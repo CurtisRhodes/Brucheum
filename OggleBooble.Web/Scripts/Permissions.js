@@ -1,106 +1,25 @@
 ﻿
 function isInRole(roleName) {
-    if (isNullorUndefined(settingsArray.ApiServer)) {
-        //console.log("isInRole settingsArray.ApiServer not defined. Looking for: " + roleName);
-        //alert("isInRole settingsArray.ApiServer not defined. Looking for: " + roleName);
+    let visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId))
         return false;
-    }
-    if (isNullorUndefined(roleName)) {
-        //if (document.domain === 'localhost') alert("isInRole roleName: " + roleName);
-        console.error("isInRole called with NullorUndefined roleName");
-        return false;
-    }
 
     if (getCookieValue("IsLoggedIn") === "false") {
-        //if (document.domain === 'localhost') alert("not logged in");
-        console.log("isInRole say not logged in");
+        console.log("not logged in");
         return false;
     }
 
-    var userPermissons = window.localStorage["userPermissons"];
-    if (isNullorUndefined(userPermissons)) {
-        console.log("loping from isInRole to loadRolesIntoLocalStorage");
-        loadRolesIntoLocalStorage("isInRole", roleName);
-        return false;
+    let userRoles = window.localStorage["userRoles"];
+    if (isNullorUndefined(userRoles)) {
+        // try to load from database
+        return getUserSettingsAndContinue("isInRole")
+        //console.log("loping from isInRole to loadRolesIntoLocalStorage");
+        //loadRolesIntoLocalStorage("isInRole", roleName);
+        //return false;
     }
-    permissonsItems = userPermissons.split(",");
-    for (var i = 0; i < permissonsItems.length; i++) {
-        if (permissonsItems[i] === "Oggle admin") {
-            //console.log("admin override");
-            return true;
-        }
-        if (permissonsItems[i] === roleName) {
-            console.log("rolename " + roleName + " FOUND!");
-            //if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
-            return true;
-        }
-        //else
-        //    console.log("rolename " + roleName + " not found ");
-    }
-
-    var userName = getCookieValue("UserName");
-
-    if (isNullorUndefined(userName)) {
-        logError({
-            VisitorId: getCookieValue("VisiorId"),
-            ActivityCode: "017",
-            Severity: 1,
-            ErrorMessage: "cookieFail userName",
-            CalledFrom: "isInRole()"
-        });
-        return false;
-    }
-
-}
-function loadRolesIntoLocalStorage(calledFrom, roleName) {
-    if (!isNullorUndefined(window.localStorage["userPermissons"])) {
-        if (calledFrom === "isInRole") {
-            console.error("userPermissons already in local storage");
-            return;
-        }
-    }
-    var visitorId = getCookieValue("VisitorId");
-    if (!isNullorUndefined(visitorId)) {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Roles/GetUserRoles?visitorId=" + visitorId + "&roleType=Assigned",
-            success: function (roleModel) {
-                if (roleModel.Success === "ok") {
-                    var userPermissons = [];
-                    $.each(roleModel.RoleNames, function (idx, roleName) {
-                        userPermissons.push(roleName);
-                    });
-                    //if (document.domain === 'localhost') alert("set user roles for " + getCookieValue("UserName") + ". " + roleModel.RoleNames.length + " added");
-                    window.localStorage["userPermissons"] = userPermissons;
-
-                    if (calledFrom === "")
-                        return isInRole(roleName);
-                }
-                else {
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "ERR",
-                        Severity: 1,
-                        ErrorMessage: roleModel.Success,
-                        CalledFrom: "loadRolesIntoLocalStorage"
-                    });
-                }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "getUserPermissions()")) {
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "loadRolesIntoLocalStorage"
-                    });
-                    if (document.domain === 'localhost') alert("XHR error in getUserPermissions(): " + errorMessage);
-                }
-                return false;
-            }
-        });
+    else {
+        // pull roll out of local storage
+        alert("userPermissons: " + userRoles);
     }
 }
 
@@ -111,22 +30,42 @@ function isLoggedIn() {
     return userNameExist;
 }
 
-function getUserSettings() {
+function getUserSettingsAndContinue(calledFrom) {
+    visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId))
+        return false;
+
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/UserSettings/Get?visitorId=" + getCookieValue("VisitorId"),
         success: function (successModel) {
             if (successModel.Success === "ok") {
 
+                // alert("TODO load user settings into local storage");
 
-                //let jsonResults = successModel.ReturnValue.Children();
+                //var userPermissons = [];
+                //$.each(roleModel.RoleNames, function (idx, roleName) {
+                //    userPermissons.push(roleName);
+                //});
+                ////if (document.domain === 'localhost') alert("set user roles for " + getCookieValue("UserName") + ". " + roleModel.RoleNames.length + " added");
+                //window.localStorage["userPermissons"] = userPermissons;
 
 
-                let carouselSettings = jsonResults.First()["CarouselSettings"];
+                if (calledFrom === "isInRole") {
 
-                alert("carouselSettings: " + JSON.stringify(carouselSettings));
+                    let roleSettings = jsonResults.First()["UserRoles"];
 
-                window.localStorage["carouselSettings"] = JSON.stringify(carouselSettings);
+                    if (isNullorUndefined(roleSettings))
+                        return false;
+                }
+                if (calledFrom === "carousel") {
+                    let roleSettings = jsonResults.First()["CarouselSettings"];
+                    alert("carouselSettings: " + JSON.stringify(carouselSettings));
+                    if (isNullorUndefined(roleSettings))
+                        return false;
+                }
+
+                //window.localStorage["carouselSettings"] = JSON.stringify(carouselSettings);
                 //var settingsJson = json.pa successModel.ReturnValue
                 //window.localStorage["userPreferences"] = successModel.ReturnValue;
                 //let jsonstring = JSON.parse(successModel);
@@ -165,14 +104,96 @@ function getUserSettings() {
     });
 }
 
-function updateUserSettings(userName, settingName, settingJson) {
-    // merge json string (in api);
+function loadUserSettingsIntoLocalStorage(usersetting) {
 
-    alert("updateUserSettings(userName: " + userName + ", settingName: " + settingName + "\n settingJson: " + settingJson);
+
+    //if (!isNullorUndefined(window.localStorage["userPermissons"])) {
+    //    if (calledFrom === "isInRole") {
+    //        console.error("userPermissons already in local storage");
+    //        return;
+    //    }
+    //}
+
+    //permissonsItems = userPermissons.split(",");
+    //for (var i = 0; i < permissonsItems.length; i++) {
+    //    if (permissonsItems[i] === "Oggle admin") {
+    //        //console.log("admin override");
+    //        return true;
+    //    }
+    //    if (permissonsItems[i] === roleName) {
+    //        console.log("rolename " + roleName + " FOUND!");
+    //        //if (document.domain === 'localhost') alert("rolename " + roleName + " FOUND!");
+    //        return true;
+    //    }
+    //    //else
+    //    //    console.log("rolename " + roleName + " not found ");
+    //}
+    //logError({
+    //    VisitorId: getCookieValue("VisiorId"),
+    //    ActivityCode: "017",
+    //    Severity: 1,
+    //    ErrorMessage: "cookieFail userName",
+    //    CalledFrom: "isInRole()"
+    //});
+    //return false;
+}
+function updateUserSettings(visitorId, settingName, settingJson) {
+    // merge json string (in api);
+    //alert("updateUserSettings(userName: " + userName + ", settingName: " + settingName + "\n settingJson: " + settingJson);
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/UserSettings/GetUserSettings?visitorId=" + visitorId,
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+
+                let savedSettings = successModel.ReturnValue
+
+                if (!isNullorUndefined(savedSettings)) {
+                    savedSettings = JSON.stringify(savedSettings);
+
+                }
+
+                window.localStorage["userPermissons"] = successModel.ReturnValue;
+                displayStatusMessage("ok", "user settings updated");
+            }
+            else {
+                if (document.domain === "localHost")
+                    alert("JQA error in setUserSettings: " + success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: success,
+                        PageId: 555,
+                        CalledFrom: "setUserSettings"
+                    });
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404()) {
+                if (document.domain === "localHost")
+                    alert("setUserSettings XHR: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        PageId: 555,
+                        CalledFrom: "setUserSettings"
+                    });
+                //sendEmailToYourself("XHR ERROR IN Carousel.JS loadImages", "api/Carousel/GetLinks?root=" + rootFolder + "&skip=" + skip + "&take=" + take + "  Message: " + errorMessage);
+            }
+        }
+    });
+
+
 
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/EntityAttribute/Update?userName=" + userName + "&settingName=" + settingName + "&settingJson=" + settingJson,
+        url: settingsArray.ApiServer + "api/EntityAttribute/Update?visitorId=" + visitorId + "&settingName=" + settingName + "&settingJson=" + settingJson,
         success: function (successModel) {
             if (successModel.Success  === "ok") {
                 window.localStorage["userPermissons"] = successModel.ReturnValue;

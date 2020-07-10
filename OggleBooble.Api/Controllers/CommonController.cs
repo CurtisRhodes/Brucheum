@@ -430,7 +430,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/UserSettings/Get")]
+        [Route("api/UserSettings/GetUserSettings")]
         public SuccessModel GetUserSettings(string visitorId)
         {
             var successModel = new SuccessModel();

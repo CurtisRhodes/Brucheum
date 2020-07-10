@@ -22,7 +22,7 @@
 }
 
 
-.carouselSettingsDialog input[type='checkbox'] {
+.carouselSettingsDialog input [type='checkbox'] {
     transform: scale(1.32);
     margin-right: 5px;
 }

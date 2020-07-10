@@ -387,8 +387,8 @@ namespace OggleBooble.Api.Controllers
                             db.SaveChanges();                        
                             repairReport.NewLinksAdded++;
                         }
-                        repairReport.RowsProcessed++;
                     }
+                    repairReport.RowsProcessed++;
                 }
                 List<ImageFile> existingLinks =
                     (from c in db.CategoryImageLinks
@@ -433,9 +433,11 @@ namespace OggleBooble.Api.Controllers
                     foreach (string orphanLink in orphanLinks)
                     {
                         var dbImageLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == orphanLink).ToList();
-                        db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == orphanLink).ToList());
-                        var imageFile = db.ImageFiles.Where(i => i.Id == orphanLink).First();
-                        db.ImageFiles.Remove(imageFile);
+                        db.CategoryImageLinks.RemoveRange(dbImageLinks);
+
+                        //db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == orphanLink).ToList());
+                        //var imageFile = db.ImageFiles.Where(i => i.Id == orphanLink).First();
+                        //db.ImageFiles.Remove(imageFile);
                     }
                     db.SaveChanges();
                     success = "0k";

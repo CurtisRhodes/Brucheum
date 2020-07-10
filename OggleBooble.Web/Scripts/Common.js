@@ -121,7 +121,7 @@ function resizePage() {
     //set page height
     let winH = $(window).height();
     let headerH = $('header').height() + 50;
-    $('.threeColumnLayout').css("height", winH - headerH);
+    $('.threeColumnLayout').css("min-height", winH - headerH);
 
 
     //var winH = $(window).height();

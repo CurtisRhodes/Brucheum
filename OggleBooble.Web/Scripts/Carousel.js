@@ -1,8 +1,8 @@
-﻿let numImages = 0, numFolders = 0, rotationSpeed = 7000, intervalSpeed = 600, carouselItemArray = new Array(),
-    imageIndex = 0, carouselContainerHeight, vCarouselInterval, selectedImageArchiveFolderId, metaTagDialogIsOpen = false,
-    imageCommentDialogIsOpen = false, folderCategoryDialogIsOpen = false, forgetShowingCatDialog, imageHistory = [],
-    rootsLoaded = [], carouselImageViews = 0, carouselImageErrors = 0, mainImageClickId, knownModelLabelClickId,
-    imageTopLabelClickId, footerLabelClickId, carouselSkip = 0, imgSrc;
+﻿let imageIndex = 0, numImages = 0, numFolders = 0, rotationSpeed = 7000, intervalSpeed = 600,
+    carouselItemArray = [], imageHistory = [],
+    vCarouselInterval, carouselImageViews = 0, carouselImageErrors = 0,
+    mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
+    carouselSkip = 0, imgSrc;
 let debugMode = true;
 let specialLaunchCode = 791;
 
@@ -45,7 +45,6 @@ function launchCarousel(startRoot) {
     }
     window.addEventListener("resize", resizeCarousel);
 }
-
 function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
     var start = Date.now();
     settingsImgRepo = settingsArray.ImageRepo;
@@ -100,8 +99,6 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     }
                     else {
                         // done
-
-                        rootsLoaded.push(rootFolder);
                         delta = (Date.now() - absolueStart) / 1000;
                         console.log("loadImages(" + rootFolder + ") DONE!! took: " + delta.toFixed(3) + " total: " + carouselItemArray.length.toLocaleString());
                         $('#footerMessage').html("total carousel items: " + carouselItemArray.length.toLocaleString());
@@ -153,7 +150,6 @@ function startCarousel(startIndex) {
         intervalBody(newImageIndex);
     }, rotationSpeed);
 }
-
 function intervalBody(newImageIndex) {
     //alert("intervalBody");
 
@@ -277,30 +273,6 @@ function setLabelLinks() {
     $('#imageTopLabel').fadeIn();
     $('#knownModelLabel').fadeIn();
 }
-
-function clickViewGallery(labelClick) {
-    clearInterval(vCarouselInterval);
-    switch (labelClick) {
-        case 1:  // carousel main image
-            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + mainImageClickId);
-            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "main image", mainImageClickId);
-            break;
-        case 2: // top imageTopLabel
-            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + imageTopLabelClickId);
-            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "image top label", imageTopLabelClickId);    
-            break;
-        case 3: // knownModelLabel
-            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + knownModelLabelClickId);
-            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "knownModelLabel", knownModelLabelClickId);
-            break;
-        case 4: // footer 
-            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + footerLabelClickId);
-            reportThenPerformEvent("CPC", carouselItemArray[imageIndex].ImageFolderName, "clickViewParentGallery", footerLabelClickId);
-            break;
-        default:
-    }
-}
-
 function getRootFolderId(rootFolder) {
     var rootFolderId = 2;
     switch (rootFolder) {
@@ -330,7 +302,6 @@ function clickSpeed(speed) {
     clearInterval(vCarouselInterval);
     startCarousel(imageIndex);
 }
-
 function togglePause() {
     if ($('#pauseButton').html() === "||")
         pause();
@@ -339,12 +310,10 @@ function togglePause() {
         resume();
     }
 }
-
 function pause() {
     clearInterval(vCarouselInterval);
     $('#pauseButton').html(">");
 }
-
 function resume() {
     //alert("resume()");
     clearInterval(vCarouselInterval);
@@ -357,95 +326,60 @@ function showCarouelSettingsDialog() {
     $("#oggleDialogTitle").html("Carousel Settings");
     $("#draggableDialogContents").html(
         "<div class='carouselSettingsDialog'>\n"+
-        "   <input class='carouselCheckbox' id='ckCenterfold' type='checkbox'/> Include Centerfolds<br/>\n" +
-        "   <input class='carouselCheckbox' id='ckArchive' type='checkbox'/> Include Archive<br/>\n" +
-        "   <input class='carouselCheckbox' id='ckSoftCore' type='checkbox'/> Include softcore<br/>\n" +
-        "   <input class='carouselCheckbox' id='ckPorn' type='checkbox'/> Include porn<br/>\n" +
-        "   <input class='carouselCheckbox' id='ckLandscape' type='checkbox'/> allow landscape size<br/>\n" +
-        "   <input class='carouselCheckbox' id='ckPortrait' type='checkbox'/> allow portrait size<br/>\n" +
+        "   <input type='checkbox' id='ckCenterfold'/> Include Centerfolds<br/>\n" +
+        "   <input type='checkbox' id='ckArchive'/> Include Archive<br/>\n" +
+        "   <input type='checkbox' id='ckSoftcore'/> Include softcore<br/>\n" +
+        "   <input type='checkbox' id='ckPorn'/> Include porn<br/>\n" +
+        "   <input type='checkbox' id='ckLandscape'/> allow landscape size<br/>\n" +
+        "   <input type='checkbox' id='ckPortrait'/> allow portrait size<br/>\n" +
         "</div>\n");
-
     $("#draggableDialog").css("width", 300);
     $('#draggableDialog').css("top", event.clientY - 75);
     $('#customMessageContainer').css("left", event.clientX - 100);
     pause();
     $("#draggableDialog").fadeIn();
-
     let lsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
 
     $('#ckCenterfold').prop("checked", lsCarouselSettings.includeCenterfolds);
     $('#ckArchive').prop("checked", lsCarouselSettings.includeArchive);
     $('#ckPorn').prop("checked", lsCarouselSettings.includePorn);
+    $('#ckSofcore').prop("checked", lsCarouselSettings.includeSoftcore);
     $('#ckLandscape').prop("checked", lsCarouselSettings.includeLandscape);
     $('#ckPortrait').prop("checked", lsCarouselSettings.includePortrait);
 
-    $('.carouselCheckbox').change(function () {
-        alert("this." + this.id + " checked: " + this.checked);
-        //window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
-
-        //let lsCarouselSettings = window.localStorage["carouselSettings"];
-
-        //var lsCarouselSettings = {
-        //    includeArchive: lsCarouselSettings.includeArchive,
-        //    includeCenterfolds: lsCarouselSettings.includeCenterfolds,
-        //    includePorn: lsCarouselSettings.includePorn,
-        //    includeLandscape: lsCarouselSettings.includeLandscape,
-        //    includePortrait: lsCarouselSettings.includePortrait
-        //};
-
-        switch (this.id) {
-            case "ckPortrait":
-                lsCarouselSettings.includePortrait = this.checked;
-                reloadAll();
-                break;
-            case "ckLandscape":
-                lsCarouselSettings.includeLandscape = this.checked;
-                reloadAll();
-                break;
-            case "ckArchive":
-                lsCarouselSettings.includeArchive = this.checked;
-                if (this.checked)
-                    loadImages("archive", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-                else
-                    removeItemsFromArray("archive");
-                break;
-            case "ckCenterfold":
-                lsCarouselSettings.includeCenterfolds = this.checked;
-                if (this.checked) {
-                    loadImages("centerfold", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-                    displayStatusMessage("ok", "centerfolds added to carousel");
-                }
-                else {
-                    let numImagesRemoved = removeItemsFromArray("centerfold");
-                    $('#headerMessage').html(numImagesRemoved + "centerfold images removed");
-                    displayStatusMessage("ok", numImagesRemoved + "centerfold images removed");
-                }
-                break;
-            case "ckPorn":
-                lsCarouselSettings.includePorn = this.checked;
-                if (this.checked) {
-                    loadImages("porn", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-                }
-                else {
-                    let numImagesRemoved = removeItemsFromArray("porn");
-                    $('#headerMessage').html(numImagesRemoved+ "porn images removed");
-                    displayStatusMessage("ok", numImagesRemoved + "porn images removed");
-                }
-                break;
-            default:
-        }
-
-        // update settings
-        window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
-
-        let userName = getCookieValue("UserName");
-        if (isNullorUndefined(userName))
+    $("input[type='checkbox']").change(function () {
+        let visitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(visitorId)) {
             displayStatusMessage("warning", "You must be logged in for settings to persist");
-        else
+        }
+        else {
+
             updateUserSettings(userName, "CarouselSettings", lsCarouselSettings)
+
+            alert("this." + this.id + " checked: " + this.checked);
+
+            //window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
+            //let lsCarouselSettings = window.localStorage["carouselSettings"];
+
+            if (this.checked)
+                addItemsToArray(this.Id);
+            else
+                removeItemsFromArray(this.Id);
+
+            //loadImages("archive", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
+            displayStatusMessage("ok", "centerfolds added to carousel");
+            let numImagesRemoved = removeItemsFromArray("centerfold");
+            $('#headerMessage').html(numImagesRemoved + "centerfold images removed");
+            displayStatusMessage("ok", numImagesRemoved + "centerfold images removed");
+
+            //let lsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
+            // save carousel setting to mission
+
+            // update settings
+            window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
+        }
     });
 }
-
 function removeItemsFromArray(rootFolder) {
     var numRemoved = 0;
     for (idx = 0; idx < carouselItemArray.length; idx++) {
@@ -472,7 +406,28 @@ function assuranceArrowClick(direction) {
         intervalBody(imageHistory.pop());
     }
 }
-
+function clickViewGallery(labelClick) {
+    clearInterval(vCarouselInterval);
+    switch (labelClick) {
+        case 1:  // carousel main image
+            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + mainImageClickId);
+            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "main image", mainImageClickId);
+            break;
+        case 2: // top imageTopLabel
+            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + imageTopLabelClickId);
+            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "image top label", imageTopLabelClickId);
+            break;
+        case 3: // knownModelLabel
+            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + knownModelLabelClickId);
+            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "knownModelLabel", knownModelLabelClickId);
+            break;
+        case 4: // footer 
+            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + footerLabelClickId);
+            reportThenPerformEvent("CPC", carouselItemArray[imageIndex].ImageFolderName, "clickViewParentGallery", footerLabelClickId);
+            break;
+        default:
+    }
+}
 function carouselContextMenu() {
     pos.x = event.clientX;
     pos.y = event.clientY;
@@ -507,7 +462,6 @@ function imgErrorThrown() {
 
 
 }
-
 function carouselHtml() {
     return "<div class='centeringOuterShell'>\n" +
         "   <div id='innerCarouselContainer'  class='centeringInnerShell'>\n" +

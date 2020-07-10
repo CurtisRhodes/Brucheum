@@ -39,7 +39,7 @@ function setHdrBottomRow(folderId, subdomain) {
     $('#bannerTitle').html("OggleBooble");
     changeFavoriteIcon("redBallon");
     switch (subdomain) {
-        case "Index": 
+        case "index": 
         case "root": {
             //$('#breadcrumbContainer').html(
             //    "<div class='headerBanner'><a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'>babes ranker</a></div>\n" +
@@ -65,16 +65,15 @@ function setHdrBottomRow(folderId, subdomain) {
             $('#mainMenuContainer').html("ranker");
             break;
         }
+        case "boobs": // poses        
+            $('#topRowRightContainer').html(tinkyTak("centerfold"));
+            $('#topRowRightContainer').append(tinkyTak("archive"));
+            $('#topRowRightContainer').append(tinkyTak("ranker", "archive"));
+            break;
         case "archive": {
             $('#topRowRightContainer').html(tinkyTak("centerfold"));
             $('#topRowRightContainer').append(tinkyTak("poses"));
             $('#topRowRightContainer').append(tinkyTak("ranker", "archive"));
-            break;
-        }
-        case "boobs": { // poses
-            // boobs archive
-            // boobs ranker
-
             break;
         }
         case "soft": {

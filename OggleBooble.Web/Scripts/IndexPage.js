@@ -3,12 +3,14 @@ function indexStartup(spaPageId) {
     $('#indexMiddleColumn').html(indexPageHTML());
     if (spaPageId === 3909) {
         setOggleHeader(spaPageId, "porn");
+        setOggleFooter(spaPageId, "porn");
         changeFavoriteIcon("porn");
         document.title = "welcome : OgglePorn";
         launchCarousel("porn");
     }
     else {
-        setOggleHeader(spaPageId, "boobs");
+        setOggleHeader(spaPageId, "index");
+        setOggleFooter(spaPageId, "boobs");
         changeFavoriteIcon("redBallon");
         document.title = "welcome : OggleBooble";
 
