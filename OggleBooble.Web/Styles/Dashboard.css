@@ -70,7 +70,7 @@
 .workAreaDisplayContainer {
     /*background-color: #dbe5c1;*/
     overflow: auto;
-    height: inherit;
+    display: flex;
 }
 
 .workAreaRowDisplayContainer {

@@ -71,12 +71,9 @@
         </div>
         <div class="middleColumn">
             <div id="divStatusMessage"></div>
-            <div id="dots"></div>
+            <div id="dots">DDDDDDDDDD</div>
             <img id="boobsRankerLoadingGif" class="loadingGif" src="Images/loader.gif" />
-            <div id="indexMiddleColumn">
-
-            </div>
-
+            <div id="indexMiddleColumn"></div>
         </div>
         <div class="rightColumn"></div>
     </div>
@@ -103,15 +100,9 @@
                 spaPageId = 3908;
             else
                 spaPageId = params.spa;
-            // boobs      homePageId = 3908;
-            // porn       homePageId = 3909;
-            // blog       homePageId = 3911;
-            // dashboard  homePageId = 3911;
-            // ranker     homePageId = 3907;
-            //isLoggedIn = !isNullorUndefined(userName);
+
 
             setOggleHeader(spaPageId, "loading");
-            //setOggleHeader(3907);
            
             var getXMLsettingsWaiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -173,7 +164,6 @@
                                 indexStartup(spaPageId);
                             }
                             if (spaPageId == 3910) {  // dashboard
-                                $('#indexMiddleColumn').html(dashboardHtml());
                                 dashboardStartup();
                             }
                             if (spaPageId == 3911) { // "blog"

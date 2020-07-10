@@ -360,7 +360,7 @@ namespace OggleBooble.Api.Controllers
                         db.EventLogs.Add(new EventLog()
                         {
                             EventCode = "MIL",
-                            EventDetail = physcialFileName,
+                            EventDetail = physcialFileLinkId,
                             PageId = folderId,
                             VisitorId = "admin",
                             Occured = DateTime.Now
@@ -368,28 +368,28 @@ namespace OggleBooble.Api.Controllers
                         db.SaveChanges();
 
 
-                        //if (db.ImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault() == null)
-                        //{
-                        //    db.ImageFiles.Add(new ImageFile()
-                        //    {
-                        //        Id = physcialFileLinkId,
-                        //        FolderId = folderId,
-                        //        FileName = physcialFileName
-                        //    });
-                        //    repairReport.ImageFileAdded++;
-                        //}
-                        //db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
-                        //{
-                        //    ImageLinkId = physcialFileLinkId,
-                        //    ImageCategoryId = folderId,
-                        //    SortOrder = 872
-                        //});
-                        ////db.SaveChanges();                        
-                        //repairReport.NewLinksAdded++;
+                        if (db.ImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault() != null)
+                        {
+                            //    db.ImageFiles.Add(new ImageFile()
+                            //    {
+                            //        Id = physcialFileLinkId,
+                            //        FolderId = folderId,
+                            //        FileName = physcialFileName
+                            //    });
+                            //    repairReport.ImageFileAdded++;
+                            //}
+                            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
+                            {
+                                ImageLinkId = physcialFileLinkId,
+                                ImageCategoryId = folderId,
+                                SortOrder = 872
+                            });
+                            db.SaveChanges();                        
+                            repairReport.NewLinksAdded++;
+                        }
+                        repairReport.RowsProcessed++;
                     }
-                    repairReport.RowsProcessed++;
                 }
-
                 List<ImageFile> existingLinks =
                     (from c in db.CategoryImageLinks
                      join i in db.ImageFiles on c.ImageLinkId equals i.Id

@@ -4,17 +4,10 @@
     rootsLoaded = [], carouselImageViews = 0, carouselImageErrors = 0, mainImageClickId, knownModelLabelClickId,
     imageTopLabelClickId, footerLabelClickId, carouselSkip = 0, imgSrc;
 let debugMode = true;
-
+let specialLaunchCode = 791;
 
 function launchCarousel(startRoot) {
     //$('#footerMessage').html("launching carousel");
-    $('#carouselContainer').html(carouselHtml());
-    resizeCarousel();
-    $('#carouselImageContainer').show();
-    $('#thisCarouselImage').show();
-
-    $('.assuranceArrows').hide();
-    $('.carouselFooter').css("visibility", "hidden");
 
 
     var jsCarouselSettings;
@@ -36,7 +29,7 @@ function launchCarousel(startRoot) {
 
     //initial call to loadimages
     
-    loadImages(startRoot, Date.now(), 0, 500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    loadImages(startRoot, Date.now(), 0, specialLaunchCode, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     if (startRoot === "boobs") {
         if (jsCarouselSettings.includeArchive) {
             loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
@@ -90,7 +83,9 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                         //alert("carouselItemArray.push[ " + idx + " ]");
                     });
 
-                    if (take === 500) {
+                    if (take === specialLaunchCode) {
+                        $('#topIndexPageSection').html(carouselHtml());
+                        $('.carouselFooter').css("visibility", "hidden");
                         if (carouselItemArray.length === 0) alert("ix00");
                         newImageIndex = Math.floor(Math.random() * 500);
                         startCarousel(newImageIndex);

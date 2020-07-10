@@ -1,9 +1,6 @@
 ﻿
 function indexStartup(spaPageId) {
-
     $('#indexMiddleColumn').html(indexPageHTML());
-
-
     if (spaPageId === 3909) {
         setOggleHeader(spaPageId, "porn");
         changeFavoriteIcon("porn");
@@ -14,10 +11,15 @@ function indexStartup(spaPageId) {
         setOggleHeader(spaPageId, "boobs");
         changeFavoriteIcon("redBallon");
         document.title = "welcome : OggleBooble";
+
+        $('#topIndexPageSection').html(
+            "<div class='centeringOuterShell'>\n" +
+            "   <div class='centeringInnerShell'>\n" +
+            "       <img class='loadingImage' src='/Images/ingranaggi3.gif'/>\n" +
+            "   </div>\n" +
+            "</div>\n");
+
         //launchPromoMessages();
-
-        
-
         launchCarousel("boobs");
         loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
     }
@@ -28,7 +30,6 @@ function indexPageHTML() {
         "        <div class='flexContainer'>\n" +
         "            <div class='sectionLabel'>random galleries</div>\n" +
         "            <div id='carouselContainer'>" +
-        "             <img id='thisCarouselImage' class='carouselImage' src='/Images/ingranaggi3.gif'/>" +
         "            </div>\n" +
         "        </div>\n" +
         "    </div>\n" +

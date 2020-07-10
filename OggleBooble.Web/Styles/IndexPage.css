@@ -9,6 +9,10 @@
     /*border: solid thin red;*/
 }
 
+.loadingImage {
+    height: 233px;
+}
+
 .indexPageSection {
     margin-top: 26px;
     width: 100%;

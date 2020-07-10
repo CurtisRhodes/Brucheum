@@ -1,6 +1,7 @@
 ﻿let pSelectedTreeId, pSelectedTreeFolderPath;
 function dashboardStartup() {
     $('.txtLinkPath').val('');
+    $('#indexMiddleColumn').html(dashboardHtml());
     setOggleHeader(3910, "dashboard");
     setOggleFooter(3910, "dashboard");
 
@@ -19,22 +20,21 @@ function dashboardStartup() {
 }
 
 function resizeDashboardPage() {
-    //resizePage();
+    resizePage();
 
     // HEIGHT
-    //$('.dashboardContainerColumn')
+    //let winH = $(window).height
 
-    //$('.threeColumnLayout').css("height", ($(window).innerHeight() - $('header').height()) + 50);
-    //var bb = $('.threeColumnLayout').height();
-    //$('.threeColumnLayout').css("height", ($(window).innerHeight() - $('header').height()) - 550);
-
-    let adjH = $('.threeColumnLayout').height() - $('header').height() - 90;
+    let heightFF = -100, widthFF = -60;
+    let adjH = $('.threeColumnLayout').height() - $('header').height() + heightFF;
     $('#dashboardContainer').css("height", adjH);
 
     // WIDTH
     let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
-    $('#dashboardMiddleColumn').css("width", middleColumnW - 33);
-    //$('#headerMessage').html("dashboardMiddleColumn.w: " + $('#dashboardMiddleColumn').width());
+    $('#dashboardMiddleColumn').css("width", middleColumnW + widthFF);
+
+    $('#mainMenuContainer').html("w: " + $('#dashboardMiddleColumn').width() + " widthFF: " + widthFF +
+        "                            h: " + $('#dashboardContainer').height() + " heightFF: " + heightFF);
 }
 
 function rebuildDirectoryTree() {
@@ -556,8 +556,6 @@ function perfomAddStepChildFolder() {
     });
 }
 
-
-
 // ROLES FUNCTION
 function showAssignRolesDialog() {
     $('#rolesChooseBoxDialog').dialog('open');
@@ -711,25 +709,69 @@ function moveCheckedImages() {
 // SORT TOOL
 function showSortTool() {
     //alert("pSelectedTreeFolderPath: " + pSelectedTreeFolderPath);
+
+    //$('#indexMiddleColumn').html(dashboardHtml())
     if (isNullorUndefined(pSelectedTreeFolderPath)) {
         alert("select a folder");
         return;
     }
-    $('#workAreaContainer').html(sortOrderHtml());
-    //$('#divSortTool').fadeIn();
+    $('#dashboardContainer').html(sortOrderHtml());
     loadSortImages();
 }
+
+// $('#indexMiddleColumn').html(dashboardHtml());
+
 function sortOrderHtml() {
     return "<div id='divSortTool'>\n" +
-        "<div class='workAreaHeader'>\n" +
-        "    <div class='workAreaHeaderLabel'><h3 id='sortTableHeader'></h3></div>\n" +
-        "    <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='$(\"#divSortTool\").hide();showAddImageLinkDialog();'></div>\n" +
-        "    </div>\n" +
-        "    <div id='sortToolContainer' class='workAreaDisplayContainer'></div>\n" +
-        "    <div class='workareaFooter'>\n" +
-        "        <button onclick='updateSortOrder()'>ReSort</button>\n" +
-        "    </div>\n" +
+        "   <div class='workAreaHeader'>\n" +
+        "       <div class='workAreaHeaderLabel'><h3 id='sortTableHeader'></h3></div>\n" +
+        "       <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png'" +
+        "       onclick='$(\"#indexMiddleColumn\").html(dashboardHtml());resizeDashboardPage();'></div>\n" +
+        "   </div>\n" +
+        "   <div id='sortToolContainer'>\n" +
+        "       <div id='sortToolImageArea'  class='workAreaDisplayContainer'></div>\n" +
+        "       <div class='workareaFooter'>\n" +
+        "           <button onclick='updateSortOrder()'>ReSort</button>\n" +
+        "       </div>\n" +
+        "   </div>\n" +
         "</div>\n";
+}
+function updateSortOrder() {
+    $('#dashBoardLoadingGif').show();
+    $('#dataifyInfo').show().html("sorting array");
+    var sortOrderArray = [];
+    $('#sortToolContainer').children().each(function () {
+        sortOrderArray.push({
+            pageId: pSelectedTreeId,
+            itemId: $(this).find("input").attr("id"),
+            inputValue: $(this).find("input").val()
+        });
+    });
+    $('#dataifyInfo').html("saving changes");
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/Links/GetImageLinks",
+        contentType: 'application/json',
+        data: JSON.stringify(sortOrderArray),
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+            if (success === "ok") {
+                $('#dataifyInfo').html("reloading");
+                loadSortImages();
+            }
+            else {
+                alert("updateSortOrder: " + success);
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errorMessage, "updateSortOrder")) {
+                sendEmailToYourself("XHR ERROR in Dashboard.js updateSortOrder",
+                    "/api/ImagePage/GetImageLinks?folderId=" + pSelectedTreeId + " Message: " + errorMessage);
+            }
+            alert("updateSortOrder xhr error: " + errorMessage);
+        }
+    });
 }
 function loadSortImages() {
     $('#sortTableHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ")
@@ -740,11 +782,13 @@ function loadSortImages() {
         success: function (imgLinks) {
             $('#dashBoardLoadingGif').hide();
             if (imgLinks.Success === "ok") {
-                $('#sortToolContainer').html("");
+                $('#sortToolImageArea').html("");
                 $.each(imgLinks.Links, function (ndx, obj) {
-                    $('#sortToolContainer').append("<div class='sortBox'><img class='sortBoxImage' src='" + settingsImgRepo + obj.FileName + "'/>" +
+                    $('#sortToolImageArea').append("<div class='sortBox'><img class='sortBoxImage' src='" +
+                        settingsImgRepo + obj.FileName + "'/>" +
                         "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></div>");
                 });
+                $('#dataifyInfo').html("done");
             }
             else {
                 alert("loadSortImages: " + imageLinksModel.Success);
@@ -761,41 +805,6 @@ function loadSortImages() {
         }
     });
 }
-function updateSortOrder() {
-        var sortOrderArray = [];
-        $('#sortToolContainer').children().each(function () {
-            sortOrderArray.push({
-                pageId: pSelectedTreeId,
-                itemId: $(this).find("input").attr("id"),
-                inputValue: $(this).find("input").val()
-            });
-        });
-
-        $.ajax({
-            type: "PUT",
-            url: settingsArray.ApiServer + "api/Links/GetImageLinks",
-            contentType: 'application/json',
-            data: JSON.stringify(sortOrderArray),
-            success: function (success) {
-                $('#dashBoardLoadingGif').hide();
-                if (success === "ok") {
-                    $('#dashBoardLoadingGif').hide();
-                    loadSortImages();
-                }
-                else {
-                    alert("updateSortOrder: " + success);
-                }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "updateSortOrder")) {
-                    sendEmailToYourself("XHR ERROR in Dashboard.js updateSortOrder",
-                        "/api/ImagePage/GetImageLinks?folderId=" + pSelectedTreeId + " Message: " + errorMessage);
-                }
-                alert("updateSortOrder xhr error: " + errorMessage);
-            }
-        });
-    }
 
 // MOVE FOLDER
 function XXmoveFolder() {
