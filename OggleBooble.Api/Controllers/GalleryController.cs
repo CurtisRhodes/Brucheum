@@ -285,14 +285,13 @@ namespace OggleBooble.Api.Controllers
 
                     if (includeSubFolders)
                     {
-                        var unsortedList = new List<VwSlideshowItem>();
+                        var unsortedList = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
                         GetChildGalleryItems(folderId, unsortedList, db);
                         //slideshowItemModel.SlideshowItems = (IList<VwSlideshowItem>)unsortedList.OrderBy(i => i.LinkId).ToList();
                         slideshowItemModel.SlideshowItems = unsortedList.OrderBy(i => i.LinkId).ToList();
                     }
                     else {
-                        slideshowItemModel.SlideshowItems = new List<VwSlideshowItem>();
-                            //db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
+                        slideshowItemModel.SlideshowItems = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
                     } 
                 }
                 slideshowItemModel.Success = "ok";

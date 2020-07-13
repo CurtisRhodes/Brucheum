@@ -17,6 +17,7 @@
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
 
     <script src="Scripts/Common.js"></script>
+    <script src="Scripts/OggleHelpers.js"></script>
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/EventControl.js"></script>
@@ -101,7 +102,6 @@
             else
                 spaPageId = params.spa;
 
-
             setOggleHeader(spaPageId, "loading");
            
             var getXMLsettingsWaiter = setInterval(function () {
@@ -112,43 +112,21 @@
                 }
                 else {
                     clearInterval(getXMLsettingsWaiter);
-                    //  LOCAL HOST because cookies don't work in IIS
-                    if (document.domain === 'localhost') {
-                        setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-                        setCookieValue("UserName", "developer");
-                        var userPermissons = [];
-                        userPermissons.push("Oggle admin");
-                        userPermissons.push("access dashboard");
-                        userPermissons.push("view dynamic");
-                        window.localStorage["userPermissons"] = userPermissons;
-                        //window.localStorage["IsLoggedIn"] = "true";
-                    }
-
                     checkFor404("start");
                     var verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
-
-                            //logError({
-                            //    VisitorId: "unknown",
-                            //    ActivityCode: "017",
-                            //    Severity: 1,
-                            //    ErrorMessage: "cookieFail userName",
-                            //    CalledFrom: "isInRole()"
-                            //});
-
+                            //alert("settingsArray.ApiServer: " + settingsArray.ApiServer);
+                            localhostBypass();
                             var visitorId = getCookieValue("VisitorId");
                             if (isNullorUndefined(visitorId)) {
-
-
-                                getIpInfo(spaPageId);
-
-
-                                loadRolesIntoLocalStorage("index", "any");
+                                // getIpInfo(spaPageId);
+                                handleUnidentifiedVisitor();
                             }
                             else {
                                 console.log("visitorId found: " + visitorId);
+                                loadUserSettingsIntoLocalStorage();
                             }
 
                             // ranker     homePageId = 3907;
@@ -157,7 +135,7 @@
                             // dashboard  homePageId = 3910;
                             // blog       homePageId = 3911;
                             if (spaPageId == 3907) { // ranker
-                                $('#indexMiddleColumn').html(rankerHTML());
+                                ///alert("rankPref: " + params.bp);
                                 rankerStartup(params.bp);
                             }
                             if (spaPageId == 3908 || spaPageId === 3909) {  // boobs,porn

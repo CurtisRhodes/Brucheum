@@ -1,7 +1,10 @@
-﻿let pSourceId, pDestinationId, pDestinationFolderName;
+﻿let pDirTreeId, pDirTreeFolderName;
 
 function linkDialogdirTreeClick(path, id) {
     //alert("linkDialogdirTreeClick path: " + path + ", id: " + id);
+    pDirTreeId = id;
+    pDirTreeFolderName = path;
+
     pDestinationId = id;
     pDestinationFolderName = path;
     $('#dirTreeResults').html(path.replace(/%20/g, " "));
@@ -21,8 +24,7 @@ function showDirTreeDialog(imgSrc, treeStart) {
     $('#draggableDialog').fadeIn();
 }
 
-function showCopyLinkDialog(linkId, folderId, imgSrc) {
-    pSourceId = folderId;
+function showCopyLinkDialog(linkId, imgSrc) {
     showDirTreeDialog(imgSrc, 1);
     $('#oggleDialogTitle').html("Copy Link");
     $('#linkManipulateClick').html(
@@ -32,7 +34,7 @@ function perfomCopyLink(linkId) {
     let visitorId = getCookieValue("VisitorId");
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pDestinationId,
+        url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pDirTreeId,
         success: function (success) {
             if (success === "ok") {
                 $('#draggableDialog').fadeOut();
@@ -40,10 +42,10 @@ function perfomCopyLink(linkId) {
                 logDataActivity({
                     VisitorId: visitorId,
                     ActivityCode: "LKC",
-                    PageId: pDestinationId,
-                    Activity: linkId
+                    PageId: pDirTreeId,
+                    Activity: "copy: " + linkId + " to: " + pDirTreeId
                 });
-                awardCredits("LKC", pSourceId);
+                awardCredits("LKC", pDirTreeId);
             }
             else {
                 if (document.domain === "localhost")
@@ -77,57 +79,73 @@ function perfomCopyLink(linkId) {
     });
 }
 
-function showMoveLinkDialog(linkId, sourceFileId) {
-    showLinkDialog(imgSrc);
+function showMoveLinkDialog(linkId, imgSrc) {
+    showDirTreeDialog(imgSrc, 1);
     $('#oggleDialogTitle').html("Move Link");
     $('#linkManipulateClick').html(
-        "<div class='roundendButton' onclick='performMoveLink(\"" + linkId + "\"," + sourceFileId + ")'>Move</div>");
+        "<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\")'>Move</div>");
 }
-function performMoveLink(linkId, sourceId) {
+
+function showArchiveLinkDialog(linkId, imgSrc) {
+    showDirTreeDialog(imgSrc, 3);
+    $('#oggleDialogTitle').html("Archive Image");
+    $('#linkManipulateClick').html(
+        "<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\")'>Archive</div>");
+}
+
+function moveFile(request, linkId) {
     $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Links/MoveLink?linkId=" + linkId + "&destinationId=" + sourceId + "&destinationId=" + pDestinationId,
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/Links/MoveFile?linkId=" + linkId + "&newFolderId=" + pDirTreeId + "&request=" + request,
         success: function (success) {
             if (success === "ok") {
-                $('#draggableDialog').fadeOut();
+                if (viewerShowing)
+                    slide("next");
+                //refresh page.
+                getAlbumImages(folderid);
+                if (request === "MOV") {
+                    // remove old link
+                }
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "LKM",
-                    PageId: pDestinationId,
-                    Activity: linkId + ' moved to ' + pDestinationFolderName
+                    ActivityCode: request, //  "ARK",
+                    PageId: newFolderId,
+                    Activity: linkId
                 });
             }
             else {
                 if (document.domain === "localhost")
-                    alert("performMoveLink AJQ: " + success);
+                    alert("performArchiveImage: " + errorMessage);
                 else
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "BUG",
-                        Severity: 1,
+                        Severity: 3,
                         ErrorMessage: success,
-                        CalledFrom: "performMoveLink"
+                        CalledFrom: "performArchiveImage"
                     });
+                //sendEmailToYourself("jQuery fail in album.js onRemoveImageClick", "Message: " + success);
             }
         },
         error: function (xhr) {
             var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404("performMoveLink")) {
+            if (!checkFor404("onRemoveImageClick")) {
                 if (document.domain === "localhost")
-                    alert("performMoveLink: " + errorMessage);
+                    alert("performArchiveImage: " + errorMessage);
                 else
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "XHR",
                         Severity: 1,
                         ErrorMessage: errorMessage,
-                        CalledFrom: "performMoveLink"
+                        CalledFrom: "performArchiveImage"
                     });
-                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
             }
         }
     });
+
 }
+
 function attemptRemoveLink(linkId, folderId) {
     // 1. if just a link delete it and you're done.
     $.ajax({
@@ -181,8 +199,6 @@ function attemptRemoveLink(linkId, folderId) {
         }
     });
 }
-
-
 function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
     //showDirTreeDialog(imgSrc, 1);
     if (errMsg === "single link") {
@@ -259,63 +275,7 @@ function performRemoveHomeFolderLink() {
     alert("todo: performRemoveHomeFolderLink");
 }
 
-function showArchiveFolderDialog(linkId, imgSrc) {
-    showDirTreeDialog(imgSrc, 3);
-    $('#oggleDialogTitle').html("Archive Image");
-    $('#linkManipulateClick').html(
-        "<div class='roundendButton' onclick='performArchiveImage(\"" + linkId + "\")'>Archive</div>");
-}
-function performArchiveImage(linkId) {
-    // make sure destintion is archive
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "api/Links/MoveFile?linkId=" + linkId + "&newFolderId=" + pDestinationId,
-        success: function (success) {
-            if (success === "ok") {
-                if (viewerShowing)
-                    slide("next");
-                //getAlbumImages(folderid);
-                logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "ARK",
-                    PageId: newFolderId,
-                    Activity: linkId
-                });
-            }
-            else {
-                if (document.domain === "localhost")
-                    alert("performArchiveImage: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 3,
-                        ErrorMessage: success,
-                        CalledFrom: "performArchiveImage"
-                    });
-                //sendEmailToYourself("jQuery fail in album.js onRemoveImageClick", "Message: " + success);
-            }
-        },
-        error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404("onRemoveImageClick")) {
-                if (document.domain === "localhost")
-                    alert("performArchiveImage: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "performArchiveImage"
-                    });
-            }
-        }
-    });
-}
-
 function showRenameFolderDialog(folderId, folderName) {
-    pSourceId = folderId;
     showLinkDialog();
     $('#oggleDialogTitle').html("Rename Folder: " + folderName);
     //$('#draggableDialogContents').html(
@@ -324,6 +284,8 @@ function showRenameFolderDialog(folderId, folderName) {
     //    "<div class='roundendButton' onclick='performRenameFolder()'>Rename Folder</div>\n" +
     //    "<div id='renameFolderReport' class='repairReport'></div>\n");
     $("#draggableDialog").fadeIn();
+
+
 }
 function performRenameFolder(folderId, newFolderName) {
     $.ajax({

@@ -1,14 +1,26 @@
-﻿let apFolderName, apFolderRoot, apFolderId, deepChildCount = 0, aapiVisitorId, apFolderType;
+﻿let apFolderName, apFolderRoot, apFolderId, deepChildCount = 0, apVisitorId, apFolderType;
+
+function checkAlbumCost(folderId) {
+    let visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId))
+        alert("You must be logged in to view this album");
+}
 
 function loadAlbum(folderId) {
-    aapiVisitorId = getCookieValue("VisitorId");
+    apVisitorId = getCookieValue("VisitorId");
+    //if (isNullorUndefined) apVisitorId
+    // alert("getVisitorInfo().referrer(): " + getVisitorInfo().referrer());
+
     try {
         settingsImgRepo = settingsArray.ImageRepo;
-        if (isNullorUndefined(aapiVisitorId)) {
+        if (isNullorUndefined(apVisitorId)) {
             if (document.domain === 'localhost')
                 alert("visitorId undefined, CalledFrom: loadAlbum");
             else
-                logError({ VisitorId: aapiVisitorId, ActivityCode: "XXX", Severity: 1, ErrorMessage: "visitorId undefined, CalledFrom: loadAlbum" });
+                logError({
+                    VisitorId: apVisitorId, ActivityCode: "XXX", Severity: 1,
+                    ErrorMessage: "visitorId undefined, CalledFrom: loadAlbum"
+                });
         }
         else {
             apFolderId = folderId;
@@ -22,7 +34,7 @@ function loadAlbum(folderId) {
             alert("Catch Error in Album.js: loadAlbum\n" + e);
         else
             logError({
-                VisitorId: aapiVisitorId,
+                VisitorId: apVisitorId,
                 ActivityCode: "CAT",
                 Severity: 1,
                 ErrorMessage: e,
@@ -77,7 +89,7 @@ function getAlbumImages(folderId) {
                     alert("XHR fail in Album.js: getAlbumImages\n" + errorMessage);
                 else
                     logError({
-                        VisitorId: aapiVisitorId,
+                        VisitorId: apVisitorId,
                         ActivityCode: "XHR",
                         Severity: 1,
                         ErrorMessage: errorMessage,
@@ -91,7 +103,7 @@ function getAlbumPageInfo(folderId) {
     var infoStart = Date.now();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + aapiVisitorId + "&folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + apVisitorId + "&folderId=" + folderId,
         success: function (imageLinksModel) {
             if (imageLinksModel.Success === "ok") {
 
@@ -102,7 +114,7 @@ function getAlbumPageInfo(folderId) {
                 apFolderRoot = imageLinksModel.RootFolder;
 
                 if (isNullorUndefined(apFolderRoot))
-                    alert("apFolderRoot");
+                    alert("apFolderRoot not found");
 
                 setOggleHeader(folderId, apFolderRoot);
                 setOggleFooter(folderId, apFolderRoot);
@@ -159,7 +171,7 @@ function getAlbumPageInfo(folderId) {
                     alert("XHR fail in Album.js: getAlbumImages\n" + errorMessage);
                 else
                     logError({
-                        VisitorId: aapiVisitorId,
+                        VisitorId: apVisitorId,
                         ActivityCode: "XHR",
                         Severity: 1,
                         ErrorMessage: errorMessage,
@@ -242,6 +254,7 @@ function subFolderImgError(folderId, imgSrc) {
 function albumContextMenu(menuType, linkId, folderId, imgSrc) {
     pos.x = event.clientX;
     pos.y = event.clientY;
+    //alert("showContextMenu.  folderId: " + folderId);
     showContextMenu(menuType, pos, imgSrc, linkId, folderId, apFolderName);
 }
 
@@ -397,7 +410,7 @@ function setCounts(dirTree, folderId) {
                     alert("XHR fail in Album.js: getAlbumImages\n" + errorMessage);
                 else
                     logError({
-                        VisitorId: aapiVisitorId,
+                        VisitorId: apVisitorId,
                         ActivityCode: "XHR",
                         Severity: 1,
                         ErrorMessage: errorMessage,

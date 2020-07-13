@@ -167,6 +167,7 @@
     <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Controllers\OggleUserController.cs" />
     <Compile Include="Controllers\RankerController.cs" />
+    <Compile Include="Controllers\RepairLinksController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\StaticPageController.cs" />

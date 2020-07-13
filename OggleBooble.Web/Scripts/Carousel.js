@@ -198,9 +198,6 @@ function setLabelLinks() {
 
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
                 $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].FirstChild);
-
-
-
                 if (debugMode) $('#headerMessage').append("P");
             }
         }
@@ -220,7 +217,7 @@ function setLabelLinks() {
                 if (debugMode) $('#headerMessage').append("P");
                 imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
                 //pause();
-                //setTimeout(function () { alert("roman shift " + $('#headerMessage').html() + ".  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
+                //setTimeout(function () { alert("roman shift.  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
             }
         }
     }

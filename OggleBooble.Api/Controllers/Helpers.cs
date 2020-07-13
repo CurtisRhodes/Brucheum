@@ -31,14 +31,6 @@ namespace OggleBooble.Api.Controllers
     {
         public static string DetermineFolderType(FolderTypeModel folderTypeInfo)
         {
-            if (folderTypeInfo.HasImages && !folderTypeInfo.HasSubFolders)
-            {
-                if (folderTypeInfo.ContainsNonRomanNumeralChildren)
-                    return "assorterdImagesGallery";
-                else
-                    return "singleModelGallery";
-
-            }
             if (folderTypeInfo.HasSubFolders && !folderTypeInfo.HasImages)
             {
                 if (!folderTypeInfo.ContainsNonRomanNumeralChildren)
@@ -48,7 +40,9 @@ namespace OggleBooble.Api.Controllers
             }
             if (folderTypeInfo.HasImages)
             {
-                if (folderTypeInfo.RootFolder == "archive" || folderTypeInfo.RootFolder == "sluts")
+                if (folderTypeInfo.RootFolder == "archive" 
+                    || folderTypeInfo.RootFolder == "centerfold"
+                    || folderTypeInfo.RootFolder == "sluts")
                     return "singleModelCollection";
                 else
                     return "assorterdImagesCollection";

@@ -4,10 +4,6 @@
     padding: 2px;
 }
 
-label {
-    width: 105px !important;
-}
-
 .trackbackLinksArea {
     height: 121px;
     border: solid .5px #ccc;
@@ -32,3 +28,4 @@ label {
     display: inline-block;
     margin-right: 4px;
 }
+s

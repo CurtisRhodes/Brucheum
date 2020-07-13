@@ -8,6 +8,13 @@ function showFolderInfoDialog(folderId, calledFrom) {
     // 4/30/2019  --first use of jQuery dialog
     // 5/30/2020  removing use of jquery dialog for my own. 
     try {
+        // 5/30 2010
+        // how to determine folder type : if a category folder or a model album
+        // if rootfolder = boobs show just the CommentText 
+        // 
+        //alert("getFolderDetails: " + folderId);
+        getFolderDetails(folderId);
+
         objFolderInfo.Id = folderId;
         $('#imagePageLoadingGif').show();
         $('#draggableDialogContents').html(folderDialogHtml());
@@ -16,12 +23,11 @@ function showFolderInfoDialog(folderId, calledFrom) {
         $('#btnCatDlgMeta').hide();
         $('#draggableDialog').css("min-width", 680);
         $('#draggableDialog').mouseleave(function () {
-            //cancel
             if ($('#btnCatDlgEdit').html() === "Edit") {
+
                 dragableDialogClose();
             }
         });
-
         //.ogContextMenu
         $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
         $('#draggableDialog').css("left", -350);
@@ -36,15 +42,6 @@ function showFolderInfoDialog(folderId, calledFrom) {
         if (typeof pause === 'function')
             pause();
 
-        // 5/30 2010
-        // how to determine folder type : if a category folder or a model album
-        // if rootfolder = boobs show just the CommentText 
-        // 
-        //alert("getFolderDetails: " + folderId);
-        getFolderDetails(folderId);
-
-        // CMX	Show Model Info Dialog
-        //reportEvent("CMX", "called From", "detail", folderId);
         reportEvent("SMD", calledFrom, "detail", folderId);
 
     }
@@ -71,13 +68,6 @@ function setReadonlyFields() {
     $('#readOnlyHometown').html(isNullorUndefined(objFolderInfo.HomeTown) ? "x " : objFolderInfo.HomeTown);
     $('#readOnlyBoobs').html(isNullorUndefined(objFolderInfo.FakeBoobs) ? "x " : objFolderInfo.FakeBoobs ? "fake" : "real");
     $('#readOnlyMeasurements').html(isNullorUndefined(objFolderInfo.Measurements) ? "x " : objFolderInfo.Measurements);
-
-    //$('#readOnlyFolderName').html(objFolderInfo.FolderName);
-    //$('#readOnlyBorn').html(dateString(objFolderInfo.Birthday));
-    //$('#readOnlyHomeCountry').html(objFolderInfo.HomeCountry);
-    //$('#readOnlyHometown').html(objFolderInfo.HomeTown);
-    //$('#readOnlyBoobs').html(((objFolderInfo.Boobs) ? "fake" : "real"));
-    //$('#readOnlyMeasurements').html(objFolderInfo.Measurements);
 }
 
 function getFolderDetails(folderId) {
@@ -97,13 +87,6 @@ function getFolderDetails(folderId) {
                 $('#txtBoobs').val(((rtnFolderInfo.FakeBoobs) ? "fake" : "real"));
                 $('#txtMeasurements').val(rtnFolderInfo.Measurements);
                 setReadonlyFields();
-                //$('#readOnlyFolderName').html(rtnFolderInfo.FolderName);
-                //$('#readOnlyBorn').html(dateString(rtnFolderInfo.Birthday));
-                //$('#readOnlyHomeCountry').html(rtnFolderInfo.HomeCountry);
-                //$('#readOnlyHometown').html(rtnFolderInfo.HomeTown);
-                //$('#readOnlyBoobs').html(((rtnFolderInfo.Boobs) ? "fake" : "real"));
-                //$('#readOnlyMeasurements').html(rtnFolderInfo.Measurements);
-
                 //$('#txtStatus').val(rtnFolderInfo.LinkStatus);
                 $("#summernoteContainer").summernote("code", rtnFolderInfo.FolderComments);
                 $('#imagePageLoadingGif').hide();
@@ -115,9 +98,11 @@ function getFolderDetails(folderId) {
 
                 switch (rtnFolderInfo.FolderType) {
                     case "singleModelGallery":
+                    case "singleModelFolderCollection":
                     case "singleModelCollection":
                         $('#modelInfoDetails').show();
                         break;
+                    case "assorterdFolderCollection":
                     case "assorterdImagesCollection":
                     case "assorterdImagesGallery":
                         $('#modelInfoDetails').hide();
@@ -208,7 +193,6 @@ function saveFolderDialog() {
             if (success === "ok") {
                 displayStatusMessage("ok", "category description updated");
                 awardCredits("FIE", objFolderInfo.Id);
-                $('#btnCatDlgEdit').html("Edit");
                 //$('#btnCatDlgMeta').hide();
                 $('#btnCatDlgCancel').hide();
                 setReadonlyFields();
@@ -219,9 +203,9 @@ function saveFolderDialog() {
                     toolbar: "none",
                     height: "200"
                 });
-
                 $('#editablePoserDetails').hide();
                 $('#readonlyPoserDetails').show();
+                setTimeout(function () { $('#btnCatDlgEdit').html("Edit") }, 400);
             }
             else {
                 //sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);

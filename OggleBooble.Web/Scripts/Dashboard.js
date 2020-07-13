@@ -1,22 +1,52 @@
 ﻿let pSelectedTreeId, pSelectedTreeFolderPath;
+
 function dashboardStartup() {
-    $('.txtLinkPath').val('');
     $('#indexMiddleColumn').html(dashboardHtml());
+    $('#dashboardContainer').show();
+    $('#defaultSection').show();
+    $('#sortToolSection').hide();
+    $('.txtLinkPath').val('');
     setOggleHeader(3910, "dashboard");
     setOggleFooter(3910, "dashboard");
-
-    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick");
     loadHeaderTabs();
     setLeftMenu('Add Images');
     document.title = "Dashboard : OggleBooble";
     $('.dashboardContainerColumn').show();
-    //defineDilogs();
+    setLeftMenu('Admin');
+    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick");
     //setSignalR();
-    if (isInRole("oggle admin"))
-        setLeftMenu('Admin');
-    //window.addEventListener("beforeunload", detectUnload());
+    //if (isInRole("oggle admin"))
     window.addEventListener("resize", resizeDashboardPage);
     resizeDashboardPage();
+}
+
+function dashboardHtml() {
+    return "<img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
+        "<div id='dashboardContainer' class='fullScreenContainer'>\n" +
+        "   <div id='defaultSection' class='fullScreenSection flexbox'>\n" +
+        "      <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
+        "          <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
+        "      </div>\n" +
+        "      <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
+        "          <div id='workAreaContainer' class='workAreaContainer'></div>\n" +
+        "      </div>\n" +
+        "      <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
+        "   </div>\n" +
+        "   <div id='sortToolSection' class='fullScreenSection'>" +
+        "       <div class='workAreaHeader'>\n" +
+        "           <div class='workAreaHeaderLabel'><h3 id='sortTableHeader'></h3></div>\n" +
+        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png'" +
+        "           onclick='$(\"#sortToolSection\").hide();$(\"#defaultSection\").show()'></div>\n" +
+        "       </div>\n" +
+        "       <div id='sortToolContainer'>\n" +
+        "           <div id='sortToolImageArea'  class='workAreaDisplayContainer'></div>\n" +
+        "           <div class='workareaFooter'>\n" +
+        "               <button onclick='updateSortOrder()'>ReSort</button>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "   </div>\n" +
+        "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
+        "</div>\n";
 }
 
 function resizeDashboardPage() {
@@ -25,7 +55,7 @@ function resizeDashboardPage() {
     // HEIGHT
     //let winH = $(window).height
 
-    let heightFF = -100, widthFF = -60;
+    let heightFF = -85, widthFF = -50;
     let adjH = $('.threeColumnLayout').height() - $('header').height() + heightFF;
     $('#dashboardContainer').css("height", adjH);
 
@@ -147,10 +177,14 @@ function repairLinks(justOne) {
     var start = Date.now();
     $('#dataifyInfo').show().html("checking and repairing links");
     $('#dashBoardLoadingGif').fadeIn();
+    changeFavoriteIcon("loading");
     //$('#repairLinksReport').html("");
+
+    alert("url: " + settingsArray.ApiServer + "api/RepairLinks/Repair?folderId=" + pSelectedTreeId + "&recurr=" + justOne);
+
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/RepairLinks/RepairLinks?folderId=" + pSelectedTreeId + "&recurr=" + justOne,
+        url: settingsArray.ApiServer + "api/RepairLinks/Repair?folderId=" + pSelectedTreeId + "&recurr=" + justOne,
         success: function (repairReport) {
             $('#dashBoardLoadingGif').hide();
             $("#draggableDialog").fadeOut();
@@ -161,7 +195,13 @@ function repairLinks(justOne) {
                     var seconds = (delta % 60000 / 1000).toFixed(0);
                     //console.log("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                     $('#dataifyInfo').html("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                    $('#dataifyInfo').append(", Rows Processed: " + repairReport.RowsProcessed);
+                    $('#dataifyInfo').append(", Files Processed: " + repairReport.PhyscialFilesProcessed);
+                    $('#dataifyInfo').append(", Links: " + repairReport.LinkRecordsProcessed);
+                    $('#dataifyInfo').append(", Image rows: " + repairReport.ImageFilesProcessed);
+                    if (repairReport.OrphanCatLinkRecs.length > 0)
+                        $('#dataifyInfo').append(", Orphan CatLink Recs: " + repairReport.OrphanCatLinkRecs.length);
+                    if (repairReport.OrphanImageFileRecs.length > 0)
+                        $('#dataifyInfo').append(", Orphan ImageFile Recs: " + repairReport.OrphanImageFileRecs.length);
                     if (repairReport.ImagesDownLoaded > 0)
                         $('#dataifyInfo').append(", Images DownLoaded: " + repairReport.ImagesDownLoaded);
                     if (repairReport.LinksEdited > 0)
@@ -184,6 +224,7 @@ function repairLinks(justOne) {
 
 
                     }
+                    changeFavoriteIcon("redBallon");
 
                     //$('#dataifyInfo').append(", directory errors: " + repairReport.DirNotFound);
                     //$('#dataifyInfo').append(", bad file names: " + repairReport.BadFileNames);
@@ -214,7 +255,7 @@ function repairLinks(justOne) {
         },
         error: function (xhr) {
             $('#dashBoardLoadingGif').hide();
-            alert("downloadLinks xhr error: " + getXHRErrorDetails(xhr));
+            alert("repairLinks xhr error: " + getXHRErrorDetails(xhr));
         }
     });
 }
@@ -708,39 +749,20 @@ function moveCheckedImages() {
 
 // SORT TOOL
 function showSortTool() {
-    //alert("pSelectedTreeFolderPath: " + pSelectedTreeFolderPath);
-
-    //$('#indexMiddleColumn').html(dashboardHtml())
     if (isNullorUndefined(pSelectedTreeFolderPath)) {
         alert("select a folder");
         return;
     }
-    $('#dashboardContainer').html(sortOrderHtml());
+    $('#defaultSection').hide();
+    $('#sortToolSection').show();
+
     loadSortImages();
-}
-
-// $('#indexMiddleColumn').html(dashboardHtml());
-
-function sortOrderHtml() {
-    return "<div id='divSortTool'>\n" +
-        "   <div class='workAreaHeader'>\n" +
-        "       <div class='workAreaHeaderLabel'><h3 id='sortTableHeader'></h3></div>\n" +
-        "       <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png'" +
-        "       onclick='$(\"#indexMiddleColumn\").html(dashboardHtml());resizeDashboardPage();'></div>\n" +
-        "   </div>\n" +
-        "   <div id='sortToolContainer'>\n" +
-        "       <div id='sortToolImageArea'  class='workAreaDisplayContainer'></div>\n" +
-        "       <div class='workareaFooter'>\n" +
-        "           <button onclick='updateSortOrder()'>ReSort</button>\n" +
-        "       </div>\n" +
-        "   </div>\n" +
-        "</div>\n";
 }
 function updateSortOrder() {
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("sorting array");
     var sortOrderArray = [];
-    $('#sortToolContainer').children().each(function () {
+    $('#sortToolImageArea').children().each(function () {
         sortOrderArray.push({
             pageId: pSelectedTreeId,
             itemId: $(this).find("input").attr("id"),
@@ -750,7 +772,7 @@ function updateSortOrder() {
     $('#dataifyInfo').html("saving changes");
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/Links/GetImageLinks",
+        url: settingsArray.ApiServer + "api/Links/UpdateSortOrder",
         contentType: 'application/json',
         data: JSON.stringify(sortOrderArray),
         success: function (success) {
@@ -1035,26 +1057,9 @@ function XXtestAddVisitor() {
     addVisitor(3309, "dashboard");
 }
 
-function dashboardHtml() {
-    return "<div id='dashboardContainer' class='dashboardContainer'>\n" +
-        "   <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
-        "       <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
-        "   </div>\n" +
-        "   <img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
-        "   <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
-        "       <div id='workAreaContainer' class='workAreaContainer'></div>\n" +
-        "   </div>\n" +
-        "   <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
-        "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
-        "</div >\n";
-}
 
 function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
-    setTimeout(function () {
-        $('#dataifyInfo').hide()
-        resizeDashboardPage();
-    }, 15000);
     showAddImageLinkDialog();
     resizeDashboardPage();
 }

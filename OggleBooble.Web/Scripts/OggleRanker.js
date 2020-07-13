@@ -12,9 +12,20 @@
     userName;
 
 function rankerStartup(rankPref) {
+
+    //alert("rankPref: " + rankPref);
+
     if (isNullorUndefined(rankPref))
         rankPref = "boobs";
+
+    if (rankPref === "big naturals")
+        rankPref = "archive";
+    //else
+    //    alert("rankPref: " + rankPref);
+
+
     document.title = "Hot or Not : OggleBooble";
+    $('#indexMiddleColumn').html(rankerHTML());
     setInitialCheckbox(rankPref);
     loadBoobsRanker(rankPref);
     setOggleHeader(spaPageId, "dashboard");

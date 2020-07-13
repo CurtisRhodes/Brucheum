@@ -26,8 +26,8 @@ namespace OggleBooble.Api.Controllers
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         [HttpGet]
-        [Route("api/Image/GetImageDetail")]
-        public ImageInfoModel GetImageDetail(int folderId, string linkId)
+        [Route("api/Image/GetLimitedImageDetail")]
+        public ImageInfoModel GetLimitedImageDetail(int folderId, string linkId)
         {
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
@@ -36,37 +36,80 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    var dbPageFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    imageInfo.FolderName = dbPageFolder.FolderName;
+                    var dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).FirstOrDefault();
+                    if (dbImageFile == null) { imageInfo.Success = "no image link found"; return imageInfo; }
+                    if (dbImageFile.FolderId != folderId)
+                    {
+                        imageInfo.IsOutsideFolderLink = true;
+                        var dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
+                        if (dbModelFolder == null) { imageInfo.Success = "no image link folderId file found"; return imageInfo; }
+                        imageInfo.ModelFolderId = dbModelFolder.Id;
+                        imageInfo.ModelFolderName = dbModelFolder.FolderName;
+                    }
+                }
+                imageInfo.Success = "ok";
+            }
+            catch (Exception ex) { imageInfo.Success = Helpers.ErrorDetails(ex); }
+            timer.Stop();
+            System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
+            return imageInfo;
+        }
+
+        [HttpGet]
+        [Route("api/Image/getFullImageDetails")]
+        public ImageInfoModel getFullImageDetails(int folderId, string linkId)
+        {
+            var timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            var imageInfo = new ImageInfoModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    //CategoryImageLink dbCategoryImageLink= db.CategoryImageLinks.Where(l=>l.ImageLinkId)
+                    
                     VirtualFolder dbPageFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    imageInfo.RootFolder = dbPageFolder.RootFolder;
+                    imageInfo.FolderPath = dbPageFolder.FolderPath;
+
                     ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).FirstOrDefault();
                     if (dbImageFile == null) { imageInfo.Success = "no image link found"; return imageInfo; }
-                    VirtualFolder dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
-                    if (dbModelFolder == null) { imageInfo.Success = "no image link folderId file found"; return imageInfo; }
+
                     if (dbImageFile.FolderId != folderId)
                     {
                         // we have a non archive link                        
+                        imageInfo.IsOutsideFolderLink = true;
+                        var dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
+                        if (dbModelFolder == null) { imageInfo.Success = "no image link folderId file found"; return imageInfo; }
+                        imageInfo.ModelFolderId = dbModelFolder.Id;
                         imageInfo.ModelFolderName = dbModelFolder.FolderName;
+                        //imageInfo.FileName = dbModelFolder.FolderPath + "/" + dbImageFile.FileName;
+                        //imageInfo.RootFolder = dbModelFolder.RootFolder;
+                        //imageInfo.FolderPath = dbModelFolder.FolderPath;
                     }
+
+                    #region DetermineFolderType
                     List<string> subFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
                     var folderTypeModel = new FolderTypeModel()
                     {
-                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbModelFolder.FolderName),
+                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbPageFolder.FolderName),
                         ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(subFolders),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
                         HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0,
-                        RootFolder = dbModelFolder.RootFolder
+                        RootFolder = dbPageFolder.RootFolder
                     };
-
-
                     imageInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
+                    #endregion
+
                     imageInfo.FolderName = dbPageFolder.FolderName;
-                    imageInfo.FolderPath = dbPageFolder.FolderPath;
-                    imageInfo.LinkId = dbImageFile.Id;
-                    imageInfo.ModelFolderId = dbImageFile.FolderId;
-                    imageInfo.ModelFolderName = dbModelFolder.FolderName;
+
                     imageInfo.Height = dbImageFile.Height;
+                    imageInfo.FileName = dbImageFile.FileName;
+                    imageInfo.Link = dbImageFile.Id;
                     imageInfo.Width = dbImageFile.Width;
                     imageInfo.LastModified = dbImageFile.Acquired.ToShortDateString();
-                    imageInfo.FileName = dbPageFolder.FolderPath + "/" + dbImageFile.FileName;
                     imageInfo.ExternalLink = dbImageFile.ExternalLink;
                     imageInfo.InternalLinks = (from l in db.CategoryImageLinks
                                                join f in db.VirtualFolders on l.ImageCategoryId equals f.Id

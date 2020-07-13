@@ -46,7 +46,7 @@ function setHdrBottomRow(folderId, subdomain) {
             //    "<div class='headerBanner'><a href='javascript:rtpe(\"BAC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n" +
             //    "<div class='headerBanner'><a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>babes archive</a></div>\n");
 
-            $('#breadcrumbContainer').append(tinkyTak("ranker", "archive"));
+            $('#breadcrumbContainer').append(tinkyTak("ranker", "big naturals"));
             $('#breadcrumbContainer').append(tinkyTak("centerfold"));
             $('#breadcrumbContainer').append(tinkyTak("archive"));
             break;
@@ -68,12 +68,12 @@ function setHdrBottomRow(folderId, subdomain) {
         case "boobs": // poses        
             $('#topRowRightContainer').html(tinkyTak("centerfold"));
             $('#topRowRightContainer').append(tinkyTak("archive"));
-            $('#topRowRightContainer').append(tinkyTak("ranker", "archive"));
+            $('#topRowRightContainer').append(tinkyTak("ranker", "big naturals"));
             break;
         case "archive": {
             $('#topRowRightContainer').html(tinkyTak("centerfold"));
             $('#topRowRightContainer').append(tinkyTak("poses"));
-            $('#topRowRightContainer').append(tinkyTak("ranker", "archive"));
+            $('#topRowRightContainer').append(tinkyTak("ranker", "big naturals"));
             break;
         }
         case "soft": {
@@ -389,20 +389,20 @@ function tinkyTak(bannerType, rankerType) {
             //"sluts":
             //"archive":
             return "<div class='headerBanner'>\n" +
-                "<div class='clickable' onclick='window.open(\"index.html?spa=3910&bp=" + rankerType + "\", \"_blank\")' " +
+                "<div class='clickable' onclick='window.open(\"/index.html?spa=3907&bp=" + rankerType + "\", \"_blank\")' " +
                 "title='Spin through the links to land on random portrait images.'>" + rankerType + " ranker</div>" +
                 "</div>\n";
         case "archive":
             return "<div class='headerBanner'>" +
-                "   <div class='clickable' onclick='window.open(\"/album.html?folderId=3, \"_blank\")'>big tits archive</div>" +
+                "   <div class='clickable' onclick='window.open(\"album.html?folder=3\", \"_blank\")'>big tits archive</div>" +
                 "</div>\n";
         case "centerfold":
             return "<div class='headerBanner'>\n" +
-                "   <div class='clickable' onclick='window.open(\"/album.html?folderId=1132, \"_blank\")'>every Playboy Centefold</div>" +
+                "   <div class='clickable' onclick='window.open(\"album.html?folder=1132\", \"_blank\")'>every Playboy Centefold</div>" +
                 "</div>\n";
         case "poses":
             return "<div class='headerBanner'>\n" +
-                "   <div class='clickable' onclick='window.open(\"/album.html?folderId=2, \"_blank\")'>poses</div>" +
+                "   <div class='clickable' onclick='window.open(\"album.html?folder=2\", \"_blank\")'>poses</div>" +
                 "</div>\n";
         default:
     }

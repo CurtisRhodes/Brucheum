@@ -314,40 +314,6 @@ function checkForHitLimit(calledFrom, pageId, userPageHits, userImageHits) {
     // pay me to do some programming for you and I'll let you in on all my source code
 }
 
-function logEventActivity(logEventModel) {
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Common/LogActivity",
-        data: logEventModel,
-        success: function (success) {
-            if (success !== "ok") {
-                if (document.domain === "localhost") alert("LogEventActivity error: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "ER2",
-                        Severity: 2,
-                        ErrorMessage: success,
-                        CalledFrom: "LogEventActivity"
-                    });
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "LogEventActivity")) {
-                if (document.domain === "localhost") alert("LogEventActivity error: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "LogEventActivity"
-                    });
-            }
-        }
-    });
-}
 
 function getIpInfo(pageId,calledFrom) {
     console.log("calling iPInfo");

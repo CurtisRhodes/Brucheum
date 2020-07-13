@@ -1,9 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <settings>
-  <!--<setting name="ApiServer" value="https://api.curtisrhodes.com/"></setting>-->
-  <!--<setting name="ApiServer" value="https://api.ogglebooble.com/"></setting>-->
+ 
   <setting name="ApiServer" value="https://localhost:44305/"></setting>
-  <!--<setting name="ApiServer" value="bad server name"></setting>-->
+
   <setting name="ImageRepo" value="https://img.ogglebooble.com/"></setting>
   <setting name="Owner" value="Randy Roads"></setting>
   <setting name="ProductName" value="Flitter"></setting>
@@ -11,3 +10,7 @@
   <setting name="LogoImage" value="HappyMan"></setting>
   <setting name="Schema" value="FGTRE"></setting>
 </settings>
+
+<!--<setting name="ApiServer" value="https://api.curtisrhodes.com/"></setting>-->
+<!--<setting name="ApiServer" value="https://api.ogglebooble.com/"></setting>-->
+<!--<setting name="ApiServer" value="bad server name"></setting>-->

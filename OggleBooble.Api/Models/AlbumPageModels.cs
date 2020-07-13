@@ -121,9 +121,10 @@ namespace OggleBooble.Api.Models
             InternalLinks = new Dictionary<int, string>();
         }
         public Dictionary<int,string> InternalLinks { get; set; }
-        public string LinkId { get; set; }
         public string FolderName { get; set; }
+        public string RootFolder { get; set; }
         public string FolderPath { get; set; }
+        public string Link { get; set; }
         public int ModelFolderId { get; set; }
         public string ModelFolderName { get; set; }
         public string ExternalLink { get; set; }
@@ -133,6 +134,7 @@ namespace OggleBooble.Api.Models
         public long? Size { get; set; }
         public string LastModified { get; set; }
         public string FolderType { get; set; }
+        public bool IsOutsideFolderLink { get; set; }
         public string Success { get; set; }
     }
 

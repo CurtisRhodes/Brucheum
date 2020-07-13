@@ -250,6 +250,13 @@ function logError(logErrorModel) {
     //    "\n pageId: " + logErrorModel.PageId +
     //    "\n message: " + logErrorModel.ErrorMessage);
     //else
+
+    if (isNullorUndefined(logErrorModel.VisitorId)) {
+        logErrorModel.VisitorId = "unk";
+    }
+    if (isNullorUndefined(logErrorModel.CalledFrom))
+        logErrorModel.CalledFrom = "unkzz";
+    try {
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogError",
@@ -258,20 +265,23 @@ function logError(logErrorModel) {
                 if (success === "ok") {
                     //displayStatusMessage("ok", "error message logged");
                     console.log("error message logged.  Called from: " +
-                        logErrorModel.CalledFrom + " message: " + logErrorModel.ErrorMessage);
+                        logErrorModel.CalledFrom + " message: " + success);
                 }
                 else {
 
-                    console.error("error in logError!!: " + success);
+                    console.error("ajx error in logError!!: " + success);
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errorMessage, "logError")) {
-                    console.error("XHR error in logError!!: " + success);
+                    console.error("XHR error in logError!!: " + errorMessage);
                 }
             }
         });
+    } catch (e) {
+        console.error("Catch error in logError!!: " + e);
+    }
 }
 
 function logDataActivity(changeLogModel) {

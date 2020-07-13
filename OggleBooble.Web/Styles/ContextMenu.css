@@ -23,25 +23,25 @@
     text-decoration: underline;
 }
 
+
 .contextMenuInnerContainer {
-    background: #ac9696;
+    background-color: #aae890;
     display: none;
 }
-
-    .contextMenuInnerContainer span {
-        color: var(--oggleLabelColor);
-    }
-
-.innerContextMenuContainer {
-    display: none;
-    background-color: #b1b1b1;
-}
-
-.ctxInfoValue {
-    display: inline-block;
-}
-
-.innerContextMenu {
-    display: inline-block;
+.ctxInfolabel {
+    font-size: 12px;
     font-weight: bold;
+    width:100% !important;
+    margin-right:3px;
+}
+.contextMenuInnerContainer div {
+    line-height: 17px;
+    padding: 0 !important;
+}
+.ctxInfoValue {
+    background-color: #f3f3f3;
+    border: solid 0.3px #e6d990;
+    font-size: 13px;
+    max-width: 200px;
+    overflow-x: auto;
 }

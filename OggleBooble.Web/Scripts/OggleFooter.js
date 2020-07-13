@@ -91,17 +91,7 @@
             break;
         }
         default: {
-            footerhtml =
-                "<div class='flexContainer'>\n" +
-                "    <div class='footerCol'>\n" +
-                "       <div>unhandled domain: " + rootFolder + "</div>\n" +
-                "    </div>\n" +
-                "    <div class='footerCol'>\n" +
-                "    </div>\n" +
-                "    <div class='footerCol'>\n" +
-                "        <div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
-                "    </div>\n" +
-                "</div>\n";
+            $('#footerCol1').html("<div>unhandled domain: " + rootFolder + "</div>\n");
             break;
         }
     }
@@ -113,7 +103,6 @@ function defaultFooter(pageId, rootFolder) {
         "       <div class='clickable' onclick='rtpe(\"FLC\",\"about us\",\"about us\"," + pageId + ")'>about</div>\n" +
         "       <div id='footerCol1'>\n" +
         "       </div>\n" +
-        "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>Dashboard</div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" + // column 2
         "       <div class='clickable' onclick='rtpe(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
@@ -123,6 +112,7 @@ function defaultFooter(pageId, rootFolder) {
         "       <div class='clickable' onclick='rtpe(\"FLC\",\"feedback\"," + rootFolder + "\"," + pageId + ")'>Feedback</div>\n" +
         "       <div id='footerCol3'></div>\n" +
         "       <div class='clickable' onclick='window.location.href=\"index.html?spa=3911\", \"_blank\"'>Blog</div>\n" +
+        "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>Dashboard</div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" +
         "       <div id='footerInfo1'></div>\n" +
