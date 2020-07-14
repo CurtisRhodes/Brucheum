@@ -2,56 +2,90 @@
     carouselItemArray = [], imageHistory = [],
     vCarouselInterval, carouselImageViews = 0, carouselImageErrors = 0,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
-    carouselSkip = 0, imgSrc;
+    carouselSkip = 0, imgSrc, jsCarouselSettings, nextRoot = 1, specialLaunchCode = 112;
 let debugMode = true;
-let specialLaunchCode = 791;
 
 function launchCarousel(startRoot) {
-    //$('#footerMessage').html("launching carousel");
-
-
-    var jsCarouselSettings;
-    if (isNullorUndefined(window.localStorage["carouselSettings"])) {
+    //$('#footerMessage2').html("launching carousel");
+    //if (isNullorUndefined(window.localStorage["carouselSettings"]))
+    {
         lsCarouselSettings = {
             includeArchive: true,
             includeCenterfolds: true,
             includePorn: false,
+            includeSoftcore: true,
             includeLandscape: true,
             includePortrait: false
         };
         window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
     }
-    else {
-        console.log("carouselSettings found in local storage!");
-        //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
-    }
+    //else {
+    //    console.log("carouselSettings found in local storage!");
+    //    //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
+    //}
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
 
     //initial call to loadimages
-    
     loadImages(startRoot, Date.now(), 0, specialLaunchCode, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-    if (startRoot === "boobs") {
-        if (jsCarouselSettings.includeArchive) {
-            loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-        }
-        if (jsCarouselSettings.includeCenterfolds) {
-            loadImages("centerfold", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-        }
-    }
-    if (startRoot === "porn") {
-        //if (jsCarouselSettings.includePorn) {
-            loadImages("sluts", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-        //}
-    }
+
     window.addEventListener("resize", resizeCarousel);
 }
+
+function addMoreRootsToCarousel() {
+    if (nextRoot === 1) {
+        nextRoot = 2;
+        if (jsCarouselSettings.includeArchive) {
+            $('#footerMessage2').html("loading archive");
+            loadImages("archive", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+            return;
+        }
+    }
+    if (nextRoot === 2) {
+        nextRoot = 3;
+        if (jsCarouselSettings.includeCenterfolds) {
+            $('#footerMessage2').html("loading centerfolds");
+            loadImages("centerfold", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+            return;
+        }
+    }
+    if (nextRoot === 3) {
+        nextRoot = 4;
+        if (jsCarouselSettings.includeSoftcore) {
+            $('#footerMessage2').html("loading soft core");
+            loadImages("soft", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+            return;
+        }
+    }
+    if (nextRoot === 4) {
+        nextRoot = 5;
+        if (jsCarouselSettings.includePorn) {
+            if (jsCarouselSettings.includePorn) {
+                $('#footerMessage2').html("loading sluts");
+                loadImages("sluts", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+                return;
+            }
+        }
+    }
+    if (nextRoot === 5) {
+        nextRoot = 6;
+        if (jsCarouselSettings.includePorn) {
+            if (jsCarouselSettings.includePorn) {
+                $('#footerMessage2').html("loading porn");
+                loadImages("porn", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+                return;
+            } 
+        }
+    }
+    if (nextRoot === 6) {
+
+        alert("DONE");
+    }
+}
+
 function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
     var start = Date.now();
     settingsImgRepo = settingsArray.ImageRepo;
     try {
-        //$('#imageTopLabel').hide();
-        //$('#footerMessage').html("loading carousel");
-        //alert("loading carousel");
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/IndexPage/GetCarouselImages?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
@@ -86,22 +120,24 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                         $('#topIndexPageSection').html(carouselHtml());
                         $('.carouselFooter').css("visibility", "hidden");
                         if (carouselItemArray.length === 0) alert("ix00");
-                        newImageIndex = Math.floor(Math.random() * 500);
+                        newImageIndex = Math.floor(Math.random() * specialLaunchCode);
                         startCarousel(newImageIndex);
+                        delta = (Date.now() - absolueStart) / 1000;
+                        $('#footerMessage2').html("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                        alet("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                     }
-
-                    var delta = (Date.now() - start) / 1000;
                     if (carouselInfo.Links.length === take) {
                         carouselSkip += take;
                         take = 2000;
                         loadImages(rootFolder, absolueStart, carouselSkip, take, includeLandscape, includePortrait);
-                        $('#footerMessage').html(rootFolder + " carousel items loaded: " + carouselItemArray.length + " skip: " + carouselSkip);
+                        $('#footerMessage2').html(rootFolder + " carousel items loaded: " + carouselItemArray.length.toLocaleString() + " skip: " + carouselSkip.toLocaleString());
                     }
                     else {
-                        // done
+                        addMoreRootsToCarousel();
                         delta = (Date.now() - absolueStart) / 1000;
                         console.log("loadImages(" + rootFolder + ") DONE!! took: " + delta.toFixed(3) + " total: " + carouselItemArray.length.toLocaleString());
-                        $('#footerMessage').html("total carousel items: " + carouselItemArray.length.toLocaleString());
+                        $('#footerMessage2').html("loadImages DONE!! took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+
                     }
                 }
                 else {
@@ -167,10 +203,7 @@ function intervalBody(newImageIndex) {
                 imageHistory.push(imageIndex);
                 $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
 
-                $('#footerMessage').html("image " + imageIndex + " of " + carouselItemArray.length.toLocaleString());
-                //console.log("image views: " + carouselImageViews);
-                //$('#headerMessage').html("viewed ok: " + ++carouselImageViews + " errors: " + carouselImageErrors);
-                //$('#footerMessage').append(".  carousel image viewed: " + carouselImageViews);
+                $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
             });
         }
     });
@@ -386,7 +419,7 @@ function removeItemsFromArray(rootFolder) {
         }
     }
     console.log("Removed " + numRemoved + " links of type: " + rootFolder);
-    $('#footerMessage').html("total carousel items: " + carouselItemArray.length.toLocaleString());
+    $('#footerMessage2').html("total carousel items: " + carouselItemArray.length.toLocaleString());
     return numRemoved;
 }
 

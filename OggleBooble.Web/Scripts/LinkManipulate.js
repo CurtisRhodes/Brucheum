@@ -24,14 +24,13 @@ function showDirTreeDialog(imgSrc, treeStart) {
     $('#draggableDialog').fadeIn();
 }
 
-function showCopyLinkDialog(linkId, imgSrc) {
+function showCopyLinkDialog(linkId, folderId, imgSrc) {
     showDirTreeDialog(imgSrc, 1);
     $('#oggleDialogTitle').html("Copy Link");
     $('#linkManipulateClick').html(
         "<div class='roundendButton' onclick='perfomCopyLink(\"" + linkId + "\")'>Copy</div>");
 }
 function perfomCopyLink(linkId) {
-    let visitorId = getCookieValue("VisitorId");
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pDirTreeId,
@@ -40,7 +39,7 @@ function perfomCopyLink(linkId) {
                 $('#draggableDialog').fadeOut();
                 displayStatusMessage("ok", "link copied")
                 logDataActivity({
-                    VisitorId: visitorId,
+                    VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKC",
                     PageId: pDirTreeId,
                     Activity: "copy: " + linkId + " to: " + pDirTreeId
@@ -52,7 +51,7 @@ function perfomCopyLink(linkId) {
                     alert("perfomCopyLink AJQ: " + success);
                 else
                     logError({
-                        VisitorId: visitorId,
+                        VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "AJQ",
                         Severity: 1,
                         ErrorMessage: success,
@@ -79,37 +78,42 @@ function perfomCopyLink(linkId) {
     });
 }
 
-function showMoveLinkDialog(linkId, imgSrc) {
+// showMoveLinkDialog(pLinkId, pFolderId, pImgSrc)
+function showMoveLinkDialog(linkId, folderId, imgSrc) {
     showDirTreeDialog(imgSrc, 1);
     $('#oggleDialogTitle').html("Move Link");
     $('#linkManipulateClick').html(
-        "<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\")'>Move</div>");
+        "<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\"," + folderId + ")'>Move</div>");
 }
 
 function showArchiveLinkDialog(linkId, imgSrc) {
     showDirTreeDialog(imgSrc, 3);
     $('#oggleDialogTitle').html("Archive Image");
     $('#linkManipulateClick').html(
-        "<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\")'>Archive</div>");
+        "<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\"," + folderId + ")'>Archive</div>");
 }
 
-function moveFile(request, linkId) {
+function moveFile(request, linkId, folderId) {
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/Links/MoveFile?linkId=" + linkId + "&newFolderId=" + pDirTreeId + "&request=" + request,
+        url: settingsArray.ApiServer + "api/Links/MoveFile?linkId=" + linkId + "&destinationFolderId=" + pDirTreeId + "&request=" + request,
         success: function (success) {
             if (success === "ok") {
                 if (viewerShowing)
                     slide("next");
-                //refresh page.
-                getAlbumImages(folderid);
-                if (request === "MOV") {
-                    // remove old link
-                }
+
+
+                alert("//refresh page.");
+
+
+
+                getAlbumImages(folderId);
+                displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pDirTreeId);
+
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: request, //  "ARK",
-                    PageId: newFolderId,
+                    ActivityCode: request,
+                    PageId: folderId,
                     Activity: linkId
                 });
             }
@@ -122,7 +126,7 @@ function moveFile(request, linkId) {
                         ActivityCode: "BUG",
                         Severity: 3,
                         ErrorMessage: success,
-                        CalledFrom: "performArchiveImage"
+                        CalledFrom: "moveFile"
                     });
                 //sendEmailToYourself("jQuery fail in album.js onRemoveImageClick", "Message: " + success);
             }
@@ -146,7 +150,7 @@ function moveFile(request, linkId) {
 
 }
 
-function attemptRemoveLink(linkId, folderId) {
+function attemptRemoveLink(linkId, folderId, imgSrc) {
     // 1. if just a link delete it and you're done.
     $.ajax({
         type: "DELETE",
@@ -159,9 +163,11 @@ function attemptRemoveLink(linkId, folderId) {
                 if (success === "ok") {
                     if (viewerShowing)
                         slide("next");
+
                     getAlbumImages(folderId);
+
                     logDataActivity({
-                        VisitorId: visitorId,
+                        VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "REM",
                         PageId: folderId,
                         Activity: linkId

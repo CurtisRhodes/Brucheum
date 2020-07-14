@@ -190,7 +190,7 @@ namespace OggleBooble.Api.Controllers
                         }
                     }
                     else
-                        success = "single Link";
+                        success = "single link";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
@@ -199,7 +199,7 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Links/MoveLinkToRejects")]
-        public string MoveLinkToRejects(string linkId, int folderId)
+        public string MoveLinkToRejects(string linkId)
         {
             string success;
             try
@@ -208,7 +208,14 @@ namespace OggleBooble.Api.Controllers
                 {
                     var linksToRemove = db.CategoryImageLinks.Where(l => l.ImageLinkId == linkId).ToList();
                     db.CategoryImageLinks.RemoveRange(linksToRemove);
+
+
+
                     ImageFile reject = db.ImageFiles.Where(i => i.Id == linkId).First();
+
+
+
+
                     db.ImageFiles.Remove(reject);
                     db.SaveChanges();
                     success = "ok";
@@ -226,70 +233,47 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
+                string ftpRepo = imgRepo.Substring(7);
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).First();
                     string ext = dbImageFile.FileName.Substring(dbImageFile.FileName.LastIndexOf("."));
 
                     VirtualFolder dbSourceFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).First();
-                    string sourceFtpPath = ftpHost + imgRepo + dbSourceFolder.FolderPath; // + dbSourceFolder.FolderName;
+                    string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath;
                     string assumedFileName = dbSourceFolder.FolderName + "_" + linkId + ext;
 
                     VirtualFolder dbDestFolder = db.VirtualFolders.Where(i => i.Id == destinationFolderId).First();
-                    string destFtpPath = ftpHost + imgRepo + dbDestFolder.FolderPath;// + "/" + sourceFolder.FolderName;
+                    string destFtpPath = ftpHost + ftpRepo + "/" + dbDestFolder.FolderPath;
                     string newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
 
                     success = FtpUtilies.MoveFile(sourceFtpPath + "/" + assumedFileName, destFtpPath + "/" + newFileName);
 
                     if (success == "ok")
                     {  // update ImageFile
-                        dbImageFile.FileName = assumedFileName;
+                        dbImageFile.FileName = newFileName;
                         dbImageFile.FolderId = destinationFolderId;
+
+                        // create new link
+                        db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
+                        {
+                            ImageCategoryId = destinationFolderId,
+                            ImageLinkId = linkId,
+                            SortOrder = 1746
+                        });
 
                         if (request == "MOV")
                         {  // update link
                             MySqlDataContext.CategoryImageLink existinglink = db.CategoryImageLinks
                                 .Where(l => l.ImageLinkId == linkId && l.ImageCategoryId == dbSourceFolder.Id).First();
-                            existinglink.ImageCategoryId = destinationFolderId;
+                            db.CategoryImageLinks.Remove(existinglink);
                         }
-                        if (request == "ARK")
-                        {  // create new link
-                            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
-                            {
-                                ImageCategoryId = destinationFolderId,
-                                ImageLinkId = linkId,
-                                SortOrder = 1746
-                            });
-                        }
+                        //if (request == "ARK")
+
                         db.SaveChanges();
                     }
                     success = "ok";
                 }
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
-        [HttpPut]
-        [Route("api/Links/FtpMoveFolder")]
-        public string FtpMoveFolder(int folderId, string newFolderName)
-        {
-            string success;
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    VirtualFolder rowToRename = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                    rowToRename.FolderName = newFolderName;
-                    var files = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
-                    foreach (ImageFile file in files)
-                    {
-                        var fileLinkId = file.FileName.Substring(file.FileName.LastIndexOf("_"));
-                        file.FileName = newFolderName + fileLinkId;
-                    }
-                    //db.SaveChanges();
-                }
-                success = "ok";
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;

@@ -124,8 +124,7 @@ function getFullImageDetails() {
                 console.log("getFullImageDetails: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
 
                 pFolderType = imageInfo.FolderType;
-                $('#aboveImageContainerMessageArea').html("pFolderType: " + pFolderType +
-                    "  IsOutsideFolderLink: " + imageInfo.IsOutsideFolderLink);
+                // $('#aboveImageContainerMessageArea').html("pFolderType: " + pFolderType + "  IsOutsideFolderLink: " + imageInfo.IsOutsideFolderLink);
 
                 switch (imageInfo.FolderType) {
                     case "singleModelGallery":
@@ -356,7 +355,7 @@ function contextMenuAction(action) {
             showRenameFolderDialog(pFolderId, pFolderName)
             break;
         case "remove":
-            attemptRemoveLink(pLinkId, pFolderId);
+            attemptRemoveLink(pLinkId, pFolderId, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
         case "setF":
@@ -365,7 +364,7 @@ function contextMenuAction(action) {
         case "setC":
             setFolderImage(pLinkId, pFolderId, "parent");
             break;
-        default:
+        default: {
             if (document.domain === "localhost")
                 alert("contextMenuAction Unhandeled switch case option.  Action: " + action);
             else
@@ -376,6 +375,7 @@ function contextMenuAction(action) {
                     ErrorMessage: "contextMenuAction Unhandeled switch case option.  Action: " + action,
                     CalledFrom: "Album.js contextMenuAction"
                 });
+        }
     }
 }
 

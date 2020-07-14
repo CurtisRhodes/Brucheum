@@ -115,14 +115,15 @@ function defaultFooter(pageId, rootFolder) {
         "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>Dashboard</div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" +
-        "       <div id='footerInfo1'></div>\n" +
+        "       <div id='footerInfo4'></div>\n" +
         "       <div>folder type: " + rootFolder + "</div>\n" +
+        //"  <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
+        //"  <div id='footerLastBuild' class='footerVersionMessage'></div>\n";
         "    </div>\n" +
         "</div>\n" +
         "<div class='footerFooter'>\n" +
         "    <div id='footerMessage'></div>\n" +
-        //"  <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
-        //"  <div id='footerLastBuild' class='footerVersionMessage'></div>\n";
+        "    <div id='footerMessage2'></div>\n" +
         "    <div id='copyright'>&copy; 2020 - <a href='~/IntelDsgn/Index'>Intelligent Design SoftWare</a></div>\n" +
         "</div>\n" +
         "</div>\n";

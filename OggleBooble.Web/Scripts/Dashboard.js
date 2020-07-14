@@ -180,7 +180,7 @@ function repairLinks(justOne) {
     changeFavoriteIcon("loading");
     //$('#repairLinksReport').html("");
 
-    alert("url: " + settingsArray.ApiServer + "api/RepairLinks/Repair?folderId=" + pSelectedTreeId + "&recurr=" + justOne);
+    //alert("url: " + settingsArray.ApiServer + "api/RepairLinks/Repair?folderId=" + pSelectedTreeId + "&recurr=" + justOne);
 
     $.ajax({
         type: "GET",
