@@ -19,17 +19,14 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var db = new OggleBoobleMySqlContext()) 
-                {                    
+                using (var db = new OggleBoobleMySqlContext())
+                {
                     db.Database.ExecuteSqlCommand("TRUNCATE TABLE Entity");
                     db.Database.ExecuteSqlCommand("insert OggleBooble.DirTree select * from OggleBooble.VwDirTree");
                 }
                 success = "ok";
             }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
 
@@ -153,28 +150,18 @@ namespace OggleBooble.Api.Controllers
         [Route("api/GalleryPage/GetSubFolderCounts")]
         public SubFolderCountModel GetSubFolderCounts(int folderId)
         {
-            var subFolderCounts = new SubFolderCountModel();
+            //step 1 get this data from the database
+
+            // step 2 use this to Refresh the database after changes are made
+
+
+            var subFolderCounts = new SubFolderCountModel() { FolderId = folderId };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var subDirs = db.VirtualFolders.Where(f => f.Parent == folderId).ToList();
-                    foreach (VirtualFolder subDir in subDirs)
-                    {
-                        var subDirItem = new SubFolderCountItem() { SubFolderId = subDir.Id };
-                        subDirItem.SubFolderCount = db.VirtualFolders.Where(s => s.Parent == subDir.Id).Count();
-
-                        subDirItem.FileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subDir.Id).Count();
-
-                        if (subDirItem.SubFolderCount > 0)
-                        {
-                            deepCount = 0;
-                            subDirItem.ChildFiles = GetDeepFileCount(subDir.Id, db);
-                            subDirItem.TotalChildFiles += subDirItem.ChildFiles;
-                        }
-                        subDirItem.TotalChildFiles += subDirItem.FileCount;
-                        subFolderCounts.SubFolderCountItems.Add(subDirItem);
-                    }
+                    GetDeepFileCount(folderId, subFolderCounts, db);
+                    SaveFileCounts(subFolderCounts);
                     subFolderCounts.Success = "ok";
                 }
             }
@@ -183,18 +170,67 @@ namespace OggleBooble.Api.Controllers
             }
             return subFolderCounts;
         }
-
-        int deepCount = 0;
-        private int GetDeepFileCount(int folderId, OggleBoobleMySqlContext db)
+        private void GetDeepFileCount(int parentId, SubFolderCountModel subFolderModel, OggleBoobleMySqlContext db)
         {
-            var childFolders = db.VirtualFolders.Where(f => f.Parent == folderId).ToList();
-            foreach (VirtualFolder childFolder in childFolders)
+            var subDirs = db.VirtualFolders.Where(f => f.Parent == parentId).ToList();
+            foreach (VirtualFolder subDir in subDirs)
             {
-                deepCount += db.CategoryImageLinks.Where(l => l.ImageCategoryId == childFolder.Id).Count();
-                GetDeepFileCount(childFolder.Id, db);
+                var thisSubFolder = new SubFolderCountItem();
+                thisSubFolder.SubFolderId = subDir.Id;
+                thisSubFolder.ParentId = parentId;
+                thisSubFolder.SubFolderCount = subDirs.Count();
+                thisSubFolder.FileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subDir.Id).Count();
+
+                if (parentId == subFolderModel.FolderId)
+                {
+                    subFolderModel.TotalChildFiles += thisSubFolder.FileCount;
+                }
+                else
+                {
+                    var parent = subFolderModel.SubFolderCountItems.Find(i => i.ParentId == parentId);
+                    if (parent != null)
+                    {
+                        parent.TotalChildFiles += thisSubFolder.FileCount;
+                        //while (parent.SubFolderId != subFolderModel.FolderId)
+                        //{
+                        //    parent = subFolderModel.SubFolderCountItems.Find(i => i.ParentId == parent.ParentId);
+
+                        //    parent.TotalChildFiles += thisSubFolder.FileCount;
+                        //}
+                    }
+                }
+                var subsubFolders = db.VirtualFolders.Where(f => f.Parent == subDir.Id).ToList();
+                foreach (VirtualFolder subsubFolder in subsubFolders)
+                {
+                    thisSubFolder.ChildFiles += db.CategoryImageLinks.Where(l => l.ImageCategoryId == subsubFolder.Id).Count();
+                    GetDeepFileCount(subsubFolder.Id, subFolderModel, db);
+                }
+                subFolderModel.SubFolderCountItems.Add(thisSubFolder);
             }
-            return deepCount;
         }
+
+        private void SaveFileCounts(SubFolderCountModel countModel) {
+            int rootFolder = countModel.FolderId;
+            int ttl1 = 0;
+            using (var db = new OggleBoobleMySqlContext())
+            {
+                var childFolders = db.VirtualFolders.Where(f => f.Parent == rootFolder).ToList();
+                foreach (var childFolder in childFolders) 
+                {
+                    ttl1 += countModel.SubFolderCountItems.Find(c => c.SubFolderId == childFolder.Id).FileCount;                
+                }
+                var dbFolderDetail = db.FolderDetails.Where(f => f.FolderId == rootFolder).FirstOrDefault();
+                if (dbFolderDetail == null)
+                { 
+                //db.FolderDetails.Add(new FolderDetail() { FolderId=rootFolder, })
+                }
+            
+            }
+
+
+
+        }
+
 
         [HttpPut]
         [Route("api/GalleryPage/UpdateFolderImage")]

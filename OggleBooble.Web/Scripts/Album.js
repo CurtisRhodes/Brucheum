@@ -49,55 +49,61 @@ function getAlbumImages(folderId) {
     var getImagesStart = Date.now();
     $('#imagePageLoadingGif').show();
     $('.footer').hide();
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + folderId,
-        success: function (albumImageInfo) {
-            $('#imagePageLoadingGif').hide();
-            if (albumImageInfo.Success === "ok") {
-                processImages(albumImageInfo);
-                $('#folderCommentButton').fadeIn();
-                setCounts(albumImageInfo, folderId);
-                if (albumImageInfo.RootFolder === "centerfold")
-                    awardCredits("PBV", folderId);
-                else
-                    awardCredits("PGV", folderId);
-                let delta = (Date.now() - getImagesStart) / 1000;
-                console.log("GetAlbumImages took: " + delta.toFixed(3));
-                $('.footer').show();
-            }
-            else {
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + folderId,
+            success: function (albumImageInfo) {
                 $('#imagePageLoadingGif').hide();
-                if (document.domain === 'localhost')
-                    alert("jQuery fail in Album.js: getAlbumImages\n" + albumImageInfo.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 1,
-                        ErrorMessage: imageLinksModel.Success,
-                        CalledFrom: "loadAlbum"
-                    });
-                //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
+                if (albumImageInfo.Success === "ok") {
+                    processImages(albumImageInfo);
+                    $('#folderCommentButton').fadeIn();
+
+                    setCounts(albumImageInfo, folderId);
+
+                    if (albumImageInfo.RootFolder === "centerfold")
+                        awardCredits("PBV", folderId);
+                    else
+                        awardCredits("PGV", folderId);
+                    let delta = (Date.now() - getImagesStart) / 1000;
+                    console.log("GetAlbumImages took: " + delta.toFixed(3));
+                    $('.footer').show();
+                }
+                else {
+                    $('#imagePageLoadingGif').hide();
+                    if (document.domain === 'localhost')
+                        alert("jQuery fail in Album.js: getAlbumImages\n" + albumImageInfo.Success);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "BUG",
+                            Severity: 1,
+                            ErrorMessage: imageLinksModel.Success,
+                            CalledFrom: "loadAlbum"
+                        });
+                    //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
+                }
+            },
+            error: function (jqXHR) {
+                $('#imagePageLoadingGif').hide();
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (!checkFor404("getAlbumImages")) {
+                    if (document.domain === 'localhost')
+                        alert("XHR fail in Album.js: getAlbumImages\n" + errorMessage);
+                    else
+                        logError({
+                            VisitorId: apVisitorId,
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "loadAlbum"
+                        });
+                }
             }
-        },
-        error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "getAlbumImages")) {
-                if (document.domain === 'localhost')
-                    alert("XHR fail in Album.js: getAlbumImages\n" + errorMessage);
-                else
-                    logError({
-                        VisitorId: apVisitorId,
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "loadAlbum"
-                    });
-            }
-        }
-    });
+        });
+    } catch (e) {
+        alert("CAT fail in Album.js: getAlbumImages\n" + e);
+    }
 }
 function getAlbumPageInfo(folderId) {
     var infoStart = Date.now();
@@ -200,7 +206,7 @@ function processImages(albumImageInfo) {
             " src='" + imgSrc + "'/>\n";
         if (obj.Id !== obj.SrcId)
             imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
-                obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail\"," + obj.SrcId + "\")' /></div>\n";
+                obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail\"," + obj.SrcId + ")' /></div>\n";
         imageHtml += "</div>\n";
         $('#imageContainer').append(imageHtml);
     });
@@ -307,6 +313,9 @@ function setBreadCrumbs(breadCrumbModel) {
 
 function setBadges(badgesText) {
     if (!isNullorUndefined(badgesText)) {
+
+        alert("badgesText: " + badgesText);
+
         if (badgesText.indexOf("Playmate Of The Year") > -1) {
             $('#badgesContainer').append("<a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>");
         }
@@ -314,7 +323,7 @@ function setBadges(badgesText) {
             $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
         }
         if (badgesText.indexOf("black centerfolds") > -1) {
-            $('#badgesContainer').append("<div class='blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
+            $('#badgesContainer').append("<div class='badgeImage blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
         }
         if (badgesText.indexOf("Hef likes twins") > -1) {
             $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
@@ -405,7 +414,7 @@ function setCounts(dirTree, folderId) {
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "getAlbumImages")) {
+            if (!checkFor404("getAlbumImages")) {
                 if (document.domain === 'localhost')
                     alert("XHR fail in Album.js: getAlbumImages\n" + errorMessage);
                 else
@@ -442,7 +451,7 @@ function directToStaticPage(folderId) {
             }
             else {
                 if (successModel.Success.indexOf("Option not supported") > -1) {
-                    checkFor404(successModel.Success, "directToStaticPage");
+                    checkFor404("directToStaticPage");
                 }
                 else {
                     logError({
@@ -457,7 +466,7 @@ function directToStaticPage(folderId) {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "directToStaticPage")) {
+            if (!checkFor404("directToStaticPage")) {
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "XHR",

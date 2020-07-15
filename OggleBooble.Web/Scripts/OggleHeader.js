@@ -5,6 +5,7 @@ function setOggleHeader(folderId, subdomain) {
     if (subdomain === undefined) subdomain = "boobs";
     hdrFolderId = folderId;
     hdrSubdomain = subdomain;
+
     $('#oggleHeader').html(headerHtml(folderId, subdomain));
 
     $('#draggableDialog').resizable({
@@ -17,12 +18,20 @@ function setOggleHeader(folderId, subdomain) {
 
     mediaDebug = false;
     if (mediaDebug) {        
-        $('.headerTopRow').css("border", "solid thin lime");
+        //$('.headerTopRow').css("border", "solid thin lime");
         //return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#topRowRightContainer').width() + $('#searchBox').width() + topRowFudgeFactor;
-        $('#bannerTitle').css("border", "solid thin red");
+
+        //$('#bannerTitle').css("border", "solid thin red");
         $('#mainMenuContainer').css("border", "solid thin red");
-        $('#topRowRightContainer').css("border", "solid thin red");
+        //$('#topRowRightContainer').css("border", "solid thin red");
         $('#searchBox').css("border", "solid thin red");
+
+        $('.headerBottomRow').css("border", "solid thin lime");
+        $('#headerMessage').css("border", "solid thin red");
+        $('#breadcrumbContainer').css("border", "solid thin red");
+        $('#badgesContainer').css("border", "solid thin red");
+        $('#hdrBtmRowSec3').css("border", "solid thin red");
+        $('#divLoginArea').css("border", "solid thin red");
     }
 
     setHdrBottomRow(hdrFolderId, subdomain);
@@ -41,12 +50,7 @@ function setHdrBottomRow(folderId, subdomain) {
     switch (subdomain) {
         case "index": 
         case "root": {
-            //$('#breadcrumbContainer').html(
-            //    "<div class='headerBanner'><a href='javascript:rtpe(\"RNK\"," + folderId + ",\"archive\")'>babes ranker</a></div>\n" +
-            //    "<div class='headerBanner'><a href='javascript:rtpe(\"BAC\"," + folderId + ",1132,1132)'>every Playboy Centerfold</a></div>\n" +
-            //    "<div class='headerBanner'><a href='javascript:rtpe(\"BAC\"," + folderId + ",3,3)'>babes archive</a></div>\n");
-
-            $('#breadcrumbContainer').append(tinkyTak("ranker", "big naturals"));
+             $('#breadcrumbContainer').append(tinkyTak("ranker", "big naturals"));
             $('#breadcrumbContainer').append(tinkyTak("centerfold"));
             $('#breadcrumbContainer').append(tinkyTak("archive"));
             break;
@@ -99,12 +103,6 @@ function setHdrBottomRow(folderId, subdomain) {
             changeFavoriteIcon("porn");
             $('#topRowRightContainer').html(tinkyTak("archive"));
             $('#topRowRightContainer').append(tinkyTak("ranker", "porn"));
-
-            //$('body').addClass('pornBodyColors');
-            //$('#topRowRightContainer').html("<div id='rankerTag' class='headerBanner'>" +
-            //    "<a href='javascript:rtpe(\"BAC\"," + folderId + ",440,440)'>slut archive</a></div>\n");
-            //$('#topRowRightContainer').append("<div id='rankerTag' class='headerBanner'>\n<a href='javascript:rtpe(\"RNK\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")' " +
-            //    "title='Spin through the links to land on random portrait images. ' >porn ranker</a></div>\n");
             break;
         }
         default: {
@@ -132,9 +130,7 @@ function setMenubar(folderId, subdomain) {
             break;
         case "archive": {
             headerMenu =
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",4)'>milk cows,</a> \n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1103)'>russian spys,</a> \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1093)'>highschool fantasy girls,</a> \n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1107)'>sweater meat,</a> \n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",123)'>ultra juggs</a> \n";
             break;
@@ -222,76 +218,82 @@ function setLoginSection(subdomain) {
 }
 
 function mediaSavyHdrResize() {
+    //return;
     hdrRowW = $('.headerTopRow').width();
     let LasttopRowOption = "t0", lastBottomRowOption = "b0";
     // bottom Row  
     {
+        // default bottom
+        $('#mainMenuContainer').html(setMenubar(hdrFolderId, hdrSubdomain));
+
+        //$('#divSiteLogo').css("height", "80px");
+        //"id='headerMessage' class='bottomLeftHeaderArea'>    padding-right: 8px;        float: left;
+        // id='breadcrumbContainer' class='breadCrumbArea'>
+        //id='badgesContainer' class='badgesSection'>display: flex; float: left;
+        // .badgeImage { height: 31px; margin - left: 9px; float: left; font-size: 16px; margin - bottom: 3px; cursor: pointer; }
+        //id='hdrBtmRowSec3' class='hdrBtmRowOverflow' margin-left: 15px;
+        //$('#divLoginArea').css("font-size", "14px");
+
+
         if (hdrBottRowSectionsW() >= hdrRowW) {
-            $('.oggleHeader').css("background-color", "var(--brucheumBlue)");
-            $('.siteLogo').css("height", "80px");
-            $('#divLoginArea').css("font-size", "17px");
-            if (hdrSubdomain === "Index") {
-                $('.headerBanner').css("font-size", "12px"); // banner tabs contents
-                $('.headerBanner').css("color", "yellow").show(); // banner tabs contents
-            }
+            $('#oggleHeader').css("background-color", "var(--brucheumBlue)");
+            $('#divSiteLogo').css("height", "70px");
+            $('#topRowRightContainer').css("color", "yellow").show(); // banner tabs contents
+            $('.headerBannerButton').css("font-size", "18px").show();            
             $('#breadcrumbContainer').css("font-size", "18px").show();
-            $('.badgeImage').css("height", "31px");
-            $('.blackCenterfoldsBanner').css("font-size", "16px");
+            $('.badgeImage').css("height", "25px");
+            $('.badgeImage').css("font-size", "10px").show();            
+            $('#divLoginArea').css("font-size", "17px");
             lastBottomRowOption="b1";
         }
         if (hdrBottRowSectionsW() >= hdrRowW) {
-            $('.oggleHeader').css("background-color", "#ccffcc");  // green
-            $('.siteLogo').css("height", "80px");
+            $('#oggleHeader').css("background-color", "#ccffcc");  // green
+            $('#divSiteLogo').css("height", "60px");
             $('#divLoginArea').css("font-size", "15px");
             $('#breadcrumbContainer').css("font-size", "15px").show();
-            $('.badgeImage').css("height", "31px");
-            $('.blackCenterfoldsBanner').css("font-size", "15px");
+            $('.badgeImage').css("height", "20px");
             lastBottomRowOption = "b2";
         }
         if (hdrBottRowSectionsW() >= hdrRowW) {
-            $('.oggleHeader').css("background-color", "#e6de3b");  // sn
-            $('.siteLogo').css("height", "60px");
+            $('#oggleHeader').css("background-color", "#e6de3b");  // sn
+            $('#divSiteLogo').css("height", "50px");
             $('#divLoginArea').css("font-size", "13px");
             $('#breadcrumbContainer').css("font-size", "13px").show();
-            $('.badgeImage').css("height", "28px");
-            $('.blackCenterfoldsBanner').css("font-size", "13px");
+            $('.badgeImage').css("height", "18px");
             lastBottomRowOption = "b3";
         }
         //if (hdrBottRowSectionsW() >= hdrRowW) {
-        //    $('.siteLogo').css("height", "60px");
+        //    $('#divSiteLogo').css("height", "60px");
         //    $('#divLoginArea').css("font-size", "12px");
         //    $('#breadcrumbContainer').css("font-size", "12px").show();
-        //    $('.headerBanner').css("font-size", "10px").show();
         //    $('.badgeImage').css("height", "22px");
         //    $('.blackCenterfoldsBanner').css("font-size", "10px");
         //    showResizeMessage("brown?: ");
         //}
         if (hdrBottRowSectionsW() >= hdrRowW) {
-            $('.oggleHeader').css("background-color", "#e9b5e7");  // sn
-            $('.siteLogo').css("height", "50px");
+            $('#oggleHeader').css("background-color", "#e9b5e7");  // sn
+            $('#divSiteLogo').css("height", "50px");
             $('#divLoginArea').css("font-size", "12px");
             $('#breadcrumbContainer').css("font-size", "12px").show();
             $('.blackCenterfoldsBanner').css("font-size", "12px");
-            $('.badgeImage').css("height", "22px");
+            $('.badgeImage').css("height", "15px");
             $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
             lastBottomRowOption = "b4";
         }
         //if (hdrBottRowSectionsW() >= hdrRowW) {
-        //    $('.oggleHeader').css("background-color", "#e6de3b");  // sn
-        //    $('.siteLogo').css("height", "40px");
+        //    $('#oggleHeader').css("background-color", "#e6de3b");  // sn
+        //    $('#divSiteLogo').css("height", "40px");
         //    $('#divLoginArea').css("font-size", "12px");
         //    $('#breadcrumbContainer').css("font-size", "10px").show();
-        //    $('.headerBanner').css("font-size", "12px").show();
         //    $('.blackCenterfoldsBanner').css("font-size", "10px");
         //    $('.badgeImage').css("height", "20px");
         //    showResizeMessage("iPad 40/12 : ");
         //}
         if (hdrBottRowSectionsW() >= hdrRowW) {
-            $('.oggleHeader').css("background-color", "#a58383");  // brown        
-            $('.siteLogo').css("height", "30px");
+            $('#oggleHeader').css("background-color", "#a58383");  // brown        
+            $('#divSiteLogo').css("height", "30px");
             $('#breadcrumbContainer').hide();
             $('#divLoginArea').css("font-size", "12px");
-            $('.headerBanner').css("font-size", "12px").show();
             $('.badgeImage').css("height", "18px");
             $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
             lastBottomRowOption = "b5";
@@ -299,40 +301,48 @@ function mediaSavyHdrResize() {
     }
     // top row
     {
+        //default top
+        $('#divSiteLogo').css("height", "60px").show(); 
+        $('#mainMenuContainer').css("font-size", "25px").show();  // id='mainMenuContainer' class='hdrTopRowMenu' font-size: 32px; font-family: Comic Sans MS; color: var(--oggleTitleColor); vertical-align: top; padding-left: 28px; margin-right: 8px; margin-top: 1px;    padding: 0;
+        $('.headerBannerButton').css("font-size", "14px"); //id='bannerTitle' class='headerTitle' font-size: 28px; padding-left: 6px; padding-top: 1px; font-family: 'Lucida Calligraphy';
+        $('#topRowRightContainer').show();
+        $('#bannerTitle').css("color", "black").css("height", "28px").show(); ; // font-size: 28px;
+        //<div id='topRowRightContainer'></div>" +
+        // searchBox class='oggleSearchBox'
+
         if (hdrTopRowSectionsW() > hdrRowW) {
-            $('#bannerTitle').css("font-size", "33px");
-            $('#mainMenuContainer').css("font-size", "20px").show();
-            $('#topRowRightContainer').show();
-            $('.headerBanner').css("font-size", "17px").show(); // banner tabs contents
-            //"           <div id='topRowRightContainer'></div>" +
-            //"           <div id='searchBox' class='oggleSearchBox'>\n" +
+            //$('#divSiteLogo').css("height", "70px").show(); 
+            $('#bannerTitle').css("color", "blue").css("height", "25px");
+            $('#mainMenuContainer').css("font-size", "25px").show();
+            $('.headerBannerButton').css("font-size", "14px");
+
+            $('.badgeImage').css("height", "25px");
+            $('.badgeImage').css("font-size", "10px");            
+            $('#searchBox').css("font-size", "10px");
             LasttopRowOption = "t1";
         }
-        //let testing = false;
-        //if (false) {
         if (hdrTopRowSectionsW() > hdrRowW) {
-            $('#bannerTitle').css("font-size", "22px");
-            $('#bannerTitle').css("color", "orange");
-            $('#topRowRightContainer').show();
-            $('#mainMenuContainer').css("font-size", "18px").show();
-            $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
-            //"           <div id='searchBox' class='oggleSearchBox'>\n" +
-            LasttopRowOption="t2"
+            //$('#divSiteLogo').css("height", "60px"); 
+            $('#bannerTitle').css("color", "orange").css("height", "23px");
+            $('#mainMenuContainer').css("font-size", "22px").show();
+            $('.headerBannerButton').css("font-size", "13px");
+            LasttopRowOption = "t2";
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
-            $('#topRowRightContainer').hide();
-            $('#mainMenuContainer').css("font-size", "18px");
-            $('.headerBanner').css("font-size", "15px").show(); // banner tabs contents
-            //"           <div id='searchBox' class='oggleSearchBox'>\n" +
+            $('#divSiteLogo').css("height", "50px"); 
+            $('#bannerTitle').css("color", "red").css("height", "20px");
+            $('#mainMenuContainer').css("font-size", "20px");
+            $('.headerBannerButton').css("font-size", "12px");
             LasttopRowOption ="t3";
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
-            $('#topRowRightContainer').hide();
-            $('#mainMenuContainer').hide();
-            //"           <div id='searchBox' class='oggleSearchBox'>\n" +
+            $('#mainMenuContainer').html($('#hamburgerCtx'));
             LasttopRowOption ="t4";
         }
-
+        if (hdrTopRowSectionsW() > hdrRowW) {
+            $('#mainMenuContainer').html($('#hamburgerCtx'));
+            LasttopRowOption = "t5";
+        }
     }
     showResizeMessage(LasttopRowOption, lastBottomRowOption);
 }
@@ -355,10 +365,9 @@ function hdrTopRowSectionsW() {
 function showResizeMessage(lasttopRowOption, lastBottomRowOption) {
     if (mediaDebug) {
         //if (!secMsg.includes("RESET"))
-        $('#aboveImageContainerMessageArea').html("r: " + $('.headerTopRow').width().toLocaleString() +
-            "    T: " + lasttopRowOption + " : " + hdrTopRowSectionsW().toLocaleString() +
-            " B: " + lastBottomRowOption + " : " + hdrBottRowSectionsW().toLocaleString());
-
+        $('#aboveImageContainerMessageArea').html("Top: " + lasttopRowOption + " : " + hdrTopRowSectionsW().toLocaleString() +
+            " Bot: " + lastBottomRowOption + " : " + hdrBottRowSectionsW().toLocaleString() +
+            "<span style='margin-left:45px;'>rW: </span> (" + $('.headerTopRow').width().toLocaleString() + ")");
         //alert("banner: " + $('#bannerTitle').width() + " menu: " + $('#mainMenuContainer').width() + " rightRow: " + $('#topRowRightContainer').width() + " sbox: " + $('#searchBox').width());
     }
 }
@@ -388,20 +397,20 @@ function tinkyTak(bannerType, rankerType) {
             //"porn":
             //"sluts":
             //"archive":
-            return "<div class='headerBanner'>\n" +
+            return "<div class='headerBannerButton'>\n" +
                 "<div class='clickable' onclick='window.open(\"/index.html?spa=3907&bp=" + rankerType + "\", \"_blank\")' " +
                 "title='Spin through the links to land on random portrait images.'>" + rankerType + " ranker</div>" +
                 "</div>\n";
         case "archive":
-            return "<div class='headerBanner'>" +
+            return "<div class='headerBannerButton'>" +
                 "   <div class='clickable' onclick='window.open(\"album.html?folder=3\", \"_blank\")'>big tits archive</div>" +
                 "</div>\n";
         case "centerfold":
-            return "<div class='headerBanner'>\n" +
+            return "<div class='headerBannerButton'>\n" +
                 "   <div class='clickable' onclick='window.open(\"album.html?folder=1132\", \"_blank\")'>every Playboy Centefold</div>" +
                 "</div>\n";
         case "poses":
-            return "<div class='headerBanner'>\n" +
+            return "<div class='headerBannerButton'>\n" +
                 "   <div class='clickable' onclick='window.open(\"album.html?folder=2\", \"_blank\")'>poses</div>" +
                 "</div>\n";
         default:

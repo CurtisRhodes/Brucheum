@@ -85,7 +85,7 @@ function loadBoobsRanker(rankPref) {
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "loadBoobsRankers")) {
+            if (!checkFor404("loadBoobsRankers")) {
                 if (document.domain === 'localhost')
                     alert("loadBoobsRanker: " + albumImageInfo.Success);
                 else
@@ -243,7 +243,7 @@ function unloadBoobsRanker(rankPref) {
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "loadBoobsRankers")) {
+            if (!checkFor404("loadBoobsRankers")) {
                 if (document.domain === 'localhost')
                     alert("unloadBoobsRanker" + errorMessage);
                 else
@@ -449,14 +449,14 @@ function imageClick(selectedSide) {
                 }
                 else {
                     if (document.domain === 'localhost')
-                        alert("imageClick" + success);
+                        alert("Ranker/imageClick" + success);
                     else
                         logError({
                             VisitorId: getCookieValue("VisitorId"),
                             ActivityCode: "JQA",
                             Severity: 12,
-                            ErrorMessage: "unknown switch option" + rankPref,
-                            CalledFrom: "Ranker setFolderNameColor"
+                            ErrorMessage: success,
+                            CalledFrom: "Ranker/imageClick"
                         });
                     //sendEmailToYourself("jQuery Fail in Ranker.Html imageClick", "BoobsRanker POST: " + container.Success);
                     //alert("BoobsRanker POST: " + container.Success);
@@ -466,16 +466,16 @@ function imageClick(selectedSide) {
                 $('#blogLoadingGif').hide();
                 $('#imagePageLoadingGif').hide();
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "launchPromoMessages")) {
+                if (!checkFor404("Ranker/imageClick")) {
                     if (document.domain === 'localhost')
-                        alert("imageClick" + errorMessage);
+                        alert("Ranker/imageClick" + errorMessage);
                     else
                         logError({
                             VisitorId: getCookieValue("VisitorId"),
                             ActivityCode: "XHR",
                             Severity: 12,
                             ErrorMessage: errorMessage,
-                            CalledFrom: "Ranker setFolderNameColor"
+                            CalledFrom: "Ranker/imageClick"
                         });
                     
                     //sendEmailToYourself("XHR ERROR in Ranker.Html imageClick", "api/BoobsRanker.  Message: " + errorMessage);

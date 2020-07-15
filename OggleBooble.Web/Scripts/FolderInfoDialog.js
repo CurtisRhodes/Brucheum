@@ -113,30 +113,30 @@ function getFolderDetails(folderId) {
                 $('#imagePageLoadingGif').hide();
                 showMyAlert("unable to show folder info");
                 if (document.domain === 'localhost')
-                    alert("getfolderIfno: " + rtnFolderInfo.Success);
+                    alert("getFolderDetails: " + rtnFolderInfo.Success);
                 else
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "JQE",
+                        ActivityCode: "AJQ",
                         Severity: 2,
                         ErrorMessage: rtnFolderInfo.Success,
-                        CalledFrom: "getrtnFolderInfo"
+                        CalledFrom: "getFolderDetails"
                     });
             }
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "showCategoryDialog")) {
+            if (!checkFor404("getFolderDetails")) {
                 if (document.domain === 'localhost')
-                    alert("getrtnFolderInfo: " + errorMessage);
+                    alert("getFolderDetails: " + errorMessage);
                 else
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "XHR",
                         Severity: 2,
                         ErrorMessage: errorMessage,
-                        CalledFrom: "getrtnFolderInfo"
+                        CalledFrom: "getFolderDetails"
                     });
             }
         }
@@ -224,7 +224,7 @@ function saveFolderDialog() {
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "saveCategoryDialogText")) {
+            if (!checkFor404("saveFolderDialog")) {
                 if (document.domain === 'localhost')
                     alert("saveFolderDialog: " + errorMessage);
                 else
@@ -336,29 +336,66 @@ function createPosersIdentifiedFolder() {
                                 displayStatusMessage("ok", "image moved to newfolder");
                             }
                             else {
-                                //alert("createPosersIdentifiedFolder " + success);
-                                //displayStatusMessage("error", successModel.Success);
-                                sendEmailToYourself("error in ModelInfoDialog.js", "createPosersIdentifiedFolder " + moveImageSuccessModel.Success);
+                                if (document.domain === 'localhost')
+                                    alert("createPosersIdentifiedFolder/MoveImage: " + moveImageSuccessModel.Success);
+                                else
+                                    logError({
+                                        VisitorId: getCookieValue("VisitorId"),
+                                        ActivityCode: "AJQ",
+                                        Severity: 2,
+                                        ErrorMessage: moveImageSuccessModel.Success,
+                                        CalledFrom: "createPosersIdentifiedFolder/MoveImage"
+                                    });
                             }
                         },
                         error: function (jqXHR) {
                             var errorMessage = getXHRErrorDetails(jqXHR);
-                            if (!checkFor404(errorMessage, "createPosersIdentifiedFolder")) {
-                                sendEmailToYourself("XHR ERROR in Transitions.html createPosersIdentifiedFolder", "/api/MoveImage/MoveImage Message: " + errorMessage);
+                            if (!checkFor404("createPosersIdentifiedFolder/MoveImage")) {
+                                if (document.domain === 'localhost')
+                                    alert("createPosersIdentifiedFolder/MoveImage: " + errorMessage);
+                                else
+                                    logError({
+                                        VisitorId: getCookieValue("VisitorId"),
+                                        ActivityCode: "XHR",
+                                        Severity: 2,
+                                        ErrorMessage: errorMessage,
+                                        CalledFrom: "createPosersIdentifiedFolder/MoveImage"
+                                    });
+                                //sendEmailToYourself("XHR ERROR in Transitions.html createPosersIdentifiedFolder", "/api/MoveImage/MoveImage Message: " + errorMessage);
                             }
                         }
                     });
                 }
                 else {
-                    sendEmailToYourself("error in ModelInfo.js", "CreateVirtualFolder: " + successModel.Success);
+                    if (document.domain === 'localhost')
+                        alert("getrtnFolderInfo: " + successModel.Success);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "AJQ",
+                            Severity: 2,
+                            ErrorMessage: successModel.Success,
+                            CalledFrom: "createPosersIdentifiedFolder"
+                        });
+                    //sendEmailToYourself("error in ModelInfo.js", "CreateVirtualFolder: " + successModel.Success);
                     //alert("CreateVirtualFolder: " + successModel.Success);
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "createPosersIdentifiedFolder")) {
-                    sendEmailToYourself("XHR ERROR in Transitions.html createPosersIdentifiedFolder",
-                        "/api/FtpDashBoard/CreateFolder?parentId=" + defaultParentFolder + "&newFolderName=" + FolderDetailModel.FolderName + " Message: " + errorMessage);
+                if (!checkFor404("createPosersIdentifiedFolder")) {
+                    if (document.domain === 'localhost')
+                        alert("createPosersIdentifiedFolder: " + errorMessage);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 2,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "createPosersIdentifiedFolder"
+                        });
+                    //sendEmailToYourself("XHR ERROR in Transitions.html createPosersIdentifiedFolder",
+                      //  "/api/FtpDashBoard/CreateFolder?parentId=" + defaultParentFolder + "&newFolderName=" + FolderDetailModel.FolderName + " Message: " + errorMessage);
                 }
             }
         });
@@ -401,14 +438,32 @@ function updateFolderDetail() {
                     displayStatusMessage("ok", "Model info updated");
                 }
                 else {
-                    sendEmailToYourself("XHR ERROR in ModelInfoDialog.js updateFolderDetail", "Edit Model info: " + success);
-                    //alert("Edit Model info: " + success);
+                    if (document.domain === 'localhost')
+                        alert("createPosersIdentifiedFolder: " + success);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "AJQ",
+                            Severity: 2,
+                            ErrorMessage: success,
+                            CalledFrom: "updateFolderDetail"
+                        });
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "updateFolderDetail")) {
-                    sendEmailToYourself("XHR ERROR in ModelInfoDialog.js updateFolderDetail", "/api/ImageCategoryDetail Message: " + errorMessage);
+                if (!checkFor404("updateFolderDetail")) {
+                    if (document.domain === 'localhost')
+                        alert("updateFolderDetail: " + errorMessage);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 2,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "updateFolderDetail"
+                        });
+                    //sendEmailToYourself("XHR ERROR in ModelInfoDialog.js updateFolderDetail", "/api/ImageCategoryDetail Message: " + errorMessage);
                 }
             }
         });
@@ -502,24 +557,34 @@ function addTrackback(link) {
                     }
                     else {
                         if (document.domain === 'localhost')
-                            alert("setTrackbackLinks: " + success);
+                            alert("addTrackback: " + success);
                         else
-                            sendEmailToYourself("setTrackbackLinks", success);
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "AJQ",
+                                Severity: 2,
+                                ErrorMessage: success,
+                                CalledFrom: "addTrackback"
+                            });
                     }
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (document.domain === 'localhost') {
-                    alert("XHR ERROR IN addTrackback\nfolderId=" + folderId +
-                        "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/Insert" + "\nMessage : " + errorMessage);
+                if (!checkFor404("addTrackback")) {
+                    if (document.domain === 'localhost')
+                        alert("addTrackback: " + errorMessage);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 2,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "addTrackback"
+                        });
+                    //sendEmailToYourself("XHR ERROR IN addTrackback", "folderId=" + folderId + "<br/>Message : " + errorMessage);
                 }
-                else {
-                    if (!checkFor404(errorMessage, "addTrackback")) {
-                        sendEmailToYourself("XHR ERROR IN addTrackback",
-                            "folderId=" + folderId + "<br/>Message : " + errorMessage);
-                    }
-                }
+
             }
         });
     }
@@ -538,27 +603,29 @@ function updateTrackback(trackBackItem) {
                 if (document.domain === 'localhost')
                     alert("updateTrackback: " + success);
                 else
-                    sendEmailToYourself("updateTrackback", success);
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 2,
+                        ErrorMessage: success,
+                        CalledFrom: "updateTrackback"
+                    });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (document.domain === 'localhost') {
-                alert("XHR ERROR IN updateTrackback" +
-                    "\nurl: " + settingsArray.ApiServer + "api/TrackbackLink/Insert" + "\nMessage : " + errorMessage);
-            }
-            else {
-                if (!checkFor404(errorMessage, "updateTrackback")) {
+            if (!checkFor404("updateTrackback")) {
+                if (document.domain === 'localhost')
+                    alert("updateTrackback: " + errorMessage);
+                else
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "XHR",
-                        Severity: 3,
-                        ErrorMessage: "XHR ERROR IN updateTrackback: " + errorMessage,
-                        CalledFrom: "ModelInfoDialgo updateTrackback"
+                        Severity: 2,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "updateTrackback"
                     });
-                    //sendEmailToYourself("XHR ERROR IN updateTrackback", errorMessage);
-                }
-            }
+            };
         }
     });
 }

@@ -83,19 +83,42 @@ function performSearch(searchString) {
                 type: "GET",
                 url: settingsArray.ApiServer + "api/CatFolder/GetSearchResults?searchString=" + searchString,
                 success: function (SearchResultsModel) {
-                    $('#searchResultsDiv').html("<ul class='searchResultList>").show();
-                    $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
-                        $('#searchResultsDiv').append("<li id=" + searchResult.FolderId +
-                            " onclick='jumpToSelected(" + searchResult.FolderId + ")' onkeydown='linkItemKeyDown(event)'  >" +
-                            searchResult.Parent + "/" + searchResult.FolderName + "</li>");
-                    });
-                    $('#searchResultsDiv').append("</ul>").show();
-                    $('#divLoginArea').hide();
+                    if (SearchResultsModel.Success === "ok") {
+                        $('#searchResultsDiv').html("<ul class='searchResultList>").show();
+                        $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
+                            $('#searchResultsDiv').append("<li id=" + searchResult.FolderId +
+                                " onclick='jumpToSelected(" + searchResult.FolderId + ")' onkeydown='linkItemKeyDown(event)'  >" +
+                                searchResult.Parent + "/" + searchResult.FolderName + "</li>");
+                        });
+                        $('#searchResultsDiv').append("</ul>").show();
+                        $('#divLoginArea').hide();
+                    }
+                    else
+                        if (document.domain === 'localhost')
+                            alert("performSearch: " + SearchResultsModel.Success);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 1,
+                                ErrorMessage: SearchResultsModel.Success,
+                                CalledFrom: "performSearch"
+                            });
                     busy = false;
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "loadSettings")) {
+                    if (!checkFor404("performSearch")) {
+                        if (document.domain === 'localhost')
+                            alert("XHR error in performSearch: " + errorMessage);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 1,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "performSearch"
+                            });
                         //sendEmailToYourself("XHR error in oggleSearchKeyDown", "/Data/Settings.xml Message: " + errorMessage);
                         if (document.domain === 'localhost')
                             alert("oggleSearchKeyDown xhr error: " + getXHRErrorDetails(xhr));

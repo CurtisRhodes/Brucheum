@@ -127,26 +127,6 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-        [HttpPost]
-        [Route("api/Links/MoveLink")]
-        public string MoveLink(string linkId, int sourceId, int destinationId)
-        {
-            string success;
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink() { ImageCategoryId = destinationId, ImageLinkId = linkId, SortOrder = 1456 });
-                    var linkToRemove = db.CategoryImageLinks.Where(l => l.ImageCategoryId == sourceId && l.ImageLinkId == linkId).First();
-                    db.CategoryImageLinks.Remove(linkToRemove);
-                    db.SaveChanges();
-                }
-                success = "ok";
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
         [HttpPut]
         [Route("api/Links/RenameFolder")]
         public string RenameFolder(int folderId, string newFolderName)
@@ -225,9 +205,33 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-        //api/Links/MoveLink
+        //[HttpPost]
+        //[Route("api/Links/MoveLink")]
+        //public string MoveLink(string linkId, int sourceId, int destinationId, string request)
+        //{
+        //    string success;
+        //    try
+        //    {
+        //        using (var db = new OggleBoobleMySqlContext())
+        //        {
+        //            // add new link
+        //            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink() { ImageCategoryId = destinationId, ImageLinkId = linkId, SortOrder = 1456 });
+        //            // if (request == "ARK") keep the existing link
+        //            if (request == "MOV")
+        //            {
+        //                var linkToRemove = db.CategoryImageLinks.Where(l => l.ImageCategoryId == sourceId && l.ImageLinkId == linkId).First();
+        //                db.CategoryImageLinks.Remove(linkToRemove);
+        //            }
+        //            db.SaveChanges();
+        //        }
+        //        success = "ok";
+        //    }
+        //    catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+        //    return success;
+        //}
+
         [HttpPut]
-        [Route("api/Links/MoveFile")]
+        [Route("api/Links/MoveLink")]
         public string MoveFile(string linkId, int destinationFolderId, string request)
         {
             string success;

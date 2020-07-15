@@ -12,13 +12,15 @@ namespace OggleBooble.Api.Models
         {
             SubFolderCountItems = new List<SubFolderCountItem>();
         }
+        public int FolderId { get; set; }
+        public int TotalChildFiles { get; set; }
         public List<SubFolderCountItem> SubFolderCountItems { get; set; }       
-        public string FolderType { get; set; }
         public string Success { get; set; }
     }
     public class SubFolderCountItem
     {
         public int SubFolderId { get; set; }
+        public int ParentId { get; set; }
         public int ChildFiles { get; set; }
         public int SubFolderCount { get; set; }
         public int TotalChildFiles { get; set; }

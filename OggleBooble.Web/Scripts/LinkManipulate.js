@@ -11,12 +11,16 @@ function linkDialogdirTreeClick(path, id) {
 }
 function showDirTreeDialog(imgSrc, treeStart) {
     $('#draggableDialogContents').html(
-        "    <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
-        "    <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
-        "    <div class='inline'><img class='moveDialogDirTreeButton' src='/Images/caretDown.png' " +
+        "   <div>" +
+        "       <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
+        "       <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
+        "       <div class='inline'><img class='moveDialogDirTreeButton' src='/Images/caretDown.png' " +
         "           onclick='$(\"#linkManipulateDirTree\").toggle()'/></div>\n" +
-        "    <div id='linkManipulateClick'></div>\n" +
-        "    <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif'/></div>\n");
+        "       <div id='linkManipulateClick'></div>\n" +
+        "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif' /></div>\n" +
+        "   </div>");
+
+
     loadDirectoryTree(treeStart, "linkManipulateDirTree", "linkDialogdirTreeClick");
     //var winH = $(window).height();
     //var dlgH = $('#draggableDialog').height();
@@ -86,27 +90,22 @@ function showMoveLinkDialog(linkId, folderId, imgSrc) {
         "<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\"," + folderId + ")'>Move</div>");
 }
 
-function showArchiveLinkDialog(linkId, imgSrc) {
+function showArchiveLinkDialog(linkId, folderId, imgSrc) {
     showDirTreeDialog(imgSrc, 3);
     $('#oggleDialogTitle').html("Archive Image");
     $('#linkManipulateClick').html(
-        "<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\"," + folderId + ")'>Archive</div>");
+    "<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\"," + folderId + ")'>Archive</div>");
 }
 
 function moveFile(request, linkId, folderId) {
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/Links/MoveFile?linkId=" + linkId + "&destinationFolderId=" + pDirTreeId + "&request=" + request,
+        url: settingsArray.ApiServer + "api/Links/MoveLink?linkId=" + linkId + "&destinationFolderId=" + pDirTreeId + "&request=" + request,
         success: function (success) {
             if (success === "ok") {
                 if (viewerShowing)
                     slide("next");
-
-
-                alert("//refresh page.");
-
-
-
+                dragableDialogClose();
                 getAlbumImages(folderId);
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pDirTreeId);
 
@@ -310,26 +309,29 @@ function performRenameFolder(folderId, newFolderName) {
             }
             else {
                 if (document.domain === "localhost")
-                    alert("perfomCopyLink AJQ: " + success);
+                    alert("performRenameFolder: " + success);
                 else
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
+                        ActivityCode: "AJQ",
                         Severity: 1,
                         ErrorMessage: success,
-                        CalledFrom: "perfomCopyLink"
+                        CalledFrom: "performRenameFolder"
                     });
             }
         },
         error: function (xhr) {
             var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404(errorMessage, "removeImage")) {
+            if (!checkFor404("performRenameFolder")) {
+                if (document.domain === "localhost")
+                    alert("performRenameFolder: " + errorMessage);
+                else
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "XHR",
                     Severity: 1,
                     ErrorMessage: errorMessage,
-                    CalledFrom: "Album.js removeImage"
+                    CalledFrom: "performRenameFolder"
                 });
                 //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
             }
@@ -384,48 +386,6 @@ function setFolderImage(linkId, folderId, level) {
     });
 }
 
-// RENAME A FOLDER
-function OLDrenameFolder() {
-    var start = Date.now();
-    $('#dashBoardLoadingGif').fadeIn();
-    $('#dataifyInfo').show().html("renaming folder " + $('.txtLinkPath').val() + " to " + $('#txtReName').val());
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "api/Folder/Rename?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val(),
-        success: function (success) {
-            $('#dashBoardLoadingGif').hide();
-            //$('#renameFolderCrud').dialog("close");
-            //$('#renameFolderCrud').hide();
-            if (success === "ok") {
-                var delta = Date.now() - start;
-                var minutes = Math.floor(delta / 60000);
-                var seconds = (delta % 60000 / 1000).toFixed(0);
-                displayStatusMessage("ok", "folder " + $('.txtLinkPath').val() + " renamed to " + $('#txtReName').val());
-                console.log("Rename Folder took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-
-                $('.txtLinkPath').val('');
-                $('#renameFolderCrud').dialog("close");
-                logActivity({
-                    PageId: dashboardMainSelectedTreeId,
-                    PageName: $('.txtLinkPath').val(),
-                    Activity: "folder renamed from: " + $('.txtLinkPath').val() + " to " + $('#txtReName').val()
-                });
-                //$('#dataifyInfo').hide();
-            }
-            else {
-                alert("renameFolder: " + success);
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "renameFolder")) {
-                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
-                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
-            }
-        }
-    });
-}
-
 function nonFtpMoveCopy() {
     $('#imagePageLoadingGif').show();
     $.ajax({
@@ -475,87 +435,4 @@ function nonFtpMoveCopy() {
         }
     });
 }
-
-function oldRemoveImage() {
-    //alert("folderId: " + folderId);
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId,
-        success: function (success) {
-            if (success === "ok") {
-                $.ajax({
-                    type: "DELETE",
-                    url: settingsArray.ApiServer + "api/FtpImageRemove/RemoveImageLink?folderId=" + folderId + "&imageId=" + linkId,
-                    success: function (success) {
-                        if (success === "ok") {
-                            if (viewerShowing)
-                                slide("next");
-                            getAlbumImages(folderId);
-
-                            var changeLogModel = {
-                                PageId: folderId,
-                                PageName: folderName,
-                                Activity: "link removed " + linkId
-                            };
-                            logActivity(changeLogModel);
-                        }
-                        else {
-                            alert("removeLink: " + success);
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "BUG",
-                                Severity: 1,
-                                ErrorMessage: success,
-                                CalledFrom: "Album.js removeImage"
-                            });
-                            //sendEmailToYourself("jQuery fail in album.js removeImage", "Message: " + success);
-                        }
-                    },
-                    error: function (xhr) {
-                        var errorMessage = getXHRErrorDetails(xhr);
-                        if (!checkFor404(errorMessage, "removeImage")) {
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "XHR",
-                                Severity: 1,
-                                ErrorMessage: errorMessage,
-                                CalledFrom: "Album.js removeImage"
-                            });
-                            //sendEmailToYourself("XHR error in album.js removeImage", "RemoveImageLink?folderId=" + t
-                        }
-                    }
-                });
-            }
-            else {
-                if (success === "only link")
-                    showDeleteDialog();
-                else {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 3,
-                        ErrorMessage: success,
-                        CalledFrom: "Album.js removeImage"
-                    });
-                    //sendEmailToYourself("jQuery fail in album.js removeImage", "Message: " + success);
-                    //alert(success);
-                }
-            }
-        },
-        error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404(errorMessage, "removeImage")) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "Album.js removeImage"
-                });
-                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
-            }
-        }
-    });
-}
-
 

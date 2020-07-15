@@ -36,7 +36,7 @@ function resizeViewer() {
     $('#viewerImage').height($(window).height() - 30);
     $('.slideshowNavgArrows img').height($(window).height() - 30);
     $('#slideShowContainer').css('width', "100%");
-
+    $(window).scrollTop(0);
     //if ($('#viewerButtonsRow').width() > $(window).width())
     //alert("$('#viewerButtonsRow').width(): " + $('#viewerButtonsRow').width() + "  window.width: " + $(window).width());
 }
@@ -99,8 +99,9 @@ function getSlideshowItems(folderId, startItem) {
             error: function (jqXHR) {
                 $('#imagePageLoadingGif').hide();
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "getAlbumImages")) {
-                    if (document.domain === "localhost") alert("getSlideshowItems: " + errorMessage);
+                if (!checkFor404("getAlbumImages")) {
+                    if (document.domain === "localhost")
+                        alert("getSlideshowItems: " + errorMessage);
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "XHR",

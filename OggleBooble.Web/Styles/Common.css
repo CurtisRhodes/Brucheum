@@ -196,27 +196,31 @@ body {
                 color: #fff;
             }
 
-    .footerFooter {
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        width: 100%;
-        background-color: #212121;
-        padding-bottom: 2px;
-    }
+.footerColCustContainer {
+    text-align: center;
+    float: left;
+    padding: 0;
+}
 
-        .footerFooter div {
-            display: inline-block;
-            padding-left: 12px;
-        }
-
-    .footer #copyright {
+.footerFooter {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    background-color: #212121;
+    padding-bottom: 2px;
+}
+    .footerFooter div {
         display: inline-block;
-        float: right;
-        margin-right: 8px;
+        padding-left: 12px;
     }
-        .footer #copyright a:visited {
-            color: #eee;
-        }
+.footer #copyright {
+    display: inline-block;
+    float: right;
+    margin-right: 8px;
+}
+    .footer #copyright a:visited {
+        color: #eee;
+    }
 
 .roundendButton {
     display: inline-block;

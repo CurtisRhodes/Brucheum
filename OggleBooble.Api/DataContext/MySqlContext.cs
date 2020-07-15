@@ -327,6 +327,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public DateTime? Birthday { get; set; }
         public string FolderComments { get; set; }
         public bool? FakeBoobs { get; set; }
+        public int TotalChildFiles { get; set; }
+        public int SubFolderCount { get; set; }
     }
 
     // VIEWS

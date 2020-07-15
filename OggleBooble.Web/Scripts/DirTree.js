@@ -43,7 +43,7 @@ function loadDirectoryTree(startNode, container, clickEvent) {
             $('#dashBoardLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(xhr);
             alert(errorMessage);
-            if (!checkFor404(errorMessage, "getDirTree")) {
+            if (!checkFor404("getDirTree")) {
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "XHR",

@@ -28,10 +28,17 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                    string fileName = "";
+                    string fullPathName = "";
                     if (dbFolder.FolderImage != null)
-                        fileName = repoDomain + "/" + dbFolder.FolderPath + "/" +
-                           db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault().FileName;
+                    {
+                        var dbImageFile = db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault();
+                        if (dbImageFile != null)
+                        {
+                            //string fileName = dbImageFile.FileName;
+                            fullPathName = repoDomain + "/" + dbFolder.FolderPath + "/" + dbImageFile.FileName;
+                        }
+                    }
+
                     if (Helpers.ContainsRomanNumeral(dbFolder.FolderName))
                     {
                         dbFolder = db.VirtualFolders.Where(f => f.Id == dbFolder.Parent).First();
@@ -40,7 +47,7 @@ namespace OggleBooble.Api.Controllers
                     folderDetailModel.FolderId = folderId;
                     folderDetailModel.FolderName = dbFolder.FolderName;
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
-                    folderDetailModel.FolderImage = fileName;
+                    folderDetailModel.FolderImage = fullPathName;
                     folderDetailModel.InternalLinks = (from l in db.CategoryImageLinks
                                                        join f in db.VirtualFolders on l.ImageCategoryId equals f.Id
                                                        where l.ImageCategoryId == folderId && l.ImageCategoryId != folderId

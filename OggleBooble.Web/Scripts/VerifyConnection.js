@@ -1,4 +1,6 @@
-﻿function getVisitorInfo() {
+﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0, verifyConnectionCountLimit = 17,
+    inCheckFor404Loop = false, checkFor404Loop, persisConnectionInterval, persisConnectionIntervalRunning = false;
+function getVisitorInfo() {
     var info = {
 
         timeOpened: new Date(),
@@ -32,24 +34,18 @@
         scrColorDepth() { return screen.colorDepth },
         scrPixelDepth() { return screen.pixelDepth },
 
-        latitude() { return position.coords.latitude },
-        longitude() { return position.coords.longitude },
-        accuracy() { return position.coords.accuracy },
-        altitude() { return position.coords.altitude },
-        altitudeAccuracy() { return position.coords.altitudeAccuracy },
-        heading() { return position.coords.heading },
-        speed() { return position.coords.speed },
-        timestamp() { return position.timestamp },
+        //latitude() { return position.coords.latitude },
+        //longitude() { return position.coords.longitude },
+        //accuracy() { return position.coords.accuracy },
+        //altitude() { return position.coords.altitude },
+        //altitudeAccuracy() { return position.coords.altitudeAccuracy },
+        //heading() { return position.coords.heading },
+        //speed() { return position.coords.speed },
+        //timestamp() { return position.timestamp },
     };
     return info;
 }
 
-var connectionVerified = false;
-var canIgetaConnectionMessageShowing = false;
-var verifyConnectionCount = 0;
-var verifyConnectionCountLimit = 17;
-var inCheckFor404Loop = false;
-var checkFor404Loop;
 function checkFor404(calledFrom) {
     //sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
     connectionVerified = false;
@@ -110,6 +106,9 @@ function verifyConnection() {
     if (isNullorUndefined(settingsArray.ApiServer)) {
         console.error("verifyConnection settingsArray.ApiServer not defined");
         connectionVerified = false;
+        if (!persisConnectionIntervalRunning)
+            persistConnection();
+
         return;
     }
     else {
@@ -126,6 +125,8 @@ function verifyConnection() {
                         console.log("verifyConnection: connection verified");
                         $('#customMessage').hide();
                         canIgetaConnectionMessageShowing = false;
+                        if (!persisConnectionIntervalRunning)
+                            persistConnection();
                     }
                     else {
                         //if (document.domain === "local host") alert("verifyConnection: " + successModel.Success)
@@ -144,4 +145,46 @@ function verifyConnection() {
             }
         });
     }
+}
+
+function persistConnection() {
+    persisConnectionIntervalRunning = true;
+    persisConnectionInterval = setInterval(function () {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Common/VerifyConnection",
+            success: function (successModel) {
+                if (successModel.Success === "ok") {
+                    if (successModel.ConnectionVerified) {
+                        //clearInterval(checkFor404Loop);
+                        inCheckFor404Loop = false;
+                        connectionVerified = true;
+                        verifyConnectionCount = 0;
+                        console.log("persist Connection ok");
+                    }
+                    else {
+                        if (document.domain === 'localhost')
+                            alert("errorLogReport" + errorMessage);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 12,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "errorLogReport"
+                            });
+                    }
+                }
+                else {
+                    if (document.domain === "local host") alert("verifyConnection JQA: " + successModel.Success)
+                    connectionVerified = false;
+                }
+            },
+            error: function (jqXHR) {
+                var errorMessage = getXHRErrorDetails(jqXHR);
+                if (document.domain === "local host") alert("verifyConnection XHR: " + errorMessage)
+                connectionVerified = false;
+            }
+        });
+    }, 15000);
 }

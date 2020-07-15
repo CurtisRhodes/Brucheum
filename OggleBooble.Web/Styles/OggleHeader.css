@@ -47,7 +47,6 @@
 }
 .bottomLeftHeaderArea {
     padding-right: 8px;
-    padding-top: 11px;
     float: left;
 }
 .badgesSection {
@@ -57,23 +56,18 @@
 .loginArea {
     font-family: Arial;
     font-size: 14px;
-    margin-top: 9px;
+    /*margin-top: 9px;*/
     margin-right: 5px;
     float: right;
 }
 
-.badgeImage {
-    height: 31px;
-    margin-left: 9px;
-    float: left;
-}
 
 .breadCrumbArea {
     float: left;
     display: inline-block;
 }
-.headerBanner {
-    font-size: 17px;
+.headerBannerButton {
+    font-size: 15px;
     display: inline-block;
     border: solid 2px #000;
     border-radius: 10px;
@@ -84,21 +78,25 @@
     cursor: pointer;
 }
 
-.headerBanner a {
+.headerBannerButton a {
     text-decoration: none;
 }
 
+.badgeImage {
+    height: 31px;
+    margin-left: 9px;
+    float: left;
+    font-size: 16px;
+    margin-bottom: 3px;
+    cursor: pointer;
+}
  .blackCenterfoldsBanner {
         border: solid 2px red;
         border-radius: 10px;
-        font-size: 16px;
         padding: 3px;
         white-space: nowrap;
         text-decoration: none;
         background-color: #407d6e;
-        margin-left: 8px;
-        margin-bottom: 3px;
-        cursor: pointer;
     }
 
     .blackCenterfoldsBanner a {
@@ -106,10 +104,10 @@
     }
 
 .headerTitle {
-    padding-left: 6px;
+    font-size: 28px;
+    padding-right: 6px;
     padding-top: 1px;
     font-family: 'Lucida Calligraphy';
-    font-size: 33px;
 }
 
 .classicColors {
@@ -176,7 +174,7 @@
 }
 
 .siteLogo {
-    height: 50px;
+    height: 60px;
     cursor: pointer;
 }
 .hamburger {
@@ -185,12 +183,12 @@
 }
 
 .hdrTopRowMenu {
-    font-size: 20px;
+    font-size: 28px;
     display: inline-block;
     font-family: Comic Sans MS;
     color: var(--oggleTitleColor);
     vertical-align: top;
-    margin-left: 8px;
+    padding-left: 28px;
     margin-right: 8px;
     margin-top: 1px;
     padding: 0;
@@ -198,7 +196,6 @@
 
 .hdrBtmRowOverflow {
     margin-left: 15px;
-    /*border: solid thin red;*/
 }
 
 .topLinkRow a {

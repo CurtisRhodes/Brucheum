@@ -86,7 +86,7 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "loadImages")) {
+            if (!checkFor404("loadImages")) {
                 if (document.domain === 'localhost')
                     alert("XHR error in loadUpdatedGalleriesBoxes\n" + errorMessage);
                 else
@@ -132,20 +132,34 @@ function launchPromoMessages() {
             }
             else {
                 $('#blogLoadingGif').hide();
-                sendEmailToYourself("FAIL in Index.Html launchPromoMessages", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                    "<br/>Called from: " + getCookieValue("IpAddress") + "<br/>Message: " + blogCommentsContainer.Success);
-                //alert("loadPromoMessages: " + blogCommentsContainer.Success)
+                if (document.domain === 'localhost')
+                    alert("launchPromoMessages: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "AJQ",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "launchPromoMessages"
+                    });
             }
         },
         error: function (jqXHR) {
             $('#blogLoadingGif').hide();
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "launchPromoMessages")) {
-                sendEmailToYourself("XHR ERROR in Index.Html launchPromoMessages ", "/api/OggleBlog/GetBlogList?commentType=PRO" +
-                    "Called from: " + getCookieValue("IpAddress") + "  folderId: " + folderId + " Message: " + errorMessage);
+            if (!checkFor404("launchPromoMessages")) {
+                if (document.domain === 'localhost')
+                    alert("launchPromoMessages: " + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "launchPromoMessages"
+                    });
             }
-            //alert("launchPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "settingsArray.ApiServer: " + settingsArray.ApiServer);
         }
     });
 }

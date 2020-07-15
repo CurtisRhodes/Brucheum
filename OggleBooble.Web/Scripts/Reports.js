@@ -9,15 +9,12 @@ function showPerfMetrics() {
 function metricsMatrixReport() {
     if (connectionVerified) {
         //$('#dashBoardLoadingGif').show();
-        alert("metricsMatrixReport");
-
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Report/MetricMatrixReport",
             success: function (metricsMatrixResults) {
                 $('#dashBoardLoadingGif').hide();
                 if (metricsMatrixResults.Success === "ok") {
-
                     var kludge = "<table><tr><th></th><th>Today</th><th>Yesterday</th><th>-2 Days</th><th>-3 Days</th><th>-4 Days</th>" +
                         "<th>-5 Days</th><th>-6 Days</th></tr>";
                     $.each(metricsMatrixResults.MatrixRows, function (idx, row) {
@@ -40,15 +37,31 @@ function metricsMatrixReport() {
                     runMostImageHits();
                 }
                 else {
-                    alert("PageHitsReport: " + metricsMatrixResults.Success);
+                    if (document.domain === 'localhost')
+                        alert("metricsMatrixReport" + metricsMatrixResults.Success);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "AJQ",
+                            Severity: 12,
+                            ErrorMessage: metricsMatrixResults.Success,
+                            CalledFrom: "metricsMatrixReport"
+                        });
                 }
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "renameFolder")) {
-                    alert(errorMessage);
-                    //sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
-                    //    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+                if (!checkFor404("metricsMatrixReport")) {
+                    if (document.domain === 'localhost')
+                        alert("metricsMatrixReport" + errorMessage);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 12,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "metricsMatrixReport"
+                        });
                 }
             }
         });
@@ -57,7 +70,7 @@ function metricsMatrixReport() {
         alert("unable to run report");
 }
 
-function mostVisitedPagesPages() {
+function mostVisitedPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
@@ -73,14 +86,29 @@ function mostVisitedPagesPages() {
                 $('#popPagesContainer').css("display", "inline-block");
             }
             else {
-                alert("mostVisitedPagesPages: " + popularPages.Success);
+                if (document.domain === "localhost")
+                    alert("mostVisitedPages: " + popularPages.Success);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: popularPages.Success,
+                    CalledFrom: "mostVisitedPages"
+                });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "runPopPages")) {
-                alert("runPopPages: " + errorMessage);
-                sendEmailToYourself("XHR ERROR in Dashboard.js runPopPages", "Message: " + errorMessage);
+            if (!checkFor404("runPopPages")) {
+                if (document.domain === "localhost")
+                    alert("mostVisitedPages: " + errorMessage);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: "mostVisitedPages"
+                });
             }
         }
     });
@@ -102,15 +130,31 @@ function runMostImageHits() {
                 $("#mostImageHitsReport").append("</table>");
             }
             else {
-                alert("runMostImageHits: " + mostImageHits.Success);
+                if (document.domain === 'localhost')
+                    alert("runMostImageHits" + mostImageHits.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "AJQ",
+                        Severity: 12,
+                        ErrorMessage: mostImageHits.Success,
+                        CalledFrom: "runMostImageHits"
+                    });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "runMostImageHits")) {
-                alert("runMostImageHits: " + errorMessage);
-                sendEmailToYourself("XHR ERROR in Dashboard.js runMostImageHits", "Message: " + errorMessage);
-            }
+            if (!checkFor404("runMostImageHits")) 
+                if (document.domain === 'localhost')
+                    alert("runMostImageHits" + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 12,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "runMostImageHits"
+                    });
         }
     });
 }
@@ -150,17 +194,31 @@ function runEventActivityReport() {
                 $("#divStandardReportCount").html(" Total: " + activityReport.HitCount.toLocaleString());
             }
             else {
-                alert("activityReport: " + activityReport.Success);
+                if (document.domain === 'localhost')
+                    alert("eventActivityReport" + activityReport.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "AJQ",
+                        Severity: 12,
+                        ErrorMessage: activityReport.Success,
+                        CalledFrom: "eventActivityReport"
+                    });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-
-            alert(errorMessage);
-
-            if (!checkFor404(errorMessage, "ActivityReport")) {
-                sendEmailToYourself("XHR ERROR in Dashboard.js ActivityReport",
-                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+            if (!checkFor404("eventActivityReport")) {
+                if (document.domain === 'localhost')
+                    alert("eventActivityReport" + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 12,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "eventActivityReport"
+                    });
             }
         }
     });
@@ -195,15 +253,31 @@ function runLatestImageHitsReport() {
                 $("#divStandardReportCount").html(" Total: " + imageHitActivityReport.HitCount.toLocaleString());
             }
             else {
-                alert("ImageHitActivityReport: " + mostImageHits.Success);
+                if (document.domain === 'localhost')
+                    alert("LatestImageHitsReport" + imageHitActivityReport.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "AJQ",
+                        Severity: 12,
+                        ErrorMessage: imageHitActivityReport.Success,
+                        CalledFrom: "LatestImageHitsReport"
+                    });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "runMostImageHits")) {
-                alert("runMostImageHits: " + errorMessage);
-                sendEmailToYourself("XHR ERROR in Dashboard.js runMostImageHits", "Message: " + errorMessage);
-            }
+            if (!checkFor404("LatestImageHitsReport"))
+                if (document.domain === 'localhost')
+                    alert("LatestImageHitsReport" + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 12,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "LatestImageHitsReport"
+                    });
         }
     });
 }
@@ -253,14 +327,31 @@ function runMostActiveUsersReport() {
                 $("#divStandardReportCount").html(" Total: " + mostActiveUsersReport.HitCount.toLocaleString());
             }
             else {
-                alert("mostActiveUsersReport: " + mostActiveUsersReport.Success);
+                if (document.domain === 'localhost')
+                    alert("mostActiveUsersReport" + mostActiveUsersReport.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "AJQ",
+                        Severity: 12,
+                        ErrorMessage: mostActiveUsersReport.Success,
+                        CalledFrom: "mostActiveUsersReport"
+                    });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "mostActiveUsersReport")) {
-                alert("runMostImageHits: " + errorMessage);
-                sendEmailToYourself("XHR ERROR in Dashboard.js mostActiveUsersReport", "Message: " + errorMessage);
+            if (!checkFor404("mostActiveUsersReport")) {
+                if (document.domain === 'localhost')
+                    alert("mostActiveUsersReport" + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 12,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "mostActiveUsersReport"
+                    });
             }
         }
     });
@@ -310,14 +401,31 @@ function runPageHitReport() {
                 $("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
-                alert("PageHitsReport: " + pageHitReportModel.Success);
+                if (document.domain === 'localhost')
+                    alert("pageHitsReport" + pageHitReportModel.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "AJQ",
+                        Severity: 12,
+                        ErrorMessage: pageHitReportModel.Success,
+                        CalledFrom: "pageHitsReport"
+                    });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "renameFolder")) {
-                sendEmailToYourself("XHR ERROR in Dashboard.js renameFolder",
-                    "/api/FtpDashboard/RenameFolder?folderId=" + dashboardMainSelectedTreeId + "&newFolderName=" + $('#txtReName').val() + " Message: " + errorMessage);
+            if (!checkFor404("pageHitsReport")) {
+                if (document.domain === 'localhost')
+                    alert("pageHitsReport" + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "AJQ",
+                        Severity: 12,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "pageHitsReport"
+                    });
             }
         }
     });
@@ -384,8 +492,17 @@ function errorLogReport() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "errorLogReport")) {
-                //sendEmailToYourself("XHR ERROR in Dashboard.js FeedbackReport"                    + errorMessage);
+            if (!checkFor404("errorLogReport")) {
+                if (document.domain === 'localhost')
+                    alert("errorLogReport" + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 12,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "errorLogReport"
+                    });
             }
         }
     });
@@ -425,12 +542,31 @@ function FeedbackReport() {
                 //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
-                alert("PageHitsReport: " + feedbackReport.Success);
+                if (document.domain === 'localhost')
+                    alert("FeedbackReport" + feedbackReport.Success);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "AJQ",
+                        Severity: 12,
+                        ErrorMessage: feedbackReport.Success,
+                        CalledFrom: "FeedbackReport"
+                    });
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "FeedbackReport")) {
+            if (!checkFor404("FeedbackReport")) {
+                if (document.domain === 'localhost')
+                    alert("FeedbackReport" + errorMessage);
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 12,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "FeedbackReport"
+                    });
                 //sendEmailToYourself("XHR ERROR in Dashboard.js FeedbackReport"                    + errorMessage);
             }
         }

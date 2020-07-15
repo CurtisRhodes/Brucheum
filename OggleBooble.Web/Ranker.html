@@ -43,14 +43,14 @@
                     <div class="boobsRankerTitle">Boobs Ranker</div>
                     <div class="rankerImageContainer">
                         <div class="rankerImageFloatBox">
-                            <div id="rankerBoxLeft" class="rankerImageSlotBox" onclick="imageClick('Left')"></div>
+                            <div id="rankerBoxLeft" class="rankerImageSlotBox" onclick="rankerBoxClick('Left')"></div>
                             <div id="rankerLeftText" class="rankerImageName" onclick="jumpToFolder('left')"></div>
                         </div>
                         <div id="divCountDown" class="roundCountDowner">
                             <div id="countDownNumber" class="countDownNumberContainer"></div>
                         </div>
                         <div class="rankerImageFloatBox">
-                            <div id="rankerBoxRight" class="rankerImageSlotBox" onclick="imageClick('Right')"></div>
+                            <div id="rankerBoxRight" class="rankerImageSlotBox" onclick="rankerBoxClick('Right')"></div>
                             <div id="rankerRightText" class="rankerImageName" onclick="jumpToFolder('right')"></div>
                         </div>
                     </div>
@@ -197,23 +197,36 @@
 
                     }
                     else {
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "CDE",
-                            Severity: 2,
-                            ErrorMessage: " unknown subdomain: " + container.Success,
-                            CalledFrom: "Ranker.Html loadBoobsRanker"
-                        });
-                        sendEmailToYourself("jQuery Fail in Ranker.Html loadBoobsRanker", " unknown subdomain: " + container.Success);
+                        if (document.domain === 'localhost')
+                            alert("loadBoobsRanker" + container.Success);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "AJQ",
+                                Severity: 12,
+                                ErrorMessage: container.Success,
+                                CalledFrom: "loadBoobsRanker"
+                            });
+                        //sendEmailToYourself("jQuery Fail in Ranker.Html loadBoobsRanker", " unknown subdomain: " + container.Success);
                         //alert("BoobsRanker: " + container.Success);
                     }
                 },
                 error: function (jqXHR) {
                     $('#imagePageLoadingGif').hide();
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "loadBoobsRankers")) {
-                        sendEmailToYourself("XHR ERROR in Ranker.html loadBoobsRanker", "api/BoobsRanker?rootFolder=" + subdomain + "&skip=" + skip + "&take=" + take +
-                            "Called from: " + getCookieValue("IpAddress") + " Message: " + errorMessage);
+                    if (!checkFor404("loadBoobsRankers")) {
+                        if (document.domain === 'localhost')
+                            alert("loadBoobsRanker" + errorMessage);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 12,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "loadBoobsRanker"
+                            });
+                        //sendEmailToYourself("XHR ERROR in Ranker.html loadBoobsRanker", "api/BoobsRanker?rootFolder=" + subdomain + "&skip=" + skip + "&take=" + take +
+                          //  "Called from: " + getCookieValue("IpAddress") + " Message: " + errorMessage);
                     }
                 }
             });
@@ -243,7 +256,17 @@
                     throttleSluts = false;
                     break;
                 default:
-                    sendEmailToYourself("jQuery Fail in Ranker.Html killtimer ", " unknown subdomain: " + subdomain);
+                    if (document.domain === 'localhost')
+                        alert("killTimer unknown subdomain");
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "BUG",
+                            Severity: 12,
+                            ErrorMessage: "unknown subdomain",
+                            CalledFrom: "killTimer"
+                        });                    
+                    //sendEmailToYourself("jQuery Fail in Ranker.Html killtimer ", " unknown subdomain: " + subdomain);
                     //alert("unknown subdomain: " + subdomain);
                     break;
             }
@@ -277,6 +300,16 @@
                         $('#footerMessage').html("removed " + kkk + " " + subdomain + " items");
                     }
                     else {
+                        if (document.domain === 'localhost')
+                            alert("unloadBoobsRanker" + container.Success);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "AJQ",
+                                Severity: 12,
+                                ErrorMessage: container.Success,
+                                CalledFrom: "unloadBoobsRanker"
+                            });
                         sendEmailToYourself("jQuery Fail in Ranker.Html unloadBoobsRanker", container.Success);
                         //alert("unloadBoobsRanker: " + container.Success);
                     }
@@ -285,8 +318,18 @@
                 error: function (jqXHR) {
                     $('#imagePageLoadingGif').hide();
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "loadBoobsRankers")) {
-                        sendEmailToYourself("XHR ERROR in Ranker.html unloadBoobsRanker", "api/BoobsRanker?rootFolder=" + subdomain + "&skip=0&take=50000  Message: " + errorMessage);
+                    if (!checkFor404("loadBoobsRankers")) {
+                        if (document.domain === 'localhost')
+                            alert("loadBoobsRanker" + errorMessage);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 12,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "loadBoobsRanker"
+                            });
+                        //sendEmailToYourself("XHR ERROR in Ranker.html unloadBoobsRanker", "api/BoobsRanker?rootFolder=" + subdomain + "&skip=0&take=50000  Message: " + errorMessage);
                     }
                 }
             });
@@ -337,8 +380,17 @@
                     }
                     break;
                 default:
-                    sendEmailToYourself("jQuery Fail in Ranker.Html Addmore", " unknown subdomain: " + subdomain);
-                    //alert("Addmore unknown subdomain: " + subdomain);
+                    if (document.domain === 'localhost')
+                        alert("addMore unknown subdomain: " + subdomain);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "BUG",
+                            Severity: 12,
+                            ErrorMessage: "unknown subdomain" + subdomain,
+                            CalledFrom: "addMore"
+                        });                    
+                    //sendEmailToYourself("jQuery Fail in Ranker.Html Addmore", " unknown subdomain: " + subdomain);
                     break;
             }
         }
@@ -412,8 +464,16 @@
                     textObject.css("color", "#249c40")
                     break;
                 default:
-                    sendEmailToYourself("jQuery Fail in Ranker.Html setFolderNameColor", " unknown subdomain: " + subdomain);
-                    //alert("setFolderNameColor unknown subdomain: " + subdomain);
+                    if (document.domain === 'localhost')
+                        alert("setFolderNameColor unknown subdomain: " + subdomain);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "BUG",
+                            Severity: 12,
+                            ErrorMessage: "unknown subdomain" + subdomain,
+                            CalledFrom: "setFolderNameColor"
+                        });
                     break;
             }
         }
@@ -453,7 +513,7 @@
             setHeaderRowMessage();
         }
 
-        function imageClick(selectedSide) {
+        function rankerBoxClick(selectedSide) {
             if ($('.rankerImageSlotBox').css('cursor') !== 'not-allowed') {
 
                 if (!isLoggedIn()) {
@@ -493,18 +553,34 @@
 
                         }
                         else {
-                            sendEmailToYourself("jQuery Fail in Ranker.Html imageClick","BoobsRanker POST: " + container.Success);
-                            //alert("BoobsRanker POST: " + container.Success);
+                            if (document.domain === 'localhost')
+                                alert("rankerBoxClick" + success);
+                            else
+                                logError({
+                                    VisitorId: getCookieValue("VisitorId"),
+                                    ActivityCode: "AJQ",
+                                    Severity: 12,
+                                    ErrorMessage: success,
+                                    CalledFrom: "rankerBoxClick"
+                                });
                         }
                     },
                     error: function (jqXHR) {
                         $('#blogLoadingGif').hide();
                         $('#imagePageLoadingGif').hide();
                         var errorMessage = getXHRErrorDetails(jqXHR);
-                        if (!checkFor404(errorMessage, "launchPromoMessages")) {
-                            sendEmailToYourself("XHR ERROR in Ranker.Html imageClick", "api/BoobsRanker.  Message: " + errorMessage); 
-                        }
-                        //alert("launchPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "settingsArray.ApiServer: " + settingsArray.ApiServer);
+                        if (!checkFor404("rankerBoxClick"))
+                            if (document.domain === 'localhost')
+                                alert("rankerBoxClick" + errorMessage);
+                            else
+                                logError({
+                                    VisitorId: getCookieValue("VisitorId"),
+                                    ActivityCode: "XHR",
+                                    Severity: 12,
+                                    ErrorMessage: errorMessage,
+                                    CalledFrom: "rankerBoxClick"
+                                });
+                            //sendEmailToYourself("XHR ERROR in Ranker.Html rankerBoxClick", "api/BoobsRanker.  Message: " + errorMessage); 
                     }
                 });
             }

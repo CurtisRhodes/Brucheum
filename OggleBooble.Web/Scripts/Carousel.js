@@ -1,17 +1,18 @@
 ﻿let imageIndex = 0, numImages = 0, numFolders = 0, rotationSpeed = 7000, intervalSpeed = 600,
-    carouselItemArray = [], imageHistory = [],
+    carouselItemArray = [], imageHistory = [], absolueStart,
     vCarouselInterval, carouselImageViews = 0, carouselImageErrors = 0,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
     carouselSkip = 0, imgSrc, jsCarouselSettings, nextRoot = 1, specialLaunchCode = 112;
 let debugMode = true;
 
 function launchCarousel(startRoot) {
-    //$('#footerMessage2').html("launching carousel");
-    //if (isNullorUndefined(window.localStorage["carouselSettings"]))
+    absolueStart = Date.now();
+    $('#footerMessage2').html("launching carousel");
+    if (!isNullorUndefined(window.localStorage["carouselSettings"]))
     {
         lsCarouselSettings = {
-            includeArchive: true,
-            includeCenterfolds: true,
+            includeArchive: false,
+            includeCenterfolds: false,
             includePorn: false,
             includeSoftcore: true,
             includeLandscape: true,
@@ -19,73 +20,46 @@ function launchCarousel(startRoot) {
         };
         window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
     }
-    //else {
-    //    console.log("carouselSettings found in local storage!");
-    //    //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
-    //}
+    else {
+        console.log("carouselSettings found in local storage!");
+        //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
+    }
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
 
     //initial call to loadimages
-    loadImages(startRoot, Date.now(), 0, specialLaunchCode, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-
+    loadImages(startRoot, absolueStart, 0, specialLaunchCode, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     window.addEventListener("resize", resizeCarousel);
-}
-
-function addMoreRootsToCarousel() {
-    if (nextRoot === 1) {
-        nextRoot = 2;
-        if (jsCarouselSettings.includeArchive) {
-            $('#footerMessage2').html("loading archive");
-            loadImages("archive", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-            return;
-        }
-    }
-    if (nextRoot === 2) {
-        nextRoot = 3;
-        if (jsCarouselSettings.includeCenterfolds) {
-            $('#footerMessage2').html("loading centerfolds");
-            loadImages("centerfold", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-            return;
-        }
-    }
-    if (nextRoot === 3) {
-        nextRoot = 4;
-        if (jsCarouselSettings.includeSoftcore) {
-            $('#footerMessage2').html("loading soft core");
-            loadImages("soft", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-            return;
-        }
-    }
-    if (nextRoot === 4) {
-        nextRoot = 5;
-        if (jsCarouselSettings.includePorn) {
-            if (jsCarouselSettings.includePorn) {
-                $('#footerMessage2').html("loading sluts");
-                loadImages("sluts", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-                return;
-            }
-        }
-    }
-    if (nextRoot === 5) {
-        nextRoot = 6;
-        if (jsCarouselSettings.includePorn) {
-            if (jsCarouselSettings.includePorn) {
-                $('#footerMessage2').html("loading porn");
-                loadImages("porn", Date.now(), carouselItemArray.length, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-                return;
-            } 
-        }
-    }
-    if (nextRoot === 6) {
-
-        alert("DONE");
-    }
 }
 
 function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
     var start = Date.now();
     settingsImgRepo = settingsArray.ImageRepo;
     try {
+
+        if (take === specialLaunchCode) {
+            console.log("take === specialLaunchCode");
+            if (!isNullorUndefined(window.localStorage["carouselCache"])) {
+                let carouselCacheArray = JSON.parse(window.localStorage["carouselCache"]);
+                $.each(carouselCacheArray, function (idx, obj) {
+                    carouselItemArray.push(obj);
+                });
+
+                if (carouselItemArray.length === 0) alert("ix00");
+
+                $('.carouselFooter').css("visibility", "hidden");
+                $('#topIndexPageSection').html(carouselHtml());
+                setTimeout(function () {
+                    resizeCarousel();
+                    startCarousel();
+                    console.log("startCarousel");
+                }, 1600);
+
+                let delta = (Date.now() - absolueStart) / 1000;
+                $('#footerMessage2').html("initial launch from cache took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                skip += 100;
+            }
+        }
+
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/IndexPage/GetCarouselImages?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
@@ -117,27 +91,39 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     });
 
                     if (take === specialLaunchCode) {
-                        $('#topIndexPageSection').html(carouselHtml());
-                        $('.carouselFooter').css("visibility", "hidden");
-                        if (carouselItemArray.length === 0) alert("ix00");
-                        newImageIndex = Math.floor(Math.random() * specialLaunchCode);
-                        startCarousel(newImageIndex);
-                        delta = (Date.now() - absolueStart) / 1000;
-                        $('#footerMessage2').html("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                        alet("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                        if (isNullorUndefined(window.localStorage["carouselCache"]))
+                        {
+                            console.log("isNullorUndefined(window.localStorage[carouselCache])");
+
+                            $('#topIndexPageSection').html(carouselHtml());
+                            $('.carouselFooter').css("visibility", "hidden");
+                            if (carouselItemArray.length === 0) alert("ix00");
+                            startCarousel();
+                            delta = (Date.now() - absolueStart) / 1000;
+                            $('#footerMessage2').html("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                            //alert("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+
+                            let jsnObj = "[";  //new JSONArray();
+                            //let jsnObj = [];
+                            for (i = 0; i < 101; i++) {
+                                //if (i === 12) { alert("carouselItemArray[i]: " + JSON.stringify(carouselItemArray[i])); }
+                                jsnObj += (JSON.stringify(carouselItemArray[i])) + ",";
+                            }
+                            window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                        }
                     }
                     if (carouselInfo.Links.length === take) {
                         carouselSkip += take;
                         take = 2000;
                         loadImages(rootFolder, absolueStart, carouselSkip, take, includeLandscape, includePortrait);
-                        $('#footerMessage2').html(rootFolder + " carousel items loaded: " + carouselItemArray.length.toLocaleString() + " skip: " + carouselSkip.toLocaleString());
+                        if (take !== specialLaunchCode)
+                            $('#footerMessage2').html(carouselSkip + "  " + rootFolder + " loaded");
+                        else
+                            alert($('#footerMessage2').html());
                     }
                     else {
                         addMoreRootsToCarousel();
-                        delta = (Date.now() - absolueStart) / 1000;
-                        console.log("loadImages(" + rootFolder + ") DONE!! took: " + delta.toFixed(3) + " total: " + carouselItemArray.length.toLocaleString());
-                        $('#footerMessage2').html("loadImages DONE!! took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-
+                        //console.log("loadImages(" + rootFolder + ") DONE!! took: " + delta.toFixed(3) + " total: " + carouselItemArray.length.toLocaleString());
                     }
                 }
                 else {
@@ -158,7 +144,7 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "loadImages")) {
+                if (!checkFor404("loadImages")) {
                     if (document.domain === "localhost")
                         alert("Carousel loadImages:\n" + errorMessage);
                     else
@@ -178,34 +164,87 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
     }
 }
 
-function startCarousel(startIndex) {
+function addMoreRootsToCarousel() {
+    if (nextRoot === 1) {
+        nextRoot = 2;
+        if (jsCarouselSettings.includeArchive) {
+            $('#footerMessage2').html("loading archive");
+            carouselSkip = 0;
+            loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+            return;
+        }
+    }
+    if (nextRoot === 2) {
+        nextRoot = 3;
+        if (jsCarouselSettings.includeCenterfolds) {
+            $('#footerMessage2').html("loading centerfolds");
+            carouselSkip = 0;
+            loadImages("centerfold", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+            return;
+        }
+    }
+    if (nextRoot === 3) {
+        nextRoot = 4;
+        if (jsCarouselSettings.includeSoftcore) {
+            $('#footerMessage2').html("loading soft core");
+            carouselSkip = 0;
+            loadImages("soft", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+            return;
+        }
+    }
+    if (nextRoot === 4) {
+        nextRoot = 5;
+        if (jsCarouselSettings.includePorn) {
+            if (jsCarouselSettings.includePorn) {
+                $('#footerMessage2').html("loading sluts");
+                carouselSkip = 0;
+                loadImages("sluts", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+                return;
+            }
+        }
+    }
+    if (nextRoot === 5) {
+        nextRoot = 6;
+        if (jsCarouselSettings.includePorn) {
+            if (jsCarouselSettings.includePorn) {
+                $('#footerMessage2').html("loading porn");
+                loadImages("porn", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+                return;
+            }
+        }
+    }
+    if (nextRoot === 6) {
+        let delta = (Date.now() - absolueStart) / 1000;
+        console.log("loadImages DONE!! took: " + delta.toFixed(3) + " total: " + carouselItemArray.length.toLocaleString());
+        $('#footerMessage2').html("loadImages DONE!! took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+        setTimeout(function () { $('#footerMessage2').html("") }, 12000);
+        //alert("DONE");
+    }
+}
+
+function startCarousel() {
     $('.assuranceArrows').show();
-    intervalBody(startIndex);
+
+    resizeCarousel();
+    intervalBody();
     vCarouselInterval = setInterval(function () {
-        newImageIndex = Math.floor(Math.random() * carouselItemArray.length);
-        intervalBody(newImageIndex);
+        intervalBody();
     }, rotationSpeed);
 }
-function intervalBody(newImageIndex) {
-    //alert("intervalBody");
 
-    imageIndex = newImageIndex;
+function intervalBody() {
+    imageIndex = Math.floor(Math.random() * carouselItemArray.length);
     $('.carouselFooter').css("visibility", "hidden");
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-        if (isNullorUndefined(carouselItemArray[imageIndex]))
-            console.log("carouselItemArray[" + imageIndex + "] undefined ");
-        else {
-            imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
-            $('#thisCarouselImage').attr('src', imgSrc).load(function ()
-            {
-                $('#carouselFooter').fadeIn();
-                setLabelLinks();
-                imageHistory.push(imageIndex);
-                $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+        imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
+        $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+            $('#carouselFooter').fadeIn();
+            setLabelLinks();
+            imageHistory.push(imageIndex);
+            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
 
-                $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
-            });
-        }
+            $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
+        });
     });
 }
 
@@ -327,10 +366,8 @@ function clickSpeed(speed) {
         rotationSpeed = Math.max(rotationSpeed - 800, 800);
     if (speed === 'slower')
         rotationSpeed += 800;
-    imageIndex = Math.floor(Math.random() * numImages);
-    $('.carouselImage').attr('src', carouselItemArray[imageIndex].Link);
     clearInterval(vCarouselInterval);
-    startCarousel(imageIndex);
+    startCarousel();
 }
 function togglePause() {
     if ($('#pauseButton').html() === "||")
@@ -347,8 +384,7 @@ function pause() {
 function resume() {
     //alert("resume()");
     clearInterval(vCarouselInterval);
-    imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-    startCarousel(imageIndex);
+    startCarousel();
     $('#pauseButton').html("||");
 }
 
@@ -384,7 +420,7 @@ function showCarouelSettingsDialog() {
         }
         else {
 
-            updateUserSettings(userName, "CarouselSettings", lsCarouselSettings)
+            updateUserSettings(visitorId, "CarouselSettings", lsCarouselSettings)
 
             alert("this." + this.id + " checked: " + this.checked);
 
@@ -433,7 +469,15 @@ function assuranceArrowClick(direction) {
         pause();
         //imageHistory.pop();
         imageHistory.pop();
-        intervalBody(imageHistory.pop());
+
+        imgSrc = settingsImgRepo + carouselItemArray[imageHistory.pop()].FileName;
+        $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+            $('#carouselFooter').fadeIn();
+            setLabelLinks();
+            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+            $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
+        });
+        //intervalBody(imageHistory.pop());
     }
 }
 function clickViewGallery(labelClick) {

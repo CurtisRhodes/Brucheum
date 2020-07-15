@@ -169,14 +169,29 @@
                     },
                     error: function (jqXHR) {
                         var errorMessage = getXHRErrorDetails(jqXHR);
-                        if (!checkFor404(errorMessage, "LoadPicArray")) {
-                            sendEmailToYourself("XHR ERROR in Transitions.html LoadPicArray", "api/Transitions?folderName=" + subdomain + " Message: " + errorMessage);
+                        if (!checkFor404("LoadPicArray")) {
+                            if (document.domain === "localhost")
+                                alert("Transitions/LoadPicArray: " + errorMessage);
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 1,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "Transitions/LoadPicArray"
+                            });
                         }
                     }
                 });
             } catch (e) {
-                sendEmailToYourself("LoadPicArray","CATCH :" + e.Message);
-                //alert("LoadPicArray CATCH :" + e.Message);
+                if (document.domain === "localhost")
+                    alert("Transitions/LoadPicArray: " + e);
+                logError({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "XHR",
+                    Severity: 1,
+                    ErrorMessage: e,
+                    CalledFrom: "Transitions/LoadPicArray"
+                });
             }
         };
 

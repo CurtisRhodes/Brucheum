@@ -85,7 +85,7 @@ function saveFeedback() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "saveFeedbackDialog")) {
+            if (!checkFor404("saveFeedbackDialog")) {
                 if (document.domain === 'localhost')
                     alert("saveFeedback: " + success);
                 else
@@ -143,7 +143,7 @@ function getUserEmail() {
 
                 alert("XHR ERROR IN getUserEmail" + errorMessage);
 
-                if (!checkFor404(errorMessage, "getUserEmail")) {
+                if (!checkFor404("getUserEmail")) {
                     logError({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "XHR",

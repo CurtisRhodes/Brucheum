@@ -195,13 +195,13 @@ function repairLinks(justOne) {
                     var seconds = (delta % 60000 / 1000).toFixed(0);
                     //console.log("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                     $('#dataifyInfo').html("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                    $('#dataifyInfo').append(", Files Processed: " + repairReport.PhyscialFilesProcessed);
+                    $('#dataifyInfo').append(", Files: " + repairReport.PhyscialFilesProcessed);
                     $('#dataifyInfo').append(", Links: " + repairReport.LinkRecordsProcessed);
                     $('#dataifyInfo').append(", Image rows: " + repairReport.ImageFilesProcessed);
                     if (repairReport.OrphanCatLinkRecs.length > 0)
-                        $('#dataifyInfo').append(", Orphan CatLink Recs: " + repairReport.OrphanCatLinkRecs.length);
+                        $('#dataifyInfo').append(", Orphan Links: " + repairReport.OrphanCatLinkRecs.length);
                     if (repairReport.OrphanImageFileRecs.length > 0)
-                        $('#dataifyInfo').append(", Orphan ImageFile Recs: " + repairReport.OrphanImageFileRecs.length);
+                        $('#dataifyInfo').append(", Orphan Recs: " + repairReport.OrphanImageFileRecs.length);
                     if (repairReport.ImagesDownLoaded > 0)
                         $('#dataifyInfo').append(", Images DownLoaded: " + repairReport.ImagesDownLoaded);
                     if (repairReport.LinksEdited > 0)
@@ -629,7 +629,7 @@ function prepareXhamsterPage() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "prepareXhamsterPage")) {
+            if (!checkFor404("prepareXhamsterPage")) {
                 sendEmailToYourself("XHR ERROR in Dashboard.js prepareXhamsterPage",
                     "/api/xHampster?folderId=" + pSelectedTreeId + " Message: " + errorMessage);
             }
@@ -684,7 +684,7 @@ function showMoveManyTool() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "showMoveManyTool")) 
+            if (!checkFor404("showMoveManyTool")) 
                 sendEmailToYourself("XHR ERROR in Dashboard.js showMoveManyTool", "Message: " + errorMessage);            
             alert("showMoveManyTool xhr error: " + errorMessage);
         }
@@ -738,7 +738,7 @@ function moveCheckedImages() {
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "moveCheckedImages"))
+                if (!checkFor404("moveCheckedImages"))
                     sendEmailToYourself("XHR ERROR in Dashboard.js moveCheckedImages", "Message: " + errorMessage);
                 alert("moveCheckedImages xhr error: " + errorMessage);
             }
@@ -787,7 +787,7 @@ function updateSortOrder() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "updateSortOrder")) {
+            if (!checkFor404("updateSortOrder")) {
                 sendEmailToYourself("XHR ERROR in Dashboard.js updateSortOrder",
                     "/api/ImagePage/GetImageLinks?folderId=" + pSelectedTreeId + " Message: " + errorMessage);
             }
@@ -829,7 +829,8 @@ function loadSortImages() {
 }
 
 // MOVE FOLDER
-function XXmoveFolder() {
+function showMoveFolderDialog() {
+
     //$('#dataifyInfo').show().html("Preparing to Move Folder");
     $('#dataifyInfo').show().html("Moving Folder");
     //$('#progressBar').show();
@@ -925,7 +926,7 @@ function emergencyFolderLocationFix() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "emergencyFolderLocationFix")) {
+            if (!checkFor404("emergencyFolderLocationFix")) {
                 alert("XHR ERROR in Dashboard.js renameFolder" + errorMessage);
             }
         }
@@ -954,7 +955,7 @@ function MoveManyCleanup() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "emergencyFolderLocationFix")) {
+            if (!checkFor404("emergencyFolderLocationFix")) {
                 alert("XHR ERROR in Dashboard.js renameFolder" + errorMessage);
             }
         }
@@ -1012,7 +1013,7 @@ function XXloadProperties() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "loadProperties")) {
+            if (!checkFor404("loadProperties")) {
                 sendEmailToYourself("XHR ERROR in Blog.js putBlogEntry", "/api/OggleBlog Message: " + errorMessage);
             }
         }
@@ -1044,7 +1045,7 @@ function XXmergeFolders() {
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "collapseChildFolder")) {
+                if (!checkFor404("collapseChildFolder")) {
                     sendEmailToYourself("XHR ERROR in Dashboard.js collapseChildFolder", "/api/MoveImage/CollapseFolder?folderId=" + pSelectedTreeId + " Message: " + errorMessage);
                 }
             }

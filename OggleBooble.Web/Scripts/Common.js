@@ -23,7 +23,7 @@ function loadOggleSettings() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "loadSettings")) {
+            if (!checkFor404("loadSettings")) {
                 if (document.domain === "localhost") alert("loadSettings: " + errorMessage);
                 else
                     logError({
@@ -274,7 +274,7 @@ function logError(logErrorModel) {
             },
             error: function (jqXHR) {
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errorMessage, "logError")) {
+                if (!checkFor404("logError")) {
                     console.error("XHR error in logError!!: " + errorMessage);
                 }
             }
@@ -424,7 +424,7 @@ function showCustomMessage(blogId, allowClickAnywhere) {
             }
             else {
                 //if (entry.Success.indexOf("Option not supported") > -1) {
-                checkFor404(successModel.Success, "showCustomMessage");
+                checkFor404("showCustomMessage");
                 logError({
                     VisitorId: getCookieValue("VisiorId"),
                     ActivityCode: "JQR",
@@ -440,7 +440,7 @@ function showCustomMessage(blogId, allowClickAnywhere) {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "showCustomMessage")) {
+            if (!checkFor404("showCustomMessage")) {
                 logError({
                     VisitorId: getCookieValue("VisiorId"),
                     ActivityCode: "XHR",

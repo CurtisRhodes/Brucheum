@@ -69,27 +69,29 @@ function loadComment() {
             }
             else {
                 if (document.domain === "localhost") alert("AJX addImageComment: " + comment.Success);
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "AJX",
-                    Severity: 1,
-                    ErrorMessage: success,
-                    CalledFrom: "addImageComment"
-                });
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "AJX",
+                        Severity: 1,
+                        ErrorMessage: success,
+                        CalledFrom: "addImageComment"
+                    });
                 //sendEmailToYourself("ERROR in ImageCommentDialog.js loadComment", "saveComment: " + comment.Success);
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "loadComment")) {
+            if (!checkFor404("loadComment")) {
                 if (document.domain === "localhost") alert("XHR loadComment: " + errorMessage);
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "loadComment"
-                });
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "loadComment"
+                    });
                 //sendEmailToYourself("XHR ERROR in ImageCommentDialog.js loadComment",
                 //    "/api/OggleBlog?linkId=" + blogComment.LinkId + "&userId=" + blogComment.UserId + " Message: " + errorMessage);
             }
@@ -143,15 +145,16 @@ function addImageComment() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "addImageComment")) {
+            if (!checkFor404("addImageComment")) {
                 if (document.domain === "localhost") alert("XHR editImageComment: " + errorMessage);
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "addImageComment"
-                });
+                else
+                    logError({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "XHR",
+                        Severity: 1,
+                        ErrorMessage: errorMessage,
+                        CalledFrom: "addImageComment"
+                    });
                 //sendEmailToYourself("XHR ERROR in ImageCommentDialog.js addImageComment", "/api/OggleBlog Message: " + errorMessage);
             }
         }
@@ -169,9 +172,10 @@ function editImageComment() {
             }
             else {
                 if (document.domain === "localhost") alert("AJX editImageComment: " + success);
+                else
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "AJX",
+                    ActivityCode: "AJQ",
                     Severity: 1,
                     ErrorMessage: success,
                     CalledFrom: "editImageComment"
@@ -181,8 +185,9 @@ function editImageComment() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "editImageComment")) {
+            if (!checkFor404("editImageComment")) {
                 if (document.domain === "localhost") alert("XHR editImageComment: " + errorMessage);
+                else
                 logError({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "XHR",

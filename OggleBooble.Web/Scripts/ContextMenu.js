@@ -94,7 +94,7 @@ function getLimitedImageDetails() {
         },
         error: function (xhr) {
             var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404()) {
+            if (!checkFor404("getLimitedImageDetails")) {
                 if (document.domain === "localhost")
                     alert("getImageDetails XHR: " + errorMessage);
                 else
@@ -186,7 +186,7 @@ function getFullImageDetails() {
         },
         error: function (xhr) {
             var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404()) {
+            if (!checkFor404("getFullImageDetails")) {
                 if (document.domain === "localhost")
                     alert("getImageDetails XHR: " + errorMessage);
                 else
@@ -195,7 +195,7 @@ function getFullImageDetails() {
                         ActivityCode: "XHR",
                         Severity: 1,
                         ErrorMessage: errorMessage,
-                        CalledFrom: "Album.js removeImage"
+                        CalledFrom: "getFullImageDetails"
                     });
                 //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
             }
@@ -262,7 +262,7 @@ function ctxGetFolderDetails() {
         },
         error: function (xhr) {
             var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404()) {
+            if (!checkFor404("ctxGetFolderDetails")) {
                 if (document.domain === "localhost")
                     alert("ctxGetFolderDetails XHR: " + errorMessage);
                 else
@@ -341,7 +341,7 @@ function contextMenuAction(action) {
             //showLinks(pLinkId);
             break;
         case "archive":
-            showArchiveLinkDialog(pLinkId, pImgSrc);
+            showArchiveLinkDialog(pLinkId, pFolderId, pImgSrc);
             break;
         case "copy":
             showCopyLinkDialog(pLinkId, pFolderId, pImgSrc);

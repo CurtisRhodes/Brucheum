@@ -52,7 +52,7 @@ function loadBlogDropDowns() {
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404()) {
+            if (!checkFor404("loadBlogDropDowns")) {
                 //sendEmailToYourself("XHR ERROR IN getRefValues", "api/Ref/Get?refType=" + refType + "<br/>" + errorMessage);
                 if (document.domain === 'localhost')
                     alert("XHR error in loadBlogDropDowns\n" + errorMessage);
@@ -125,16 +125,17 @@ function loadBlogArticles(commentType) {
             error: function (jqXHR) {
                 $('#blogLoadingGif').hide();
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404()) {
-                    //sendEmailToYourself("XHR ERROR in Blog.js loadBlogArticles", "/api/OggleBlog/GetBlogList?commentType=" + commentType + "  Message: " + errorMessage);
-                    if (document.domain === 'localhost') alert("XHR error in loadBlogArticles\n" + errorMessage);
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "loadBlogArticles"
-                    });
+                if (!checkFor404("loadBlogArticles")) {
+                    if (document.domain === 'localhost')
+                        alert("XHR error in loadBlogArticles\n" + errorMessage);
+                    else
+                        logError({
+                            VisitorId: getCookieValue("VisitorId"),
+                            ActivityCode: "XHR",
+                            Severity: 1,
+                            ErrorMessage: errorMessage,
+                            CalledFrom: "loadBlogArticles"
+                        });
                 }
             }
         });
@@ -182,7 +183,7 @@ function loadFolderComments() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errorMessage, "loadBlogArticles")) {
+            if (!checkFor404("loadBlogArticles")) {
                 sendEmailToYourself("XHR ERROR in Blog.js loadBlogArticles", "/api/CategoryComment/GetCategoryComments  Message: " + errorMessage);
             }
         }
@@ -416,7 +417,17 @@ function loadBlogList(commentType) {
                     }
                     else {
                         $('#blogLoadingGif').hide();
-                        sendEmailToYourself("jquery fail in Blog.js loadBlogArticles", "load BlogList: " + categoryCommentContainer.Success);
+                        if (document.domain === 'localhost')
+                            alert("XHR error in loadBlogList\n" + categoryCommentContainer.Success);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "AJQ",
+                                Severity: 1,
+                                ErrorMessage: categoryCommentContainer.Success,
+                                CalledFrom: "loadBlogList"
+                            });
+                        //sendEmailToYourself("jquery fail in Blog.js loadBlogArticles", "load BlogList: " + categoryCommentContainer.Success);
                         //alert("load BlogList: " + categoryCommentContainer.Success);
                     }
                     resizeBlogPage();
@@ -424,8 +435,18 @@ function loadBlogList(commentType) {
                 error: function (jqXHR) {
                     $('#blogLoadingGif').hide();
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "loadBlogList")) {
-                        sendEmailToYourself("XHR ERROR in Blog.js loadBlogList", "/api/CategoryComment  Message: " + errorMessage);
+                    if (!checkFor404("loadBlogList")) {
+                        if (document.domain === 'localhost')
+                            alert("XHR error in loadBlogList\n" + errorMessage);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 1,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "loadBlogList"
+                            });
+                        //sendEmailToYourself("XHR ERROR in Blog.js loadBlogList", "/api/CategoryComment  Message: " + errorMessage);
                     }
                 }
             });
@@ -532,14 +553,34 @@ function saveBlogEntry() {
                         blogObject.Id = successModel.ReturnValue;
                     }
                     else {
-                        sendEmailToYourself("jQuery fail in Blog.js saveBlogEntry", "saveBlogEntry: " + successModel.Success);
+                        if (document.domain === 'localhost')
+                            alert("saveBlogEntry: " + successModel.Success);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "AJQ",
+                                Severity: 1,
+                                ErrorMessage: successModel.Success,
+                                CalledFrom: "saveBlogEntry"
+                            });
+                        //sendEmailToYourself("jQuery fail in Blog.js saveBlogEntry", "saveBlogEntry: " + successModel.Success);
                         //alert("saveBlogEntry: " + successModel.Success);
                     }
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "loadBlogEntry")) {
-                        sendEmailToYourself("XHR ERROR in Blog.js saveBlogEntry", "/api/OggleBlog Message: " + errorMessage);
+                    if (!checkFor404("loadBlogEntry")) {
+                        if (document.domain === 'localhost')
+                            alert("XHR error in saveBlogEntry\n" + errorMessage);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 1,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "saveBlogEntry"
+                            });
+                        //sendEmailToYourself("XHR ERROR in Blog.js saveBlogEntry", "/api/OggleBlog Message: " + errorMessage);
                     }
                 }
             });
@@ -555,21 +596,51 @@ function saveBlogEntry() {
                         loadBlogList(blogObject.CommentType);
                     }
                     else {
-                        sendEmailToYourself("jQuery fail in Blog.js saveBlogEntry", "update blogEntry: " + success);
+                        if (document.domain === 'localhost')
+                            alert("Blog/Update: " + success);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "AJQ",
+                                Severity: 1,
+                                ErrorMessage: success,
+                                CalledFrom: "Blog/Update"
+                            });
+                        //sendEmailToYourself("jQuery fail in Blog.js saveBlogEntry", "update blogEntry: " + success);
                         //alert("update blogEntry: " + success);
                     }
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errorMessage, "putBlogEntry")) {
-                        sendEmailToYourself("XHR ERROR in Blog.js putBlogEntry", "/api/OggleBlog Message: " + errorMessage);
+                    if (!checkFor404("putBlogEntry")) {
+                        if (document.domain === 'localhost')
+                            alert("XHR error in Blog/Update\n" + errorMessage);
+                        else
+                            logError({
+                                VisitorId: getCookieValue("VisitorId"),
+                                ActivityCode: "XHR",
+                                Severity: 1,
+                                ErrorMessage: errorMessage,
+                                CalledFrom: "saveBlogEntry"
+                            });
+                        //sendEmailToYourself("XHR ERROR in Blog.js putBlogEntry", "/api/OggleBlog Message: " + errorMessage);
                     }
                 }
             });
         }
 
     } catch (e) {
-        sendEmailToYourself("catch error in Blog.js putBlogEntry", "saveBlogEntry catch: " + e);
+        if (document.domain === 'localhost')
+            alert("CATCH error in Blog/Update\n" + e);
+        else
+            logError({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "CAT",
+                Severity: 1,
+                ErrorMessage: e,
+                CalledFrom: "saveBlogEntry"
+            });
+        //sendEmailToYourself("catch error in Blog.js putBlogEntry", "saveBlogEntry catch: " + e);
         //alert("saveBlogEntry catch: " + e);
     }
 }

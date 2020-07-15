@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Runtime.InteropServices;
 
 namespace OggleBooble.Api.Controllers
 {
@@ -24,9 +25,14 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     if (includeLandscape)
+                    {
+                        //List<VwCarouselItem> carouselItems = db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
+                        //    .Where(v => v.Width > v.Height)
+                        //    .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList();
                         carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
                             .Where(v => v.Width > v.Height)
                             .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
+                    }
                     if (includePortrait)
                         carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
                             .Where(v => v.Height >= v.Width)
