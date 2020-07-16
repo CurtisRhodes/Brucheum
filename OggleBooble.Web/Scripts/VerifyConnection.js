@@ -81,16 +81,7 @@ function checkFor404(calledFrom) {
                             if (isNullorUndefined(visitorId))
                                 visitorId = "--";
                             canIgetaConnectionMessageShowing = true;
-                            if (document.domain === "localhost")
-                                console.log("SERVICE DOWN");
-                            else
-                                logError({
-                                    VisitorId: visitorId,
-                                    ActivityCode: "404",
-                                    Severity: 1,
-                                    ErrorMessage: "SERVICE DOWN",
-                                    CalledFrom: "checkFor404 /"+ calledFrom
-                                });
+                            logError("BUG", "SERVICE DOWN", "checkFor404 /" + calledFrom);
                         }
                     }
                     verifyConnection();
@@ -163,28 +154,18 @@ function persistConnection() {
                         console.log("persist Connection ok");
                     }
                     else {
-                        if (document.domain === 'localhost')
-                            alert("errorLogReport" + errorMessage);
-                        else
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "XHR",
-                                Severity: 12,
-                                ErrorMessage: errorMessage,
-                                CalledFrom: "errorLogReport"
-                            });
+                        logError("BUG", successModel.Success, "persistConnection");
                     }
                 }
                 else {
-                    if (document.domain === "local host") alert("verifyConnection JQA: " + successModel.Success)
+                    logError("BUG", successModel.Success, "persistConnection");
                     connectionVerified = false;
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (document.domain === "local host") alert("verifyConnection XHR: " + errorMessage)
+                logError("XHR", getXHRErrorDetails(jqXHR), "persistConnection");
                 connectionVerified = false;
             }
         });
-    }, 15000);
+    }, 45000);
 }

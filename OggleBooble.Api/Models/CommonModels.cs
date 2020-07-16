@@ -73,8 +73,8 @@ namespace OggleBooble.Api.Models
     public class LogErrorModel
     {
         public string VisitorId { get; set; }
-        public string ActivityCode { get; set; }
-        public int Severity { get; set; }
+        public string ErrorCode { get; set; }
+        public int PageId { get; set; }
         public string ErrorMessage { get; set; }
         public string CalledFrom { get; set; }
     }

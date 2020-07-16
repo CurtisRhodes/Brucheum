@@ -17,19 +17,9 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
     try {
         var visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
-            if (document.domain === 'localhost')
-                console.error("visitorId not set in reportThenPerformEvent: " + eventCode);
-            else
-                logError({
-                    VisitorId: "undefined",
-                    ActivityCode: "CA2",
-                    Severity: 2,
-                    ErrorMessage: "visitorId not set",
-                    CalledFrom: "reportThenPerformEvent/" + calledFrom
-                });
+            logError("BUG", pageId, "visitorId not set ", "reportThenPerformEvent/" + calledFrom);
             visitorId = "unknown";
         }
-
         logEventActivity({
             VisitorId: visitorId,
             EventCode: eventCode,
@@ -37,21 +27,10 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
             PageId: pageId,
             CalledFrom: calledFrom
         });
-
         performEvent(eventCode, calledFrom, eventDetail, pageId);
-
     }
     catch (e) {
-        if (document.domain === 'localhost')
-            alert("reportThenPerformEvent Catch Error: " + e);
-        else
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "CA2",
-                Severity: 2,
-                ErrorMessage: e,
-                CalledFrom: "reportThenPerformEvent/" + calledFrom
-            });
+        logError("CAT", pageId, e, "reportThenPerformEvent/" + calledFrom);
     }
 }
 
@@ -130,19 +109,10 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
                         showCustomMessage(35, false);
                     break;
                 default:
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "KLG",
-                        Severity: 2,
-                        ErrorMessage: "uncaught switch option Left Menu Click EventDetail: " + eventDetail,
-                        CalledFrom: calledFrom
-                    });
-                //alert("uncaught switch option Left Menu Click\nEventDetail: " + eventDetail); break;
+                    logError("BUG", pageId, "Uncaught Case: " + eventDetail, "performEvent/Left Menu Click EventDetail");
             }
             break;
         case "FLC":  //  footer link clicked
-            //if (document.domain === 'localhost') alert("eventCode: " + eventCode + " pageId: " + pageId);
-            //reportThenPerformEvent(\"FLC\",\"blog\",\"blog\"," + pageId + ")'>Blog</div>\n"
             switch (eventDetail) {
                 case "about us": showCustomMessage(38); break;
                 case "dir tree": showCatListDialog(2); break;
@@ -162,25 +132,12 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
                 case "freedback": showFeedbackDialog(); break;
                 case "slut archive": window.location.href = "/album.html?folder=440"; break;
                 default:
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "KLG",
-                        Severity: 2,
-                        ErrorMessage: "uncaught switch option footer link clicked EventDetail: " + eventDetail,
-                        CalledFrom: calledFrom
-                    });
-                    //alert("eventDetail: " + eventDetail);
+                    logError("BUG", pageId, "Uncaught Case: " + eventDetail, "performEvent/footer link click");
                     break;
             }
             break;
         default:
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "KLG",
-                Severity: 2,
-                ErrorMessage: "Uncaught Case: " + eventDetail + "eventCode " + eventCode + "  not handled in reportThenPerformEvent",
-                CalledFrom: calledFrom
-            });
-        //sendEmailToYourself("Uncaught Case: " + eventCode, "eventCode " + eventCode + "  not handled in reportThenPerformEvent");
+            logError("BUG", pageId, "Uncaught Case: " + eventDetail, "performEvent");
     }
 }
+

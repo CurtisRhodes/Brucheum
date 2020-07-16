@@ -1,34 +1,4 @@
-﻿function xxdeleteCookie() {
-
-    window.localStorage["UserName"] = null;
-    window.localStorage["IpAddress"] = null;
-    window.localStorage["VisitorId"] = null;
-    window.localStorage["UserName"] = null;
-    window.localStorage["userPermissons"] = null;
-
-    var expiryDate = new Date();
-    expiryDate.setMonth(expiryDate.getMonth() - 1);
-
-    document.cookie = "expires:" + expiryDate.toUTCString();
-    if (!isNullorUndefined(getCookieValue("UserName"))) {
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "JQ6",
-            Severity: 2,
-            ErrorMessage: "Delete Cookie Fail After Logout UserName: " + getCookieValue("UserName"),
-            CalledFrom: "showLoginDialog"
-        });
-        //sendEmailToYourself("Delete Cookie Fail", "After Logout UserName: " + getCookieValue("UserName"));
-        if (document.domain === 'localhost')  // #DEBUG
-            alert("After Logout User: " + getCookieValue("UserName"));
-        if (document.cookie) {
-            if (document.domain === 'localhost')
-                alert("cookie failed to delete: " + document.cookie);
-        }
-        //console.log("deleteCookie()  document.cookie: " + document.cookie);
-    }
-}
-
+﻿
 function setCookieValue(elementName, elementValue) {
     //alert("setCookieValue(" + elementName + "," + elementValue + ")");
     window.localStorage[elementName] = elementValue;

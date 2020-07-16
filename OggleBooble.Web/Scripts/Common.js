@@ -22,18 +22,8 @@ function loadOggleSettings() {
             });
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("loadSettings")) {
-                if (document.domain === "localhost") alert("loadSettings: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: "877",
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "common.js loadSettings"
-                    });
-                //sendEmailToYourself("XHR error in common.js loadSettings", "/Data/Settings.xml Message: " + errorMessage);
+            if (!checkFor404("loadOggleSettings")) {
+                logError("XHR", 3998, getXHRErrorDetails(jqXHR), "loadOggleSettings");
             }
         }
     });
@@ -137,14 +127,7 @@ function letemPorn(response, pornType, pageId) {
         //<div onclick="goToPorn()">Nasty Porn</div>
         //window.location.href = '/index.html?subdomain=porn';
         if (isNullorUndefined(pornType)) {
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "PRN",
-                Severity: 2,
-                ErrorMessage: "isNullorUndefined(pornType)",
-                CalledFrom: "HitCounter.js letemPorn"
-            });
-            //sendEmailToYourself("letemPorn problem", "pornType missing");
+            logError("BUG", pageId, "isNullorUndefined(pornType)", "letemPorn");
             pornType = "UNK";
         }
         reportThenPerformEvent("PRN", "xx", pornType, pageId);
@@ -243,13 +226,55 @@ function create_UUID() {
     return uuid;
 }
 
-function logError(logErrorModel) {
+function logError(errorCode, pageId, errorMessage, calledFrom) {
+    if (document.domain === 'localhost')
+        alert("Error " + calledFrom + " : " + errorMessage);
+    else
+        try {
+            $.ajax({
+                type: "POST",
+                url: settingsArray.ApiServer + "api/Common/LogError",
+                data: {
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: errorCode,
+                    PageId: pageId,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: calledFrom
+                },
+                success: function (success) {
+                    if (success === "ok") {
+                        //displayStatusMessage("ok", "error message logged");
+                        console.log("error message logged.  Called from: " + calledFrom + " message: " + errorMessage);
+                    }
+                    else {
+                        console.error("ajx error in logError!!: " + success);
+                    }
+                },
+                error: function (jqXHR) {
+                    var errorMessage = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404("logError")) {
+                        if (document.domain === 'localhost')
+                            alert("XHR error in logError!!: " + errorMessage);
+                        console.error("XHR error in logError!!: " + errorMessage);
+                    }
+                }
+            });
+        } catch (e) {
+            if (document.domain === 'localhost')
+                alert("Catch error in logError!!: " + e);
+            console.error("Catch error in logError!!: " + e);
+        }
+}
+
+function logError1(logErrorModel) {
     //if (document.domain === "localhost") alert("error almost logged: " +
     //    "\n called from: " + logErrorModel.CalledFrom +
     //    "\n code: " + logErrorModel.ActivityCode +
     //    "\n pageId: " + logErrorModel.PageId +
     //    "\n message: " + logErrorModel.ErrorMessage);
     //else
+
+    
 
     if (isNullorUndefined(logErrorModel.VisitorId)) {
         logErrorModel.VisitorId = "unk";
@@ -284,47 +309,27 @@ function logError(logErrorModel) {
     }
 }
 
-function logDataActivity(changeLogModel) {
+function logDataActivity(activityModel) {
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogDataActivity",
-        data: changeLogModel,
+        data: activityModel,
         success: function (success) {
             if (success === "ok") {
-              //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
+                //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
                 if (typeof doneLoggingDataActivity === 'function') {
                     //alert("doneLoggingDataActivity()");
                     doneLoggingDataActivity();
                 }
             }
-            else {
-                if (document.domain === "localhost")
-                    alert("logDataActivity JQE: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "OMG",
-                        Severity: 1,
-                        ErrorMessage: success,
-                        CalledFrom: "logDataActivity"
-                    });
-                //sendEmailToYourself("error in common/logActivity", success);
-            }
+            else
+                logError("BUG", activityModel.PageId, success, "logDataActivity");
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("logDataActivity")) {
-                if (document.domain === "localhost")
-                    alert("logDataActivity XHR: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "XHR", Severity: 1, ErrorMessage: errorMessage,
-                        CalledFrom: "logDataActivity"
-                    });
-                //sendEmailToYourself("xhr error in common.js logActivity", "/api  ChangeLog  Message: " + errorMessage);
-            }
+            if (!checkFor404("logDataActivity"))
+                logError("XHR", activityModel.PageId, errorMessage, "logDataActivity");
         }
     });
 }
@@ -364,19 +369,12 @@ function getFileDate() {
 
 }
 
-function indexCatTreeContainerClick(path, id, treeId) {
+function indexCatTreeContainerClick(path, pageId, treeId) {
     try {
-        window.location.href = "/album.html?folder=" + id;
+        window.location.href = "/album.html?folder=" + pageId;
         $('#indexCatTreeContainer').dialog('close');
     } catch (e) {
-        logError({
-            VisitorId: getCookieValue("VisiorId"),
-            ActivityCode: "CAT",
-            Severity: 1,
-            ErrorMessage: e,
-            CalledFrom: "common.js indexCatTreeContainerClick"
-        });
-        //sendEmailToYourself("jQuery fail in indexCatTreeContainerClick", "dirTreeClick path: " + path + " id: " + id + " treeId: " + treeId + "  error: " + e);
+        logError("CAT", pageId, e, "indexCatTreeContainerClick");
     }
 }
 
@@ -424,31 +422,14 @@ function showCustomMessage(blogId, allowClickAnywhere) {
             }
             else {
                 //if (entry.Success.indexOf("Option not supported") > -1) {
-                checkFor404("showCustomMessage");
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "JQR",
-                    Severity: 1,
-                    ErrorMessage: entry.Success,
-                    CalledFrom: "common.js showCustomMessage"
-                });
-                //sendEmailToYourself("SERVICE DOWN", "from showCustomMessage" +
-                //    "<br/>folderId=" + folderId +
-                //    "<br/>IpAddress: " + getCookieValue("IpAddress") +
-                //    "<br/>" + entry.Success);
+                if (!checkFor404("showCustomMessage"))
+                    logError("BUG", 3111, entry.Success, "showCustomMessage");
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("showCustomMessage")) {
-                logError({
-                    VisitorId: getCookieValue("VisiorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "common.js showCustomMessage"
-                });
-                //sendEmailToYourself("xhr error in common.js showCustomMessage", "api/OggleBlog/?blogId=" + blogId + ", Message: " + errorMessage);
+                logError("XHR", 3911, errorMessage, "showCustomMessage");
             }
         }
     });
@@ -461,7 +442,7 @@ function isValidEmail(email) {
     return emailReg.test(email);
 }
 
-function sendEmail(to,from,subject, message) {
+function sendEmail(to, from, subject, message) {
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "api/Common/SendEmail",
@@ -476,33 +457,12 @@ function sendEmail(to,from,subject, message) {
                 //$('#footerMessage').html("email sent");
                 //displayStatusMessage("ok", "email sent");
             }
-            else {
-                if (document.domain === "localhost")
-                    alert("sendEmail: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "SEY",
-                        Severity: 2,
-                        ErrorMessage: subject + " Message: " + message,
-                        CalledFrom: "sendEmail"
-                    });
-            }
+            else
+                logError("BUG", 3992, success, "sendEmail");
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("sendEmailToYourself")) {
-                if (document.domain === "localhost")
-                    alert("sendEmailToYourself: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "common.js sendEmail"
-                    });
-            }
+            if (!checkFor404("sendEmailToYourself"))
+                logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
         }
     });
 }
@@ -523,33 +483,12 @@ function sendEmailToYourself(subject, message) {
                 //$('#footerMessage').html("email sent");
                 //displayStatusMessage("ok", "email sent");
             }
-            else {
-                if (document.domain === "localhost")
-                    alert("sendEmailToYourself: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "SEY",
-                        Severity: 2,
-                        ErrorMessage: subject + " Message: " + message,
-                        CalledFrom: "sendEmailToYourself"
-                    });
-            }
+            else
+                logError("BUG", 3992, success, "sendEmailToYourself");
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("sendEmailToYourself")) {
-                if (document.domain === "localhost")
-                    alert("sendEmailToYourself: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "common.js sendEmailToYourself"
-                    });
-            }
+            if (!checkFor404("sendEmailToYourself"))
+                logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
         }
     });
 }

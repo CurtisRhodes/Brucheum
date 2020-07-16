@@ -830,8 +830,7 @@ function loadSortImages() {
 
 // MOVE FOLDER
 function showMoveFolderDialog() {
-
-    //$('#dataifyInfo').show().html("Preparing to Move Folder");
+     //$('#dataifyInfo').show().html("Preparing to Move Folder");
     $('#dataifyInfo').show().html("Moving Folder");
     //$('#progressBar').show();
     $('#dashBoardLoadingGif').show();
@@ -840,13 +839,7 @@ function showMoveFolderDialog() {
         url: settingsArray.ApiServer + "/api/Folder/Move?sourceFolderId=" + pSelectedTreeId + "&destinationFolderId=" + moveFolderSelectedParentId,
         success: function (success) {
             if (success !== "ok") {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "MYQ",
-                    Severity: 1,
-                    ErrorMessage: success,
-                    CalledFrom: "dashboard.js movefolder"
-                });
+                logError("BUG", pSelectedTreeId, success, "dashboard.js movefolder");
             }
             $('#dashBoardLoadingGif').hide();
             //if (!success.startsWith("ERROR")) {
@@ -865,7 +858,8 @@ function showMoveFolderDialog() {
         },
         error: function (xhr) {
             $('#dashBoardLoadingGif').hide();
-            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
+            if (!checkFor404(""))
+                logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "");
         }
     });
 }

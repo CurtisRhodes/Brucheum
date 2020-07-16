@@ -37,22 +37,14 @@ function loadDirectoryTree(startNode, container, clickEvent) {
                     onDirTreeComplete();
                 }
             }
-            else { alert(dirTreeModel.Success); }
-        },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            var errorMessage = getXHRErrorDetails(xhr);
-            alert(errorMessage);
-            if (!checkFor404("getDirTree")) {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 3,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "getDirTree"
-                });
+            else {
+                logError("BUG", startNode, dirTreeModel.Success, "loadDirectoryTree");
             }
-            //dest.html("buildCatTree xhr error: " + getXHRErrorDetails(xhr));
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            if (!checkFor404("loadDirectoryTree"))
+                logError("XHR", startNode, getXHRErrorDetails(jqXHR), "loadDirectoryTree");
         }
     });
 }

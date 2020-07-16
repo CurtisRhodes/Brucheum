@@ -42,6 +42,7 @@ namespace OggleBooble.Api.Models
             ImageLinks = new List<VwLink>();
             SubDirs = new List<CategoryTreeModel>();
         }
+        public int FolderId { get; set; }
         public string RootFolder { get; set; }
         public List<VwLink> ImageLinks { get; set; }
         public List<CategoryTreeModel> SubDirs { get; set; }
@@ -61,6 +62,7 @@ namespace OggleBooble.Api.Models
         public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
         public string ExternalLinks { get; set; }
         public int FileCount { get; set; }
+        public int SubFolderCount { get; set; }
         public int PageHits { get; set; }
         public int UserImageHits { get; set; }
         public int UserPageHits { get; set; }

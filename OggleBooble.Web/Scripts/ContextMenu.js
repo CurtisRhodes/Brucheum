@@ -81,31 +81,13 @@ function getLimitedImageDetails() {
                 getFullImageDetails();
             }
             else {
-                if (document.domain === "localhost") alert("imageInfo.Success: " + imageInfo.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 3,
-                        ErrorMessage: imageInfo.Success,
-                        CalledFrom: "imageCtx"
-                    });
+                logError("BUG", pFolderId, imageInfo.Success, "getLimitedImageDetails");
             }
         },
         error: function (xhr) {
             var errorMessage = getXHRErrorDetails(xhr);
             if (!checkFor404("getLimitedImageDetails")) {
-                if (document.domain === "localhost")
-                    alert("getImageDetails XHR: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "Album.js removeImage"
-                    });
-                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
+                logError("XHR", pFolderId, getXHRErrorDetails(jqXHR), "getLimitedImageDetails");
             }
         }
     });
@@ -173,31 +155,12 @@ function getFullImageDetails() {
                 }
             }
             else {
-                if (document.domain === "localhost") alert("imageInfo.Success: " + imageInfo.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 3,
-                        ErrorMessage: imageInfo.Success,
-                        CalledFrom: "imageCtx"
-                    });
+                logError("BUG", pFolderId, imageInfo.Success, "getFullImageDetails");
             }
         },
         error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
             if (!checkFor404("getFullImageDetails")) {
-                if (document.domain === "localhost")
-                    alert("getImageDetails XHR: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "getFullImageDetails"
-                    });
-                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
+                logError("XHR", pFolderId, getXHRErrorDetails(jqXHR), "getFullImageDetails");
             }
         }
     });
@@ -249,31 +212,12 @@ function ctxGetFolderDetails() {
                 }
             }
             else {
-                if (document.domain === "localhost") alert("folderDetails.Success: " + folderDetails.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 3,
-                        ErrorMessage: folderDetails.Success,
-                        CalledFrom: "ctxGetFolderDetails"
-                    });
+                logError("BUG", pFolderId, folderDetails.Success, "ctxGetFolderDetails");
             }
         },
         error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
             if (!checkFor404("ctxGetFolderDetails")) {
-                if (document.domain === "localhost")
-                    alert("ctxGetFolderDetails XHR: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "ctxGetFolderDetails"
-                    });
-                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
+                logError("XHR", pFolderId, getXHRErrorDetails(jqXHR), "ctxGetFolderDetails");
             }
         }
     });
@@ -365,16 +309,7 @@ function contextMenuAction(action) {
             setFolderImage(pLinkId, pFolderId, "parent");
             break;
         default: {
-            if (document.domain === "localhost")
-                alert("contextMenuAction Unhandeled switch case option.  Action: " + action);
-            else
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "BUG",
-                    Severity: 2,
-                    ErrorMessage: "contextMenuAction Unhandeled switch case option.  Action: " + action,
-                    CalledFrom: "Album.js contextMenuAction"
-                });
+            logError("BUG", pFolderId, "Unhandeled switch Action: " + action, "contextMenuAction");
         }
     }
 }

@@ -297,39 +297,36 @@ namespace OggleBooble.Api.Controllers
                     {
                         PkId = Guid.NewGuid().ToString(),
                         VisitorId = logErrorModel.VisitorId,
-                        ActivityCode = logErrorModel.ActivityCode,
+                        ErrorCode = logErrorModel.ErrorCode,
                         ErrorMessage = logErrorModel.ErrorMessage,
                         CalledFrom = logErrorModel.CalledFrom,
-                        Severity = logErrorModel.Severity,
+                        PageId = logErrorModel.PageId,
                         Occured = DateTime.Now
                     });
                     mdb.SaveChanges();
                     success = "ok";
                 }
             }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
-        }
+        } 
 
         [HttpPost]
         [Route("api/Common/LogActivity")]
-        public string LogActivity(LogActivityModel logEventModel)
+        public string LogActivity(LogActivityModel activityModel)
         {
             string success;
             try
             {
                 using (var mdb = new OggleBoobleMySqlContext())
                 {
-                    logEventModel.EventDetail = mdb.VirtualFolders.Where(f => f.Id == logEventModel.PageId).FirstOrDefault().FolderName;
+                    activityModel.EventDetail = mdb.VirtualFolders.Where(f => f.Id == activityModel.PageId).FirstOrDefault().FolderName;
                     mdb.EventLogs.Add(new EventLog()
                     {
-                        EventCode = logEventModel.EventCode,
-                        EventDetail = logEventModel.EventDetail,
-                        PageId = logEventModel.PageId,
-                        VisitorId = logEventModel.VisitorId,
+                        EventCode = activityModel.EventCode,
+                        EventDetail = activityModel.EventDetail,
+                        PageId = activityModel.PageId,
+                        VisitorId = activityModel.VisitorId,
                         Occured = DateTime.Now
                     });
                     mdb.SaveChanges();

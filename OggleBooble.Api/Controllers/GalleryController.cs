@@ -34,7 +34,7 @@ namespace OggleBooble.Api.Controllers
         [Route("api/GalleryPage/GetAlbumImages")]
         public AlbumImagesModel GetAlbumImages(int folderId)
         {
-            var albumImageInfo = new AlbumImagesModel();
+            var albumImageInfo = new AlbumImagesModel() { FolderId = folderId };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -82,12 +82,15 @@ namespace OggleBooble.Api.Controllers
                     VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                     albumInfo.RootFolder = dbCategoryFolder.RootFolder;
                     albumInfo.FolderName = dbCategoryFolder.FolderName;
-                    List<string> subFolderNames = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f=>f.FolderName).ToList();
+                    albumInfo.FileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
+                    albumInfo.SubFolderCount = db.VirtualFolders.Where(f => f.Parent == folderId).Count();
+
+                    //List<string> subFolderNames = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f=>f.FolderName).ToList();
                     var folderTypeModel = new FolderTypeModel()   // 1.618  
                     {
                         RootFolder = dbCategoryFolder.RootFolder,
                         ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName),
-                        ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(subFolderNames),
+                        ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList()),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
                         HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0,
                     };
@@ -153,21 +156,28 @@ namespace OggleBooble.Api.Controllers
             //step 1 get this data from the database
 
             // step 2 use this to Refresh the database after changes are made
-
-
             var subFolderCounts = new SubFolderCountModel() { FolderId = folderId };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+
+                    //var dbFolder= 
+
                     GetDeepFileCount(folderId, subFolderCounts, db);
                     SaveFileCounts(subFolderCounts);
                     subFolderCounts.Success = "ok";
+
+
+
                 }
             }
             catch (Exception ex) { 
                 subFolderCounts.Success = Helpers.ErrorDetails(ex); 
             }
+
+
+
             return subFolderCounts;
         }
         private void GetDeepFileCount(int parentId, SubFolderCountModel subFolderModel, OggleBoobleMySqlContext db)

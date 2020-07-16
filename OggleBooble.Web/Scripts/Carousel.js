@@ -8,7 +8,7 @@ let debugMode = true;
 function launchCarousel(startRoot) {
     absolueStart = Date.now();
     $('#footerMessage2').html("launching carousel");
-    if (!isNullorUndefined(window.localStorage["carouselSettings"]))
+    if (isNullorUndefined(window.localStorage["carouselSettings"]))
     {
         lsCarouselSettings = {
             includeArchive: false,
@@ -21,21 +21,24 @@ function launchCarousel(startRoot) {
         window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
     }
     else {
-        console.log("carouselSettings found in local storage!");
-        //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
+        console.log("carouselSettings found in local storage!2");
+    //    //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
     }
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
+    console.log("jsCarouselSettings loaded");
 
     //initial call to loadimages
+    console.log("calling loadImages");
     loadImages(startRoot, absolueStart, 0, specialLaunchCode, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     window.addEventListener("resize", resizeCarousel);
 }
 
 function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
-    var start = Date.now();
+    //var start = Date.now();
+    //console.log("loading Images take: " + take + ".   specialLaunchCode: " + specialLaunchCode);
+
     settingsImgRepo = settingsArray.ImageRepo;
     try {
-
         if (take === specialLaunchCode) {
             console.log("take === specialLaunchCode");
             if (!isNullorUndefined(window.localStorage["carouselCache"])) {
@@ -55,11 +58,11 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                 }, 1600);
 
                 let delta = (Date.now() - absolueStart) / 1000;
+                console.log("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
                 $('#footerMessage2').html("initial launch from cache took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                 skip += 100;
             }
         }
-
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/IndexPage/GetCarouselImages?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
@@ -127,40 +130,16 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                     }
                 }
                 else {
-                    if (document.domain === "localhost")
-                        alert("carousel.loadImages: " + carouselInfo.Success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "CSL",
-                            Severity: 1,
-                            ErrorMessage: carouselInfo.Success,
-                            PageId: homePageId,
-                            CalledFrom: "loadImages"
-                        });
-                    //if (document.domain === 'localhost') alert("loadImages: " + carouselInfo.Success);
-                    //--sendEmailToYourself("Error in Caraousel/loadImages", carouselInfo.Success);
+                    logError("BUG", rootFolder, carouselInfo.Success, "carousel.loadImages");
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("loadImages")) {
-                    if (document.domain === "localhost")
-                        alert("Carousel loadImages:\n" + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 1,
-                            ErrorMessage: errorMessage,
-                            PageId: homePageId,
-                            CalledFrom: "loadImages"
-                        });
-                }
+                if (!checkFor404("carousel.loadImages"))
+                    logError("XHR", rootFolder, getXHRErrorDetails(jqXHR), "carousel.loadImages");
             }
         });
     } catch (e) {
-        alert(e);
+        logError("CAT",rootFolder, e, "carousel.loadImages");
     }
 }
 
@@ -169,6 +148,8 @@ function addMoreRootsToCarousel() {
         nextRoot = 2;
         if (jsCarouselSettings.includeArchive) {
             $('#footerMessage2').html("loading archive");
+            console.log("loading archive");
+
             carouselSkip = 0;
             loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
             return;
@@ -178,6 +159,7 @@ function addMoreRootsToCarousel() {
         nextRoot = 3;
         if (jsCarouselSettings.includeCenterfolds) {
             $('#footerMessage2').html("loading centerfolds");
+            console.log("loading centerfolds ");
             carouselSkip = 0;
             loadImages("centerfold", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
             return;

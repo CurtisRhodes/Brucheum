@@ -4,36 +4,17 @@ var freeImageHitsAllowed = 2500;
 function logImageHit(link, pageId, isInitialHit) {
     try {
         if (isNullorUndefined(pageId)) {
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "IM1",
-                Severity: 2,
-                ErrorMessage: "TROUBLE in logImageHit. PageId came in Null or Undefined",
-                CalledFrom: "HitCounter.js logImageHit"
-            });
-            //sendEmailToYourself("TROUBLE in logImageHit. PageId came in Null or Undefined", "Set to 1 or  something");
+            logError("IH1", pageId, "TROUBLE in logImageHit. PageId came in Null or Undefined", "HitCounter.js logImageHit");
             return;
         }
         var visitorId = getCookieValue("VisitorId");
         if (!Number.isInteger(pageId)) {
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "IH2",
-                Severity: 2,
-                ErrorMessage: "PageId came in wrong. Link: " + link + "  pageId:  " + pageId,
-                CalledFrom: "HitCounter.js logImageHit"
-            });
+            logError("IH2", pageId, "PageId came in wrong. Link: " + link + "  pageId:  " + pageId, "HitCounter.js logImageHit");
             verifyVisitorId(visitorId, pageId);
             return;
         }
         if (isNullorUndefined(visitorId)) {
-            logError({
-                VisitorId: visitorId,
-                ActivityCode: "IH0",
-                Severity: 27,
-                ErrorMessage: "logImageHit no VisitorId",
-                CalledFrom: pageId
-            });
+            logError("IH0", pageId, "logImageHit no VisitorId", "HitCounter.js logImageHit");
             //addVisitor(pageId, "logImageHit");
             return;
         }
@@ -56,68 +37,30 @@ function logImageHit(link, pageId, isInitialHit) {
                     //checkForHitLimit("images", pageId, userPageHits, userImageHits);
                 }
                 else {
-                    //if (imageHitSuccessModel.Success.indexOf("Duplicate entry") > 0) {
-                    if (document.domain === 'localhost')
-                        alert("logImageHit: " + imageHitSuccessModel.Success);
-                    else
-                        logError({
-                            VisitorId: visitorId,
-                            ActivityCode: "IM4",
-                            Severity: 2,
-                            ErrorMessage: imageHitSuccessModel.Success,
-                            CalledFrom: "logImageHit"
-                        });
+                    logError("BUG", pageId, imageHitSuccessModel.Success, "logImageHit");
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("logImageHit")) {
-                    if (document.domain === 'localhost')
-                        alert("logImageHit: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "IM5",
-                            Severity: 2,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "HitCounter.js logImageHit"
-                        });
+                    logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logImageHit");
                 }
             }
         });
     } catch (e) {
-        logError({
-            VisitorId: visitorId,
-            ActivityCode: "IM6",
-            Severity: 2,
-            ErrorMessage: "CATCH ERROR: " + e,
-            CalledFrom: "logImageHit"
-        });
+        logError("CAT", pageId, e, "logImageHit");
      }
 }
 
 function logPageHit(pageId) {
     //alert("logPageHit(" + pageId );  // + "," + visitorId + "," + calledFrom + ")");
     if (isNullorUndefined(pageId)) {
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "AAA",
-            Severity: 1,
-            ErrorMessage: "PageId undefined in LogPageHit.",
-            CalledFrom: "HitCounter.js logPageHit"
-        });
+        logError("BUG", pageId, "PageId undefined in LogPageHit.", "logPageHit");
         //sendEmailToYourself("PageId undefined in LogPageHit.", "visitorId: " + visitorId);
         return;
     }
     var visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
-        logError({
-            VisitorId: visitorId,
-            ActivityCode: "AA2",
-            Severity: 1,
-            ErrorMessage: "visitorId undefined in LogPageHit.",
-            CalledFrom: "HitCounter.js logPageHit"
-        });
+        logError("BUG", pageId, "VisitorId undefined in LogPageHit.", "logPageHit");
     }
     $.ajax({
         type: "POST",
@@ -128,31 +71,12 @@ function logPageHit(pageId) {
                 // checkForHitLimit("pages", pageId, pageHitSuccess.UserPageHits, pageHitSuccess.UserImageHits);
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("logPageHit: " + pageHitSuccess.Success);
-                else
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "B01",
-                        Severity: 4,
-                        ErrorMessage: pageHitSuccess.Success,
-                        CalledFrom: "logPageHit"
-                    });
+                logError("BUG", pageId, pageHitSuccess.Success, "logPageHit");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("logPageHit")) {
-                if (document.domain === 'localhost')
-                    alert("logPageHit: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: "pageId: " + pageId + " Message: " + errorMessage,
-                        CalledFrom: "HitCounter.js logPageHit"
-                    });
+                logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logPageHit");
             }
         }
     });
@@ -160,14 +84,7 @@ function logPageHit(pageId) {
 
 function logVisit(visitorId, pageId) {
     if (isNullorUndefined(visitorId)) {
-        logError({
-            VisitorId: visitorId,
-            ActivityCode: "ERR",
-            Severity: 256,
-            ErrorMessage: "log visit called with no visitorId",
-            PageId: pageId,
-            CalledFrom: "HitCounter.js logVisit"
-        });
+        logError("BUG", pageId, "log visit called with no visitorId", "logVisit");
         return;
     }
     $.ajax({
@@ -194,35 +111,12 @@ function logVisit(visitorId, pageId) {
                 }
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("logVisit: " + logVisitSuccessModel.Success);
-                else
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "ERR",
-                        Severity: 2,
-                        ErrorMessage: "PageId: " + pageId + " Message: " + logVisitSuccessModel.Success,
-                        CalledFrom: "HitCounter.js logVisit"
-                    });
-                //sendEmailToYourself("Ajax Error in logVisit", "PageId: " + pageId + "<br/>Message: " + logVisitSuccessModel.Success);
+                logError("BUG", pageId, logVisitSuccessModel.Success, "logVisit");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("logVisit")) {
-                if (document.domain === 'localhost')
-                    alert("logVisit: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "HitCounter.js logVisit"
-                    });
-                //sendEmailToYourself("XHR ERROR IN HITCOUNTER.JS logVisit",
-                //    "api/HitCounter/LogVisit?visitorId=" + visitorId +
-                //    "<br/>" + errorMessage);
+                logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logVisit");
             }
         }
     });
@@ -230,14 +124,7 @@ function logVisit(visitorId, pageId) {
 
 function verifyVisitorId(visitorId, pageId, calledFrom) {
     if (isNullorUndefined(visitorId)) {
-        logError({
-            VisitorId: visitorId,
-            ActivityCode: "VV0",
-            Severity: 2,
-            ErrorMessage: "visitorId undefined",
-            PageId: pageId,
-            CalledFrom: "verifyVisitorId"
-        });
+        logError("BUG", pageId, "visitorId undefined", "verifyVisitorId");
         return;
     }
     $.ajax({
@@ -246,45 +133,16 @@ function verifyVisitorId(visitorId, pageId, calledFrom) {
         success: function (visitorSuccessModel) {
             if (visitorSuccessModel.Success === "ok") {
                 if (!visitorSuccessModel.Exists) {
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "VV1",
-                        Severity: 72,
-                        ErrorMessage: "VisitorId not found in Visitor table",
-                        PageId: pageId,
-                        CalledFrom: "verifyVisitorId"
-                    });
-                    //addVisitor(pageId, "verifyVisitorId");
-                    //callIpServiceFromStaticPage(pageId, calledFrom);
+                    logError("BUG", pageId, "VisitorId not found in Visitor table", "verifyVisitorId");
                 }
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("verifyVisitorId: " + visitorSuccessModel.Success);
-                else
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "AJQ",
-                        Severity: 2,
-                        ErrorMessage: visitorSuccessModel.Success,
-                        PageId: pageId,
-                        CalledFrom: "verifyVisitorId"
-                    });
+                logError("BUG", pageId, visitorSuccessModel.Success, "verifyVisitorId");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("logImageHit")) {
-                if (document.domain === 'localhost')
-                    alert("verifyVisitorId: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: visitorId,
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "verifyVisitorId"
-                    });
+                logError("XHR", pageId, getXHRErrorDetails(jqXHR), "verifyVisitorId");
             }
         }
     });
@@ -379,65 +237,22 @@ function getIpInfo(pageId, calledFrom) {
                             });
                         }
                         else {
-                            if (document.domain === 'localhost')
-                                alert("addVisitor: " + addVisitorSuccess.Success);
-                            else
-                                logError({
-                                    VisitorId: addVisitorSuccess.VisitorId,
-                                    ActivityCode: "AV1",
-                                    Severity: 277,
-                                    ErrorMessage: addVisitorSuccess.Success,
-                                    PageId: pageId,
-                                    CalledFrom: "addVisitor/" + calledFrom
-                                });
+                            logError("BUG",pageId, addVisitorSuccess.Success, "addVisitor");
                         }
                     },
                     error: function (jqXHR) {
-                        var errorMessage = getXHRErrorDetails(jqXHR);
-                        if (!checkFor404("addVisitor")) {
-                            if (document.domain === 'localhost')
-                                alert("addVisitor: " + errorMessage);
-                            else
-                                logError({
-                                    VisitorId: visitorId,
-                                    ActivityCode: "AV3",
-                                    Severity: 1,
-                                    ErrorMessage: errorMessage,
-                                    PageId: pageId,
-                                    CalledFrom: "addVisitor/" + calledFrom
-                                });
-                        }
+                        if (!checkFor404("addVisitor")) 
+                            logError("XHR", pageId, getXHRErrorDetails(jqXHR), "addVisitor");
                     }
                 });
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("getIpInfo")) {
-                    if (document.domain === 'localhost')
-                        alert("getIpInfo: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: visitorId,
-                            ActivityCode: "IP3",
-                            Severity: 133,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "getIpInfo/" + calledFrom
-                        });
+                    logError("XHR", pageId, getXHRErrorDetails(jqXHR), "getIpInfo/" + calledFrom);
                 }
             }
         });
     } catch (e) {
-        if (document.domain === 'localhost')
-            alert("getIpInfo: " + e);
-        else
-            logError({
-                VisitorId: "--",
-                ActivityCode: "AV4",
-                Severity: 200,
-                ErrorMessage: "Catch error: " + e,
-                PageId: pageId,
-                CalledFrom: "getIpInfo/" + calledFrom
-            });
+        logError("CAT", pageId, e, "getIpInfo/" + calledFrom);
     }
 }
-

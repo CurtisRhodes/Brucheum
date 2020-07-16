@@ -186,9 +186,9 @@ namespace OggleBooble.Api.MySqlDataContext
         [Key]
         public string PkId { get; set; }
         public string VisitorId { get; set; }
-        public string ActivityCode { get; set; }
+        public string ErrorCode { get; set; }
         public string CalledFrom { get; set; }
-        public int Severity { get; set; }
+        public int PageId { get; set; }
         public string ErrorMessage { get; set; }
         public DateTime Occured { get; set; }
     }

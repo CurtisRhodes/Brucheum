@@ -69,36 +69,12 @@ function saveFeedback() {
                 showMyAlert("Thank you for your feedback");
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("saveFeedback: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "DBL",
-                        Severity: 3,
-                        ErrorMessage: success,
-                        CalledFrom: "OggleHeader saveFeedbackDialog"
-                    });
-                //sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
-                //if (document.domain === 'localhost') alert("EditFolderCategory: " + success);
+                logError("BUG", feedbackPageId, success, "saveFeedback");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("saveFeedbackDialog")) {
-                if (document.domain === 'localhost')
-                    alert("saveFeedback: " + success);
-                else
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "OggleHeader saveFeedbackDialog"
-                });
-                //sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
-                //    "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
-                //    $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);
+                logError("XHR", feedbackPageId, getXHRErrorDetails(jqXHR), "saveFeedback");
             }
         }
     });
@@ -138,22 +114,10 @@ function getUserEmail() {
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (document.domain === 'localhost') {
-
-                alert("XHR ERROR IN getUserEmail" + errorMessage);
-
-                if (!checkFor404("getUserEmail")) {
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 3,
-                        ErrorMessage: "XHR ERROR IN getUserEmail: " + errorMessage,
-                        CalledFrom: "getUserEmail"
-                    });
-                    //sendEmailToYourself("XHR ERROR IN updateTrackback", errorMessage);
-                }
+            if (!checkFor404("saveFeedbackDialog")) {
+                logError("XHR", feedbackPageId, getXHRErrorDetails(jqXHR), "getUserEmail");
             }
         }
     });
 }
+

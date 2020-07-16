@@ -67,7 +67,6 @@ namespace OggleBooble.Api.Controllers
 
         public static bool ContainsNonRomanNumeralChildren(List<string> childFolders)
         {
-
             foreach (string childFolder in childFolders)
             {
                 if (!childFolder.Contains(" I") && childFolder.Contains(" V") && childFolder.Contains(" X")) {
