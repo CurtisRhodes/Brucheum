@@ -1,4 +1,5 @@
-﻿using OggleBooble.Api.Models;
+﻿using Newtonsoft.Json;
+using OggleBooble.Api.Models;
 using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
@@ -103,6 +104,81 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
+        [HttpGet]
+        [Route("api/OggleUser/GetUserSettings")]
+        public SuccessModel GetUserSettings(string visitorId)
+        {
+            var successModel = new SuccessModel();
+            try
+            {
+                using (var mdb = new OggleBoobleMySqlContext())
+                {
+                    var dbRegisteredUsers = mdb.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+                    if (dbRegisteredUsers != null) 
+                    {
+                        successModel.ReturnValue = dbRegisteredUsers.UserSettings;
+                    }
+                }
+                successModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
+        }
+
+        [HttpPut]
+        [Route("api/OggleUser/UpdateUserSettings")]
+        public SuccessModel UpdateUserSettings(string visitorId, string settingName, string settingJson)
+        {
+            var successModel = new SuccessModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+                    if (dbUser != null)
+                    {
+                        string json = JsonConvert.SerializeObject(settingJson);
+                        if (settingName == "Initial")
+                        {
+                            //var x = JsonConvert.DeserializeObject(dbUser.UserSettings);
+                            //dbUser.UserSettings = JsonConvert.SerializeObject(settingJson);
+                            //dbUser.UserSettings = JsonConvert.DeserializeObject(settingJson).ToString();
+                            dbUser.UserSettings = settingJson;
+                            db.SaveChanges();
+                            successModel.Success = "ok";
+                        }
+                        else {
+                            string userSettingsRaw = dbUser.UserSettings;
+                            var userSettingsParse = JsonConvert.DeserializeObject(dbUser.UserSettings);
+                            //var test1 = userSettingsParse
+                        
+                        }
+
+
+                        // replace section
+                        //var dbUser = mdb.RegisteredUsers.Where(r => r.UserName == userName).FirstOrDefault();
+                        //var currentSettings = dbUser.UserSettings;
+
+                        //int startindex = currentSettings.IndexOf(settingName);
+                        //int lenToEnd = currentSettings.Substring(startindex, currentSettings.IndexOf("}") + 1).Length;
+                        //string elementRemoved = currentSettings.Remove(startindex, lenToEnd);
+                        //dbUser.UserSettings = elementRemoved + settingJson;
+
+                        //mdb.SaveChanges();
+                        //successModel.Success = "ok";
+                        //successModel.ReturnValue = dbUser.UserSettings;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
+        }
 
         private static string HashSHA256(string value)
         {

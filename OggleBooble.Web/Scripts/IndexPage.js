@@ -72,31 +72,12 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                 resizeIndexPage();
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("JQA error in loadUpdatedGalleriesBoxes\n" + latestUpdates.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "JQA",
-                        Severity: 12,
-                        ErrorMessage: latestUpdates.Success,
-                        CalledFrom: "loadUpdatedGalleriesBoxes"
-                    });
+                logError("BUG", 3908, latestUpdates.Success, "loadUpdatedGalleriesBoxes");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("loadImages")) {
-                if (document.domain === 'localhost')
-                    alert("XHR error in loadUpdatedGalleriesBoxes\n" + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "loadUpdatedGalleriesBoxes"
-                    });
+                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "loadUpdatedGalleriesBoxes");
             }
         }
     });
@@ -132,33 +113,14 @@ function launchPromoMessages() {
             }
             else {
                 $('#blogLoadingGif').hide();
-                if (document.domain === 'localhost')
-                    alert("launchPromoMessages: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "launchPromoMessages"
-                    });
+                logError("XHR", 3908, blogCommentsContainer.Success, "launchPromoMessages");
             }
         },
         error: function (jqXHR) {
             $('#blogLoadingGif').hide();
             $('#imagePageLoadingGif').hide();
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("launchPromoMessages")) {
-                if (document.domain === 'localhost')
-                    alert("launchPromoMessages: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "launchPromoMessages"
-                    });
+                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "launchPromoMessages");
             }
         }
     });

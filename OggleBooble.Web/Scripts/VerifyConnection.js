@@ -81,7 +81,7 @@ function checkFor404(calledFrom) {
                             if (isNullorUndefined(visitorId))
                                 visitorId = "--";
                             canIgetaConnectionMessageShowing = true;
-                            logError("BUG", "SERVICE DOWN", "checkFor404 /" + calledFrom);
+                            logError("404", 3910, "SERVICE DOWN", "checkFor404 /" + calledFrom);
                         }
                     }
                     verifyConnection();

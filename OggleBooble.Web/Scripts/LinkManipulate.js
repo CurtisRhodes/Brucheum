@@ -51,32 +51,12 @@ function perfomCopyLink(linkId) {
                 awardCredits("LKC", pDirTreeId);
             }
             else {
-                if (document.domain === "localhost")
-                    alert("perfomCopyLink AJQ: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 1,
-                        ErrorMessage: success,
-                        CalledFrom: "perfomCopyLink"
-                    });
+                logError("BUG", pDirTreeId, success, "perfomCopyLink");
             }
         },
         error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
             if (!checkFor404("perfomCopyLink")) {
-                if (document.domain === "localhost")
-                    alert("perfomCopyLink: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "perfomCopyLink"
-                    });
-                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
+                logError("XHR", pDirTreeId, getXHRErrorDetails(jqXHR), "perfomCopyLink");
             }
         }
     });
@@ -117,36 +97,15 @@ function moveFile(request, linkId, folderId) {
                 });
             }
             else {
-                if (document.domain === "localhost")
-                    alert("performArchiveImage: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "BUG",
-                        Severity: 3,
-                        ErrorMessage: success,
-                        CalledFrom: "moveFile"
-                    });
-                //sendEmailToYourself("jQuery fail in album.js onRemoveImageClick", "Message: " + success);
+                logError("BUG", folderId, success, "moveFile");
             }
         },
         error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404("onRemoveImageClick")) {
-                if (document.domain === "localhost")
-                    alert("performArchiveImage: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "performArchiveImage"
-                    });
+            if (!checkFor404("moveFile")) {
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "moveFile");
             }
         }
     });
-
 }
 
 function attemptRemoveLink(linkId, folderId, imgSrc) {
@@ -173,37 +132,18 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                     });
                 }
                 else {
-                    if (document.domain === "localhost")
-                        alert("attemptRemoveLink: " + success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "BUG",
-                            Severity: 3,
-                            ErrorMessage: success,
-                            CalledFrom: "attemptRemoveLink"
-                        });
-                    //sendEmailToYourself("jQuery fail in album.js onRemoveImageClick", "Message: " + success);
+                    logError("BUG", folderId, success, "attemptRemoveLink");
                 }
             }
         },
         error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
             if (!checkFor404("attemptRemoveLink")) {
-                if (document.domain === "localhost")
-                    alert("attemptRemoveLink: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "Album.js onRemoveImageClick"
-                    });
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "attemptRemoveLink");
             }
         }
     });
 }
+
 function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
     //showDirTreeDialog(imgSrc, 1);
     if (errMsg === "single link") {
@@ -213,7 +153,7 @@ function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
             "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked' />  duplicate</div>\n" +
             "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons' />  bad link</div>\n" +
             "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons' />  low quality</div>\n" +
-            "    <div class='roundendButton' onclick='perFormDeleteImage(" + linkId + ")'>ok</div>\n");
+            "    <div class='roundendButton' onclick='performDeleteImage(" + linkId + ")'>ok</div>\n");
     }
     if (errMsg === "home folder Link") {
         $('#oggleDialogTitle').html("Remove Home Folder Link");
@@ -225,7 +165,8 @@ function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
     }
     $('#draggableDialog').fadeIn();
 }
-function perFormDeleteImage(linkId) {
+
+function performDeleteImage(linkId) {
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "api/Links/MoveLinkToRejects?linkId=" + linkId,
@@ -245,33 +186,13 @@ function perFormDeleteImage(linkId) {
                     });
                 }
                 else {
-                    if (document.domain === "localhost")
-                        alert("perFormDeleteImage: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "BUG",
-                            Severity: 3,
-                            ErrorMessage: success,
-                            CalledFrom: "perFormDeleteImage"
-                        });
-                    //sendEmailToYourself("jQuery fail in album.js onRemoveImageClick", "Message: " + success);
+                    logError("BUG", 3908, success, "performDeleteImage");
                 }
             }
         },
-        error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
+        error: function (jqXHR) {
             if (!checkFor404("perFormDeleteImage")) {
-                if (document.domain === "localhost")
-                    alert("perFormDeleteImage: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "perFormDeleteImage"
-                    });
+                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "perFormDeleteImage");
             }
         }
     });
@@ -308,32 +229,12 @@ function performRenameFolder(folderId, newFolderName) {
                 });
             }
             else {
-                if (document.domain === "localhost")
-                    alert("performRenameFolder: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 1,
-                        ErrorMessage: success,
-                        CalledFrom: "performRenameFolder"
-                    });
+                logError("BUG", folderId, success, "performRenameFolder");
             }
         },
         error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
             if (!checkFor404("performRenameFolder")) {
-                if (document.domain === "localhost")
-                    alert("performRenameFolder: " + errorMessage);
-                else
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "performRenameFolder"
-                });
-                //sendEmailToYourself("XHR ERROR IN ALBUM.JS remove image", "/api/FtpImageRemove/CheckLinkCount?imageLinkId=" + linkId + " Message: " + errorMessage);
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "performRenameFolder");
             }
         }
     });
@@ -348,39 +249,16 @@ function setFolderImage(linkId, folderId, level) {
         url: settingsArray.ApiServer + "/api/GalleryPage/UpdateFolderImage?linkId=" + linkId + "&folderId=" + folderId + "&level=" + level,
         success: function (success) {
             if (success === "ok") {
-
                 displayStatusMessage("ok", level + " image set");
                 $("#imageContextMenu").fadeOut();
-
             }
             else {
-                if (document.domain === "localhost")
-                    alert("setFolderImage AJX: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "AJX",
-                        Severity: 1,
-                        ErrorMessage: success,
-                        CalledFrom: "common.js setFolderImage"
-                    });
+                logError("BUG", folderId, success, "setFolderImage");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("setFolderImage")) {
-                if (document.domain === "localhost")
-                    alert("setFolderImage: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisiorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "common.js setFolderImage"
-                    });
-                //sendEmailToYourself("xhr error in common.js setFolderImage", "/api/ImageCategoryDetail/?linkId=" + linkId +
-                //    "&folderId=" + folderId + "&level=" + level + " Message: " + errorMessage);
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "setFolderImage");
             }
         }
     });
@@ -419,19 +297,14 @@ function nonFtpMoveCopy() {
                 }
             }
             else {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "BUG",
-                    Severity: 2,
-                    ErrorMessage: successModel.Success,
-                    CalledFrom: "MoveCopyArchive.js ftpMoveCopy"
-                });
-                //alert("ftpMoveCopy: " + successModel.Success);
+                logError("BUG", MoveCopyImageModel.SourceFolderId, success, "nonFtpMoveCopy");
             }
         },
         error: function (xhr) {
             $('#imagePageLoadingGif').hide();
-            alert("ftpMoveCopy xhr error: " + xhr.statusText);
+            if (!checkFor404("setFolderImage")) {
+                logError("XHR", MoveCopyImageModel.SourceFolderId, getXHRErrorDetails(jqXHR), "nonFtpMoveCopy");
+            }
         }
     });
 }

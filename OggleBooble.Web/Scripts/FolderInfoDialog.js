@@ -47,17 +47,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
     }
     catch (e) {
         $('#imagePageLoadingGif').hide();
-        if (document.domain === 'localhost')
-            alert("showFolderInfoDialog catch: " + e);
-        else
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "CAT",
-                Severity: 12,
-                ErrorMessage: "showFolderInfoDialog catch: " + e,
-                CalledFrom: "showFolderInfoDialog"
-            });
-        //sendEmailToYourself("javascript catch in FolderInfoDialog.js showCategoryDialog", "get NudeModelInfo catch: " + e);
+        logError("CAT", folderId, e, "showFolderInfoDialog");
     }
 }
 
@@ -111,33 +101,14 @@ function getFolderDetails(folderId) {
             }
             else {
                 $('#imagePageLoadingGif').hide();
-                showMyAlert("unable to show folder info");
-                if (document.domain === 'localhost')
-                    alert("getFolderDetails: " + rtnFolderInfo.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 2,
-                        ErrorMessage: rtnFolderInfo.Success,
-                        CalledFrom: "getFolderDetails"
-                    });
+                //showMyAlert("unable to show folder info");
+                logError("BUG", folderId, rtnFolderInfo.Success, "getFolderDetails");
             }
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("getFolderDetails")) {
-                if (document.domain === 'localhost')
-                    alert("getFolderDetails: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "getFolderDetails"
-                    });
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getFolderDetails");
             }
         }
     });
@@ -208,36 +179,13 @@ function saveFolderDialog() {
                 setTimeout(function () { $('#btnCatDlgEdit').html("Edit") }, 400);
             }
             else {
-                //sendEmailToYourself("jquery fail in FolderCategory.js saveCategoryDialogText", success);
-                if (document.domain === 'localhost')
-                    alert("saveFolderDialog: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "JQE",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "saveFolderDialog"
-                    });
+                logError("BUG", objFolderInfo.Id, success, "saveFolderDialog");
             }
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("saveFolderDialog")) {
-                if (document.domain === 'localhost')
-                    alert("saveFolderDialog: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "saveFolderDialog"
-                    });
-                //sendEmailToYourself("XHR ERROR in FolderCategory.js saveCategoryDialogText",
-                //    "/api/CategoryComment/EditFolderCategory?folderId=" + categoryFolderId + "&commentText=" +
-                //    $('#catDlgSummerNoteTextArea').summernote('code') + " Message: " + errorMessage);
+                logError("XHR", objFolderInfo.Id, getXHRErrorDetails(jqXHR), "saveFolderDialog");
             }
         }
     });
@@ -295,15 +243,15 @@ function clearGets() {
 }
 
 function validate() {
-    FolderDetailModel.FolderName = $('#txtFolderName').val();
-    $('#modelInfoDialog').dialog('option', 'title', FolderDetailModel.FolderName);
-    FolderDetailModel.Born = $('#txtBorn').val();
-    FolderDetailModel.Nationality = $('#txtNationality').val();
-    FolderDetailModel.Measurements = $('#txtMeasurements').val();
-    FolderDetailModel.Boobs = $('#selBoobs').val();
-    FolderDetailModel.CommentText = $('#modelInfoDialogComment').summernote('code');
-    FolderDetailModel.ExternalLinks = $('#externalLinks').summernote('code');
-    FolderDetailModel.LinkStatus = $('#txtStatus').val();
+    objFolderInfo.FolderName = $('#txtFolderName').val();
+    $('#modelInfoDialog').dialog('option', 'title', objFolderInfo.FolderName);
+    objFolderInfo.Born = $('#txtBorn').val();
+    objFolderInfo.Nationality = $('#txtNationality').val();
+    objFolderInfo.Measurements = $('#txtMeasurements').val();
+    objFolderInfo.Boobs = $('#selBoobs').val();
+    objFolderInfo.CommentText = $('#modelInfoDialogComment').summernote('code');
+    objFolderInfo.ExternalLinks = $('#externalLinks').summernote('code');
+    objFolderInfo.LinkStatus = $('#txtStatus').val();
     return true;
 }
 
@@ -313,7 +261,7 @@ function createPosersIdentifiedFolder() {
         // step 1:  Create new Ftmp Folder
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "/api/FtpDashBoard/CreateFolder?parentId=" + defaultParentFolder + "&newFolderName=" + FolderDetailModel.FolderName,
+            url: settingsArray.ApiServer + "/api/FtpDashBoard/CreateFolder?parentId=" + defaultParentFolder + "&newFolderName=" + objFolderInfo.FolderName,
             success: function (successModel) {
                 $('#dashBoardLoadingGif').hide();
                 if (successModel.Success === "ok") {
@@ -322,8 +270,8 @@ function createPosersIdentifiedFolder() {
                     //linkId = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
                     var MoveCopyImageModel = {
                         Mode: "Archive",
-                        Link: FolderDetailModel.FolderImage,
-                        SourceFolderId: FolderDetailModel.FolderId,
+                        Link: successModel.FolderImage,
+                        SourceFolderId: successModel.FolderId,
                         DestinationFolderId: successModel.ReturnValue
                     };
 
@@ -335,72 +283,25 @@ function createPosersIdentifiedFolder() {
                             if (moveImageSuccessModel.Success === "ok") {
                                 displayStatusMessage("ok", "image moved to newfolder");
                             }
-                            else {
-                                if (document.domain === 'localhost')
-                                    alert("createPosersIdentifiedFolder/MoveImage: " + moveImageSuccessModel.Success);
-                                else
-                                    logError({
-                                        VisitorId: getCookieValue("VisitorId"),
-                                        ActivityCode: "AJQ",
-                                        Severity: 2,
-                                        ErrorMessage: moveImageSuccessModel.Success,
-                                        CalledFrom: "createPosersIdentifiedFolder/MoveImage"
-                                    });
-                            }
+                            else
+                                logError("BUG", defaultParentFolder, moveImageSuccessModel.Success, "createPosersIdentifiedFolder/MoveImage");
                         },
                         error: function (jqXHR) {
                             var errorMessage = getXHRErrorDetails(jqXHR);
-                            if (!checkFor404("createPosersIdentifiedFolder/MoveImage")) {
-                                if (document.domain === 'localhost')
-                                    alert("createPosersIdentifiedFolder/MoveImage: " + errorMessage);
-                                else
-                                    logError({
-                                        VisitorId: getCookieValue("VisitorId"),
-                                        ActivityCode: "XHR",
-                                        Severity: 2,
-                                        ErrorMessage: errorMessage,
-                                        CalledFrom: "createPosersIdentifiedFolder/MoveImage"
-                                    });
-                                //sendEmailToYourself("XHR ERROR in Transitions.html createPosersIdentifiedFolder", "/api/MoveImage/MoveImage Message: " + errorMessage);
-                            }
+                            if (!checkFor404("createPosersIdentifiedFolder/MoveImage")) 
+                                logError("XHR", defaultParentFolder, getXHRErrorDetails(jqXHR), "createPosersIdentifiedFolder/MoveImage");
                         }
                     });
                 }
-                else {
-                    if (document.domain === 'localhost')
-                        alert("getrtnFolderInfo: " + successModel.Success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "AJQ",
-                            Severity: 2,
-                            ErrorMessage: successModel.Success,
-                            CalledFrom: "createPosersIdentifiedFolder"
-                        });
-                    //sendEmailToYourself("error in ModelInfo.js", "CreateVirtualFolder: " + successModel.Success);
-                    //alert("CreateVirtualFolder: " + successModel.Success);
-                }
+                else 
+                    logError("BUG", defaultParentFolder, successModel.Success, "createPosersIdentifiedFolder");
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("createPosersIdentifiedFolder")) {
-                    if (document.domain === 'localhost')
-                        alert("createPosersIdentifiedFolder: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 2,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "createPosersIdentifiedFolder"
-                        });
-                    //sendEmailToYourself("XHR ERROR in Transitions.html createPosersIdentifiedFolder",
-                      //  "/api/FtpDashBoard/CreateFolder?parentId=" + defaultParentFolder + "&newFolderName=" + FolderDetailModel.FolderName + " Message: " + errorMessage);
-                }
+                if (!checkFor404("createPosersIdentifiedFolder")) 
+                    logError("XHR", defaultParentFolder , getXHRErrorDetails(jqXHR), "createPosersIdentifiedFolder");
             }
         });
     }
-
     //// 2. actually create
     //string extension = model.FolderImage.Substring(model.FolderImage.LastIndexOf("."));
     ////string sourceOriginPath = Helpers.GetParentPath(dbParent.Id, true);
@@ -432,39 +333,18 @@ function updateFolderDetail() {
         $.ajax({
             type: "PUT",
             url: settingsArray.ApiServer + "/api/ImageCategoryDetail",
-            data: FolderDetailModel,
+            data: objFolderInfo,
             success: function (success) {
                 if (success === "ok") {
                     displayStatusMessage("ok", "Model info updated");
                 }
                 else {
-                    if (document.domain === 'localhost')
-                        alert("createPosersIdentifiedFolder: " + success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "AJQ",
-                            Severity: 2,
-                            ErrorMessage: success,
-                            CalledFrom: "updateFolderDetail"
-                        });
+                    logError("BUG", objFolderInfo.Id, success, "updateFolderDetail");
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("updateFolderDetail")) {
-                    if (document.domain === 'localhost')
-                        alert("updateFolderDetail: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 2,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "updateFolderDetail"
-                        });
-                    //sendEmailToYourself("XHR ERROR in ModelInfoDialog.js updateFolderDetail", "/api/ImageCategoryDetail Message: " + errorMessage);
-                }
+                if (!checkFor404("updateFolderDetail")) 
+                    logError("XHR", objFolderInfo.Id, getXHRErrorDetails(jqXHR), "updateFolderDetail");
             }
         });
     }
@@ -538,7 +418,7 @@ function addTrackback(link) {
         alert("addTrackback  site: " + site + "  link: " + hLink);
 
         var trackBackItem = {
-            PageId: FolderDetailModel.FolderId,
+            PageId: objFolderInfo.FolderId,
             Site: site,
             TrackBackLink: hLink,
             LinkStatus: "unknown"
@@ -552,39 +432,15 @@ function addTrackback(link) {
                     displayStatusMessage("ok", "trackback link added");
                 }
                 else {
-                    if (success.indexOf("Violation of PRIMARY KEY") > -1) {
+                    if (success.indexOf("Violation of PRIMARY KEY") > -1) 
                         updateTrackback(trackBackItem);
-                    }
-                    else {
-                        if (document.domain === 'localhost')
-                            alert("addTrackback: " + success);
-                        else
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "AJQ",
-                                Severity: 2,
-                                ErrorMessage: success,
-                                CalledFrom: "addTrackback"
-                            });
-                    }
+                    else 
+                        logError("BUG", folderId, success, "addTrackback");
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("addTrackback")) {
-                    if (document.domain === 'localhost')
-                        alert("addTrackback: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 2,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "addTrackback"
-                        });
-                    //sendEmailToYourself("XHR ERROR IN addTrackback", "folderId=" + folderId + "<br/>Message : " + errorMessage);
-                }
-
+                if (!checkFor404("addTrackback")) 
+                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addTrackback");
             }
         });
     }
@@ -599,33 +455,12 @@ function updateTrackback(trackBackItem) {
             if (success === "ok") {
                 displayStatusMessage("ok", "trackback link updated");
             }
-            else {
-                if (document.domain === 'localhost')
-                    alert("updateTrackback: " + success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: success,
-                        CalledFrom: "updateTrackback"
-                    });
-            }
+            else
+                logError("BUG", objFolderInfo.Id, success, "updateTrackback");
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("updateTrackback")) {
-                if (document.domain === 'localhost')
-                    alert("updateTrackback: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "updateTrackback"
-                    });
-            };
+            if (!checkFor404("updateTrackback")) 
+                logError("XHR", objFolderInfo.Id, getXHRErrorDetails(jqXHR), "updateTrackback");            
         }
     });
 }

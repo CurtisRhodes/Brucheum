@@ -133,14 +133,14 @@ function setLeftMenu(viewId) {
 }
 
 function loadHeaderTabs() {
-    if (isInRole("add images")) {
+    if (isInRole("ADD")) {
         $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
         $('#divAddImages').show();
     }
-    if (isInRole("manage folders")) {
+    if (isInRole("ADD")) {
         $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Folders');\">Manage Folders</a>");
     }
-    if (isInRole("Oggle admin")) {
+    if (isInRole("ADM")) {
         //alert("isInRole Oggle admin")
         $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Admin');\">Admin</a>");
         $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Reports');\">Reports</a>");

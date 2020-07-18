@@ -99,15 +99,7 @@ function logVisit(visitorId, pageId) {
                     else {
                         $('#headerMessage').html("Wecome back" + logVisitSuccessModel.UserName);
                     }
-                    logEventActivity({
-                        VisitorId: visitorId,
-                        EventCode: "VIS",
-                        EventDetail: "VisitAdded. new visitor: " + logVisitSuccessModel.IsNewVisitor,
-                        PageId: pageId,
-                        CalledFrom: "HitCounter.js logVisit"
-                    });
-                    //sendEmailToYourself("Visit Added ", "visitorId: " + visitorId + "<br/>Initial Page: ");
-                    //if (document.domain === 'localhost') alert("Visit Added ", "visitorId: " + visitorId);
+                    logEvent("VIS", pageId, "is new visitor: " + logVisitSuccessModel.IsNewVisitor, "HitCounter.js logVisit")
                 }
             }
             else {
@@ -154,25 +146,13 @@ function checkForHitLimit(calledFrom, pageId, userPageHits, userImageHits) {
             if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0) {
                 if (getCookieValue("IpAddress") !== "68.203.90.183") {                   //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
                     showCustomMessage(98, true);
-                    logEventActivity({
-                        VisitorId: getCookieValue("VisitorId"),
-                        EventCode: "PAY",
-                        EventDetail: "UserPageHits: " + userPageHits,
-                        PageId: pageId,
-                        CalledFrom: calledFrom
-                    });
+                    logEvent("PAY", pageId, "UserPageHits: " + userPageHits)
                 }
             }
         }
         if (calledFrom === "images") {
             if (userImageHits > freeImageHitsAllowed && userImageHits % 10 === 0) {
-                logEventActivity({
-                    VisitorId: getCookieValue("VisitorId"),
-                    EventCode: "PAY",
-                    EventDetail: "Image Hits: " + userImageHits,
-                    PageId: pageId,
-                    CalledFrom: calledFrom
-                });
+                logEvent("PAY", pageId, "Image Hits: " + userImageHits)
                 showCustomMessage(97, true);
             }
         }
@@ -227,14 +207,7 @@ function getIpInfo(pageId, calledFrom) {
                         if (addVisitorSuccess.Success === "ok") {
                             setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
                             setCookieValue("IsLoggedIn", "true");
-
-                            logEventActivity({
-                                VisitorId: getCookieValue("VisitorId"),
-                                EventCode: "NEW",
-                                EventDetail: addVisitorSuccess.EventDetail,
-                                PageId: pageId,
-                                CalledFrom: "callIpService/" + calledFrom
-                            });
+                            logEvent("NEW", pageId, addVisitorSuccess.EventDetail)
                         }
                         else {
                             logError("BUG",pageId, addVisitorSuccess.Success, "addVisitor");

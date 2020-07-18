@@ -94,34 +94,12 @@ function performSearch(searchString) {
                         $('#divLoginArea').hide();
                     }
                     else
-                        if (document.domain === 'localhost')
-                            alert("performSearch: " + SearchResultsModel.Success);
-                        else
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "XHR",
-                                Severity: 1,
-                                ErrorMessage: SearchResultsModel.Success,
-                                CalledFrom: "performSearch"
-                            });
+                        logError("XHR", 3908, SearchResultsModel.Success, "oggleSearchKeyDown");
                     busy = false;
                 },
                 error: function (jqXHR) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
                     if (!checkFor404("performSearch")) {
-                        if (document.domain === 'localhost')
-                            alert("XHR error in performSearch: " + errorMessage);
-                        else
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "XHR",
-                                Severity: 1,
-                                ErrorMessage: errorMessage,
-                                CalledFrom: "performSearch"
-                            });
-                        //sendEmailToYourself("XHR error in oggleSearchKeyDown", "/Data/Settings.xml Message: " + errorMessage);
-                        if (document.domain === 'localhost')
-                            alert("oggleSearchKeyDown xhr error: " + getXHRErrorDetails(xhr));
+                        logError("XHR", 3907, getXHRErrorDetails(jqXHR), "oggleSearchKeyDown");
                     }
                 }
             });

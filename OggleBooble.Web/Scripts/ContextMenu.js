@@ -38,7 +38,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
         getLimitedImageDetails();
 
     //$('.adminLink').hide();
-    if (isInRole("Oggle admin")) $('.adminLink').show();
+    if (isInRole("ADM")) $('.adminLink').show();
 }
 
 $('.contextMenuContent').mouseover(function (e) {

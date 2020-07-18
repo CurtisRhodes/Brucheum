@@ -27,11 +27,9 @@
     <script src="Scripts/OggleFooter.js"></script>
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/DirTree.js"></script>
-    <script src="Scripts/ModelInfoDialog.js"></script>
     <script src="Scripts/FeedbackDialog.js"></script>
     <script src="Scripts/FolderInfoDialog.js"></script>
     <script src="Scripts/ImageCommentDialog.js"></script>
-    <script src="Scripts/MoveCopyArchive.js"></script>
     <script src="Scripts/MetaTagDialog.js"></script>
     <script src="Scripts/LinkManipulate.js"></script>
     <script src="Scripts/ContextMenu.js"></script>
@@ -112,18 +110,15 @@
                         else {
                             clearInterval(waiter2);
                             $('#dots').html('');
-                            //changeFavoriteIcon("redBallon");
+                            changeFavoriteIcon("redBallon");
 
-                            if (isInRole("view dynamic") || document.domain === "localhost") {
-                                //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) TruE");
+                            if (isInRole("NewUser")) {
                                 loadAlbum(params.folder);
-                                //$('#feedbackBanner').fadeIn();
                             }
                             else {
-                                loadAlbum(params.folder);
-                                //alert("document.domain: " + document.domain);
-                                //if (getCookieValue("IpAddress") == "68.203.90.183") alert("isInRole(view dynamic) FALSE");
                                 //directToStaticPage(params.folder);
+                                //alert("document.domain: " + document.domain);
+                                loadAlbum(params.folder);
                             }
                         }
                     }, 300);

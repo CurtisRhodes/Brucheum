@@ -37,31 +37,12 @@ function metricsMatrixReport() {
                     runMostImageHits();
                 }
                 else {
-                    if (document.domain === 'localhost')
-                        alert("metricsMatrixReport" + metricsMatrixResults.Success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "AJQ",
-                            Severity: 12,
-                            ErrorMessage: metricsMatrixResults.Success,
-                            CalledFrom: "metricsMatrixReport"
-                        });
+                    logError("BUG", 3910, metricsMatrixResults.Success, "metricsMatrixReport");
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("metricsMatrixReport")) {
-                    if (document.domain === 'localhost')
-                        alert("metricsMatrixReport" + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "metricsMatrixReport"
-                        });
+                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "metricsMatrixReport");
                 }
             }
         });
@@ -86,29 +67,12 @@ function mostVisitedPages() {
                 $('#popPagesContainer').css("display", "inline-block");
             }
             else {
-                if (document.domain === "localhost")
-                    alert("mostVisitedPages: " + popularPages.Success);
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: popularPages.Success,
-                    CalledFrom: "mostVisitedPages"
-                });
+                logError("BUG", 3910, popularPages.Success, "mostVisitedPages");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("runPopPages")) {
-                if (document.domain === "localhost")
-                    alert("mostVisitedPages: " + errorMessage);
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "mostVisitedPages"
-                });
+            if (!checkFor404("mostVisitedPages")) {
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "mostVisitedPages");
             }
         }
     });
@@ -130,31 +94,12 @@ function runMostImageHits() {
                 $("#mostImageHitsReport").append("</table>");
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("runMostImageHits" + mostImageHits.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 12,
-                        ErrorMessage: mostImageHits.Success,
-                        CalledFrom: "runMostImageHits"
-                    });
+                logError("BUG", 3910, mostImageHits.Success, "runMostImageHits");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("runMostImageHits")) 
-                if (document.domain === 'localhost')
-                    alert("runMostImageHits" + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 12,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "runMostImageHits"
-                    });
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "runMostImageHits");
         }
     });
 }
@@ -194,31 +139,12 @@ function runEventActivityReport() {
                 $("#divStandardReportCount").html(" Total: " + activityReport.HitCount.toLocaleString());
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("eventActivityReport" + activityReport.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 12,
-                        ErrorMessage: activityReport.Success,
-                        CalledFrom: "eventActivityReport"
-                    });
+                logError("BUG", 3910, activityReport.Success, "eventActivityReport");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("eventActivityReport")) {
-                if (document.domain === 'localhost')
-                    alert("eventActivityReport" + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 12,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "eventActivityReport"
-                    });
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "eventActivityReport");
             }
         }
     });
@@ -253,31 +179,12 @@ function runLatestImageHitsReport() {
                 $("#divStandardReportCount").html(" Total: " + imageHitActivityReport.HitCount.toLocaleString());
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("LatestImageHitsReport" + imageHitActivityReport.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 12,
-                        ErrorMessage: imageHitActivityReport.Success,
-                        CalledFrom: "LatestImageHitsReport"
-                    });
+                logError("BUG", 3910, imageHitActivityReport.Success, "showLatestImageHitsReport");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("LatestImageHitsReport"))
-                if (document.domain === 'localhost')
-                    alert("LatestImageHitsReport" + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 12,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "LatestImageHitsReport"
-                    });
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "showLatestImageHitsReport");
         }
     });
 }
@@ -327,31 +234,12 @@ function runMostActiveUsersReport() {
                 $("#divStandardReportCount").html(" Total: " + mostActiveUsersReport.HitCount.toLocaleString());
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("mostActiveUsersReport" + mostActiveUsersReport.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 12,
-                        ErrorMessage: mostActiveUsersReport.Success,
-                        CalledFrom: "mostActiveUsersReport"
-                    });
+                logError("BUG", 3910, mostActiveUsersReport.Success, "mostActiveUsersReport");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("mostActiveUsersReport")) {
-                if (document.domain === 'localhost')
-                    alert("mostActiveUsersReport" + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 12,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "mostActiveUsersReport"
-                    });
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "mostActiveUsersReport");
             }
         }
     });
@@ -401,31 +289,12 @@ function runPageHitReport() {
                 $("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("pageHitsReport" + pageHitReportModel.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 12,
-                        ErrorMessage: pageHitReportModel.Success,
-                        CalledFrom: "pageHitsReport"
-                    });
+                logError("BUG", 3910, success, "pageHitsReport");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("pageHitsReport")) {
-                if (document.domain === 'localhost')
-                    alert("pageHitsReport" + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 12,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "pageHitsReport"
-                    });
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "pageHitsReport");
             }
         }
     });
@@ -487,22 +356,13 @@ function errorLogReport() {
                 $('#dashboardMiddleColumn').html(html);
             }
             else {
+                logError("BUG", 3910, errorLogReport.Success, "errorLogReport");
                 alert("PageHitsReport: " + errorLogReport.Success);
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("errorLogReport")) {
-                if (document.domain === 'localhost')
-                    alert("errorLogReport" + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 12,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "errorLogReport"
-                    });
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "errorLogReport");
             }
         }
     });
@@ -542,32 +402,12 @@ function FeedbackReport() {
                 //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("FeedbackReport" + feedbackReport.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJQ",
-                        Severity: 12,
-                        ErrorMessage: feedbackReport.Success,
-                        CalledFrom: "FeedbackReport"
-                    });
+                logError("XHR", 3910, feedbackReport.Success, "FeedbackReport");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("FeedbackReport")) {
-                if (document.domain === 'localhost')
-                    alert("FeedbackReport" + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 12,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "FeedbackReport"
-                    });
-                //sendEmailToYourself("XHR ERROR in Dashboard.js FeedbackReport"                    + errorMessage);
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "FeedbackReport");
             }
         }
     });

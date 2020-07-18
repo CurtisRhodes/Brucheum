@@ -22,31 +22,11 @@ function loadCooseBox(column,option) {
                         });
                     }
                     else
-                        if (document.domain === 'localhost')
-                            alert("roles/loadCooseBox" + usersModel.Success);
-                        else
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "XHR",
-                                Severity: 12,
-                                ErrorMessage: usersModel.Success,
-                                CalledFrom: "roles/loadCooseBox"
-                            });
+                        logError("BUG", 3910, usersModel.Success, "roles/loadCooseBox");
                 },
                 error: function (jqXHR) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404("loadUsers")) {
-                        if (document.domain === 'localhost')
-                            alert("roles/loadCooseBox" + errorMessage);
-                        else
-                            logError({
-                                VisitorId: getCookieValue("VisitorId"),
-                                ActivityCode: "XHR",
-                                Severity: 12,
-                                ErrorMessage: errorMessage,
-                                CalledFrom: "roles/loadCooseBox"
-                            });
-                        //sendEmailToYourself("XHR ERROR IN Admin.JS loadImages", "api/Login/GetUsers Message: " + errorMessage);
+                    if (!checkFor404("roles/loadCooseBox")) {
+                        logError("XHR", 3910, getXHRErrorDetails(jqXHR), "roles/loadCooseBox");
                     }
                 }
             });
@@ -90,32 +70,12 @@ function loadCooseBox(column,option) {
                     });
                 }
                 else {
-                    if (document.domain === 'localhost')
-                        alert("api/Roles/GetRoles" + roleModel.Success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "AJQ",
-                            Severity: 12,
-                            ErrorMessage: roleModel.Success,
-                            CalledFrom: "api/Roles/GetRoles"
-                        });
+                    logError("BUG", 3910, roleModel.Success, "roles/loadCooseBox");
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("loadAllUserRoles")) {
-                    if (document.domain === 'localhost')
-                        alert("api/Roles/GetRoles" + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "api/Roles/GetRoles"
-                        });
-                    //sendEmailToYourself("XHR ERROR IN Admin.JS loadAllUserRoles", "api/Login/GetUsers Message: " + errorMessage);
+                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "roles/loadCooseBox");
                 }
             }
         });
@@ -179,47 +139,17 @@ function loadUserRoles(whichType) {
 
                 }
                 else {
-                    if (document.domain === 'localhost')
-                        alert("api/Roles/loadUserRoles" + roleModel.Success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: roleModel.Success,
-                            CalledFrom: "api/Roles/loadUserRoles"
-                        });
-                    //sendEmailToYourself("ERROR in loadUserRoles", "roleModel.Success: " + roleModel.Success);
+                    logError("BUG", 3910, roleModel.Success, "api/Roles/loadUserRoles");
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("loadUserRoles")) {
-                    if (document.domain === 'localhost')
-                        alert("api/Roles/loadUserRoles" + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "api/Roles/loadUserRoles"
-                        });
-                    //sendEmailToYourself("XHR ERROR IN loadUserRoles", "api/Roles/GetUserRoles?userName=" + selectedUserName + "&whichType=" + whichType + " Message: " + errorMessage);
+                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "api/Roles/loadUserRoles");
                 }
             }
         });
     } catch (e) {
-        if (document.domain === 'localhost')
-            alert("CAT api/Roles/loadUserRoles" + e);
-        else
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "CAT",
-                Severity: 12,
-                ErrorMessage: e,
-                CalledFrom: "api/Roles/loadUserRoles"
-            });
+        logError("CAT", 3910, e, "api/Roles/loadUserRoles");
     }
 }
 
@@ -289,38 +219,18 @@ function RemoveUserRole(selectedUserName, selectedRoleId) {
                     loadRoles();
                     //displayStatusMessage("ok", "Role [" + selectedRoleName + "] Removed");
                 }
-                else {
-                    if (document.domain === 'localhost')
-                        alert("RemoveUserRole: " + success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "AJQ",
-                            Severity: 12,
-                            ErrorMessage: success,
-                            CalledFrom: "RemoveUserRole"
-                        });
-  }
+                else 
+                    logError("BUG", 3910, success, "RemoveUserRole");                
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("RemoveUserRole")) {
-                    if (document.domain === 'localhost')
-                        alert("RemoveUserRole: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "RemoveUserRole"
-                        });
+                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "RemoveUserRole");
                 }
             }
-        });
+        }); 
     }
     catch (e) {
-        alert("RemoveUserRole catch ERROR: " + e);
+        logError("CAT", 3910, e, "RemoveUserRole");
     }
 }
 
@@ -343,37 +253,16 @@ function loadAaddEditRoles() {
                     });
                 }
                 else
-                    alert(roleModel.Success);
-                if (document.domain === 'localhost')
-                    alert("loadAaddEditRoles: " + roleModel.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 12,
-                        ErrorMessage: roleModel.Success,
-                        CalledFrom: "loadAaddEditRoles"
-                    });
-},
+                    logError("BUG", 3910, roleModel.Success, "loadAaddEditRoles");
+            },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("loadAaddEditRoles")) {
-                    if (document.domain === 'localhost')
-                        alert("loadAaddEditRoles: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "loadAaddEditRoles"
-                        });
+                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "loadAaddEditRoles");
                 }
             }
         });
     } catch (e) {
-        //displayStatusMessage("error", "catch ERROR: " +e);
-        alert("getRoles catch: " + e);
+        logError("CAT", 3910, e, "loadAaddEditRoles");
     }
 }
 
@@ -403,38 +292,17 @@ function addRole() {
                     loadAaddEditRoles();
                     $('#btnRoleToggle').hide();
                 }
-                else {
-                    if (document.domain === 'localhost')
-                        alert("addRole" + success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: success,
-                            CalledFrom: "addRole"
-                        });
-                }
+                else 
+                    logError("BUG", 3910, success, "addRole");
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("addRole")) {
-                    if (document.domain === 'localhost')
-                        alert("addRole" + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "addRole"
-                        });
-                }
+                if (!checkFor404("addRole")) 
+                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "addRole");
             }
         });
     }
     catch (e) {
-        alert("AddRole catch: " + e);
+        logError("CAT", 3910, e, "addRole");
     }
 }
 
@@ -452,39 +320,17 @@ function updateRole(newName) {
                     getAllRoles();
                     $('#btnRoleToggle').hide();
                 }
-                else {
-                    //displayStatusMessage("error", "server ERROR: " + success);
-                    if (document.domain === 'localhost')
-                        alert("updateRole" + success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: success,
-                            CalledFrom: "updateRole"
-                        });
-                }
+                else 
+                    logError("BUG", 3910, success, "updateRole");
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("updateRole")) {
-                    if (document.domain === 'localhost')
-                        alert("updateRole" + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "updateRole"
-                        });
-                }
+                if (!checkFor404("updateRole")) 
+                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "updateRole");
             }
         });
     }
     catch (e) {
-        alert("updateRole catch: " + e);
+        logError("CAT", 3910, e, "updateRole");
     }
 }
 

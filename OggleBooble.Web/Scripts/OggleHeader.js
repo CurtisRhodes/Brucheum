@@ -106,16 +106,7 @@ function setHdrBottomRow(folderId, subdomain) {
             break;
         }
         default: {
-            if (document.domain === "localhost")
-                alert("setHdrBottomRow switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain);
-            else
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "BUG",
-                    Severity: 2,
-                    ErrorMessage: "switch case not handled. FolderId: " + folderId + ", Subdomain: " + subdomain,
-                    CalledFrom: "OggleHeader setOggleHeader"
-                });
+            logError("SWT", folderId, " Subdomain: " + subdomain, "setHdrBottomRow");
         }
     }
     setTimeout(function () { mediaSavyHdrResize(); }, 400);
@@ -206,9 +197,6 @@ function setLoginSection(subdomain) {
         $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
         $('#optionNotLoggedIn').hide();
-        if (isInRole("Oggle admin")) {
-            $('#dashboardMenuItem').show();
-        }
     }
     else {
         $('#dashboardMenuItem').hide();

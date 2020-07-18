@@ -84,47 +84,19 @@ function getSlideshowItems(folderId, startItem) {
                 }
                 else {
                     $('#imagePageLoadingGif').hide();
-                    if (document.domain === "localhost") alert("getSlideshowItems: " + slideshowItemModel.Success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "BUG",
-                            Severity: 1,
-                            ErrorMessage: slideshowItemModel.Success,
-                            CalledFrom: "getSlideshowItems"
-                        });
-                    //sendEmailToYourself("jQuery fail in Album.js: getAlbumImages", imageLinksModel.Success);
+                    logError("BUG", folderId, success, "getSlideshowItems");
                 }
             },
             error: function (jqXHR) {
                 $('#imagePageLoadingGif').hide();
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("getAlbumImages")) {
-                    if (document.domain === "localhost")
-                        alert("getSlideshowItems: " + errorMessage);
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "getSlideshowItems"
-                    });
-                    //sendEmailToYourself("XHR ERROR in Album.js GetImageLinks ",
+                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getSlideshowItems");
                 }
             }
         });
     } catch (e) {
         $('#imagePageLoadingGif').hide();
-        if (document.domain === "localhost") alert("getSlideshowItems CATCH: " + e);
-        else
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "CAT",
-                Severity: 1,
-                ErrorMessage: e,
-                CalledFrom: "Album.js getAlbumImages"
-            });
-        //sendEmailToYourself("Catch in Album.js getAlbumImages", e);
+        logError("CAT", folderId, e, "getSlideshowItems");
     }
 }
 
@@ -170,30 +142,13 @@ function incrimentExplode() {
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
         if (imageViewerFolderName === undefined) {
             if (typeof staticPageFolderName === 'string') {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "IS1",
-                    Severity: 4,
-                    ErrorMessage: "Issue in SlideShow. StaticPageFolderName: " + staticPageFolderName,
-                    CalledFrom: "slideshow.js explodeViewer"
-                });
-                //sendEmailToYourself("Issue in SlideShow", "staticPageFolderName: " + staticPageFolderName);
-                if (document.domain === 'localhost') alert("Issue in SlideShow. StaticPageFolderName: " + staticPageFolderName);
+                logError("IS1", folderId, StaticPageFolderName, "slideshow.js explodeViewer");
                 currentfolderName = staticPageFolderName;
             }
             else {
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "IS2",
-                    Severity: 4,
-                    ErrorMessage: "Issue in SlideShow  typeof staticPageFolderName",
-                    CalledFrom: "slideshow.js explodeViewer"
-                });
-                //sendEmailToYourself("Issue in SlideShow", "staticPageFolderName: " + staticPageFolderName);
-                if (document.domain === 'localhost') alert("Issue in SlideShow  typeof staticPageFolderName");
+                logError("IS1", folderId, "typeof staticPageFolderName", "slideshow.js explodeViewer");
             }
         }
-
         $('#viewerButtonsRow').show();
         clearInterval(exploderInterval);
         $('#slideShowContainer').css('top', 0);
@@ -201,17 +156,6 @@ function incrimentExplode() {
         if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId)
             $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
         resizeViewer();
-
-        //setTimeout(function () {
-        //    if (spIncludeSubFolders) {
-        //        if (!spSlideShowRunning) {
-        //            //clearInterval(imageViewerIntervalTimer);
-        //            //alert("start slideshow");
-        //            //runSlideShow('start');
-        //        }
-        //        else alert("runnaway");
-        //    }
-        //}, slideShowSpeed);
     }
 }
 
@@ -295,14 +239,7 @@ function slide(direction) {
         }, 450);
         //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
     } catch (e) {
-        logError({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "CAT",
-            Severity: 4,
-            ErrorMessage: e,
-            CalledFrom: "slideshow.js.slide"
-        });
-        //sendEmailToYourself("CATCH ERROR in slideshow.js.slide " + "Error: " + e);
+        logError("CAT", 3910, e, "slide");
     }
 }
 
@@ -396,22 +333,11 @@ function closeViewer(calledFrom) {
             closeMethod = calledFrom;
         }
         if (spSessionCount < 2) {
-            logEventActivity({
-                VisitorId: getCookieValue("VisitorId"),
-                EventCode: "SVC",
-                PageId: albumFolderId,
-                EventDetail: "Single Image Viewed. closeMethod: " + closeMethod,
-                CalledFrom: albumFolderId
-            });
+            logEvent("SVC", pageId, "Single Image Viewed. closeMethod: " + closeMethod);
+            //logActivity("SVC", pageId)
         }
         else {
-            logEventActivity({
-                VisitorId: getCookieValue("VisitorId"),
-                EventCode: "SVC",
-                PageId: albumFolderId,
-                EventDetail: "Images Viewed: " + spSessionCount + " closed: " + closeMethod,
-                CalledFrom: albumFolderId
-            });
+            logEvent("SVC", pageId, "Images Viewed: " + spSessionCount + " closed: " + closeMethod);
         }
         resizeImageContainer();
         //if (spSessionCount > 20) {

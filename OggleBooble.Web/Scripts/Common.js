@@ -226,9 +226,11 @@ function create_UUID() {
     return uuid;
 }
 
+//logError("BUG", "SERVICE DOWN", "checkFor404 /" + calledFrom);
+
 function logError(errorCode, pageId, errorMessage, calledFrom) {
     if (document.domain === 'localhost')
-        alert("Error " + calledFrom + " : " + errorMessage);
+        alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
     else
         try {
             $.ajax({
@@ -266,46 +268,52 @@ function logError(errorCode, pageId, errorMessage, calledFrom) {
         }
 }
 
-function logError1(logErrorModel) {
-    //if (document.domain === "localhost") alert("error almost logged: " +
-    //    "\n called from: " + logErrorModel.CalledFrom +
-    //    "\n code: " + logErrorModel.ActivityCode +
-    //    "\n pageId: " + logErrorModel.PageId +
-    //    "\n message: " + logErrorModel.ErrorMessage);
-    //else
-
-    
-
-    if (isNullorUndefined(logErrorModel.VisitorId)) {
-        logErrorModel.VisitorId = "unk";
-    }
-    if (isNullorUndefined(logErrorModel.CalledFrom))
-        logErrorModel.CalledFrom = "unkzz";
-    try {
+function logActivity(activityCode, pageId) {
+    if (document.domain !== 'localhost') {
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "api/Common/LogError",
-            data: logErrorModel,
+            url: settingsArray.ApiServer + "api/Common/LogActivity",
+            data: {
+                VisitorId: getCookieValue("VisiorId"),
+                ActivityCode: activityCode,
+                PageId: pageId
+            },
             success: function (success) {
-                if (success === "ok") {
-                    //displayStatusMessage("ok", "error message logged");
-                    console.log("error message logged.  Called from: " +
-                        logErrorModel.CalledFrom + " message: " + success);
-                }
-                else {
-
-                    console.error("ajx error in logError!!: " + success);
+                if (success !== "ok") {
+                    logError("BUG", pageId, success, "logActivity");
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("logError")) {
-                    console.error("XHR error in logError!!: " + errorMessage);
+                if (!checkFor404("logActivity")) 
+                    logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logActivity");
+            }
+        });
+    }
+}
+
+function logEvent(eventCode, pageId, eventDetails) {
+    if (document.domain !== 'localhost') {
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogActivity",
+            data: {
+                VisitorId: getCookieValue("VisiorId"),
+                EventCode: eventCode,
+                EventDetail: eventDetails,
+                PageId: pageId
+            },
+            success: function (success) {
+                if (success !== "ok") {
+                    logError("BUG", pageId, success, "logEvent");
+                }
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("logEvent")) {
+                    logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logEvent");
+
                 }
             }
         });
-    } catch (e) {
-        console.error("Catch error in logError!!: " + e);
     }
 }
 
@@ -491,26 +499,6 @@ function sendEmailToYourself(subject, message) {
                 logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
         }
     });
-}
-
-var registerEmail;
-var requestedPrivileges = [];
-function authenticateEmail(usersEmail) {
-    var privileges = "";
-    $.each(requestedPrivileges, function (idx,obj) {
-        privileges += obj + ", ";
-    });
-    logEventActivity({
-        VisitorId: getCookieValue("VisiorId"),
-        EventCode: "EMA" ,
-        EventDetail: usersEmail + privileges,
-        PageId: 1111,
-        CalledFrom: "authenticateEmail"
-    });
-    sendEmailToYourself("Acess Requested", " user: " + getCookieValue("UserName") + " has requsted " + privileges);
-    alert("Thank you for registering " + getCookieValue("UserName") + "\n please reply to the two factor authentitifcation email sent to you" +
-        "\nYou will then be granted the access you requested."+"\nThe menu item 'Dashboard' will appear next to your 'Hello' message");
-    dragableDialogClose();
 }
 
 function requestPrivilege(privilege) {

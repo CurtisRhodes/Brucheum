@@ -8,6 +8,7 @@ let debugMode = true;
 function launchCarousel(startRoot) {
     absolueStart = Date.now();
     $('#footerMessage2').html("launching carousel");
+
     if (isNullorUndefined(window.localStorage["carouselSettings"]))
     {
         lsCarouselSettings = {
@@ -19,14 +20,12 @@ function launchCarousel(startRoot) {
             includePortrait: false
         };
         window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
+        console.log("default carouselSettings loaded int local storage");
     }
     else {
-        console.log("carouselSettings found in local storage!2");
-    //    //alert("lsCarouselSettings: " + jsCarouselSettings + "\ncarouselSettings.includeLandscape: " + jsCarouselSettings.includeLandscape);
+        console.log("carouselSettings found in local storage!");
     }
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-    console.log("jsCarouselSettings loaded");
-
     //initial call to loadimages
     console.log("calling loadImages");
     loadImages(startRoot, absolueStart, 0, specialLaunchCode, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
@@ -107,9 +106,7 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                             //alert("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
 
                             let jsnObj = "[";  //new JSONArray();
-                            //let jsnObj = [];
                             for (i = 0; i < 101; i++) {
-                                //if (i === 12) { alert("carouselItemArray[i]: " + JSON.stringify(carouselItemArray[i])); }
                                 jsnObj += (JSON.stringify(carouselItemArray[i])) + ",";
                             }
                             window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";

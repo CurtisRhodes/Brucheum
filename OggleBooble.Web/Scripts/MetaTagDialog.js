@@ -74,38 +74,18 @@ function getMetaTags(folderId, linkId) {
                     });
                 }
                 else {
-                    sendEmailToYourself("XHR ERROR in MetaTagDialog.js getMetaTags", "get MetaTags: " + metaTagResults.Success);
-                    //alert("get MetaTags: " + metaTagResults.Success);
+                    logError("BUG", folderId, success, "getMetaTags");
                 }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("getMetaTags")) {
-                    if (document.domain === "localhost")
-                        alert("getMetaTags: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 2,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "getMetaTags"
-                        });
+                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getMetaTags");
                 }
             }
         });
     }
     catch (e) {
-        if (document.domain === "localhost")
-            alert("getMetaTags: " + e);
-        else
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "CAT",
-                Severity: 2,
-                ErrorMessage: e,
-                CalledFrom: "getMetaTags"
-            });
+        logError("CAT", folderId, getXHRErrorDetails(jqXHR), "getMetaTags");
     }
 }
 
@@ -119,20 +99,12 @@ function loadMetaTagForEditing(tagId) {
                 $('#txtMetaTag').val(model.Tag);
                 metaTagModel.TagId = tagId;
             }
+            else
+                logError("BUG", 3908, model.Tag, "loadMetaTagForEditing");
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("loadMetaTagForEditing")) {
-                if (document.domain === "localhost")
-                    alert("loadMetaTagForEditing: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 2,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "loadMetaTagForEditing"
-                    });
+                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "loadMetaTagForEditing");
             }
         }
     });
@@ -161,21 +133,12 @@ function editMetaTag() {
                     $('#txtMetaTag').val("");
                     getMetaTags(metaTagModel.FolderId);
                 }
+                else
+                    logError("BUG", 3908, success, "editMetaTag");
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("editMetaTag")) {
-                    if (document.domain === "localhost")
-                        alert("getMetaTags: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 2,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "getMetaTags"
-                        });
-                    //sendEmailToYourself("XHR ERROR in MetaTagDialog.js editMetaTag", "/api/MetaTag Message: " + errorMessage);
+                    logError("XHR", 3908, getXHRErrorDetails(jqXHR), "editMetaTag");
                 }
             }
         });
@@ -195,31 +158,11 @@ function addMetaTag() {
                     getMetaTags(metaTagModel.FolderId, metaTagModel.LinkId);
                 }
                 else
-                    if (document.domain === "localhost")
-                        alert("addMetaTag: " + success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "AJQ",
-                            Severity: 2,
-                            ErrorMessage: success,
-                            CalledFrom: "addMetaTag"
-                        });
+                    logError("BUG", 3908, success, "addMetaTag");
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("addMetaTag")) {
-                    if (document.domain === "localhost")
-                        alert("addMetaTag: " + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 2,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "addMetaTag"
-                        });
-                    //sendEmailToYourself("XHR ERROR in MetaTagDialog.js addMetaTag", "/api/MetaTag Message: " + errorMessage);
+                    logError("XHR", 3908, getXHRErrorDetails(jqXHR), "addMetaTag");
                 }
             }
         });

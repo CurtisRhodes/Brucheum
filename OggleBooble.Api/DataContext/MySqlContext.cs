@@ -27,9 +27,12 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<FolderDetail> FolderDetails { get; set; }
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
         public virtual DbSet<EventLog> EventLogs { get; set; }
+        public virtual DbSet<ActivityLog> ActivityLogs { get; set; }
         public virtual DbSet<Ref> Refs { get; set; }
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
+
+
         public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
         public virtual DbSet<PageHitTotals> PageHitTotal { get; set; }
@@ -222,6 +225,18 @@ namespace OggleBooble.Api.MySqlDataContext
         [Column(Order = 1)]
         public string RefCode { get; set; }
         public string RefDescription { get; set; }
+    }
+
+    [Table("OggleBooble.ActivityLog")]
+    public class ActivityLog
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int PkId { get; set; }
+        public string ActivtyCode { get; set; }
+        public int PageId { get; set; }
+        public string VisitorId { get; set; }
+        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.EventLog")]

@@ -85,15 +85,21 @@ namespace OggleBooble.Api.Models
         public string ActivityCode { get; set; }
         public string Activity { get; set; }
         public string VisitorId { get; set; }
-        public DateTime Occured { get; set; }
     }
-    public class LogActivityModel
+
+    public class ActivityLogModel
+    {
+        public string ActivtyCode { get; set; }
+        public int PageId { get; set; }
+        public string VisitorId { get; set; }
+    }
+
+    public class EventLogModel
     {
         public string VisitorId { get; set; }
         public string EventCode { get; set; }
         public string EventDetail { get; set; }
         public int PageId { get; set; }
-        public int CalledFrom { get; set; }
     }
     public class LogVisitSuccessModel
     {

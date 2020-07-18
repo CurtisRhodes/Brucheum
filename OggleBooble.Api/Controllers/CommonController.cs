@@ -309,24 +309,50 @@ namespace OggleBooble.Api.Controllers
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
-        } 
-
+        }
+        
         [HttpPost]
         [Route("api/Common/LogActivity")]
-        public string LogActivity(LogActivityModel activityModel)
+        public string LogActivity(ActivityLogModel activityModel)
         {
             string success;
             try
             {
                 using (var mdb = new OggleBoobleMySqlContext())
                 {
-                    activityModel.EventDetail = mdb.VirtualFolders.Where(f => f.Id == activityModel.PageId).FirstOrDefault().FolderName;
-                    mdb.EventLogs.Add(new EventLog()
+                    //activityModel.EventDetail = mdb.VirtualFolders.Where(f => f.Id == activityModel.PageId).FirstOrDefault().FolderName;
+                    mdb.ActivityLogs.Add(new ActivityLog()
                     {
-                        EventCode = activityModel.EventCode,
-                        EventDetail = activityModel.EventDetail,
+                        ActivtyCode= activityModel.ActivtyCode,
                         PageId = activityModel.PageId,
                         VisitorId = activityModel.VisitorId,
+                        Occured = DateTime.Now
+                    });
+                    mdb.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+        [HttpPost]
+        [Route("api/Common/LogEvent")]
+        public string LogEvent(EventLogModel eventModel)
+        {
+            string success;
+            try
+            {
+                using (var mdb = new OggleBoobleMySqlContext())
+                {
+                    mdb.EventLogs.Add(new EventLog()
+                    {
+                        EventCode = eventModel.EventCode,
+                        EventDetail = eventModel.EventDetail,
+                        PageId = eventModel.PageId,
+                        VisitorId = eventModel.VisitorId,
                         Occured = DateTime.Now
                     });
                     mdb.SaveChanges();
@@ -426,54 +452,5 @@ namespace OggleBooble.Api.Controllers
             return refs;
         }
 
-        [HttpGet]
-        [Route("api/UserSettings/GetUserSettings")]
-        public SuccessModel GetUserSettings(string visitorId)
-        {
-            var successModel = new SuccessModel();
-            try
-            {
-                using (var mdb = new OggleBoobleMySqlContext())
-                {
-                    successModel.ReturnValue = mdb.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault().UserSettings;
-                }
-                successModel.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                successModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return successModel;
-        }
-
-        [HttpPut]
-        [Route("api/EntityAttribute/Update")]
-        public SuccessModel UpdateUserSettings(string userName, string settingName, string settingJson)
-        {
-            var successModel = new SuccessModel();
-            try
-            {
-                using (var mdb = new OggleBoobleMySqlContext())
-                {
-                    // replace section
-                    var dbUser = mdb.RegisteredUsers.Where(r => r.UserName == userName).FirstOrDefault();
-                    var currentSettings = dbUser.UserSettings;
-
-                    int startindex = currentSettings.IndexOf(settingName);
-                    int lenToEnd = currentSettings.Substring(startindex, currentSettings.IndexOf("}") + 1).Length;
-                    string elementRemoved = currentSettings.Remove(startindex, lenToEnd);
-                    dbUser.UserSettings = elementRemoved + settingJson;
-
-                    mdb.SaveChanges();
-                    successModel.Success = "ok";
-                    successModel.ReturnValue = dbUser.UserSettings;
-                }
-            }
-            catch (Exception ex)
-            {
-                successModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return successModel;
-        }
     }
 }

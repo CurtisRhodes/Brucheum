@@ -101,7 +101,7 @@ namespace OggleBooble.Api.Controllers
                 int newFolderId = 0;
                 using (var db = new OggleBoobleMSSqlContext())
                 {
-                    MSSqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
+                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
                     destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" +
                         Helpers.GetParentPath(parentId) + dbSourceFolder.FolderName + "/" + newFolderName.Trim();
 
@@ -114,7 +114,7 @@ namespace OggleBooble.Api.Controllers
                     string createDirSuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
                     if (createDirSuccess == "ok")
                     {
-                        var newFolder = new MSSqlDataContext.CategoryFolder()
+                        var newFolder = new CategoryFolder()
                         {
                             Parent = parentId,
                             FolderName = newFolderName.Trim(),

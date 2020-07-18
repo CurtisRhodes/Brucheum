@@ -55,15 +55,10 @@ function saveFeedback() {
         data: feedBackModel,
         success: function (success) {
             if (success === "ok") {
-                logEventActivity({
-                    VisitorId: feedBackModel.VisitorId,
-                    EventCode: "FBS",
-                    EventDetail: "Hooraaaayyy !!",
-                    PageId: feedbackPageId,
-                    CalledFrom: "OggleHeader saveFeedbackDialog"
-                });
-                sendEmailToYourself("FeedBack", "ip: " + getCookieValue("IpAddress") + "<br/>"
-                    + $('#feedbackDialogSummerNoteTextArea').summernote('code'));
+                logEvent("FBS", feedbackPageId, "Hooraaaayyy !!");
+
+                sendEmailToYourself("FeedBack", $('#feedbackDialogSummerNoteTextArea').summernote('code'));
+
                 //console.log("is email working?");
                 $("#draggableDialog").fadeOut();
                 showMyAlert("Thank you for your feedback");
@@ -103,7 +98,6 @@ function feedbackDialogHtml() {
 }
 
 function getUserEmail() {
-    
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + getCookieValue("VisitorId"),

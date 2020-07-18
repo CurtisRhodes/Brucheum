@@ -68,35 +68,13 @@ function loadBoobsRanker(rankPref) {
 
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("jQuery fail in Album.js: getAlbumImages\n" + albumImageInfo.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "CDE",
-                        Severity: 2,
-                        ErrorMessage: " unknown rankPref: " + container.Success,
-                        CalledFrom: "Ranker.Html loadBoobsRanker"
-                    });
-                //sendEmailToYourself("jQuery Fail in Ranker.Html loadBoobsRanker", " unknown rankPref: " + container.Success);
-                //alert("BoobsRanker: " + container.Success);
+                logError("BUG", 3907, container.Success, "loadBoobsRanker");
             }
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("loadBoobsRankers")) {
-                if (document.domain === 'localhost')
-                    alert("loadBoobsRanker: " + albumImageInfo.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "CDE", Severity: 2,
-                        ErrorMessage: "loadBoobsRanker: " + errorMessage,
-                        CalledFrom: "loadBoobsRanker"
-                    });
-                //sendEmailToYourself("XHR ERROR in Ranker.html loadBoobsRanker", "api/BoobsRanker?rootFolder=" + rankPref + "&skip=" + skip + "&take=" + take +
-                //    "Called from: " + getCookieValue("IpAddress") + " Message: " + errorMessage);
+            if (!checkFor404("loadBoobsRanker")) {
+                logError("XHR", 3907, getXHRErrorDetails(jqXHR), "loadBoobsRanker");
             }
         }
     });
@@ -148,15 +126,7 @@ function setInitialCheckbox(rankPref) {
             $('#ckBoxArchive').prop('checked', true);
             break;
         default:
-            logError({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "CDE",
-                Severity: 2,
-                ErrorMessage: "unknown rankPref: " + rankPref,
-                CalledFrom: "Ranker.Html setInitialCheckbox"
-            });
-            sendEmailToYourself("jQuery Fail in Ranker.Html setInitialCheckbox", " unknown rankPref: " + rankPref);
-            alert("setInitialCheckbox unknown rankPref: " + rankPref);
+            logError("SWT", 3907, "rankPref: " + rankPref, "setInitialCheckbox");
             break;
     }
     setRankerBreadcrumbMessage();
@@ -186,18 +156,7 @@ function killTimer(rankPref) {
             throttleSluts = false;
             break;
         default:
-            if (document.domain === 'localhost')
-                alert("Ranker killtimer unknown switch option" + rankPref);
-            else
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "JQA",
-                    Severity: 12,
-                    ErrorMessage: "unknown switch option" + rankPref,
-                    CalledFrom: "Ranker killtimer"
-                });
-            //sendEmailToYourself("jQuery Fail in Ranker.Html killtimer ", " unknown rankPref: " + rankPref);
-            //alert("unknown rankPref: " + rankPref);
+            logError("SWT", 3907, "switch option" + rankPref, "killtimer");
             break;
     }
 }
@@ -225,36 +184,13 @@ function unloadBoobsRanker(rankPref) {
                 $('#footerMessage').html("removed " + kkk + " " + rankPref + " items");
             }
             else {
-                if (document.domain === 'localhost')
-                    alert("unloadBoobsRanker" + container.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "JQA",
-                        Severity: 12,
-                        ErrorMessage: container.Success,
-                        CalledFrom: "unloadBoobsRanker"
-                    });
-
-                //sendEmailToYourself("jQuery Fail in Ranker.Html unloadBoobsRanker", container.Success);
-                //alert("unloadBoobsRanker: " + container.Success);
+                logError("BUG", 3907, container.Success, "unloadBoobsRanker");
             }
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("loadBoobsRankers")) {
-                if (document.domain === 'localhost')
-                    alert("unloadBoobsRanker" + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "JQA",
-                        Severity: 12,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "unloadBoobsRanker"
-                    });
-                //sendEmailToYourself("XHR ERROR in Ranker.html unloadBoobsRanker", "api/BoobsRanker?rootFolder=" + rankPref + "&skip=0&take=50000  Message: " + errorMessage);
+            if (!checkFor404("unloadBoobsRanker")) {
+                logError("XHR", 3907, getXHRErrorDetails(jqXHR), "unloadBoobsRanker");
             }
         }
     });
@@ -305,17 +241,7 @@ function addMore(rankPref) {
             }
             break;
         default:
-            if (document.domain === 'localhost')
-                alert("Ranker addMore unknown switch option" + rankPref);
-            else
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "JQA",
-                    Severity: 12,
-                    ErrorMessage: "unknown switch option" + rankPref,
-                    CalledFrom: "Ranker addMore"
-                });
-            //sendEmailToYourself("jQuery Fail in Ranker.Html Addmore", " unknown rankPref: " + rankPref);
+            logError("SWT", 3908, "unknown switch option" + rankPref, "addMore");
             break;
     }
 }
@@ -389,19 +315,7 @@ function setFolderNameColor(rankPref, textObject) {
             textObject.css("color", "#249c40")
             break;
         default:
-            if (document.domain === 'localhost')
-                alert("Ranker setFolderNameColor unknown switch option" + rankPref);
-            else
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "JQA",
-                    Severity: 12,
-                    ErrorMessage: "unknown switch option" + rankPref,
-                    CalledFrom: "Ranker setFolderNameColor"
-                });
-
-            //sendEmailToYourself("jQuery Fail in Ranker.Html setFolderNameColor", " unknown rankPref: " + rankPref);
-            //alert("setFolderNameColor unknown rankPref: " + rankPref);
+            logError("SWT", 3908, "unknown switch option" + rankPref, "setFolderNameColor");
             break;
     }
 }
@@ -448,39 +362,15 @@ function imageClick(selectedSide) {
                     $('#rankerBox' + selectedSide).removeClass("bigRedBorder");
                 }
                 else {
-                    if (document.domain === 'localhost')
-                        alert("Ranker/imageClick" + success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "JQA",
-                            Severity: 12,
-                            ErrorMessage: success,
-                            CalledFrom: "Ranker/imageClick"
-                        });
-                    //sendEmailToYourself("jQuery Fail in Ranker.Html imageClick", "BoobsRanker POST: " + container.Success);
-                    //alert("BoobsRanker POST: " + container.Success);
+                    logError("BUG", 3907, success, "imageClick");
                 }
             },
             error: function (jqXHR) {
                 $('#blogLoadingGif').hide();
                 $('#imagePageLoadingGif').hide();
-                var errorMessage = getXHRErrorDetails(jqXHR);
                 if (!checkFor404("Ranker/imageClick")) {
-                    if (document.domain === 'localhost')
-                        alert("Ranker/imageClick" + errorMessage);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "XHR",
-                            Severity: 12,
-                            ErrorMessage: errorMessage,
-                            CalledFrom: "Ranker/imageClick"
-                        });
-                    
-                    //sendEmailToYourself("XHR ERROR in Ranker.Html imageClick", "api/BoobsRanker.  Message: " + errorMessage);
+                    logError("XHR", 3907, getXHRErrorDetails(jqXHR), "imageClick");
                 }
-                //alert("launchPromoMessages jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "settingsArray.ApiServer: " + settingsArray.ApiServer);
             }
         });
     }

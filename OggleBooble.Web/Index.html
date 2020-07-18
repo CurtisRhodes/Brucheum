@@ -117,18 +117,18 @@
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
-                            //alert("settingsArray.ApiServer: " + settingsArray.ApiServer);
+
                             localhostBypass();
+
                             var visitorId = getCookieValue("VisitorId");
                             if (isNullorUndefined(visitorId)) {
+                                alert("isNullorUndefined(visitorId)");
                                 // getIpInfo(spaPageId);
-                                handleUnidentifiedVisitor();
                             }
                             else {
                                 console.log("visitorId found: " + visitorId);
-                                loadUserSettingsIntoLocalStorage();
+                                loadUserSettingsIntoLocalStorage(visitorId);
                             }
-
                             // ranker     homePageId = 3907;
                             // boobs      homePageId = 3908;
                             // porn       homePageId = 3909;

@@ -4,13 +4,8 @@ function rtpe(eventCode, calledFrom, eventDetail, pageId) {
 }
 
 function reportEvent(eventCode, calledFrom, eventDetail, pageId) {
-    logEventActivity({
-        VisitorId: getCookieValue("VisitorId"),
-        EventCode: eventCode,
-        EventDetail: eventDetail,
-        PageId: pageId,
-        CalledFrom: calledFrom
-    });
+    logActivity(eventCode, pageId)
+    logEvent("PRN", pageId, eventDetail);
 }
 
 function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
@@ -20,13 +15,7 @@ function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
             logError("BUG", pageId, "visitorId not set ", "reportThenPerformEvent/" + calledFrom);
             visitorId = "unknown";
         }
-        logEventActivity({
-            VisitorId: visitorId,
-            EventCode: eventCode,
-            EventDetail: eventDetail,
-            PageId: pageId,
-            CalledFrom: calledFrom
-        });
+        logActivity(eventCode, pageId)
         performEvent(eventCode, calledFrom, eventDetail, pageId);
     }
     catch (e) {
@@ -45,6 +34,7 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
         case "XLC":  // external link clicked
             break;
         case "PRN":  //("Porn Option clicked");
+            logEvent("PRN", pageId, eventDetail);
             window.location.href = '/index.html?subdomain=porn';
             break;
         case "HBC":  //  header banner clicked

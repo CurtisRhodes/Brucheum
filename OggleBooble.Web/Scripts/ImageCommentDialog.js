@@ -8,7 +8,7 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
 
     imageComment.VisitorId = getCookieValue("VisitorId");
     imageComment.ImageLinkId = linkId;
-    imageComment.FoldeId = folderId;
+    imageComment.FolderId = folderId;
 
     alert("calledFrom: " + calledFrom);
 
@@ -68,32 +68,12 @@ function loadComment() {
                 }
             }
             else {
-                if (document.domain === "localhost") alert("AJX addImageComment: " + comment.Success);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "AJX",
-                        Severity: 1,
-                        ErrorMessage: success,
-                        CalledFrom: "addImageComment"
-                    });
-                //sendEmailToYourself("ERROR in ImageCommentDialog.js loadComment", "saveComment: " + comment.Success);
+                logError("BUG", imageComment.FolderId, comment.Success, "addImageComment");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("loadComment")) {
-                if (document.domain === "localhost") alert("XHR loadComment: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "loadComment"
-                    });
-                //sendEmailToYourself("XHR ERROR in ImageCommentDialog.js loadComment",
-                //    "/api/OggleBlog?linkId=" + blogComment.LinkId + "&userId=" + blogComment.UserId + " Message: " + errorMessage);
+                logError("XHR", imageComment.FolderId, getXHRErrorDetails(jqXHR), "loadComment");
             }
         }
     });
@@ -119,7 +99,7 @@ function addImageComment() {
                 displayStatusMessage("ok", "Entry Added");
                 $('#divSaveFantasy').html("edit");
                 $('#divCloseantasy').html("done");
-                awardCredits("IMC", imageComment.FoldeId);
+                awardCredits("IMC", imageComment.FolderId);
 
                 //FCC	Fantasy comment
                 //SID	show Image Comment Dialog
@@ -130,32 +110,13 @@ function addImageComment() {
                 if (success.includes("title"))
                     alert("Please add a title");
                 else {
-                    if (document.domain === "localhost") alert("AJX addImageComment: " + success);
-                    else
-                        logError({
-                            VisitorId: getCookieValue("VisitorId"),
-                            ActivityCode: "AJX",
-                            Severity: 1,
-                            ErrorMessage: successModel.Success,
-                            CalledFrom: "addImageComment"
-                        });
-                    //sendEmailToYourself("jquery fail in ImageCommentDialog.js addImageComment", "saveComment: " + successModel.Success);
+                    logError("BUG", FolderId, success, "addImageComment");                    
                 }
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("addImageComment")) {
-                if (document.domain === "localhost") alert("XHR editImageComment: " + errorMessage);
-                else
-                    logError({
-                        VisitorId: getCookieValue("VisitorId"),
-                        ActivityCode: "XHR",
-                        Severity: 1,
-                        ErrorMessage: errorMessage,
-                        CalledFrom: "addImageComment"
-                    });
-                //sendEmailToYourself("XHR ERROR in ImageCommentDialog.js addImageComment", "/api/OggleBlog Message: " + errorMessage);
+                logError("XHR", imageComment.FolderId, getXHRErrorDetails(jqXHR), "addImageComment");
             }
         }
     });
@@ -165,37 +126,18 @@ function editImageComment() {
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "api/ImageComment/Update",
-        data: blogComment,
+        data: imageComment,
         success: function (success) {
             if (success === "ok") {
                 displayStatusMessage("ok", "Entry Updated");
             }
             else {
-                if (document.domain === "localhost") alert("AJX editImageComment: " + success);
-                else
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "AJQ",
-                    Severity: 1,
-                    ErrorMessage: success,
-                    CalledFrom: "editImageComment"
-                });
-                //sendEmailToYourself("jquery fail in ImageCommentDialog.js addImageComment", "editImageComment: " + success);
+                logError("BUG", imageComment.FolderId, success, "addImageComment");
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("editImageComment")) {
-                if (document.domain === "localhost") alert("XHR editImageComment: " + errorMessage);
-                else
-                logError({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "XHR",
-                    Severity: 1,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: "editImageComment"
-                });
-                //sendEmailToYourself("XHR ERROR in ImageCommentDialog.js editImageComment", "/api/OggleBlog Message: " + errorMessage);
+                logError("XHR", imageComment.FolderId, getXHRErrorDetails(jqXHR), "editImageComment");
             }
         }
     });
