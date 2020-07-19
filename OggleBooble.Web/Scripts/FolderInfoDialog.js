@@ -13,7 +13,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
         // if rootfolder = boobs show just the CommentText 
         // 
         //alert("getFolderDetails: " + folderId);
-        getFolderDetails(folderId);
+        getFolderInfo(folderId);
 
         objFolderInfo.Id = folderId;
         $('#imagePageLoadingGif').show();
@@ -41,9 +41,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
         $('#editablePoserDetails').hide();
         if (typeof pause === 'function')
             pause();
-
         reportEvent("SMD", calledFrom, "detail", folderId);
-
     }
     catch (e) {
         $('#imagePageLoadingGif').hide();
@@ -60,7 +58,7 @@ function setReadonlyFields() {
     $('#readOnlyMeasurements').html(isNullorUndefined(objFolderInfo.Measurements) ? "x " : objFolderInfo.Measurements);
 }
 
-function getFolderDetails(folderId) {
+function getFolderInfo(folderId) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/CatFolder/GetFolderInfo?folderId=" + folderId,
@@ -332,7 +330,7 @@ function updateFolderDetail() {
     if (validate()) {
         $.ajax({
             type: "PUT",
-            url: settingsArray.ApiServer + "/api/ImageCategoryDetail",
+            url: settingsArray.ApiServer + "api/FolderDetail/AddUpdate",
             data: objFolderInfo,
             success: function (success) {
                 if (success === "ok") {
@@ -399,91 +397,62 @@ function addHrefToExternalLinks() {
 
 function showTrackbackDialog() {
     $("#trackBackDialog").html("<div>" +
-        "<div>link<input id='txtTrachBackLink' /></div>"+
-        "<div id='tbResults'></div>" +
+        "<div>link<input id='txtTrackBackLink' /></div>"+
+        "<div>link<input type='select' id=''/></div>" +
+        "            <select id='selTrackBackLinkSite' class='boobDropDown'>\n" +
+        "               <option value='BAB'>babepedia</option>\n" +
+        "               <option value='FRE'>freeones</option>\n" +
+        "            </select>\n" +
+        "<div>link<input id='txtTrackBackStatus' value='submitted' /></div>" +
+        "<div class='tbResultsContainer'><ul id='ulExistingLinks'></div>" +
         "    <div class='folderDialogFooter'>\n" +
         "        <div id='btnTbDlgAddEdit' class='folderCategoryDialogButton' onclick='tbAddEdit()'>add</div>\n" +
-        "        <div id='btnTbDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='tbCancelEdit()'>Cancel</div>\n" +
+        "        <div id='btnTbDlgDelete' class='folderCategoryDialogButton displayHidden' onclick='tbAddEdit()'>delete</div>\n" +
+        "        <div class='folderCategoryDialogButton' onclick='$('#trackBackDialog').hide()'>Cancel</div>\n" +
         "    </div>\n" +
         "</div>");
-
+    $.each(objFolderInfo.TrackBackLink, function (idx, obj) {
+        $('#ulExistingLinks').append("<li onclick='loadTbForEdit(" + $(this) + ")' >" + obj.Href + " - " + obj.LinkStatus + "/>");
+    });
     $("#trackBackDialog").show();
-
 }
-
+function loadTbForEdit(selectedLink) {
+    $('#selTrackBackLinkSite').val(selectedLink.SiteCode);
+    $('#txtTrackBackStatus').val(selectedLink.LinkStatus);
+    $('#txtTrackBackLink').val(selectedLink.Href);
+    $('#btnTbDlgAddEdit').html("edit");
+    $('#btnTbDlgDelete').show();
+}
 function tbAddEdit() {
-    if ($('#btnTbDlgAddEdit').html() === "add") {
-        addTrackback()
-    }
-    objFolderInfo.Id = folderId;
-
-
-}
-
-function addTrackback(link) {
-    var site = "";
-    var hLink = "";
-    if ($('#txtLinkHref').val().indexOf('freeones') > -1) {
-        site = "Freeones";
-        hLink = "<a href='" + link + "' target='_blank'>free porn</a>";
-    }
-    if ($('#txtLinkHref').val().indexOf('indexxx') > -1) {
-        site = "Indexxx";
-        hLink = "<a href='" + link + "'>indexxx</a>";
-    }
-    if ($('#txtLinkHref').val().indexOf('babepedia') > -1) {
-        site = "Babepedia";
-        hLink = "<a href='" + link + "' target='_blank'>Babepedia</a>";
-    }
-
-    if (site !== "") {
-
-        alert("addTrackback  site: " + site + "  link: " + hLink);
-
-        var trackBackItem = {
-            PageId: objFolderInfo.FolderId,
-            Site: site,
-            TrackBackLink: hLink,
-            LinkStatus: "unknown"
-        };
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/TrackbackLink/Insert",
-            data: trackBackItem,
-            success: function (success) {
-                if (success === "ok") {
-                    displayStatusMessage("ok", "trackback link added");
-                }
-                else {
-                    if (success.indexOf("Violation of PRIMARY KEY") > -1) 
-                        updateTrackback(trackBackItem);
-                    else 
-                        logError("BUG", folderId, success, "addTrackback");
-                }
-            },
-            error: function (jqXHR) {
-                if (!checkFor404("addTrackback")) 
-                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addTrackback");
-            }
-        });
-    }
-}
-
-function updateTrackback(trackBackItem) {
+    var trackBackItem = {
+        PageId: objFolderInfo.FolderId,
+        Site: $('#txtTrackBackStatus').val(),
+        TrackBackLink: $('#txtTrackBackLink').val(),
+        LinkStatus: $('#txtTrackBackLink').val()
+    };
     $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "api/TrackbackLink/Update",
+        type: "POST",
+        url: settingsArray.ApiServer + "api/FolderDetail/AddEditTrackBackLink",
         data: trackBackItem,
         success: function (success) {
             if (success === "ok") {
-                displayStatusMessage("ok", "trackback link updated");
+               if(status=== "submitted")
+                    displayStatusMessage("ok", "trackback link added");
+                else
+                    displayStatusMessage("ok", "trackback link updated");
+                $('#btnTbDlgAddEdit').html("add");
+                $('#btnTbDlgDelete').hide();
+                $('#selTrackBackLinkSite').val("");
+                $('#txtTrackBackStatus').val("");
+                $('#txtTrackBackLink').val("");
             }
-            else
-                logError("BUG", objFolderInfo.Id, success, "updateTrackback");
+            else {
+                logError("BUG", folderId, success, "addTrackback");
+            }
         },
         error: function (jqXHR) {
-            if (!checkFor404("updateTrackback")) 
-                logError("XHR", objFolderInfo.Id, getXHRErrorDetails(jqXHR), "updateTrackback");            
+            if (!checkFor404("addTrackback"))
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addTrackback");
         }
     });
 }

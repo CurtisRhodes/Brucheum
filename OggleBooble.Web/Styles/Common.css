@@ -31,10 +31,8 @@ body {
 .threeColumnLayout {
     /*width: 100%;*/
     background-color: var(--oggleBackgroundColor);
-    height: 100%;
     display: flex;
-    overflow: auto;
-    border-top: solid 14px black;
+    border-top: solid 7px black;
 }
 
     .threeColumnLayout .leftColumn {

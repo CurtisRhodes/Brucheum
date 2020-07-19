@@ -81,7 +81,8 @@ function checkFor404(calledFrom) {
                             if (isNullorUndefined(visitorId))
                                 visitorId = "--";
                             canIgetaConnectionMessageShowing = true;
-                            logError("404", 3910, "SERVICE DOWN", "checkFor404 /" + calledFrom);
+                            if (document.domain !== 'localhost')
+                                logError("404", 3910, "SERVICE DOWN", "checkFor404 /" + calledFrom);
                         }
                     }
                     verifyConnection();
@@ -163,7 +164,7 @@ function persistConnection() {
                 }
             },
             error: function (jqXHR) {
-                logError("XHR", getXHRErrorDetails(jqXHR), "persistConnection");
+                logError("XHR", 3980, getXHRErrorDetails(jqXHR), "persistConnection");
                 connectionVerified = false;
             }
         });

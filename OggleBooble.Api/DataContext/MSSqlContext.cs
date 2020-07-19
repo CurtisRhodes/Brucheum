@@ -26,7 +26,7 @@ namespace OggleBooble.Api.MSSqlDataContext
         public virtual DbSet<RejectLink> RejectLinks { get; set; }
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
         public virtual DbSet<StepChild> StepChildren { get; set; }
-        public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
+        //public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
         public virtual DbSet<vwCarouselItem> vwCarouselImages { get; set; }
         public virtual DbSet<vwSlideshowItem> vwSlideshowItems { get; set; }
@@ -83,18 +83,18 @@ namespace OggleBooble.Api.MSSqlDataContext
         public DateTime Occured { get; set; }
     }
 
-    [Table("Oggle.TrackbackLink")]
-    public partial class TrackbackLink
-    {
-        [Key]
-        [Column(Order = 0)]
-        public int PageId { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public string Site { get; set; }
-        public string TrackBackLink { get; set; }
-        public string LinkStatus { get; set; }
-    }
+    //[Table("Oggle.TrackbackLink")]
+    //public partial class TrackbackLink
+    //{
+    //    [Key]
+    //    [Column(Order = 0)]
+    //    public int PageId { get; set; }
+    //    [Key]
+    //    [Column(Order = 1)]
+    //    public string Site { get; set; }
+    //    public string TrackBackLink { get; set; }
+    //    public string LinkStatus { get; set; }
+    //}
 
     [Table("Oggle.StepChild")]
     public partial class StepChild

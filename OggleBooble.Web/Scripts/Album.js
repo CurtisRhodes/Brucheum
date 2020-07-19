@@ -61,16 +61,21 @@ function getAlbumImages(folderId) {
                         if (albumImageInfo.ImageLinks.length === 0)
                             $('#galleryBottomfileCount').html(albumImageInfo.SubDirs.length.toLocaleString());
                         else
-                            $('#galleryBottomfileCount').html("# "+albumImageInfo.ImageLinks.length.toLocaleString() + "/" + albumImageInfo.SubDirs.length);
+                            $('#galleryBottomfileCount').html("# " + albumImageInfo.ImageLinks.length.toLocaleString() + "/" + albumImageInfo.SubDirs.length);
                         let countStr = "?";
+                        let imgSrc = "?";
                         $.each(albumImageInfo.SubDirs, function (idx, subDir) {
                             if (albumImageInfo.ImageLinks.length  === 0)
                                 countStr = "(" + albumImageInfo.SubDirs.length + ")";
                             else
                                 countStr = "(" + albumImageInfo.ImageLinks.length.toLocaleString() + " / " + albumImageInfo.SubDirs.length + ")";
-                            getDeepFolderCounts(subDir);
-                            
-                            let imgSrc = settingsImgRepo + subDir.FolderImage;
+
+                            getDeepFolderCounts(subDir.FolderId);
+                            if (isNullorUndefined(subDir.FolderImage))
+                                imgSrc = "/Images/binaryCodeRain.gif";
+                            else
+                                imgSrc = settingsImgRepo + subDir.FolderImage;
+
                             $('#imageContainer').append("<div class='" + imageFrameClass + "'\n" +
                                 " oncontextmenu='albumContextMenu(\"Folder\",\"" + subDir.LinkId + "\"," + subDir.FolderId + ",\"" + imgSrc + "\")'\n" +
                                 " onclick='rtpe(\"SUB\"," + apFolderId + "," + subDir.IsStepChild + "," + subDir.FolderId + ")'>\n" +
@@ -90,6 +95,7 @@ function getAlbumImages(folderId) {
                     if (albumImageInfo.RootFolder === "centerfold")
                         activityCode = "PBV";
                     chargeCredits(activityCode, folderId);
+                    getDeepFolderCounts(folderId);
 
                     let delta = (Date.now() - getImagesStart) / 1000;
                     console.log("GetAlbumImages took: " + delta.toFixed(3));
@@ -112,15 +118,16 @@ function getAlbumImages(folderId) {
     }
 }
 
-function getDeepFolderCounts(subDir) {
+function getDeepFolderCounts(folderId) {
     //if (subDir.SubDirs.length === 1) {
     //    if (subDir.RootFolder === "centerfold")
     //        $('#fc' + obj.SubFolderId).html("C" + subDir.FileCount.toLocaleString() + "/" + subDir.SubDirs[0].FileCount);
     //}
     let deepStart = Date.now();
+    //alert("GetSubFolderCounts(" + subDir.FolderId + ")");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + subDir.FolderId,
+        url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folderId,
         success: function (subFolderModel) {
             if (subFolderModel.Success === "ok") {
                 if (subFolderModel.TtlFileCount > 0) {
@@ -136,14 +143,10 @@ function getDeepFolderCounts(subDir) {
                 deepFolderCount += subFolderModel.TtlFolderCount;
                 $('#galleryBottomfileCount').html(deepFolderCount.toLocaleString() + " (" + deepFileCount.toLocaleString() + ")");
             }
-            else {
-                logError("BUG", subDir.FolderId, subFolderModel.Success, "getDeepFolderCounts");
-            }
+            else { logError("BUG", folderId, subFolderModel.Success, "getDeepFolderCounts"); }
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumImages")) {
-                logError("XHR", subDir.FolderId, getXHRErrorDetails(jqXHR), "getDeepFolderCounts");
-            }
+            if (!checkFor404("getAlbumImages")) { logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getDeepFolderCounts"); }
         }
     });
 }
@@ -200,36 +203,20 @@ function getAlbumPageInfo(folderId) {
                 //$('#aboveImageContainerMessageArea').html("FolderType: " + imageLinksModel.FolderType);
                 $('#googleSearchText').html(imageLinksModel.FolderName);
 
-                //alert("imageLinksModel.TrackBackItems: " + imageLinksModel.TrackBackItems.length)
-                $.each(imageLinksModel.TrackBackItems, function (idx, obj) {
-                    alert("trackback: " + obj.Site);
-                    switch (obj.Site) {
-                        case "FRE":
-                            $('#trackbackLinkArea').append("<div class'leftColumnTrackbackArea'><a href=\"" + obj.Href + "\">Free</a></div>");
-                            break;
-                        case "BAB":
-                            $('#trackbackLinkArea').append("<div class'leftColumnTrackbackArea'><a href=\"" + obj.Href + "\">Babepedia</a></div>");
-                            break;
-                        default:
-                    }
-                });
-
-
-                //$.each(imageLinksModel.TrackBackItems, function (idx, trackBackItem) {
-                //    if (trackBackItem.Site === "Babepedia") {
-                //        $('#babapediaLink').html(trackBackItem.TrackBackLink);
-                //        $('#babapediaLink').show();
-                //    }
-                //    if (trackBackItem.Site === "Freeones") {
-                //        $('#freeonesLink').html(trackBackItem.TrackBackLink);
-                //        $('#freeonesLink').show();
-                //    }
-                //    if (trackBackItem.Site === "Indexxx") {
-                //        $('#indexxxLink').html(trackBackItem.TrackBackLink);
-                //        $('#indexxxLink').show();
-                //    }
-                //});
-
+                if ((imageLinksModel.TrackBackItems.length > 0)) {
+                    $('#trackbackContainer').css("display", "inline-block");
+                    $.each(imageLinksModel.TrackBackItems, function (idx, obj) {
+                        switch (obj.SiteCode) {
+                            case "FRE":
+                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">" + imageLinksModel.FolderName + " Free Porn</a></div>");
+                                break;
+                            case "BAB":
+                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Babepedia</a></div>");
+                                break;
+                            default:
+                        }
+                    });
+                }
                 setBreadCrumbs(imageLinksModel.BreadCrumbs);
                 setBadges(imageLinksModel.ExternalLinks);
 

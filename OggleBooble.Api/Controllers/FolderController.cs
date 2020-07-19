@@ -270,8 +270,8 @@ namespace OggleBooble.Api.Controllers
     public class FolderDetailController : ApiController
     {
         [HttpPut]
-        [Route("api/FolderDetail/Update")]
-        public string Update(FolderDetailModel model)
+        [Route("api/FolderDetail/AddUpdate")]
+        public string AddUpdate(FolderDetailModel model)
         {
             string success = "";
             try
@@ -300,114 +300,27 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
-    }
-
-    [EnableCors("*", "*", "*")]
-    public class TrackbackLinkController : ApiController
-    {
-        [HttpGet]
-        public TrackBackModel GetTrackBacks(int folderId)
-        {
-            TrackBackModel trackBackModel = new TrackBackModel();
-            try
-            {
-                using (var db = new OggleBoobleMSSqlContext())
-                {
-                    var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
-                    foreach (MSSqlDataContext.TrackbackLink trackbackLink in trackbackLinks)
-                    {
-                        trackBackModel.TrackBackItems.Add(new TrackBackItem()
-                        {
-                            Site = trackbackLink.Site,
-                            TrackBackLink = trackbackLink.TrackBackLink,
-                            LinkStatus = trackbackLink.LinkStatus
-                        });
-                    }
-                    trackBackModel.Success = "ok";
-                }
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    List<MySqlDataContext.TrackbackLink> trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
-                    foreach (MySqlDataContext.TrackbackLink trackbackLink in trackbackLinks)
-                    {
-                        trackBackModel.TrackBackItems.Add(new TrackBackItem()
-                        {
-                            Site = trackbackLink.SiteCode,
-                            TrackBackLink = trackbackLink.Href,
-                            LinkStatus = trackbackLink.LinkStatus
-                        });
-                    }
-                    trackBackModel.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                trackBackModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return trackBackModel;
-        }
 
         [HttpPost]
-        public string Insert(TrackBackItem trackBackItem)
-        {
-            string success;
-            try
-            {                
-                using (var db = new OggleBoobleMSSqlContext())
-                {
-                    db.TrackbackLinks.Add(new MSSqlDataContext.TrackbackLink()
-                    {
-                        PageId = trackBackItem.PageId,
-                        LinkStatus = trackBackItem.LinkStatus,
-                        Site = trackBackItem.Site,
-                        TrackBackLink = trackBackItem.TrackBackLink
-                    });
-                    db.SaveChanges();
-                    success = "ok";
-                }
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    db.TrackbackLinks.Add(new MySqlDataContext.TrackbackLink()
-                    {
-                        PageId = trackBackItem.PageId,
-                        LinkStatus = trackBackItem.LinkStatus,
-                        SiteCode = trackBackItem.Site,
-                        Href = trackBackItem.TrackBackLink
-                    });
-                    db.SaveChanges();
-                }
-                success = "ok";
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        [HttpPut]
-        public string Update(TrackBackItem item)
+        [Route("api/Links/AddEditTrackBackLink")]
+        public string AddEditTrackBackLink(TrackbackLink trackBackItem)
         {
             string success = "";
             try
             {
-                using (var db = new OggleBoobleMSSqlContext())
-                {
-                    MSSqlDataContext.TrackbackLink trackbackLink = db.TrackbackLinks.Where(t => t.PageId == item.PageId).FirstOrDefault();
-                    trackbackLink.Site = item.Site;
-                    trackbackLink.LinkStatus = item.LinkStatus;
-                    trackbackLink.TrackBackLink = item.TrackBackLink;
-                    db.SaveChanges();
-                }
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    MySqlDataContext.TrackbackLink trackbackLink = db.TrackbackLinks.Where(t => t.PageId == item.PageId).FirstOrDefault();
-                    trackbackLink.SiteCode = item.Site;
-                    trackbackLink.LinkStatus = item.LinkStatus;
-                    trackbackLink.Href = item.TrackBackLink;
+                    var dbTrackBack = db.TrackbackLinks.Where(t => t.PageId == trackBackItem.PageId && t.SiteCode == trackBackItem.SiteCode).FirstOrDefault();
+                    if (dbTrackBack == null)
+                        db.TrackbackLinks.Add(trackBackItem);
+                    else
+                    {
+                        dbTrackBack.LinkStatus = trackBackItem.LinkStatus;
+                        dbTrackBack.Href = trackBackItem.Href;
+                    }
                     db.SaveChanges();
+                    success = "ok";
                 }
-                success = "ok";
             }
             catch (Exception ex)
             {
@@ -416,5 +329,4 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
     }
-
 }

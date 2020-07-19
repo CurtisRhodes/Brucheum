@@ -47,12 +47,12 @@ namespace OggleBooble.Api.Models
     {
         public AlbumInfoModel()
         {
-            TrackBackItems = new List<TrackBackItem>();
+            TrackBackItems = new List<TrackbackLink>();
             BreadCrumbs = new List<BreadCrumbItemModel>();
         }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
-        public List<TrackBackItem> TrackBackItems { get; set; }
+        public List<TrackbackLink> TrackBackItems { get; set; }
         public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
         public string ExternalLinks { get; set; }
         public int FileCount { get; set; }

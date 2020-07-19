@@ -73,7 +73,7 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/GalleryPage/GetAlbumPageInfo")]
-        public AlbumInfoModel GetAlbumPageInfo(string visitorId, int folderId)
+        public AlbumInfoModel GetAlbumPageInfo(string visitorId, int folderId) 
         {
             var albumInfo = new AlbumInfoModel();
             try
@@ -97,12 +97,12 @@ namespace OggleBooble.Api.Controllers
                     };
                     albumInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
                     var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
-                    foreach (MySqlDataContext.TrackbackLink trackbackLink in trackbackLinks)
+                    foreach (TrackbackLink trackbackLink in trackbackLinks)
                     {
-                        albumInfo.TrackBackItems.Add(new TrackBackItem()
+                        albumInfo.TrackBackItems.Add(new TrackbackLink()
                         {
-                            Site = trackbackLink.SiteCode,
-                            TrackBackLink = trackbackLink.Href,
+                            SiteCode = trackbackLink.SiteCode,
+                            Href = trackbackLink.Href,
                             LinkStatus = trackbackLink.LinkStatus
                         });
                     }

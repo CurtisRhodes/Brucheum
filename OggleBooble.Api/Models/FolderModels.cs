@@ -63,22 +63,22 @@ namespace OggleBooble.Api.Models
         public string Tag { get; set; }
     }
 
-    public class TrackBackModel
-    {
-        public TrackBackModel()
-        {
-            TrackBackItems = new List<TrackBackItem>();
-        }
-        public List<TrackBackItem> TrackBackItems { get; set; }
-        public string Success { get; set; }
-    }
-    public class TrackBackItem
-    {
-        public int PageId { get; set; }
-        public string Site { get; set; }
-        public string TrackBackLink { get; set; }
-        public string LinkStatus { get; set; }
-    }
+    //public class TrackBackModel
+    //{
+    //    public TrackBackModel()
+    //    {
+    //        TrackBackItems = new List<TrackBackItem>();
+    //    }
+    //    public List<TrackBackItem> TrackBackItems { get; set; }
+    //    public string Success { get; set; }
+    //}
+    //public class TrackBackItem
+    //{
+    //    public int PageId { get; set; }
+    //    public string Site { get; set; }
+    //    public string TrackBackLink { get; set; }
+    //    public string LinkStatus { get; set; }
+    //}
 
     public class StepchildModel
     {
