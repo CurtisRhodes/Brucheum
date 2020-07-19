@@ -84,13 +84,11 @@ function getAlbumImages(folderId) {
                     $('#imageContainer').show();
                     resizeImageContainer();
                     //$('#footerMessage').html(": " + imagesModel.Files.length);
-
-
                     $('#folderCommentButton').fadeIn();
 
                     let activityCode = "PGV"
                     if (albumImageInfo.RootFolder === "centerfold")
-                        activityCode = "PVV";
+                        activityCode = "PBV";
                     chargeCredits(activityCode, folderId);
 
                     let delta = (Date.now() - getImagesStart) / 1000;
@@ -202,20 +200,35 @@ function getAlbumPageInfo(folderId) {
                 //$('#aboveImageContainerMessageArea').html("FolderType: " + imageLinksModel.FolderType);
                 $('#googleSearchText').html(imageLinksModel.FolderName);
 
-                $.each(imageLinksModel.TrackBackItems, function (idx, trackBackItem) {
-                    if (trackBackItem.Site === "Babepedia") {
-                        $('#babapediaLink').html(trackBackItem.TrackBackLink);
-                        $('#babapediaLink').show();
-                    }
-                    if (trackBackItem.Site === "Freeones") {
-                        $('#freeonesLink').html(trackBackItem.TrackBackLink);
-                        $('#freeonesLink').show();
-                    }
-                    if (trackBackItem.Site === "Indexxx") {
-                        $('#indexxxLink').html(trackBackItem.TrackBackLink);
-                        $('#indexxxLink').show();
+                //alert("imageLinksModel.TrackBackItems: " + imageLinksModel.TrackBackItems.length)
+                $.each(imageLinksModel.TrackBackItems, function (idx, obj) {
+                    alert("trackback: " + obj.Site);
+                    switch (obj.Site) {
+                        case "FRE":
+                            $('#trackbackLinkArea').append("<div class'leftColumnTrackbackArea'><a href=\"" + obj.Href + "\">Free</a></div>");
+                            break;
+                        case "BAB":
+                            $('#trackbackLinkArea').append("<div class'leftColumnTrackbackArea'><a href=\"" + obj.Href + "\">Babepedia</a></div>");
+                            break;
+                        default:
                     }
                 });
+
+
+                //$.each(imageLinksModel.TrackBackItems, function (idx, trackBackItem) {
+                //    if (trackBackItem.Site === "Babepedia") {
+                //        $('#babapediaLink').html(trackBackItem.TrackBackLink);
+                //        $('#babapediaLink').show();
+                //    }
+                //    if (trackBackItem.Site === "Freeones") {
+                //        $('#freeonesLink').html(trackBackItem.TrackBackLink);
+                //        $('#freeonesLink').show();
+                //    }
+                //    if (trackBackItem.Site === "Indexxx") {
+                //        $('#indexxxLink').html(trackBackItem.TrackBackLink);
+                //        $('#indexxxLink').show();
+                //    }
+                //});
 
                 setBreadCrumbs(imageLinksModel.BreadCrumbs);
                 setBadges(imageLinksModel.ExternalLinks);

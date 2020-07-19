@@ -397,6 +397,29 @@ function addHrefToExternalLinks() {
     $('#txtLinkLabel').val('');
 }
 
+function showTrackbackDialog() {
+    $("#trackBackDialog").html("<div>" +
+        "<div>link<input id='txtTrachBackLink' /></div>"+
+        "<div id='tbResults'></div>" +
+        "    <div class='folderDialogFooter'>\n" +
+        "        <div id='btnTbDlgAddEdit' class='folderCategoryDialogButton' onclick='tbAddEdit()'>add</div>\n" +
+        "        <div id='btnTbDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='tbCancelEdit()'>Cancel</div>\n" +
+        "    </div>\n" +
+        "</div>");
+
+    $("#trackBackDialog").show();
+
+}
+
+function tbAddEdit() {
+    if ($('#btnTbDlgAddEdit').html() === "add") {
+        addTrackback()
+    }
+    objFolderInfo.Id = folderId;
+
+
+}
+
 function addTrackback(link) {
     var site = "";
     var hLink = "";
@@ -512,6 +535,8 @@ function folderDialogHtml() {
         "        <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
         "        <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
         "        <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
+        "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n" +
         "    </div>\n" +
+        "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n" +
         "</div>\n";
 }

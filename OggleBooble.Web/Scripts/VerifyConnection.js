@@ -154,11 +154,11 @@ function persistConnection() {
                         console.log("persist Connection ok");
                     }
                     else {
-                        logError("BUG", successModel.Success, "persistConnection");
+                        logError("ERR", 3908, successModel.Success, "persistConnection");
                     }
                 }
                 else {
-                    logError("BUG", successModel.Success, "persistConnection");
+                    logError("BUG", 3908, successModel.Success, "persistConnection");
                     connectionVerified = false;
                 }
             },
