@@ -230,7 +230,7 @@ function contextMenuAction(action) {
     switch (action) {
         case "showDialog": {
             if ($('#ctxModelName').html() === "unknown model") {
-                showUnknownModelDialog(pLinkId);
+                showUnknownModelDialog(pLinkId, pImgSrc);
             }
             else {
                 if (isNullorUndefined(pModelFolderId)) {

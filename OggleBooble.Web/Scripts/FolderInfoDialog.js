@@ -82,7 +82,7 @@ function getFolderInfo(folderId) {
 
                 //determine view
                 //alert("rtnFolderInfo.FolderType: " + rtnFolderInfo.FolderType);
-                $('#aboveImageContainerMessageArea').html("aFolderType: " + rtnFolderInfo.FolderType);
+                //$('#aboveImageContainerMessageArea').html("aFolderType: " + rtnFolderInfo.FolderType);
 
                 switch (rtnFolderInfo.FolderType) {
                     case "singleModelGallery":
@@ -373,22 +373,40 @@ function oldModelInfoDialogHtml() {
         //"</div>\n"
 }
 
-function showUnknownModelDialog(pLinkId) {
+function showUnknownModelDialog(pLinkId, imgSrc) {
+    $('#oggleDialogTitle').html("Unknown Poser");
+    $('#draggableDialogContents').html(
+        "<div class='flexContainer'>" +
+        "   <div class='floatRight'>" +
+        "          <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
+        "   </div>" +
+        "   <div class='floatLeft'>" +
+        "       <div>If you you know who this is<br/>please <a class='dialogEditButton' href='javascript:IamThisModel()'>identify poser</a></div>\n" +
+        "       <br/>" +
+        "       <a class='dialogEditButton' href='javascript:IamThisModel()'>I am in this image</a>\n" +
+        "   </div>" +
+        "</div>").show();
+
+    //$('#draggableDialogContents').html(
+    //    "   <div>" +
+    //    "       <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
+    //    "       <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
+    //    "       <div class='inline'><img class='moveDialogDirTreeButton' src='/Images/caretDown.png' " +
+    //    "           onclick='$(\"#linkManipulateDirTree\").toggle()'/></div>\n" +
+    //    "       <div id='linkManipulateClick'></div>\n" +
+    //    "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif' /></div>\n" +
+    //    "   </div>");
+
 
     $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
     $('#draggableDialog').css("left", -350);
     $('#draggableDialog').css("min-width", 470);
-    $('#oggleDialogTitle').html("Unknown Poser");
-    $('#draggableDialogContents').html(
-        "    <div>If you you know who this is Please <span class='clickable' onclick='IdentifyPoser()'Add Info</span></div>\n" +
-        "    <div class='clickable' onclick='IamThisModel()'>Is this you? </div>\n" +
-        "    <a class='dialogEditButton' href='javascript:IdentifyPoser()'>Add Info</a>\n").show();
     $('#draggableDialog').fadeIn();
-    //$('#draggableDialog').mouseleave(function () { dragableDialogClose(); });
+    $('#draggableDialog').mouseleave(function () { dragableDialogClose(); });
 }
 
 function addHrefToExternalLinks() {
-    //alert("addHrefToExternalLinks: " + $('#txtLinkHref').val());
+    alert("addHrefToExternalLinks: " + $('#txtLinkHref').val());
     $('#externalLinks').summernote('pasteHTML', "<a href=" + $('#txtLinkHref').val() + " target = '_blank'>" + $('#txtLinkLabel').val() + "</a><br/>");
     addTrackback($('#txtLinkHref').val());
     $('#txtLinkHref').val('');

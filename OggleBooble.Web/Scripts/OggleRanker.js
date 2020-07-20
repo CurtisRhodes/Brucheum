@@ -110,6 +110,7 @@ function setRankerBreadcrumbMessage() {
 function setInitialCheckbox(rankPref) {
     switch (rankPref) {
         case "boobs":
+        case "big naturals":
             $('#ckBoxBoobs').prop('checked', true);
             break;
         case "playboy":

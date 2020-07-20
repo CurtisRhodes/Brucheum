@@ -33,9 +33,9 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/GalleryPage/GetAlbumImages")]
-        public AlbumImagesModel GetAlbumImages(int folderId)
+        public GalleryImagesAndFoldersModel GetAlbumImages(int folderId)
         {
-            var albumImageInfo = new AlbumImagesModel() { FolderId = folderId };
+            var albumImageInfo = new GalleryImagesAndFoldersModel() { FolderId = folderId };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -47,7 +47,7 @@ namespace OggleBooble.Api.Controllers
                     var dbFolderRows = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
                     foreach (VwDirTree row in dbFolderRows)
                     {
-                        albumImageInfo.SubDirs.Add(new CategoryTreeModel()
+                        albumImageInfo.Folders.Add(new GalleryFolderModel()
                         {
                             LinkId = Guid.NewGuid().ToString(),
                             FolderId = row.Id,
@@ -55,8 +55,13 @@ namespace OggleBooble.Api.Controllers
                             ParentId = row.Parent,
                             FileCount = row.FileCount,
                             IsStepChild = row.IsStepChild,
-                            FolderImage = row.FolderImage
-                        }); 
+                            FolderImage = row.FolderImage,
+                            RootFolder = row.RootFolder
+                            //public int SubDirCount { get; set; }
+                            //public int ChildFiles { get; set; }
+                            //public string DanniPath { get; set; }
+                            //public int Links { get; set; }
+                        });
                     }
 
                     // IMAGES
@@ -64,10 +69,7 @@ namespace OggleBooble.Api.Controllers
                 }
                 albumImageInfo.Success = "ok";
             }
-            catch (Exception ex)
-            {
-                albumImageInfo.Success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { albumImageInfo.Success = Helpers.ErrorDetails(ex); }
             return albumImageInfo;
         }
 
@@ -91,7 +93,7 @@ namespace OggleBooble.Api.Controllers
                     {
                         RootFolder = dbCategoryFolder.RootFolder,
                         ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName),
-                        ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList()),
+                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList()),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
                         HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0,
                     };

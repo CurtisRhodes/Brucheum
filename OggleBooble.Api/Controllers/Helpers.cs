@@ -31,9 +31,9 @@ namespace OggleBooble.Api.Controllers
     {
         public static string DetermineFolderType(FolderTypeModel folderTypeInfo)
         {
-            if (folderTypeInfo.HasSubFolders && !folderTypeInfo.HasImages)
+            if (folderTypeInfo.HasSubFolders)
             {
-                if (!folderTypeInfo.ContainsNonRomanNumeralChildren)
+                if (folderTypeInfo.ContainsRomanNumeralChildren)
                     return "singleModelFolderCollection";
                 else
                     return "assorterdFolderCollection";
@@ -65,16 +65,16 @@ namespace OggleBooble.Api.Controllers
             return false;
         }
 
-        public static bool ContainsNonRomanNumeralChildren(List<string> childFolders)
-        {
-            foreach (string childFolder in childFolders)
-            {
-                if (!childFolder.Contains(" I") && childFolder.Contains(" V") && childFolder.Contains(" X")) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        //public static bool ContainsNonRomanNumeralChildren(List<string> childFolders)
+        //{
+        //    foreach (string childFolder in childFolders)
+        //    {
+        //        if (!childFolder.Contains(" I") && childFolder.Contains(" V") && childFolder.Contains(" X")) {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
 
 
         public static string GetFileUrlFromLinkId(string linkId)

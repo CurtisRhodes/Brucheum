@@ -27,21 +27,53 @@ namespace OggleBooble.Api.Models
         public bool HasImages { get; set; }
         public bool HasSubFolders { get; set; }
         public bool ContainsRomanNumeral { get; set; }
-        public bool ContainsNonRomanNumeralChildren { get; set; }
+        public bool ContainsRomanNumeralChildren { get; set; }
     }
-    public class AlbumImagesModel
+
+    public class GalleryImagesAndFoldersModel
     {
-        public AlbumImagesModel()
+        public GalleryImagesAndFoldersModel()
         {
             ImageLinks = new List<VwLink>();
-            SubDirs = new List<CategoryTreeModel>();
+            Folders = new List<GalleryFolderModel>();
         }
         public int FolderId { get; set; }
         public string RootFolder { get; set; }
         public List<VwLink> ImageLinks { get; set; }
-        public List<CategoryTreeModel> SubDirs { get; set; }
+        public List<GalleryFolderModel> Folders { get; set; }
         public string Success { get; set; }
     }
+
+    //LinkId = Guid.NewGuid().ToString(),
+    //FolderId = row.Id,
+    //DirectoryName = row.FolderName,
+    //ParentId = row.Parent,
+    //FileCount = row.FileCount,
+    //IsStepChild = row.IsStepChild,
+    //FolderImage = row.FolderImage
+
+    public class GalleryFolderModel
+    {
+        //public GalleryFolderModel()
+        //{
+        //    SubDirs = new List<CategoryTreeModel>();
+        //}
+        public string LinkId { get; set; }
+        public int FolderId { get; set; }
+        public int ParentId { get; set; }
+        public string DirectoryName { get; set; }
+        public string FolderImage { get; set; }
+        public int FileCount { get; set; }
+        public int IsStepChild { get; set; }
+        public string RootFolder { get; set; }
+        //public int SubDirCount { get; set; }
+        //public int ChildFiles { get; set; }
+
+        //public int Links { get; set; }
+        //public string DanniPath { get; set; }
+        //public List<CategoryTreeModel> SubDirs { get; set; }
+    }
+
 
     public class AlbumInfoModel
     {
@@ -63,28 +95,6 @@ namespace OggleBooble.Api.Models
         public string LastModified { get; set; }
         public string FolderType { get; set; }
         public string Success { get; set; }
-    }
-
-    public class CategoryTreeModel
-    {
-        public CategoryTreeModel()
-        {
-            SubDirs = new List<CategoryTreeModel>();
-        }
-        public int FolderId { get; set; }
-        public int ParentId { get; set; }
-        public string DirectoryName { get; set; }
-        public string DanniPath { get; set; }
-        public string RootFolder { get; set; }
-        public string FolderImage { get; set; }
-        //public string Link { get; set; }
-        public string LinkId { get; set; }
-        public int FileCount { get; set; }
-        public int SubDirCount { get; set; }
-        public int ChildFiles { get; set; }
-        public int Links { get; set; }
-        public int IsStepChild { get; set; }
-        public List<CategoryTreeModel> SubDirs { get; set; }
     }
 
     public class xxVwLinkModel

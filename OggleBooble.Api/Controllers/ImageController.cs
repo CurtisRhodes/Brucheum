@@ -95,7 +95,7 @@ namespace OggleBooble.Api.Controllers
                     var folderTypeModel = new FolderTypeModel()
                     {
                         ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbPageFolder.FolderName),
-                        ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(subFolders),
+                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(subFolders),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
                         HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0,
                         RootFolder = dbPageFolder.RootFolder

@@ -72,12 +72,12 @@ function setHdrBottomRow(folderId, subdomain) {
         case "boobs": // poses        
             $('#topRowRightContainer').html(tinkyTak("centerfold"));
             $('#topRowRightContainer').append(tinkyTak("archive"));
-            $('#topRowRightContainer').append(tinkyTak("ranker", "big naturals"));
+            $('#topRowRightContainer').append(tinkyTak("ranker", "poses"));
             break;
         case "archive": {
             $('#topRowRightContainer').html(tinkyTak("centerfold"));
             $('#topRowRightContainer').append(tinkyTak("poses"));
-            $('#topRowRightContainer').append(tinkyTak("ranker", "big naturals"));
+            $('#topRowRightContainer').append(tinkyTak("ranker", "boobs"));
             break;
         }
         case "soft": {
@@ -391,7 +391,7 @@ function tinkyTak(bannerType, rankerType) {
                 "</div>\n";
         case "archive":
             return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='window.open(\"album.html?folder=3\", \"_blank\")'>big tits archive</div>" +
+                "   <div class='clickable' onclick='window.open(\"album.html?folder=3\", \"_blank\")'>big naturals archive</div>" +
                 "</div>\n";
         case "centerfold":
             return "<div class='headerBannerButton'>\n" +

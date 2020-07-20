@@ -72,7 +72,7 @@ namespace OggleBooble.Api.Controllers
                         // hasChildren with non child galleries
                         RootFolder = dbFolder.RootFolder,
                         ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbFolder.FolderName),
-                        ContainsNonRomanNumeralChildren = Helpers.ContainsNonRomanNumeralChildren(childFolders),
+                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(childFolders),
                         HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
                         HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0
                     };
@@ -217,10 +217,16 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    searchResultsModel.SearchResults =
+                    //searchResultsModel.SearchResults =
+                    List<SearchResult> startsWithSearchResults =
                         (from f in db.VirtualFolders
                          where f.FolderName.StartsWith(searchString)
                          select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
+                    foreach (SearchResult searchResult in startsWithSearchResults)
+                    {
+                        if (!Helpers.ContainsRomanNumeral(searchResult.FolderName))
+                            searchResultsModel.SearchResults.Add(searchResult);
+                    }
                     List<SearchResult> containsSearchResults = 
                         (from f in db.VirtualFolders
                          where f.FolderName.Contains(searchString)
@@ -229,7 +235,8 @@ namespace OggleBooble.Api.Controllers
                     foreach (SearchResult searchResult in containsSearchResults)
                     {
                         if (!searchResult.FolderName.ToLower().StartsWith(searchString.ToLower()))
-                            searchResultsModel.SearchResults.Add(searchResult);
+                            if (!Helpers.ContainsRomanNumeral(searchResult.FolderName))
+                                searchResultsModel.SearchResults.Add(searchResult);
                     }
                 }
                 searchResultsModel.Success = "ok";

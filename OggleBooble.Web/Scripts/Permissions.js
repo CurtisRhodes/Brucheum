@@ -7,26 +7,27 @@ function isInRole(roleName) {
 
 
         if (isNullorUndefined(window.localStorage["userSettings"]).Roles) {
-            alert("isNullorUndefined userSettings");
+            //alert("isNullorUndefined userSettings");
             const visitorId = getCookieValue("VisitorId");
 
             if (isNullorUndefined(visitorId))
                 return false;
 
-            alert("initialize userSettings");
+            //alert("initialize userSettings");
             updateUserSettings(visitorId, "Initial", loadInitialJson());
         }
         //let userRoles;
         try {
-            //alert("userSettings Raw " + window.localStorage["userSettings"]);
-            let userSettings = window.localStorage["userSettings"];
-            //alert("userSettings: " + userSettings);
-            //userRoles = userSettings.Roles;
-            if (!isNullorUndefined(userSettings.Roles)) alert("userRoles: " + userRoles);
-
+            if (isNullorUndefined(window.localStorage["userSettings"])) {
+                //alert("userSettings Raw " + window.localStorage["userSettings"]);
+                let userSettings = window.localStorage["userSettings"];
+                //alert("userSettings: " + userSettings);
+                //userRoles = userSettings.Roles;
+                //if (!isNullorUndefined(userSettings.Roles)) alert("userRoles: " + userRoles);
+            }
         } catch (e) {
             console.log("userSettings.Roles  not found yet");
-            alert("userSettings.Roles  not found yet");
+            //alert("userSettings.Roles  not found yet");
             return;
             //resetUserSettings();
             //userRoles = JSON.parse(window.localStorage["userPermissons"]);
@@ -72,7 +73,7 @@ function loadUserSettingsIntoLocalStorage(visitorId) {
 
                 if (successModel.Success === "ok") {
                     if (!isNullorUndefined(successModel.ReturnValue)) {
-                        window.localStorage["userSettings"] = JSON.parse(successModel.ReturnValue);
+                        //window.localStorage["userSettings"] = JSON.parse(successModel.ReturnValue);
                         console.log("userSettings data loaded into local storage");
                     }
                     else 
@@ -101,7 +102,7 @@ function updateUserSettings(visitorId, settingName, settingJson) {
                     if (isNullorUndefined(successModel.ReturnValue)) {
 
 
-                        alert("loadUserSettingsIntoLocalStorage: " + successModel.ReturnValue);
+                        //alert("loadUserSettingsIntoLocalStorage: " + successModel.ReturnValue);
                         //loadUserSettingsIntoLocalStorage(visitorId, settingName);
 
 

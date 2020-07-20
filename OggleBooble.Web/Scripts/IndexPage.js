@@ -76,7 +76,7 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("loadImages")) {
+            if (!checkFor404("loadUpdatedGalleriesBoxes")) {
                 logError("XHR", 3908, getXHRErrorDetails(jqXHR), "loadUpdatedGalleriesBoxes");
             }
         }

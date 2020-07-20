@@ -1,4 +1,5 @@
-﻿let apFolderName, apFolderRoot, apFolderId, deepFileCount = 0, deepFolderCount = 0, apVisitorId, apFolderType;
+﻿let apFolderName, apFolderRoot, apFolderId, apVisitorId, apFolderType;
+let deepFileCount = 0, deepFolderCount = 0;
 
 function checkAlbumCost(folderId) {
     let visitorId = getCookieValue("VisitorId");
@@ -57,31 +58,25 @@ function getAlbumImages(folderId) {
                     $('#galleryBottomfileCount').html(albumImageInfo.ImageLinks.length.toLocaleString());
 
                     //  SUBFOLDERS 
-                    if (albumImageInfo.SubDirs.length > 0) {
-                        if (albumImageInfo.ImageLinks.length === 0)
-                            $('#galleryBottomfileCount').html(albumImageInfo.SubDirs.length.toLocaleString());
-                        else
-                            $('#galleryBottomfileCount').html("# " + albumImageInfo.ImageLinks.length.toLocaleString() + "/" + albumImageInfo.SubDirs.length);
+                    if (albumImageInfo.Folders.length > 0) {
+                        $('#galleryBottomfileCount').html("# " + albumImageInfo.ImageLinks.length.toLocaleString() + "/" + albumImageInfo.Folders.length);
                         let countStr = "?";
                         let imgSrc = "?";
-                        $.each(albumImageInfo.SubDirs, function (idx, subDir) {
-                            if (albumImageInfo.ImageLinks.length  === 0)
-                                countStr = "(" + albumImageInfo.SubDirs.length + ")";
-                            else
-                                countStr = "(" + albumImageInfo.ImageLinks.length.toLocaleString() + " / " + albumImageInfo.SubDirs.length + ")";
-
-                            getDeepFolderCounts(subDir.FolderId);
-                            if (isNullorUndefined(subDir.FolderImage))
+                        $.each(albumImageInfo.Folders, function (idx, folder) {
+                            countStr = albumImageInfo.Folders.length + "/" + folder.FileCount.toLocaleString();
+                            if (isNullorUndefined(folder.FolderImage))
                                 imgSrc = "/Images/binaryCodeRain.gif";
                             else
-                                imgSrc = settingsImgRepo + subDir.FolderImage;
+                                imgSrc = settingsImgRepo + folder.FolderImage;
 
                             $('#imageContainer').append("<div class='" + imageFrameClass + "'\n" +
-                                " oncontextmenu='albumContextMenu(\"Folder\",\"" + subDir.LinkId + "\"," + subDir.FolderId + ",\"" + imgSrc + "\")'\n" +
-                                " onclick='rtpe(\"SUB\"," + apFolderId + "," + subDir.IsStepChild + "," + subDir.FolderId + ")'>\n" +
-                                "<img id='" + subDir.LinkId + "' class='folderImage'\n" +
-                                "onerror='subFolderImgError(\"" + subDir.FolderId + "\"," + imgSrc + ")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
-                                "<div class='" + labelClass + "'>" + subDir.DirectoryName + "</div><span Id='fc" + subDir.FolderId + "'>" + countStr + "</span></div>");
+                                " oncontextmenu='albumContextMenu(\"Folder\",\"" + folder.LinkId + "\"," + folder.FolderId + ",\"" + imgSrc + "\")'\n" +
+                                " onclick='rtpe(\"SUB\"," + apFolderId + "," + folder.IsStepChild + "," + folder.FolderId + ")'>\n" +
+                                "<img id='" + folder.LinkId + "' class='folderImage'\n" +
+                                "onerror='subFolderImgError(\"" + folder.FolderId + "\"," + imgSrc + ")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
+                                "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div><span Id='fc" + folder.FolderId + "'>" + countStr + "</span></div>");
+
+                            getDeepFolderCounts(folder);
                         });
                     }
                     // $('#aboveImageContainerMessageArea').html(folde
@@ -95,7 +90,7 @@ function getAlbumImages(folderId) {
                     if (albumImageInfo.RootFolder === "centerfold")
                         activityCode = "PBV";
                     chargeCredits(activityCode, folderId);
-                    getDeepFolderCounts(folderId);
+                    //getDeepFolderCounts(folderId);
 
                     let delta = (Date.now() - getImagesStart) / 1000;
                     console.log("GetAlbumImages took: " + delta.toFixed(3));
@@ -118,32 +113,40 @@ function getAlbumImages(folderId) {
     }
 }
 
-function getDeepFolderCounts(folderId) {
-    //if (subDir.SubDirs.length === 1) {
-    //    if (subDir.RootFolder === "centerfold")
-    //        $('#fc' + obj.SubFolderId).html("C" + subDir.FileCount.toLocaleString() + "/" + subDir.SubDirs[0].FileCount);
-    //}
+
+function getDeepFolderCounts(folder) {
+    //LinkId = Guid.NewGuid().ToString(),
+    //FolderId = row.Id,
+    //DirectoryName = row.FolderName,
+    //ParentId = row.Parent,
+    //FileCount = row.FileCount,
+    //IsStepChild = row.IsStepChild,
+    //FolderImage = row.FolderImage,
+    //RootFolder = row.RootFolder
+
+    deepFileCount += folder.FileCount;
+    deepFolderCount += 1;
     let deepStart = Date.now();
-    //alert("GetSubFolderCounts(" + subDir.FolderId + ")");
+    //alert("GetSubFolderCounts(" + folder.FolderId + ")");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folderId,
-        success: function (subFolderModel) {
-            if (subFolderModel.Success === "ok") {
-                if (subFolderModel.TtlFileCount > 0) {
-                    $('#fc' + subFolderModel.FolderId).html(subFolderModel.TtlFileCount.toLocaleString());
+        url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folder.FolderId,
+        success: function (countsModel) {
+            if (countsModel.Success === "ok") {
+                if (countsModel.TtlFileCount > 0) {
+                    $('#fc' + countsModel.FolderId).html(countsModel.TtlFileCount.toLocaleString());
                 }
-                if (subFolderModel.TtlFolderCount > 0) {
-                    //alert("TtlFolderCount: " + subFolderModel.TtlFolderCount);
-                    $('#fc' + subFolderModel.FolderId).html(subFolderModel.TtlFolderCount + " (" + subFolderModel.TtlFileCount.toLocaleString() + ")");
+                if (countsModel.TtlFolderCount > 0) {
+                    //alert("TtlFolderCount: " + countsModel.TtlFolderCount);
+                    $('#fc' + countsModel.FolderId).html(countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString());
                 }
                 var delta = (Date.now() - deepStart) / 1000;
                 console.log("getDeepFolderCounts took: " + delta.toFixed(3));
-                deepFileCount += subFolderModel.TtlFileCount;
-                deepFolderCount += subFolderModel.TtlFolderCount;
-                $('#galleryBottomfileCount').html(deepFolderCount.toLocaleString() + " (" + deepFileCount.toLocaleString() + ")");
+                deepFileCount += countsModel.TtlFileCount;
+                deepFolderCount += countsModel.TtlFolderCount;
+                $('#galleryBottomfileCount').html("'" + deepFolderCount.toLocaleString() + " (" + deepFileCount.toLocaleString() + ")");
             }
-            else { logError("BUG", folderId, subFolderModel.Success, "getDeepFolderCounts"); }
+            else { logError("BUG", folderId, countsModel.Success, "getDeepFolderCounts"); }
         },
         error: function (jqXHR) {
             if (!checkFor404("getAlbumImages")) { logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getDeepFolderCounts"); }

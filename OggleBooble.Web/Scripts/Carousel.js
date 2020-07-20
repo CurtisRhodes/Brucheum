@@ -1,9 +1,9 @@
 ﻿let imageIndex = 0, numImages = 0, numFolders = 0, rotationSpeed = 7000, intervalSpeed = 600,
-    carouselItemArray = [], imageHistory = [], absolueStart,
-    vCarouselInterval, carouselImageViews = 0, carouselImageErrors = 0,
+    carouselItemArray = [], imageHistory = [], imageHistoryArrayCount = 0, absolueStart,
+    vCarouselInterval = null, carouselImageViews = 0, carouselImageErrors = 0,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
-    carouselSkip = 0, imgSrc, jsCarouselSettings, nextRoot = 1, specialLaunchCode = 112;
-let debugMode = true;
+    imgSrc, jsCarouselSettings, nextRoot = 1, specialLaunchCode = 112;
+let debugMode = false;
 
 function launchCarousel(startRoot) {
     absolueStart = Date.now();
@@ -32,39 +32,44 @@ function launchCarousel(startRoot) {
     window.addEventListener("resize", resizeCarousel);
 }
 
-function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, includePortrait) {
-    //var start = Date.now();
-    //console.log("loading Images take: " + take + ".   specialLaunchCode: " + specialLaunchCode);
-
+function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includeLandscape, includePortrait) {
     settingsImgRepo = settingsArray.ImageRepo;
     try {
-        if (take === specialLaunchCode) {
-            console.log("take === specialLaunchCode");
+        if (carouselTake === specialLaunchCode) {
+            //alert("carouselTake(" + carouselTake + ") === specialLaunchCode(" + specialLaunchCode + ")");
+            console.log("carouselTake === specialLaunchCode");
             if (!isNullorUndefined(window.localStorage["carouselCache"])) {
                 let carouselCacheArray = JSON.parse(window.localStorage["carouselCache"]);
                 $.each(carouselCacheArray, function (idx, obj) {
                     carouselItemArray.push(obj);
                 });
-
-                if (carouselItemArray.length === 0) alert("ix00");
-
                 $('.carouselFooter').css("visibility", "hidden");
-                $('#topIndexPageSection').html(carouselHtml());
-                setTimeout(function () {
-                    resizeCarousel();
-                    startCarousel();
-                    console.log("startCarousel");
-                }, 1600);
+                if (vCarouselInterval)
+                    alert("carousel interval already started")
+                else {
+                    $('#topIndexPageSection').html(carouselHtml());
+                    $('#thisCarouselImage').show();
 
+                    imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
+                    $('#thisCarouselImage').attr('src', imgSrc);
+                    $('#carouselImageContainer').show();
+                    $('#thisCarouselImage').show();
+                    resizeIndexPage();
+                    //resizeCarousel();
+
+                    //alert("proper call from load carouselCache")
+                    startCarousel("carouselCache: " + carouselTake);
+                }
+                console.log("startCarousel");
                 let delta = (Date.now() - absolueStart) / 1000;
-                console.log("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
+                if (debugMode) $('#hdrBtmRowSec3').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
                 $('#footerMessage2').html("initial launch from cache took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                skip += 100;
+                carouselSkip += 100;
             }
         }
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/IndexPage/GetCarouselImages?root=" + rootFolder + "&skip=" + skip + "&take=" + take +
+            url: settingsArray.ApiServer + "api/IndexPage/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
                 "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
@@ -89,21 +94,18 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                             LinkId: obj.LinkId,
                             FileName: obj.FileName
                         });
-                        //alert("carouselItemArray.push[ " + idx + " ]");
                     });
 
-                    if (take === specialLaunchCode) {
-                        if (isNullorUndefined(window.localStorage["carouselCache"]))
-                        {
+                    if (carouselTake === specialLaunchCode) {
+                        if (isNullorUndefined(window.localStorage["carouselCache"])) {
                             console.log("isNullorUndefined(window.localStorage[carouselCache])");
 
                             $('#topIndexPageSection').html(carouselHtml());
                             $('.carouselFooter').css("visibility", "hidden");
-                            if (carouselItemArray.length === 0) alert("ix00");
-                            startCarousel();
+                            //if (carouselItemArray.length === 0) alert("ix00");
+                            startCarousel("GetCarouselImages?root=" + rootFolder);
                             delta = (Date.now() - absolueStart) / 1000;
                             $('#footerMessage2').html("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                            //alert("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
 
                             let jsnObj = "[";  //new JSONArray();
                             for (i = 0; i < 101; i++) {
@@ -112,14 +114,14 @@ function loadImages(rootFolder, absolueStart, skip, take, includeLandscape, incl
                             window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
                         }
                     }
-                    if (carouselInfo.Links.length === take) {
-                        carouselSkip += take;
-                        take = 2000;
-                        loadImages(rootFolder, absolueStart, carouselSkip, take, includeLandscape, includePortrait);
-                        if (take !== specialLaunchCode)
+                    if (carouselInfo.Links.length === carouselTake) {
+                        carouselSkip += carouselTake;
+                        carouselTake = 2000;
+
+                        //alert("loadImages recurr.  carouselTake: " + carouselTake);
+                        loadImages(rootFolder, absolueStart, carouselSkip, 2000, includeLandscape, includePortrait);
+                        if (carouselTake !== specialLaunchCode)
                             $('#footerMessage2').html(carouselSkip + "  " + rootFolder + " loaded");
-                        else
-                            alert($('#footerMessage2').html());
                     }
                     else {
                         addMoreRootsToCarousel();
@@ -146,8 +148,7 @@ function addMoreRootsToCarousel() {
         if (jsCarouselSettings.includeArchive) {
             $('#footerMessage2').html("loading archive");
             console.log("loading archive");
-
-            carouselSkip = 0;
+            alert("loading archive");
             loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
             return;
         }
@@ -157,6 +158,7 @@ function addMoreRootsToCarousel() {
         if (jsCarouselSettings.includeCenterfolds) {
             $('#footerMessage2').html("loading centerfolds");
             console.log("loading centerfolds ");
+            alert("loading centerfolds ");
             carouselSkip = 0;
             loadImages("centerfold", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
             return;
@@ -197,32 +199,51 @@ function addMoreRootsToCarousel() {
         console.log("loadImages DONE!! took: " + delta.toFixed(3) + " total: " + carouselItemArray.length.toLocaleString());
         $('#footerMessage2').html("loadImages DONE!! took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
         setTimeout(function () { $('#footerMessage2').html("") }, 12000);
-        //alert("DONE");
     }
 }
 
-function startCarousel() {
-    $('.assuranceArrows').show();
+function startCarousel(calledFrom) {
+    //alert("inside startCarousel(" + calledFrom + ")");
+    if (vCarouselInterval)
+        alert("carousel interval already started")
+    else {
+        $('.assuranceArrows').show();
+        //alert("starting inverval startCarousel(" + calledFrom + ")");
+        vCarouselInterval = setInterval(function () {
+            intervalBody();
+        }, rotationSpeed);
+    }
+}
 
-    resizeCarousel();
-    intervalBody();
-    vCarouselInterval = setInterval(function () {
-        intervalBody();
-    }, rotationSpeed);
+function alreadyInLast100(idx) {
+    let idxStart = Math.max(0, carouselItemArray.length - 100);
+    for (i = idxStart; i < imageHistory.length; i++) {
+        if (idx === imageHistory[i]) {
+            alert("Already shown try again")
+            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+            break;
+        }
+    }
 }
 
 function intervalBody() {
     imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+    alreadyInLast100(imageIndex);
     $('.carouselFooter').css("visibility", "hidden");
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
         imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
         $('#thisCarouselImage').attr('src', imgSrc).load(function () {
             $('#carouselFooter').fadeIn();
             setLabelLinks();
-            imageHistory.push(imageIndex);
+            //imageHistory.push("'" + carouselItemArray[imageIndex].FileName + "'");
+            imageHistory.push("'" + imageIndex + "'");
             $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-
+            //if (debugMode) $('#hdrBtmRowSec3').html(".len: " + imageHistory.length);
+            //if (debugMode) $('#hdrBtmRowSec3').append("  Count: " + imageHistoryArrayCount);
+            //if (debugMode) $('#hdrBtmRowSec3').append("  a[" + imageHistoryArrayCount + "]: " + imageHistory[imageHistoryArrayCount]);
+            
             $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
+            imageHistoryArrayCount++;
         });
     });
 }
@@ -236,11 +257,11 @@ function setLabelLinks() {
             // noraml
             mainImageClickId = carouselItemArray[imageIndex].FolderId;
 
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderName);
-            knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
+            knownModelLabelClickId = carouselItemArray[imageIndex].FolderParentId;
 
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderParentName)
-            imageTopLabelClickId = carouselItemArray[imageIndex].FolderParentId;
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderName)
+            imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
 
             $('#carouselFooterLabel').html(carouselItemArray[imageIndex].FolderGPName);
             footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
@@ -296,16 +317,22 @@ function setLabelLinks() {
             }
         }
         else {  // roman numeral shift
-            mainImageClickId = carouselItemArray[imageIndex].FolderParentId;
+            mainImageClickId = carouselItemArray[imageIndex].FolderId;
 
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParentName);
-            knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGPName);
-            imageTopLabelClickId = carouselItemArray[imageIndex].FolderGPId;
+            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderName);
+            imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
+            //$('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGPName);
+            //imageTopLabelClickId = carouselItemArray[imageIndex].FolderGPId;
+            
+            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
+            knownModelLabelClickId = carouselItemArray[imageIndex].ImageId;
+            //$('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParentName);
+            //knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
 
             $('#carouselFooterLabel').html(carouselItemArray[imageIndex].ImageFolderGPName);
             footerLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;;
+            //$('#carouselFooterLabel').html(carouselItemArray[imageIndex].ImageFolderGPName);
+            //footerLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;;
 
             //ImageFolderGPName
             //ImageFolderGPId
@@ -321,6 +348,7 @@ function setLabelLinks() {
     $('#imageTopLabel').fadeIn();
     $('#knownModelLabel').fadeIn();
 }
+
 function getRootFolderId(rootFolder) {
     var rootFolderId = 2;
     switch (rootFolder) {
@@ -346,24 +374,25 @@ function clickSpeed(speed) {
     if (speed === 'slower')
         rotationSpeed += 800;
     clearInterval(vCarouselInterval);
-    startCarousel();
+    vCarouselInterval = null;
+    startCarousel("clickSpeed");
 }
 function togglePause() {
     if ($('#pauseButton').html() === "||")
         pause();
     else {
-        //alert("togglePause resume");
         resume();
     }
 }
 function pause() {
     clearInterval(vCarouselInterval);
+    vCarouselInterval = null;
     $('#pauseButton').html(">");
 }
 function resume() {
-    //alert("resume()");
     clearInterval(vCarouselInterval);
-    startCarousel();
+    vCarouselInterval = null;
+    startCarousel("resume");
     $('#pauseButton').html("||");
 }
 
@@ -401,7 +430,7 @@ function showCarouelSettingsDialog() {
 
             updateUserSettings(visitorId, "CarouselSettings", lsCarouselSettings)
 
-            alert("this." + this.id + " checked: " + this.checked);
+            console.log("this." + this.id + " checked: " + this.checked);
 
             //window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
             //let lsCarouselSettings = window.localStorage["carouselSettings"];
@@ -440,13 +469,15 @@ function removeItemsFromArray(rootFolder) {
 
 function assuranceArrowClick(direction) {
     //reportEvent(eventCode, calledFrom, eventDetail, pageId) {
-    reportEvent("CAA", carouselItemArray[imageIndex].LinkId, "direction: " + direction,  homePageId);
+    reportEvent("CAA", carouselItemArray[imageIndex].LinkId, "direction: " + direction,  3908);
     if (direction === "foward") {
         resume();
     }
     else {
         pause();
-        //imageHistory.pop();
+        //alert("imageHistory.len: " + imageHistory.length);
+
+        imageHistory.pop();
         imageHistory.pop();
 
         imgSrc = settingsImgRepo + carouselItemArray[imageHistory.pop()].FileName;
@@ -461,21 +492,18 @@ function assuranceArrowClick(direction) {
 }
 function clickViewGallery(labelClick) {
     clearInterval(vCarouselInterval);
+    vCarouselInterval = null;
     switch (labelClick) {
         case 1:  // carousel main image
-            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + mainImageClickId);
             rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "main image", mainImageClickId);
             break;
         case 2: // top imageTopLabel
-            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + imageTopLabelClickId);
             rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "image top label", imageTopLabelClickId);
             break;
         case 3: // knownModelLabel
-            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + knownModelLabelClickId);
             rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "knownModelLabel", knownModelLabelClickId);
             break;
         case 4: // footer 
-            //if (document.domain === 'localhost') alert("labelClick: " + labelClick + " page: " + footerLabelClickId);
             reportThenPerformEvent("CPC", carouselItemArray[imageIndex].ImageFolderName, "clickViewParentGallery", footerLabelClickId);
             break;
         default:
@@ -484,9 +512,6 @@ function clickViewGallery(labelClick) {
 function carouselContextMenu() {
     pos.x = event.clientX;
     pos.y = event.clientY;
-
-    //alert("carouselContextMenu FolderId: " + carouselItemArray[imageIndex].FolderId)
-
     showContextMenu("Carousel", pos, imgSrc,
         carouselItemArray[imageIndex].LinkId,
         carouselItemArray[imageIndex].FolderId,
@@ -500,20 +525,15 @@ function imgErrorThrown() {
     carouselImageViews -= 1;
     carouselImageErrors++;
     pause();
-    //alert("Missig Image: " + carouselItemArray[imageIndex].FolderId + ", " + carouselItemArray[imageIndex].FolderName + "\nlinkId: " + carouselItemArray[imageIndex].LinkId);
     logDataActivity({
         VisitorId: getCookieValue("VisitorId"),
         ActivityCode: "IME",
         PageId: carouselItemArray[imageIndex].FolderId,
         Activity: carouselItemArray[imageIndex].LinkId
     });
-
-
-    alert("image error\npage: " + carouselItemArray[imageIndex].FolderId +
+    console.log("image error\npage: " + carouselItemArray[imageIndex].FolderId +
         ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
         ",\nActivity: " + carouselItemArray[imageIndex].LinkId);
-
-
 }
 function carouselHtml() {
     return "<div class='centeringOuterShell'>\n" +

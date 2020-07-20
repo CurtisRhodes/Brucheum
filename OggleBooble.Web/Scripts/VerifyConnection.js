@@ -164,7 +164,7 @@ function persistConnection() {
                 }
             },
             error: function (jqXHR) {
-                logError("XHR", 3980, getXHRErrorDetails(jqXHR), "persistConnection");
+                //logError("XHR", 3980, getXHRErrorDetails(jqXHR), "persistConnection");
                 connectionVerified = false;
             }
         });
