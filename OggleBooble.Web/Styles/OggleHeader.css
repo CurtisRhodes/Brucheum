@@ -122,7 +122,7 @@
     display: none;
 }
 
-.oggleDraggableDialog {
+.oggleDialogContainer {
     position: absolute;
     z-index: 36;
     display: none;
@@ -142,7 +142,7 @@
     width: 100%;
     cursor: grabbing; 
 }
-.draggableDialogTitle {
+.oggleDialogTitle {
     float: left;
     padding: 2px 8px;
     width: 100%;

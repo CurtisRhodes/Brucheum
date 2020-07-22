@@ -1011,7 +1011,7 @@ function XXloadProperties() {
         type: "PATCH",
         url: settingsArray.ApiServer + "api/FtpDashBoard/GetFileProps?folderId=" + pSelectedTreeId,
         success: function (success) {
-            $('#imagePageLoadingGif').hide();
+            $('#indexPageLoadingGif').hide();
             if (success === "ok") {
                 displayStatusMessage("ok", "done");
                 $('#dataifyInfo').hide();

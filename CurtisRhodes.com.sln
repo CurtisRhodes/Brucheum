@@ -51,8 +51,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BruchHtml", "BruchHtml\", "
 		SlnRelativePath = "BruchHtml\"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bruch.Api", "Bruch.Api\Bruch.Api.csproj", "{BB27B095-E242-419B-B09A-6144896FFC22}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brucheum", "Brucheum\Brucheum.csproj", "{B1281210-87B4-485B-B161-2DF8EF5A4EDC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0497EF20-745F-47B6-BFE9-B2DDDDB27C72}"
@@ -86,10 +84,6 @@ Global
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Release|Any CPU.Build.0 = Debug|Any CPU
-		{BB27B095-E242-419B-B09A-6144896FFC22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB27B095-E242-419B-B09A-6144896FFC22}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB27B095-E242-419B-B09A-6144896FFC22}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB27B095-E242-419B-B09A-6144896FFC22}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU

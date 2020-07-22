@@ -7,27 +7,10 @@ let debugMode = true;
 
 function launchCarousel(startRoot) {
     absolueStart = Date.now();
-    $('#footerMessage2').html("launching carousel");
-
-    if (isNullorUndefined(window.localStorage["carouselSettings"]))
-    {
-        lsCarouselSettings = {
-            includeArchive: false,
-            includeCenterfolds: false,
-            includePorn: false,
-            includeSoftcore: true,
-            includeLandscape: true,
-            includePortrait: false
-        };
-        window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
-        console.log("default carouselSettings loaded int local storage");
-    }
-    else {
-        console.log("carouselSettings found in local storage!");
-    }
+    loadCarouselSettingsIntoLocalStorage();
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-    //initial call to loadimages
-    console.log("calling loadImages");
+    $('#footerMessage2').html("initial call to loadimages");
+    console.log("initial call to loadimages");
     loadImages(startRoot, absolueStart, 0, specialLaunchCode, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
     window.addEventListener("resize", resizeCarousel);
 }
@@ -44,10 +27,9 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                 $.each(carouselCacheArray, function (idx, obj) {
                     carouselItemArray.push(obj);
                 });
-
-
-                if (vCarouselInterval)
-                    alert("carousel interval already started")
+                if (vCarouselInterval) {
+                    console.log("carousel interval already started");
+                }
                 else {
                     $('#topIndexPageSection').html(carouselHtml());
                     $('#thisCarouselImage').show();
@@ -209,7 +191,7 @@ function addMoreRootsToCarousel() {
 function startCarousel(calledFrom) {
     //alert("inside startCarousel(" + calledFrom + ")");
     if (vCarouselInterval)
-        alert("carousel interval already started")
+        console.log("carousel interval already started")
     else {
         $('.assuranceArrows').show();
         //alert("starting inverval startCarousel(" + calledFrom + ")");
@@ -237,7 +219,7 @@ function intervalBody() {
         imageIndex = Math.floor(Math.random() * carouselItemArray.length);
     }
     else {
-        if (debugMode) $('#hdrBtmRowSec3').html("images: " + arryItemsShownCount++);
+        if (debugMode) $('#hdrBtmRowSec3').html("images: " + ++arryItemsShownCount);
     }
     $('.carouselFooter').css("visibility", "hidden");
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
@@ -407,64 +389,54 @@ function resume() {
 }
 
 function showCarouelSettingsDialog() {
-    $("#oggleDialogTitle").html("Carousel Settings");
-    $("#draggableDialogContents").html(
-        "<div class='carouselSettingsDialog'>\n"+
-        "   <input type='checkbox' id='ckCenterfold'/> Include Centerfolds<br/>\n" +
-        "   <input type='checkbox' id='ckArchive'/> Include Archive<br/>\n" +
-        "   <input type='checkbox' id='ckSoftcore'/> Include softcore<br/>\n" +
-        "   <input type='checkbox' id='ckPorn'/> Include porn<br/>\n" +
-        "   <input type='checkbox' id='ckLandscape'/> allow landscape size<br/>\n" +
-        "   <input type='checkbox' id='ckPortrait'/> allow portrait size<br/>\n" +
-        "</div>\n");
-    $("#draggableDialog").css("width", 300);
-    $('#draggableDialog').css("top", event.clientY - 75);
-    $('#customMessageContainer').css("left", event.clientX - 100);
     pause();
-    $("#draggableDialog").fadeIn();
-    let lsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
 
-    $('#ckCenterfold').prop("checked", lsCarouselSettings.includeCenterfolds);
-    $('#ckArchive').prop("checked", lsCarouselSettings.includeArchive);
-    $('#ckPorn').prop("checked", lsCarouselSettings.includePorn);
-    $('#ckSofcore').prop("checked", lsCarouselSettings.includeSoftcore);
-    $('#ckLandscape').prop("checked", lsCarouselSettings.includeLandscape);
-    $('#ckPortrait').prop("checked", lsCarouselSettings.includePortrait);
+    $("#carouselSettingsDialog").html(
+        "<div class='carouselSettingsDialog'>\n" +
+        "   <div class='oggleDialogHeader'>" +
+        "       <div class='oggleDialogTitle'>Carousel Settings</div>" +
+        "       <div class='oggleDialogCloseButton'>" +
+        "       <img src='/images/poweroffRed01.png' onclick='resume(); $(\"#carouselSettingsDialog\").hide();'/></div>\n" +
+        "   </div>\n" +
+        "   <div class='oggleDialogContents'>\n" +
+        "       <input type='checkbox' id='ckCenterfold'/> Include Centerfolds<br/>\n" +
+        "       <input type='checkbox' id='ckArchive'/> Include Big Naturals Archive<br/>\n" +
+        "       <input type='checkbox' id='ckSoftcore'/> Include softcore<br/>\n" +
+        "       <input type='checkbox' id='ckPorn'/> Include porn<br/>\n" +
+        "       <input type='checkbox' id='ckLandscape'/> allow landscape size<br/>\n" +
+        "       <input type='checkbox' id='ckPortrait'/> allow portrait size<br/>\n" +
+        "   </div>\n" +
+        "</div>\n");
+
+
+
+    $("#carouselSettingsDialog").css("width", 300);
+    $('#carouselSettingsDialog').css("top", event.clientY - 75);
+    $('#carouselSettingsDialog').css("left", event.clientX - 100);
+    $("#carouselSettingsDialog").draggable().fadeIn();
+
+    $('#ckCenterfold').prop("checked", jsCarouselSettings.includeCenterfolds);
+    $('#ckArchive').prop("checked", jsCarouselSettings.includeArchive);
+    $('#ckPorn').prop("checked", jsCarouselSettings.includePorn);
+    $('#ckSofcore').prop("checked", jsCarouselSettings.includeSoftcore);
+    $('#ckLandscape').prop("checked", jsCarouselSettings.includeLandscape);
+    $('#ckPortrait').prop("checked", jsCarouselSettings.includePortrait);
 
     $("input[type='checkbox']").change(function () {
-        let visitorId = getCookieValue("VisitorId");
-        if (isNullorUndefined(visitorId)) {
-            displayStatusMessage("warning", "You must be logged in for settings to persist");
-        }
-        else {
+        //$('input.' + $(this).prop('class')).prop('checked', true);
+        //alert("$(input[type = 'checkbox']).change  $(this).prop(checked): " + $(this).prop("checked"));
+        if ($(this).prop("checked"))
+            addItemsToArray($(this).attr("id"));
+        else
+            removeItemsFromArray($(this).attr("id"));
 
-            updateUserSettings(visitorId, "CarouselSettings", lsCarouselSettings)
-
-            console.log("this." + this.id + " checked: " + this.checked);
-
-            //window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
-            //let lsCarouselSettings = window.localStorage["carouselSettings"];
-
-            if (this.checked)
-                addItemsToArray(this.Id);
-            else
-                removeItemsFromArray(this.Id);
-
-            //loadImages("archive", Date.now(), 0, 500, lsCarouselSettings.includeLandscape, lsCarouselSettings.includePortrait);
-            displayStatusMessage("ok", "centerfolds added to carousel");
-            let numImagesRemoved = removeItemsFromArray("centerfold");
-            $('#headerMessage').html(numImagesRemoved + "centerfold images removed");
-            displayStatusMessage("ok", numImagesRemoved + "centerfold images removed");
-
-            //let lsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-            // save carousel setting to mission
-
-            // update settings
-            window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
-        }
+        updateCarouselSettings()
     });
 }
-function removeItemsFromArray(rootFolder) {
+
+function removeItemsFromArray(ckId) {
+    let remDom = ckId.substring(2);
+    alert("removeItemsFromArray: " + remDom);
     var numRemoved = 0;
     for (idx = 0; idx < carouselItemArray.length; idx++) {
         if (carouselItemArray[idx].RootFolder === rootFolder) {
@@ -475,6 +447,12 @@ function removeItemsFromArray(rootFolder) {
     console.log("Removed " + numRemoved + " links of type: " + rootFolder);
     $('#footerMessage2').html("total carousel items: " + carouselItemArray.length.toLocaleString());
     return numRemoved;
+}
+function addItemsToArray(ckId) {
+    let remDom = ckId.substring(2);
+    //$('#ckPorn').prop('checked', true);
+    alert("addItemsToArray: " + remDom);
+    loadImages(remDom, Date.now(), 0, 500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
 }
 
 function assuranceArrowClick(direction) {
@@ -518,7 +496,7 @@ function clickViewGallery(labelClick) {
             break;
         default:
     }
-}
+} 
 function carouselContextMenu() {
     pos.x = event.clientX;
     pos.y = event.clientY;
@@ -566,5 +544,6 @@ function carouselHtml() {
         "          <img class='speedButton floatRight' src='Images/Settings-icon.png' title='carousel settings' onclick='showCarouelSettingsDialog()' />\n" +
         "       </div>\n" +
         "   </div>\n" +
-        "</div>\n";
+        "</div>\n" +
+        "<div id='carouselSettingsDialog' class='oggleDialogContainer'>\n";
 }

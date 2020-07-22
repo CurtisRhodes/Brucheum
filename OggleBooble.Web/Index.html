@@ -40,7 +40,7 @@
     <script src="Scripts/FolderInfoDialog.js"></script>
     <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/ContextMenu.js"></script>
-    <script src="Scripts/Carousel.js"></script>ModelInfoDialog
+    <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/IndexPage.js"></script>
 
     <link href="Styles/Common.css" rel="stylesheet" />
@@ -66,16 +66,16 @@
 <body>
     <div id="oggleHeader" class="stickyHeader boobsHeader"></div>
     <div class="threeColumnLayout">
-        <div class="leftColumn">
+        <div id="leftColumnArea" class="leftColumn">
             <div id="pabh" class="promoBox"></div>
         </div>
         <div class="middleColumn">
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
-            <img id="boobsRankerLoadingGif" class="loadingGif" src="Images/loader.gif" />
+            <img id="indexPageLoadingGif" class="loadingGif" src="Images/loader.gif" />
             <div id="indexMiddleColumn"></div>
         </div>
-        <div class="rightColumn"></div>
+        <div id="rightColumnArea" class="rightColumn"></div>
     </div>
     <div class="footer"></div>
 
@@ -133,13 +133,17 @@
                             // porn       homePageId = 3909;
                             // dashboard  homePageId = 3910;
                             // blog       homePageId = 3911;
+
                             if (spaPageId == 3907) { // ranker
                                 ///alert("rankPref: " + params.bp);
                                 rankerStartup(params.bp);
                             }
-                            if (spaPageId == 3908 || spaPageId == 3909) {  // boobs,porn
-                                indexStartup(spaPageId);
-                            }
+                            if (spaPageId == 3908)
+                                indexStartup();
+
+                            if (spaPageId == 3909)
+                                pornStartup();
+
                             if (spaPageId == 3910) {  // dashboard
                                 dashboardStartup();
                             }

@@ -151,3 +151,44 @@ function loadInitialJson() {
     return test1;
 }
 
+function loadCarouselSettingsIntoLocalStorage() {
+    if (isNullorUndefined(window.localStorage["carouselSettings"])) {
+        lsCarouselSettings = {
+            includeArchive: false,
+            includeCenterfolds: false,
+            includePorn: false,
+            includeSoftcore: true,
+            includeLandscape: true,
+            includePortrait: false
+        };
+        window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
+        console.log("default carouselSettings loaded int local storage");
+    }
+    else {
+        console.log("carouselSettings found in local storage!");
+    }
+    //jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
+}
+
+function updateCarouselSettings() {
+    let visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId)) {
+        displayStatusMessage("warning", "You must be logged in for settings to persist");
+    }
+    else {
+        //let currentCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
+        let lsCarouselSettings = {
+            includeArchive: $('#ckArchive').prop("checked"),
+            includeCenterfolds: $('#ckCenterfold').prop("checked"),
+            includePorn: $('#ckPorn').prop("checked"),
+            includeSoftcore: $('#ckSofcore').prop("checked"),
+            includeLandscape: $('#ckLandscape').prop("checked"),
+            includePortrait: $('#ckPortrait').prop("checked")
+        };
+        window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
+        console.log("carouselSettings updated in window.localStorage");
+
+        updateUserSettings(visitorId, "CarouselSettings", lsCarouselSettings);
+
+    }
+}

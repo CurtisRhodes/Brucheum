@@ -196,7 +196,7 @@ body {
 
 .footerColCustContainer {
     text-align: center;
-    float: left;
+    /*float: left;*/
     padding: 0;
 }
 

@@ -1,12 +1,6 @@
 ﻿let apFolderName, apFolderRoot, apFolderId, apVisitorId, apFolderType;
 let deepFileCount = 0, deepFolderCount = 0;
 
-function checkAlbumCost(folderId) {
-    let visitorId = getCookieValue("VisitorId");
-    if (isNullorUndefined(visitorId))
-        alert("You must be logged in to view this album");
-}
-
 function loadAlbum(folderId) {
     try {
         settingsImgRepo = settingsArray.ImageRepo;
@@ -15,21 +9,20 @@ function loadAlbum(folderId) {
         getAlbumPageInfo(folderId)
     }
     catch (e) {
-        $('#imagePageLoadingGif').hide();
+        $('#indexPageLoadingGif').hide();
         logError("CAT", folderId, e, "loadAlbum");
     }
 }
 
 function getAlbumImages(folderId) {
     var getImagesStart = Date.now();
-    $('#imagePageLoadingGif').show();
-    $('.footer').hide();
+    $('#indexPageLoadingGif').show();
     try {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + folderId,
             success: function (albumImageInfo) {
-                $('#imagePageLoadingGif').hide();
+                $('#indexPageLoadingGif').hide();
                 if (albumImageInfo.Success === "ok") {
                     $('#deepSlideshowButton').hide();
 
@@ -49,9 +42,11 @@ function getAlbumImages(folderId) {
                             " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + apFolderId + ",\"" + imgSrc + "\")'\n" +
                             " onclick='launchViewer(" + obj.FolderId + ",\"" + obj.LinkId + "\",false)'\n" +
                             " src='" + imgSrc + "'/>\n";
-                        if (obj.Id !== obj.SrcId)
+
+                        if (obj.FolderId !== obj.SrcId)
                             imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
                                 obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail\"," + obj.SrcId + ")' /></div>\n";
+
                         imageHtml += "</div>\n";
                         $('#imageContainer').append(imageHtml);
                     });
@@ -80,7 +75,6 @@ function getAlbumImages(folderId) {
                         });
                     }
                     // $('#aboveImageContainerMessageArea').html(folde
-                    $('#imagePageLoadingGif').hide();
                     $('#imageContainer').show();
                     resizeImageContainer();
                     //$('#footerMessage').html(": " + imagesModel.Files.length);
@@ -96,13 +90,10 @@ function getAlbumImages(folderId) {
                     console.log("GetAlbumImages took: " + delta.toFixed(3));
                     $('.footer').show();
                 }
-                else {
-                    $('#imagePageLoadingGif').hide();
-                    logError("BUG", folderId, success, "getAlbumImages");
-                }
+                else logError("BUG", folderId, success, "getAlbumImages");
             },
             error: function (jqXHR) {
-                $('#imagePageLoadingGif').hide();
+                $('#indexPageLoadingGif').hide();
                 if (!checkFor404("getAlbumImages")) {
                     logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumImages");
                 }
@@ -113,6 +104,63 @@ function getAlbumImages(folderId) {
     }
 }
 
+function getAlbumPageInfo(folderId) {
+    var infoStart = Date.now();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + apVisitorId + "&folderId=" + folderId,
+        success: function (imageLinksModel) {
+            if (imageLinksModel.Success === "ok") {
+
+                apFolderName = imageLinksModel.FolderName;
+                apFolderType = imageLinksModel.FolderType;
+                document.title = apFolderName + " : OggleBooble";
+
+                apFolderRoot = imageLinksModel.RootFolder;
+
+                if (isNullorUndefined(apFolderRoot))
+                    alert("apFolderRoot not found");
+
+                setOggleHeader(folderId, apFolderRoot);
+                setOggleFooter(folderId, apFolderRoot);
+                //setAlbumPageCSS(imageLinksModel.FolderType);
+
+                //$('#aboveImageContainerMessageArea').html("FolderType: " + imageLinksModel.FolderType);
+                $('#seoPageName').html(imageLinksModel.FolderName);
+
+                if ((imageLinksModel.TrackBackItems.length > 0)) {
+                    $('#trackbackContainer').css("display", "inline-block");
+                    $.each(imageLinksModel.TrackBackItems, function (idx, obj) {
+                        switch (obj.SiteCode) {
+                            case "FRE":
+                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">" + imageLinksModel.FolderName + " Free Porn</a></div>");
+                                break;
+                            case "BAB":
+                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Babepedia</a></div>");
+                                break;
+                            default:
+                        }
+                    });
+                }
+                setBreadCrumbs(imageLinksModel.BreadCrumbs);
+                setBadges(imageLinksModel.ExternalLinks);
+
+                //$('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
+                $('#footerPageHits').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
+                logPageHit(folderId);
+                $('#folderCommentButton').fadeIn();
+                var delta = (Date.now() - infoStart) / 1000;
+                console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
+            }
+            else logError("BUG", folderId, imageLinksModel.Success, "getAlbumPageInfo");
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("getAlbumPageInfo")) {
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
+            }
+        }
+    });
+}
 
 function getDeepFolderCounts(folder) {
     //LinkId = Guid.NewGuid().ToString(),
@@ -150,96 +198,6 @@ function getDeepFolderCounts(folder) {
         },
         error: function (jqXHR) {
             if (!checkFor404("getAlbumImages")) { logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getDeepFolderCounts"); }
-        }
-    });
-}
-
-function chargeCredits(activityCode, folderId) {
-    let credits;
-    switch (activityCode) {
-        case "PBV": credits = -20; break; // Playboy Page View
-        case "PGV": credits = -10; break; // Page View
-        default: alert("unhandled awardCredits activityCode: " + activityCode);
-    }
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/User/AwardCredits",
-        data: {
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: activityCode,
-            PageId: folderId,
-            Credits: credits
-        },
-        success: function (success) {
-            if (success === "ok") {
-                //displayStatusMessage("ok", "credits charged");
-            }
-            else logError("BUG", folderId, success, "awardCredits");
-        },
-        error: function (jqXHR) {
-            if (!checkFor404("awardCredits")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "awardCredits");
-        }
-    });
-}
-
-function getAlbumPageInfo(folderId) {
-    var infoStart = Date.now();
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + apVisitorId + "&folderId=" + folderId,
-        success: function (imageLinksModel) {
-            if (imageLinksModel.Success === "ok") {
-
-                apFolderName = imageLinksModel.FolderName;
-                apFolderType = imageLinksModel.FolderType;
-                document.title = apFolderName + " : OggleBooble";
-
-                apFolderRoot = imageLinksModel.RootFolder;
-
-                if (isNullorUndefined(apFolderRoot))
-                    alert("apFolderRoot not found");
-
-                setOggleHeader(folderId, apFolderRoot);
-                setOggleFooter(folderId, apFolderRoot);
-                //setAlbumPageCSS(imageLinksModel.FolderType);
-
-                //$('#aboveImageContainerMessageArea').html("FolderType: " + imageLinksModel.FolderType);
-                $('#googleSearchText').html(imageLinksModel.FolderName);
-
-                if ((imageLinksModel.TrackBackItems.length > 0)) {
-                    $('#trackbackContainer').css("display", "inline-block");
-                    $.each(imageLinksModel.TrackBackItems, function (idx, obj) {
-                        switch (obj.SiteCode) {
-                            case "FRE":
-                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">" + imageLinksModel.FolderName + " Free Porn</a></div>");
-                                break;
-                            case "BAB":
-                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Babepedia</a></div>");
-                                break;
-                            default:
-                        }
-                    });
-                }
-                setBreadCrumbs(imageLinksModel.BreadCrumbs);
-                setBadges(imageLinksModel.ExternalLinks);
-
-                //$('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
-                $('#fo oterInfo1').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
-                logPageHit(folderId, "Album.html");
-                $('#folderCommentButton').fadeIn();
-                var delta = (Date.now() - infoStart) / 1000;
-                console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
-            }
-            else {
-                $('#imagePageLoadingGif').hide();
-                logError("BUG", folderId, imageLinksModel.Success, "getAlbumPageInfo");                
-            }
-        },
-        error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
-            if (!checkFor404("getAlbumPageInfo")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
-            }
         }
     });
 }
@@ -389,8 +347,42 @@ $(window).resize(function () {
 
 function launchDeepSlideShow()
 {
-    $('#imagePageLoadingGif').show();
+    $('#indexPageLoadingGif').show();
     launchViewer(apFolderId, 1, true);
+}
+
+function checkAlbumCost(folderId) {
+    let visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId))
+        alert("You must be logged in to view this album");
+}
+
+function chargeCredits(activityCode, folderId) {
+    let credits;
+    switch (activityCode) {
+        case "PBV": credits = -20; break; // Playboy Page View
+        case "PGV": credits = -10; break; // Page View
+        default: alert("unhandled awardCredits activityCode: " + activityCode);
+    }
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/User/AwardCredits",
+        data: {
+            VisitorId: getCookieValue("VisitorId"),
+            ActivityCode: activityCode,
+            PageId: folderId,
+            Credits: credits
+        },
+        success: function (success) {
+            if (success === "ok") {
+                //displayStatusMessage("ok", "credits charged");
+            }
+            else logError("BUG", folderId, success, "awardCredits");
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("awardCredits")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "awardCredits");
+        }
+    });
 }
         
 function slowlyShowFolderInfoDialog(folderId) {

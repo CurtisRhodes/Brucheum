@@ -144,7 +144,7 @@ namespace OggleBooble.Api.Controllers
                         if (settingName == "Initial")
                         {
                             //var x = JsonConvert.DeserializeObject(dbUser.UserSettings);
-                            //dbUser.UserSettings = JsonConvert.SerializeObject(settingJson);
+                            dbUser.UserSettings = JsonConvert.SerializeObject(settingJson);
                             //dbUser.UserSettings = JsonConvert.DeserializeObject(settingJson).ToString();
                             dbUser.UserSettings = settingJson;
                             db.SaveChanges();
@@ -152,7 +152,7 @@ namespace OggleBooble.Api.Controllers
                         }
                         else {
                             string userSettingsRaw = dbUser.UserSettings;
-                            var userSettingsParse = JsonConvert.DeserializeObject(dbUser.UserSettings);
+                            //var userSettingsParse = JsonConvert.DeserializeObject(dbUser.UserSettings);
                             //var test1 = userSettingsParse
                         
                         }

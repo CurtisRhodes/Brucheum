@@ -1,31 +1,22 @@
 ﻿
-function indexStartup(spaPageId) {
+function indexStartup() {
     $('#indexMiddleColumn').html(indexPageHTML());
-    if (spaPageId == 3909) {
-        setOggleHeader(spaPageId, "porn");
-        setOggleFooter(spaPageId, "porn");
-        changeFavoriteIcon("porn");
-        document.title = "welcome : OgglePorn";
-        launchCarousel("porn");
-        loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
-    }
-    else {
-        setOggleHeader(spaPageId, "index");
-        setOggleFooter(spaPageId, "boobs");
-        changeFavoriteIcon("redBallon");
-        document.title = "welcome : OggleBooble";
-
-        $('#topIndexPageSection').html(
-            "<div class='centeringOuterShell'>\n" +
-            "   <div class='centeringInnerShell'>\n" +
-            "       <img class='loadingImage' src='/Images/ingranaggi3.gif'/>\n" +
-            "   </div>\n" +
-            "</div>\n");
-
-        //launchPromoMessages();
-        launchCarousel("boobs");
-        loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
-    }
+    setOggleHeader(3908, "index");
+    setOggleFooter(3908, "boobs");
+    changeFavoriteIcon("redBallon");
+    document.title = "welcome : OggleBooble";
+    //launchPromoMessages();
+    launchCarousel("boobs");
+    loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
+}
+function pornStartup() {
+    $('#indexMiddleColumn').html(indexPageHTML());
+    setOggleHeader(spaPageId, "porn");
+    setOggleFooter(spaPageId, "porn");
+    changeFavoriteIcon("porn");
+    document.title = "OgglePorn";
+    launchCarousel("porn");
+    loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
 }
 
 function indexPageHTML() {
@@ -113,13 +104,11 @@ function launchPromoMessages() {
                 showPromoMessages();
             }
             else {
-                $('#blogLoadingGif').hide();
                 logError("XHR", 3908, blogCommentsContainer.Success, "launchPromoMessages");
             }
         },
         error: function (jqXHR) {
-            $('#blogLoadingGif').hide();
-            $('#imagePageLoadingGif').hide();
+            $('#indexPageLoadingGif').hide();
             if (!checkFor404("launchPromoMessages")) {
                 logError("XHR", 3908, getXHRErrorDetails(jqXHR), "launchPromoMessages");
             }

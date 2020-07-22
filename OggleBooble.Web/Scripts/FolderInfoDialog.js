@@ -412,7 +412,7 @@ function showTrackbackDialog() {
     $("#trackBackDialog").html(
         "<div>\n" +
         "   <div id='bb'class='oggleDialogHeader'>" +
-        "       <div id='cc' class='draggableDialogTitle'>Trackbacks</div>" +
+        "       <div id='cc' class='oggleDialogTitle'>Trackbacks</div>" +
         "       <div id='ddd' class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#trackBackDialog\").hide()'/></div>\n" +
         "   </div>\n" +
         "   <div>link <input id='txtTrackBackLink'  class='roundedInput' style='width:85%' /></div>" +

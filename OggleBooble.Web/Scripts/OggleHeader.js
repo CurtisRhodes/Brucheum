@@ -460,10 +460,10 @@ function headerHtml(folderId, subdomain) {
 
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
-        "      <div id='draggableDialog' class='oggleDraggableDialog'>\n" +
+        "      <div id='draggableDialog' class='oggleDialogContainer'>\n" +
         "           <div id='draggableDialogHeader'class='oggleDialogHeader'" +
         "                   onmousedown='draggableDialogEnterDragMode()' onmouseup='draggableDialogCancelDragMode()'>" +
-        "               <div id='oggleDialogTitle' class='draggableDialogTitle'></div>" +
+        "               <div id='oggleDialogTitle' class='oggleDialogTitle'></div>" +
         "               <div id='draggableDialogCloseButton' class='oggleDialogCloseButton'>" +
         "               <img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
         "           </div>\n" +

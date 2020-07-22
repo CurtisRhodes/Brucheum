@@ -45,9 +45,8 @@
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"centerfolds\",\"centerfolds\"," + pageId + ")'>Centerfolds</div>\n");
             $('#footerCol2').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"rejects\",\"rejects\"," + pageId + ")'>Rejects</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"rejects\",\"rejects\"," + pageId + ")'>Rejects</div>\n");
                 //"<div class='clickable' onclick='rtpe(\"FLC\",\"videos\",\"videos\"," + pageId + ")'>Videos</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"centerfolds\",\"centerfolds\"," + pageId + ")'>Centerfolds</div>\n");
             break;
         }
         case "soft": {
@@ -100,22 +99,27 @@
 function defaultFooter(pageId, rootFolder) {
     return "<div class='flexContainer'>\n" +
         "    <div class='footerCol'>\n" +  // column 1
-        "       <div class='clickable' onclick='rtpe(\"FLC\",\"about us\",\"about us\"," + pageId + ")'>about</div>\n" +
         "       <div id='footerCol1' class='footerColCustContainer'></div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" + // column 2
-        "       <div class='clickable' onclick='rtpe(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
         "       <div id='footerCol2' class='footerColCustContainer'></div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" + // column 3
         "       <div class='clickable' onclick='rtpe(\"FLC\",\"feedback\"," + rootFolder + "\"," + pageId + ")'>Feedback</div>\n" +
-        "       <div id='footerCol3' class='footerColCustContainer'></div>\n" +
         "       <div class='clickable' onclick='window.location.href=\"index.html?spa=3911\", \"_blank\"'>Blog</div>\n" +
-        "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>Dashboard</div>\n" +
+        "       <div id='footerCol3' class='footerColCustContainer'></div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" +
-        "       <div>folder type: " + rootFolder + "</div>\n" +
-        "       <div id='footerInfo4' class='footerColCustContainer'></div>\n" +
+        "       <div class='clickable' onclick='rtpe(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
+        "       <div id='footerInfo4' class='footerColCustContainer'></div>\n" +        
+        //"  <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
+        //"  <div id='footerLastBuild' class='footerVersionMessage'></div>\n";
+        "    </div>\n" +
+        "    <div class='footerCol'>\n" +
+        "       <div>page type: " + rootFolder + "</div>\n" +
+        "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>Dashboard</div>\n" +
+        "       <div id='footerPageHits'></div>\n" +
+        "       <div id='footerInfo5' class='footerColCustContainer'></div>\n" +
         //"  <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
         //"  <div id='footerLastBuild' class='footerVersionMessage'></div>\n";
         "    </div>\n" +
