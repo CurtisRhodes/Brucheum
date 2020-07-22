@@ -35,7 +35,8 @@ function launchCarousel(startRoot) {
 function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includeLandscape, includePortrait) {
     settingsImgRepo = settingsArray.ImageRepo;
     try {
-        if (carouselTake === specialLaunchCode) {
+
+        if ((rootFolder === "boobs") && (carouselTake === specialLaunchCode)) {
             //alert("carouselTake(" + carouselTake + ") === specialLaunchCode(" + specialLaunchCode + ")");
             console.log("carouselTake === specialLaunchCode");
             if (!isNullorUndefined(window.localStorage["carouselCache"])) {
@@ -100,15 +101,15 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                     });
 
                     if (carouselTake === specialLaunchCode) {
-                        if (isNullorUndefined(window.localStorage["carouselCache"])) {
-                            console.log("isNullorUndefined(window.localStorage[carouselCache])");
+                        $('#topIndexPageSection').html(carouselHtml());
+                        $('.carouselFooter').css("visibility", "hidden");
+                        //if (carouselItemArray.length === 0) alert("ix00");
+                        startCarousel("GetCarouselImages?root=" + rootFolder);
+                        delta = (Date.now() - absolueStart) / 1000;
+                        $('#footerMessage2').html("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
 
-                            $('#topIndexPageSection').html(carouselHtml());
-                            $('.carouselFooter').css("visibility", "hidden");
-                            //if (carouselItemArray.length === 0) alert("ix00");
-                            startCarousel("GetCarouselImages?root=" + rootFolder);
-                            delta = (Date.now() - absolueStart) / 1000;
-                            $('#footerMessage2').html("initial launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                        if ((rootFolder === "boobs") && (isNullorUndefined(window.localStorage["carouselCache"]))) {
+                            console.log("isNullorUndefined(window.localStorage[carouselCache])");
 
                             let jsnObj = "[";  //new JSONArray();
                             for (i = 0; i < 101; i++) {

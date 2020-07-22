@@ -24,7 +24,6 @@ function showFolderInfoDialog(folderId, calledFrom) {
         $('#draggableDialog').css("min-width", 680);
         $('#draggableDialog').mouseleave(function () {
             if ($('#btnCatDlgEdit').html() === "Edit") {
-
                 dragableDialogClose();
             }
         });
@@ -50,12 +49,12 @@ function showFolderInfoDialog(folderId, calledFrom) {
 }
 
 function setReadonlyFields() {
-    $('#readOnlyFolderName').html(isNullorUndefined(objFolderInfo.FolderName) ? " " : objFolderInfo.FolderName);
+    $('#readOnlyFolderName').html(objFolderInfo.FolderName);
     $('#readOnlyBorn').html(isNullorUndefined(objFolderInfo.Birthday) ? "_ " : dateString(objFolderInfo.Birthday));
-    $('#readOnlyHomeCountry').html(isNullorUndefined(objFolderInfo.HomeCountry) ? "x " : objFolderInfo.HomeCountry);
-    $('#readOnlyHometown').html(isNullorUndefined(objFolderInfo.HomeTown) ? "x " : objFolderInfo.HomeTown);
-    $('#readOnlyBoobs').html(isNullorUndefined(objFolderInfo.FakeBoobs) ? "x " : objFolderInfo.FakeBoobs ? "fake" : "real");
-    $('#readOnlyMeasurements').html(isNullorUndefined(objFolderInfo.Measurements) ? "x " : objFolderInfo.Measurements);
+    $('#readOnlyHomeCountry').html(isNullorUndefined(objFolderInfo.HomeCountry) ? " " : objFolderInfo.HomeCountry);
+    $('#readOnlyHometown').html(isNullorUndefined(objFolderInfo.HomeTown) ? " " : objFolderInfo.HomeTown);
+    $('#readOnlyBoobs').html(isNullorUndefined(objFolderInfo.FakeBoobs) ? 0 : objFolderInfo.FakeBoobs ? "fake" : "real");
+    $('#readOnlyMeasurements').html(isNullorUndefined(objFolderInfo.Measurements) ? " " : objFolderInfo.Measurements);
 }
 
 function getFolderInfo(folderId) {
@@ -121,6 +120,11 @@ function editFolderDialog() {
         showMyAlert("you must be logged in to edit folder comments");
         return;
     }
+    //$('#txtBoobs').val(((rtnFolderInfo.FakeBoobs) ? "fake" : "real"));
+    //"            <select id='selBoobs' class='boobDropDown'>\n" +
+    //"               <option value=0>Real</option>\n" +
+    //"               <option value=1>Fake</option>\n" +
+
     $('#editablePoserDetails').show();
     $('#readonlyPoserDetails').hide();
 
@@ -136,7 +140,7 @@ function editFolderDialog() {
     $(".note-editable").css('font-size', '16px');
 
     $("#txtBorn").datepicker();
-    $('#selBoobs').val(objFolderInfo.FakeBoobs ? 1 : 0).change();
+    //$('#selBoobs').val(objFolderInfo.FakeBoobs ? 1 : 0).change();
 
     $('#btnCatDlgCancel').show();
 }
@@ -149,13 +153,13 @@ function saveFolderDialog() {
     objFolderInfo.HomeCountry = $('#txtHomeCountry').val();
     objFolderInfo.HomeTown = $('#txtHometown').val();
     objFolderInfo.Measurements = $('#txtMeasurements').val();
-    objFolderInfo.FakeBoobs = $('#selBoobs').val();
+    objFolderInfo.FakeBoobs = $('#selBoobs').val() == 1;
     objFolderInfo.FolderComments = $('#summernoteContainer').summernote('code');
     //folderInfo.ExternalLinks = $('#externalLinks').summernote('code');
     //folderInfo.LinkStatus = $('#txtStatus').val();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "/api/FolderDetail/Update",
+        url: settingsArray.ApiServer + "/api/FolderDetail/AddUpdate",
         data: objFolderInfo,
         success: function (success) {
             $('#imagePageLoadingGif').fadeOut();
@@ -403,43 +407,60 @@ function addHrefToExternalLinks() {
 }
 
 function showTrackbackDialog() {
-    $("#trackBackDialog").html("<div>" +
-        "<div>link<input id='txtTrackBackLink' /></div>"+
-        "<div>link<input type='select' id=''/></div>" +
-        "            <select id='selTrackBackLinkSite' class='boobDropDown'>\n" +
-        "               <option value='BAB'>babepedia</option>\n" +
-        "               <option value='FRE'>freeones</option>\n" +
-        "            </select>\n" +
-        "<div>link<input id='txtTrackBackStatus' value='submitted' /></div>" +
-        "<div class='tbResultsContainer'><ul id='ulExistingLinks'></div>" +
-        "    <div class='folderDialogFooter'>\n" +
-        "        <div id='btnTbDlgAddEdit' class='folderCategoryDialogButton' onclick='tbAddEdit()'>add</div>\n" +
-        "        <div id='btnTbDlgDelete' class='folderCategoryDialogButton displayHidden' onclick='tbAddEdit()'>delete</div>\n" +
-        "        <div class='folderCategoryDialogButton' onclick='$('#trackBackDialog').hide()'>Cancel</div>\n" +
-        "    </div>\n" +
+    $('#btnCatDlgEdit').html("pause");
+
+    $("#trackBackDialog").html(
+        "<div>\n" +
+        "   <div id='bb'class='oggleDialogHeader'>" +
+        "       <div id='cc' class='draggableDialogTitle'>Trackbacks</div>" +
+        "       <div id='ddd' class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#trackBackDialog\").hide()'/></div>\n" +
+        "   </div>\n" +
+        "   <div>link <input id='txtTrackBackLink'  class='roundedInput' style='width:85%' /></div>" +
+        "   <div>site <select id='selTrackBackLinkSite' class='roundedInput'>\n" +
+        "          <option value='BAB'>babepedia</option>\n" +
+        "          <option value='FRE'>freeones</option>\n" +
+        "       </select></div>\n" +
+        "   <div>status<input id='txtTrackBackStatus' class='roundedInput' /></div>" +
+        "   <div class='tbResultsContainer'>" +
+        "       <ul id='ulExistingLinks'></ul>" +
+        "   </div>\n" +
+        "   <div class='folderDialogFooter'>\n" +
+        "       <div id='btnTbDlgAddEdit' class='folderCategoryDialogButton' onclick='tbAddEdit()'>add</div>\n" +
+        "       <div id='btnTbDlgDelete' class='folderCategoryDialogButton displayHidden' onclick='tbAddEdit()'>delete</div>\n" +
+        "       <div class='folderCategoryDialogButton' onclick='$('#trackBackDialog').hide()'>Cancel</div>\n" +
+        "   </div>\n" +
         "</div>");
-    $.each(objFolderInfo.TrackBackLink, function (idx, obj) {
-        $('#ulExistingLinks').append("<li onclick='loadTbForEdit(" + $(this) + ")' >" + obj.Href + " - " + obj.LinkStatus + "/>");
+
+    $("#trackBackDialog").css("top", 105);
+    $("#trackBackDialog").draggable().resizable();
+
+    $.each(objFolderInfo.TrackBackItems, function (idx, obj) {
+        $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
     });
     $("#trackBackDialog").show();
 }
-function loadTbForEdit(selectedLink) {
+
+function loadTbForEdit(idx) {
+    let selectedLink = objFolderInfo.TrackBackItems[idx];
     $('#selTrackBackLinkSite').val(selectedLink.SiteCode);
     $('#txtTrackBackStatus').val(selectedLink.LinkStatus);
     $('#txtTrackBackLink').val(selectedLink.Href);
     $('#btnTbDlgAddEdit').html("edit");
     $('#btnTbDlgDelete').show();
 }
+
 function tbAddEdit() {
+
     var trackBackItem = {
         PageId: objFolderInfo.FolderId,
-        Site: $('#txtTrackBackStatus').val(),
-        TrackBackLink: $('#txtTrackBackLink').val(),
-        LinkStatus: $('#txtTrackBackLink').val()
+        SiteCode: $('#selTrackBackLinkSite').val(),
+        Href: $('#txtTrackBackLink').val(),
+        LinkStatus: $('#txtTrackBackStatus').val()
     };
+
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/FolderDetail/AddEditTrackBackLink",
+        url: settingsArray.ApiServer + "api/Links/AddEditTrackBackLink",
         data: trackBackItem,
         success: function (success) {
             if (success === "ok") {
@@ -447,8 +468,13 @@ function tbAddEdit() {
                     displayStatusMessage("ok", "trackback link added");
                 else
                     displayStatusMessage("ok", "trackback link updated");
-                $('#btnTbDlgAddEdit').html("add");
-                $('#btnTbDlgDelete').hide();
+                $('#ulExistingLinks').html("");
+                //$.each(objFolderInfo.TrackBackItems, function (idx, obj) {
+                //    $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
+                //});
+
+                //$('#btnTbDlgAddEdit').html("add");
+                //$('#btnTbDlgDelete').hide();
                 $('#selTrackBackLinkSite').val("");
                 $('#txtTrackBackStatus').val("");
                 $('#txtTrackBackLink').val("");
@@ -495,8 +521,8 @@ function folderDialogHtml() {
         "            <input id='txtHometown'/>\n" +
         "            <input id='txtBorn'/>\n" +
         "            <select id='selBoobs' class='boobDropDown'>\n" +
-        "               <option value='0'>Real</option>\n" +
-        "               <option value='1'>Fake</option>\n" +
+        "               <option value=0>Real</option>\n" +
+        "               <option value=1>Fake</option>\n" +
         "            </select>\n"+
         "            <input id='txtMeasurements'/>\n" +
         "        </div>\n" +

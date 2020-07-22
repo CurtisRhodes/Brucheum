@@ -69,5 +69,43 @@
 .boobDropDown {
     display: block;
     height: 26px;
-    width: 212px;
+    width: 206px;
+}
+
+.tbResultsContainer {
+    height: 65px;
+    background-color: azure; 
+    border: solid thin black;
+    border-radius: 3px 4px;
+}
+
+.viewOnlyMessage {
+    text-align: center;
+    font-size: 17px;
+    padding: 2px;
+}
+
+.trackbackLinksArea {
+    height: 121px;
+    border: solid .5px #ccc;
+    overflow-y: auto;
+    width: 100%;
+    padding: 5px;
+    margin-right: 4px;
+}
+
+    .trackbackLinksArea a {
+        color: blue;
+        font-size: 15px;
+    }
+
+.addLinkIcon {
+    cursor: pointer;
+    font-size: 28px;
+}
+
+.hrefLabel {
+    font-size: 16px;
+    display: inline-block;
+    margin-right: 4px;
 }

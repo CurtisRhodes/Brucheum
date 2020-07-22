@@ -65,6 +65,18 @@ namespace OggleBooble.Api.Controllers
                         folderDetailModel.Measurements = FolderDetails.Measurements;
                         folderDetailModel.FakeBoobs = FolderDetails.FakeBoobs;
                     }
+                    var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
+                    foreach (TrackbackLink trackbackLink in trackbackLinks)
+                    {
+                        folderDetailModel.TrackBackItems.Add(new TrackbackLink()
+                        {
+                            SiteCode = trackbackLink.SiteCode,
+                            Href = trackbackLink.Href,
+                            LinkStatus = trackbackLink.LinkStatus
+                        });
+                    }
+
+
                     //folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
                     //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
 

@@ -47,7 +47,7 @@ function getAlbumImages(folderId) {
                             " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\")'\n" +
                             " alt='" + obj.LinkId + "'\n" +
                             " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + apFolderId + ",\"" + imgSrc + "\")'\n" +
-                            " onclick='launchViewer(" + obj.Id + ",\"" + obj.LinkId + "\",false)'\n" +
+                            " onclick='launchViewer(" + obj.FolderId + ",\"" + obj.LinkId + "\",false)'\n" +
                             " src='" + imgSrc + "'/>\n";
                         if (obj.Id !== obj.SrcId)
                             imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +

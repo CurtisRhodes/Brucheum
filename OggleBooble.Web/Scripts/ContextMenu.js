@@ -192,7 +192,7 @@ function ctxGetFolderDetails() {
                 $('#ctxModelName').html(folderDetails.FolderName);
 
                 //alert("FolderTypeF: " + pFolderType);
-                $('#aboveImageContainerMessageArea').html("FolderTypeF: " + pFolderType);
+                //$('#aboveImageContainerMessageArea').html("FolderTypeF: " + pFolderType);
 
                 //$('#imageInfoLinkId').html(imageInfo.LinkId);
                 //$('#imageInfoInternalLink').html(imageInfo.Link);
