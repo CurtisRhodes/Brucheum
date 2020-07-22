@@ -15,6 +15,13 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
+    public class MoveManyModel
+    {
+        public int SourceFolderId { get; set; }
+        public int DestinationFolderId { get; set; }
+        public string[] ImageLinkIds { get; set; }
+    }
+
     public class SortOrderItem
     {
         public int PageId { get; set; }

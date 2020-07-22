@@ -2,14 +2,10 @@
 //var tabIndent = 22;
 //var tab = 0;
 //var totalPics = 0;
-var totalFolders = 0;
-var dirTreeTab = 0;
-var dirTreeTabIndent = 2;
-var totalFiles = 0;
-var expandDepth = 2;
-var strdirTree = "";
+let totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
 
 function loadDirectoryTree(startNode, container, clickEvent) {
+    totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
     settingsImgRepo = settingsArray.ImageRepo;
     var start = Date.now();
     $('#dashBoardLoadingGif').show();

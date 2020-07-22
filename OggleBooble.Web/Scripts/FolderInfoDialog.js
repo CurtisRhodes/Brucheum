@@ -387,17 +387,6 @@ function showUnknownModelDialog(pLinkId, imgSrc) {
         "   </div>" +
         "</div>").show();
 
-    //$('#draggableDialogContents').html(
-    //    "   <div>" +
-    //    "       <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
-    //    "       <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
-    //    "       <div class='inline'><img class='moveDialogDirTreeButton' src='/Images/caretDown.png' " +
-    //    "           onclick='$(\"#linkManipulateDirTree\").toggle()'/></div>\n" +
-    //    "       <div id='linkManipulateClick'></div>\n" +
-    //    "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif' /></div>\n" +
-    //    "   </div>");
-
-
     $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
     $('#draggableDialog').css("left", -350);
     $('#draggableDialog').css("min-width", 470);

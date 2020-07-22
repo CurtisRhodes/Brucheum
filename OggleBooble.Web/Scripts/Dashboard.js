@@ -34,35 +34,36 @@ function dashboardHtml() {
         "      <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
         "   </div>\n" +
         "   <div id='sortToolSection' class='fullScreenSection'>" +
-        "       <div class='workAreaHeader'>\n" +
-        "           <div class='workAreaHeaderLabel'><h3 id='sortTableHeader'></h3></div>\n" +
+        "       <div id='sortToolHeader' class='workAreaHeader'>\n" +
+        "           <div id='sortTableHeader' class='workAreaHeaderTitle'></div>\n" +
         "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png'" +
         "           onclick='$(\"#sortToolSection\").hide();$(\"#defaultSection\").show()'></div>\n" +
         "       </div>\n" +
-        "       <div id='sortToolContainer'>\n" +
+        "       <div>\n" +
         "           <div id='sortToolImageArea'  class='workAreaDisplayContainer'></div>\n" +
         "           <div class='workareaFooter'>\n" +
         "               <button onclick='updateSortOrder()'>ReSort</button>\n" +
         "           </div>\n" +
         "       </div>\n" +
-        "   </div>\n" +
+        "   </div>\n" +         
         "   <div id='moveManySection' class='fullScreenSection'>" +
-        "       <div class='workAreaHeader'>\n" +
-        "           <div class='workAreaHeaderLabel'><h3 id='moveManyHeader'></h3></div>\n" +
-        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png'" +
-       //"               onclick='$(\"#moveManySection\").hide();$(\"#defaultSection\").show()'></div>\n"
-        "               ></div>\n"
-       // "           <div>destination<input id='txtMoveManyDestination'\><span class='clickable' onclick='$(\"mmDirTreeContainer\").toggle()'>select</span></div>\n" +
-        "           <div> destination    <span class='clickable'  >select</span></div>\n" +
-       // "           <div id='btnSelectAll' class='clickable' onclick='$(\".loadManyCheckbox\").prop(\"checked\", true);'>SelectAll</div>\n" +
-        "           <div id='btnSelectAll' class='clickable'>SelectAll</div>\n" +
-        "           <div id='mmDirTreeContainer' class='displayHidden'></div>\n" +
-        "       </div>\n" +
-        "       <div id='moveManyContainer'>\n" +
-        "           <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
-        "           <div class='workareaFooter'>\n" +
-        "               <button onclick='moveCheckedImages()'>Move</button>\n" +
+        "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
+        "           <div class='workAreaHeaderArea'>\n" +
+        "               <div class='workAreaHeaderTitle'>Move Many</div>\n" +
+        "               <div class='workAreaHeaderDetailRow'>\n" +
+        "                   <div class='moveManyHeaderLabel'>source</div><input id='txtMoveManySource' class='roundedInput' style='width:65%' readonly='readonly' /><br />" +
+        "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly' />" +
+        "                   <img class='dialogDirTreeButton' src='/Images/caretDown.png' " +
+        "                      onclick='$(\"#mmDirTreeContainer\").toggle()'/>\n" +
+        "                   <label><input type='checkbox' id='mmCkSelectAll' onclick='mmSelectAll()'>Select All</label>\n" +
+        "               </div>\n" +
         "           </div>\n" +
+        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='closeMoveManySection()'></div>\n" +
+        "       </div>\n" +
+        "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
+        "       <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
+        "       <div class='workareaFooter'>\n" +
+        "           <button onclick='moveCheckedImages()'>Move</button>\n" +
         "       </div>\n" +
         "   </div>\n" +
         "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
@@ -83,8 +84,8 @@ function resizeDashboardPage() {
     let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
     $('#dashboardMiddleColumn').css("width", middleColumnW + widthFF);
 
-    $('#mainMenuContainer').html("w: " + $('#dashboardMiddleColumn').width() + " widthFF: " + widthFF +
-        "                            h: " + $('#dashboardContainer').height() + " heightFF: " + heightFF);
+    //$('#mainMenuContainer').html("w: " + $('#dashboardMiddleColumn').width() + " widthFF: " + widthFF +
+    //    "                            h: " + $('#dashboardContainer').height() + " heightFF: " + heightFF);
 }
 
 function rebuildDirectoryTree() {
@@ -511,13 +512,14 @@ function SaveFileAs() {
 function showCreateNewFolderDialog() {
     $('#oggleDialogTitle').html("Create New Folder");
     $('#draggableDialogContents').html(
-        "<div><span>parent</span><input class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
+        "<div><span>parent</span><input id='txtCreateFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
         "<div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput' /></div>\n" +
         "<div class='roundendButton' onclick='performCreateNewFolder()'>Create Folder</div>\n");
     $("#draggableDialog").fadeIn();
-    var winH = $(window).height();
-    var dlgH = $('#customMessage').height();
-    $('#customMessageContainer').css("top", (winH - dlgH) / 2);
+    //var winH = $(window).height();
+    //var dlgH = $('#customMessage').height();
+    //$('#customMessageContainer').css("top", (winH - dlgH) / 2);
+    $("#txtCreateFolderParent").val(pSelectedTreeFolderPath);
 }
 function performCreateNewFolder() {
     $('#dashBoardLoadingGif').fadeIn();
@@ -660,21 +662,20 @@ function prepareXhamsterPage() {
 
 // MOVE MANY
 function showMoveManyTool() {
-
     if (isNullorUndefined(pSelectedTreeFolderPath)) {
         alert("select a folder");
         return;
     }
-
     $('#defaultSection').hide();
     $('#moveManySection').show();
+    $('#txtMoveManySource').val(pSelectedTreeFolderPath);
+    $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyHeader').height());
     loadDirectoryTree(1, "mmDirTreeContainer", "moveManyDirTreeClick");
-
-    $('#moveManyHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
+    //$('#moveManyHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
     $('#txtMoveManyDestination').val("");
     $('#dashBoardLoadingGif').fadeIn();
-
     // get image links
+    let imgRepo = settingsArray.ImageRepo;
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Links/GetImageLinks?folderId=" + pSelectedTreeId,
@@ -683,8 +684,8 @@ function showMoveManyTool() {
             if (imgLinks.Success === "ok") {
                 $('#moveManyImageArea').html("");
                 $.each(imgLinks.Links, function (ndx, obj) {
-                    $('#moveManyImageArea').append("<div class='sortBox'><img class='sortBoxImage' src='" + obj.Link + "'/>" +
-                        "<br/><input type='checkbox' class='loadManyCheckbox' imageId=" + obj.LinkId + "></div>");
+                    $('#moveManyImageArea').append("<div class='sortBox'><img class='sortBoxImage' src='" + imgRepo + "/" + obj.FileName + "'/>" +
+                        "<br/><input type='checkbox' class='loadManyCheckbox' imageId="  + obj.LinkId + "></div>");
                 });
                 //resizePage();
             }
@@ -700,42 +701,47 @@ function showMoveManyTool() {
         }
     });
 }
-function showMMDirTree() { }
+function mmSelectAll() {
+    if ($('#mmCkSelectAll').is(":checked"))
+        $('.loadManyCheckbox').prop("checked", true);
+    else
+        $('.loadManyCheckbox').prop("checked", false);
+}
 let selectedMMTreeId;
 function moveManyDirTreeClick(danniPath, folderId) {
     selectedMMTreeId = folderId;
     let selectedMMFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
     $('#txtMoveManyDestination').val(selectedMMFolderPath);
+    $('#mmDirTreeContainer').fadeOut();    
 }
 function moveCheckedImages() {
-    //alert("entering move many");    
-    console.log("entering move many");
-    if (moveManyDestinationFolderId === 0) {
+    if (selectedMMTreeId == 0) {
         alert("select a destination");
         return;
     }
     var checkedImages = [];
-    $('#moveManyToolContainer').children().each(function (ndx, obj) {
+    $('#moveManyImageArea').children().each(function (ndx, obj) {
         if ($(this).find("input").is(":checked")) {
             checkedImages.push($(this).find("input").attr("imageId"));
         }
     });
-    var moveManyModel = {
-        SourceFolderId: pSelectedTreeId,
-        DestinationFolderId: selectedMMTreeId,
-        ImageLinkIds: checkedImages
-    };
     if (confirm("move " + checkedImages.length + " images to " + $('#txtMoveManyDestination').val())) {
+        var moveManyModel = {
+            SourceFolderId: pSelectedTreeId,
+            DestinationFolderId: selectedMMTreeId,
+            ImageLinkIds: checkedImages
+        };
         $('#dashBoardLoadingGif').fadeIn();
         $.ajax({
             type: "PUT",
-            url: settingsArray.ApiServer + "api/MoveImage/MoveMany",
+            url: settingsArray.ApiServer + "api/Links/MoveMany",
             data: moveManyModel,
             success: function (success) {
                 $('#dashBoardLoadingGif').hide();
                 if (success === "ok") {
                     //rebuildDirectoryTree();
                     showMoveManyTool();
+                    $('#txtMoveManyDestination').val(selectedMMFolderPath);
                 }
                 else
                     alert("moveCheckedImages: " + success);
@@ -749,6 +755,10 @@ function moveCheckedImages() {
         });
     }
     console.log("leaving move many");
+}
+function closeMoveManySection() {
+    $('#moveManySection').hide();
+    $('#defaultSection').show();
 }
 
 // SORT TOOL
@@ -868,6 +878,8 @@ function showMoveFolderDialog() {
     });
 }
 
+
+// EMERGENCY TOOLS
 function addFileDates() {
     $('#dataifyInfo').show().html("adding file dates");
     //$('#progressBar').show();
@@ -897,7 +909,6 @@ function addFileDates() {
         }
     });
 }
-
 function emergencyFolderLocationFix() {
     var start = Date.now();
     $('#dashBoardLoadingGif').show();
@@ -930,7 +941,6 @@ function emergencyFolderLocationFix() {
         }
     });
 }
-
 function MoveManyCleanup() {
     var start = Date.now();
     $('#dashBoardLoadingGif').show();
@@ -1061,6 +1071,7 @@ function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
     showAddImageLinkDialog();
     resizeDashboardPage();
+    setTimeout(function () { $('#dataifyInfo').hide() }, 2500);
 }
 
 function dashBoardDirTreeClick(danniPath, folderId) {

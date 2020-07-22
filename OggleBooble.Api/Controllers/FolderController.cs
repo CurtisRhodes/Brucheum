@@ -17,6 +17,8 @@ namespace OggleBooble.Api.Controllers
     {
         private readonly string hostingPath = ".ogglebooble.com/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
+
         [HttpGet]
         [Route("api/CatFolder/GetFolderInfo")]
         public FolderDetailModel GetFolderInfo(int folderId)
@@ -95,65 +97,32 @@ namespace OggleBooble.Api.Controllers
             SuccessModel successModel = new SuccessModel();
             try
             {
-                string destinationFtpPath;
-                string destinationRootFolder;
-                //string folderPath;
-                int newFolderId = 0;
-                using (var db = new OggleBoobleMSSqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == parentId).FirstOrDefault();
-                    destinationFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" +
-                        Helpers.GetParentPath(parentId) + dbSourceFolder.FolderName + "/" + newFolderName.Trim();
-
-                    if (FtpUtilies.DirectoryExists(destinationFtpPath))
+                    string ftpRepo = imgRepo.Substring(7);
+                    var dbDestParent = db.VirtualFolders.Where(i => i.Id == parentId).First();
+                    string newFtpPath = ftpHost + ftpRepo + "/" + dbDestParent.FolderPath + "/" + newFolderName;
+                    if (FtpUtilies.DirectoryExists(newFtpPath))
                     {
                         successModel.Success = "folder already exists";
                         return successModel;
                     }
-                    destinationRootFolder = dbSourceFolder.RootFolder;
-                    string createDirSuccess = FtpUtilies.CreateDirectory(destinationFtpPath);
-                    if (createDirSuccess == "ok")
+
+                    successModel.Success = FtpUtilies.CreateDirectory(newFtpPath);
+                    if (successModel.Success == "ok")
                     {
-                        var newFolder = new CategoryFolder()
-                        {
-                            Parent = parentId,
-                            FolderName = newFolderName.Trim(),
-                            SortOrder = 933,
-                            RootFolder = destinationRootFolder
-                        };
-                        db.CategoryFolders.Add(newFolder);
-                        db.CategoryFolderDetails.Add(new CategoryFolderDetail() 
-                        { FolderId = newFolderId });
+                        VirtualFolder newFolder = new VirtualFolder();
+                        //newFolder.Id = newFolderId;
+                        newFolder.Parent = parentId;
+                        newFolder.FolderName = newFolderName.Trim();
+                        newFolder.SortOrder = 934;
+                        newFolder.FolderPath = dbDestParent.FolderPath + "/" + newFolderName;
+                        db.VirtualFolders.Add(newFolder);
                         db.SaveChanges();
-                        newFolderId = newFolder.Id;
+                        int newFolderId = newFolder.Id;
+                        successModel.ReturnValue = newFolderId.ToString();
+                        successModel.Success = "ok";
                     }
-                    else
-                    {
-                        successModel.Success = createDirSuccess;
-                        return successModel;
-                    }
-                }
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    var dbParent = db.VirtualFolders.Where(f => f.Id == parentId).FirstOrDefault();
-                    string folderPath = dbParent.FolderPath + "/" + newFolderName;
-
-                    VirtualFolder newFolder = new VirtualFolder();
-                    newFolder.Id = newFolderId;
-                    newFolder.Parent = parentId;
-                    newFolder.FolderName = newFolderName.Trim();
-                    newFolder.RootFolder = destinationRootFolder;
-                    newFolder.SortOrder = 934;
-                    newFolder.FolderPath = folderPath;
-
-                    db.VirtualFolders.Add(newFolder);
-                    //db.FolderDetails.Add(new FolderDetail() { Id = newFolderId });
-                    db.SaveChanges();
-
-
-
-                    successModel.ReturnValue = newFolderId.ToString();
-                    successModel.Success = "ok";
                 }
             }
             catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }

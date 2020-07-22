@@ -447,3 +447,8 @@ body {
     background-color: var(--oggleBackgroundColor)
 }
 
+.dialogDirTreeButton {
+    height: 25px;
+    cursor: pointer;
+    margin-left: 1px;
+}

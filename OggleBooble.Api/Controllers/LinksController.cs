@@ -30,7 +30,7 @@ namespace OggleBooble.Api.Controllers
             var imgLinks = new ImageLinksModel();
             using (var db = new OggleBoobleMySqlContext())
             {
-                imgLinks.Links = db.VwLinks.Where(l => l.Id == folderId).OrderBy(l => l.SortOrder).ToList();
+                imgLinks.Links = db.VwLinks.Where(l => l.FolderId == folderId).OrderBy(l => l.SortOrder).ToList();
             }
             imgLinks.Success = "ok";
             return imgLinks;
@@ -205,30 +205,50 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-        //[HttpPost]
-        //[Route("api/Links/MoveLink")]
-        //public string MoveLink(string linkId, int sourceId, int destinationId, string request)
-        //{
-        //    string success;
-        //    try
-        //    {
-        //        using (var db = new OggleBoobleMySqlContext())
-        //        {
-        //            // add new link
-        //            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink() { ImageCategoryId = destinationId, ImageLinkId = linkId, SortOrder = 1456 });
-        //            // if (request == "ARK") keep the existing link
-        //            if (request == "MOV")
-        //            {
-        //                var linkToRemove = db.CategoryImageLinks.Where(l => l.ImageCategoryId == sourceId && l.ImageLinkId == linkId).First();
-        //                db.CategoryImageLinks.Remove(linkToRemove);
-        //            }
-        //            db.SaveChanges();
-        //        }
-        //        success = "ok";
-        //    }
-        //    catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-        //    return success;
-        //}
+        [HttpPut]
+        [Route("api/Links/MoveMany")]
+        public string MoveMany(MoveManyModel moveManyModel)
+        {
+            string success;
+            try
+            {
+                string ftpRepo = imgRepo.Substring(7);
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbDestFolder = db.VirtualFolders.Where(i => i.Id == moveManyModel.DestinationFolderId).First();
+                    string destFtpPath = ftpHost + ftpRepo + "/" + dbDestFolder.FolderPath;
+                    
+                    var dbSourceFolder = db.VirtualFolders.Where(f => f.Id == moveManyModel.SourceFolderId).First();
+                    string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath;
+
+                    ImageFile dbImageFile = null;
+                    string oldFileName;
+                    string newFileName;
+                    string linkId;
+                    for (int i = 0; i < moveManyModel.ImageLinkIds.Length; i++) {
+                        linkId = moveManyModel.ImageLinkIds[i];
+                        dbImageFile = db.ImageFiles.Where(f => f.Id == linkId).First();
+                        oldFileName = sourceFtpPath + "/" + dbImageFile.FileName;
+                        newFileName = destFtpPath + "/" + dbDestFolder.FolderName + "_" + linkId + dbImageFile.FileName.Substring(dbImageFile.FileName.Length - 4);
+                        success = FtpUtilies.MoveFile(oldFileName, newFileName);
+                        if (success == "ok")
+                        {                            
+                            dbImageFile.FolderId = moveManyModel.DestinationFolderId;
+                            dbImageFile.FileName = newFileName;
+                            var oldLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
+                            db.CategoryImageLinks.Remove(oldLink);
+                            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink() { ImageCategoryId = dbDestFolder.Id, ImageLinkId = linkId, SortOrder = 999 });
+                        }
+                        else
+                            return success;
+                    }
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
 
         [HttpPut]
         [Route("api/Links/MoveLink")]

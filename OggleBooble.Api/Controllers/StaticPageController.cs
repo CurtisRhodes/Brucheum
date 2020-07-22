@@ -425,7 +425,7 @@ namespace OggleBooble.Api.Controllers
                 bodyHtml.Append("   <div id='imageContainer' class='flexWrapContainer'>\n");
 
                 // IMAGES 
-                List<VwLink> vwLinks = db.VwLinks.Where(v => v.Id == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
+                List<VwLink> vwLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                 int idx = 0;
                 foreach (VwLink link in vwLinks)
                 {

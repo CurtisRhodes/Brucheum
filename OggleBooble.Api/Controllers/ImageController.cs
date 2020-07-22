@@ -181,7 +181,7 @@ namespace OggleBooble.Api.Controllers
                         //if (!FtpUtilies.DirectoryExists(destinationFtpPath))
                         //    FtpUtilies.CreateDirectory(destinationFtpPath);
 
-                        //string ftpMoveSuccess = FtpUtilies.MoveFile(sourceFtpPath + "/" + dbImageFile.FileName, destinationFtpPath + "/" + newFileName);
+                        //string  Success = FtpUtilies.MoveFile(sourceFtpPath + "/" + dbImageFile.FileName, destinationFtpPath + "/" + newFileName);
                         //if (ftpMoveSuccess == "ok")
                         //{
 

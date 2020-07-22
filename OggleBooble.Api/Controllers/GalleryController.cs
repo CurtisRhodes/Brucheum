@@ -65,7 +65,7 @@ namespace OggleBooble.Api.Controllers
                     }
 
                     // IMAGES
-                    albumImageInfo.ImageLinks = db.VwLinks.Where(v => v.Id == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
+                    albumImageInfo.ImageLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                 }
                 albumImageInfo.Success = "ok";
             }

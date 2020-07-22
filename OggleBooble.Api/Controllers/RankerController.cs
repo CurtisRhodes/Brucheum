@@ -26,7 +26,7 @@ namespace OggleBooble.Api.Controllers
                          where i.Orientation == "P"
                          select new ImageRankerModel()
                          {
-                             FolderId = i.Id,
+                             FolderId = i.FolderId,
                              LinkId = i.LinkId,
                              Link = i.FileName,
                              FolderName = i.SrcFolder

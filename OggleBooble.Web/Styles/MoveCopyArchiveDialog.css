@@ -19,12 +19,6 @@
     display: none;
 }
 
-.moveDialogDirTreeButton {
-    height: 40px;
-    cursor: pointer;
-    margin-left: 1px;
-}
-
 .moveDialogDirTree {
     margin-top: 22px;
     margin-left: 50px;

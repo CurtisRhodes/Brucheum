@@ -2,8 +2,8 @@
     carouselItemArray = [], imageHistory = [], imageHistoryArrayCount = 0, absolueStart,
     vCarouselInterval = null, carouselImageViews = 0, carouselImageErrors = 0,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
-    imgSrc, jsCarouselSettings, nextRoot = 1, specialLaunchCode = 112;
-let debugMode = false;
+    imgSrc, jsCarouselSettings, nextRoot = 1, specialLaunchCode = 112, arryItemsShownCount = 0;
+let debugMode = true;
 
 function launchCarousel(startRoot) {
     absolueStart = Date.now();
@@ -43,19 +43,22 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                 $.each(carouselCacheArray, function (idx, obj) {
                     carouselItemArray.push(obj);
                 });
-                $('.carouselFooter').css("visibility", "hidden");
+
+
                 if (vCarouselInterval)
                     alert("carousel interval already started")
                 else {
                     $('#topIndexPageSection').html(carouselHtml());
                     $('#thisCarouselImage').show();
 
+                    imageIndex = Math.floor(Math.random() * carouselCacheArray.length);
                     imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
                     $('#thisCarouselImage').attr('src', imgSrc);
                     $('#carouselImageContainer').show();
                     $('#thisCarouselImage').show();
                     resizeIndexPage();
-                    //resizeCarousel();
+                    resizeCarousel();
+                    //$('#carouselFooter').fadeIn();
 
                     //alert("proper call from load carouselCache")
                     startCarousel("carouselCache: " + carouselTake);
@@ -219,28 +222,34 @@ function alreadyInLast100(idx) {
     let idxStart = Math.max(0, carouselItemArray.length - 100);
     for (i = idxStart; i < imageHistory.length; i++) {
         if (idx === imageHistory[i]) {
-            alert("Already shown try again")
-            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-            break;
+            console.log("Already shown try again: ");
+            return true;
         }
     }
+    return false;
 }
 
 function intervalBody() {
     imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-    alreadyInLast100(imageIndex);
+    if (alreadyInLast100(imageIndex)) {
+        if (debugMode) $('#hdrBtmRowSec3').html("already in last 100 flagged");
+        imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+    }
+    else {
+        if (debugMode) $('#hdrBtmRowSec3').html("images: " + arryItemsShownCount++);
+    }
     $('.carouselFooter').css("visibility", "hidden");
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
         imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
         $('#thisCarouselImage').attr('src', imgSrc).load(function () {
             $('#carouselFooter').fadeIn();
             setLabelLinks();
-            //imageHistory.push("'" + carouselItemArray[imageIndex].FileName + "'");
-            imageHistory.push("'" + imageIndex + "'");
+
+            imageHistory.push(imageIndex);
             $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-            //if (debugMode) $('#hdrBtmRowSec3').html(".len: " + imageHistory.length);
-            //if (debugMode) $('#hdrBtmRowSec3').append("  Count: " + imageHistoryArrayCount);
-            //if (debugMode) $('#hdrBtmRowSec3').append("  a[" + imageHistoryArrayCount + "]: " + imageHistory[imageHistoryArrayCount]);
+            //if (debugMode) $('#hdrBtmRowSec3').append(".len: " + imageHistory.length);
+            //if (debugMode) $('#hdrBtmRowSec3').html("  Count: " + imageHistoryArrayCount);
+            //if (debugMode) $('#hdrBtmRowSec3').append("  a[" + (imageHistory.length - 1) + "]: " + imageHistory[imageHistory.length - 1]);
             
             $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
             imageHistoryArrayCount++;
@@ -475,19 +484,19 @@ function assuranceArrowClick(direction) {
     }
     else {
         pause();
-        //alert("imageHistory.len: " + imageHistory.length);
-
         imageHistory.pop();
         imageHistory.pop();
+        let indx = Number(imageHistory.pop())
+        if (debugMode) $('#hdrBtmRowSec3').html("indx: " + indx);
+        alert("indx[" + imageHistory.length + "]: " + indx);
 
-        imgSrc = settingsImgRepo + carouselItemArray[imageHistory.pop()].FileName;
-        $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+        let hisImg = settingsImgRepo + carouselItemArray[indx].FileName;
+        $('#thisCarouselImage').attr('src', hisImg).load(function () {
             $('#carouselFooter').fadeIn();
             setLabelLinks();
             $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
             $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
         });
-        //intervalBody(imageHistory.pop());
     }
 }
 function clickViewGallery(labelClick) {

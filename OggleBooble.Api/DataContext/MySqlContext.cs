@@ -423,7 +423,8 @@ namespace OggleBooble.Api.MySqlDataContext
     {
         [Key]
         public string LinkId { get; set; }
-        public int Id { get; set; }
+        public int FolderId { get; set; }
+        public int Parent { get; set; }
         public int SrcId { get; set; }
         public string FileName { get; set; }
         public string SrcFolder { get; set; }
