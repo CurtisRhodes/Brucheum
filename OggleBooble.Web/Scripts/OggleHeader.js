@@ -34,9 +34,9 @@ function setOggleHeader(folderId, subdomain) {
         $('#divLoginArea').css("border", "solid thin red");
     }
 
-    setHdrBottomRow(hdrFolderId, subdomain);
     $('#mainMenuContainer').html(setMenubar(folderId, subdomain));
     setLoginSection(subdomain);
+    setHdrBottomRow(hdrFolderId, subdomain);
     setTimeout(function () { mediaSavyHdrResize(); }, 400);
 
     window.addEventListener("resize", mediaSavyHdrResize);
@@ -55,7 +55,11 @@ function setHdrBottomRow(folderId, subdomain) {
             $('#breadcrumbContainer').append(tinkyTak("archive"));
             break;
         }
-        case "loading": $('#mainMenuContainer').html("loading"); break;
+        case "loading": {
+            $('#mainMenuContainer').html("loading");
+            $("#divLoginArea").hide();
+            break;
+        }
         case "dashboard": {
             $('#mainMenuContainer').html("dashboard");
             $("#divLoginArea").hide();
@@ -179,7 +183,7 @@ function setMenubar(folderId, subdomain) {
 }
 
 function setLoginSection(subdomain) {
-    if (subdomain === "loading") {
+    if (subdomain === "loading" || subdomain === "dashboard") {
         $('#divLoginArea').hide();
         return;
     }
@@ -187,19 +191,18 @@ function setLoginSection(subdomain) {
     var isLoggedIn = getCookieValue("IsLoggedIn");
 
     if (isNullorUndefined(isLoggedIn)) {
-        setCookieValue("IsLoggedIn", "true");
-        isLoggedIn = "true";
+        setCookieValue("IsLoggedIn", "false");
+        isLoggedIn = "false";
         console.log("isNullorUndefined(isLoggedIn)");
     }
 
     if (isLoggedIn === "true") {
-        $('#headerMessage').html("logged in");
+        //$('#headerMessage').html("logged in");
         $('#spnUserName').html(getCookieValue("UserName"));
         $('#optionLoggedIn').show();
         $('#optionNotLoggedIn').hide();
     }
     else {
-        $('#dashboardMenuItem').hide();
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
     }

@@ -123,6 +123,7 @@
 }
 
 .oggleDialogContainer {
+    display: none;
     position: absolute;
     z-index: 36;
     display: none;
@@ -130,7 +131,8 @@
     /* 
     min-width: 400px;
     box-sizing: unset;
-    overflow: auto; */
+    overflow: auto;
+    */
     border: solid 2px var(--oggleBorderColor);
     background-color: var(--oggleBackgroundColor);
 }

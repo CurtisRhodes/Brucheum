@@ -18,11 +18,8 @@ function rankerStartup(rankPref) {
     if (isNullorUndefined(rankPref))
         rankPref = "boobs";
 
-    if (rankPref === "big naturals")
+    if (rankPref === "big%20naturals")
         rankPref = "archive";
-    //else
-    //    alert("rankPref: " + rankPref);
-
 
     document.title = "Hot or Not : OggleBooble";
     $('#indexMiddleColumn').html(rankerHTML());
@@ -30,7 +27,6 @@ function rankerStartup(rankPref) {
     loadBoobsRanker(rankPref);
     setOggleHeader(spaPageId, "dashboard");
     setOggleFooter(spaPageId, "blog");
-
     setRankerBreadcrumbMessage();
     //userName = getCookieValue("UserName");
 }
@@ -40,7 +36,7 @@ function loadBoobsRanker(rankPref) {
     //$('#boobsRankerLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/BoobsRanker?rootFolder=" + rankPref + "&skip=" + skip + "&take=" + take,
+        url: settingsArray.ApiServer + "api/Ranker/LoadRankerImages?rootFolder=" + rankPref + "&skip=" + skip + "&take=" + take,
         success: function (container) {
             $('#boobsRankerLoadingGif').hide();
             if (container.Success === "ok") {
@@ -110,7 +106,6 @@ function setRankerBreadcrumbMessage() {
 function setInitialCheckbox(rankPref) {
     switch (rankPref) {
         case "boobs":
-        case "big naturals":
             $('#ckBoxBoobs').prop('checked', true);
             break;
         case "playboy":

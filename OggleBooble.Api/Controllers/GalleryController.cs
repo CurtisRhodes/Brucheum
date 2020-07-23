@@ -42,9 +42,9 @@ namespace OggleBooble.Api.Controllers
                 {
                     var dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                     albumImageInfo.RootFolder = dbCategoryFolder.RootFolder;
-                    List<string> subFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
+                    //List<string> subFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
                     // SUB FOLDERS
-                    var dbFolderRows = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
+                    List<VwDirTree> dbFolderRows = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
                     foreach (VwDirTree row in dbFolderRows)
                     {
                         albumImageInfo.Folders.Add(new GalleryFolderModel()
@@ -57,10 +57,6 @@ namespace OggleBooble.Api.Controllers
                             IsStepChild = row.IsStepChild,
                             FolderImage = row.FolderImage,
                             RootFolder = row.RootFolder
-                            //public int SubDirCount { get; set; }
-                            //public int ChildFiles { get; set; }
-                            //public string DanniPath { get; set; }
-                            //public int Links { get; set; }
                         });
                     }
 

@@ -127,6 +127,7 @@ namespace OggleBooble.Api.Controllers
                         //newFolder.Id = newFolderId;
                         newFolder.Parent = parentId;
                         newFolder.FolderName = newFolderName.Trim();
+                        newFolder.RootFolder = dbDestParent.RootFolder;
                         newFolder.SortOrder = 934;
                         newFolder.FolderPath = dbDestParent.FolderPath + "/" + newFolderName;
                         db.VirtualFolders.Add(newFolder);

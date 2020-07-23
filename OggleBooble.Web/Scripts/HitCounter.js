@@ -60,6 +60,9 @@ function logPageHit(pageId) {
     }
     var visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
+        visitorId = "undefined";
+        //setCookieValue("VisitorId", "undefined");
+        setCookieValue("VisitorId", create_UUID());
         logError("BUG", pageId, "VisitorId undefined in LogPageHit.", "logPageHit");
     }
     $.ajax({

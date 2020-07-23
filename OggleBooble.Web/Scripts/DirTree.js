@@ -73,7 +73,10 @@ function buildDirTreeRecurr(parentNode, clickEvent) {
             if (!isNullorUndefined(thisNode.SubDirs)) {
                 if (thisNode.SubDirs.length > 0) {
                     //txtFileCount = "(" + parentNode.SubDirs.length + ")";
-                    txtFileCount = "(" + thisNode.SubDirs.length + ")";
+                    if(vwDir.FileCount>0)
+                        txtFileCount = "(" + vwDir.FileCount + " / [" + thisNode.SubDirs.length + "]";
+                    else
+                        txtFileCount = "[" + thisNode.SubDirs.length + "]";
 
                     //totalFiles = 0;
                     //if (vwDir.FileCount > 0) {

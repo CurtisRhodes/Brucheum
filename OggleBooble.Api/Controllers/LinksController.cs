@@ -229,8 +229,8 @@ namespace OggleBooble.Api.Controllers
                         linkId = moveManyModel.ImageLinkIds[i];
                         dbImageFile = db.ImageFiles.Where(f => f.Id == linkId).First();
                         oldFileName = sourceFtpPath + "/" + dbImageFile.FileName;
-                        newFileName = destFtpPath + "/" + dbDestFolder.FolderName + "_" + linkId + dbImageFile.FileName.Substring(dbImageFile.FileName.Length - 4);
-                        success = FtpUtilies.MoveFile(oldFileName, newFileName);
+                        newFileName = dbDestFolder.FolderName + "_" + linkId + dbImageFile.FileName.Substring(dbImageFile.FileName.Length - 4);
+                        success = FtpUtilies.MoveFile(oldFileName, destFtpPath + "/" + newFileName);
                         if (success == "ok")
                         {                            
                             dbImageFile.FolderId = moveManyModel.DestinationFolderId;

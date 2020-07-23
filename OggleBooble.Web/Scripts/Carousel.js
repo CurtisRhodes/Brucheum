@@ -144,7 +144,6 @@ function addMoreRootsToCarousel() {
         if (jsCarouselSettings.includeCenterfolds) {
             $('#footerMessage2').html("loading centerfolds");
             console.log("loading centerfolds ");
-            alert("loading centerfolds ");
             carouselSkip = 0;
             loadImages("centerfold", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
             return;
@@ -407,8 +406,6 @@ function showCarouelSettingsDialog() {
         "       <input type='checkbox' id='ckPortrait'/> allow portrait size<br/>\n" +
         "   </div>\n" +
         "</div>\n");
-
-
 
     $("#carouselSettingsDialog").css("width", 300);
     $('#carouselSettingsDialog').css("top", event.clientY - 75);

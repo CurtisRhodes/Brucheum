@@ -286,7 +286,7 @@ namespace OggleBooble.Api.Controllers
                 }
 
                 string imageLinkId = Guid.NewGuid().ToString();
-                string extension= newLink.Link.Substring(newLink.Link.LastIndexOf("."));
+                string extension = newLink.Link.Substring(newLink.Link.LastIndexOf("."));
                 string newFileName = newLink.Path.Substring(newLink.Path.LastIndexOf("/") + 1) + "_" + imageLinkId + extension;
                 string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
                 string trimPath = newLink.Path.Replace("/Root/", "").Replace("%20", " ");
@@ -428,35 +428,9 @@ namespace OggleBooble.Api.Controllers
                     });
                     mdb.SaveChanges();
                 }
-
-                using (var db = new OggleBoobleMSSqlContext())
-                {
-                    db.ImageLinks.Add(new MSSqlDataContext.ImageLink()
-                    {
-                        Id = imageLinkId,
-                        FolderLocation = newLink.FolderId,
-                        ExternalLink = newLink.Link,
-                        Width = fWidth,
-                        Height = fHeight,
-                        Size = fSize,
-                        LastModified = DateTime.Now,
-                        Link = "http://" + trimPath + "/" + newFileName
-                    });
-                    db.CategoryImageLinks.Add(new MSSqlDataContext.CategoryImageLink()
-                    {
-                        ImageCategoryId = newLink.FolderId,
-                        ImageLinkId = imageLinkId,
-                        SortOrder = 999
-                    });
-                    db.SaveChanges();
-                }
-
                 successModel.Success = "ok";
             }
-            catch (Exception ex)
-            {
-                successModel.Success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
             return successModel;
         }
 

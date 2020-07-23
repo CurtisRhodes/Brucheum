@@ -24,7 +24,6 @@ function getAlbumImages(folderId) {
             success: function (albumImageInfo) {
                 $('#indexPageLoadingGif').hide();
                 if (albumImageInfo.Success === "ok") {
-                    $('#deepSlideshowButton').hide();
 
                     //function processImages(albumImageInfo) {
                     let labelClass = "defaultSubFolderImage";
@@ -114,6 +113,21 @@ function getAlbumPageInfo(folderId) {
 
                 apFolderName = imageLinksModel.FolderName;
                 apFolderType = imageLinksModel.FolderType;
+
+                switch (imageLinksModel.FolderType) {
+                    case "singleModelCollection":
+                    case "assorterdImagesGallery":
+                        $('#deepSlideshowButton').hide();
+                        break;
+                    case "singleModelFolderCollection":
+                    case "singleModelGallery":
+                    case "assorterdFolderCollection":
+                    case "assorterdImagesCollection":
+                        $('#deepSlideshowButton').show();
+                        break;
+                }
+                // $('#aboveImageContainerMessageArea').html("aFolderType: " + imageLinksModel.FolderType);
+
                 document.title = apFolderName + " : OggleBooble";
 
                 apFolderRoot = imageLinksModel.RootFolder;
@@ -358,6 +372,11 @@ function checkAlbumCost(folderId) {
 }
 
 function chargeCredits(activityCode, folderId) {
+    let visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId)) {
+        // at this time this bypass is not handled
+        return;
+    }
     let credits;
     switch (activityCode) {
         case "PBV": credits = -20; break; // Playboy Page View

@@ -45,7 +45,7 @@ function dashboardHtml() {
         "               <button onclick='updateSortOrder()'>ReSort</button>\n" +
         "           </div>\n" +
         "       </div>\n" +
-        "   </div>\n" +         
+        "   </div>\n" +
         "   <div id='moveManySection' class='fullScreenSection'>" +
         "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
         "           <div class='workAreaHeaderArea'>\n" +
@@ -62,12 +62,14 @@ function dashboardHtml() {
         "       </div>\n" +
         "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
         "       <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
-        "       <div class='workareaFooter'>\n" +
+        "       <div id='moveManyFooter' class='workareaFooter'>\n" +
         "           <button onclick='moveCheckedImages()'>Move</button>\n" +
+        "           <div id='moveManyCountContainer' class='floatRight'></div>" +
         "       </div>\n" +
         "   </div>\n" +
         "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
-        "</div>\n";
+        "</div>\n" +
+        "<div id='dashboardDialog' class='oggleDialogContainer'>\n";
 }
 
 function resizeDashboardPage() {
@@ -510,15 +512,25 @@ function SaveFileAs() {
 
 // CREATE NEW FOLDER
 function showCreateNewFolderDialog() {
-    $('#oggleDialogTitle').html("Create New Folder");
-    $('#draggableDialogContents').html(
-        "<div><span>parent</span><input id='txtCreateFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
-        "<div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput' /></div>\n" +
-        "<div class='roundendButton' onclick='performCreateNewFolder()'>Create Folder</div>\n");
-    $("#draggableDialog").fadeIn();
-    //var winH = $(window).height();
-    //var dlgH = $('#customMessage').height();
-    //$('#customMessageContainer').css("top", (winH - dlgH) / 2);
+
+    $('#dashboardDialog').html(
+        "<div class='carouselSettingsDialog'>\n" +
+        "   <div class='oggleDialogHeader'>" +
+        "       <div class='oggleDialogTitle'>Create New Folder</div>" +
+        "       <div class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#dashboardDialog\").hide()'/></div>\n" +
+        "   </div>\n" +
+        "   <div class='oggleDialogContents'>\n" +
+        "       <div><span>parent</span><input id='txtCreateFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
+        "       <div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput' /></div>\n" +
+        "       <div class='roundendButton' onclick='performCreateNewFolder()'>Create Folder</div>\n" +
+        "   </div>\n" +
+        "</div>\n");
+
+    //$("#dashboardDialog").css("width", 300);
+    $('#dashboardDialog').css("top", 75);
+    $('#dashboardDialog').css("left", 400);
+    $("#dashboardDialog").draggable().fadeIn();
+
     $("#txtCreateFolderParent").val(pSelectedTreeFolderPath);
 }
 function performCreateNewFolder() {
@@ -669,7 +681,8 @@ function showMoveManyTool() {
     $('#defaultSection').hide();
     $('#moveManySection').show();
     $('#txtMoveManySource').val(pSelectedTreeFolderPath);
-    $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyHeader').height());
+    $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
+
     loadDirectoryTree(1, "mmDirTreeContainer", "moveManyDirTreeClick");
     //$('#moveManyHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
     $('#txtMoveManyDestination').val("");
@@ -688,6 +701,7 @@ function showMoveManyTool() {
                         "<br/><input type='checkbox' class='loadManyCheckbox' imageId="  + obj.LinkId + "></div>");
                 });
                 //resizePage();
+                $('#moveManyCountContainer').html(imgLinks.Links.length.toLocaleString());
             }
             else {
                 alert("showMoveManyTool: " + imageLinksModel.Success);

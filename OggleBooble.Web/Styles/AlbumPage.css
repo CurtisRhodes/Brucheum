@@ -35,6 +35,7 @@
 }
 
 .deepSlideshow {
+    display: none;
     float: right;
     cursor: pointer;
     color: var(--oggleTitleColor);
