@@ -75,23 +75,6 @@ namespace OggleBooble.Api.Controllers
                             LinkStatus = trackbackLink.LinkStatus
                         });
                     }
-
-
-                    //folderDetailModel.LinkStatus = categoryFolderDetails.LinkStatus;
-                    //folderDetailModel.FolderImage = Helpers.GetFirstImage(folderId);
-
-                    var childFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
-                    var folderTypeModel = new FolderTypeModel()
-                    {
-                        // hasChildren with non child galleries
-                        RootFolder = dbFolder.RootFolder,
-                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbFolder.FolderName),
-                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(childFolders),
-                        HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
-                        HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0
-                    };
-                    folderDetailModel.FolderType = Helpers.DetermineFolderType(folderTypeModel);
-
                     folderDetailModel.Success = "ok";
                 }
             }

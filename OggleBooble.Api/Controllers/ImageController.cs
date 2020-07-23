@@ -90,21 +90,7 @@ namespace OggleBooble.Api.Controllers
                         //imageInfo.FolderPath = dbModelFolder.FolderPath;
                     }
 
-                    #region DetermineFolderType
-                    List<string> subFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
-                    var folderTypeModel = new FolderTypeModel()
-                    {
-                        ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbPageFolder.FolderName),
-                        ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(subFolders),
-                        HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0,
-                        HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0,
-                        RootFolder = dbPageFolder.RootFolder
-                    };
-                    imageInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
-                    #endregion
-
                     imageInfo.FolderName = dbPageFolder.FolderName;
-
                     imageInfo.Height = dbImageFile.Height;
                     imageInfo.FileName = dbImageFile.FileName;
                     imageInfo.Link = dbImageFile.Id;

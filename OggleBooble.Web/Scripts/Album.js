@@ -1,5 +1,5 @@
-﻿let apFolderName, apFolderRoot, apFolderId, apVisitorId, apFolderType;
-let deepFileCount = 0, deepFolderCount = 0;
+﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId, apFolderType,
+    deepFileCount = 0, deepFolderCount = 0;
 
 function loadAlbum(folderId) {
     try {
@@ -49,11 +49,11 @@ function getAlbumImages(folderId) {
                         imageHtml += "</div>\n";
                         $('#imageContainer').append(imageHtml);
                     });
-                    $('#galleryBottomfileCount').html(albumImageInfo.ImageLinks.length.toLocaleString());
+                    //$('#galleryBottomfileCount').html(albumImageInfo.ImageLinks.length.toLocaleString());
 
                     //  SUBFOLDERS 
                     if (albumImageInfo.Folders.length > 0) {
-                        $('#galleryBottomfileCount').html("# " + albumImageInfo.ImageLinks.length.toLocaleString() + "/" + albumImageInfo.Folders.length);
+                        //$('#galleryBottomfileCount').html("# " + albumImageInfo.ImageLinks.length.toLocaleString() + "/" + albumImageInfo.Folders.length);
                         let countStr = "?";
                         let imgSrc = "?";
                         $.each(albumImageInfo.Folders, function (idx, folder) {
@@ -70,7 +70,7 @@ function getAlbumImages(folderId) {
                                 "onerror='subFolderImgError(\"" + folder.FolderId + "\"," + imgSrc + ")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
                                 "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div><span Id='fc" + folder.FolderId + "'>" + countStr + "</span></div>");
 
-                            getDeepFolderCounts(folder);
+                            getDeepFolderCounts(folder, albumImageInfo.ImageLinks.length);
                         });
                     }
                     // $('#aboveImageContainerMessageArea').html(folde
@@ -88,7 +88,11 @@ function getAlbumImages(folderId) {
                     let delta = (Date.now() - getImagesStart) / 1000;
                     console.log("GetAlbumImages took: " + delta.toFixed(3));
                     $('.footer').show();
+
+                    getDeepFolderCounts(albumImageInfo, 0);
                 }
+
+
                 else logError("BUG", folderId, success, "getAlbumImages");
             },
             error: function (jqXHR) {
@@ -114,6 +118,7 @@ function getAlbumPageInfo(folderId) {
                 apFolderName = imageLinksModel.FolderName;
                 apFolderType = imageLinksModel.FolderType;
 
+                // this isn't worth a shit
                 switch (imageLinksModel.FolderType) {
                     case "singleModelCollection":
                     case "assorterdImagesGallery":
@@ -126,7 +131,7 @@ function getAlbumPageInfo(folderId) {
                         $('#deepSlideshowButton').show();
                         break;
                 }
-                // $('#aboveImageContainerMessageArea').html("aFolderType: " + imageLinksModel.FolderType);
+                if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + imageLinksModel.FolderType);
 
                 document.title = apFolderName + " : OggleBooble";
 
@@ -176,7 +181,7 @@ function getAlbumPageInfo(folderId) {
     });
 }
 
-function getDeepFolderCounts(folder) {
+function getDeepFolderCounts(folder, currentFolderImageLinks) {
     //LinkId = Guid.NewGuid().ToString(),
     //FolderId = row.Id,
     //DirectoryName = row.FolderName,
@@ -185,9 +190,7 @@ function getDeepFolderCounts(folder) {
     //IsStepChild = row.IsStepChild,
     //FolderImage = row.FolderImage,
     //RootFolder = row.RootFolder
-
-    deepFileCount += folder.FileCount;
-    deepFolderCount += 1;
+    deepFileCount += currentFolderImageLinks;
     let deepStart = Date.now();
     //alert("GetSubFolderCounts(" + folder.FolderId + ")");
     $.ajax({
@@ -195,18 +198,35 @@ function getDeepFolderCounts(folder) {
         url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folder.FolderId,
         success: function (countsModel) {
             if (countsModel.Success === "ok") {
-                if (countsModel.TtlFileCount > 0) {
-                    $('#fc' + countsModel.FolderId).html(countsModel.TtlFileCount.toLocaleString());
+                if (folder.FolderId !== apFolderId) {
+                    if (countsModel.TtlFileCount > 0) {
+                        $('#fc' + countsModel.FolderId).html(countsModel.TtlFileCount.toLocaleString());
+                    }
+                    if (countsModel.TtlFolderCount > 1) {
+                        //alert("TtlFolderCount: " + countsModel.TtlFolderCount);
+                        $('#fc' + countsModel.FolderId).html(countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString());
+                    }
                 }
-                if (countsModel.TtlFolderCount > 0) {
-                    //alert("TtlFolderCount: " + countsModel.TtlFolderCount);
-                    $('#fc' + countsModel.FolderId).html(countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString());
-                }
+                //if (apFolderRoot === "centerfold")
                 var delta = (Date.now() - deepStart) / 1000;
                 console.log("getDeepFolderCounts took: " + delta.toFixed(3));
                 deepFileCount += countsModel.TtlFileCount;
                 deepFolderCount += countsModel.TtlFolderCount;
-                $('#galleryBottomfileCount').html("'" + deepFolderCount.toLocaleString() + " (" + deepFileCount.toLocaleString() + ")");
+                if (Number(folder.FolderId) === Number(apFolderId)) {
+                    if (deepFolderCount < 2) {
+                        //alert("folder.FolderId: " + folder.FolderId + " === apFolderId: " + apFolderId + "  deepFolderCount: " + deepFolderCount);
+                        //$('#galleryBottomfileCount').html(deepFolderCount.toLocaleString() + " / " + deepFileCount.toLocaleString());
+                        $('#galleryBottomfileCount').html(deepFileCount.toLocaleString());
+                    }
+                    else {
+                        if (apFolderRoot === "centerfold")
+                            $('#galleryBottomfileCount').html("c " + deepFolderCount.toLocaleString());
+                        else
+                            $('#galleryBottomfileCount').html("[" + apFolderRoot + "]" + deepFolderCount.toLocaleString() + " / " + deepFileCount.toLocaleString());
+                    }
+                }
+                else
+                    $('#galleryBottomfileCount').html(deepFileCount.toLocaleString());
             }
             else { logError("BUG", folderId, countsModel.Success, "getDeepFolderCounts"); }
         },

@@ -29,31 +29,6 @@ namespace OggleBooble.Api.Controllers
     }
     public static class Helpers
     {
-        public static string DetermineFolderType(FolderTypeModel folderTypeInfo)
-        {
-            if (folderTypeInfo.HasSubFolders)
-            {
-                if (folderTypeInfo.ContainsRomanNumeralChildren)
-                    return "singleModelFolderCollection";
-                else
-                    return "assorterdFolderCollection";
-            }
-            if (folderTypeInfo.HasImages)
-            {
-                if (folderTypeInfo.RootFolder == "archive" 
-                    || folderTypeInfo.RootFolder == "centerfold"
-                    || folderTypeInfo.RootFolder == "sluts")
-                    return "singleModelCollection";
-                else
-                    return "assorterdImagesCollection";
-            }
-
-            //folderDetailModel.ContainsRomanNumerals = ContainsRomanNumerals(db.CategoryFolders.Where(f => f.Parent == folderId).ToList());
-            //folderDetailModel.HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
-            //folderDetailModel.HasSubfolders = db.CategoryFolders.Where(f => f.Parent == folderId).Count() > 0;
-            return "unknown";
-        }
-
         public static bool ContainsRomanNumeralChildren(List<string> childFolders)
         {
             foreach (string childFolder in childFolders)
