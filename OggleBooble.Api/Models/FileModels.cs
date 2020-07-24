@@ -23,4 +23,13 @@ namespace OggleBooble.Api.Models
         public string Link { get; set; }
         public string Path { get; set; }
     }
+
+    public class StaticPageResultsModel
+    {
+        public int FolderId { get; set; }
+        public int PagesCreated { get; set; }
+        public int FoldersProcessed { get; set; }
+        public string Success { get; set; }
+    }
+
 }

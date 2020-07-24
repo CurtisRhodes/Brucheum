@@ -317,18 +317,26 @@ function createStaticPages(justOne) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/StaticPage/Build?folderId=" + pSelectedTreeId + "&recurr=" + justOne,
-        success: function (success) {
+        success: function (results) {
             //$('#progressBar').hide();
             $('#dashBoardLoadingGif').hide();
-            if (success === "ok") {
-                $('#createStaticPagesCrud').dialog("close");
+            if (results.Success === "ok") {
                 displayStatusMessage("ok", "done");
-                $('#txtNewLink').val("");
-                $('#progressBar').hide();
-                $('#dataifyInfo').hide();
+                $('#dataifyInfo').html(" folders: " + results.FoldersProcessed + "  pages created: " + results.PagesCreated);
+
+                //public class StaticPageResultsModel {
+                //    public int FolderId { get; set; }
+                //    public int PagesCreated { get; set; }
+                //    public int FoldersProcessed { get; set; }
+                //    public string Success { get; set; }
+                //}
+
+                //$('#txtNewLink').val("");
+                //$('#progressBar').hide();
+                //$('#dataifyInfo').hide();
             }
             else
-                alert("createStaticPages: " + success);
+                alert("createStaticPages: " + results.Success);
         },
         error: function (xhr) {
             $('#dashBoardLoadingGif').hide();
