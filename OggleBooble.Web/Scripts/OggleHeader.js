@@ -442,7 +442,7 @@ function headerHtml(folderId, subdomain) {
         "                   <div class='hoverTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
         "                   <div class='hoverTab'><a href='javascript:onLogoutClick(" + folderId + ")'>Log Out</a></div>\n" +
         "               </div>\n" +
-        "               <div id='optionNotLoggedIn'>\n" +
+        "               <div id='optionNotLoggedIn' class='displayHidden'>\n" +
         "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
         "                   <div id='btnLayoutLogin' class='hoverTab'><a href='javascript:showLoginDialog(" + folderId + ")'>Log In</a></div>\n" +
         "               </div>\n" +

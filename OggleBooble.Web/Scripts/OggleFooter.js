@@ -131,7 +131,7 @@ function defaultFooter(pageId, rootFolder) {
         "    </div>\n" +
         "    <div class='footerCol'>\n" +  // column 4
         //          window.open("/album.html?folder=" + pageId, "_blank");  // open in new tab
-        "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\"'>dashboard</div>\n" +
+        "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>dashboard</div>\n" +
         "       <div id='footerCol4' class='footerColCustContainer'></div>\n" +        
         "    </div>\n" +
         "    <div class='footerCol'>\n" +  // column 5
