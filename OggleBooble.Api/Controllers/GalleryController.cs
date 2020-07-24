@@ -42,7 +42,8 @@ namespace OggleBooble.Api.Controllers
                 {
                     var dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                     albumImageInfo.RootFolder = dbCategoryFolder.RootFolder;
-                    //List<string> subFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList();
+                    albumImageInfo.FolderType = dbCategoryFolder.FolderType;
+
                     // SUB FOLDERS
                     List<VwDirTree> dbFolderRows = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
                     foreach (VwDirTree row in dbFolderRows)
@@ -68,27 +69,6 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { albumImageInfo.Success = Helpers.ErrorDetails(ex); }
             return albumImageInfo;
         }
-
-        public SuccessModel GetFolderType(int folderId)
-        {
-            SuccessModel successModel = new SuccessModel();
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    var dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                    string RootFolder = dbCategoryFolder.RootFolder;
-                    bool ContainsRomanNumeral = Helpers.ContainsRomanNumeral(dbCategoryFolder.FolderName);
-                    bool ContainsRomanNumeralChildren = Helpers.ContainsRomanNumeralChildren(db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.FolderName).ToList());
-                    bool HasImages = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0;
-                    bool HasSubFolders = db.VirtualFolders.Where(f => f.Parent == folderId).Count() > 0;
-                    //albumInfo.FolderType = Helpers.DetermineFolderType(folderTypeModel);
-                }
-            }
-            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
-            return successModel;
-        }
-
 
         [HttpGet]
         [Route("api/GalleryPage/GetAlbumPageInfo")]
@@ -242,21 +222,21 @@ namespace OggleBooble.Api.Controllers
                     }
                     mdb.SaveChanges();
                 }
-                using (var db = new OggleBoobleMSSqlContext())
-                {
-                    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    if (level == "folder")
-                    {
-                        dbCategoryFolder.FolderImage = linkId;
-                    }
-                    else
-                    {
-                        CategoryFolder dbParentCategoryFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
-                        dbParentCategoryFolder.FolderImage = linkId;
-                    }
-                    db.SaveChanges();
-                    success = "ok";
-                }
+                //using (var db = new OggleBoobleMSSqlContext())
+                //{
+                //    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                //    if (level == "folder")
+                //    {
+                //        dbCategoryFolder.FolderImage = linkId;
+                //    }
+                //    else
+                //    {
+                //        CategoryFolder dbParentCategoryFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
+                //        dbParentCategoryFolder.FolderImage = linkId;
+                //    }
+                //    db.SaveChanges();
+                //}
+                success = "ok";
             }
             catch (Exception ex)
             {

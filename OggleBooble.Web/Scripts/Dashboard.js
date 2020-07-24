@@ -55,7 +55,7 @@ function dashboardHtml() {
         "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly' />" +
         "                   <img class='dialogDirTreeButton' src='/Images/caretDown.png' " +
         "                      onclick='$(\"#mmDirTreeContainer\").toggle()'/>\n" +
-        "                   <label><input type='checkbox' id='mmCkSelectAll' onclick='mmSelectAll()'>Select All</label>\n" +
+        "                   <div class='floatRight'><input type='checkbox' id='mmCkSelectAll' onclick='mmSelectAll()'>  Select All</div>\n" +
         "               </div>\n" +
         "           </div>\n" +
         "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='closeMoveManySection()'></div>\n" +
@@ -88,6 +88,9 @@ function resizeDashboardPage() {
 
     //$('#mainMenuContainer').html("w: " + $('#dashboardMiddleColumn').width() + " widthFF: " + widthFF +
     //    "                            h: " + $('#dashboardContainer').height() + " heightFF: " + heightFF);
+
+    $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
+
 }
 
 function rebuildDirectoryTree() {
@@ -285,24 +288,24 @@ function repairLinks(justOne) {
 
 // CREATE STATIC PAGES
 function showCreateStaticPagesDialog() {
-    $('#oggleDialogTitle').html("Create Static Pages");
-    $('#draggableDialogContents').html("<div id='createStaticPagesCrud'>\n" +
-        //"    <div><span>folders to staticify</span>" + pSelectedTreeFolderPath + "</div>\n" +
+
+    $('#dashboardDialog').html(
+        "<div class='carouselSettingsDialog'>\n" +
+        "   <div class='oggleDialogHeader'>" +
+        "       <div class='oggleDialogTitle'>Create Static Pages</div>" +
+        "       <div class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#dashboardDialog\").hide()'/></div>\n" +
+        "   </div>\n" +
+        "   <div class='oggleDialogContents'>\n" +
         "    <div><span>folders to staticify</span><input id='txtFolderToStaticify' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
         "    <div><span>include all subfolders </span><input type='checkbox' id='ckStaticIncludeSubfolders' checked='checked' /></div>\n" +
         "    <div class='roundendButton' onclick='createStaticPages($(\"#ckStaticIncludeSubfolders\").is(\":checked\"))'>Build Files</div>\n" +
-        //"    <div id='renameFolderReport' class='repairReport'></div>\n" +
+        "   </div>\n" +
         "</div>\n");
-    
+   
     $("#txtFolderToStaticify").val(pSelectedTreeFolderPath);
-
-    $("#draggableDialog").fadeIn();
-    var winH = $(window).height();
-    var dlgH = $('#draggableDialog').height();
-    $('#draggableDialog').css("top", ($(window).height() - $('#draggableDialog').height()) / 2);
-    $('#draggableDialog').css("left", ($(window).width() - $('#draggableDialog').width) / 2);
-
-    //$("#mainMenuContainer").html(".txtLinkPath : " + $('.txtLinkPath').val());
+    $('#dashboardDialog').css("top", 75);
+    $('#dashboardDialog').css("left", 400);
+    $("#dashboardDialog").draggable().fadeIn();
 
 }
 function createStaticPages(justOne) {
@@ -681,7 +684,7 @@ function showMoveManyTool() {
     $('#defaultSection').hide();
     $('#moveManySection').show();
     $('#txtMoveManySource').val(pSelectedTreeFolderPath);
-    $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
+    // $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
 
     loadDirectoryTree(1, "mmDirTreeContainer", "moveManyDirTreeClick");
     //$('#moveManyHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));

@@ -2,12 +2,12 @@
 function indexStartup() {
     $('#indexMiddleColumn').html(indexPageHTML());
     setOggleHeader(3908, "index");
-    setOggleFooter(3908, "boobs");
+    setOggleFooter(3908, "index");
     changeFavoriteIcon("redBallon");
     document.title = "welcome : OggleBooble";
     //launchPromoMessages();
     launchCarousel("boobs");
-    loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
+    loadUpdatedGalleriesBoxes(updatedGalleriesCount, "boobs");
 }
 function pornStartup() {
     $('#indexMiddleColumn').html(indexPageHTML());
@@ -16,7 +16,9 @@ function pornStartup() {
     changeFavoriteIcon("porn");
     document.title = "OgglePorn";
     launchCarousel("porn");
-    loadUpdatedGalleriesBoxes(updatedGalleriesCount, subdomain);
+    loadUpdatedGalleriesBoxes(updatedGalleriesCount, "porn");
+    // set porn colors
+
 }
 
 function indexPageHTML() {

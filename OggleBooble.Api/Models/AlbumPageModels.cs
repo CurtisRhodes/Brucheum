@@ -40,6 +40,7 @@ namespace OggleBooble.Api.Models
         }
         public int FolderId { get; set; }
         public string RootFolder { get; set; }
+        public string FolderType { get; set; }
         public List<VwLink> ImageLinks { get; set; }
         public List<GalleryFolderModel> Folders { get; set; }
         public string Success { get; set; }

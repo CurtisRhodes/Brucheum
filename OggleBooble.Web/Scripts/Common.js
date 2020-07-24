@@ -1,6 +1,6 @@
 ﻿let verbosity = 5, freeVisitorHitsAllowed = 7500, settingsArray = {}, userRoles = [], settingsImgRepo,
     viewerShowing = false, waitingForReportThenPerformEvent = true, forgetShowingCustomMessage = true,
-    debugMode = true;
+    debugMode = false;
 
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>

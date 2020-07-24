@@ -55,24 +55,25 @@ namespace OggleBooble.Api.Controllers
                 //SignalRHost.ProgressHub.PostToClient("Creating static files: " + folderName + ".html");
 
                 string staticContent =
-                    "<!DOCTYPE html>\n<html lang='en'>\n" + HeadHtml(folderId, folderName) +
-                    "\n<body style='margin-top:105px'>\n" +
-                    
-                    GetStaticPageHeader(folderId, rootFolder) +
+                    "<!DOCTYPE html>\n"+
+                    "<html lang='en'>\n" + // HeadHtml(folderId, folderName) +
+                    " <head>\n" +
+                    "   <meta http-equiv='refresh' content='0'; url='https://ogglebooble.com/album.html?folder=" + folderId + "'/>" +
+                    " </head>\n" +
+                    " </body>\n</body>\n"+
+                    "</html>";
 
-                    GalleryPageBodyHtml(folderId, folderName, rootFolder) +
-                    "<footer></footer>\n" +
-                    // Slideshow() + CommentDialog() + ModelInfoDialog() +
-                    "<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
-                    "<script>var staticPageFolderId=" + folderId + "; " +
-                    "var staticPageFolderName='" + folderName + "'; " +
-                    "var currentFolderRoot='" + rootFolder + "';</script>\n" +
-                    "<div w3-include-html='/Snippets/Slideshow.html'></div>\n" +
-                    "<div w3-include-html='/Snippets/AdminDialogs.html'></div>\n" +
-                    "<div w3-include-html='/Snippets/Login.html'></div>\n" +
-                    "<div w3-include-html='/Snippets/Register.html'></div>\n" +
-                    "<script src='/scripts/StaticPage.js'></script>\n" +
-                    "\n</body>\n</html>";
+
+                //GetStaticPageHeader(folderId, rootFolder) +
+                //GalleryPageBodyHtml(folderId, folderName, rootFolder) +
+                //"<footer></footer>\n" +
+                //// Slideshow() + CommentDialog() + ModelInfoDialog() +
+                //"<div id='staticCatTreeContainer' class='displayHidden categoryListContainer' title=" + rootFolder + "></div>" +
+                //"<script>var staticPageFolderId=" + folderId + "; " +
+                //"var staticPageFolderName='" + folderName + "'; " +
+                //"var currentFolderRoot='" + rootFolder + "';</script>\n" +
+                //"<script src='/scripts/StaticPage.js'></script>\n" +
+                //"\n</body>\n</html>";
 
                 success = WriteFileToDisk(staticContent, rootFolder, folderName);
                 if (success == "ok")
@@ -496,7 +497,7 @@ namespace OggleBooble.Api.Controllers
 
         private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle)
         {
-            string success = "";
+            string success;
             try
             {
                 // todo  write the image as a file to x.ogglebooble  4/1/19

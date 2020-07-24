@@ -56,7 +56,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    if (rootFolder.Contains("pornsluts"))
+                    if (rootFolder == "porn")
                         updatesModel.LatestTouchedGalleries = db.VwLatestTouched.
                             Where(l => l.RootFolder == "porn" || l.RootFolder == "sluts").Take(take).ToList();
                     else

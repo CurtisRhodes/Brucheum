@@ -101,17 +101,26 @@ namespace OggleBooble.Api.Controllers
                 {
                     physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36));
                 }
-                var existingLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
-                foreach (MySqlDataContext.CategoryImageLink existingLink in existingLinks)
-                {
-                    // check if there is a physcial file in the folder for every link in the table.
+                var folderLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
 
-                    if (!physcialFileLinkIds.Contains(existingLink.ImageLinkId))
+                // check if there is a physcial file in the folder for every link in the table.
+                // there can be more links than files. That's the point.
+                foreach (CategoryImageLink folderLink in folderLinks)
+                {
+                    if (!physcialFileLinkIds.Contains(folderLink.ImageLinkId))
                     {
-                        repairReport.OrphanCatLinkRecs.Add(existingLink.ImageLinkId);
-                        db.CategoryImageLinks.Remove(existingLink);
-                        db.SaveChanges();
-                        repairReport.LinksRemoved++;
+                        var nonLocallink = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId).FirstOrDefault();
+                        if (nonLocallink != null)
+                        {
+                            // we have a valid link
+                        }
+                        else
+                        {
+                            repairReport.OrphanCatLinkRecs.Add(folderLink.ImageLinkId);
+                            db.CategoryImageLinks.Remove(folderLink);
+                            db.SaveChanges();
+                            repairReport.LinksRemoved++;
+                        }
                     }
                     repairReport.LinkRecordsProcessed++;
                 }
@@ -123,12 +132,11 @@ namespace OggleBooble.Api.Controllers
                     // check if there is a physcial file in the folder for every ImageFile with a FolderId equaling the folderId.
                     if (!physcialFileLinkIds.Contains(existingImageFile.Id))
                     {
+                        // I'd have to scann ever physical folder's links prove there is no file for this file link.
                         repairReport.OrphanImageFileRecs.Add(existingImageFile.Id);
-                        db.ImageFiles.Remove(existingImageFile);
-                        db.SaveChanges();
+                        //db.ImageFiles.Remove(existingImageFile);
+                        //db.SaveChanges();
                         repairReport.DirNotFound++;
-
-
                     }
                     repairReport.ImageFilesProcessed++;
                 }

@@ -7,6 +7,9 @@
 function launchCarousel(startRoot) {
     absolueStart = Date.now();
     loadCarouselSettingsIntoLocalStorage();
+    if (startRoot === "porn") {
+        nextRoot = 6;
+    }
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
     $('#footerMessage2').html("initial call to loadimages");
     console.log("initial call to loadimages");
@@ -17,33 +20,32 @@ function launchCarousel(startRoot) {
 function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includeLandscape, includePortrait) {
     settingsImgRepo = settingsArray.ImageRepo;
     try {
-        if ((rootFolder === "boobs") && (carouselTake === specialLaunchCode)) {
-            //alert("carouselTake(" + carouselTake + ") === specialLaunchCode(" + specialLaunchCode + ")");
+        if (carouselTake === specialLaunchCode) {
             console.log("carouselTake === specialLaunchCode");
-            if (!isNullorUndefined(window.localStorage["carouselCache"])) {
-                let carouselCacheArray = JSON.parse(window.localStorage["carouselCache"]);
-                $.each(carouselCacheArray, function (idx, obj) {
-                    carouselItemArray.push(obj);
-                });
-                $('#topIndexPageSection').html(carouselHtml());
-                $('#thisCarouselImage').show();
-
-                imageIndex = Math.floor(Math.random() * carouselCacheArray.length);
-                imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
-                $('#thisCarouselImage').attr('src', imgSrc);
-                $('#carouselImageContainer').show();
-                $('#thisCarouselImage').show();
-                resizeIndexPage();
-                resizeCarousel();
-                //$('#carouselFooter').fadeIn();
-
-                //alert("proper call from load carouselCache")
-                startCarousel();
-                let delta = (Date.now() - absolueStart) / 1000;
-                if (debugMode) $('#hdrBtmRowSec3').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
-                console.log("startCarousel from load carouselCache launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                $('#footerMessage2').html("initial launch from cache took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                carouselSkip += 100;
+            if (rootFolder === "boobs") {
+                if (!isNullorUndefined(window.localStorage["carouselCache"])) {
+                    let carouselCacheArray = JSON.parse(window.localStorage["carouselCache"]);
+                    $.each(carouselCacheArray, function (idx, obj) {
+                        carouselItemArray.push(obj);
+                    });
+                    $('#topIndexPageSection').html(carouselHtml());
+                    $('#thisCarouselImage').show();
+                    carouselSkip += 100;
+                    if (!vCarouselInterval) {
+                        imageIndex = Math.floor(Math.random() * carouselCacheArray.length);
+                        imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
+                        $('#thisCarouselImage').attr('src', imgSrc);
+                        $('#carouselImageContainer').show();
+                        $('#thisCarouselImage').show();
+                        resizeIndexPage();
+                        resizeCarousel();
+                        startCarousel();
+                        let delta = (Date.now() - absolueStart) / 1000;
+                        if (debugMode) $('#hdrBtmRowSec3').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
+                        console.log("startCarousel from load carouselCache launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                        $('#footerMessage2').html("initial launch from cache took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                    }
+                }
             }
         }
         $.ajax({
@@ -74,27 +76,36 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                             FileName: obj.FileName
                         });
                     });
+
                     if (carouselTake === specialLaunchCode) {
-                        if (isNullorUndefined(window.localStorage["carouselCache"])) {
-                            startCarousel();
-                            if (document.domain === 'localhost')
-                                alert("startCarousel() called from inside GetCarouselImages");
-                            $('#footerMessage2').html("startCarousel() called from inside GetCarouselImages");
-                        }
-                    }
-
-                    if ((rootFolder === "boobs") && (isNullorUndefined(window.localStorage["carouselCache"]))) {
-                        if (carouselItemArray.length > 188) {
-                            let jsnObj = "[";  //new JSONArray();
-                            for (i = 0; i < 101; i++) {
-                                jsnObj += (JSON.stringify(carouselItemArray[i])) + ",";
+                        $('#topIndexPageSection').html(carouselHtml());
+                        if ((rootFolder === "boobs") && (isNullorUndefined(window.localStorage["carouselCache"]))) {
+                            if (carouselItemArray.length > 188) {
+                                let jsnObj = "[";  //new JSONArray();
+                                for (i = 0; i < 101; i++) {
+                                    jsnObj += (JSON.stringify(carouselItemArray[i])) + ",";
+                                }
+                                window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                                if (document.domain === 'localhost')
+                                    alert("carouselCache loaded into window.localStorage");
+                                $('#footerMessage2').html("carouselCache loaded into window.localStorage");
                             }
-                            window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
-                            $('#topIndexPageSection').html(carouselHtml());
+                        }
+                        if (!vCarouselInterval) {
+                            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+                            imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
+                            $('#thisCarouselImage').attr('src', imgSrc);
+                            $('#carouselImageContainer').show();
+                            $('#thisCarouselImage').show();
+                            resizeIndexPage();
+                            resizeCarousel();
 
-                            if (document.domain === 'localhost')
-                                alert("carouselCache window.localStorage");
-                            $('#footerMessage2').html("carouselCache window.localStorage");
+                            startCarousel();
+
+                            let delta = (Date.now() - absolueStart) / 1000;
+                            if (debugMode) $('#hdrBtmRowSec3').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
+                            console.log("startCarousel from load carouselCache launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                            $('#footerMessage2').html("initial launch from cache took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                         }
                     }
 
@@ -252,6 +263,10 @@ function setLabelLinks() {
             if (debugMode) $('#headerMessage').html("1");
 
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
+
+                $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderName);
+                knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;
+
                 $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].FirstChild);
                 if (debugMode) $('#headerMessage').append("P");
             }

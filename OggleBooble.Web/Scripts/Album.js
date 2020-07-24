@@ -25,12 +25,29 @@ function getAlbumImages(folderId) {
                 $('#indexPageLoadingGif').hide();
                 if (albumImageInfo.Success === "ok") {
 
-                    //function processImages(albumImageInfo) {
+                    setOggleHeader(folderId, albumImageInfo.RootFolder);
+                    setOggleFooter(folderId, albumImageInfo.RootFolder);
+                    switch (albumImageInfo.FolderType) {
+                        case "singleModel":
+                        case "singleParent":
+                        case "multiModel":
+                            $('#deepSlideshowButton').hide();
+                            break;
+                        case "singleChild":
+                        case "multiFolder":
+                            $('#deepSlideshowButton').show();
+                            break;
+                    }
+                    //"       <div id='footerFolderType'></div>\n" +
+                    // alert("folder type: " + albumImageInfo.FolderType);
+                    $('#footerFolderType').html("folder type: " + albumImageInfo.FolderType);
+
+                    //PROCESS IMAGES
                     let labelClass = "defaultSubFolderImage";
                     let imageFrameClass = "folderImageOutterFrame";
 
-                    $('#imageContainer').html('');
                     // IMAGES
+                    $('#imageContainer').html('');
                     $.each(albumImageInfo.ImageLinks, function (idx, obj) {
                         //imageFrameClass = "defaultImageFrame";
                         let imgSrc = settingsImgRepo + "/" + obj.FileName;
@@ -69,11 +86,10 @@ function getAlbumImages(folderId) {
                                 "<img id='" + folder.LinkId + "' class='folderImage'\n" +
                                 "onerror='subFolderImgError(\"" + folder.FolderId + "\"," + imgSrc + ")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
                                 "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div><span Id='fc" + folder.FolderId + "'>" + countStr + "</span></div>");
-
                             getDeepFolderCounts(folder, albumImageInfo.ImageLinks.length);
                         });
                     }
-                    // $('#aboveImageContainerMessageArea').html(folde
+
                     $('#imageContainer').show();
                     resizeImageContainer();
                     //$('#footerMessage').html(": " + imagesModel.Files.length);
@@ -118,19 +134,6 @@ function getAlbumPageInfo(folderId) {
                 apFolderName = imageLinksModel.FolderName;
                 apFolderType = imageLinksModel.FolderType;
 
-                // this isn't worth a shit
-                switch (imageLinksModel.FolderType) {
-                    case "singleModelCollection":
-                    case "assorterdImagesGallery":
-                        $('#deepSlideshowButton').hide();
-                        break;
-                    case "singleModelFolderCollection":
-                    case "singleModelGallery":
-                    case "assorterdFolderCollection":
-                    case "assorterdImagesCollection":
-                        $('#deepSlideshowButton').show();
-                        break;
-                }
                 if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + imageLinksModel.FolderType);
 
                 document.title = apFolderName + " : OggleBooble";
@@ -140,8 +143,6 @@ function getAlbumPageInfo(folderId) {
                 if (isNullorUndefined(apFolderRoot))
                     alert("apFolderRoot not found");
 
-                setOggleHeader(folderId, apFolderRoot);
-                setOggleFooter(folderId, apFolderRoot);
                 //setAlbumPageCSS(imageLinksModel.FolderType);
 
                 //$('#aboveImageContainerMessageArea').html("FolderType: " + imageLinksModel.FolderType);
@@ -174,9 +175,7 @@ function getAlbumPageInfo(folderId) {
             else logError("BUG", folderId, imageLinksModel.Success, "getAlbumPageInfo");
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumPageInfo")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
-            }
+            if (!checkFor404("getAlbumPageInfo")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
         }
     });
 }
@@ -222,7 +221,7 @@ function getDeepFolderCounts(folder, currentFolderImageLinks) {
                         if (apFolderRoot === "centerfold")
                             $('#galleryBottomfileCount').html("c " + deepFolderCount.toLocaleString());
                         else
-                            $('#galleryBottomfileCount').html("[" + apFolderRoot + "]" + deepFolderCount.toLocaleString() + " / " + deepFileCount.toLocaleString());
+                            $('#galleryBottomfileCount').html(deepFolderCount.toLocaleString() + " / " + deepFileCount.toLocaleString());
                     }
                 }
                 else
