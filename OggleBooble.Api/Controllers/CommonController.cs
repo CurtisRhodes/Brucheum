@@ -18,21 +18,19 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class CommonController : ApiController
     {
-        [HttpGet]
+        [HttpPut]
         [Route("api/Common/SendEmail")]
-        public string SendEmail(EmailMessage emailMessage)
+        public string SendEmail(EmailMessageModel message)
         {
             string success = "";
             try
             {
+                MailMessage mailMessage = new MailMessage("info@api.Ogglebooble.com", "CurtishRhodes@hotmail.com");
+                mailMessage.Subject = message.Subject;
+                mailMessage.Body = message.Message;
+                mailMessage.IsBodyHtml = true;
                 using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
                 {
-                    MailMessage mailMessage = new MailMessage(
-                        emailMessage.To,
-                        emailMessage.From,
-                        emailMessage.Subject,
-                        emailMessage.Message);
-                    mailMessage.IsBodyHtml = true;
                     smtpClient.Send(mailMessage);
                     success = "ok";
                 }

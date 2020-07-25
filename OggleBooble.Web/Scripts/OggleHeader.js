@@ -7,6 +7,9 @@ function setOggleHeader(folderId, subdomain) {
     hdrSubdomain = subdomain;
 
     $('#oggleHeader').html(headerHtml(folderId, subdomain));
+    $('#oggleHeader').addClass('boobsHeader');
+    $('#divSiteLogo').attr("src", "/Images/redballon.png");
+    $('#bannerTitle').html("OggleBooble");
 
     $('#draggableDialog').resizable({
         resize: function (event, ui) {
@@ -18,14 +21,10 @@ function setOggleHeader(folderId, subdomain) {
 
     mediaDebug = false;
     if (mediaDebug) {        
-        //$('.headerTopRow').css("border", "solid thin lime");
-        //return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#topRowRightContainer').width() + $('#searchBox').width() + topRowFudgeFactor;
-
         //$('#bannerTitle').css("border", "solid thin red");
         $('#mainMenuContainer').css("border", "solid thin red");
         //$('#topRowRightContainer').css("border", "solid thin red");
         $('#searchBox').css("border", "solid thin red");
-
         $('.headerBottomRow').css("border", "solid thin lime");
         $('#headerMessage').css("border", "solid thin red");
         $('#breadcrumbContainer').css("border", "solid thin red");
@@ -34,25 +33,20 @@ function setOggleHeader(folderId, subdomain) {
         $('#divLoginArea').css("border", "solid thin red");
     }
 
-    $('#mainMenuContainer').html(setMenubar(folderId, subdomain));
-    //setLoginSection(subdomain);
+    $('#mainMenuContainer').html(setHeaderMenu(folderId, subdomain));
     setHdrBottomRow(hdrFolderId, subdomain);
-    //setTimeout(function () { mediaSavyHdrResize(); }, 400);
-
+    setLoginSection(subdomain);
+    mediaSavyHdrResize();
     window.addEventListener("resize", mediaSavyHdrResize);
 }
 
 function setHdrBottomRow(folderId, subdomain) {
-    $('#oggleHeader').addClass('boobsHeader');
-    $('#divSiteLogo').attr("src", "/Images/redballon.png");
-    $('#bannerTitle').html("OggleBooble");
-    changeFavoriteIcon("redBallon");
     switch (subdomain) {
         case "index": 
         case "root": {
-             $('#breadcrumbContainer').append(tinkyTak("ranker", "big naturals"));
-            $('#breadcrumbContainer').append(tinkyTak("centerfold"));
-            $('#breadcrumbContainer').append(tinkyTak("archive"));
+             $('#breadcrumbContainer').append(addBannerButton("ranker", "big naturals"));
+            $('#breadcrumbContainer').append(addBannerButton("centerfold"));
+            $('#breadcrumbContainer').append(addBannerButton("archive"));
             break;
         }
         case "loading": {
@@ -74,14 +68,17 @@ function setHdrBottomRow(folderId, subdomain) {
             break;
         }
         case "boobs": // poses        
-            $('#topRowRightContainer').html(tinkyTak("centerfold"));
-            $('#topRowRightContainer').append(tinkyTak("archive"));
-            $('#topRowRightContainer').append(tinkyTak("ranker", "poses"));
+            $('#topRowRightContainer').html(addBannerButton("centerfold"));
+            $('#topRowRightContainer').append(addBannerButton("archive"));
+            $('#topRowRightContainer').append(addBannerButton("ranker", "poses"));
+            changeFavoriteIcon("redBallon");
             break;
+
         case "archive": {
-            $('#topRowRightContainer').html(tinkyTak("centerfold"));
-            $('#topRowRightContainer').append(tinkyTak("poses"));
-            $('#topRowRightContainer').append(tinkyTak("ranker", "boobs"));
+            $('#topRowRightContainer').html(addBannerButton("centerfold"));
+            $('#topRowRightContainer').append(addBannerButton("poses"));
+            $('#topRowRightContainer').append(addBannerButton("ranker", "boobs"));
+            changeFavoriteIcon("redBallon");
             break;
         }
         case "soft": {
@@ -95,8 +92,8 @@ function setHdrBottomRow(folderId, subdomain) {
         case "cybergirl":
         case "centerfold": {
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
-            $('#topRowRightContainer').html(tinkyTak("archive"));
-            $('#topRowRightContainer').append(tinkyTak("ranker", "centerfold"));
+            $('#topRowRightContainer').html(addBannerButton("archive"));
+            $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
             break;
         }
         case "porn":
@@ -105,24 +102,29 @@ function setHdrBottomRow(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
             $('#bannerTitle').html("OgglePorn");
             changeFavoriteIcon("porn");
-            $('#topRowRightContainer').html(tinkyTak("archive"));
-            $('#topRowRightContainer').append(tinkyTak("ranker", "porn"));
+            $('#topRowRightContainer').html(addBannerButton("archive"));
+            $('#topRowRightContainer').append(addBannerButton("ranker", "porn"));
             break;
         }
         default: {
-            logError("SWT", folderId, " Subdomain: " + subdomain, "setHdrBottomRow");
+            logError("SWT", folderId, "subdomain: " + subdomain, "setHdrBottomRow");
         }
     }
     setTimeout(function () { mediaSavyHdrResize(); }, 400);
 }
 
-function setMenubar(folderId, subdomain) {
+function setHeaderMenu(folderId, subdomain) {
     let headerMenu;
     //rtpe(eventCode, calledFrom, eventDetail, pageId)
     switch (subdomain) {
-        case "loading":
-            headerMenu = "loading";
-            break;
+        case "boobs":
+            headerMenu =
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",,3916)'> positions,</a>\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",241)'>sizes</a>\n";
         case "archive": {
             headerMenu =
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1103)'>russian spys,</a> \n" +
@@ -140,7 +142,7 @@ function setMenubar(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",2601)'> extras</a>\n";
             break;
         }
-        case "soft":
+        case "soft": {
             headerMenu =
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",243)'>pussy</a>, \n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",420)'>boob suckers</a>, \n" +
@@ -149,6 +151,7 @@ function setMenubar(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",397)'>kinky</a> and \n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",411)'>naughty behaviour</a>\n";
             break;
+        }
         case "porn": {
             headerMenu =
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",243)'>cock suckers</a>, \n" +
@@ -158,7 +161,7 @@ function setMenubar(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",411)'>naughty behaviour</a>\n";
             break;
         }
-        case "sluts":
+        case "sluts": {
             headerMenu =
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",1174)'>big titters gone bad</a>,\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",2677)'>cocksucker lipps</a>,\n" +
@@ -170,14 +173,15 @@ function setMenubar(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4198)'>milf cocksuckers</a>,\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4271)'>retro</a>,\n";
             break;
+        }
+        case "loading": {
+            headerMenu = "loading";
+            break;
+        }
         default:
-            headerMenu =
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",,3916)'> positions,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",241)'>sizes</a>\n";
+            logError("SWT", apFolderId, "subdomain: " + subdomain, "setHeaderMenu");
+            headerMenu = subdomain;
+
     }
     return headerMenu;
 }
@@ -211,9 +215,7 @@ function setLoginSection(subdomain) {
 function mediaSavyHdrResize() {
     //return;
     hdrRowW = $('.headerTopRow').width();
-    let LasttopRowOption = "t0", lastBottomRowOption = "b0";
-
-    $('#mainMenuContainer').html(setMenubar(hdrFolderId, hdrSubdomain));
+    let lasttopRowOption = "t0", lastBottomRowOption = "b0";
     // bottom Row
     {
         if (hdrBottRowSectionsW() >= hdrRowW) {
@@ -305,33 +307,33 @@ function mediaSavyHdrResize() {
             $('.badgeImage').css("height", "25px");
             $('.badgeImage').css("font-size", "10px");            
             $('#searchBox').css("font-size", "10px");
-            LasttopRowOption = "t1";
+            lasttopRowOption = "t1";
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             //$('#divSiteLogo').css("height", "60px"); 
             $('#bannerTitle').css("color", "orange").css("height", "23px");
             $('#mainMenuContainer').css("font-size", "22px").show();
             $('.headerBannerButton').css("font-size", "13px");
-            LasttopRowOption = "t2";
+            lasttopRowOption = "t2";
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#divSiteLogo').css("height", "50px"); 
             $('#bannerTitle').css("color", "red").css("height", "20px");
             $('#mainMenuContainer').css("font-size", "20px");
             $('.headerBannerButton').css("font-size", "12px");
-            LasttopRowOption ="t3";
+            lasttopRowOption ="t3";
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#mainMenuContainer').html($('#hamburgerCtx'));
-            LasttopRowOption ="t4";
+            lasttopRowOption ="t4";
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#mainMenuContainer').html($('#hamburgerCtx'));
-            LasttopRowOption = "t5";
+            lasttopRowOption = "t5";
         }
     }
-    //alert("mediaSavyHdrResize " + LasttopRowOption);
-    showResizeMessage(LasttopRowOption, lastBottomRowOption);
+    //alert("mediaSavyHdrResize " + lasttopRowOption);
+    showResizeMessage(lasttopRowOption, lastBottomRowOption);
 }
 
 function showHamburger() {
@@ -374,7 +376,7 @@ function dragableDialogClose() {
         resume();
 }
 
-function tinkyTak(bannerType, rankerType) {
+function addBannerButton(bannerType, rankerType) {
     switch (bannerType) {
         case "ranker":
             // Ranker tags
@@ -401,6 +403,8 @@ function tinkyTak(bannerType, rankerType) {
                 "   <div class='clickable' onclick='window.open(\"album.html?folder=2\", \"_blank\")'>poses</div>" +
                 "</div>\n";
         default:
+            logError("SWT", folderId, "bannerType: " + bannerType, "addBannerButton");
+
     }
 }
 

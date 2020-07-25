@@ -27,7 +27,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/CatFolder/GetQuickFolderInfo?folderId=" + folderId,
+            url: settingsArray.ApiServer + "api/Folder/GetQuickFolderInfo?folderId=" + folderId,
             success: function (folderInfo) {
                 $('#imagePageLoadingGif').hide();
                 if (folderInfo.Success === "ok") {
@@ -62,6 +62,122 @@ function showFolderInfoDialog(folderId, calledFrom) {
     }
 }
 
+function showBasicFolderInfoDialog() {
+
+    $("#oggleDialogTitle").html("loading");
+    $("#draggableDialogContents").html(
+        "<div>\n" +
+        "    <div id='modelInfoDetails' class='flexContainer'>\n" +
+        "    </div>\n" +
+        "    <div class='modelInfoCommentArea'>\n" +
+        "       <textarea id='summernoteContainer'></textarea>\n" +
+        "    </div>\n" +
+        "    <div id='folderInfoDialogFooter' class='folderDialogFooter'>\n" +
+        "        <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
+        "    </div>\n" +
+        "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n" +
+        "</div>\n");
+
+    //$(".note-editable").css('font-size', '16px');
+    //$('#draggableDialog').css("top", 111);
+    //$('#draggableDialog').css("left", -350);
+    $('#summernoteContainer').summernote({
+        toolbar: "none",
+        height: "300px"
+    });
+    $('#summernoteContainer').summernote('disable');
+    $(".note-editable").css('font-size', '16px');
+    $("#draggableDialog").fadeIn();
+    if (!isLoggedIn()) {
+        ///showMyAlert("you must be logged in to edit folder comments");
+        $("#btnCatDlgEdit").hide();
+    }
+}
+function showFullModelDetailsDialog(folderId) {
+    $('#imagePageLoadingGif').show();
+    $("#modelInfoDetails").html(modelInfoDetailHtml());
+    $('#readonlyPoserDetails').show();
+    $('#editablePoserDetails').hide();
+
+    //$('#btnCatDlgCancel').hide();
+    //$('#btnCatDlgMeta').hide();
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Folder/GetFullFolderInfo?folderId=" + folderId,
+        success: function (folderInfo) {
+            $('#imagePageLoadingGif').hide();
+            if (folderInfo.Success === "ok") {
+                objFolderInfo = folderInfo;
+                $('#oggleDialogTitle').html(folderInfo.FolderName);
+                $('#modelDialogThumbNailImage').attr("src", folderInfo.FolderImage);
+                $('#txtFolderName').val(folderInfo.FolderName);
+                $('#txtBorn').val(dateString(folderInfo.Birthday));
+                $('#txtHomeCountry').val(folderInfo.HomeCountry);
+                $('#txtHometown').val(folderInfo.HomeTown);
+                $('#txtBoobs').val(((folderInfo.FakeBoobs) ? "fake" : "real"));
+                $('#txtMeasurements').val(folderInfo.Measurements);
+                setReadonlyFields();
+                //$('#txtStatus').val(folderInfo.LinkStatus);
+                $("#summernoteContainer").summernote("code", folderInfo.FolderComments);
+            }
+            else {
+                $('#imagePageLoadingGif').hide();
+                //showMyAlert("unable to show folder info");
+                logError("BUG", folderId, folderInfo.Success, "getFolderDetails");
+            }
+        },
+        error: function (jqXHR) {
+            $('#imagePageLoadingGif').hide();
+            if (!checkFor404("getFolderDetails")) {
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getFolderDetails");
+            }
+        }
+    });
+}
+function modelInfoDetailHtml() {
+
+    $('#folderInfoDialogFooter').append(
+        "        <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
+        "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n");
+
+    //    "        <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
+
+    return "<div class='poserLabels' class='floatLeft'>\n" +
+        "            <div>name</div>\n" +
+        "            <div>home country</div>\n" +
+        "            <div>hometown</div>\n" +
+        "            <div>born</div>\n" +
+        "            <div>boobs</div>\n" +
+        "            <div>figure</div>\n" +
+        "        </div>\n" +
+        "        <div id='readonlyPoserDetails' class='poserDetails floatLeft'>\n" +
+        "            <div id='readOnlyFolderName'></div>\n" +
+        "            <div id='readOnlyHomeCountry'></div>\n" +
+        "            <div id='readOnlyHometown'></div>\n" +
+        "            <div id='readOnlyBorn'></div>\n" +
+        "            <div id='readOnlyBoobs'></div>\n" +
+        "            <div id='readOnlyMeasurements'></div>\n" +
+        "        </div>\n" +
+        "        <div id='editablePoserDetails' class='editablePoserDetails floatLeft'>\n" +
+        "            <input id='txtFolderName'/>\n" +
+        "            <input id='txtHomeCountry'/>\n" +
+        "            <input id='txtHometown'/>\n" +
+        "            <input id='txtBorn'/>\n" +
+        "            <select id='selBoobs' class='boobDropDown'>\n" +
+        "               <option value=0>Real</option>\n" +
+        "               <option value=1>Fake</option>\n" +
+        "            </select>\n" +
+        "            <input id='txtMeasurements'/>\n" +
+        "        </div>\n" +
+        "        <div class='floatLeft'>\n" +
+        "            <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n";
+}
+
+// ADD EDIT FOLDER INFO
 function setReadonlyFields() {
     $('#readOnlyFolderName').html(objFolderInfo.FolderName);
     $('#readOnlyBorn').html(isNullorUndefined(objFolderInfo.Birthday) ? "_ " : dateString(objFolderInfo.Birthday));
@@ -70,21 +186,11 @@ function setReadonlyFields() {
     $('#readOnlyBoobs').html(isNullorUndefined(objFolderInfo.FakeBoobs) ? 0 : objFolderInfo.FakeBoobs ? "fake" : "real");
     $('#readOnlyMeasurements').html(isNullorUndefined(objFolderInfo.Measurements) ? " " : objFolderInfo.Measurements);
 }
-
 function editFolderDialog() {
     if ($('#btnCatDlgEdit').html() === "Save") {
         saveFolderDialog();
         return;
     }
-    if (!isLoggedIn()) {
-        showMyAlert("you must be logged in to edit folder comments");
-        return;
-    }
-    //$('#txtBoobs').val(((rtnFolderInfo.FakeBoobs) ? "fake" : "real"));
-    //"            <select id='selBoobs' class='boobDropDown'>\n" +
-    //"               <option value=0>Real</option>\n" +
-    //"               <option value=1>Fake</option>\n" +
-
     $('#editablePoserDetails').show();
     $('#readonlyPoserDetails').hide();
 
@@ -104,7 +210,6 @@ function editFolderDialog() {
 
     $('#btnCatDlgCancel').show();
 }
-
 function saveFolderDialog() {
     $('#imagePageLoadingGif').show();
     // LOAD GETS
@@ -152,7 +257,6 @@ function saveFolderDialog() {
         }
     });
 }
-
 function cancelEdit() {
     $('#btnCatDlgEdit').html("Edit");
     $('#btnCatDlgCancel').hide();
@@ -170,14 +274,6 @@ function cancelEdit() {
     });
 
 }
-
-function addMetaTags() {
-
-    //openMetaTagDialog(categoryFolderId);
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
 function toggleMode() {
     switch ($('#modelInfoEdit').html()) {
         case "Add":
@@ -192,7 +288,6 @@ function toggleMode() {
         default:
     }
 }
-
 function clearGets() {
     $('#txtLinkHref').val('');
     $('#txtLinkLabel').val('');
@@ -203,7 +298,6 @@ function clearGets() {
     $('#txtStatus').val('');
     $('#externalLinks').html('');
 }
-
 function validate() {
     objFolderInfo.FolderName = $('#txtFolderName').val();
     $('#modelInfoDialog').dialog('option', 'title', objFolderInfo.FolderName);
@@ -215,6 +309,125 @@ function validate() {
     objFolderInfo.ExternalLinks = $('#externalLinks').summernote('code');
     objFolderInfo.LinkStatus = $('#txtStatus').val();
     return true;
+}
+function updateFolderDetail() {
+    if (validate()) {
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/FolderDetail/AddUpdate",
+            data: objFolderInfo,
+            success: function (success) {
+                if (success === "ok") {
+                    displayStatusMessage("ok", "Model info updated");
+                }
+                else {
+                    logError("BUG", objFolderInfo.Id, success, "updateFolderDetail");
+                }
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("updateFolderDetail"))
+                    logError("XHR", objFolderInfo.Id, getXHRErrorDetails(jqXHR), "updateFolderDetail");
+            }
+        });
+    }
+}
+
+// TRACKBACK DIALOG
+function showTrackbackDialog() {
+    $('#btnCatDlgEdit').html("pause");
+
+    $("#trackBackDialog").html(
+        "<div>\n" +
+        "   <div id='bb'class='oggleDialogHeader'>" +
+        "       <div id='cc' class='oggleDialogTitle'>Trackbacks</div>" +
+        "       <div id='ddd' class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#trackBackDialog\").hide()'/></div>\n" +
+        "   </div>\n" +
+        "   <div>link <input id='txtTrackBackLink'  class='roundedInput' style='width:85%' /></div>" +
+        "   <div>site <select id='selTrackBackLinkSite' class='roundedInput'>\n" +
+        "          <option value='BAB'>babepedia</option>\n" +
+        "          <option value='FRE'>freeones</option>\n" +
+        "       </select></div>\n" +
+        "   <div>status<input id='txtTrackBackStatus' class='roundedInput' /></div>" +
+        "   <div class='tbResultsContainer'>" +
+        "       <ul id='ulExistingLinks'></ul>" +
+        "   </div>\n" +
+        "   <div class='folderDialogFooter'>\n" +
+        "       <div id='btnTbDlgAddEdit' class='folderCategoryDialogButton' onclick='tbAddEdit()'>add</div>\n" +
+        "       <div id='btnTbDlgDelete' class='folderCategoryDialogButton displayHidden' onclick='tbDelete()'>delete</div>\n" +
+        "       <div class='folderCategoryDialogButton' onclick='$('#trackBackDialog').hide()'>Cancel</div>\n" +
+        "   </div>\n" +
+        "</div>");
+
+    //$("#trackBackDialog").css("top", 105);
+    $("#trackBackDialog").show();
+    loadTrackBackItems();
+}
+function loadTrackBackItems() {
+    $("#trackBackDialog").draggable();  //.resizable();
+    $.each(objFolderInfo.TrackBackItems, function (idx, obj) {
+        $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
+    });
+}
+
+function loadTbForEdit(idx) {
+    let selectedLink = objFolderInfo.TrackBackItems[idx];
+    $('#selTrackBackLinkSite').val(selectedLink.SiteCode);
+    $('#txtTrackBackStatus').val(selectedLink.LinkStatus);
+    $('#txtTrackBackLink').val(selectedLink.Href);
+    $('#btnTbDlgAddEdit').html("edit");
+    $('#btnTbDlgDelete').show();
+}
+function tbAddEdit() {
+    if ($('#btnTbDlgAddEdit').html() === "edit") {
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Links/AddEditTrackBackLink",
+            data: {
+                PageId: objFolderInfo.FolderId,
+                SiteCode: $('#selTrackBackLinkSite').val(),
+                Href: $('#txtTrackBackLink').val(),
+                LinkStatus: $('#txtTrackBackStatus').val()
+            },
+            success: function (successModel) {
+                if (successModel.Success === "ok") {
+                    if (successModel.ReturnValue==="Insert")
+                        displayStatusMessage("ok", "trackback link added");
+                    else
+                        displayStatusMessage("ok", "trackback link updated");
+
+                    $('#ulExistingLinks').html("");
+                    $.each(successModel.TrackBackItems, function (idx, obj) {
+                        $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
+                    });
+
+                    $('#btnTbDlgAddEdit').html("add");
+                    $('#selTrackBackLinkSite').val("");
+                    $('#txtTrackBackStatus').val("");
+                    $('#txtTrackBackLink').val("");
+                    $('#btnTbDlgDelete').hide();
+
+                }
+                else logError("BUG", folderId, successModel.Success, "addTrackback");                
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("addTrackback"))
+                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addTrackback");
+            }
+        });
+    }
+    if ($('#btnTbDlgAddEdit').html() === "add") {
+        $('#selTrackBackLinkSite').val("");
+        $('#txtTrackBackStatus').val("");
+        $('#txtTrackBackLink').val("");
+        $('#btnTbDlgAddEdit').html("edit");
+    }
+}
+function tbDelete() { }
+
+////////////////////////////////
+function IamThisModel() {
+    alert("IamThisModel clicked");
+
 }
 
 function createPosersIdentifiedFolder() {
@@ -250,17 +463,17 @@ function createPosersIdentifiedFolder() {
                         },
                         error: function (jqXHR) {
                             var errorMessage = getXHRErrorDetails(jqXHR);
-                            if (!checkFor404("createPosersIdentifiedFolder/MoveImage")) 
+                            if (!checkFor404("createPosersIdentifiedFolder/MoveImage"))
                                 logError("XHR", defaultParentFolder, getXHRErrorDetails(jqXHR), "createPosersIdentifiedFolder/MoveImage");
                         }
                     });
                 }
-                else 
+                else
                     logError("BUG", defaultParentFolder, successModel.Success, "createPosersIdentifiedFolder");
             },
             error: function (jqXHR) {
-                if (!checkFor404("createPosersIdentifiedFolder")) 
-                    logError("XHR", defaultParentFolder , getXHRErrorDetails(jqXHR), "createPosersIdentifiedFolder");
+                if (!checkFor404("createPosersIdentifiedFolder"))
+                    logError("XHR", defaultParentFolder, getXHRErrorDetails(jqXHR), "createPosersIdentifiedFolder");
             }
         });
     }
@@ -289,54 +502,25 @@ function createPosersIdentifiedFolder() {
 
     // 2. add new category folder row and folder detail row
 }
-
-function updateFolderDetail() {
-    if (validate()) {
-        $.ajax({
-            type: "PUT",
-            url: settingsArray.ApiServer + "api/FolderDetail/AddUpdate",
-            data: objFolderInfo,
-            success: function (success) {
-                if (success === "ok") {
-                    displayStatusMessage("ok", "Model info updated");
-                }
-                else {
-                    logError("BUG", objFolderInfo.Id, success, "updateFolderDetail");
-                }
-            },
-            error: function (jqXHR) {
-                if (!checkFor404("updateFolderDetail")) 
-                    logError("XHR", objFolderInfo.Id, getXHRErrorDetails(jqXHR), "updateFolderDetail");
-            }
-        });
-    }
-}
-
-function IamThisModel() {
-    alert("IamThisModel clicked");
-
-}
-
 function oldModelInfoDialogHtml() {
-        //"        <div class='modelInfoDialogLabel'>comment</div>\n" +
-        //"        <div id='modelInfoDialogCommentContainer'>\n" +
-        //"            <div id='modelInfoDialogComment' class='modelInfoCommentArea'></div>\n" +
-        //"        </div>\n" +
-        //"        <div id='modelInfoDialogTrackBack'>\n" +
-        //"            <div class='modelInfoDialogLabel'>status</div><input id='txtStatus' class='modelDialogInput' style='width: 90%;' /><br />\n" +
-        //"            <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
-        //"            <div>\n" +
-        //"                <div class='hrefLabel'>href</div><input id='txtLinkHref' class='modelDialogInput' />\n" +
-        //"                <div class='hrefLabel'>label</div><input id='txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
-        //"                <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
-        //"            </div>\n" +
-        //"            <div id='externalLinks' class='trackbackLinksArea'></div>\n" +
-        //"        </div>\n" +
-        //"    </div>\n" +
-        //"    <a id='modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Save</a>\n" +
-        //"</div>\n"
+    //"        <div class='modelInfoDialogLabel'>comment</div>\n" +
+    //"        <div id='modelInfoDialogCommentContainer'>\n" +
+    //"            <div id='modelInfoDialogComment' class='modelInfoCommentArea'></div>\n" +
+    //"        </div>\n" +
+    //"        <div id='modelInfoDialogTrackBack'>\n" +
+    //"            <div class='modelInfoDialogLabel'>status</div><input id='txtStatus' class='modelDialogInput' style='width: 90%;' /><br />\n" +
+    //"            <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
+    //"            <div>\n" +
+    //"                <div class='hrefLabel'>href</div><input id='txtLinkHref' class='modelDialogInput' />\n" +
+    //"                <div class='hrefLabel'>label</div><input id='txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
+    //"                <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
+    //"            </div>\n" +
+    //"            <div id='externalLinks' class='trackbackLinksArea'></div>\n" +
+    //"        </div>\n" +
+    //"    </div>\n" +
+    //"    <a id='modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Save</a>\n" +
+    //"</div>\n"
 }
-
 function showUnknownModelDialog(pLinkId, imgSrc) {
     $('#oggleDialogTitle').html("Unknown Poser");
     $('#draggableDialogContents').html(
@@ -357,7 +541,6 @@ function showUnknownModelDialog(pLinkId, imgSrc) {
     $('#draggableDialog').fadeIn();
     $('#draggableDialog').mouseleave(function () { dragableDialogClose(); });
 }
-
 function addHrefToExternalLinks() {
     alert("addHrefToExternalLinks: " + $('#txtLinkHref').val());
     $('#externalLinks').summernote('pasteHTML', "<a href=" + $('#txtLinkHref').val() + " target = '_blank'>" + $('#txtLinkLabel').val() + "</a><br/>");
@@ -365,214 +548,8 @@ function addHrefToExternalLinks() {
     $('#txtLinkHref').val('');
     $('#txtLinkLabel').val('');
 }
+function addMetaTags() {
 
-function showTrackbackDialog() {
-    $('#btnCatDlgEdit').html("pause");
-
-    $("#trackBackDialog").html(
-        "<div>\n" +
-        "   <div id='bb'class='oggleDialogHeader'>" +
-        "       <div id='cc' class='oggleDialogTitle'>Trackbacks</div>" +
-        "       <div id='ddd' class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#trackBackDialog\").hide()'/></div>\n" +
-        "   </div>\n" +
-        "   <div>link <input id='txtTrackBackLink'  class='roundedInput' style='width:85%' /></div>" +
-        "   <div>site <select id='selTrackBackLinkSite' class='roundedInput'>\n" +
-        "          <option value='BAB'>babepedia</option>\n" +
-        "          <option value='FRE'>freeones</option>\n" +
-        "       </select></div>\n" +
-        "   <div>status<input id='txtTrackBackStatus' class='roundedInput' /></div>" +
-        "   <div class='tbResultsContainer'>" +
-        "       <ul id='ulExistingLinks'></ul>" +
-        "   </div>\n" +
-        "   <div class='folderDialogFooter'>\n" +
-        "       <div id='btnTbDlgAddEdit' class='folderCategoryDialogButton' onclick='tbAddEdit()'>add</div>\n" +
-        "       <div id='btnTbDlgDelete' class='folderCategoryDialogButton displayHidden' onclick='tbAddEdit()'>delete</div>\n" +
-        "       <div class='folderCategoryDialogButton' onclick='$('#trackBackDialog').hide()'>Cancel</div>\n" +
-        "   </div>\n" +
-        "</div>");
-
-    $("#trackBackDialog").css("top", 105);
-    $("#trackBackDialog").draggable().resizable();
-
-    $.each(objFolderInfo.TrackBackItems, function (idx, obj) {
-        $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
-    });
-    $("#trackBackDialog").show();
+    //openMetaTagDialog(categoryFolderId);
 }
 
-function loadTbForEdit(idx) {
-    let selectedLink = objFolderInfo.TrackBackItems[idx];
-    $('#selTrackBackLinkSite').val(selectedLink.SiteCode);
-    $('#txtTrackBackStatus').val(selectedLink.LinkStatus);
-    $('#txtTrackBackLink').val(selectedLink.Href);
-    $('#btnTbDlgAddEdit').html("edit");
-    $('#btnTbDlgDelete').show();
-}
-
-function tbAddEdit() {
-
-    var trackBackItem = {
-        PageId: objFolderInfo.FolderId,
-        SiteCode: $('#selTrackBackLinkSite').val(),
-        Href: $('#txtTrackBackLink').val(),
-        LinkStatus: $('#txtTrackBackStatus').val()
-    };
-
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Links/AddEditTrackBackLink",
-        data: trackBackItem,
-        success: function (success) {
-            if (success === "ok") {
-               if(status=== "submitted")
-                    displayStatusMessage("ok", "trackback link added");
-                else
-                    displayStatusMessage("ok", "trackback link updated");
-                $('#ulExistingLinks').html("");
-                //$.each(objFolderInfo.TrackBackItems, function (idx, obj) {
-                //    $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
-                //});
-
-                //$('#btnTbDlgAddEdit').html("add");
-                //$('#btnTbDlgDelete').hide();
-                $('#selTrackBackLinkSite').val("");
-                $('#txtTrackBackStatus').val("");
-                $('#txtTrackBackLink').val("");
-            }
-            else {
-                logError("BUG", folderId, success, "addTrackback");
-            }
-        },
-        error: function (jqXHR) {
-            if (!checkFor404("addTrackback"))
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addTrackback");
-        }
-    });
-}
-
-function IdentifyPoser() {
-    $('#modelInfoEdit').show().html("Add");
-    $('#modelInfoEditArea').show();
-    $('#modelInfoViewOnlyArea').hide();
-}
-
-function showBasicFolderInfoDialog() {
-
-    $("#oggleDialogTitle").html("loading");
-    $("#draggableDialogContents").html(
-        "<div>\n" +
-        "    <div id='modelInfoDetails' class='flexContainer'>\n" +
-        "    </div>\n" +
-        "    <div class='modelInfoCommentArea'>\n" +
-        "       <textarea id='summernoteContainer'></textarea>\n" +
-        "    </div>\n" +
-        "    <div id='folderInfoDialogFooter' class='folderDialogFooter'>\n" +
-        "        <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
-        "    </div>\n" +
-        "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n" +
-        "</div>\n");
-
-    //$(".note-editable").css('font-size', '16px');
-    //$('#draggableDialog').css("top", 111);
-    //$('#draggableDialog').css("left", -350);
-    $('#summernoteContainer').summernote({
-        toolbar: "none",
-        height: "300px"
-    });
-    $('#summernoteContainer').summernote('disable');
-    $(".note-editable").css('font-size', '16px');
-    $("#draggableDialog").fadeIn();
-}
-
-//-- function showSimpleSummaryDialog(folderId) { }
-
-function showFullModelDetailsDialog(folderId) {
-    $('#imagePageLoadingGif').show();
-
-    $("#modelInfoDetails").html(modelInfoDetailHtml());
-
-    $('#readonlyPoserDetails').show();
-    $('#editablePoserDetails').hide();
-
-    //$('#btnCatDlgCancel').hide();
-    //$('#btnCatDlgMeta').hide();
-
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/CatFolder/GetFolderInfo?folderId=" + folderId,
-        success: function (rtnFolderInfo) {
-            $('#imagePageLoadingGif').hide();
-            if (rtnFolderInfo.Success === "ok") {
-                objFolderInfo = rtnFolderInfo;
-                $('#oggleDialogTitle').html(rtnFolderInfo.FolderName);
-                $('#modelDialogThumbNailImage').attr("src", rtnFolderInfo.FolderImage);
-                $('#txtFolderName').val(rtnFolderInfo.FolderName);
-                $('#txtBorn').val(dateString(rtnFolderInfo.Birthday));
-                $('#txtHomeCountry').val(rtnFolderInfo.HomeCountry);
-                $('#txtHometown').val(rtnFolderInfo.HomeTown);
-                $('#txtBoobs').val(((rtnFolderInfo.FakeBoobs) ? "fake" : "real"));
-                $('#txtMeasurements').val(rtnFolderInfo.Measurements);
-                setReadonlyFields();
-                //$('#txtStatus').val(rtnFolderInfo.LinkStatus);
-                $("#summernoteContainer").summernote("code", rtnFolderInfo.FolderComments);
-
-                //$('#imagePageLoadingGif').hide();
-                //$("#draggableDialog").fadeIn();
-
-            }
-            else {
-                $('#imagePageLoadingGif').hide();
-                //showMyAlert("unable to show folder info");
-                logError("BUG", folderId, rtnFolderInfo.Success, "getFolderDetails");
-            }
-        },
-        error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
-            if (!checkFor404("getFolderDetails")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getFolderDetails");
-            }
-        }
-    });
-}
-
-function modelInfoDetailHtml() {
-
-    $('#folderInfoDialogFooter').append(
-        "        <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
-        "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n");
-
-    //    "        <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
-
-    return "<div class='poserLabels' class='floatLeft'>\n" +
-        "            <div>name</div>\n" +
-        "            <div>home country</div>\n" +
-        "            <div>hometown</div>\n" +
-        "            <div>born</div>\n" +
-        "            <div>boobs</div>\n" +
-        "            <div>figure</div>\n" +
-        "        </div>\n" +
-        "        <div id='readonlyPoserDetails' class='poserDetails floatLeft'>\n" +
-        "            <div id='readOnlyFolderName'></div>\n" +
-        "            <div id='readOnlyHomeCountry'></div>\n" +
-        "            <div id='readOnlyHometown'></div>\n" +
-        "            <div id='readOnlyBorn'></div>\n" +
-        "            <div id='readOnlyBoobs'></div>\n" +
-        "            <div id='readOnlyMeasurements'></div>\n" +
-        "        </div>\n" +
-        "        <div id='editablePoserDetails' class='editablePoserDetails floatLeft'>\n" +
-        "            <input id='txtFolderName'/>\n" +
-        "            <input id='txtHomeCountry'/>\n" +
-        "            <input id='txtHometown'/>\n" +
-        "            <input id='txtBorn'/>\n" +
-        "            <select id='selBoobs' class='boobDropDown'>\n" +
-        "               <option value=0>Real</option>\n" +
-        "               <option value=1>Fake</option>\n" +
-        "            </select>\n" +
-        "            <input id='txtMeasurements'/>\n" +
-        "        </div>\n" +
-        "        <div class='floatLeft'>\n" +
-        "            <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
-        "        </div>\n" +
-        "    </div>\n" +
-        "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n";
-}

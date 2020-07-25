@@ -552,13 +552,12 @@ function sendEmail(to, from, subject, message) {
 }
 
 function sendEmailToYourself(subject, message) {
-    // if (document.domain === "localhost") alert("sendEmailToYourself(subject: " + subject + ", message: " + message + ")");
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "api/Common/SendEmail",
         data: {
             To: "CurtishRhodes@hotmail.com",
-            From: "relay-hosting.secureserver.net",
+            From: "info@api.Ogglebooble.com",
             Subject: subject,
             Message: message
         },

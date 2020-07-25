@@ -20,95 +20,6 @@ namespace OggleBooble.Api.Controllers
         private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
 
         //url: settingsArray.ApiServer + "api/CatFolder/GetFolderType?folderId=" + folderId,
-        [HttpGet]
-        [Route("api/CatFolder/GetQuickFolderInfo")]
-        public FolderInfoModel GetQuickFolderInfo(int folderId)
-        {
-            var folderInfo = new FolderInfoModel();
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    if (dbFolder != null)
-                    {
-                        folderInfo.FolderType = dbFolder.FolderType;
-                        folderInfo.FolderName = dbFolder.FolderName;
-                        folderInfo.Parent = dbFolder.Parent;
-                        var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-                        if (dbFolderDetails != null)
-                            folderInfo.FolderComments = dbFolderDetails.FolderComments;
-                        folderInfo.Success = "ok";
-                    }
-                }
-            }
-            catch (Exception ex) { folderInfo.Success = Helpers.ErrorDetails(ex); }
-            return folderInfo;
-        }
-        
-        [HttpGet]
-        [Route("api/CatFolder/GetFolderInfo")]
-        public FolderDetailModel GetFolderInfo(int folderId)
-        {
-            var folderDetailModel = new FolderDetailModel();
-            try
-            {
-                string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                    string fullPathName = "";
-                    if (dbFolder.FolderImage != null)
-                    {
-                        var dbImageFile = db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault();
-                        if (dbImageFile != null)
-                        {
-                            var imgFolderPath = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath;
-                            //string fileName = dbImageFile.FileName;
-                            bool nw = (imgFolderPath == dbFolder.FolderPath);
-                            fullPathName = repoDomain + "/" + imgFolderPath + "/" + dbImageFile.FileName;
-                        }
-                    }
-
-                    folderDetailModel.FolderId = folderId;
-                    folderDetailModel.FolderType = dbFolder.FolderType;
-                    folderDetailModel.FolderName = dbFolder.FolderName;
-                    folderDetailModel.RootFolder = dbFolder.RootFolder;
-                    folderDetailModel.FolderImage = fullPathName;
-                    folderDetailModel.InternalLinks = (from l in db.CategoryImageLinks
-                                                       join f in db.VirtualFolders on l.ImageCategoryId equals f.Id
-                                                       where l.ImageCategoryId == folderId && l.ImageCategoryId != folderId
-                                                       select new { folderId = f.Id, folderName = f.FolderName })
-                                                       .ToDictionary(i => i.folderId, i => i.folderName);
-                    FolderDetail FolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-                    if (FolderDetails != null)
-                    {
-                        folderDetailModel.HomeCountry = FolderDetails.HomeCountry;
-                        folderDetailModel.HomeTown = FolderDetails.HomeTown;
-                        folderDetailModel.FolderComments = FolderDetails.FolderComments;
-                        folderDetailModel.Birthday = FolderDetails.Birthday;
-                        folderDetailModel.Measurements = FolderDetails.Measurements;
-                        folderDetailModel.FakeBoobs = FolderDetails.FakeBoobs;
-                    }
-                    var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
-                    foreach (TrackbackLink trackbackLink in trackbackLinks)
-                    {
-                        folderDetailModel.TrackBackItems.Add(new TrackbackLink()
-                        {
-                            SiteCode = trackbackLink.SiteCode,
-                            Href = trackbackLink.Href,
-                            LinkStatus = trackbackLink.LinkStatus
-                        });
-                    }
-                    folderDetailModel.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                folderDetailModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return folderDetailModel;
-        }
 
         [HttpPost]
         [Route("api/CatFolder/Create")]
@@ -267,6 +178,96 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class FolderDetailController : ApiController
     {
+        [HttpGet]
+        [Route("api/Folder/GetQuickFolderInfo")]
+        public FolderInfoModel GetQuickFolderInfo(int folderId)
+        {
+            var folderInfo = new FolderInfoModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    if (dbFolder != null)
+                    {
+                        folderInfo.FolderType = dbFolder.FolderType;
+                        folderInfo.FolderName = dbFolder.FolderName;
+                        folderInfo.Parent = dbFolder.Parent;
+                        var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                        if (dbFolderDetails != null)
+                            folderInfo.FolderComments = dbFolderDetails.FolderComments;
+                        folderInfo.Success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex) { folderInfo.Success = Helpers.ErrorDetails(ex); }
+            return folderInfo;
+        }
+
+        [HttpGet]
+        [Route("api/Folder/GetFullFolderInfo")]
+        public FolderDetailModel GetFullFolderInfo(int folderId)
+        {
+            var folderDetailModel = new FolderDetailModel();
+            try
+            {
+                string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                    string fullPathName = "";
+                    if (dbFolder.FolderImage != null)
+                    {
+                        var dbImageFile = db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault();
+                        if (dbImageFile != null)
+                        {
+                            var imgFolderPath = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath;
+                            //string fileName = dbImageFile.FileName;
+                            bool nw = (imgFolderPath == dbFolder.FolderPath);
+                            fullPathName = repoDomain + "/" + imgFolderPath + "/" + dbImageFile.FileName;
+                        }
+                    }
+
+                    folderDetailModel.FolderId = folderId;
+                    folderDetailModel.FolderType = dbFolder.FolderType;
+                    folderDetailModel.FolderName = dbFolder.FolderName;
+                    folderDetailModel.RootFolder = dbFolder.RootFolder;
+                    folderDetailModel.FolderImage = fullPathName;
+                    folderDetailModel.InternalLinks = (from l in db.CategoryImageLinks
+                                                       join f in db.VirtualFolders on l.ImageCategoryId equals f.Id
+                                                       where l.ImageCategoryId == folderId && l.ImageCategoryId != folderId
+                                                       select new { folderId = f.Id, folderName = f.FolderName })
+                                                       .ToDictionary(i => i.folderId, i => i.folderName);
+                    FolderDetail FolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if (FolderDetails != null)
+                    {
+                        folderDetailModel.HomeCountry = FolderDetails.HomeCountry;
+                        folderDetailModel.HomeTown = FolderDetails.HomeTown;
+                        folderDetailModel.FolderComments = FolderDetails.FolderComments;
+                        folderDetailModel.Birthday = FolderDetails.Birthday;
+                        folderDetailModel.Measurements = FolderDetails.Measurements;
+                        folderDetailModel.FakeBoobs = FolderDetails.FakeBoobs;
+                    }
+                    var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
+                    foreach (TrackbackLink trackbackLink in trackbackLinks)
+                    {
+                        folderDetailModel.TrackBackItems.Add(new TrackbackLink()
+                        {
+                            SiteCode = trackbackLink.SiteCode,
+                            Href = trackbackLink.Href,
+                            LinkStatus = trackbackLink.LinkStatus
+                        });
+                    }
+                    folderDetailModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                folderDetailModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return folderDetailModel;
+        }
+
         [HttpPut]
         [Route("api/FolderDetail/AddUpdate")]
         public string AddUpdate(FolderDetailModel model)
@@ -301,30 +302,47 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/Links/AddEditTrackBackLink")]
-        public string AddEditTrackBackLink(TrackbackLink trackBackItem)
+        public TrackbackSuccessModel AddEditTrackBackLink(TrackbackLink trackBackItem)
         {
-            string success = "";
+            var successModel = new TrackbackSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     var dbTrackBack = db.TrackbackLinks.Where(t => t.PageId == trackBackItem.PageId && t.SiteCode == trackBackItem.SiteCode).FirstOrDefault();
                     if (dbTrackBack == null)
+                    {
                         db.TrackbackLinks.Add(trackBackItem);
+                        successModel.SaveMode = "Insert";
+                    }
                     else
                     {
                         dbTrackBack.LinkStatus = trackBackItem.LinkStatus;
                         dbTrackBack.Href = trackBackItem.Href;
+                        successModel.SaveMode = "Update";
                     }
                     db.SaveChanges();
-                    success = "ok";
+
+                    var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == trackBackItem.PageId).ToList();
+                    foreach (TrackbackLink trackbackLink in trackbackLinks)
+                    {
+                        successModel.TrackBackItems.Add(new TrackbackLink()
+                        {
+                            SiteCode = trackbackLink.SiteCode,
+                            Href = trackbackLink.Href,
+                            LinkStatus = trackbackLink.LinkStatus
+                        });
+                    }
+
+
+                    successModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return successModel;
         }
     }
 }

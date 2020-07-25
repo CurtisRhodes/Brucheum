@@ -6,6 +6,17 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
+    public class TrackbackSuccessModel
+    {
+        public TrackbackSuccessModel()
+        {
+            TrackBackItems = new List<TrackbackLink>();
+        }
+        public List<TrackbackLink> TrackBackItems { get; set; }
+        public string SaveMode { get; set; }
+        public string Success { get; set; }
+    }
+
     public class FolderDetailModel
     {
         public FolderDetailModel()
@@ -29,6 +40,7 @@ namespace OggleBooble.Api.Models
         public string FolderType { get; set; }
         public string Success { get; set; }
     }
+
     public class SearchResultsModel
     {
         public SearchResultsModel()

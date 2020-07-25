@@ -5,7 +5,7 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
-    public class EmailMessage
+    public class EmailMessageModel
     {
         public string To { get; set; }
         public string From { get; set; }

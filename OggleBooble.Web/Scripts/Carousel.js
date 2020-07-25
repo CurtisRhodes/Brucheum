@@ -123,16 +123,16 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                     }
                 }
                 else {
-                    logError("BUG", rootFolder, carouselInfo.Success, "carousel.loadImages");
+                    logError("BUG", 3908, carouselInfo.Success, "carousel.loadImages");
                 }
             },
             error: function (jqXHR) {
                 if (!checkFor404("carousel.loadImages"))
-                    logError("XHR", rootFolder, getXHRErrorDetails(jqXHR), "carousel.loadImages");
+                    logError("XHR", 3908, getXHRErrorDetails(jqXHR), "carousel.loadImages");
             }
         });
     } catch (e) {
-        logError("CAT",rootFolder, e, "carousel.loadImages");
+        logError("CAT", 3908, e, "carousel.loadImages");
     }
 }
 
@@ -470,7 +470,7 @@ function assuranceArrowClick(direction) {
         imageHistory.pop();
         let indx = Number(imageHistory.pop())
         if (debugMode) $('#hdrBtmRowSec3').html("indx: " + indx);
-        alert("indx[" + imageHistory.length + "]: " + indx);
+        //alert("indx[" + imageHistory.length + "]: " + indx);
 
         let hisImg = settingsImgRepo + carouselItemArray[indx].FileName;
         $('#thisCarouselImage').attr('src', hisImg).load(function () {
@@ -498,6 +498,7 @@ function clickViewGallery(labelClick) {
             reportThenPerformEvent("CPC", carouselItemArray[imageIndex].ImageFolderName, "clickViewParentGallery", footerLabelClickId);
             break;
         default:
+            logError("SWT", 3908, "labelClick: " + labelClick, "clickViewGallery");
     }
 } 
 function carouselContextMenu() {
