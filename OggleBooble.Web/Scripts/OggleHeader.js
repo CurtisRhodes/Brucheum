@@ -35,9 +35,9 @@ function setOggleHeader(folderId, subdomain) {
     }
 
     $('#mainMenuContainer').html(setMenubar(folderId, subdomain));
-    setLoginSection(subdomain);
+    //setLoginSection(subdomain);
     setHdrBottomRow(hdrFolderId, subdomain);
-    setTimeout(function () { mediaSavyHdrResize(); }, 400);
+    //setTimeout(function () { mediaSavyHdrResize(); }, 400);
 
     window.addEventListener("resize", mediaSavyHdrResize);
 }
@@ -212,20 +212,10 @@ function mediaSavyHdrResize() {
     //return;
     hdrRowW = $('.headerTopRow').width();
     let LasttopRowOption = "t0", lastBottomRowOption = "b0";
-    // bottom Row  
+
+    $('#mainMenuContainer').html(setMenubar(hdrFolderId, hdrSubdomain));
+    // bottom Row
     {
-        // default bottom
-        $('#mainMenuContainer').html(setMenubar(hdrFolderId, hdrSubdomain));
-
-        //$('#divSiteLogo').css("height", "80px");
-        //"id='headerMessage' class='bottomLeftHeaderArea'>    padding-right: 8px;        float: left;
-        // id='breadcrumbContainer' class='breadCrumbArea'>
-        //id='badgesContainer' class='badgesSection'>display: flex; float: left;
-        // .badgeImage { height: 31px; margin - left: 9px; float: left; font-size: 16px; margin - bottom: 3px; cursor: pointer; }
-        //id='hdrBtmRowSec3' class='hdrBtmRowOverflow' margin-left: 15px;
-        //$('#divLoginArea').css("font-size", "14px");
-
-
         if (hdrBottRowSectionsW() >= hdrRowW) {
             $('#oggleHeader').css("background-color", "var(--brucheumBlue)");
             $('#divSiteLogo').css("height", "70px");
@@ -283,7 +273,12 @@ function mediaSavyHdrResize() {
         if (hdrBottRowSectionsW() >= hdrRowW) {
             $('#oggleHeader').css("background-color", "#a58383");  // brown        
             $('#divSiteLogo').css("height", "30px");
-            $('#breadcrumbContainer').hide();
+           // $('#breadcrumbContainer').hide();
+            //if (debugMode)
+            $('#hdrBtmRowSec3').html("hdrBottRowSectionsW() >= hdrRowW");
+            $('#footerMessage2').html("hdrBottRowSectionsW() >= hdrRowW");
+            //alert("hdrBottRowSectionsW() >= hdrRowW");
+
             $('#divLoginArea').css("font-size", "12px");
             $('.badgeImage').css("height", "18px");
             $('#mainMenuContainer').html("<img class='hamburger' src='/Images/hamburger.png' onclick='showHamburger()'/>");
@@ -335,6 +330,7 @@ function mediaSavyHdrResize() {
             LasttopRowOption = "t5";
         }
     }
+    //alert("mediaSavyHdrResize " + LasttopRowOption);
     showResizeMessage(LasttopRowOption, lastBottomRowOption);
 }
 

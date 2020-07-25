@@ -18,6 +18,14 @@ namespace OggleBooble.Api.Models
         public bool ConnectionVerified { get; set; }
         public string Success { get; set; }
     }
+    public class FolderInfoModel
+    {
+        public string FolderType { get; set; }
+        public string FolderComments { get; set; }
+        public string FolderName { get; set; }
+        public int Parent { get; set; }
+        public string Success { get; set; }
+    }
     public class SuccessModel
     {
         public string ReturnValue { get; set; }

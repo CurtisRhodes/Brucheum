@@ -443,8 +443,10 @@ body {
     position: absolute;
     min-height: 200px;
     min-width: 500px;
+    padding: 3px;
     border: solid 3px var(--oggleBorderColor);
-    background-color: var(--oggleBackgroundColor)
+    background-color: var(--oggleBackgroundColor);
+    z-index: 10;
 }
 
 .dialogDirTreeButton {

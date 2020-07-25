@@ -82,6 +82,8 @@ namespace OggleBooble.Api.Controllers
                     VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                     albumInfo.RootFolder = dbCategoryFolder.RootFolder;
                     albumInfo.FolderName = dbCategoryFolder.FolderName;
+                    albumInfo.FolderType = dbCategoryFolder.FolderType;
+
                     albumInfo.FileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
                     albumInfo.SubFolderCount = db.VirtualFolders.Where(f => f.Parent == folderId).Count();
 

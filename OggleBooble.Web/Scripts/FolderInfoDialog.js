@@ -7,40 +7,54 @@ function showFolderInfoDialog(folderId, calledFrom) {
     // --alter table OggleBooble.ImageFolder add CatergoryDescription nvarchar(max)
     // 4/30/2019  --first use of jQuery dialog
     // 5/30/2020  removing use of jquery dialog for my own. 
-    try {
-        // 5/30 2010
-        // how to determine folder type : if a category folder or a model album
-        // if rootfolder = boobs show just the CommentText 
-        // 
-        //alert("getFolderDetails: " + folderId);
-        getFolderInfo(folderId);
+    // how to determine folder type : if a category folder or a model album
+    // if rootfolder = boobs show just the CommentText 
+    // 7/24/2020
+    // added a new field called FolderType
 
-        objFolderInfo.Id = folderId;
-        $('#imagePageLoadingGif').show();
-        $('#draggableDialogContents').html(folderDialogHtml());
-        $('#modelInfoDetails').hide();
-        $('#btnCatDlgCancel').hide();
-        $('#btnCatDlgMeta').hide();
-        $('#draggableDialog').css("min-width", 680);
-        $('#draggableDialog').mouseleave(function () {
-            if ($('#btnCatDlgEdit').html() === "Edit") {
-                dragableDialogClose();
+    if (typeof pause === 'function') pause();
+    reportEvent("SMD", calledFrom, "detail", folderId);
+    showBasicFolderInfoDialog();
+
+    //$('#draggableDialog').css("min-width", 680);
+
+    $('#draggableDialog').mouseleave(function () {
+        if ($('#btnCatDlgEdit').html() === "Edit") {
+            dragableDialogClose();
+        }
+    });
+
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/CatFolder/GetQuickFolderInfo?folderId=" + folderId,
+            success: function (folderInfo) {
+                $('#imagePageLoadingGif').hide();
+                if (folderInfo.Success === "ok") {
+                    objFolderInfo.Id = folderId;
+                    $("#oggleDialogTitle").html(folderInfo.FolderName);
+                    $("#summernoteContainer").summernote("code", folderInfo.FolderComments);
+
+                    //$('#aboveImageContainerMessageArea').html("aFolderType: " + rtnFolderInfo.FolderType);
+                    //multiModel	488
+                    //multiFolder	394
+
+                    switch (folderInfo.FolderType) {
+                        case "singleModel":
+                        case "singleParent":
+                            showFullModelDetailsDialog(folderId);
+                            break;
+                        case "singleChild":
+                            showFullModelDetailsDialog(folderInfo.Parent);
+                            break;
+                    }
+                }
+                else logError("BUG", folderId, folderInfo.Success, "getFolderDetails");
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("getFolderDetails")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getFolderDetails");
             }
         });
-        //.ogContextMenu
-        $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
-        $('#draggableDialog').css("left", -350);
-        $('#summernoteContainer').summernote({
-            toolbar: "none",
-            height: "200px", 
-            dialogsInBody: true
-        });
-        $('#summernoteContainer').summernote('disable');
-        $(".note-editable").css('font-size', '16px');
-        $('#editablePoserDetails').hide();
-        if (typeof pause === 'function')
-            pause();
-        reportEvent("SMD", calledFrom, "detail", folderId);
     }
     catch (e) {
         $('#imagePageLoadingGif').hide();
@@ -55,60 +69,6 @@ function setReadonlyFields() {
     $('#readOnlyHometown').html(isNullorUndefined(objFolderInfo.HomeTown) ? " " : objFolderInfo.HomeTown);
     $('#readOnlyBoobs').html(isNullorUndefined(objFolderInfo.FakeBoobs) ? 0 : objFolderInfo.FakeBoobs ? "fake" : "real");
     $('#readOnlyMeasurements').html(isNullorUndefined(objFolderInfo.Measurements) ? " " : objFolderInfo.Measurements);
-}
-
-function getFolderInfo(folderId) {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/CatFolder/GetFolderInfo?folderId=" + folderId,
-        success: function (rtnFolderInfo) {
-            $('#imagePageLoadingGif').hide();
-            if (rtnFolderInfo.Success === "ok") {
-                objFolderInfo = rtnFolderInfo;
-                $('#oggleDialogTitle').html(rtnFolderInfo.FolderName);
-                $('#modelDialogThumbNailImage').attr("src", rtnFolderInfo.FolderImage);
-                $('#txtFolderName').val(rtnFolderInfo.FolderName);
-                $('#txtBorn').val(dateString(rtnFolderInfo.Birthday));
-                $('#txtHomeCountry').val(rtnFolderInfo.HomeCountry);
-                $('#txtHometown').val(rtnFolderInfo.HomeTown);
-                $('#txtBoobs').val(((rtnFolderInfo.FakeBoobs) ? "fake" : "real"));
-                $('#txtMeasurements').val(rtnFolderInfo.Measurements);
-                setReadonlyFields();
-                //$('#txtStatus').val(rtnFolderInfo.LinkStatus);
-                $("#summernoteContainer").summernote("code", rtnFolderInfo.FolderComments);
-                $('#imagePageLoadingGif').hide();
-                $("#draggableDialog").fadeIn();
-
-                //determine view
-                //alert("rtnFolderInfo.FolderType: " + rtnFolderInfo.FolderType);
-                //$('#aboveImageContainerMessageArea').html("aFolderType: " + rtnFolderInfo.FolderType);
-
-                switch (rtnFolderInfo.FolderType) {
-                    case "singleModelGallery":
-                    case "singleModelFolderCollection":
-                    case "singleModelCollection":
-                        $('#modelInfoDetails').show();
-                        break;
-                    case "assorterdFolderCollection":
-                    case "assorterdImagesCollection":
-                    case "assorterdImagesGallery":
-                        $('#modelInfoDetails').hide();
-                        break;
-                }
-            }
-            else {
-                $('#imagePageLoadingGif').hide();
-                //showMyAlert("unable to show folder info");
-                logError("BUG", folderId, rtnFolderInfo.Success, "getFolderDetails");
-            }
-        },
-        error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
-            if (!checkFor404("getFolderDetails")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getFolderDetails");
-            }
-        }
-    });
 }
 
 function editFolderDialog() {
@@ -496,10 +456,94 @@ function IdentifyPoser() {
     $('#modelInfoViewOnlyArea').hide();
 }
 
-function folderDialogHtml() {
-    return "<div>\n" +
+function showBasicFolderInfoDialog() {
+
+    $("#oggleDialogTitle").html("loading");
+    $("#draggableDialogContents").html(
+        "<div>\n" +
         "    <div id='modelInfoDetails' class='flexContainer'>\n" +
-        "        <div class='poserLabels' class='floatLeft'>\n" +
+        "    </div>\n" +
+        "    <div class='modelInfoCommentArea'>\n" +
+        "       <textarea id='summernoteContainer'></textarea>\n" +
+        "    </div>\n" +
+        "    <div id='folderInfoDialogFooter' class='folderDialogFooter'>\n" +
+        "        <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
+        "    </div>\n" +
+        "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n" +
+        "</div>\n");
+
+    //$(".note-editable").css('font-size', '16px');
+    //$('#draggableDialog').css("top", 111);
+    //$('#draggableDialog').css("left", -350);
+    $('#summernoteContainer').summernote({
+        toolbar: "none",
+        height: "300px"
+    });
+    $('#summernoteContainer').summernote('disable');
+    $(".note-editable").css('font-size', '16px');
+    $("#draggableDialog").fadeIn();
+}
+
+//-- function showSimpleSummaryDialog(folderId) { }
+
+function showFullModelDetailsDialog(folderId) {
+    $('#imagePageLoadingGif').show();
+
+    $("#modelInfoDetails").html(modelInfoDetailHtml());
+
+    $('#readonlyPoserDetails').show();
+    $('#editablePoserDetails').hide();
+
+    //$('#btnCatDlgCancel').hide();
+    //$('#btnCatDlgMeta').hide();
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/CatFolder/GetFolderInfo?folderId=" + folderId,
+        success: function (rtnFolderInfo) {
+            $('#imagePageLoadingGif').hide();
+            if (rtnFolderInfo.Success === "ok") {
+                objFolderInfo = rtnFolderInfo;
+                $('#oggleDialogTitle').html(rtnFolderInfo.FolderName);
+                $('#modelDialogThumbNailImage').attr("src", rtnFolderInfo.FolderImage);
+                $('#txtFolderName').val(rtnFolderInfo.FolderName);
+                $('#txtBorn').val(dateString(rtnFolderInfo.Birthday));
+                $('#txtHomeCountry').val(rtnFolderInfo.HomeCountry);
+                $('#txtHometown').val(rtnFolderInfo.HomeTown);
+                $('#txtBoobs').val(((rtnFolderInfo.FakeBoobs) ? "fake" : "real"));
+                $('#txtMeasurements').val(rtnFolderInfo.Measurements);
+                setReadonlyFields();
+                //$('#txtStatus').val(rtnFolderInfo.LinkStatus);
+                $("#summernoteContainer").summernote("code", rtnFolderInfo.FolderComments);
+
+                //$('#imagePageLoadingGif').hide();
+                //$("#draggableDialog").fadeIn();
+
+            }
+            else {
+                $('#imagePageLoadingGif').hide();
+                //showMyAlert("unable to show folder info");
+                logError("BUG", folderId, rtnFolderInfo.Success, "getFolderDetails");
+            }
+        },
+        error: function (jqXHR) {
+            $('#imagePageLoadingGif').hide();
+            if (!checkFor404("getFolderDetails")) {
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getFolderDetails");
+            }
+        }
+    });
+}
+
+function modelInfoDetailHtml() {
+
+    $('#folderInfoDialogFooter').append(
+        "        <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
+        "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n");
+
+    //    "        <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
+
+    return "<div class='poserLabels' class='floatLeft'>\n" +
         "            <div>name</div>\n" +
         "            <div>home country</div>\n" +
         "            <div>hometown</div>\n" +
@@ -523,22 +567,12 @@ function folderDialogHtml() {
         "            <select id='selBoobs' class='boobDropDown'>\n" +
         "               <option value=0>Real</option>\n" +
         "               <option value=1>Fake</option>\n" +
-        "            </select>\n"+
+        "            </select>\n" +
         "            <input id='txtMeasurements'/>\n" +
         "        </div>\n" +
         "        <div class='floatLeft'>\n" +
         "            <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
         "        </div>\n" +
         "    </div>\n" +
-        "    <div class='modelInfoCommentArea'>\n" +
-        "       <textarea id='summernoteContainer'></textarea>\n" +
-        "    </div>\n" +
-        "    <div class='folderDialogFooter'>\n" +
-        "        <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
-        "        <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
-        "        <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
-        "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n" +
-        "    </div>\n" +
-        "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n" +
-        "</div>\n";
+        "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n";
 }

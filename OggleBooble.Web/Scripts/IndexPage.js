@@ -23,11 +23,10 @@ function pornStartup() {
 
 function indexPageHTML() {
     return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
-        "        <div class='flexContainer'>\n" +
-        "            <div class='sectionLabel'>random galleries</div>\n" +
-        "            <div id='carouselContainer'>" +
-        "            </div>\n" +
-        "        </div>\n" +
+        "       <div class='sectionLabel'>random galleries</div>\n" +
+        //"       <div class='flexContainer'>\n" +
+        "           <div id='carouselContainer'></div>\n" +
+        //"        </div>\n" +
         "    </div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +

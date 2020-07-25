@@ -28,7 +28,7 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                     $.each(carouselCacheArray, function (idx, obj) {
                         carouselItemArray.push(obj);
                     });
-                    $('#topIndexPageSection').html(carouselHtml());
+                    $('#carouselContainer').html(carouselHtml());
                     $('#thisCarouselImage').show();
                     carouselSkip += 100;
                     if (!vCarouselInterval) {
@@ -78,7 +78,7 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                     });
 
                     if (carouselTake === specialLaunchCode) {
-                        $('#topIndexPageSection').html(carouselHtml());
+                        $('#carouselContainer').html(carouselHtml());
                         if ((rootFolder === "boobs") && (isNullorUndefined(window.localStorage["carouselCache"]))) {
                             if (carouselItemArray.length > 188) {
                                 let jsnObj = "[";  //new JSONArray();

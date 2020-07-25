@@ -1,4 +1,5 @@
 ﻿let pSelectedTreeId, pSelectedTreeFolderPath;
+let dshBrdSubDirTreeId;
 
 function dashboardStartup() {
     $('#indexMiddleColumn').html(dashboardHtml());
@@ -574,21 +575,37 @@ function performCreateNewFolder() {
     });
 }
 
-// COPY FOLDER
+// COPY FOLDER  (create stepchild)
 function showAddStepChildFolderDialog() {
-    $('#oggleDialogTitle').html("Copy Folder");
-    $('#draggableDialogContents').html(
-        "<div id='copyFolderCrud' class='dashboardToggle' title='Copy Folder'>\n" +
+    $('#dashboardDialog').html(
+        "<div class='carouselSettingsDialog'>\n" +
+        "   <div class='oggleDialogHeader'>" +
+        "       <div class='oggleDialogTitle'>Create Stepchild Folder</div>" +
+        "       <div class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#dashboardDialog\").hide()'/></div>\n" +
+        "   </div>\n" +
+        "   <div class='oggleDialogContents'>\n" +
         "    <div><span>folder to copy</span><input id='txtNewStepParent' class='txtLinkPath roundedInput' readonly='readonly' /></div>\n" +
-        "    <div><span>new name</span><input id='txtNewFolderName' class='roundedInput' /></div>\n" +
+        "    <div><span>new name</span><input id='txtscNewFolderName' class='roundedInput' /></div>\n" +
         "    <div><span>link</span><input id='txtCustomFolderLink' class='roundedInput' /></div>\n" +
-        "    <div>\n" +
-        "        <span>new parent </span><div id='copyFolderToggleButton' onclick='$('#copyFolderParentDirTree').dialog('open');' class='toggleButton'>...</div>\n" +
-        "        <div id='copyFolderParentDirTree' class='moveDirTreeContainer' title='Select Parent Folder'></div>\n" +
-        "        <input id='txtCopyFolderParent' class='roundedInput' readonly='readonly' />\n" +
-        "    </div>\n" +
-        "    <div class='roundendButton' onclick='copyFolder()'>Copy Folder</div>\n" +
-        "</div>");
+
+        "    <div class='roundendButton' onclick='createStaticPages($(\"#ckStaticIncludeSubfolders\").is(\":checked\"))'>Create Stepchild</div>\n" +
+        "   </div>\n" +
+        "       <div id='scDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
+        "</div>\n");
+    loadDirectoryTree(1, "scDirTreeContainer", "dshBrdSubDirTreeClick");
+
+
+
+    $("#txtFolderToStaticify").val(pSelectedTreeFolderPath);
+    $('#dashboardDialog').css("top", 75);
+    $('#dashboardDialog').css("left", 400);
+    $("#dashboardDialog").draggable().fadeIn();
+
+    "<div id='copyFolderCrud' class='dashboardToggle' title='Copy Folder'>\n" +
+    "    <div>\n" +
+    "        <span>new parent </span><div id='copyFolderToggleButton' onclick='$('#copyFolderParentDirTree').dialog('open');' class='toggleButton'>...</div>\n" +
+    "        <div id='copyFolderParentDirTree' class='moveDirTreeContainer' title='Select Parent Folder'></div>\n" +
+    "        <input id='txtCopyFolderParent' class='roundedInput' readonly='readonly' />\n" +
 
     //loadDirectoryTree(1, "linkManipulateDirTree");
     //var winH = $(window).height();
@@ -604,10 +621,10 @@ function perfomAddStepChildFolder() {
         type: "POST",
         url: settingsArray.ApiServer + "api/CatFolder/AddStepChild",
         data: {
-            SourceFileId: copyFolderSelectedParentId,
+            SourceFileId: dshBrdSubDirTreeId,
             DestinationId: pSelectedTreeId,
             LinkId: $('#txtCustomFolderLink').val(),
-            FolderName: $('#txtNewFolderName').val(),
+            FolderName: $('#txtscNewFolderName').val(),
             SortOrder: 1998
         },
         success: function (successModel) {
@@ -694,7 +711,7 @@ function showMoveManyTool() {
     $('#txtMoveManySource').val(pSelectedTreeFolderPath);
     // $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
 
-    loadDirectoryTree(1, "mmDirTreeContainer", "moveManyDirTreeClick");
+    loadDirectoryTree(1, "mmDirTreeContainer", "dshBrdSubDirTreeClick");
     //$('#moveManyHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
     $('#txtMoveManyDestination').val("");
     $('#dashBoardLoadingGif').fadeIn();
@@ -732,15 +749,9 @@ function mmSelectAll() {
     else
         $('.loadManyCheckbox').prop("checked", false);
 }
-let selectedMMTreeId;
-function moveManyDirTreeClick(danniPath, folderId) {
-    selectedMMTreeId = folderId;
-    let selectedMMFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
-    $('#txtMoveManyDestination').val(selectedMMFolderPath);
-    $('#mmDirTreeContainer').fadeOut();    
-}
+
 function moveCheckedImages() {
-    if (selectedMMTreeId == 0) {
+    if (dshBrdSubDirTreeId == 0) {
         alert("select a destination");
         return;
     }
@@ -753,7 +764,7 @@ function moveCheckedImages() {
     if (confirm("move " + checkedImages.length + " images to " + $('#txtMoveManyDestination').val())) {
         var moveManyModel = {
             SourceFolderId: pSelectedTreeId,
-            DestinationFolderId: selectedMMTreeId,
+            DestinationFolderId: dshBrdSubDirTreeId,
             ImageLinkIds: checkedImages
         };
         $('#dashBoardLoadingGif').fadeIn();
@@ -1099,6 +1110,13 @@ function onDirTreeComplete() {
     setTimeout(function () { $('#dataifyInfo').hide() }, 2500);
 }
 
+function dshBrdSubDirTreeClick(danniPath, folderId) {
+     dshBrdSubDirTreeId = folderId;
+    let selectedMMFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
+    $('#txtMoveManyDestination').val(selectedMMFolderPath);
+    $('#txtscNewFolderName').val(selectedMMFolderPath),
+    $('#mmDirTreeContainer').fadeOut();
+}
 function dashBoardDirTreeClick(danniPath, folderId) {
     pSelectedTreeId = folderId;
     pSelectedTreeFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");

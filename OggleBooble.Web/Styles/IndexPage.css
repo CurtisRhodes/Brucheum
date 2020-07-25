@@ -1,12 +1,14 @@
 ﻿
 
 .sectionLabel {
-    font-size: larger;
     color: var(--oggleTitleColor);
-    position: absolute;
     white-space: nowrap;
     display: none;
-    /*border: solid thin red;*/
+    /*
+        font-size: larger;
+        position: relative;
+        border: solid thin red;
+    */
 }
 
 .loadingImage {

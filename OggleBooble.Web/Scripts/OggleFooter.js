@@ -1,6 +1,6 @@
 ﻿function setOggleFooter(pageId, rootFolder) {
     //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
-    //rtpe(code,calledFrom,eventDetail,pageId)
+
     $('.footer').html(defaultFooter(pageId, rootFolder));
 
     // ranker     homePageId = 3907;
@@ -18,7 +18,6 @@
     //cybergirl	26
     //special	11
     //root	2            $('#footerCol1').html(
-
 
     switch (rootFolder) {
         case "index": {

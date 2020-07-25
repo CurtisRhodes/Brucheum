@@ -174,9 +174,14 @@
     padding-top: 2px;
     padding-left: 2px;
 }
-
+/*
+//$('#divSiteLogo').css("height", "50px");
+//$('#bannerTitle').css("height", "20px");
+//$('#mainMenuContainer').css("font-size", "20px");
+//$('.headerBannerButton').css("font-size", "12px");
+*/
 .siteLogo {
-    height: 60px;
+    height: 50px;
     cursor: pointer;
 }
 .hamburger {

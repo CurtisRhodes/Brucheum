@@ -19,6 +19,33 @@ namespace OggleBooble.Api.Controllers
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
 
+        //url: settingsArray.ApiServer + "api/CatFolder/GetFolderType?folderId=" + folderId,
+        [HttpGet]
+        [Route("api/CatFolder/GetQuickFolderInfo")]
+        public FolderInfoModel GetQuickFolderInfo(int folderId)
+        {
+            var folderInfo = new FolderInfoModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    if (dbFolder != null)
+                    {
+                        folderInfo.FolderType = dbFolder.FolderType;
+                        folderInfo.FolderName = dbFolder.FolderName;
+                        folderInfo.Parent = dbFolder.Parent;
+                        var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                        if (dbFolderDetails != null)
+                            folderInfo.FolderComments = dbFolderDetails.FolderComments;
+                        folderInfo.Success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex) { folderInfo.Success = Helpers.ErrorDetails(ex); }
+            return folderInfo;
+        }
+        
         [HttpGet]
         [Route("api/CatFolder/GetFolderInfo")]
         public FolderDetailModel GetFolderInfo(int folderId)
@@ -36,17 +63,15 @@ namespace OggleBooble.Api.Controllers
                         var dbImageFile = db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault();
                         if (dbImageFile != null)
                         {
+                            var imgFolderPath = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath;
                             //string fileName = dbImageFile.FileName;
-                            fullPathName = repoDomain + "/" + dbFolder.FolderPath + "/" + dbImageFile.FileName;
+                            bool nw = (imgFolderPath == dbFolder.FolderPath);
+                            fullPathName = repoDomain + "/" + imgFolderPath + "/" + dbImageFile.FileName;
                         }
                     }
 
-                    if (Helpers.ContainsRomanNumeral(dbFolder.FolderName))
-                    {
-                        dbFolder = db.VirtualFolders.Where(f => f.Id == dbFolder.Parent).First();
-                        folderId = dbFolder.Id;
-                    }
                     folderDetailModel.FolderId = folderId;
+                    folderDetailModel.FolderType = dbFolder.FolderType;
                     folderDetailModel.FolderName = dbFolder.FolderName;
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
                     folderDetailModel.FolderImage = fullPathName;

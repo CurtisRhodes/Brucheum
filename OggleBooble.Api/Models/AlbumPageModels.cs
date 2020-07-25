@@ -22,15 +22,6 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
-    public class FolderTypeModel
-    {
-        public string RootFolder { get; set; }
-        public bool HasImages { get; set; }
-        public bool HasSubFolders { get; set; }
-        public bool ContainsRomanNumeral { get; set; }
-        public bool ContainsRomanNumeralChildren { get; set; }
-    }
-
     public class GalleryImagesAndFoldersModel
     {
         public GalleryImagesAndFoldersModel()
