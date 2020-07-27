@@ -3,6 +3,9 @@
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     event.preventDefault();
     window.event.returnValue = false;
+    //EVT	CXM	Context Menu Opened
+    //logEvent(eventCode, pageId, calledFrom, eventDetails)
+    logEvent("CXM", folderId, menuType, folderName);
 
     pLinkId = linkId;
     pImgSrc = imgSrc;
@@ -260,14 +263,9 @@ function contextMenuAction(action) {
             break;
         }
         case "explode": {
-            if (isLoggedIn()) {
-                //rtpe(eventCode, calledFrom, eventDetail, pageId)
-                rtpe("EXP", pFolderName, pImgSrc, pFolderId);
-            }
-            else {
-                reportEvent("UNX", "", "", pFolderId);
-                showMyAlert("You must be logged in to use this feature");
-            }
+          //rtpe(eventCode, calledFrom, eventDetail, pageId)
+            //rtpe("EXP", pFolderName, pImgSrc, pFolderId);
+            window.open(pImgSrc, "_blank");
             break;
         }
         case "Image tags":
@@ -288,6 +286,7 @@ function contextMenuAction(action) {
             showArchiveLinkDialog(pLinkId, pFolderId, pImgSrc);
             break;
         case "copy":
+            alert("contextMenuAction/copy (pLinkId: " + pLinkId + ", pFolderId: " + pFolderId + ", pImgSrc: " + pImgSrc);
             showCopyLinkDialog(pLinkId, pFolderId, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;

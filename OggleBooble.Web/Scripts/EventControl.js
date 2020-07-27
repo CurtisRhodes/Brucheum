@@ -1,21 +1,12 @@
 ﻿
 function rtpe(eventCode, calledFrom, eventDetail, pageId) {
-    reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId);
-}
-
-function reportEvent(eventCode, calledFrom, eventDetail, pageId) {
-    logActivity(eventCode, pageId)
-    logEvent("PRN", pageId, eventDetail);
-}
-
-function reportThenPerformEvent(eventCode, calledFrom, eventDetail, pageId) {
     try {
         var visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
             logError("BUG", pageId, "visitorId not set ", "reportThenPerformEvent/" + calledFrom);
             visitorId = "unknown";
         }
-        logActivity(eventCode, pageId)
+        logEvent(eventCode, pageId, calledFrom, eventDetail);
         performEvent(eventCode, calledFrom, eventDetail, pageId);
     }
     catch (e) {
@@ -34,7 +25,6 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
         case "XLC":  // external link clicked
             break;
         case "PRN":  //("Porn Option clicked");
-            logEvent("PRN", pageId, eventDetail);
             window.location.href = '/index.html?subdomain=porn';
             break;
         case "HBC":  //  header banner clicked

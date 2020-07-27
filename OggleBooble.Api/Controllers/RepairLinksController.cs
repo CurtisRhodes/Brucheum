@@ -3,8 +3,9 @@ using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
-using System.Web;
+using System.Net;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -15,6 +16,10 @@ namespace OggleBooble.Api.Controllers
     {
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
+        private readonly string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
+        static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         [HttpGet]
         [Route("api/RepairLinks/Repair")]
@@ -52,26 +57,57 @@ namespace OggleBooble.Api.Controllers
                     // 1. check for physicalFiles with ImageFile row
                     if (db.ImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault() == null)
                     {
-                        repairReport.MissingFiles.Add(physcialFileLinkId);
-
-                        db.EventLogs.Add(new EventLog()
+                        try
                         {
-                            EventCode = "MIg",
-                            EventDetail = physcialFileLinkId,
-                            PageId = folderId,
-                            VisitorId = "admin",
-                            Occured = DateTime.Now
-                        });
-                        db.SaveChanges();
 
+                            int fWidth = 0; int fHeight = 0; long fSize = 0;
+                            //if()
 
+                            string imgFileName = "/"+imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
+                            using (var fileStream = new FileStream(imgFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                            {
+                                fSize = fileStream.Length;
+                                using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                                {
+                                    fWidth = image.Width;
+                                    fHeight = image.Height;
+                                }
+                            }
 
+                            db.ImageFiles.Add(new ImageFile()
+                            {
+                                Id = physcialFileLinkId,
+                                Acquired = DateTime.Today,
+                                ExternalLink = "?",
+                                FileName = physcialFileName,
+                                FolderId = folderId,
+                                Height = fHeight,
+                                Size = fSize,
+                                Width = fWidth
+                            });
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            repairReport.Errors.Add(Helpers.ErrorDetails(ex));
 
+                            repairReport.MissingFiles.Add(physcialFileLinkId);
+
+                            db.EventLogs.Add(new EventLog()
+                            {
+                                EventCode = "MIg",
+                                EventDetail = physcialFileLinkId,
+                                PageId = folderId,
+                                VisitorId = "admin",
+                                Occured = DateTime.Now
+                            });
+                            db.SaveChanges();
+                        }
                     }
-                    else
+                    //                    else
                     {
                         // 2. check for physicalFiles with no link
-                        if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFileLinkId).FirstOrDefault() == null)
+                        if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFileLinkId && il.ImageCategoryId == folderId).FirstOrDefault() == null)
                         {
                             db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
                             {
@@ -112,14 +148,41 @@ namespace OggleBooble.Api.Controllers
                         var nonLocallink = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId).FirstOrDefault();
                         if (nonLocallink != null)
                         {
+                            var dbImageFile = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId).FirstOrDefault();
+                            if (dbImageFile == null)
+                            {
+                                db.CategoryImageLinks.Remove(folderLink);
+                                db.SaveChanges();
+                                repairReport.LinksRemoved++;
+                            }
+                            else
+                            {
+                                if (dbImageFile.FolderId != folderId)
+                                {
+                                    dbImageFile.FolderId = folderId;
+                                    //db.SaveChanges();
+                                    //repairReport.ImageFileAdded++;
+
+                                }
+                            }
+
                             // we have a valid link
                         }
                         else
                         {
-                            repairReport.OrphanCatLinkRecs.Add(folderLink.ImageLinkId);
-                            db.CategoryImageLinks.Remove(folderLink);
-                            db.SaveChanges();
-                            repairReport.LinksRemoved++;
+                            var dbAllImageLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == folderLink.ImageLinkId).ToList();
+                            if (dbAllImageLinks.Count() == 1)
+                            {
+                                repairReport.OrphanCatLinkRecs.Add(folderLink.ImageLinkId);
+                                db.CategoryImageLinks.Remove(folderLink);
+                                db.SaveChanges();
+                                repairReport.LinksRemoved++;
+                            }
+                            else
+                            {
+                                repairReport.BadFileNames++;
+
+                            }
                         }
                     }
                     repairReport.LinkRecordsProcessed++;
@@ -133,10 +196,19 @@ namespace OggleBooble.Api.Controllers
                     if (!physcialFileLinkIds.Contains(existingImageFile.Id))
                     {
                         // I'd have to scann ever physical folder's links prove there is no file for this file link.
-                        repairReport.OrphanImageFileRecs.Add(existingImageFile.Id);
-                        //db.ImageFiles.Remove(existingImageFile);
-                        //db.SaveChanges();
-                        repairReport.DirNotFound++;
+                        //var dbImageFile = db.ImageFiles.Where(i => i.Id == existingImageFile.Id).FirstOrDefault();
+                        //if ((dbImageFile == null) || (dbImageFile.FolderId == folderId))
+                        {
+                            repairReport.OrphanImageFileRecs.Add(existingImageFile.Id);
+                            db.ImageFiles.Remove(existingImageFile);
+
+                            var dbBadLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == existingImageFile.Id).ToList();
+                            db.CategoryImageLinks.RemoveRange(dbBadLinks);
+
+                            db.SaveChanges();
+                            repairReport.DirNotFound++;
+                            repairReport.LinksRemoved += dbBadLinks.Count();
+                        }
                     }
                     repairReport.ImageFilesProcessed++;
                 }
@@ -155,68 +227,6 @@ namespace OggleBooble.Api.Controllers
                 repairReport.Success = Helpers.ErrorDetails(ex);
                 return;
             }
-        }
-        private void RepairLinksRecurr(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db)
-        {
-            try
-            {
-                VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-
-                string rootFolder = dbCategoryFolder.RootFolder;
-                if (rootFolder == "centerfold")
-                    rootFolder = "playboy";
-
-                string ftpPath = ftpHost + "/" + rootFolder + ".ogglebooble.com/"
-                    + Helpers.GetParentPath(folderId) + dbCategoryFolder.FolderName;
-
-                if (!FtpUtilies.DirectoryExists(ftpPath))
-                {
-                    repairReport.DirNotFound++;
-                    FtpUtilies.CreateDirectory(ftpPath);
-                    repairReport.Errors.Add("created directory " + ftpPath);
-                }
-                //int folderRowsProcessed = 0;
-
-                //if (repairReport.isSubFolder)
-                //    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed + "  Total: " + repairReport.RowsProcessed);
-                //else
-                //    SignalRHost.ProgressHub.PostToClient("Processing: " + dbCategoryFolder.FolderName + "  Rows: " + folderRowsProcessed);
-
-                List<ImageFile> goDaddyLinks =
-                    (from c in db.CategoryImageLinks
-                     join g in db.ImageFiles on c.ImageLinkId equals g.Id
-                     where c.ImageCategoryId == folderId
-                     //&& g.Link.Contains(dbCategoryFolder.FolderName)
-                     && g.FolderId == dbCategoryFolder.Id
-                     select (g)).ToList();
-
-                string[] imageFiles = FtpUtilies.GetFiles(ftpPath);
-
-                string goDaddyPrefix = "http://" + rootFolder + ".ogglebooble.com/";
-                string expectedLinkName = goDaddyPrefix + Helpers.GetParentPath(folderId) + dbCategoryFolder.FolderName;
-
-                if (goDaddyLinks.Count() != imageFiles.Count())
-                {
-                    if (goDaddyLinks.Count() > imageFiles.Count())
-                    {
-                    }
-
-                    if (imageFiles.Count() > goDaddyLinks.Count())
-                    {
-                        repairReport.Errors.Add("Extra Links Found in " + ftpPath);
-                        foreach (string imageFile in imageFiles)
-                        {
-                        }
-                    }
-                }
-                int[] subDirs = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f => f.Id).ToArray();
-                foreach (int subDir in subDirs)
-                {
-                    repairReport.isSubFolder = true;
-                    RepairLinksRecurr(subDir, repairReport, db);
-                }
-            }
-            catch (Exception ex) { repairReport.Success = Helpers.ErrorDetails(ex); }
         }
     }
 }

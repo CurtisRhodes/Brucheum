@@ -62,11 +62,15 @@ function checkFor404(calledFrom) {
             document.title = "loading : OggleBooble";
             changeFavoriteIcon("loading");
             checkFor404Loop = setInterval(function () {
-                if (!connectionVerified) {
+                if (connectionVerified) {
+                    changeFavoriteIcon("redBallon");
+                }
+                else {
                     if (++verifyConnectionCount === 3) {
-                        $('.launchingServiceContainer').css("top", window.innerHeight / 2 - 100);
                         $('#customMessage').html(
                             "<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/altair04.gif' height='200' /></div>\n").show();
+                        $('.launchingServiceContainer').css("top", window.innerHeight() / 2 - 100);
+
                     }
                     if (verifyConnectionCount > verifyConnectionCountLimit) {
                         if (!canIgetaConnectionMessageShowing) {
@@ -95,12 +99,10 @@ function checkFor404(calledFrom) {
 }
 
 function verifyConnection() {
+
     if (isNullorUndefined(settingsArray.ApiServer)) {
         console.error("verifyConnection settingsArray.ApiServer not defined");
         connectionVerified = false;
-        if (!persisConnectionIntervalRunning)
-            persistConnection();
-
         return;
     }
     else {
@@ -112,8 +114,10 @@ function verifyConnection() {
                     if (successModel.ConnectionVerified) {
                         clearInterval(checkFor404Loop);
                         inCheckFor404Loop = false;
+
                         connectionVerified = true;
                         verifyConnectionCount = 0;
+
                         console.log("verifyConnection: connection verified");
                         $('#customMessage').hide();
                         canIgetaConnectionMessageShowing = false;
@@ -168,5 +172,5 @@ function persistConnection() {
                 connectionVerified = false;
             }
         });
-    }, 45000);
+    }, 145000);
 }

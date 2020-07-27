@@ -35,9 +35,16 @@
     margin-right:3px;
 }
 .contextMenuInnerContainer div {
-    line-height: 17px;
+    line-height: 21px;
     padding: 0 !important;
 }
+.contextMenuInnerContainer div:hover {
+    text-decoration: underline;
+}
+
+
+
+
 .ctxInfoValue {
     background-color: #f3f3f3;
     border: solid 0.3px #e6d990;

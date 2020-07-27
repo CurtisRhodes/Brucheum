@@ -23,10 +23,9 @@
         //rtpe(code,calledfrom,detail,pageId)
         case "index": {
             $('#footerCol1').html(
-                "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n" +
+                "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n");
+            $('#footerCol2').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
-            //$('#footerCol2').html();
-            //$('#footerCol5').html();
             break;
         }
         case "boobs": {  //    poses

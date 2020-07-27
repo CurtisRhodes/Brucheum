@@ -193,7 +193,7 @@ function letemPorn(response, pornType, pageId) {
             logError("BUG", pageId, "isNullorUndefined(pornType)", "letemPorn");
             pornType = "UNK";
         }
-        reportThenPerformEvent("PRN", "xx", pornType, pageId);
+        rtpe("PRN", "xx", pornType, pageId);
     }
     else {
         $('#customMessage').hide();
@@ -290,9 +290,10 @@ function create_UUID() {
 }
 
 function logError(errorCode, pageId, errorMessage, calledFrom) {
-    if (document.domain === 'localhost')
-        alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
-    else {
+    //if (document.domain === 'localhost')
+    //    alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+    //else
+    {
         try {
             if (isNullorUndefined(pageId)) {
                 if (document.domain === 'localhost')
@@ -313,7 +314,7 @@ function logError(errorCode, pageId, errorMessage, calledFrom) {
                 url: settingsArray.ApiServer + "api/Common/LogError",
                 data: {
                     VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: errorCode,
+                    ErrorCode: errorCode,
                     PageId: pageId,
                     ErrorMessage: errorMessage,
                     CalledFrom: calledFrom
@@ -344,38 +345,22 @@ function logError(errorCode, pageId, errorMessage, calledFrom) {
     }
 }
 
-function logActivity(activityCode, pageId) {
-    if (document.domain !== 'localhost') {
+function logEvent(eventCode, pageId, calledFrom, eventDetails) {
+    //if (document.domain === 'localhost')
+    //    alert("logEvent. eventCode: " + eventCode + "  pageId: " + pageId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
+    //else
+    {
+        let visitorId = getCookieValue("VisiorId");
+        if (isNullorUndefined(visitorId))
+            visitorId = "3:20";
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "api/Common/LogActivity",
+            url: settingsArray.ApiServer + "api/Common/LogEvent",
             data: {
-                VisitorId: getCookieValue("VisiorId"),
-                ActivityCode: activityCode,
-                PageId: pageId
-            },
-            success: function (success) {
-                if (success !== "ok") {
-                    logError("BUG", pageId, success, "logActivity");
-                }
-            },
-            error: function (jqXHR) {
-                if (!checkFor404("logActivity")) 
-                    logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logActivity");
-            }
-        });
-    }
-}
-
-function logEvent(eventCode, pageId, eventDetails) {
-    if (document.domain !== 'localhost') {
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/Common/LogActivity",
-            data: {
-                VisitorId: getCookieValue("VisiorId"),
+                VisitorId: visitorId,
                 EventCode: eventCode,
                 EventDetail: eventDetails,
+                CalledFrom: calledFrom,
                 PageId: pageId
             },
             success: function (success) {
@@ -394,6 +379,12 @@ function logEvent(eventCode, pageId, eventDetails) {
 }
 
 function logDataActivity(activityModel) {
+    //activityModel{
+    //    VisitorId: getCookieValue("VisitorId"),
+    //    ActivityCode: "LKC",
+    //    PageId: pDirTreeId,
+    //    Activity: "copy: " + linkId + " to: " + pDirTreeId
+    //};
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogDataActivity",
@@ -474,7 +465,7 @@ function slowlyShowCustomMessage(blogId) {
 }
 
 function showCustomMessage(blogId, allowClickAnywhere) {
-    //alert("showCustomMessage(" + blogId + ")");
+    alert("showCustomMessage(" + blogId + ")");
     if (typeof pause === 'function') {
         pause();
     }
@@ -486,8 +477,8 @@ function showCustomMessage(blogId, allowClickAnywhere) {
                 $('#draggableDialog').css("top", 200);
 
                 $('#draggableDialog').draggable();
-                $('#oggleDialogTitle').html(entry.CommentTitle);
-                $('#draggableDialogContents').html(entry.CommentText);
+                $('#centeredDialogTitle').html(entry.CommentTitle);
+                $('#centeredDialogContents').html(entry.CommentText);
 
                 //var x = window.innerWidth * .5 - $('#draggableDialog').width() * .5;              
                 //var x = (window.innerWidth - $('#draggableDialog').width()) * .5;              
@@ -497,10 +488,10 @@ function showCustomMessage(blogId, allowClickAnywhere) {
 
                 if (allowClickAnywhere) {
                     $('#draggableDialogCloseButton').prop('title', 'click anywhere on dialog to close');
-                    $('#draggableDialogContents').click(function () { dragableDialogClose(); });
+                    $('#centeredDialogContents').click(function () { dragableDialogClose(); });
                 }
                 else {
-                    $('#draggableDialogContents').prop("onclick", null).off("click");
+                    $('#centeredDialogContents').prop("onclick", null).off("click");
                     $('#draggableDialogCloseButton').removeProp('title');
                 }
             }

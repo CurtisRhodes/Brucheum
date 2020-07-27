@@ -309,33 +309,34 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
         
-        [HttpPost]
-        [Route("api/Common/LogActivity")]
-        public string LogActivity(ActivityLogModel activityModel)
-        {
-            string success;
-            try
-            {
-                using (var mdb = new OggleBoobleMySqlContext())
-                {
-                    //activityModel.EventDetail = mdb.VirtualFolders.Where(f => f.Id == activityModel.PageId).FirstOrDefault().FolderName;
-                    mdb.ActivityLogs.Add(new ActivityLog()
-                    {
-                        ActivtyCode= activityModel.ActivtyCode,
-                        PageId = activityModel.PageId,
-                        VisitorId = activityModel.VisitorId,
-                        Occured = DateTime.Now
-                    });
-                    mdb.SaveChanges();
-                }
-                success = "ok";
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
+        //[HttpPost]
+        //[Route("api/Common/LogActivity")]
+        //public string LogActivity(ActivityLogModel activityModel)
+        //{
+        //    string success;
+        //    try
+        //    {
+        //        using (var mdb = new OggleBoobleMySqlContext())
+        //        {
+        //            //activityModel.EventDetail = mdb.VirtualFolders.Where(f => f.Id == activityModel.PageId).FirstOrDefault().FolderName;
+        //            mdb.ActivityLogs.Add(new ActivityLog()
+        //            {
+        //                ActivtyCode= activityModel.ActivtyCode,
+        //                PageId = activityModel.PageId,
+        //                VisitorId = activityModel.VisitorId,
+        //                Occured = DateTime.Now
+        //            });
+        //            mdb.SaveChanges();
+        //        }
+        //        success = "ok";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        success = Helpers.ErrorDetails(ex);
+        //    }
+        //    return success;
+        //}
+
         [HttpPost]
         [Route("api/Common/LogEvent")]
         public string LogEvent(EventLogModel eventModel)

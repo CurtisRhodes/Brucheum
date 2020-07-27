@@ -270,7 +270,7 @@ workAreaHeaderDetailRow {
 .workAreaDisplayContainer {
     padding: 4px;
     margin-left: 5px;
-    max-height: 400px;
+    min-height: 400px;
     overflow-y: auto;
 }
 

@@ -55,6 +55,8 @@ function resetUserSettings() {
 }
 
 function isLoggedIn() {
+    if (document.domain === 'localhost')
+        return true;
     var userNameExist = true;
     if (isNullorUndefined(getCookieValue("UserName")))
         userNameExist = false;

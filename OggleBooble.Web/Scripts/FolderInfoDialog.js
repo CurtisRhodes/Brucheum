@@ -13,7 +13,8 @@ function showFolderInfoDialog(folderId, calledFrom) {
     // added a new field called FolderType
 
     if (typeof pause === 'function') pause();
-    reportEvent("SMD", calledFrom, "detail", folderId);
+
+    logEvent("SMD", folderId, calledFrom, eventDetails)
     showBasicFolderInfoDialog();
 
     //$('#draggableDialog').css("min-width", 680);
@@ -27,12 +28,12 @@ function showFolderInfoDialog(folderId, calledFrom) {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Folder/GetQuickFolderInfo?folderId=" + folderId,
+            url: settingsArray.ApiServer + "api/FolderDetail/GetQuickFolderInfo?folderId=" + folderId,
             success: function (folderInfo) {
                 $('#imagePageLoadingGif').hide();
                 if (folderInfo.Success === "ok") {
                     objFolderInfo.Id = folderId;
-                    $("#oggleDialogTitle").html(folderInfo.FolderName);
+                    $("#centeredDialogTitle").html(folderInfo.FolderName);
                     $("#summernoteContainer").summernote("code", folderInfo.FolderComments);
 
                     //$('#aboveImageContainerMessageArea').html("aFolderType: " + rtnFolderInfo.FolderType);
@@ -64,8 +65,8 @@ function showFolderInfoDialog(folderId, calledFrom) {
 
 function showBasicFolderInfoDialog() {
 
-    $("#oggleDialogTitle").html("loading");
-    $("#draggableDialogContents").html(
+    $("#centeredDialogTitle").html("loading");
+    $("#centeredDialogContents").html(
         "<div>\n" +
         "    <div id='modelInfoDetails' class='flexContainer'>\n" +
         "    </div>\n" +
@@ -93,6 +94,7 @@ function showBasicFolderInfoDialog() {
         $("#btnCatDlgEdit").hide();
     }
 }
+
 function showFullModelDetailsDialog(folderId) {
     $('#imagePageLoadingGif').show();
     $("#modelInfoDetails").html(modelInfoDetailHtml());
@@ -104,12 +106,12 @@ function showFullModelDetailsDialog(folderId) {
 
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Folder/GetFullFolderInfo?folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/FolderDetail/GetFullFolderInfo?folderId=" + folderId,
         success: function (folderInfo) {
             $('#imagePageLoadingGif').hide();
             if (folderInfo.Success === "ok") {
                 objFolderInfo = folderInfo;
-                $('#oggleDialogTitle').html(folderInfo.FolderName);
+                $('#centeredDialogTitle').html(folderInfo.FolderName);
                 $('#modelDialogThumbNailImage').attr("src", folderInfo.FolderImage);
                 $('#txtFolderName').val(folderInfo.FolderName);
                 $('#txtBorn').val(dateString(folderInfo.Birthday));
@@ -135,12 +137,14 @@ function showFullModelDetailsDialog(folderId) {
         }
     });
 }
+
 function modelInfoDetailHtml() {
 
-    $('#folderInfoDialogFooter').append(
-        "        <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
-        "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n");
-
+    if (isLoggedIn()) {
+        $('#folderInfoDialogFooter').append(
+            "        <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
+            "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n");
+    }
     //    "        <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
 
     return "<div class='poserLabels' class='floatLeft'>\n" +
@@ -522,8 +526,8 @@ function oldModelInfoDialogHtml() {
     //"</div>\n"
 }
 function showUnknownModelDialog(pLinkId, imgSrc) {
-    $('#oggleDialogTitle').html("Unknown Poser");
-    $('#draggableDialogContents').html(
+    $('#centeredDialogTitle').html("Unknown Poser");
+    $('#centeredDialogContents').html(
         "<div class='flexContainer'>" +
         "   <div class='floatRight'>" +
         "          <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +

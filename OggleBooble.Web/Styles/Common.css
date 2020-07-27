@@ -342,11 +342,6 @@ body {
     z-index: 20;
 }
 
-.customMessageContainer {
-    position: absolute;
-    z-index: 200;
-}
-
 .divRefreshPage {
     background-color: var(--oggleDialogBackgroundColor);
     font-size: 24px;

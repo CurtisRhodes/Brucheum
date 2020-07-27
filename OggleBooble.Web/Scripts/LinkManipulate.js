@@ -9,8 +9,10 @@ function linkDialogdirTreeClick(path, id) {
     pDestinationFolderName = path;
     $('#dirTreeResults').html(path.replace(/%20/g, " "));
 }
+
 function showDirTreeDialog(imgSrc, treeStart) {
-    $('#draggableDialogContents').html(
+//    alert("showDirTreeDialog(imgSrc: " + imgSrc + ", treeStart: " + treeStart);
+    $('#centeredDialogContents').html(
         "   <div>" +
         "       <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
         "       <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
@@ -20,20 +22,21 @@ function showDirTreeDialog(imgSrc, treeStart) {
         "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif' /></div>\n" +
         "   </div>");
 
-
     loadDirectoryTree(treeStart, "linkManipulateDirTree", "linkDialogdirTreeClick");
     //var winH = $(window).height();
     //var dlgH = $('#draggableDialog').height();
     //$('#draggableDialog').css("top", (winH - dlgH) / 2);
-    $('#draggableDialog').fadeIn();
+    $('#centeredDialogContainer').fadeIn();
 }
 
 function showCopyLinkDialog(linkId, folderId, imgSrc) {
+    //alert("showCopyLinkDialog(linkId: " + linkId + ", folderId: " + folderId + ", imgSrc: " + imgSrc);
     showDirTreeDialog(imgSrc, 1);
-    $('#oggleDialogTitle').html("Copy Link");
+    $('#centeredDialogTitle').html("Copy Link");
     $('#linkManipulateClick').html(
         "<div class='roundendButton' onclick='perfomCopyLink(\"" + linkId + "\")'>Copy</div>");
 }
+
 function perfomCopyLink(linkId) {
     $.ajax({
         type: "POST",
@@ -42,6 +45,7 @@ function perfomCopyLink(linkId) {
             if (success === "ok") {
                 $('#draggableDialog').fadeOut();
                 displayStatusMessage("ok", "link copied")
+                $('#centeredDialogContainer').fadeOut();
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKC",
@@ -65,14 +69,14 @@ function perfomCopyLink(linkId) {
 // showMoveLinkDialog(pLinkId, pFolderId, pImgSrc)
 function showMoveLinkDialog(linkId, folderId, imgSrc) {
     showDirTreeDialog(imgSrc, 1);
-    $('#oggleDialogTitle').html("Move Link");
+    $('#centeredDialogTitle').html("Move Link");
     $('#linkManipulateClick').html(
         "<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\"," + folderId + ")'>Move</div>");
 }
 
 function showArchiveLinkDialog(linkId, folderId, imgSrc) {
     showDirTreeDialog(imgSrc, 3);
-    $('#oggleDialogTitle').html("Archive Image");
+    $('#centeredDialogTitle').html("Archive Image");
     $('#linkManipulateClick').html(
     "<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\"," + folderId + ")'>Archive</div>");
 }
@@ -88,7 +92,7 @@ function moveFile(request, linkId, folderId) {
                 dragableDialogClose();
                 getAlbumImages(folderId);
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pDirTreeId);
-
+                $('#centeredDialogContainer').fadeOut();
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: request,
@@ -110,11 +114,13 @@ function moveFile(request, linkId, folderId) {
 
 function attemptRemoveLink(linkId, folderId, imgSrc) {
     // 1. if just a link delete it and you're done.
+    $('#imagePageLoadingGif').show();
     $.ajax({
         type: "DELETE",
         url: settingsArray.ApiServer + "api/Links/RemoveLink?linkId=" + linkId + "&folderId=" + folderId,
         success: function (success) {
             if (success === "single link" || success === "home folder Link") {
+                $('#imagePageLoadingGif').hide();
                 showConfirmDeteteImageDialog(linkId, imgSrc, success);
             }
             else {
@@ -130,13 +136,16 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                         PageId: folderId,
                         Activity: linkId
                     });
+                    $('#imagePageLoadingGif').hide();
                 }
                 else {
+                    $('#imagePageLoadingGif').hide();
                     logError("BUG", folderId, success, "attemptRemoveLink");
                 }
             }
         },
         error: function (xhr) {
+            $('#imagePageLoadingGif').hide();
             if (!checkFor404("attemptRemoveLink")) {
                 logError("XHR", folderId, getXHRErrorDetails(jqXHR), "attemptRemoveLink");
             }
@@ -147,8 +156,8 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
 function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
     //showDirTreeDialog(imgSrc, 1);
     if (errMsg === "single link") {
-        $('#oggleDialogTitle').html("Delete Image");
-        $('#draggableDialogContents').html(
+        $('#centeredDialogTitle').html("Delete Image");
+        $('#centeredDialogContents').html(
             "    <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
             "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked' />  duplicate</div>\n" +
             "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons' />  bad link</div>\n" +
@@ -156,8 +165,8 @@ function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
             "    <div class='roundendButton' onclick='performDeleteImage(" + linkId + ")'>ok</div>\n");
     }
     if (errMsg === "home folder Link") {
-        $('#oggleDialogTitle').html("Remove Home Folder Link");
-        $('#draggableDialogContents').html("<div class='oggleDialogWindow'>\n" +
+        $('#centeredDialogTitle').html("Remove Home Folder Link");
+        $('#centeredDialogContents').html("<div class='oggleDialogWindow'>\n" +
             "    <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
             "    <div>Are you sure you want to remove the home folder Link</div>\n" +
             "    <div class='roundendButton' onclick='performRemoveHomeFolderLink(" + linkId + ")'>confirm</div>\n" +
@@ -179,7 +188,7 @@ function performDeleteImage(linkId) {
                     if (viewerShowing)
                         slide("next");
                     getAlbumImages(folderid);
-                    logActivity({
+                    logDataActivity({
                         PageId: albumFolderId,
                         PageName: currentAlbumJSfolderName,
                         Activity: "link removed " + selectedImageLinkId
@@ -203,8 +212,8 @@ function performRemoveHomeFolderLink() {
 
 function showRenameFolderDialog(folderId, folderName) {
     showLinkDialog();
-    $('#oggleDialogTitle').html("Rename Folder: " + folderName);
-    //$('#draggableDialogContents').html(
+    $('#centeredDialogTitle').html("Rename Folder: " + folderName);
+    //$('#centeredDialogContents').html(
     //    "<div><span>folder to rename</span>" + folderName + "</div>\n" +
     //    "<div><span>new name</span><input id='txtReName' class='roundedInput' /></div>\n" +
     //    "<div class='roundendButton' onclick='performRenameFolder()'>Rename Folder</div>\n" +
@@ -276,6 +285,7 @@ function nonFtpMoveCopy() {
 
                 displayStatusMessage("ok", "link " + MoveCopyImageModel.Mode + "ed to " + $('#dirTreeResults').html());
                 //alert("changeLogModel id: " + MoveCopyImageModel.SourceFolderId + " mode: " + MoveCopyImageModel.Mode + "  name: " + $('#dirTreeResults').html());
+
                 var activityDesc;
                 if (MoveCopyImageModel.Mode === "Copy")
                     activityDesc = "link copied from " + MoveCopyImageModel.SourceFolderId + " to: " + MoveCopyImageModel.DestinationFolderId;
@@ -283,11 +293,7 @@ function nonFtpMoveCopy() {
                     activityDesc = "link moved from " + MoveCopyImageModel.SourceFolderId + " to: " + MoveCopyImageModel.DestinationFolderId;
                 if (MoveCopyImageModel.Mode === "Archive")
                     activityDesc = "link Archived from " + MoveCopyImageModel.SourceFolderId + " to: " + MoveCopyImageModel.DestinationFolderId;
-                logActivity({
-                    PageId: MoveCopyImageModel.SourceFolderId,
-                    PageName: $('#dirTreeResults').html(),
-                    Activity: activityDesc
-                });
+
                 $('#moveCopyDialog').dialog("close");
                 if (successModel.ReturnValue === "0") {
                     var linkId = MoveCopyImageModel.Link.substr(MoveCopyImageModel.Link.lastIndexOf("_") + 1, 36);

@@ -1,21 +1,18 @@
 ﻿var imageComment = {};
 
 function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
-   
-    //alert("3imageCommentDialog. LinkId: " + linkId + " called From: " + calledFrom);
+    logEvent("SID", folderId, calledFrom, "LinkId: " + linkId);
 
-    $('#draggableDialogContents').html(imageCommentDialogHtml());
+    $('#centeredDialogContents').html(imageCommentDialogHtml());
 
     imageComment.VisitorId = getCookieValue("VisitorId");
     imageComment.ImageLinkId = linkId;
     imageComment.FolderId = folderId;
 
-    alert("calledFrom: " + calledFrom);
-
     $('#commentDialogImage').attr("src", imgSrc);
     $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
     //if(calledFrom==="")
-    $('#oggleDialogTitle').html("Write a fantasy about this image");
+    $('#centeredDialogTitle').html("Write a fantasy about this image");
 
     $('#imageCommentEditor').summernote({
         height: 200,
@@ -33,12 +30,6 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
     if (typeof pause === 'function')
         pause();
 
-    //loadComment();
-
-    //FCC	Fantasy comment
-    //SID	show Image Comment Dialog
-    //CMX	Show Model Info Dialog
-    reportEvent("SID", calledFrom, "LinkId: " + linkId, folderId);
     $("#draggableDialog").fadeIn();
 
     //innocent young girl with an enormous set of knockers.She doesn't mind showing them, but it's like she's doing you a favor.

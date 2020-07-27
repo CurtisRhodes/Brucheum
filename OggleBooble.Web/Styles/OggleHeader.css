@@ -116,18 +116,10 @@
     border-bottom: var(--oggleHeaderBoarderBottom);
 }
 
-.customMessageContainer {
-    position: relative;
-    top: 250px;
-    display: none;
-}
-
 .oggleDialogContainer {
-    display: none;
     position: absolute;
-    z-index: 36;
+    z-index: 20;
     display: none;
-    resize: both;
     /* 
     min-width: 400px;
     box-sizing: unset;

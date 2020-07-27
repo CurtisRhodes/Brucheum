@@ -117,7 +117,7 @@ function clearSearch() {
 }
 
 function jumpToSelected(selectedFolderId) {
-    reportThenPerformEvent('SRC', currentFolderId, "", selectedFolderId);
+    rtpe('SRC', currentFolderId, "", selectedFolderId);
     //window.open("/album.html?folder=" + selectedFolderId, "_blank");
     clearSearch();
 }

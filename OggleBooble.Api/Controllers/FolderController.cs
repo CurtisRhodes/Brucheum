@@ -179,7 +179,7 @@ namespace OggleBooble.Api.Controllers
     public class FolderDetailController : ApiController
     {
         [HttpGet]
-        [Route("api/Folder/GetQuickFolderInfo")]
+        [Route("api/FolderDetail/GetQuickFolderInfo")]
         public FolderInfoModel GetQuickFolderInfo(int folderId)
         {
             var folderInfo = new FolderInfoModel();
@@ -205,7 +205,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Folder/GetFullFolderInfo")]
+        [Route("api/FolderDetail/GetFullFolderInfo")]
         public FolderDetailModel GetFullFolderInfo(int folderId)
         {
             var folderDetailModel = new FolderDetailModel();

@@ -2,12 +2,17 @@
     deepFileCount = 0, deepFolderCount = 0;
 
 function loadAlbum(folderId) {
+    if (isNullorUndefined(folderId)) {
+        logError("BUG", 999, "folderId not found", "loadAlbum");
+        return;
+    }
+    apFolderId = folderId;
+
     apVisitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(apVisitorId)) {
         apVisitorId = "stillOkUnknown";
     }
     settingsImgRepo = settingsArray.ImageRepo;
-    apFolderId = folderId;
     getAlbumImages(folderId);
     getAlbumPageInfo(folderId)
 }
@@ -257,11 +262,13 @@ function setBreadCrumbs(breadCrumbModel) {
                     "<a class='inactiveBreadCrumb' " +
                     "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbModel[i].FolderId + ")' " +
                     "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
-                    "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" + breadCrumbModel[i].FolderId + ",\"bc click\")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                    "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" +
+                    breadCrumbModel[i].FolderId + ",\"bc click\")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
             }
             else {
                 $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
-                    "href='javascript:rtpe(\"BCC\"," + apFolderId + ",44," + breadCrumbModel[i].FolderId + ")'>" +
+                    // rtpe(eventCode, calledFrom, eventDetail, pageId)
+                    "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" + breadCrumbModel[i].FolderName + "\"," + breadCrumbModel[i].FolderId + ")'>" +
                     breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
             }
         }
@@ -323,34 +330,14 @@ $(window).resize(function () {
 });
 
 function galleryImageError(linkId, imgSrc) {
-    try {
-        alert("subDirImg Error PageId: " + apFolderId + ",\nDirectoryName: " + apFolderRoot + ",\nimgSrc: " + imgSrc);
-
-        $('#' + linkId).attr('src', "Images/redballon.png");
-        logDataActivity({
-            VisitorId: apVisitorId,
-            ActivityCode: "IEG",
-            PageId: apFolderId,
-            Activity: imgSrc
-        });
-    } catch (e) {
-        logError("CAT", apFolderId, e, "galleryImageError");
-    }
+    $('#' + linkId).attr('src', "Images/redballon.png");
+    logError("AIE", apFolderId, "image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
+    //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
 
 function subFolderImgError(imgSrc) {
-    try {
-        alert("subDirImg Error. apFolderId: " + apFolderId + ",\nDirectoryName: " + apFolderRoot + ",\nimgSrc: " + imgSrc);
-
-        logDataActivity({
-            VisitorId: apVisitorId,
-            ActivityCode: "IMS",
-            PageId: apFolderId,
-            Activity: imgSrc
-        });
-    } catch (e) {
-        logError("CAT", apFolderId, e, "subFolderImgError");
-    }
+    logError("FIE", apFolderId, "image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album subFolderImgError");
+    //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
 
 function launchDeepSlideShow()

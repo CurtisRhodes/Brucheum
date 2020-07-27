@@ -333,11 +333,10 @@ function closeViewer(calledFrom) {
             closeMethod = calledFrom;
         }
         if (spSessionCount < 2) {
-            logEvent("SVC", pageId, "Single Image Viewed. closeMethod: " + closeMethod);
-            //logActivity("SVC", pageId)
+            logEvent("SVC", pageId, "calledFrom", "Single Image Viewed. closeMethod: " + closeMethod);
         }
         else {
-            logEvent("SVC", pageId, "Images Viewed: " + spSessionCount + " closed: " + closeMethod);
+            logEvent("SVC", pageId, "calledFrom", "Images Viewed: " + spSessionCount + " closed: " + closeMethod);
         }
         resizeImageContainer();
         //if (spSessionCount > 20) {

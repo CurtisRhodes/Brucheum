@@ -77,15 +77,8 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
 }
 
 function latestGalleryImageError(folderId, thisItemSrc) {    
-    //alert("latestGalleryImageError: " + folderId);
-    //alert("latestGallery src: " + $('#lt' + folderId).attr('src'));
     $('#lt' + folderId).attr('src', "Images/redballon.png");
-    logDataActivity({
-        VisitorId: getCookieValue("VisitorId"),
-        ActivityCode: "IME",
-        PageId: folderId,
-        Activity: thisItemSrc
-    });
+    logError("LIE", folderId, "image not found thisItemSrc: " + thisItemSrc, "Index latestGalleryImageError");
 }
 
 function launchPromoMessages() {

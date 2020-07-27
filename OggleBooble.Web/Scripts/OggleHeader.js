@@ -10,12 +10,14 @@ function setOggleHeader(folderId, subdomain) {
     $('#oggleHeader').addClass('boobsHeader');
     $('#divSiteLogo').attr("src", "/Images/redballon.png");
     $('#bannerTitle').html("OggleBooble");
+    //changeFavoriteIcon("loading");
+    //changeFavoriteIcon("redBallon");
 
-    $('#draggableDialog').resizable({
+    $('#centeredDialogContents').resizable({
         resize: function (event, ui) {
             //$('#headerMessage').html("onresize: " + event.pageX + " note-editable.height: " + $('.note-editable').height());
             //$('#headerMessage').html("dH: " + $('#draggableDialog').height() + " sH: " + $('.note-editable').height());
-            $('.note-editable').height($('#draggableDialog').height() - 360);
+            $('.note-editable').height($('#centeredDialogContents').height() - 360);
         }
     });
 
@@ -174,12 +176,20 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4271)'>retro</a>,\n";
             break;
         }
+        case "index": {
+            headerMenu = "index";
+            break;
+        }
+        case "dashboard": {
+            headerMenu = "dashboard";
+            break;
+        }
         case "loading": {
             headerMenu = "loading";
             break;
         }
         default:
-            logError("SWT", apFolderId, "subdomain: " + subdomain, "setHeaderMenu");
+            logError("SWT", hdrFolderId, "subdomain: " + subdomain, "setHeaderMenu");
             headerMenu = subdomain;
 
     }
@@ -192,23 +202,16 @@ function setLoginSection(subdomain) {
         return;
     }
     $('#divLoginArea').show();
-    var isLoggedIn = getCookieValue("IsLoggedIn");
-
-    if (isNullorUndefined(isLoggedIn)) {
-        setCookieValue("IsLoggedIn", "false");
-        isLoggedIn = "false";
-        console.log("isNullorUndefined(isLoggedIn)");
-    }
-
-    if (isLoggedIn === "true") {
-        //$('#headerMessage').html("logged in");
-        $('#spnUserName').html(getCookieValue("UserName"));
-        $('#optionLoggedIn').show();
-        $('#optionNotLoggedIn').hide();
-    }
-    else {
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').show();
+    $('#optionLoggedIn').hide();
+    $('#optionNotLoggedIn').show();
+    let userName = getCookieValue("UserName");
+    if (!isNullorUndefined(userName)) {
+        let isLoggedIn = getCookieValue("IsLoggedIn");
+        if (!isNullorUndefined(isLoggedIn)) {
+            $('#spnUserName').html(userName);
+            $('#optionLoggedIn').show();
+            $('#optionNotLoggedIn').hide();
+        }
     }
 }
 
@@ -363,15 +366,15 @@ function showResizeMessage(lasttopRowOption, lastBottomRowOption) {
 
 function draggableDialogEnterDragMode() {
     //$('#headerMessage').html("entering drag mode");
-    $('#draggableDialog').draggable({ disabled: false });
-    $('#draggableDialog').draggable();
+    $('#centeredDialogContents').draggable({ disabled: false });
+    $('#centeredDialogContents').draggable();
 }
 function draggableDialogCancelDragMode() {
     //$('#headerMessage').html("end drag");
-    $('#draggableDialog').draggable({ disabled: true });
+    $('#centeredDialogContents').draggable({ disabled: true });
 }
 function dragableDialogClose() {
-    $('#draggableDialog').fadeOut();
+    $('#centeredDialogContents').fadeOut();
     if (typeof resume === 'function')
         resume();
 }
@@ -450,9 +453,6 @@ function headerHtml(folderId, subdomain) {
         "       </div>\n" +
         "   </div>\n" +
 
-        // rtpe(eventCode, calledFrom, eventDetail, pageId)
-        //case "RNK":  // Ranker Banner Clicked    window.location.href = "/Ranker.html?subdomain=" + eventDetail;
-
         "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
 
         "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
@@ -463,14 +463,13 @@ function headerHtml(folderId, subdomain) {
 
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
-        "      <div id='draggableDialog' class='oggleDialogContainer'>\n" +
-        "           <div id='draggableDialogHeader'class='oggleDialogHeader'" +
-        "                   onmousedown='draggableDialogEnterDragMode()' onmouseup='draggableDialogCancelDragMode()'>" +
-        "               <div id='oggleDialogTitle' class='oggleDialogTitle'></div>" +
+        "      <div id='centeredDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
+        "           <div id='centeredDialogHeader'class='oggleDialogHeader' onmousedown='draggableDialogEnterDragMode()' onmouseup='draggableDialogCancelDragMode()'>" +
+        "               <div id='centeredDialogTitle' class='oggleDialogTitle'></div>" +
         "               <div id='draggableDialogCloseButton' class='oggleDialogCloseButton'>" +
         "               <img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
         "           </div>\n" +
-        "           <div id='draggableDialogContents' class='oggleDialogContents'></div>\n" +
+        "           <div id='centeredDialogContents' class='oggleDialogContents'></div>\n" +
         "      </div>\n" +
         "   </div>\n" +
         "</div>\n" +
@@ -479,9 +478,7 @@ function headerHtml(folderId, subdomain) {
         "   <img class='dirTreeImage'/>\n" +
         "</div>\n" +
 
-        "<div id='modalContainer' class='modalVail'>\n" +
-        "   <div id='modalContent' class='modalContentStyle'></div>\n" +
-        "</div>\n" +
+        "<div id='vailShell' class='modalVail'></div>\n" +
 
         "<div id='contextMenuContainer' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>" +
         "   <div id='contextMenuContent'></div>\n" +
