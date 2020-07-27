@@ -29,8 +29,8 @@ namespace OggleBooble.Api.Controllers
         [Route("api/Image/GetLimitedImageDetail")]
         public ImageInfoModel GetLimitedImageDetail(int folderId, string linkId)
         {
-            var timer = new System.Diagnostics.Stopwatch();
-            timer.Start();
+            //var timer = new System.Diagnostics.Stopwatch();
+            //timer.Start();
             var imageInfo = new ImageInfoModel();
             try
             {
@@ -38,11 +38,12 @@ namespace OggleBooble.Api.Controllers
                 {
                     var dbPageFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     imageInfo.FolderName = dbPageFolder.FolderName;
+                    imageInfo.FolderType = dbPageFolder.FolderType;
+
                     var dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).FirstOrDefault();
                     if (dbImageFile == null) { imageInfo.Success = "no image link found"; return imageInfo; }
                     if (dbImageFile.FolderId != folderId)
                     {
-                        imageInfo.IsOutsideFolderLink = true;
                         var dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
                         if (dbModelFolder == null) { imageInfo.Success = "no image link folderId file found"; return imageInfo; }
                         imageInfo.ModelFolderId = dbModelFolder.Id;
@@ -52,8 +53,8 @@ namespace OggleBooble.Api.Controllers
                 imageInfo.Success = "ok";
             }
             catch (Exception ex) { imageInfo.Success = Helpers.ErrorDetails(ex); }
-            timer.Stop();
-            System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
+            //timer.Stop();
+            //System.Diagnostics.Debug.WriteLine("GetImageLinks took: " + timer.Elapsed);
             return imageInfo;
         }
 
@@ -79,15 +80,10 @@ namespace OggleBooble.Api.Controllers
 
                     if (dbImageFile.FolderId != folderId)
                     {
-                        // we have a non archive link                        
-                        imageInfo.IsOutsideFolderLink = true;
                         var dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
                         if (dbModelFolder == null) { imageInfo.Success = "no image link folderId file found"; return imageInfo; }
                         imageInfo.ModelFolderId = dbModelFolder.Id;
                         imageInfo.ModelFolderName = dbModelFolder.FolderName;
-                        //imageInfo.FileName = dbModelFolder.FolderPath + "/" + dbImageFile.FileName;
-                        //imageInfo.RootFolder = dbModelFolder.RootFolder;
-                        //imageInfo.FolderPath = dbModelFolder.FolderPath;
                     }
 
                     imageInfo.FolderName = dbPageFolder.FolderName;

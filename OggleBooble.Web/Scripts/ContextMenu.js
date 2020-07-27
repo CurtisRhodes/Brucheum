@@ -3,22 +3,15 @@
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     event.preventDefault();
     window.event.returnValue = false;
-    //EVT	CXM	Context Menu Opened
-    //logEvent(eventCode, pageId, calledFrom, eventDetails)
     logEvent("CXM", folderId, menuType, folderName);
-
     pLinkId = linkId;
     pImgSrc = imgSrc;
     pFolderId = folderId;
     pFolderName = folderName;
     pMenuType = menuType;
-    if (typeof pause === 'function')
-        pause();
+    if (typeof pause === 'function') pause();
 
-    //"<div id='slideshowCtxMenuContainer' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>" +
-    //"   <div id='slideshowContextMenuContent'></div>\n" +
-    //"</div>\n" +
-    if (pMenuType === "Slideshow") {
+    if (menuType === "Slideshow") {
         $('#slideshowCtxMenuContainer').css("top", pos.y);
         $('#slideshowCtxMenuContainer').css("left", pos.x);
         $('#slideshowCtxMenuContainer').fadeIn();
@@ -31,9 +24,6 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
         $('#contextMenuContent').html(contextMenuHtml())
     }
     $('.ogContextMenu').draggable();
-
-    //$('#ctxSeeMore').html("menu type: " + pMenuType);
-    $('#ctxModelName').html("<img class='ctxloadingGif' src='Images/loader.gif'/>");
 
     if (pMenuType === "Folder")
         ctxGetFolderDetails();
@@ -53,33 +43,52 @@ $('.contextMenuContent').mouseover(function (e) {
 });
 
 function getLimitedImageDetails() {
-    $('#ctxNewTab').hide();
+    //$('#ctxNewTab').hide();
     $('#ctxShowLinks').hide();
     $('#ctxDownLoad').hide();
-    let start = Date.now();
+    $('#ctxModelName').html("<img class='ctxloadingGif' src='Images/loader.gif'/>");
+    //let start = Date.now();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Image/GetLimitedImageDetail?folderId=" + pFolderId + "&linkId=" + pLinkId,
         success: function (imageInfo) {
-            var delta = Date.now() - start;
-            var minutes = Math.floor(delta / 60000);
-            var seconds = (delta % 60000 / 1000).toFixed(0);
-            console.log("getLimitedImageDetails: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+
+            //var delta = Date.now() - start;
+            //var minutes = Math.floor(delta / 60000);
+            //var seconds = (delta % 60000 / 1000).toFixed(0);
+            //console.log("getLimitedImageDetails: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
 
             if (imageInfo.Success === "ok") {
-                if (imageInfo.OutsideFolderLink) {
-                    $('#ctxModelName').html(imageInfo.ModelFolderName);
-                    pModelFolderId = imageInfo.ModelFolderId;
-                    $('#ctxSeeMore').show();
+
+                $('#ctxModelName').html(imageInfo.FolderType);
+
+                let folderType = imageInfo.FolderType;
+                switch (folderType) {
+                    case "singleModel":
+                    case "singleChild":
+                    case "singleParent":
+                        $('#ctxModelName').html(imageInfo.ModelFolderName);
+                        $('#ctxSeeMore').hide();
+                        break;
+                    case "multiModel":
+                    case "multiFolder":
+                        $('#ctxSeeMore').hide();
+                        $('#ctxModelName').html("unidenitified");
+                        if ((imageInfo.ModelFolderId !== 0) && (pFolderId != imageInfo.ModelFolderId)) {
+                            $('#ctxModelName').html(imageInfo.ModelFolderName);
+                            $('#ctxSeeMore').show();
+                        }
+                        break;
+                    default:
+                        logError("SWT", apFolderId, "folder tpe: " + albumImageInfo.FolderType, "getAlbumImages");
                 }
-                else {
-                    $('#ctxModelName').html(imageInfo.FolderName);
-                    $('#ctxSeeMore').hide();
+                switch (pMenuType) {
+                    case "Slideshow":
+                    case "Carousel":
+                    case "Image":
+                    case "Folder":
+                    default:
                 }
-                //pModelFolderName = imageInfo.ModelFolderName;
-                //$('#headerMessage').html("menu type: " + pMenuType);
-                //$('#aboveImageContainerMessageArea').html("FolderType: " + pFolderType);
-                //let outsideFolderLink = (Number(pModelFolderId) !== Number(pFolderId));
 
                 getFullImageDetails();
             }
@@ -88,10 +97,7 @@ function getLimitedImageDetails() {
             }
         },
         error: function (xhr) {
-            var errorMessage = getXHRErrorDetails(xhr);
-            if (!checkFor404("getLimitedImageDetails")) {
-                logError("XHR", pFolderId, getXHRErrorDetails(jqXHR), "getLimitedImageDetails");
-            }
+            if (!checkFor404("getLimitedImageDetails")) logError("XHR", pFolderId, getXHRErrorDetails(jqXHR), "getLimitedImageDetails");
         }
     });
 }
@@ -103,33 +109,18 @@ function getFullImageDetails() {
         url: settingsArray.ApiServer + "api/Image/getFullImageDetails?folderId=" + pFolderId + "&linkId=" + pLinkId,
         success: function (imageInfo) {
             if (imageInfo.Success === "ok") {
-                var delta = Date.now() - start;
-                var minutes = Math.floor(delta / 60000);
-                var seconds = (delta % 60000 / 1000).toFixed(0);
-                console.log("getFullImageDetails: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
 
-                pFolderType = imageInfo.FolderType;
+                //pFolderType = imageInfo.FolderType;
                 // $('#aboveImageContainerMessageArea').html("pFolderType: " + pFolderType + "  IsOutsideFolderLink: " + imageInfo.IsOutsideFolderLink);
-
-                switch (imageInfo.FolderType) {
-                    case "singleModelGallery":
-                    case "singleModelFolderCollection":
-                    case "singleModelCollection":
-                        //$('#modelInfoDetails').show();
-                        break;
-                    case "assorterdFolderCollection":
-                    case "assorterdImagesCollection":
-                    case "assorterdImagesGallery":
-                        $('#modelInfoDetails').hide();
-                        if (!imageInfo.IsOutsideFolderLink) {
-                            $('#ctxModelName').html("unknown model");
-                            $('#ctxSeeMore').hide();
-                        }
-                        break;
-                }
-
-                //"<div id='ctxInfo' onclick='contextMenuAction(\"imageInfo\")'>Show Image info</div>\n" +
-                //    "   <div id='imageInfoContainer' class='contextMenuInnerContainer'></div>\n" +
+                //switch (imageInfo.FolderType) {
+                //    case "singleModelGallery":
+                //    case "singleModelFolderCollection":
+                //    case "singleModelCollection":
+                //    case "assorterdFolderCollection":
+                //    case "assorterdImagesCollection":
+                //    case "assorterdImagesGallery":
+                //        break;
+                //}
 
                 $('#imageInfoContainer').html(
                     "<div><span class='ctxInfolabel'>file name</span><span id='imageInfoFileName' class='ctxInfoValue'></span></div>\n" +
@@ -156,6 +147,11 @@ function getFullImageDetails() {
                         $('#linkInfoContainer').append("<div><a href='/album.html?folder=" + idx + "' target='_blank'>" + obj + "</a></div>");
                     });
                 }
+
+                var delta = Date.now() - start;
+                var minutes = Math.floor(delta / 60000);
+                var seconds = (delta % 60000 / 1000).toFixed(0);
+                console.log("getFullImageDetails: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
             }
             else {
                 logError("BUG", pFolderId, imageInfo.Success, "getFullImageDetails");

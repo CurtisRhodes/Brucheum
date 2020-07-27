@@ -11,8 +11,8 @@ function showFeedbackDialog(pageId) {
         height: 300,
         toolbar: [['codeview']]
     });
-    $('#draggableDialog').css("top", $('.oggleHeader').height() + 20);
-    $("#draggableDialog").fadeIn();
+    $('#centeredDialog').css("top", $('.oggleHeader').height() + 20);
+    $("#centeredDialog").fadeIn();
 
     getUserEmail();
 }
@@ -60,7 +60,7 @@ function saveFeedback() {
                 sendEmailToYourself("FeedBack", $('#feedbackDialogSummerNoteTextArea').summernote('code'));
 
                 //console.log("is email working?");
-                $("#draggableDialog").fadeOut();
+                $("#centeredDialogContainer").fadeOut();
                 showMyAlert("Thank you for your feedback");
             }
             else {

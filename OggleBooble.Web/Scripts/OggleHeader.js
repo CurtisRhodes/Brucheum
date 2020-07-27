@@ -15,8 +15,6 @@ function setOggleHeader(folderId, subdomain) {
 
     $('#centeredDialogContents').resizable({
         resize: function (event, ui) {
-            //$('#headerMessage').html("onresize: " + event.pageX + " note-editable.height: " + $('.note-editable').height());
-            //$('#headerMessage').html("dH: " + $('#draggableDialog').height() + " sH: " + $('.note-editable').height());
             $('.note-editable').height($('#centeredDialogContents').height() - 360);
         }
     });
@@ -364,19 +362,18 @@ function showResizeMessage(lasttopRowOption, lastBottomRowOption) {
     }
 }
 
-function draggableDialogEnterDragMode() {
+function centeredDialogEnterDragMode() {
     //$('#headerMessage').html("entering drag mode");
     $('#centeredDialogContents').draggable({ disabled: false });
     $('#centeredDialogContents').draggable();
 }
-function draggableDialogCancelDragMode() {
+function centeredDialogCancelDragMode() {
     //$('#headerMessage').html("end drag");
     $('#centeredDialogContents').draggable({ disabled: true });
 }
 function dragableDialogClose() {
-    $('#centeredDialogContents').fadeOut();
-    if (typeof resume === 'function')
-        resume();
+    $('#centeredDialogContainer').fadeOut();
+    if (typeof resume === 'function') resume();
 }
 
 function addBannerButton(bannerType, rankerType) {
@@ -464,9 +461,9 @@ function headerHtml(folderId, subdomain) {
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "      <div id='centeredDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
-        "           <div id='centeredDialogHeader'class='oggleDialogHeader' onmousedown='draggableDialogEnterDragMode()' onmouseup='draggableDialogCancelDragMode()'>" +
+        "           <div id='centeredDialogHeader'class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
         "               <div id='centeredDialogTitle' class='oggleDialogTitle'></div>" +
-        "               <div id='draggableDialogCloseButton' class='oggleDialogCloseButton'>" +
+        "               <div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
         "               <img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
         "           </div>\n" +
         "           <div id='centeredDialogContents' class='oggleDialogContents'></div>\n" +

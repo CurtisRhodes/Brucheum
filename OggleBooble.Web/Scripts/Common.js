@@ -474,25 +474,20 @@ function showCustomMessage(blogId, allowClickAnywhere) {
         url: settingsArray.ApiServer + "api/OggleBlog/?blogId=" + blogId,
         success: function (entry) {
             if (entry.Success === "ok") {
-                $('#draggableDialog').css("top", 200);
-
-                $('#draggableDialog').draggable();
+                $('#centeredDialogContainer').css("top", 200);
                 $('#centeredDialogTitle').html(entry.CommentTitle);
                 $('#centeredDialogContents').html(entry.CommentText);
 
-                //var x = window.innerWidth * .5 - $('#draggableDialog').width() * .5;              
-                //var x = (window.innerWidth - $('#draggableDialog').width()) * .5;              
-                //alert("window.innerWidth: " + window.innerWidth + " Dialog.width: " + $('#draggableDialog').width() + "  Left: " + x);
-                $('#draggableDialog').css("left", (window.innerWidth - $('#draggableDialog').width()) * .5);
-                $('#draggableDialog').show();
+                $('#centeredDialogContainer').css("left", (window.innerWidth - $('#centeredDialog').width()) * .5);
+                $('#centeredDialogContainer').show();
 
                 if (allowClickAnywhere) {
-                    $('#draggableDialogCloseButton').prop('title', 'click anywhere on dialog to close');
+                    $('#centeredDialogCloseButton').prop('title', 'click anywhere on dialog to close');
                     $('#centeredDialogContents').click(function () { dragableDialogClose(); });
                 }
                 else {
                     $('#centeredDialogContents').prop("onclick", null).off("click");
-                    $('#draggableDialogCloseButton').removeProp('title');
+                    $('#centeredDialogCloseButton').removeProp('title');
                 }
             }
             else {

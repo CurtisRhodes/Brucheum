@@ -13,7 +13,8 @@ namespace OggleBooble.Api.Models
             SubFolders = new List<SubFolderCountModel>();
         }
         public int FolderId { get; set; }
-        public string RootFolder { get; set; }
+        //public string RootFolder { get; set; }
+        //public string FolderType { get; set; }
         public int FileCount { get; set; }
         public int TtlFileCount { get; set; }
         public int TtlFolderCount { get; set; }
@@ -135,7 +136,6 @@ namespace OggleBooble.Api.Models
         public long? Size { get; set; }
         public string LastModified { get; set; }
         public string FolderType { get; set; }
-        public bool IsOutsideFolderLink { get; set; }
         public string Success { get; set; }
     }
 

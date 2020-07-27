@@ -11,10 +11,10 @@ function showLoginDialog() {
     $('#centeredDialogTitle').html("Log In to OggleBooble");
  +   $('#centeredDialogContents').html(loginDialogHtml());
 
-    // $("#draggableDialog").css("width", "400");
+    // $("#centeredDialogContainer").css("width", "400");
 
     $("#vailShell").fadeIn();
-    $("#draggableDialog").fadeIn();
+    $("#centeredDialogContainer").fadeIn();
     $('.validationError').hide();
 
     if (typeof pause === 'function')

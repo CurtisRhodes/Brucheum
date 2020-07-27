@@ -24,8 +24,8 @@ function showDirTreeDialog(imgSrc, treeStart) {
 
     loadDirectoryTree(treeStart, "linkManipulateDirTree", "linkDialogdirTreeClick");
     //var winH = $(window).height();
-    //var dlgH = $('#draggableDialog').height();
-    //$('#draggableDialog').css("top", (winH - dlgH) / 2);
+    //var dlgH = $('#centeredDialog').height();
+    //$('#centeredDialog').css("top", (winH - dlgH) / 2);
     $('#centeredDialogContainer').fadeIn();
 }
 
@@ -38,14 +38,16 @@ function showCopyLinkDialog(linkId, folderId, imgSrc) {
 }
 
 function perfomCopyLink(linkId) {
+    $('#imagePageLoadingGif').show();
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pDirTreeId,
         success: function (success) {
+            $('#imagePageLoadingGif').hide();
+            $('#centeredDialog').fadeOut();
+            $('#centeredDialogContainer').fadeOut();
             if (success === "ok") {
-                $('#draggableDialog').fadeOut();
                 displayStatusMessage("ok", "link copied")
-                $('#centeredDialogContainer').fadeOut();
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKC",
@@ -82,10 +84,12 @@ function showArchiveLinkDialog(linkId, folderId, imgSrc) {
 }
 
 function moveFile(request, linkId, folderId) {
+    $('#imagePageLoadingGif').show();
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "api/Links/MoveLink?linkId=" + linkId + "&destinationFolderId=" + pDirTreeId + "&request=" + request,
         success: function (success) {
+            $('#imagePageLoadingGif').hide();
             if (success === "ok") {
                 if (viewerShowing)
                     slide("next");
@@ -172,7 +176,7 @@ function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
             "    <div class='roundendButton' onclick='performRemoveHomeFolderLink(" + linkId + ")'>confirm</div>\n" +
             "</div>\n");
     }
-    $('#draggableDialog').fadeIn();
+    $('#centeredDialog').fadeIn();
 }
 
 function performDeleteImage(linkId) {
@@ -218,7 +222,7 @@ function showRenameFolderDialog(folderId, folderName) {
     //    "<div><span>new name</span><input id='txtReName' class='roundedInput' /></div>\n" +
     //    "<div class='roundendButton' onclick='performRenameFolder()'>Rename Folder</div>\n" +
     //    "<div id='renameFolderReport' class='repairReport'></div>\n");
-    $("#draggableDialog").fadeIn();
+    $("#centeredDialog").fadeIn();
 
 
 }
@@ -228,7 +232,7 @@ function performRenameFolder(folderId, newFolderName) {
         url: settingsArray.ApiServer + "api/Links/RenameFolder?folderId=" + folderId + "&newFolderName=" + newFolderName,
         success: function (success) {
             if (success === "ok") {
-                $('#draggableDialog').fadeOut();
+                $('#centeredDialog').fadeOut();
 
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),

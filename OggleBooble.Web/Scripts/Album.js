@@ -1,4 +1,4 @@
-﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId, apFolderType,
+﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId,// apFolderType,
     deepFileCount = 0, deepFolderCount = 0;
 
 function loadAlbum(folderId) {
@@ -23,12 +23,11 @@ function getAlbumImages() {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" +apFolderId,
+            url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + apFolderId,
             success: function (albumImageInfo) {
                 $('#indexPageLoadingGif').hide();
                 if (albumImageInfo.Success === "ok") {
                     apFolderRoot = albumImageInfo.RootFolder;
-
                     switch (albumImageInfo.FolderType) {
                         case "singleParent":
                         case "multiFolder":
@@ -109,14 +108,12 @@ function getAlbumImages() {
 
                     getDeepFolderCounts(albumImageInfo, 0);
                 }
-
-
-                else logError("BUG", apFolderId, success, "getAlbumImages");
+                else logError("BUG", apFolderId, albumImageInfo.Success, "getAlbumImages");
             },
             error: function (jqXHR) {
                 $('#indexPageLoadingGif').hide();
                 if (!checkFor404("getAlbumImages")) {
-                    logError("XHR",apFolderId, getXHRErrorDetails(jqXHR), "getAlbumImages");
+                    logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "getAlbumImages");
                 }
             }
         });
@@ -130,23 +127,23 @@ function getAlbumPageInfo(folderId) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + apVisitorId + "&folderId=" +apFolderId,
-        success: function (imageLinksModel) {
-            if (imageLinksModel.Success === "ok") {
+        success: function (albumInfo) {
+            if (albumInfo.Success === "ok") {
 
-                apFolderName = imageLinksModel.FolderName;
-                apFolderType = imageLinksModel.FolderType;
+                apFolderName = albumInfo.FolderName;
+                //apFolderType = albumInfo.FolderType;
 
-                if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + imageLinksModel.FolderType);
+                if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + albumInfo.FolderType);
 
                 document.title = apFolderName + " : OggleBooble";
-                $('#seoPageName').html(imageLinksModel.FolderName);
+                $('#seoPageName').html(albumInfo.FolderName);
 
-                if ((imageLinksModel.TrackBackItems.length > 0)) {
+                if ((albumInfo.TrackBackItems.length > 0)) {
                     $('#trackbackContainer').css("display", "inline-block");
-                    $.each(imageLinksModel.TrackBackItems, function (idx, obj) {
+                    $.each(albumInfo.TrackBackItems, function (idx, obj) {
                         switch (obj.SiteCode) {
                             case "FRE":
-                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">" + imageLinksModel.FolderName + " Free Porn</a></div>");
+                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">" + albumInfo.FolderName + " Free Porn</a></div>");
                                 break;
                             case "BAB":
                                 $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Babepedia</a></div>");
@@ -156,20 +153,21 @@ function getAlbumPageInfo(folderId) {
                         }
                     });
                 }
-                setBadges(imageLinksModel.ExternalLinks);
+                setBadges(albumInfo.ExternalLinks);
 
-                //$('#headerMessage').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
-                $('#footerPageHits').html("page hits: " + imageLinksModel.PageHits.toLocaleString());
                 logPageHit(folderId);
                 $('#folderCommentButton').fadeIn();
-                setOggleHeader(folderId, imageLinksModel.RootFolder);
-                setOggleFooter(folderId, imageLinksModel.RootFolder);
-                $('#footerFolderType').html("folder type: " + imageLinksModel.FolderType);
-                setBreadCrumbs(imageLinksModel.BreadCrumbs);
+                setOggleHeader(folderId, albumInfo.RootFolder);
+                setOggleFooter(folderId, albumInfo.RootFolder);
+                //$('#headerMessage').html("page hits: " + albumInfo.PageHits.toLocaleString());
+                $('#footerPageHits').html("page hits: " + albumInfo.PageHits.toLocaleString());
+                $('#footerFolderType').html("folder type: " + albumInfo.FolderType);
+
+                setBreadCrumbs(albumInfo.BreadCrumbs);
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
             }
-            else logError("BUG",apFolderId, imageLinksModel.Success, "getAlbumPageInfo");
+            else logError("BUG",apFolderId, albumInfo.Success, "getAlbumPageInfo");
         },
         error: function (jqXHR) {
             if (!checkFor404("getAlbumPageInfo")) logError("XHR",apFolderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");

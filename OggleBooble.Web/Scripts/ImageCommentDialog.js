@@ -10,7 +10,7 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
     imageComment.FolderId = folderId;
 
     $('#commentDialogImage').attr("src", imgSrc);
-    $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
+    $('#centeredDialogContainer').css("top", $('.oggleHeader').height() - 50);
     //if(calledFrom==="")
     $('#centeredDialogTitle').html("Write a fantasy about this image");
 
@@ -30,7 +30,7 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
     if (typeof pause === 'function')
         pause();
 
-    $("#draggableDialog").fadeIn();
+    $("#centeredDialogContainer").fadeIn();
 
     //innocent young girl with an enormous set of knockers.She doesn't mind showing them, but it's like she's doing you a favor.
 }

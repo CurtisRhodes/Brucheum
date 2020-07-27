@@ -66,7 +66,9 @@ namespace OggleBooble.Api.Controllers
                 }
                 albumImageInfo.Success = "ok";
             }
-            catch (Exception ex) { albumImageInfo.Success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) {
+                albumImageInfo.Success = Helpers.ErrorDetails(ex); 
+            }
             return albumImageInfo;
         }
 
@@ -153,11 +155,23 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    var dbFolderDetail = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if (dbFolderDetail != null)
+                        if (dbFolderDetail.TotalChildFiles != 0)
+                        {
+                            subFolderModel.TtlFileCount = dbFolderDetail.TotalChildFiles;
+                            subFolderModel.TtlFolderCount = dbFolderDetail.SubFolderCount;
+                            subFolderModel.Success = "ok";
+                            return subFolderModel;
+                        }
                     //subFolderModel.RootFolder = db.VirtualFolders.Where(f => f.Parent == folderId).First().RootFolder;
                     subFolderModel.TtlFileCount = subFolderModel.FileCount = db.CategoryImageLinks.Where(l => l .ImageCategoryId == folderId).Count();
+                    
+                    
                     subFolderModel.TtlFolderCount = db.VirtualFolders.Where(f => f.Parent == folderId).Count();
                     AddChildSubFolders(folderId, subFolderModel, db);
                     SaveFileCounts(subFolderModel, db);
+                    AddChildSubFolders(folderId, subFolderModel, db);
                     subFolderModel.Success = "ok";
                 }
             }
@@ -186,22 +200,23 @@ namespace OggleBooble.Api.Controllers
         private void SaveFileCounts(SubFolderCountModel parentFolderModel, OggleBoobleMySqlContext db) {
             foreach (SubFolderCountModel subFolder in parentFolderModel.SubFolders)
             {  // drop down to last node
-                SaveFileCounts(subFolder, db);
                 subFolder.TtlFileCount = subFolder.FileCount;
                 subFolder.TtlFolderCount = subFolder.SubFolders.Count();
                 parentFolderModel.TtlFolderCount += subFolder.SubFolders.Count();
                 parentFolderModel.TtlFileCount += subFolder.FileCount;
-
             }
-            var folderDetail = db.FolderDetails.Where(d => d.FolderId == parentFolderModel.FolderId).FirstOrDefault();
-            if (folderDetail == null)
-                folderDetail = new FolderDetail() { FolderId = parentFolderModel.FolderId };
-
-            folderDetail.TotalChildFiles = parentFolderModel.TtlFileCount;
-            folderDetail.SubFolderCount = parentFolderModel.TtlFolderCount;
-            db.SaveChanges();
+            if (parentFolderModel.TtlFileCount > 0)
+            {
+                var folderDetail = db.FolderDetails.Where(d => d.FolderId == parentFolderModel.FolderId).FirstOrDefault();
+                if (folderDetail != null)
+                {
+                    //folderDetail = new FolderDetail() { FolderId = parentFolderModel.FolderId };
+                    folderDetail.TotalChildFiles = parentFolderModel.TtlFileCount;
+                    folderDetail.SubFolderCount = parentFolderModel.TtlFolderCount;
+                    db.SaveChanges();
+                }
+            }
         }
-
 
         [HttpPut]
         [Route("api/GalleryPage/UpdateFolderImage")]

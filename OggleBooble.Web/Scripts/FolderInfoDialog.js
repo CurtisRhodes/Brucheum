@@ -13,17 +13,8 @@ function showFolderInfoDialog(folderId, calledFrom) {
     // added a new field called FolderType
 
     if (typeof pause === 'function') pause();
-
-    logEvent("SMD", folderId, calledFrom, eventDetails)
+    //alert("showFolderInfoDialog(folderId: " + folderId + ", calledFrom: " + calledFrom + ")");
     showBasicFolderInfoDialog();
-
-    //$('#draggableDialog').css("min-width", 680);
-
-    $('#draggableDialog').mouseleave(function () {
-        if ($('#btnCatDlgEdit').html() === "Edit") {
-            dragableDialogClose();
-        }
-    });
 
     try {
         $.ajax({
@@ -39,7 +30,6 @@ function showFolderInfoDialog(folderId, calledFrom) {
                     //$('#aboveImageContainerMessageArea').html("aFolderType: " + rtnFolderInfo.FolderType);
                     //multiModel	488
                     //multiFolder	394
-
                     switch (folderInfo.FolderType) {
                         case "singleModel":
                         case "singleParent":
@@ -49,6 +39,9 @@ function showFolderInfoDialog(folderId, calledFrom) {
                             showFullModelDetailsDialog(folderInfo.Parent);
                             break;
                     }
+
+                    logEvent("SMD", folderId, calledFrom, "folder type: " + folderInfo.FolderType);
+
                 }
                 else logError("BUG", folderId, folderInfo.Success, "getFolderDetails");
             },
@@ -80,19 +73,25 @@ function showBasicFolderInfoDialog() {
         "</div>\n");
 
     //$(".note-editable").css('font-size', '16px');
-    //$('#draggableDialog').css("top", 111);
-    //$('#draggableDialog').css("left", -350);
+    //$('#centeredDialogContainer').css("top", 111);
+    //$('#centeredDialogContainer').css("left", -350);
     $('#summernoteContainer').summernote({
         toolbar: "none",
-        height: "300px"
+    //    min-height: "200px"
     });
     $('#summernoteContainer').summernote('disable');
     $(".note-editable").css('font-size', '16px');
-    $("#draggableDialog").fadeIn();
+    $(".note-editable").css('min-height', '186px');
     if (!isLoggedIn()) {
         ///showMyAlert("you must be logged in to edit folder comments");
         $("#btnCatDlgEdit").hide();
     }
+    $('#centeredDialogContainer').mouseleave(function () {
+        if ($('#btnCatDlgEdit').html() === "Edit") {
+            dragableDialogClose();
+        }
+    });
+    $('#centeredDialogContainer').draggable().fadeIn();
 }
 
 function showFullModelDetailsDialog(folderId) {
@@ -539,11 +538,11 @@ function showUnknownModelDialog(pLinkId, imgSrc) {
         "   </div>" +
         "</div>").show();
 
-    $('#draggableDialog').css("top", $('.oggleHeader').height() - 50);
-    $('#draggableDialog').css("left", -350);
-    $('#draggableDialog').css("min-width", 470);
-    $('#draggableDialog').fadeIn();
-    $('#draggableDialog').mouseleave(function () { dragableDialogClose(); });
+    $('#centeredDialogContainer').css("top", $('.oggleHeader').height() - 50);
+    $('#centeredDialogContainer').css("left", -350);
+    $('#centeredDialogContainer').css("min-width", 470);
+    $('#centeredDialogContainer').fadeIn();
+    $('#centeredDialogContainer').mouseleave(function () { dragableDialogClose(); });
 }
 function addHrefToExternalLinks() {
     alert("addHrefToExternalLinks: " + $('#txtLinkHref').val());
