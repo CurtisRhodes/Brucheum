@@ -200,14 +200,14 @@ namespace OggleBooble.Api.Controllers
                         //if ((dbImageFile == null) || (dbImageFile.FolderId == folderId))
                         {
                             repairReport.OrphanImageFileRecs.Add(existingImageFile.Id);
-                            db.ImageFiles.Remove(existingImageFile);
+                            //db.ImageFiles.Remove(existingImageFile);
 
                             var dbBadLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == existingImageFile.Id).ToList();
-                            db.CategoryImageLinks.RemoveRange(dbBadLinks);
+                            //db.CategoryImageLinks.RemoveRange(dbBadLinks);
 
-                            db.SaveChanges();
+                            //db.SaveChanges();
                             repairReport.DirNotFound++;
-                            repairReport.LinksRemoved += dbBadLinks.Count();
+                            //repairReport.LinksRemoved += dbBadLinks.Count();
                         }
                     }
                     repairReport.ImageFilesProcessed++;

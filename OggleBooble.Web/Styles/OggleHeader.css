@@ -262,6 +262,7 @@
 
 .inactiveBreadCrumb {
     margin-left: 20px;
+    color: #000;
     font-weight: bold;
     cursor: pointer;
     float: left;
