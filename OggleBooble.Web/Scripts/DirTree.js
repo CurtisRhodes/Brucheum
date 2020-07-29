@@ -3,46 +3,70 @@
 //var tab = 0;
 //var totalPics = 0;
 let totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
+let dataLoadTime;
 
 function loadDirectoryTree(startNode, container, clickEvent) {
+    dataLoadTime = (Date.now() - start) / 1000;
     totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
     settingsImgRepo = settingsArray.ImageRepo;
     var start = Date.now();
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("loading directory tree");
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
-        success: function (dirTreeModel) {
-            if (dirTreeModel.Success === "ok") {
-                var dataLoadTime = (Date.now() - start) / 1000;
 
-                //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
-                $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
-                start = Date.now();
-                buildDirTreeRecurr(dirTreeModel, clickEvent);
-                strdirTree += "<div class='dirTreeImageContainer floatingDirTreeImage'><img class='dirTreeImage' /></div>";
+    if (!isNullorUndefined(window.localStorage["dirTree"]) && (startNode === 1)) {
 
-                $('#' + container + '').html(strdirTree);
-
-                var htmlBuildTime = (Date.now() - start) / 1000;
-                $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
-                console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
-
-                if (typeof onDirTreeComplete === 'function') {
-                    onDirTreeComplete();
-                }
-            }
-            else {
-                logError("BUG", startNode, dirTreeModel.Success, "loadDirectoryTree");
-            }
-        },
-        error: function (jqXHR) {
-            $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("loadDirectoryTree"))
-                logError("XHR", startNode, getXHRErrorDetails(jqXHR), "loadDirectoryTree");
+        console.log("dir tree cache bypass");
+        //alert("window.localStorage['dirTree']: " + window.localStorage["dirTree"]);
+        $('#' + container + '').html(window.localStorage["dirTree"]);
+        if (typeof onDirTreeComplete === 'function') {
+            onDirTreeComplete();
         }
-    });
+
+        //let jTestDirTree = JSON.parse(window.localStorage["dirTree"]);
+        //$('#' + container + '').html(jTestDirTree);
+
+    }
+    else {
+        // refreshDirTree(startNode);
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
+
+            success: function (dirTreeModel) {
+                if (dirTreeModel.Success === "ok") {
+                    var dataLoadTime = (Date.now() - start) / 1000;
+
+                    //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
+                    $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
+                    start = Date.now();
+                    buildDirTreeRecurr(dirTreeModel, clickEvent);
+                    strdirTree += "<div class='dirTreeImageContainer floatingDirTreeImage'><img class='dirTreeImage' /></div>";
+
+                    if (startNode === 1) {
+                        //alert("strdirTree: " + strdirTree);
+                        window.localStorage["dirTree"] = strdirTree;
+                    }
+                    $('#' + container + '').html(strdirTree);
+
+                    var htmlBuildTime = (Date.now() - start) / 1000;
+                    $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
+                    console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
+
+                    if (typeof onDirTreeComplete === 'function') {
+                        onDirTreeComplete();
+                    }
+                }
+                else {
+                    logError("BUG", startNode, dirTreeModel.Success, "loadDirectoryTree");
+                }
+            },
+            error: function (jqXHR) {
+                $('#dashBoardLoadingGif').hide();
+                if (!checkFor404("loadDirectoryTree"))
+                    logError("XHR", startNode, getXHRErrorDetails(jqXHR), "loadDirectoryTree");
+            }
+        });
+    }
 }
 
 function buildDirTreeRecurr(parentNode, clickEvent) {
@@ -90,11 +114,12 @@ function buildDirTreeRecurr(parentNode, clickEvent) {
             let randomId = create_UUID();
             strdirTree +=
                 "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
-                + "<span id='S" + randomId + "' onclick=toggleDirTree('" + randomId + "') >[" + expandMode + "] </span>"
+                + "<span id='S" + randomId + "' onclick='toggleDirTree(\"" + randomId + "\") >[" + expandMode + "] </span>"
                 + "<div id='" + randomId + "aq' class='treeLabelDiv' "
                 + "onclick='" + clickEvent + "(\"" + thisNode.DanniPath + "\",\"" + vwDir.Id + "\")' "
                 + "oncontextmenu=showDirTreeContextMenu('" + vwDir.Id + "') "
-                + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') onmouseout=$('.dirTreeImageContainer').hide() >"
+                //+ "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') >"
+                + "onmouseover='showFolderImage(\"" + encodeURI(folderImage) + "\")' onmouseout='$(\".dirTreeImageContainer\").hide()' >"
                 + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
                 + txtFileCount + "</span></div>" +
                 "<div class='" + expandClass + "' id=" + randomId + ">";
@@ -150,8 +175,70 @@ function showDirTreeContextMenu(folderId) {
     $('#dashboardContextMenu').fadeIn();
 }
 
-
 function showFolderStats(folderId) {
     alert("showFolderStats\nFolderId: " + folderId);
 
 }
+
+function refreshDirTree(startNode) {
+    alert("refreshDirTree");
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
+        success: function (dirTreeModel) {
+            if (dirTreeModel.Success === "ok") {
+
+                //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
+                $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
+                start = Date.now();
+                buildDirTreeRecurr(dirTreeModel, clickEvent);
+                strdirTree += "<div class='dirTreeImageContainer floatingDirTreeImage'><img class='dirTreeImage' /></div>";
+
+                if (startNode === 1) {
+                    //alert("strdirTree: " + strdirTree);
+                    window.localStorage["dirTree"] = strdirTree;
+                }
+                $('#' + container + '').html(strdirTree);
+
+                var htmlBuildTime = (Date.now() - start) / 1000;
+                $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
+                console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
+
+                if (typeof onDirTreeComplete === 'function') {
+                    onDirTreeComplete();
+                }
+            }
+            else {
+                logError("BUG", startNode, dirTreeModel.Success, "loadDirectoryTree");
+            }
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            if (!checkFor404("loadDirectoryTree"))
+                logError("XHR", startNode, getXHRErrorDetails(jqXHR), "loadDirectoryTree");
+        }
+    });
+}
+
+function dirTreeSuccess() {
+    alert("dirTreeSuccess");
+    $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
+    start = Date.now();
+
+
+    if (startNode === 1) {
+        //alert("strdirTree: " + strdirTree);
+        window.localStorage["dirTree"] = strdirTree;
+    }
+    $('#' + container + '').html(strdirTree);
+
+    var htmlBuildTime = (Date.now() - start) / 1000;
+    $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
+    console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
+
+    if (typeof onDirTreeComplete === 'function') {
+        onDirTreeComplete();
+    }
+}
+
+

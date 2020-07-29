@@ -4,15 +4,11 @@ let dshBrdSubDirTreeId;
 function dashboardStartup() {
     changeFavoriteIcon("redBallon");
     $('#indexMiddleColumn').html(dashboardHtml());
-
+    showDefaultWorkArea();
     $('#dashboardDialog').draggable();
     $('#dashboardDialog').css("top", 250);
     $('#dashboardDialog').css("left", 450);
-
     $('#dashboardContainer').show();
-    $('#defaultSection').show();
-    $('#sortToolSection').hide();
-    $('#moveManySection').hide();
     $('.txtLinkPath').val('');
     setOggleHeader(3910, "dashboard");
     setOggleFooter(3910, "dashboard");
@@ -28,9 +24,8 @@ function dashboardStartup() {
     resizeDashboardPage();
 }
 
-function dashboardHtml() {
-    return "<img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
-        "<div id='dashboardContainer' class='fullScreenContainer'>\n" +
+function showDefaultWorkArea() {
+    $('#dashboardContainer').html(
         "   <div id='defaultSection' class='fullScreenSection flexbox'>\n" +
         "      <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
         "          <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
@@ -39,52 +34,22 @@ function dashboardHtml() {
         "          <div id='workAreaContainer' class='workAreaContainer'></div>\n" +
         "      </div>\n" +
         "      <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
-        "   </div>\n" +
-        "   <div id='sortToolSection' class='fullScreenSection'>" +
-        "       <div id='sortToolHeader' class='workAreaHeader'>\n" +
-        "           <div id='sortTableHeader' class='workAreaHeaderTitle'></div>\n" +
-        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png'" +
-        "           onclick='$(\"#sortToolSection\").hide();$(\"#defaultSection\").show()'></div>\n" +
-        "       </div>\n" +
-        "       <div>\n" +
-        "           <div id='sortToolImageArea'  class='workAreaDisplayContainer'></div>\n" +
-        "           <div id='sortToolFooter' class='workareaFooter'>\n" +
-        "               <button onclick='updateSortOrder()'>ReSort</button>\n" +
-        "           </div>\n" +
-        "       </div>\n" +
-        "   </div>\n" +
-        "   <div id='moveManySection' class='fullScreenSection'>" +
-        "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
-        "           <div class='workAreaHeaderArea'>\n" +
-        "               <div class='workAreaHeaderTitle'>Move Many</div>\n" +
-        "               <div class='workAreaHeaderDetailRow'>\n" +
-        "                   <div class='moveManyHeaderLabel'>source</div><input id='txtMoveManySource' class='roundedInput' style='width:65%' readonly='readonly' /><br />" +
-        "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly' />" +
-        "                   <img class='dialogDirTreeButton' src='/Images/caretDown.png' " +
-        "                      onclick='$(\"#mmDirTreeContainer\").toggle()'/>\n" +
-        "                   <div class='floatRight'><input type='checkbox' id='mmCkSelectAll' onclick='mmSelectAll()'>  Select All</div>\n" +
-        "               </div>\n" +
-        "           </div>\n" +
-        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='closeMoveManySection()'></div>\n" +
-        "       </div>\n" +
-        "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
-        "       <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
-        "       <div id='moveManyFooter' class='workareaFooter'>\n" +
-        "           <button onclick='moveCheckedImages()'>Move</button>\n" +
-        "           <div id='moveManyCountContainer' class='floatRight'></div>" +
-        "       </div>\n" +
-        "   </div>\n" +
-        "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
-        "</div>\n" +
-        "<div id='dashboardDialog' class='oggleDialogContainer displayHidden'>\n" +
-        "   <div class='oggleDialogHeader'>" +
-        "       <div id='dashboardDialogTitle' class='oggleDialogTitle'></div>" +
-        "       <div class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#dashboardDialog\").hide()'/></div>\n" +
-        "   </div>\n" +
-        "   <div id='dashboardDialogContents' class='oggleDialogContents'>\n" +
-        "   </div>\n" +
-        "</div>\n";
+        "   </div>\n");
 }
+
+function dashboardHtml() {
+    return "<img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
+        "   <div id='dashboardContainer' class='fullScreenContainer'>\n" +
+        "      <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
+        "   </div>\n" +
+        "   <div id='dashboardDialog' class='oggleDialogContainer displayHidden'>\n" +
+        "      <div class='oggleDialogHeader'>" +
+        "          <div id='dashboardDialogTitle' class='oggleDialogTitle'></div>" +
+        "          <div class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#dashboardDialog\").hide()'/></div>\n" +
+        "      </div>\n" +
+        "      <div id='dashboardDialogContents' class='oggleDialogContents'></div>\n" +
+        "   </div>\n";
+}  
 
 function resizeDashboardPage() {
     resizePage();
@@ -184,8 +149,8 @@ function loadHeaderTabs() {
     if (isInRole("ADM")) {
         //alert("isInRole Oggle admin")
         $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Admin');\">Admin</a>");
-        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Reports');\">Reports</a>");
-        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Roles');\">Reports</a>");
+        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:showReportsSection();\">Reports</a>");
+        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Roles');\">Manage Roles</a>");
         $('#headerMessage').html("Oggle admin");
         $('.adminLevelOption').show();
     }
@@ -565,8 +530,28 @@ function showMoveManyTool() {
         alert("select a folder");
         return;
     }
-    $('#defaultSection').hide();
-    $('#moveManySection').show();
+    $('#dashboardContainer').html(
+        "   <div id='moveManySection' class='fullScreenSection'>" +
+        "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
+        "           <div class='workAreaHeaderArea'>\n" +
+        "               <div class='workAreaHeaderTitle'>Move Many</div>\n" +
+        "               <div class='workAreaHeaderDetailRow'>\n" +
+        "                   <div class='moveManyHeaderLabel'>source</div><input id='txtMoveManySource' class='roundedInput' style='width:65%' readonly='readonly' /><br />" +
+        "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly' />" +
+        "                   <img class='dialogDirTreeButton' src='/Images/caretDown.png' " +
+        "                      onclick='$(\"#mmDirTreeContainer\").toggle()'/>\n" +
+        "                   <div class='floatRight'><input type='checkbox' id='mmCkSelectAll' onclick='mmSelectAll()'>  Select All</div>\n" +
+        "               </div>\n" +
+        "           </div>\n" +
+        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='showDefaultWorkArea()'></div>\n" +
+        "       </div>\n" +
+        "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
+        "       <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
+        "       <div id='moveManyFooter' class='workareaFooter'>\n" +
+        "           <button onclick='moveCheckedImages()'>Move</button>\n" +
+        "           <div id='moveManyCountContainer' class='floatRight'></div>" +
+        "       </div>\n" +
+        "   </div>\n");
     $('#txtMoveManySource').val(pSelectedTreeFolderPath);
     // $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
 
@@ -608,7 +593,6 @@ function mmSelectAll() {
     else
         $('.loadManyCheckbox').prop("checked", false);
 }
-
 function moveCheckedImages() {
     if (dshBrdSubDirTreeId == 0) {
         alert("select a destination");
@@ -651,10 +635,6 @@ function moveCheckedImages() {
     }
     console.log("leaving move many");
 }
-function closeMoveManySection() {
-    $('#moveManySection').hide();
-    $('#defaultSection').show();
-}
 
 // SORT TOOL
 function showSortTool() {
@@ -662,11 +642,21 @@ function showSortTool() {
         alert("select a folder");
         return;
     }
-    $('#defaultSection').hide();
-    $('#sortToolSection').show();
-
+    $('#dashboardContainer').html(
+        "   <div id='sortToolSection' class='fullScreenSection'>" +
+        "       <div id='sortToolHeader' class='workAreaHeader'>\n" +
+        "           <div id='sortTableHeader' class='workAreaHeaderTitle'></div>\n" +
+        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png'" +
+        "           onclick='showDefaultWorkArea()'></div>\n" +
+        "       </div>\n" +
+        "       <div>\n" +
+        "           <div id='sortToolImageArea'  class='workAreaDisplayContainer'></div>\n" +
+        "           <div id='sortToolFooter' class='workareaFooter'>\n" +
+        "               <button onclick='updateSortOrder()'>ReSort</button>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "   </div>\n");
     //$('#sortToolImageArea').css("height", $('#sortToolSection').height() - $('#sortToolHeader').height());  // - $('#sortToolFooter').height())
-
     $('#sortToolImageArea').css("height", $('#dashboardContainer').height() - $('#sortToolHeader').height());
     loadSortImages();
 }

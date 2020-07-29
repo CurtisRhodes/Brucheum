@@ -1,20 +1,63 @@
 ﻿// REPORTS
-var activeReport = "";
+let activeReport = "";
 
-function showPerfMetrics() {
-    $('.workAreaContainer').hide();
-    $('#divHitMetrics').fadeIn();
-    metricsMatrixReport();
+function showReportsSection() {
+    $('#dashboardContainer').html(
+        "   <div id='reportsSection' class='fullScreenSection flexbox'>\n" +
+        "       <div id='reportsLeftColumn' class='dashboardContainerColumn'>\n" +
+        "           <div id='dashboardLeftMenu' class='oggleVerticalMenu'>" +
+        "                <div class='clickable' onclick='runMetricsMatrixReport()'>Performance Metrics</div>\n" +
+        "                <div class='clickable' onclick='runPageHitReport()'>Page Hit Report</div>\n" +
+        "                <div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>\n" +
+        "                <div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>\n" +
+        "                <div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>\n" +
+        "                <div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
+        "                <div class='clickable' onclick='errorLogReport()'>Error Log</div>\n" +
+        "         </div>\n" +
+        "      </div>\n" +
+        "       <div id='reportsMiddleColumn' class='dashboardContainerColumn'>\n" +
+        "           <div class='workAreaContainer'>" +
+        "               <div id='reportsHeader' class='workAreaHeader'>\n" +
+        "                   <div class='workAreaHeaderArea'>\n" +
+        "                       <div id='reportsHeaderTitle' class='workAreaHeaderTitle'>Reports</div>\n" +
+        "                       <div class='reportsHeaderDetailRow'></div>\n" +
+        "                   </div>\n" +
+        "                   <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='showDefaultWorkArea()'></div>\n" +
+        "               </div>\n" +
+        "               <div id='reportsContentArea' class='workAreaDisplayContainer'></div>\n" +
+        "               <div id='reportsFooter' class='workareaFooter'></div>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        //"       <div id='dashboardRightColumn' class='dashboardContainerColumn'>RIGHT</div>\n" +
+        "   </div>\n");
+    $('#reportsMiddleColumn').css("width", $('#dashboardContainer').width() - $('#reportsLeftColumn').width());
+    $('.dashboardContainerColumn').show();
+    
 }
-function metricsMatrixReport() {
+
+function runMetricsMatrixReport() {
     if (connectionVerified) {
-        //$('#dashBoardLoadingGif').show();
+        $('#dashBoardLoadingGif').show();
+        $('#reportsHeaderTitle').html("Performance Metrics" + todayString());
+        
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Report/MetricMatrixReport",
             success: function (metricsMatrixResults) {
                 $('#dashBoardLoadingGif').hide();
                 if (metricsMatrixResults.Success === "ok") {
+
+                    $('#reportsContentArea').html(
+                        "<div id='doubleRowReport'>" +
+                        "   <div id='mmTopRow'>" +
+                        "       <div id='dailyActivityReportContainer' class='stdReportTable'></div>" +
+                        "   </div>" +
+                        "   <div id='mmBotRow' class='flexbox'>" +
+                        "       <div id='mostPopularPagesContainer' class='subreportContainer'></div>" +
+                        "       <div id='mostImageHitsContainer' class='subreportContainer'></div>" +
+                        "   </div>" +
+                        "</div>");
+
                     var kludge = "<table><tr><th></th><th>Today</th><th>Yesterday</th><th>-2 Days</th><th>-3 Days</th><th>-4 Days</th>" +
                         "<th>-5 Days</th><th>-6 Days</th></tr>";
                     $.each(metricsMatrixResults.MatrixRows, function (idx, row) {
@@ -28,12 +71,14 @@ function metricsMatrixReport() {
                         kludge += "<td>" + row.Six_Days_ago.toLocaleString() + "</td>";
                     });
                     kludge += "</tr></table>";
-                    $("#pageHitReport").html(kludge);
-                    $("#refreshPageHits").show();
+                    $("#dailyActivityReportContainer").html(kludge);
+                    $("#reportsFooter").html("<button onclick='moveCheckedImages()'>Move</button>\n");
+
+
                     $("#btnPopPages").show();
                     $("#btnMostImageHits").show();
 
-                    mostVisitedPagesPages();
+                    runMostVisitedPages();
                     runMostImageHits();
                 }
                 else {
@@ -51,20 +96,22 @@ function metricsMatrixReport() {
         alert("unable to run report");
 }
 
-function mostVisitedPages() {
+function runMostVisitedPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Report/MostVisitedPagesReport",
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
+
+            $("#mostPopularPagesContainer").css("height", $("#reportsSection").height() - $("#dailyActivityReportContainer").height());
+
             if (popularPages.Success === "ok") {
-                $("#mostPopularPagesReport").html("<table><tr colspan=2><th>Most Popular Pages " + todayString() + "</th></tr>");
+                $("#mostPopularPagesContainer").html("<table><tr colspan=2><th>Most Popular Pages " + todayString() + "</th></tr>");
                 $.each(popularPages.Items, function (idx, obj) {
-                    $("#mostPopularPagesReport").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" + obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
+                    $("#mostPopularPagesContainer").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" + obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
                 });
-                $("#mostPopularPagesReport").append("</table>");
-                $('#popPagesContainer').css("display", "inline-block");
+                $("#mostPopularPagesContainer").append("</table>");
             }
             else {
                 logError("BUG", 3910, popularPages.Success, "mostVisitedPages");
@@ -77,21 +124,23 @@ function mostVisitedPages() {
         }
     });
 }
+
 function runMostImageHits() {
     $('#dashBoardLoadingGif').show();
-    $("#mostImageHitsReport").html("");
+    $("#mostImageHitsContainer").html("");
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/Report/MostImageHitsReport",
         success: function (mostImageHits) {
             $('#dashBoardLoadingGif').hide();
+            $("#mostImageHitsContainer").css("height", $("#reportsSection").height() - $("#dailyActivityReportContainer").height());
             if (mostImageHits.Success === "ok") {
-                $("#mostImageHitsReport").html("<table><tr colspan=2><th>Most Image Hits" + todayString() + "</th></tr>");
+                $("#mostImageHitsContainer").html("<table><tr colspan=2><th>Most Image Hits" + todayString() + "</th></tr>");
                 $.each(mostImageHits.Items, function (idx, obj) {
-                    $("#mostImageHitsReport").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
+                    $("#mostImageHitsContainer").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
                         obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
                 });
-                $("#mostImageHitsReport").append("</table>");
+                $("#mostImageHitsContainer").append("</table>");
             }
             else {
                 logError("BUG", 3910, mostImageHits.Success, "runMostImageHits");
@@ -245,14 +294,11 @@ function runMostActiveUsersReport() {
     });
 }
 
-function pageHitReport() {
-    activeReport = "PageHitReport";
-    var html = stdReportHeader("Page Hit Report for " + todayString());
-}
 function runPageHitReport() {
-    $("#divStandardReportArea").removeClass("tightReport");
-    $("#divStandardReportArea").html("");
-    $("#divStandardReportCount").html("");
+    activeReport = "PageHitReport";
+    $('#reportsHeaderTitle').html("Page Hit Report for : " + todayString());
+    $("#reportsContentArea").html("");
+    $("#reportsFooter").html("");
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
@@ -285,8 +331,9 @@ function runPageHitReport() {
                     kludge += "<td>" + obj.HitTime + "</td></tr>";
                 });
                 kludge += "</table>";
-                $("#divStandardReportArea").html(kludge);
-                $("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+                $("#reportsContentArea").html(kludge);
+
+                $("#reportsFooter").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
                 logError("BUG", 3910, success, "pageHitsReport");
