@@ -1,4 +1,4 @@
-﻿var objFolderInfo = {};
+﻿var objFolderInfo = {}, allowDialogClose = true;
 
 function showFolderInfoDialog(folderId, calledFrom) {
     // 11:11 2/25/19
@@ -33,10 +33,10 @@ function showFolderInfoDialog(folderId, calledFrom) {
                     switch (folderInfo.FolderType) {
                         case "singleModel":
                         case "singleParent":
-                            showFullModelDetailsDialog(folderId);
+                            showFullModelDetails(folderId);
                             break;
                         case "singleChild":
-                            showFullModelDetailsDialog(folderInfo.Parent);
+                            showFullModelDetails(folderInfo.Parent);
                             break;
                     }
 
@@ -57,7 +57,6 @@ function showFolderInfoDialog(folderId, calledFrom) {
 }
 
 function showBasicFolderInfoDialog() {
-
     $("#centeredDialogTitle").html("loading");
     $("#centeredDialogContents").html(
         "<div>\n" +
@@ -87,14 +86,12 @@ function showBasicFolderInfoDialog() {
         $("#btnCatDlgEdit").hide();
     }
     $('#centeredDialogContainer').mouseleave(function () {
-        if ($('#btnCatDlgEdit').html() === "Edit") {
-            dragableDialogClose();
-        }
+        if (allowDialogClose) dragableDialogClose();
     });
     $('#centeredDialogContainer').draggable().fadeIn();
 }
 
-function showFullModelDetailsDialog(folderId) {
+function showFullModelDetails(folderId) {
     $('#imagePageLoadingGif').show();
     $("#modelInfoDetails").html(modelInfoDetailHtml());
     $('#readonlyPoserDetails').show();
@@ -194,9 +191,9 @@ function editFolderDialog() {
         saveFolderDialog();
         return;
     }
+    allowDialogClose = false;
     $('#editablePoserDetails').show();
     $('#readonlyPoserDetails').hide();
-
     $('#btnCatDlgEdit').html("Save");
     $('#summernoteContainer').summernote('enable');
     $('#summernoteContainer').summernote("destroy");
@@ -246,7 +243,8 @@ function saveFolderDialog() {
                 });
                 $('#editablePoserDetails').hide();
                 $('#readonlyPoserDetails').show();
-                setTimeout(function () { $('#btnCatDlgEdit').html("Edit") }, 400);
+                $('#btnCatDlgEdit').html("Edit");
+                allowDialogClose = true;
             }
             else {
                 logError("BUG", objFolderInfo.Id, success, "saveFolderDialog");
@@ -261,6 +259,7 @@ function saveFolderDialog() {
     });
 }
 function cancelEdit() {
+    allowDialogClose = true;
     $('#btnCatDlgEdit').html("Edit");
     $('#btnCatDlgCancel').hide();
     $('#editablePoserDetails').hide();
@@ -338,7 +337,7 @@ function updateFolderDetail() {
 // TRACKBACK DIALOG
 function showTrackbackDialog() {
     $('#btnCatDlgEdit').html("pause");
-
+    allowDialogClose = false;
     $("#trackBackDialog").html(
         "<div>\n" +
         "   <div id='bb'class='oggleDialogHeader'>" +
@@ -428,12 +427,8 @@ function tbAddEdit() {
 function tbDelete() { }
 
 ////////////////////////////////
-function IamThisModel() {
-    alert("IamThisModel clicked");
 
-}
-
-function createPosersIdentifiedFolder() {
+function xxcreatePosersIdentifiedFolder() {
     var defaultParentFolder = 917;
     if (validate()) {
         // step 1:  Create new Ftmp Folder
@@ -524,6 +519,15 @@ function oldModelInfoDialogHtml() {
     //"    <a id='modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Save</a>\n" +
     //"</div>\n"
 }
+
+function showIdentifyPoserDialog() {
+    $("#identifyPoserDialog").show();
+    $("#unknownPoserDialog").hide();
+    $("#btnPoserSave").show();
+    $("#btnPoserCancel").show();
+    allowDialogClose = false;
+}
+
 function showUnknownModelDialog(pLinkId, imgSrc) {
     $('#centeredDialogTitle').html("Unknown Poser");
     $('#centeredDialogContents').html(
@@ -531,11 +535,24 @@ function showUnknownModelDialog(pLinkId, imgSrc) {
         "   <div class='floatRight'>" +
         "          <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
         "   </div>" +
-        "   <div class='floatLeft'>" +
-        "       <div>If you you know who this is<br/>please <a class='dialogEditButton' href='javascript:IamThisModel()'>identify poser</a></div>\n" +
+
+        "   <div id='unknownPoserDialog' class='floatLeft'>" +
+        "       <div>If you you know who this is<br/>please <a class='dialogEditButton' href='javascript:showIdentifyPoserDialog()'>identify poser</a></div>\n" +
         "       <br/>" +
         "       <a class='dialogEditButton' href='javascript:IamThisModel()'>I am in this image</a>\n" +
         "   </div>" +
+
+        "   <div id='identifyPoserDialog' class='floatLeft displayHidden'>\n" +
+        "       <span>name</span><input id='txtPoserIdentifier class='roundedInput'/>\n" +
+        "       <span>comment</span>"+
+        "       <div class='modelInfoCommentArea'>\n" +
+        "          <textarea id='poserSummernoteContainer'></textarea>\n" +
+        "       </div>\n" +
+        "   </div>" +
+        "</div>" +
+        "<div id='poserDialogFooter' class='folderDialogFooter'>\n" +
+        "   <div id='btnPoserSave'   class='folderCategoryDialogButton' onclick='poserSave()'>save</div>\n" +
+        "   <div id='btnPoserCancel' class='folderCategoryDialogButton' onclick='dragableDialogClose()'>cancel</div>\n" +
         "</div>").show();
 
     $('#centeredDialogContainer').css("top", $('.oggleHeader').height() - 50);
@@ -543,7 +560,23 @@ function showUnknownModelDialog(pLinkId, imgSrc) {
     $('#centeredDialogContainer').css("min-width", 470);
     $('#centeredDialogContainer').fadeIn();
     $('#centeredDialogContainer').mouseleave(function () { dragableDialogClose(); });
+    $('#poserSummernoteContainer').summernote({
+        toolbar: [['codeview']],
+        height: "100"
+    });
+    $("#btnPoserSave").hide();
+    $("#btnPoserCancel").hide();
+    allowDialogClose = true;
 }
+function IamThisModel() {
+    alert("IamThisModel clicked");
+
+}
+function poserSave() {
+    sendEmailToYourself("poser identified !!!", "OH MY GOD");
+    showMyAlert("Thank you for your input\nYou have earned 1000 credits.");
+}
+
 function addHrefToExternalLinks() {
     alert("addHrefToExternalLinks: " + $('#txtLinkHref').val());
     $('#externalLinks').summernote('pasteHTML', "<a href=" + $('#txtLinkHref').val() + " target = '_blank'>" + $('#txtLinkLabel').val() + "</a><br/>");

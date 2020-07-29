@@ -11,7 +11,7 @@ function linkDialogdirTreeClick(path, id) {
 }
 
 function showDirTreeDialog(imgSrc, treeStart) {
-//    alert("showDirTreeDialog(imgSrc: " + imgSrc + ", treeStart: " + treeStart);
+    //alert("showDirTreeDialog(imgSrc: " + imgSrc + ", treeStart: " + treeStart);
     $('#centeredDialogContents').html(
         "   <div>" +
         "       <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +

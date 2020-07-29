@@ -9,8 +9,10 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     pFolderId = folderId;
     pFolderName = folderName;
     pMenuType = menuType;
-   
-    $('#aboveImageContainerMessageArea').html("pMenuType: " + pMenuType);
+
+    if (document.domain === 'localhost')
+        $('#aboveImageContainerMessageArea').html("pMenuType: " + pMenuType);
+
     if (menuType === "Slideshow") {
         $('#slideshowCtxMenuContainer').css("top", pos.y);
         $('#slideshowCtxMenuContainer').css("left", pos.x);
@@ -41,7 +43,7 @@ $('.contextMenuContent').mouseover(function (e) {
 });
 
 function getLimitedImageDetails() {
-    //$('#ctxNewTab').hide();
+    $('#ctxNewTab').hide();
     $('#ctxImageShowLinks').hide();
     $('#ctxDownLoad').hide();
     $('#ctxModelName').html("<img class='ctxloadingGif' src='Images/loader.gif'/>");
@@ -59,13 +61,25 @@ function getLimitedImageDetails() {
             if (imageInfo.Success === "ok") {
 
                 $('#ctxModelName').html(imageInfo.FolderType);
+                //if (pMenuType === "Folder")
+                switch (pMenuType) {
+                    case "Slideshow":
+                    case "Carousel":
+                        $('#ctxNewTab').show();
+                        break;
+                    case "Image":
+                        break;
+                    default:
+                        logError("SWT", apFolderId, "unhandled menu type: " + pMenuType, "getAlbumImages");
+                }
 
                 let folderType = imageInfo.FolderType;
                 switch (folderType) {
                     case "singleModel":
                     case "singleChild":
                     case "singleParent":
-                        $('#ctxModelName').html(imageInfo.ModelFolderName);
+                        $('#ctxModelName').html(imageInfo.FolderName);
+                        //$('#ctxModelName').html(imageInfo.ModelFolderName);
                         $('#ctxSeeMore').hide();
                         break;
                     case "multiModel":
@@ -78,7 +92,8 @@ function getLimitedImageDetails() {
                         }
                         break;
                     default:
-                        logError("SWT", apFolderId, "folder tpe: " + albumImageInfo.FolderType, "getAlbumImages");
+                        $('#ctxModelName').html("folder tpe: " + albumImageInfo.FolderType);
+                        logError("SWT", apFolderId, "folder type: " + albumImageInfo.FolderType, "getAlbumImages");
                 }
                 switch (pMenuType) {
                     case "Slideshow":
@@ -107,6 +122,7 @@ function getFullImageDetails() {
         url: settingsArray.ApiServer + "api/Image/getFullImageDetails?folderId=" + pFolderId + "&linkId=" + pLinkId,
         success: function (imageInfo) {
             if (imageInfo.Success === "ok") {
+                pModelFolderId = imageInfo.ModelFolderId;
 
                 //pFolderType = imageInfo.FolderType;
                 // $('#aboveImageContainerMessageArea').html("pFolderType: " + pFolderType + "  IsOutsideFolderLink: " + imageInfo.IsOutsideFolderLink);
@@ -119,7 +135,6 @@ function getFullImageDetails() {
                 //    case "assorterdImagesGallery":
                 //        break;
                 //}
-
 
                 $('#imageInfoFileName').html(imageInfo.FileName);
                 $('#imageInfoFolderPath').html(imageInfo.FolderPath);
@@ -161,17 +176,7 @@ function ctxGetFolderDetails() {
     $('#ctxNewTab').hide();
     $('#ctxImageShowLinks').hide();
     $('#ctxExplode').hide();
-    
-                    //"<div id='folderInfoContainer' class='contextMenuInnerContainer'>\n" +
-                    //"   <div><span class='ctxInfolabel'>file name</span><span id='folderInfoFileName' class='ctxInfoValue'></span></div>\n" +
-                    //"   <div><span class='ctxInfolabel'>folder id</span><span id='folderInfoId' class='ctxInfoValue'></span></div>\n" +
-                    //"   <div><span class='ctxInfolabel'>folder path</span><span id='folderInfoPath' class='ctxInfoValue'></span></div>\n" +
-                    //"   <div><span class='ctxInfolabel'>files</span><span id='folderInfoFileCount' class='ctxInfoValue'></span></div>\n" +
-                    //"   <div><span class='ctxInfolabel'>subfolders</span><span id='folderInfoSubDirsCount' class='ctxInfoValue'></span></div>\n" +
-                    //"   <div><span class='ctxInfolabel'>last modified</span><span id='folderInfoLastModified' class='ctxInfoValue'></span></div>\n" +
-                    //"</div>\n" +
 
-    //alert("pMenuType: " + pMenuType);
     //$.ajax({
     //    type: "GET",
     //    url: settingsArray.ApiServer + "api/CatFolder/GetFolderInfo?folderId=" + pFolderId,
@@ -210,7 +215,7 @@ function ctxGetFolderDetails() {
 function contextMenuAction(action) {
     switch (action) {
         case "showDialog": {
-            if ($('#ctxModelName').html() === "unknown model")
+            if ($('#ctxModelName').html() === "unidenitified")
                 showUnknownModelDialog(pLinkId, pImgSrc);
             else
                 showFolderInfoDialog(pModelFolderId, "img ctx");
@@ -254,7 +259,7 @@ function contextMenuAction(action) {
             showArchiveLinkDialog(pLinkId, pFolderId, pImgSrc);
             break;
         case "copy":
-            alert("contextMenuAction/copy (pLinkId: " + pLinkId + ", pFolderId: " + pFolderId + ", pImgSrc: " + pImgSrc);
+            //alert("contextMenuAction/copy (pLinkId: " + pLinkId + ", pFolderId: " + pFolderId + ", pImgSrc: " + pImgSrc);
             showCopyLinkDialog(pLinkId, pFolderId, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
@@ -308,7 +313,7 @@ function contextMenuHtml() {
         "   <div><span class='ctxInfolabel'>last modified</span><span id='folderInfoLastModified' class='ctxInfoValue'></span></div>\n" +
         " </div>\n" +
         "<div id='ctxDownLoad' onclick='contextMenuAction(\"download\")'>download folder</div>\n" +
-        "<div id='ctxShowAdmin' class='adminLink' onclick='$(\"#linkAdminContainer\").toggle()'>Show Admin</div>\n" +
+        "<div id='ctxShowAdmin' class='adminLink' onclick='$(\"#linkAdminContainer\").toggle()'>Admin</div>\n" +
         " <div id='linkAdminContainer' class='contextMenuInnerContainer'>\n" +
         "   <div onclick='contextMenuAction(\"archive\")'>Archive</div>\n" +
         "   <div onclick='contextMenuAction(\"copy\")'>Copy Link</div>\n" +

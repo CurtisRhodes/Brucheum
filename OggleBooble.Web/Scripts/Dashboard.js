@@ -722,7 +722,7 @@ function loadSortImages() {
                         settingsImgRepo + obj.FileName + "'/>" +
                         "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></div>");
                 });
-                $('#dataifyInfo').html("done");
+                $('#dataifyInfo').hide();
             }
             else {
                 alert("loadSortImages: " + imageLinksModel.Success);

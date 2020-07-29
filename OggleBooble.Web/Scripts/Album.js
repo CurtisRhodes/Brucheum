@@ -149,7 +149,7 @@ function getAlbumPageInfo(folderId) {
                                 $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Babepedia</a></div>");
                                 break;
                             default:
-                                logError("SWT", pageId, "site code: " + obj.SiteCode, "getAlbumPageInfo/TrackBackItems");
+                                logError("SWT", folderId, "site code: " + obj.SiteCode, "getAlbumPageInfo/TrackBackItems");
                         }
                     });
                 }

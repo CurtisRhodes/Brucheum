@@ -33,7 +33,6 @@ function reloadCache() {
     }
 }
 
-
 function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includeLandscape, includePortrait) {
     settingsImgRepo = settingsArray.ImageRepo;
     try {
@@ -52,6 +51,8 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                     if (!vCarouselInterval) {
                         imageIndex = Math.floor(Math.random() * carouselCacheArray.length);
                         imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
+                        mainImageClickId = carouselItemArray[imageIndex].FolderId;
+
                         $('#thisCarouselImage').attr('src', imgSrc);
                         $('#carouselImageContainer').show();
                         $('#thisCarouselImage').show();

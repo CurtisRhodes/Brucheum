@@ -25,12 +25,10 @@ namespace OggleBooble.Api.Controllers
             string success = "";
             try
             {
-                MailMessage mailMessage = new MailMessage("info@api.Ogglebooble.com", "CurtishRhodes@hotmail.com");
-                mailMessage.Subject = message.Subject;
-                mailMessage.Body = message.Message;
-                mailMessage.IsBodyHtml = true;
                 using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
                 {
+                    MailMessage mailMessage = new MailMessage("info@api.Ogglebooble.com", "CurtishRhodes@hotmail.com", message.Subject, message.Message);
+                    mailMessage.IsBodyHtml = true;
                     smtpClient.Send(mailMessage);
                     success = "ok";
                 }

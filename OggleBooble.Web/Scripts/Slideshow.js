@@ -422,7 +422,7 @@ function slideshowHtml() {
         "        </div>\n" +
         "    </div>\n" +
         "</div>\n" +
-        "<div id='slideshowCtxMenuContainer' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>" +
+        "<div id='slideshowCtxMenuContainer' class='ogContextMenu' style='z-index: 35;'  onmouseleave='$(this).fadeOut()'>" +
         "   <div id='slideshowContextMenuContent'></div>\n" +
         "</div>\n" +
        "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";

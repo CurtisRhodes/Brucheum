@@ -290,9 +290,9 @@ function create_UUID() {
 }
 
 function logError(errorCode, pageId, errorMessage, calledFrom) {
-    //if (document.domain === 'localhost')
-    //    alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
-    //else
+    if (document.domain === 'localhost')
+        alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+    else
     {
         try {
             if (isNullorUndefined(pageId)) {
@@ -549,8 +549,8 @@ function sendEmailToYourself(subject, message) {
         },
         success: function (success) {
             if (success === "ok") {
-                //$('#footerMessage').html("email sent");
-                //displayStatusMessage("ok", "email sent");
+                $('#footerMessage').html("email sent");
+                displayStatusMessage("ok", "email sent");
             }
             else
                 logError("BUG", 3992, success, "sendEmailToYourself");
