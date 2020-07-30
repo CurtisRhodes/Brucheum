@@ -1,6 +1,6 @@
 ﻿let imageIndex = 0, numImages = 0, numFolders = 0, rotationSpeed = 7000, intervalSpeed = 600,
-    carouselItemArray = [], imageHistory = [], imageHistoryArrayCount = 0, absolueStart,
-    carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval,
+    carouselItemArray = [], imageHistory = [], absolueStart,
+    carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
     imgSrc, jsCarouselSettings, nextRoot = 1, specialLaunchCode = 112, arryItemsShownCount = 0;
 
@@ -101,7 +101,7 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                         });
 
                         if (!vCarouselInterval) {
-                            alert("starting carousel from after ajax");
+                            console.log("starting carousel from after ajax");
                             imageIndex = Math.floor(Math.random() * carouselItemArray.length);
                             imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
                             $('#thisCarouselImage').attr('src', imgSrc);
@@ -199,7 +199,18 @@ function addMoreRootsToCarousel() {
         console.log("loadImages DONE!! took: " + delta.toFixed(3) + " total: " + carouselItemArray.length.toLocaleString());
         $('#footerMessage2').html("loadImages DONE!! took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
         setTimeout(function () { $('#footerMessage2').html("") }, 12000);
+        refreshCache();
     }
+}
+function refreshCache() {
+    //if ((rootFolder === "boobs") && (isNullorUndefined(window.localStorage["carouselCache"]))) {
+    let jsnObj = "[";  //new JSONArray();
+    for (i = 0; i < 101; i++) {
+        let ix = Math.floor(Math.random() * carouselItemArray.length);
+        jsnObj += (JSON.stringify(carouselItemArray[ix])) + ",";
+    }
+    window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+    console.log("refreshed carousel cache");
 }
 
 function startCarousel() {
@@ -212,15 +223,17 @@ function startCarousel() {
         }, rotationSpeed);
     }
 }
+
 function alreadyInLast100(idx) {
     let idxStart = Math.max(0, carouselItemArray.length - 100);
     for (i = idxStart; i < imageHistory.length; i++) {
         if (idx === imageHistory[i]) {
+            //alert("Already shown try again: ");
             console.log("Already shown try again: ");
             return true;
         }
     }
-    return false;
+   return false;
 }
 
 function intervalBody() {
@@ -229,27 +242,25 @@ function intervalBody() {
         if (debugMode) $('#hdrBtmRowSec3').html("already in last 100 flagged");
         imageIndex = Math.floor(Math.random() * carouselItemArray.length);
     }
-    else {
-        if (debugMode) $('#hdrBtmRowSec3').html("images: " + ++arryItemsShownCount);
-    }
+    imageHistory.push(imageIndex);
+    $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + imageHistory.length.toLocaleString());
+    if (debugMode) $('#hdrBtmRowSec3').html("images: " + ++arryItemsShownCount);
+
     $('.carouselFooter').css("visibility", "hidden");
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
         imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
         $('#thisCarouselImage').attr('src', imgSrc).load(function () {
             $('#carouselFooter').fadeIn();
             setLabelLinks();
-
-            imageHistory.push(imageIndex);
-            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });            
+            $('#hdrBtmRowSec3').html("imageIndex: " + imageIndex + "  imageHistory.length: " + imageHistory.length);
             //if (debugMode) $('#hdrBtmRowSec3').append(".len: " + imageHistory.length);
             //if (debugMode) $('#hdrBtmRowSec3').html("  Count: " + imageHistoryArrayCount);
             //if (debugMode) $('#hdrBtmRowSec3').append("  a[" + (imageHistory.length - 1) + "]: " + imageHistory[imageHistory.length - 1]);
-            
-            $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
-            imageHistoryArrayCount++;
         });
     });
 }
+
 function setLabelLinks() {
     $('#knownModelLabel').html("").hide();
     $('#carouselFooterLabel').html("").hide();
@@ -380,6 +391,7 @@ function clickSpeed(speed) {
     if (speed === 'slower')
         rotationSpeed += 800;
     clearInterval(vCarouselInterval);
+    vCarouselInterval = null;
     startCarousel();
 }
 function togglePause() {
@@ -391,33 +403,19 @@ function togglePause() {
 }
 function pause() {
     clearInterval(vCarouselInterval);
+    vCarouselInterval = null;
     $('#pauseButton').html(">");
 }
 function resume() {
+    intervalBody();
     clearInterval(vCarouselInterval);
+    vCarouselInterval = null;
     startCarousel();
     $('#pauseButton').html("||");
 }
 
 function showCarouelSettingsDialog() {
     pause();
-
-    $("#carouselSettingsDialog").html(
-        "<div class='carouselSettingsDialog'>\n" +
-        "   <div class='oggleDialogHeader'>" +
-        "       <div class='oggleDialogTitle'>Carousel Settings</div>" +
-        "       <div class='oggleDialogCloseButton'>" +
-        "       <img src='/images/poweroffRed01.png' onclick='resume(); $(\"#carouselSettingsDialog\").hide();'/></div>\n" +
-        "   </div>\n" +
-        "   <div class='oggleDialogContents'>\n" +
-        "       <input type='checkbox' id='ckCenterfold'/> Include Centerfolds<br/>\n" +
-        "       <input type='checkbox' id='ckArchive'/> Include Big Naturals Archive<br/>\n" +
-        "       <input type='checkbox' id='ckSoftcore'/> Include softcore<br/>\n" +
-        "       <input type='checkbox' id='ckPorn'/> Include porn<br/>\n" +
-        "       <input type='checkbox' id='ckLandscape'/> allow landscape size<br/>\n" +
-        "       <input type='checkbox' id='ckPortrait'/> allow portrait size<br/>\n" +
-        "   </div>\n" +
-        "</div>\n");
 
     $("#carouselSettingsDialog").css("width", 300);
     $('#carouselSettingsDialog').css("top", event.clientY - 75);
@@ -464,29 +462,45 @@ function addItemsToArray(ckId) {
 }
 
 function assuranceArrowClick(direction) {
-    logEvent("CAA", 3908, "calledFrom", "LinkId: " + carouselItemArray[imageIndex].LinkId+ "direction: " + direction)
+    //logEvent("CAA", 3908, "calledFrom", "LinkId: " + carouselItemArray[imageIndex].LinkId+ "direction: " + direction)
     if (direction === "foward") {
         resume();
     }
     else {
         pause();
+        let len1 = imageHistory.length;
+        //let idx1 = imageIndex;
+        //let linkId1 = carouselItemArray[imageIndex].LinkId;
         imageHistory.pop();
-        imageHistory.pop();
-        let indx = Number(imageHistory.pop())
-        if (debugMode) $('#hdrBtmRowSec3').html("indx: " + indx);
+        let len2 = imageHistory.length;
+
+        let popimageIndex = imageHistory[imageHistory.length - 1];
+
+        //alert("imageIndex: " + imageIndex + " popimageIndex: " + popimageIndex);
+
+        let popimage = settingsImgRepo + carouselItemArray[popimageIndex].FileName;
+        $('#thisCarouselImage').attr('src', popimage);
+
+        $('#hdrBtmRowSec3').html("len1: " + len1 + " imageIndex: " + imageIndex + "  len2: " + len2 + "  new index: " + popimageIndex);
+
+
+        //if (debugMode) $('#hdrBtmRowSec3').html("indx: " + indx);
         //alert("indx[" + imageHistory.length + "]: " + indx);
 
-        let hisImg = settingsImgRepo + carouselItemArray[indx].FileName;
-        $('#thisCarouselImage').attr('src', hisImg).load(function () {
-            $('#carouselFooter').fadeIn();
-            setLabelLinks();
-            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-            $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
-        });
+        //$('#thisCarouselImage').attr('src', popimage).load(function () {
+        //    $('#carouselFooter').fadeIn();
+        //    setLabelLinks();
+        //    //$('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+        //    //$('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
+        //    //alert("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
+        //});
+        //alert("img1: " + img1 + "\npopimage: " + popimage);
     }
 }
+
 function clickViewGallery(labelClick) {
     clearInterval(vCarouselInterval);
+    vCarouselInterval = null;
     switch (labelClick) {
         case 1:  // carousel main image
             rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "main image", mainImageClickId);
@@ -504,7 +518,9 @@ function clickViewGallery(labelClick) {
             logError("SWT", 3908, "labelClick: " + labelClick, "clickViewGallery");
     }
 } 
+
 function carouselContextMenu() {
+    pause();
     pos.x = event.clientX;
     pos.y = event.clientY;
     showContextMenu("Carousel", pos, imgSrc,
@@ -560,5 +576,20 @@ function carouselHtml() {
         "       </div>\n" +
         "   </div>\n" +
         "</div>\n" +
-        "<div id='carouselSettingsDialog'>\n";
+
+        "<div id='carouselSettingsDialog' class='oggleDialogContainer'>\n" +
+        "   <div class='oggleDialogHeader'>" +
+        "       <div class='oggleDialogTitle'>Carousel Settings</div>" +
+        "       <div class='oggleDialogCloseButton'>" +
+        "       <img src='/images/poweroffRed01.png' onclick='resume(); $(\"#carouselSettingsDialog\").hide();'/></div>\n" +
+        "   </div>\n" +
+        "   <div class='oggleDialogContents'>\n" +
+        "       <input type='checkbox' id='ckCenterfold'/> Include Centerfolds<br/>\n" +
+        "       <input type='checkbox' id='ckArchive'/> Include Big Naturals Archive<br/>\n" +
+        "       <input type='checkbox' id='ckSoftcore'/> Include softcore<br/>\n" +
+        "       <input type='checkbox' id='ckPorn'/> Include porn<br/>\n" +
+        "       <input type='checkbox' id='ckLandscape'/> allow landscape size<br/>\n" +
+        "       <input type='checkbox' id='ckPortrait'/> allow portrait size<br/>\n" +
+        "   </div>\n" +
+        "</div>\n";
 }
