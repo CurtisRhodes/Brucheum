@@ -7,10 +7,12 @@ function showFeedbackDialog(pageId) {
     //$('#imagePageLoadingGif').show();
     $('#centeredDialogContents').html(feedbackDialogHtml());
     $('#centeredDialogTitle').html("feedback");
+    //$('#feedbackDialogSummerNoteTextArea').summernote('enable');
     $('#feedbackDialogSummerNoteTextArea').summernote({
         height: 300,
         toolbar: [['codeview']]
     });
+
     $('#centeredDialog').css("top", $('.oggleHeader').height() + 20);
     $("#centeredDialog").fadeIn();
 
@@ -44,7 +46,7 @@ function saveFeedback() {
 
     var feedBackModel = {
         VisitorId: getCookieValue("VisitorId"),
-        PageId: feedbackPageId,
+        FolderId: feedbackPageId,
         FeedBackComment: $('#feedbackDialogSummerNoteTextArea').summernote('code'),
         FeedBackType: $('#feedbackDialog input[type=\'radio\']:checked').val(),
         Email: $('#txtFeedbackEmail').val()

@@ -16,14 +16,14 @@ function showFolderInfoDialog(folderId, calledFrom) {
     //alert("showFolderInfoDialog(folderId: " + folderId + ", calledFrom: " + calledFrom + ")");
     showBasicFolderInfoDialog();
 
-    try {
+    try {  // GetQuickFolderInfo
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/FolderDetail/GetQuickFolderInfo?folderId=" + folderId,
             success: function (folderInfo) {
                 $('#imagePageLoadingGif').hide();
                 if (folderInfo.Success === "ok") {
-                    objFolderInfo.Id = folderId;
+                    objFolderInfo.FolderId = folderId;
                     $("#centeredDialogTitle").html(folderInfo.FolderName);
                     $("#summernoteContainer").summernote("code", folderInfo.FolderComments);
 
@@ -67,6 +67,7 @@ function showBasicFolderInfoDialog() {
         "    </div>\n" +
         "    <div id='folderInfoDialogFooter' class='folderDialogFooter'>\n" +
         "        <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
+        "        <div id='btnCatDlgDone' class='folderCategoryDialogButton' onclick='doneEditing()'>Done</div>\n" +
         "    </div>\n" +
         "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n" +
         "</div>\n");
@@ -74,6 +75,7 @@ function showBasicFolderInfoDialog() {
     //$(".note-editable").css('font-size', '16px');
     //$('#centeredDialogContainer').css("top", 111);
     //$('#centeredDialogContainer').css("left", -350);
+    $("#btnCatDlgDone").hide();
     $('#summernoteContainer').summernote({
         toolbar: "none",
     //    min-height: "200px"
@@ -195,20 +197,18 @@ function editFolderDialog() {
     $('#editablePoserDetails').show();
     $('#readonlyPoserDetails').hide();
     $('#btnCatDlgEdit').html("Save");
-    $('#summernoteContainer').summernote('enable');
     $('#summernoteContainer').summernote("destroy");
     $('#summernoteContainer').summernote({
         toolbar: [['codeview']],
         height: "200"
     });
-
-    //$('#summernoteContainer').summernote({ toolbar: [['codeview']] });
-    $(".note-editable").css('font-size', '16px');
+    $('#summernoteContainer').focus();
+    $('#summernoteContainer').summernote('focus');
+    //$(".note-editable").css('font-size', '16px');
+    //alert("summernote('code'):" + $('#summernoteContainer').summernote('code'))
 
     $("#txtBorn").datepicker();
     //$('#selBoobs').val(objFolderInfo.FakeBoobs ? 1 : 0).change();
-
-    $('#btnCatDlgCancel').show();
 }
 function saveFolderDialog() {
     $('#imagePageLoadingGif').show();
@@ -230,21 +230,11 @@ function saveFolderDialog() {
             $('#imagePageLoadingGif').fadeOut();
             if (success === "ok") {
                 displayStatusMessage("ok", "category description updated");
-                awardCredits("FIE", objFolderInfo.Id);
-                //$('#btnCatDlgMeta').hide();
-                $('#btnCatDlgCancel').hide();
-                setReadonlyFields();
-                $('#summernoteContainer').summernote("destroy");
-                $('#summernoteContainer').summernote('disable');
-                $(".note-editable").css('font-size', '16px');
-                $('#summernoteContainer').summernote({
-                    toolbar: "none",
-                    height: "200"
-                });
-                $('#editablePoserDetails').hide();
-                $('#readonlyPoserDetails').show();
-                $('#btnCatDlgEdit').html("Edit");
-                allowDialogClose = true;
+                //awardCredits("FIE", objFolderInfo.Id);
+                $("#btnCatDlgDone").show();
+                $('#summernoteContainer').focus();
+                $('#summernoteContainer').summernote('focus');
+                $('#summernoteContainer').summernote('focus');
             }
             else {
                 logError("BUG", objFolderInfo.Id, success, "saveFolderDialog");
@@ -258,38 +248,20 @@ function saveFolderDialog() {
         }
     });
 }
-function cancelEdit() {
+function doneEditing() {
     allowDialogClose = true;
+    $("#btnCatDlgDone").hide();
     $('#btnCatDlgEdit').html("Edit");
-    $('#btnCatDlgCancel').hide();
+
     $('#editablePoserDetails').hide();
     $('#readonlyPoserDetails').show();
-
-    $('#summernoteContainer').summernote("destroy"); // needed to reset toolbar
-    $('#summernoteContainer').summernote('disable');
-    $("#summernoteContainer").summernote("code", objFolderInfo.CommentText); // reload unedited to cancel changes
-    $(".note-editable").css('font-size', '16px');
-    $(".modelDialogInput").prop('readonly', true);;
+    $('#summernoteContainer').summernote("destroy");
     $('#summernoteContainer').summernote({
         toolbar: "none",
         height: "200"
     });
+}
 
-}
-function toggleMode() {
-    switch ($('#modelInfoEdit').html()) {
-        case "Add":
-            createPosersIdentifiedFolder();
-            break;
-        case "Save":
-            updateFolderDetail();
-            break;
-        case "Exit":
-            $('#modelInfoDialog').dialog("close");
-            break;
-        default:
-    }
-}
 function clearGets() {
     $('#txtLinkHref').val('');
     $('#txtLinkLabel').val('');
@@ -300,7 +272,7 @@ function clearGets() {
     $('#txtStatus').val('');
     $('#externalLinks').html('');
 }
-function validate() {
+function loadGets() {
     objFolderInfo.FolderName = $('#txtFolderName').val();
     $('#modelInfoDialog').dialog('option', 'title', objFolderInfo.FolderName);
     objFolderInfo.Born = $('#txtBorn').val();
@@ -310,28 +282,27 @@ function validate() {
     objFolderInfo.CommentText = $('#modelInfoDialogComment').summernote('code');
     objFolderInfo.ExternalLinks = $('#externalLinks').summernote('code');
     objFolderInfo.LinkStatus = $('#txtStatus').val();
-    return true;
 }
+
 function updateFolderDetail() {
-    if (validate()) {
-        $.ajax({
-            type: "PUT",
-            url: settingsArray.ApiServer + "api/FolderDetail/AddUpdate",
-            data: objFolderInfo,
-            success: function (success) {
-                if (success === "ok") {
-                    displayStatusMessage("ok", "Model info updated");
-                }
-                else {
-                    logError("BUG", objFolderInfo.Id, success, "updateFolderDetail");
-                }
-            },
-            error: function (jqXHR) {
-                if (!checkFor404("updateFolderDetail"))
-                    logError("XHR", objFolderInfo.Id, getXHRErrorDetails(jqXHR), "updateFolderDetail");
+    loadGets();
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/FolderDetail/AddUpdate",
+        data: objFolderInfo,
+        success: function (success) {
+            if (success === "ok") {
+                displayStatusMessage("ok", "Model info updated");
             }
-        });
-    }
+            else {
+                logError("BUG", objFolderInfo.Id, success, "updateFolderDetail");
+            }
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("updateFolderDetail"))
+                logError("XHR", objFolderInfo.Id, getXHRErrorDetails(jqXHR), "updateFolderDetail");
+        }
+    });
 }
 
 // TRACKBACK DIALOG
@@ -500,33 +471,7 @@ function xxcreatePosersIdentifiedFolder() {
 
     // 2. add new category folder row and folder detail row
 }
-function oldModelInfoDialogHtml() {
-    //"        <div class='modelInfoDialogLabel'>comment</div>\n" +
-    //"        <div id='modelInfoDialogCommentContainer'>\n" +
-    //"            <div id='modelInfoDialogComment' class='modelInfoCommentArea'></div>\n" +
-    //"        </div>\n" +
-    //"        <div id='modelInfoDialogTrackBack'>\n" +
-    //"            <div class='modelInfoDialogLabel'>status</div><input id='txtStatus' class='modelDialogInput' style='width: 90%;' /><br />\n" +
-    //"            <div class='modelInfoDialogLabel'>trackbacks</div>\n" +
-    //"            <div>\n" +
-    //"                <div class='hrefLabel'>href</div><input id='txtLinkHref' class='modelDialogInput' />\n" +
-    //"                <div class='hrefLabel'>label</div><input id='txtLinkLabel' class='modelDialogInput' onblur='addHrefToExternalLinks()' />\n" +
-    //"                <span class='addLinkIcon' onclick='addHrefToExternalLinks()'>+</span>\n" +
-    //"            </div>\n" +
-    //"            <div id='externalLinks' class='trackbackLinksArea'></div>\n" +
-    //"        </div>\n" +
-    //"    </div>\n" +
-    //"    <a id='modelInfoEdit' class='dialogEditButton' href='javascript:toggleMode()'>Save</a>\n" +
-    //"</div>\n"
-}
 
-function showIdentifyPoserDialog() {
-    $("#identifyPoserDialog").show();
-    $("#unknownPoserDialog").hide();
-    $("#btnPoserSave").show();
-    $("#btnPoserCancel").show();
-    allowDialogClose = false;
-}
 
 function showUnknownModelDialog(pLinkId, imgSrc) {
     $('#centeredDialogTitle').html("Unknown Poser");
@@ -571,6 +516,13 @@ function showUnknownModelDialog(pLinkId, imgSrc) {
 function IamThisModel() {
     alert("IamThisModel clicked");
 
+}
+function showIdentifyPoserDialog() {
+    $("#identifyPoserDialog").show();
+    $("#unknownPoserDialog").hide();
+    $("#btnPoserSave").show();
+    $("#btnPoserCancel").show();
+    allowDialogClose = false;
 }
 function poserSave() {
     sendEmailToYourself("poser identified !!!", "OH MY GOD");

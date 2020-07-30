@@ -1,20 +1,20 @@
 ﻿
-function rtpe(eventCode, calledFrom, eventDetail, pageId) {
+function rtpe(eventCode, calledFrom, eventDetail, folderId) {
     try {
         var visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
-            logError("BUG", pageId, "visitorId not set ", "reportThenPerformEvent/" + calledFrom);
+            logError("BUG", folderId, "visitorId not set ", "reportThenPerformEvent/" + calledFrom);
             visitorId = "unknown";
         }
-        logEvent(eventCode, pageId, calledFrom, eventDetail);
-        performEvent(eventCode, calledFrom, eventDetail, pageId);
+        logEvent(eventCode, folderId, calledFrom, eventDetail);
+        performEvent(eventCode, calledFrom, eventDetail, folderId);
     }
     catch (e) {
-        logError("CAT", pageId, e, "reportThenPerformEvent/" + calledFrom);
+        logError("CAT", folderId, e, "reportThenPerformEvent/" + calledFrom);
     }
 }
 
-function performEvent(eventCode, calledFrom, eventDetail, pageId) {
+function performEvent(eventCode, calledFrom, eventDetail, folderId) {
     if (eventCode === "PRN") {
         //  setUserPornStatus(pornType);
     }
@@ -46,7 +46,7 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
         case "SSC":
         case "SEE":  // see more of her
         case "ONT":
-            window.open("/album.html?folder=" + pageId, "_blank");  // open in new tab
+            window.open("/album.html?folder=" + folderId, "_blank");  // open in new tab
             break;
         case 'SUB':  // 'Sub Folder Click'
         case "CIC":  // carousel image clicked
@@ -57,7 +57,9 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
         case "EPC":  // every playmate clicked
         case "BAC":  // Babes Archive Clicked
         case "LUP":  // Update Box click
-            window.location.href = "/album.html?folder=" + pageId;  //  open page in same window
+            //alert("logImageHit(eventDetail: " + eventDetail + ", folderId: " + folderId + ", true);");
+            logImageHit(eventDetail, folderId, true);
+            window.location.href = "/album.html?folder=" + folderId;  //  open page in same window
             break;
         case "HBX":  // Home breadcrumb Clicked
             if (eventDetail === "porn")
@@ -89,7 +91,7 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
                         showCustomMessage(35, false);
                     break;
                 default:
-                    logError("BUG", pageId, "Uncaught Case: " + eventDetail, "performEvent/Left Menu Click EventDetail");
+                    logError("BUG", folderId, "Uncaught Case: " + eventDetail, "performEvent/Left Menu Click EventDetail");
             }
             break;
         case "FLC":  //  footer link clicked
@@ -112,12 +114,12 @@ function performEvent(eventCode, calledFrom, eventDetail, pageId) {
                 case "freedback": showFeedbackDialog(); break;
                 case "slut archive": window.location.href = "/album.html?folder=440"; break;
                 default:
-                    logError("BUG", pageId, "Uncaught Case: " + eventDetail, "performEvent/footer link click");
+                    logError("BUG", folderId, "Uncaught Case: " + eventDetail, "performEvent/footer link click");
                     break;
             }
             break;
         default:
-            logError("BUG", pageId, "Uncaught Case: " + eventDetail, "performEvent");
+            logError("BUG", folderId, "Uncaught Case: " + eventDetail, "performEvent");
     }
 }
 

@@ -1,14 +1,6 @@
 ﻿//let loginDebugMode = false;
 
 
-function localhostBypass() {
-    if (document.domain === 'localhost') {
-        setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-        setCookieValue("UserName", "developer");
-        //window.localStorage["IsLoggedIn"] = "true";
-        console.log("localhostBypass()");
-    }
-}
 
 function getVisitorInfo() {
     var info = {

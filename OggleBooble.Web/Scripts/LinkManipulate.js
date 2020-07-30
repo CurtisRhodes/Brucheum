@@ -22,7 +22,7 @@ function showDirTreeDialog(imgSrc, treeStart) {
         "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif' /></div>\n" +
         "   </div>");
 
-    loadDirectoryTree(treeStart, "linkManipulateDirTree", "linkDialogdirTreeClick");
+    loadDirectoryTree(treeStart, "linkManipulateDirTree", "linkDialogdirTreeClick", false);
     //var winH = $(window).height();
     //var dlgH = $('#centeredDialog').height();
     //$('#centeredDialog').css("top", (winH - dlgH) / 2);

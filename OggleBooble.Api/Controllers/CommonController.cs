@@ -66,36 +66,36 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/Common/LogPageHit")]
-        public PageHitSuccessModel LogPageHit(string visitorId, int pageId)
+        public PageHitSuccessModel LogPageHit(string visitorId, int folderId)
         {
             PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
 
-                    var lastHit = mdb.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == pageId && h.Occured > twoMinutesAgo).FirstOrDefault();
+                    var lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > twoMinutesAgo).FirstOrDefault();
                     if (lastHit == null)
                     {
-                        mdb.PageHits.Add(new MySqlDataContext.PageHit()
+                        db.PageHits.Add(new PageHit()
                         {
                             VisitorId = visitorId,
-                            PageId = pageId,
+                            PageId = folderId,
                             Occured = DateTime.Now  //.AddMilliseconds(getrandom.Next())
                         });
-                        mdb.SaveChanges();
+                        db.SaveChanges();
                     }
-                    pageHitSuccessModel.PageHits = mdb.PageHits.Where(h => h.PageId == pageId).Count();
-                    var dbPageHitTotals = mdb.PageHitTotal.Where(h => h.PageId == pageId).FirstOrDefault();
+                    pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == folderId).Count();
+                    var dbPageHitTotals = db.PageHitTotal.Where(h => h.PageId == folderId).FirstOrDefault();
                     if (dbPageHitTotals != null)
                     {
                         pageHitSuccessModel.PageHits += dbPageHitTotals.Hits;
                     }
-                    pageHitSuccessModel.UserPageHits = mdb.PageHits.Where(h => h.VisitorId == visitorId).Count();
-                    pageHitSuccessModel.UserImageHits = mdb.ImageHits.Where(h => h.VisitorId == visitorId).Count();
+                    pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
+                    pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
 
-                    VirtualFolder categoryFolder = mdb.VirtualFolders.Where(f => f.Id == pageId).FirstOrDefault();
+                    VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     if (categoryFolder != null)
                     {
                         pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
@@ -107,7 +107,7 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
-                            VirtualFolder parentFolder = mdb.VirtualFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
+                            VirtualFolder parentFolder = db.VirtualFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
                             if (parentFolder != null)
                                 pageHitSuccessModel.ParentName = parentFolder.FolderName;
                         }
@@ -145,7 +145,7 @@ namespace OggleBooble.Api.Controllers
                         dbm.ImageHits.Add(new ImageHit()
                         {
                             VisitorId = logImageHItData.VisitorId,
-                            PageId = logImageHItData.PageId,
+                            PageId = logImageHItData.FolderId,
                             ImageLinkId = logImageHItData.LinkId,
                             HitDateTime = DateTime.Now
                         });
@@ -176,30 +176,30 @@ namespace OggleBooble.Api.Controllers
             LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false, IsNewVisitor = false };
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
+                using (var db = new MySqlDataContext.OggleBoobleMySqlContext())
                 {
                     DateTime lastVisitDate = DateTime.MinValue;
-                    List<MySqlDataContext.Visit> visitorVisits = mdb.Visits.Where(v => v.VisitorId == visitorId).ToList();
+                    List<MySqlDataContext.Visit> visitorVisits = db.Visits.Where(v => v.VisitorId == visitorId).ToList();
                     if (visitorVisits.Count() > 0)
-                        lastVisitDate = mdb.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+                        lastVisitDate = db.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
                     else {
                         visitSuccessModel.IsNewVisitor = true;
                     }
 
                     if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
                     {
-                        MySqlDataContext.Visitor visitor = mdb.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                        MySqlDataContext.Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                         if (visitor == null)
                         {
-                            mdb.Visits.Add(new MySqlDataContext.Visit()
+                            db.Visits.Add(new MySqlDataContext.Visit()
                             {
                                 VisitorId = visitorId,
                                 VisitDate = DateTime.Now
                             });
-                            mdb.SaveChanges();
+                            db.SaveChanges();
                             visitSuccessModel.VisitAdded = true;
                             if (!visitSuccessModel.IsNewVisitor) {
-                                var registeredUser = mdb.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+                                var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
                                 if (registeredUser != null)
                                     visitSuccessModel.UserName = " " + registeredUser.UserName;
                                 else
@@ -224,33 +224,33 @@ namespace OggleBooble.Api.Controllers
             var addVisitorSuccess = new AddVisitorSuccessModel();
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dupIp = mdb.IpInfoCalls.Where(ip => ip.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    var dupIp = db.IpInfoCalls.Where(ip => ip.IpAddress == visitorData.IpAddress).FirstOrDefault();
                     if (dupIp != null)
                         addVisitorSuccess.EventDetail = "duplicate call to IpInfo. ";
 
-                    VirtualFolder categoryFolder = mdb.VirtualFolders.Where(f => f.Id == visitorData.PageId).FirstOrDefault();
+                    VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == visitorData.FolderId).FirstOrDefault();
                     if (categoryFolder != null)
                         addVisitorSuccess.PageName = categoryFolder.FolderName;
 
                     string newVisitorId = Guid.NewGuid().ToString();
-                    var existingVisitor = mdb.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    var existingVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
                     if (existingVisitor != null)
                     {
                         addVisitorSuccess.VisitorId = existingVisitor.VisitorId;
                         addVisitorSuccess.EventDetail += "Visitor Id already exists";
-                        var registeredUser = mdb.RegisteredUsers.Where(u => u.VisitorId == existingVisitor.VisitorId).FirstOrDefault();
+                        var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == existingVisitor.VisitorId).FirstOrDefault();
                         if (registeredUser != null)
                             addVisitorSuccess.UserName = registeredUser.UserName;
                     }
                     else
                     {
                         // We have a new visitor!
-                        var newVisitor = new MySqlDataContext.Visitor()
+                        var newVisitor = new Visitor()
                         {
                             VisitorId = newVisitorId,
-                            InitialPage = visitorData.PageId,
+                            InitialPage = visitorData.FolderId,
                             City = visitorData.City,
                             Country = visitorData.Country,
                             GeoCode = visitorData.GeoCode,
@@ -258,16 +258,16 @@ namespace OggleBooble.Api.Controllers
                             InitialVisit = DateTime.Now,
                             IpAddress = visitorData.IpAddress
                         };
-                        mdb.Visitors.Add(newVisitor);
+                        db.Visitors.Add(newVisitor);
                         addVisitorSuccess.EventDetail += "New visitor added";
                     }
-                    mdb.IpInfoCalls.Add(new MySqlDataContext.IpInfoCall()
+                    db.IpInfoCalls.Add(new MySqlDataContext.IpInfoCall()
                     {
                         IpAddress = visitorData.IpAddress,
                         Occured = DateTime.Now
                     });
 
-                    mdb.SaveChanges();
+                    db.SaveChanges();
                     addVisitorSuccess.VisitorId = newVisitorId;
 
                     addVisitorSuccess.Success = "ok";
@@ -287,19 +287,19 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var mdb = new OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    mdb.ErrorLogs.Add(new ErrorLog()
+                    db.ErrorLogs.Add(new ErrorLog()
                     {
                         PkId = Guid.NewGuid().ToString(),
                         VisitorId = logErrorModel.VisitorId,
                         ErrorCode = logErrorModel.ErrorCode,
                         ErrorMessage = logErrorModel.ErrorMessage,
                         CalledFrom = logErrorModel.CalledFrom,
-                        PageId = logErrorModel.PageId,
+                        PageId = logErrorModel.FolderId,
                         Occured = DateTime.Now
                     });
-                    mdb.SaveChanges();
+                    db.SaveChanges();
                     success = "ok";
                 }
             }
@@ -307,34 +307,6 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
         
-        //[HttpPost]
-        //[Route("api/Common/LogActivity")]
-        //public string LogActivity(ActivityLogModel activityModel)
-        //{
-        //    string success;
-        //    try
-        //    {
-        //        using (var mdb = new OggleBoobleMySqlContext())
-        //        {
-        //            //activityModel.EventDetail = mdb.VirtualFolders.Where(f => f.Id == activityModel.PageId).FirstOrDefault().FolderName;
-        //            mdb.ActivityLogs.Add(new ActivityLog()
-        //            {
-        //                ActivtyCode= activityModel.ActivtyCode,
-        //                PageId = activityModel.PageId,
-        //                VisitorId = activityModel.VisitorId,
-        //                Occured = DateTime.Now
-        //            });
-        //            mdb.SaveChanges();
-        //        }
-        //        success = "ok";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        success = Helpers.ErrorDetails(ex);
-        //    }
-        //    return success;
-        //}
-
         [HttpPost]
         [Route("api/Common/LogEvent")]
         public string LogEvent(EventLogModel eventModel)
@@ -342,17 +314,17 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var mdb = new OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    mdb.EventLogs.Add(new EventLog()
+                    db.EventLogs.Add(new EventLog()
                     {
                         EventCode = eventModel.EventCode,
                         EventDetail = eventModel.EventDetail,
-                        PageId = eventModel.PageId,
+                        PageId = eventModel.FolderId,
                         VisitorId = eventModel.VisitorId,
                         Occured = DateTime.Now
                     });
-                    mdb.SaveChanges();
+                    db.SaveChanges();
                 }
                 success = "ok";
             }
@@ -375,7 +347,7 @@ namespace OggleBooble.Api.Controllers
                     var dataAction = new MySqlDataContext.ChangeLog();
                     dataAction.PkId = Guid.NewGuid().ToString();
                     dataAction.VisitorId = changeLog.VisitorId;
-                    dataAction.PageId = changeLog.PageId;
+                    dataAction.PageId = changeLog.FolderId;
                     dataAction.ActivityCode = changeLog.ActivityCode;
                     dataAction.Activity = changeLog.Activity;
                     dataAction.Occured = DateTime.Now;
@@ -398,9 +370,9 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var mdb = new MySqlDataContext.OggleBoobleMySqlContext())
+                using (var db = new MySqlDataContext.OggleBoobleMySqlContext())
                 {
-                    mdb.FeedBacks.Add(new MySqlDataContext.FeedBack()
+                    db.FeedBacks.Add(new MySqlDataContext.FeedBack()
                     {
                         FeedBackComment = feedBackModel.FeedBackComment,
                         FeedBackType = feedBackModel.FeedBackType,
@@ -408,7 +380,10 @@ namespace OggleBooble.Api.Controllers
                         VisitorId = feedBackModel.VisitorId,
                         Occured = DateTime.Now
                     });
-                    mdb.SaveChanges();
+                    db.SaveChanges();
+
+
+
                     success = "ok";
                 }
             }
@@ -430,9 +405,9 @@ namespace OggleBooble.Api.Controllers
             RefSuccessModel refs = new RefSuccessModel();
             try
             {
-                using (var mdb = new OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbRefs = mdb.Refs.Where(r => r.RefType == refType).ToList();
+                    var dbRefs = db.Refs.Where(r => r.RefType == refType).ToList();
                     foreach (Ref dbRef in dbRefs)
                     {
                         refs.RefItems.Add(new RefItemModel()

@@ -132,6 +132,7 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",123)'>ultra juggs</a> \n";
             break;
         }
+        case "cybergirls":
         case "playboy":
         case "centerfold": {
             $('header').switchClass('pornHeader', 'boobsHeader');
@@ -202,6 +203,7 @@ function setLoginSection(subdomain) {
     $('#divLoginArea').show();
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
+
     let userName = getCookieValue("UserName");
     if (!isNullorUndefined(userName)) {
         let isLoggedIn = getCookieValue("IsLoggedIn");
@@ -471,7 +473,7 @@ function headerHtml(folderId, subdomain) {
         "   </div>\n" +
         "</div>\n" +
 
-        "<div id='dirTreeContainer' class='dirTreeImageContainer floatingDirTreeImage floatingDirTreeContainer'>\n" +
+        "<div id='dirTreeContainer' class='dirTreeImageContainer floatingDirTreeImage'>\n" +
         "   <img class='dirTreeImage'/>\n" +
         "</div>\n" +
 

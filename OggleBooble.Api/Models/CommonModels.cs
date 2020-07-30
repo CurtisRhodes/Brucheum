@@ -49,7 +49,7 @@ namespace OggleBooble.Api.Models
     public class PageHitRequestModel
     {
         public string VisitorId { get; set; }
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
     }
     public class PageHitSuccessModel
     {
@@ -64,7 +64,7 @@ namespace OggleBooble.Api.Models
     public class LogImageHitDataModel
     {
         public string VisitorId { get; set; }
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
         public string LinkId { get; set; }
         public bool IsInitialHit { get; set; }
     };
@@ -82,14 +82,14 @@ namespace OggleBooble.Api.Models
     {
         public string VisitorId { get; set; }
         public string ErrorCode { get; set; }
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
         public string ErrorMessage { get; set; }
         public string CalledFrom { get; set; }
     }
     public class DataActivityModel
     {
         public string PkId { get; set; }
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
         public string ActivityCode { get; set; }
         public string Activity { get; set; }
         public string VisitorId { get; set; }
@@ -98,7 +98,7 @@ namespace OggleBooble.Api.Models
     public class ActivityLogModel
     {
         public string ActivtyCode { get; set; }
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
         public string VisitorId { get; set; }
     }
 
@@ -107,7 +107,7 @@ namespace OggleBooble.Api.Models
         public string VisitorId { get; set; }
         public string EventCode { get; set; }
         public string EventDetail { get; set; }
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
     }
     public class LogVisitSuccessModel
     {
@@ -119,7 +119,7 @@ namespace OggleBooble.Api.Models
     }
     public class AddVisitorModel
     {
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
         public string IpAddress { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
@@ -137,7 +137,7 @@ namespace OggleBooble.Api.Models
     public class FeedBackModel
     {
         public string VisitorId { get; set; }
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
         public string FeedBackComment { get; set; }
         public string FeedBackType { get; set; }
         public string FeedBackEmail { get; set; }

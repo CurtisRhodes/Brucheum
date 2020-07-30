@@ -26,7 +26,7 @@ function checkFor404(calledFrom) {
                     if (++verifyConnectionCount === 3) {
                         $('#customMessage').html(
                             "<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/altair04.gif' height='200' /></div>\n").show();
-                        $('.launchingServiceContainer').css("top", window.innerHeight / 2 - 100);
+                        $('#customMessageContainer').css("top", 200);
 
                     }
                     if (verifyConnectionCount > verifyConnectionCountLimit) {

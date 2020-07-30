@@ -207,18 +207,6 @@
     background-color: bisque;
 }
 
-.floatingDirTreeContainer {
-    position: absolute;
-    border: solid 2px var(--oggleBorderColor);
-    background-color: var(--oggleBackgroundColor);
-    display: none;
-    max-height: 500px;
-    overflow-y: auto;
-    right: 50px;
-    top: 130px;
-    z-index: 5;
-}
-
 .workAreaHeader {
     border: none;
     background-color: var(--brucheumBlue);

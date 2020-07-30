@@ -17,7 +17,7 @@ function dashboardStartup() {
     document.title = "Dashboard : OggleBooble";
     $('.dashboardContainerColumn').show();
     setLeftMenu('Admin');
-    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick");
+    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick", false);
     //setSignalR();
     //if (isInRole("oggle admin"))
     window.addEventListener("resize", resizeDashboardPage);
@@ -74,7 +74,7 @@ function resizeDashboardPage() {
 }
 
 function rebuildDirectoryTree() {
-    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick");
+    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick", true);
 }
 
 function setLeftMenu(viewId) {
@@ -417,7 +417,7 @@ function showMoveFolderDialog() {
         "       <div id='moveFolderDirTreeContainer' class='floatingDirTreeContainer'></div>\n");
 
     $("#txtMoveFolderParent").val(pSelectedTreeFolderPath);
-    loadDirectoryTree(1, "moveFolderDirTreeContainer", "dshBrdSubDirTreeClick");
+    loadDirectoryTree(1, "moveFolderDirTreeContainer", "dshBrdSubDirTreeClick", false);
     $('#dashboardDialog').fadeIn();
 }
 function performMoveFolder() {
@@ -467,7 +467,7 @@ function showAddStepChildFolderDialog() {
         "    <div class='roundendButton' onclick='createStaticPages($(\"#ckStaticIncludeSubfolders\").is(\":checked\"))'>Create Stepchild</div>\n" +
         "       <div id='scDirTreeContainer' class='floatingDirTreeContainer'></div>\n");
     $("#txtStepParent").val(pSelectedTreeFolderPath);
-    loadDirectoryTree(1, "scDirTreeContainer", "dshBrdSubDirTreeClick");
+    loadDirectoryTree(1, "scDirTreeContainer", "dshBrdSubDirTreeClick", false);
     $('#dashboardDialog').fadeIn();
 }
 function perfomAddStepChildFolder() {
@@ -555,7 +555,7 @@ function showMoveManyTool() {
     $('#txtMoveManySource').val(pSelectedTreeFolderPath);
     // $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
 
-    loadDirectoryTree(1, "mmDirTreeContainer", "dshBrdSubDirTreeClick");
+    loadDirectoryTree(1, "mmDirTreeContainer", "dshBrdSubDirTreeClick", false);
     //$('#moveManyHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
     $('#txtMoveManyDestination').val("");
     $('#dashBoardLoadingGif').fadeIn();

@@ -9,6 +9,9 @@ function launchViewer(folderId, startItem, includeSubFolders) {
     spIncludeSubFolders = includeSubFolders;
     spSessionCount = 0;
 
+    if (!includeSubFolders)
+        logImageHit(startItem, folderId, true);
+
     if (typeof staticPageFolderName === 'string') {
         isStaticPage = "true";
         alert("get image array from DOM");
@@ -313,14 +316,9 @@ function showImageViewerCommentDialog() {
 function closeViewer(calledFrom) {
     event.preventDefault();
     window.event.returnValue = false;
-
-
     $('#imageContainer').fadeIn();
-
     //slideShowContainer
     $('#slideShowContainer').effect('blind', { mode: 'hide', direction: 'vertical' }, 500);
-
-
     viewerShowing = false;
     spSlideShowRunning = false;
     slideShowButtonsActive = false;
@@ -376,7 +374,7 @@ $(document).keydown(function (event) {
                 closeViewer("escape key");
                 break;
             //case 38: scrollTabStrip('foward'); break;
-            //case 33: scrollTabStrip('foward'); breakapi/VisitorInfo/verifyVisitorId
+            //case 33: scrollTabStrip('foward'); breaks api/VisitorInfo/verifyVisitorId
             case 34:                        // pg down
             case 40:                        // dowm arrow
             case 37:                        // left arrow

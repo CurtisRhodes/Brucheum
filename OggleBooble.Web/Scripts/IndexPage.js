@@ -9,6 +9,7 @@ function indexStartup() {
     launchCarousel("boobs");
     loadUpdatedGalleriesBoxes(updatedGalleriesCount, "boobs");
 }
+
 function pornStartup() {
     $('#indexMiddleColumn').html(indexPageHTML());
     setOggleHeader(spaPageId, "porn");
@@ -24,9 +25,7 @@ function pornStartup() {
 function indexPageHTML() {
     return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
         "       <div class='sectionLabel'>random galleries</div>\n" +
-        //"       <div class='flexContainer'>\n" +
         "           <div id='carouselContainer'></div>\n" +
-        //"        </div>\n" +
         "    </div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +
@@ -50,11 +49,13 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
 
                         thisItemSrc = settingsImgRepo + LatestUpdate.ImageFile;
                         //console.log(LatestUpdate.FolderName + ". src: " + src);
+                        //rtpe(eventCode, calledFrom, eventDetail, folderId)
+
                         $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                             "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
                             "<img id='lt" + LatestUpdate.FolderId + "' class='newsContentBoxImage' " +
                             "onerror='latestGalleryImageError(" + LatestUpdate.FolderId + ",\"" + thisItemSrc + "\")' src='" + thisItemSrc + "'" +
-                            "onclick='rtpe(\"LUP\",\"home page\",10," + LatestUpdate.FolderId + ")'/>" +
+                            "onclick='rtpe(\"LUP\",\"Index page\",\"" + thisItemSrc + "\"," + LatestUpdate.FolderId + ")' />" +
                             "<div class='newsContentBoxDateLabel'>updated: " + dateString2(LatestUpdate.Acquired) + "</span></div>" +
                             "</div>");
                     }

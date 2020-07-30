@@ -1,28 +1,24 @@
-﻿var freePageHitsAllowed = 500;
-var freeImageHitsAllowed = 2500;
+﻿let freePageHitsAllowed = 500;
+let freeImageHitsAllowed = 2500;
 
-function logImageHit(link, pageId, isInitialHit) {
+function logImageHit(link, folderId, isInitialHit) {
     try {
-        if (isNullorUndefined(pageId)) {
-            logError("IH1", pageId, "TROUBLE in logImageHit. PageId came in Null or Undefined", "HitCounter.js logImageHit");
+        if (isNullorUndefined(folderId)) {
+            logError("IH1", folderId, "TROUBLE in logImageHit. folderId came in Null or Undefined", "HitCounter.js logImageHit");
             return;
         }
-        var visitorId = getCookieValue("VisitorId");
-        if (!Number.isInteger(pageId)) {
-            logError("IH2", pageId, "PageId came in wrong. Link: " + link + "  pageId:  " + pageId, "HitCounter.js logImageHit");
-            verifyVisitorId(visitorId, pageId);
-            return;
-        }
+        let visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
-            logError("IH0", pageId, "logImageHit no VisitorId", "HitCounter.js logImageHit");
-            //addVisitor(pageId, "logImageHit");
-            return;
+            visitorId = create_UUID();
+            setCookieValue("VisitorId", visitorId);
+            logError("VIV", folderId, "Visitor undefined", "logImageHit");
+            //getIpInfo(folderId, "logImageHit");
         }
 
-        var linkId = link.substr(link.lastIndexOf("_") + 1, 36);
-        var logImageHItData = {
+        let linkId = link.substr(link.lastIndexOf("_") + 1, 36);
+        let logImageHItData = {
             VisitorId: visitorId,
-            PageId: pageId,
+            PageId: folderId,
             LinkId: linkId,
             IsInitialHit: isInitialHit
         };
@@ -34,60 +30,68 @@ function logImageHit(link, pageId, isInitialHit) {
                 if (imageHitSuccessModel.Success === "ok") {
                     userPageHits = imageHitSuccessModel.UserPageHits;
                     userImageHits = imageHitSuccessModel.UserImageHits;
-                    //checkForHitLimit("images", pageId, userPageHits, userImageHits);
+                    //checkForHitLimit("images", folderId, userPageHits, userImageHits);
                 }
                 else {
-                    logError("BUG", pageId, imageHitSuccessModel.Success, "logImageHit");
+                    logError("BUG", folderId, imageHitSuccessModel.Success, "logImageHit");
                 }
             },
             error: function (jqXHR) {
                 if (!checkFor404("logImageHit")) {
-                    logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logImageHit");
+                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logImageHit");
                 }
             }
         });
     } catch (e) {
-        logError("CAT", pageId, e, "logImageHit");
+        logError("CAT", folderId, e, "logImageHit");
      }
 }
 
-function logPageHit(pageId) {
-    //alert("logPageHit(" + pageId );  // + "," + visitorId + "," + calledFrom + ")");
-    if (isNullorUndefined(pageId)) {
-        logError("BUG", pageId, "PageId undefined in LogPageHit.", "logPageHit");
-        //sendEmailToYourself("PageId undefined in LogPageHit.", "visitorId: " + visitorId);
+function logPageHit(folderId) {
+    //alert("logPageHit(" + folderId );  // + "," + visitorId + "," + calledFrom + ")");
+    if (isNullorUndefined(folderId)) {
+        logError("BUG", folderId, "folderId undefined in LogPageHit.", "logPageHit"); 0
         return;
     }
-    var visitorId = getCookieValue("VisitorId");
+
+    let visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
-        visitorId = "undefined";
-        //setCookieValue("VisitorId", "undefined");
-        setCookieValue("VisitorId", create_UUID());
-        logError("BUG", pageId, "VisitorId undefined in LogPageHit.", "logPageHit");
+        visitorId = create_UUID();
+        setCookieValue("VisitorId", visitorId);
+        logError("VIV", folderId, "VisitorId undefined in LogPageHit.", "logPageHit");
+        //getIpInfo(folderId, "logPageHit");
     }
+
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&pageId=" + pageId,
+        url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&pageId=" + folderId,
         success: function (pageHitSuccess) {
             if (pageHitSuccess.Success === "ok") {
-                //logVisit(visitorId, pageId);;
-                // checkForHitLimit("pages", pageId, pageHitSuccess.UserPageHits, pageHitSuccess.UserImageHits);
+                if (visitorId !== "unidentified")
+                    logVisit(visitorId, folderId);;
+                // checkForHitLimit("pages", folderId, pageHitSuccess.UserPageHits, pageHitSuccess.UserImageHits);
             }
             else {
-                logError("BUG", pageId, pageHitSuccess.Success, "logPageHit");
+                logError("BUG", folderId, pageHitSuccess.Success, "logPageHit");
             }
         },
         error: function (jqXHR) {
             if (!checkFor404("logPageHit")) {
-                logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logPageHit");
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logPageHit");
             }
         }
     });
 }
 
-function logVisit(visitorId, pageId) {
+function isValidVisitorId() {
+    let visitorId = getCookieValue("VisitorId");
+    if (visitorId.indexOf("-2282-") > 0)
+        return true;
+}
+
+function logVisit(visitorId, folderId) {
     if (isNullorUndefined(visitorId)) {
-        logError("BUG", pageId, "log visit called with no visitorId", "logVisit");
+        logError("BUG", folderId, "log visit called with no visitorId", "logVisit");
         return;
     }
     $.ajax({
@@ -102,60 +106,91 @@ function logVisit(visitorId, pageId) {
                     else {
                         $('#headerMessage').html("Wecome back" + logVisitSuccessModel.UserName);
                     }
-                    logEvent("VIS", pageId, "is new visitor: " + logVisitSuccessModel.IsNewVisitor, "HitCounter.js logVisit")
+                    logEvent("VIS", folderId, "is new visitor: " + logVisitSuccessModel.IsNewVisitor, "HitCounter.js logVisit")
                 }
             }
             else {
-                logError("BUG", pageId, logVisitSuccessModel.Success, "logVisit");
+                logError("BUG", folderId, logVisitSuccessModel.Success, "logVisit");
             }
         },
         error: function (jqXHR) {
             if (!checkFor404("logVisit")) {
-                logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logVisit");
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logVisit");
             }
         }
     });
 }
 
-function verifyVisitorId(visitorId, pageId, calledFrom) {
-    if (isNullorUndefined(visitorId)) {
-        logError("BUG", pageId, "visitorId undefined", "verifyVisitorId");
-        return;
-    }
+function addVisitor(folderId, calledFrom) {
+
     $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/VisitorInfo/verifyVisitorId?visitorId=" + visitorId,
-        success: function (visitorSuccessModel) {
-            if (visitorSuccessModel.Success === "ok") {
-                if (!visitorSuccessModel.Exists) {
-                    logError("BUG", pageId, "VisitorId not found in Visitor table", "verifyVisitorId");
-                }
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Common/AddVisitor",
+        data: {
+            IpAddress: ipResponse.ip,
+            FolderId: folderId,
+            CalledFrom: calledFrom,
+            City: ipResponse.city,
+            Country: ipResponse.country,
+            Region: ipResponse.region,
+            GeoCode: ipResponse.loc
+        },
+        success: function (addVisitorSuccess) {
+            if (addVisitorSuccess.Success === "ok") {
+                setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
+                setCookieValue("IsLoggedIn", "true");
+                logEvent("NEW", folderId, addVisitorSuccess.EventDetail)
             }
             else {
-                logError("BUG", pageId, visitorSuccessModel.Success, "verifyVisitorId");
+                logError("BUG", folderId, addVisitorSuccess.Success, "addVisitor");
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("logImageHit")) {
-                logError("XHR", pageId, getXHRErrorDetails(jqXHR), "verifyVisitorId");
-            }
+            if (!checkFor404("addVisitor"))
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addVisitor");
         }
     });
+    //if (isNullorUndefined(visitorId)) {
+    //    logError("BUG", folderId, "visitorId undefined", "verifyVisitorId");
+    //    return;
+    //}
+
+    //let tempVisitorId = get
+
+    //$.ajax({
+    //    type: "GET",
+    //    url: settingsArray.ApiServer + "api/VisitorInfo/verifyVisitorId?visitorId=" + visitorId,
+    //    success: function (visitorSuccessModel) {
+    //        if (visitorSuccessModel.Success === "ok") {
+    //            if (!visitorSuccessModel.Exists) {
+    //                logError("BUG", folderId, "VisitorId not found in Visitor table", "verifyVisitorId");
+    //            }
+    //        }
+    //        else {
+    //            logError("BUG", folderId, visitorSuccessModel.Success, "verifyVisitorId");
+    //        }
+    //    },
+    //    error: function (jqXHR) {
+    //        if (!checkFor404("logImageHit")) {
+    //            logError("XHR", folderId, getXHRErrorDetails(jqXHR), "verifyVisitorId");
+    //        }
+    //    }
+    //});
 }
 
-function checkForHitLimit(calledFrom, pageId, userPageHits, userImageHits) {
+function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {
     if (!isLoggedIn()) {
         if (calledFrom === "pages") {
             if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0) {
                 if (getCookieValue("IpAddress") !== "68.203.90.183") {                   //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
                     showCustomMessage(98, true);
-                    logEvent("PAY", pageId, "UserPageHits: " + userPageHits)
+                    logEvent("PAY", folderId, "UserPageHits: " + userPageHits)
                 }
             }
         }
         if (calledFrom === "images") {
             if (userImageHits > freeImageHitsAllowed && userImageHits % 10 === 0) {
-                logEvent("PAY", pageId, "Image Hits: " + userImageHits)
+                logEvent("PAY", folderId, "Image Hits: " + userImageHits)
                 showCustomMessage(97, true);
             }
         }
@@ -179,8 +214,7 @@ function checkForHitLimit(calledFrom, pageId, userPageHits, userImageHits) {
     // pay me to do some programming for you and I'll let you in on all my source code
 }
 
-
-function getIpInfo(pageId, calledFrom) {
+function getIpInfo(folderId, calledFrom) {
     console.log("calling iPInfo");
     try {
         $.ajax({
@@ -194,41 +228,14 @@ function getIpInfo(pageId, calledFrom) {
                 //              if(ipResponse.)
                 console.log("iPInfo success");
 
-                $.ajax({
-                    type: "POST",
-                    url: settingsArray.ApiServer + "api/Common/AddVisitor",
-                    data: {
-                        IpAddress: ipResponse.ip,
-                        PageId: pageId,
-                        CalledFrom: calledFrom,
-                        City: ipResponse.city,
-                        Country: ipResponse.country,
-                        Region: ipResponse.region,
-                        GeoCode: ipResponse.loc
-                    },
-                    success: function (addVisitorSuccess) {
-                        if (addVisitorSuccess.Success === "ok") {
-                            setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
-                            setCookieValue("IsLoggedIn", "true");
-                            logEvent("NEW", pageId, addVisitorSuccess.EventDetail)
-                        }
-                        else {
-                            logError("BUG",pageId, addVisitorSuccess.Success, "addVisitor");
-                        }
-                    },
-                    error: function (jqXHR) {
-                        if (!checkFor404("addVisitor")) 
-                            logError("XHR", pageId, getXHRErrorDetails(jqXHR), "addVisitor");
-                    }
-                });
             },
             error: function (jqXHR) {
                 if (!checkFor404("getIpInfo")) {
-                    logError("XHR", pageId, getXHRErrorDetails(jqXHR), "getIpInfo/" + calledFrom);
+                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getIpInfo/" + calledFrom);
                 }
             }
         });
     } catch (e) {
-        logError("CAT", pageId, e, "getIpInfo/" + calledFrom);
+        logError("CAT", folderId, e, "getIpInfo/" + calledFrom);
     }
 }

@@ -183,17 +183,17 @@ function resizePage() {
     mediaSavyHdrResize();
 }
 
-function letemPorn(response, pornType, pageId) {
+function letemPorn(response, pornType, folderId) {
     // if (document.domain === 'localhost') alert("letemPorn: " + pornType);
     if (response === "ok") {
         //  setUserPornStatus(pornType);
         //<div onclick="goToPorn()">Nasty Porn</div>
         //window.location.href = '/index.html?subdomain=porn';
         if (isNullorUndefined(pornType)) {
-            logError("BUG", pageId, "isNullorUndefined(pornType)", "letemPorn");
+            logError("BUG", folderId, "isNullorUndefined(pornType)", "letemPorn");
             pornType = "UNK";
         }
-        rtpe("PRN", "xx", pornType, pageId);
+        rtpe("PRN", "xx", pornType, folderId);
     }
     else {
         $('#customMessage').hide();
@@ -289,17 +289,17 @@ function create_UUID() {
     return uuid;
 }
 
-function logError(errorCode, pageId, errorMessage, calledFrom) {
+function logError(errorCode, folderId, errorMessage, calledFrom) {
     if (document.domain === 'localhost')
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
     else
     {
         try {
-            if (isNullorUndefined(pageId)) {
+            if (isNullorUndefined(folderId)) {
                 if (document.domain === 'localhost')
-                    alert("Error in logError. PageId undefined. Called from: " + calledFrom + "  ErrorMessage: " + errorMessage);
-                pageId = 0;
-                //logError("BUG", pageId, "Page Id undefined in LogPageHit.", "logPageHit");
+                    alert("Error in logError. folderId undefined. Called from: " + calledFrom + "  ErrorMessage: " + errorMessage);
+                folderId = 0;
+                //logError("BUG", folderId, "Page Id undefined in LogPageHit.", "logPageHit");
             }
             let visitorId = getCookieValue("VisitorId");
 
@@ -307,7 +307,7 @@ function logError(errorCode, pageId, errorMessage, calledFrom) {
             if (isNullorUndefined(visitorId)) {
                 setCookieValue("VisitorId", create_UUID());
                 setCookieValue("IsLoggedIn", "false");
-                //logError("BUG", pageId, "VisitorId undefined in LogPageHit.", "logPageHit");
+                //logError("BUG", folderId, "VisitorId undefined in LogPageHit.", "logPageHit");
             }
             $.ajax({
                 type: "POST",
@@ -315,7 +315,7 @@ function logError(errorCode, pageId, errorMessage, calledFrom) {
                 data: {
                     VisitorId: getCookieValue("VisitorId"),
                     ErrorCode: errorCode,
-                    PageId: pageId,
+                    PageId: folderId,
                     ErrorMessage: errorMessage,
                     CalledFrom: calledFrom
                 },
@@ -345,9 +345,9 @@ function logError(errorCode, pageId, errorMessage, calledFrom) {
     }
 }
 
-function logEvent(eventCode, pageId, calledFrom, eventDetails) {
+function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     //if (document.domain === 'localhost')
-    //    alert("logEvent. eventCode: " + eventCode + "  pageId: " + pageId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
+    //    alert("logEvent. eventCode: " + eventCode + "  folderId: " + folderId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
     //else
     {
         let visitorId = getCookieValue("VisiorId");
@@ -361,16 +361,16 @@ function logEvent(eventCode, pageId, calledFrom, eventDetails) {
                 EventCode: eventCode,
                 EventDetail: eventDetails,
                 CalledFrom: calledFrom,
-                PageId: pageId
+                FolderId: folderId
             },
             success: function (success) {
                 if (success !== "ok") {
-                    logError("BUG", pageId, success, "logEvent");
+                    logError("BUG", folderId, success, "logEvent");
                 }
             },
             error: function (jqXHR) {
                 if (!checkFor404("logEvent")) {
-                    logError("XHR", pageId, getXHRErrorDetails(jqXHR), "logEvent");
+                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logEvent");
 
                 }
             }
@@ -382,7 +382,7 @@ function logDataActivity(activityModel) {
     //activityModel{
     //    VisitorId: getCookieValue("VisitorId"),
     //    ActivityCode: "LKC",
-    //    PageId: pDirTreeId,
+    //    folderId: pDirTreeId,
     //    Activity: "copy: " + linkId + " to: " + pDirTreeId
     //};
     $.ajax({
@@ -444,12 +444,12 @@ function getFileDate() {
 
 }
 
-function indexCatTreeContainerClick(path, pageId, treeId) {
+function indexCatTreeContainerClick(path, folderId, treeId) {
     try {
-        window.location.href = "/album.html?folder=" + pageId;
+        window.location.href = "/album.html?folder=" + folderId;
         $('#indexCatTreeContainer').dialog('close');
     } catch (e) {
-        logError("CAT", pageId, e, "indexCatTreeContainerClick");
+        logError("CAT", folderId, e, "indexCatTreeContainerClick");
     }
 }
 
