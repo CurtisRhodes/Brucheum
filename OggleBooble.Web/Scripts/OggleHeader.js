@@ -1,7 +1,6 @@
 ﻿let hdrFolderId, hdrSubdomain, hdrRowW, mediaDebug;
 
 function setOggleHeader(folderId, subdomain) {
-    //if (getCookieValue("IpAddress") === "68.203.90.183") alert("setOggleHeader subdomain " + subdomain + "  folderId: " + folderId + " containsImageLinks: " + containsImageLinks);
     if (subdomain === undefined) subdomain = "boobs";
     hdrFolderId = folderId;
     hdrSubdomain = subdomain;

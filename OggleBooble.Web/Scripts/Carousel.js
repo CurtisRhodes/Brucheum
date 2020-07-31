@@ -228,8 +228,13 @@ function alreadyInLast100(idx) {
     let idxStart = Math.max(0, carouselItemArray.length - 100);
     for (i = idxStart; i < imageHistory.length; i++) {
         if (idx === imageHistory[i]) {
-            //alert("Already shown try again: ");
+            if (window.localStorage["IpAddress"] === "68.203.90.183") {
+                alert("Already shown try again: ");
+            }
+            else
+                alert("window.localStorage[IpAddress]: " + window.localStorage["IpAddress"]);
             console.log("Already shown try again: ");
+            //logEvent("XXX", 366,"alreadyInLast100","")
             return true;
         }
     }
@@ -253,7 +258,9 @@ function intervalBody() {
             $('#carouselFooter').fadeIn();
             setLabelLinks();
             $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });            
-            $('#hdrBtmRowSec3').html("imageIndex: " + imageIndex + "  imageHistory.length: " + imageHistory.length);
+            if (window.localStorage["IpAddress"] === "68.203.90.183")
+                $('#hdrBtmRowSec3').html(" imageIndex: " + imageIndex + "  carouselItemArray.length: " + carouselItemArray.length);
+
             //if (debugMode) $('#hdrBtmRowSec3').append(".len: " + imageHistory.length);
             //if (debugMode) $('#hdrBtmRowSec3').html("  Count: " + imageHistoryArrayCount);
             //if (debugMode) $('#hdrBtmRowSec3').append("  a[" + (imageHistory.length - 1) + "]: " + imageHistory[imageHistory.length - 1]);

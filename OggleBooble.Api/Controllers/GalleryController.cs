@@ -66,9 +66,7 @@ namespace OggleBooble.Api.Controllers
                 }
                 albumImageInfo.Success = "ok";
             }
-            catch (Exception ex) {
-                albumImageInfo.Success = Helpers.ErrorDetails(ex); 
-            }
+            catch (Exception ex) { albumImageInfo.Success = Helpers.ErrorDetails(ex); }
             return albumImageInfo;
         }
 
@@ -100,8 +98,9 @@ namespace OggleBooble.Api.Controllers
                             LinkStatus = trackbackLink.LinkStatus
                         });
                     }
-                    //MySqlDataContext.CategoryFolderDetail categoryFolderDetails = db.CategoryFolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-                    //if (categoryFolderDetails != null) albumInfo.ExternalLinks = categoryFolderDetails.ExternalLinks;
+                    if(db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault() != null) 
+                        albumInfo.FolderComments = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault().FolderComments;
+
                     #region BreadCrumbs
                     VirtualFolder thisFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                     albumInfo.BreadCrumbs.Add(new BreadCrumbItemModel()

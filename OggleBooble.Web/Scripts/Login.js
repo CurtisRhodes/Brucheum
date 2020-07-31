@@ -192,7 +192,7 @@ function attemptRegister() {
             registeredUserModel.FirstName = $('#txtFirstName').val();
             registeredUserModel.LastName = $('#txtLastName').val();
             registeredUserModel.Email = $('#txtEmail').val();
-            registeredUserModel.IpAddress = getCookieValue("IpAddress");
+            registeredUserModel.IpAddress = window.localStorage["IpAddress"];
             registeredUserModel.Status = "NEW";
 
             $.ajax({

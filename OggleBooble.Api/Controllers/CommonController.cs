@@ -16,52 +16,195 @@ using System.Net.Mail;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class CommonController : ApiController
+    public class VisitorController : ApiController
     {
-        [HttpPut]
-        [Route("api/Common/SendEmail")]
-        public string SendEmail(EmailMessageModel message)
+        [HttpPost]
+        [Route("api/Common/AddVisitor")]
+        public AddVisitorSuccessModel AddVisitor(AddVisitorModel visitorData)
         {
-            string success = "";
+            var addVisitorSuccess = new AddVisitorSuccessModel();
             try
             {
-                using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    MailMessage mailMessage = new MailMessage("info@api.Ogglebooble.com", "CurtishRhodes@hotmail.com", message.Subject, message.Message);
-                    mailMessage.IsBodyHtml = true;
-                    smtpClient.Send(mailMessage);
-                    success = "ok";
+                    VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == visitorData.FolderId).FirstOrDefault();
+                    if (categoryFolder != null)
+                        addVisitorSuccess.PageName = categoryFolder.FolderName;
+
+                    var existingVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    if (existingVisitor != null)
+                    {
+                        addVisitorSuccess.VisitorId = existingVisitor.VisitorId;
+                        addVisitorSuccess.EventDetail += "Visitor Id already exists";
+                        var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == existingVisitor.VisitorId).FirstOrDefault();
+                        if (registeredUser != null)
+                            addVisitorSuccess.UserName = registeredUser.UserName;
+                    }
+                    else
+                    {
+                        string newVisitorId = Guid.NewGuid().ToString();
+                        var newVisitor = new Visitor()
+                        {
+                            VisitorId = newVisitorId,
+                            InitialPage = visitorData.FolderId,
+                            City = visitorData.City,
+                            Country = visitorData.Country,
+                            GeoCode = visitorData.GeoCode,
+                            Region = visitorData.Region,
+                            InitialVisit = DateTime.Now,
+                            IpAddress = visitorData.IpAddress
+                        };
+                        db.Visitors.Add(newVisitor);
+                        db.SaveChanges();
+                        addVisitorSuccess.EventDetail = "New visitor added";
+                        addVisitorSuccess.VisitorId = newVisitorId;
+                    }
+                    addVisitorSuccess.Success = "ok";
                 }
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
+            catch (Exception ex) { addVisitorSuccess.Success = Helpers.ErrorDetails(ex); }
+            return addVisitorSuccess;
         }
-
-        [HttpGet]
-        [Route("api/Common/VerifyConnection")]
-        public VerifyConnectionSuccessModel VerifyConnection()
+        
+        [HttpPost]
+        [Route("api/Common/LogVisit")]
+        public LogVisitSuccessModel LogVisit(string visitorId)
         {
-            var timer = new System.Diagnostics.Stopwatch();
-            timer.Start();
-            VerifyConnectionSuccessModel successModel = new VerifyConnectionSuccessModel() { ConnectionVerified = false };
+            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false, IsNewVisitor = false };
             try
             {
-                //using (var db = new OggleBoobleMySqlContext())
-                using (var db = new OggleBoobleMSSqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    var test = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
-                    successModel.ConnectionVerified = true;
+                    DateTime lastVisitDate = DateTime.MinValue;
+                    List<Visit> visitorVisits = db.Visits.Where(v => v.VisitorId == visitorId).ToList();
+                    if (visitorVisits.Count() > 0)
+                        lastVisitDate = db.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+
+                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
+                    {
+                        Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                        if (visitor == null)
+                        {
+                            db.Visits.Add(new Visit()
+                            {
+                                VisitorId = visitorId,
+                                VisitDate = DateTime.Now
+                            });
+                            db.SaveChanges();
+                            visitSuccessModel.IsNewVisitor = true;
+                        }
+
+                        db.Visits.Add(new Visit() { VisitorId = visitorId, VisitDate = DateTime.Now });
+                        db.SaveChanges();
+                        visitSuccessModel.VisitAdded = true;
+                        if (!visitSuccessModel.IsNewVisitor)
+                        {
+                            var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+                            if (registeredUser != null)
+                                visitSuccessModel.UserName = " " + registeredUser.UserName;
+                            else
+                                visitSuccessModel.UserName = ". Please log in";
+                        }
+                    }
+                    visitSuccessModel.Success = "ok";
                 }
-                timer.Stop();
-                //successModel.ReturnValue = timer.Elapsed.ToString();
-                System.Diagnostics.Debug.WriteLine("VerifyConnection took: " + timer.Elapsed);
-                successModel.Success = "ok";
             }
             catch (Exception ex)
             {
-                successModel.Success = Helpers.ErrorDetails(ex);
+                visitSuccessModel.Success = Helpers.ErrorDetails(ex);
             }
-            return successModel;
+            return visitSuccessModel;
+        }
+
+        [HttpGet]
+        [Route("api/Common/GetVisitor")]
+        public GetVisitorModel GetVisitor(string visitorId)
+        {
+            var visitorModel = new GetVisitorModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (dbVisitor == null)
+                        visitorModel.Success = "not found";
+                    else
+                    {
+                        visitorModel.IpAddress = dbVisitor.IpAddress;
+                        visitorModel.Success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                visitorModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return visitorModel;
+        }
+        
+        [HttpPost]
+        [Route("api/Common/LogIpCall")]
+        public string LogIpCall(IpInfoCall callData)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.IpInfoCalls.Add(new IpInfoCall()
+                    {
+                        SessionId = callData.SessionId,
+                        BrowserInfo = callData.BrowserInfo,
+                        Occured = DateTime.Now
+                    });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class HitCounterController : ApiController
+    {
+        [HttpPost]
+        [Route("api/Common/LogImageHit")]
+        public ImageHitSuccessModel LogImageHit(LogImageHitDataModel logImageHItData)
+        {
+            ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();
+            try
+            {
+                using (var dbm = new OggleBoobleMySqlContext())
+                {
+                    dbm.ImageHits.Add(new ImageHit()
+                    {
+                        VisitorId = logImageHItData.VisitorId,
+                        PageId = logImageHItData.FolderId,
+                        ImageLinkId = logImageHItData.LinkId,
+                        HitDateTime = DateTime.Now
+                    });
+                    dbm.SaveChanges();
+                    imageHitSuccess.UserImageHits = dbm.ImageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
+                    imageHitSuccess.UserPageHits = dbm.PageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
+                    imageHitSuccess.ImageHits = dbm.ImageHits.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
+
+                }
+                imageHitSuccess.Success = "ok";
+            }
+            catch (DbEntityValidationException dbEx)
+            {
+                imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
+            }
+            catch (Exception ex)
+            {
+                imageHitSuccess.Success = Helpers.ErrorDetails(ex);
+            }
+            return imageHitSuccess;
         }
 
         [HttpPost]
@@ -123,163 +266,55 @@ namespace OggleBooble.Api.Controllers
             }
             return pageHitSuccessModel;
         }
+    }
 
-        bool imageHitControllerBusy = false;
-        [HttpPost]
-        [Route("api/Common/LogImageHit")]
-        public ImageHitSuccessModel LogImageHit(LogImageHitDataModel logImageHItData)
+    [EnableCors("*", "*", "*")]
+    public class CommonController : ApiController
+    {
+        [HttpPut]
+        [Route("api/Common/SendEmail")]
+        public string SendEmail(EmailMessageModel message)
         {
-            ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();
+            string success = "";
             try
             {
-                //System.Threading.Thread.Sleep(1000);
-                if (imageHitControllerBusy)
-                    imageHitSuccess.Success = "imageHitController Busy";
-                else
+                using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
                 {
-                    imageHitControllerBusy = true;
-                    using (var dbm = new OggleBoobleMySqlContext())
-                    {
-                        //DateTime utcDateTime = DateTime.UtcNow.AddMilliseconds(getrandom.Next());
-                        //imageHitSuccess.HitDateTime = utcDateTime;
-                        dbm.ImageHits.Add(new ImageHit()
-                        {
-                            VisitorId = logImageHItData.VisitorId,
-                            PageId = logImageHItData.FolderId,
-                            ImageLinkId = logImageHItData.LinkId,
-                            HitDateTime = DateTime.Now
-                        });
-                        dbm.SaveChanges();
-                        imageHitSuccess.UserImageHits = dbm.ImageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
-                        imageHitSuccess.UserPageHits = dbm.PageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
-                        imageHitSuccess.ImageHits = dbm.ImageHits.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
-                        imageHitControllerBusy = false;
-                    }
+                    MailMessage mailMessage = new MailMessage("info@api.Ogglebooble.com", "CurtishRhodes@hotmail.com", message.Subject, message.Message);
+                    mailMessage.IsBodyHtml = true;
+                    smtpClient.Send(mailMessage);
+                    success = "ok";
                 }
-                imageHitSuccess.Success = "ok";
             }
-            catch (DbEntityValidationException dbEx)
-            {
-                imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
-            }
-            catch (Exception ex)
-            {
-                imageHitSuccess.Success = Helpers.ErrorDetails(ex);
-            }
-            return imageHitSuccess;
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
         }
 
-        [HttpPost]
-        [Route("api/Common/LogVisit")]
-        public LogVisitSuccessModel LogVisit(string visitorId)
+        [HttpGet]
+        [Route("api/Common/VerifyConnection")]
+        public VerifyConnectionSuccessModel VerifyConnection()
         {
-            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false, IsNewVisitor = false };
+            var timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            VerifyConnectionSuccessModel successModel = new VerifyConnectionSuccessModel() { ConnectionVerified = false };
             try
             {
-                using (var db = new OggleBoobleMySqlContext())
+                //using (var db = new OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMSSqlContext())
                 {
-                    DateTime lastVisitDate = DateTime.MinValue;
-                    List<Visit> visitorVisits = db.Visits.Where(v => v.VisitorId == visitorId).ToList();
-                    if (visitorVisits.Count() > 0)
-                        lastVisitDate = db.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
-
-                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
-                    {
-                        Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                        if (visitor == null)
-                        {
-                            db.Visits.Add(new Visit()
-                            {
-                                VisitorId = visitorId,
-                                VisitDate = DateTime.Now
-                            });
-                            db.SaveChanges();
-                            visitSuccessModel.IsNewVisitor = true;
-                        }
-
-                        db.Visits.Add(new Visit() { VisitorId = visitorId, VisitDate = DateTime.Now });
-                        db.SaveChanges();
-                        visitSuccessModel.VisitAdded = true;
-                        if (!visitSuccessModel.IsNewVisitor)
-                        {
-                            var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-                            if (registeredUser != null)
-                                visitSuccessModel.UserName = " " + registeredUser.UserName;
-                            else
-                                visitSuccessModel.UserName = ". Please log in";
-                        }
-                    }
-                    visitSuccessModel.Success = "ok";
+                    var test = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
+                    successModel.ConnectionVerified = true;
                 }
+                timer.Stop();
+                //successModel.ReturnValue = timer.Elapsed.ToString();
+                System.Diagnostics.Debug.WriteLine("VerifyConnection took: " + timer.Elapsed);
+                successModel.Success = "ok";
             }
             catch (Exception ex)
             {
-                visitSuccessModel.Success = Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
-            return visitSuccessModel;
-        }
-
-        [HttpPost]
-        [Route("api/Common/AddVisitor")]
-        public AddVisitorSuccessModel AddVisitor(AddVisitorModel visitorData)
-        {
-            var addVisitorSuccess = new AddVisitorSuccessModel();
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    var dupIp = db.IpInfoCalls.Where(ip => ip.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (dupIp != null)
-                        addVisitorSuccess.EventDetail = "duplicate call to IpInfo. ";
-
-                    VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == visitorData.FolderId).FirstOrDefault();
-                    if (categoryFolder != null)
-                        addVisitorSuccess.PageName = categoryFolder.FolderName;
-
-                    string newVisitorId = Guid.NewGuid().ToString();
-                    var existingVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (existingVisitor != null)
-                    {
-                        addVisitorSuccess.VisitorId = existingVisitor.VisitorId;
-                        addVisitorSuccess.EventDetail += "Visitor Id already exists";
-                        var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == existingVisitor.VisitorId).FirstOrDefault();
-                        if (registeredUser != null)
-                            addVisitorSuccess.UserName = registeredUser.UserName;
-                    }
-                    else
-                    {
-                        // We have a new visitor!
-                        var newVisitor = new Visitor()
-                        {
-                            VisitorId = newVisitorId,
-                            InitialPage = visitorData.FolderId,
-                            City = visitorData.City,
-                            Country = visitorData.Country,
-                            GeoCode = visitorData.GeoCode,
-                            Region = visitorData.Region,
-                            InitialVisit = DateTime.Now,
-                            IpAddress = visitorData.IpAddress
-                        };
-                        db.Visitors.Add(newVisitor);
-                        addVisitorSuccess.EventDetail += "New visitor added";
-                    }
-                    db.IpInfoCalls.Add(new MySqlDataContext.IpInfoCall()
-                    {
-                        IpAddress = visitorData.IpAddress,
-                        Occured = DateTime.Now
-                    });
-
-                    db.SaveChanges();
-                    addVisitorSuccess.VisitorId = newVisitorId;
-
-                    addVisitorSuccess.Success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                addVisitorSuccess.Success = Helpers.ErrorDetails(ex);
-            }
-            return addVisitorSuccess;
+            return successModel;
         }
 
         [HttpPost]

@@ -153,11 +153,11 @@ function getAlbumPageInfo(folderId) {
                         }
                     });
                 }
-                setBadges(albumInfo.ExternalLinks);
 
                 logPageHit(folderId);
                 $('#folderCommentButton').fadeIn();
                 setOggleHeader(folderId, albumInfo.RootFolder);
+                setBadges(albumInfo.FolderComments);
                 setOggleFooter(folderId, albumInfo.RootFolder);
                 //$('#headerMessage').html("page hits: " + albumInfo.PageHits.toLocaleString());
                 $('#footerPageHits').html("page hits: " + albumInfo.PageHits.toLocaleString());
@@ -273,23 +273,18 @@ function setBreadCrumbs(breadCrumbModel) {
     }
 }
 
-function setBadges(badgesText) {
-    if (!isNullorUndefined(badgesText)) {
-
-        alert("badgesText: " + badgesText);
-
-        if (badgesText.indexOf("Playmate Of The Year") > -1) {
-            $('#badgesContainer').append("<a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>");
-        }
-        if (badgesText.indexOf("biggest breasted centerfolds") > -1) {
-            $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
-        }
-        if (badgesText.indexOf("black centerfolds") > -1) {
-            $('#badgesContainer').append("<div class='badgeImage blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
-        }
-        if (badgesText.indexOf("Hef likes twins") > -1) {
-            $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
-        }
+function setBadges(folderComments) {
+    if (folderComments.toUpperCase().indexOf("PLAYMATE OF THE YEAR") > -1) {
+        $('#badgesContainer').append("<a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>");
+    }
+    if (folderComments.toUpperCase().indexOf("BIGGEST BREASTED CENTERFOLDS") > -1) {
+        $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
+    }
+    if (folderComments.toUpperCase().indexOf("BLACK CENTERFOLDS") > -1) {
+        $('#badgesContainer').append("<div class='badgeImage blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
+    }
+    if (folderComments.toUpperCase().indexOf("HEF LIKES TWINS") > -1) {
+        $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
     }
 }
 

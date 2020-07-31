@@ -68,7 +68,6 @@ namespace OggleBooble.Api.Models
         //public List<CategoryTreeModel> SubDirs { get; set; }
     }
 
-
     public class AlbumInfoModel
     {
         public AlbumInfoModel()
@@ -80,7 +79,7 @@ namespace OggleBooble.Api.Models
         public string RootFolder { get; set; }
         public List<TrackbackLink> TrackBackItems { get; set; }
         public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
-        public string ExternalLinks { get; set; }
+        public string FolderComments { get; set; }
         public int FileCount { get; set; }
         public int SubFolderCount { get; set; }
         public int PageHits { get; set; }

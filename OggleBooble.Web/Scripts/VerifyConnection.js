@@ -4,7 +4,6 @@
     //persisConnectionInterval, persisConnectionIntervalRunning = false;
 
 function checkFor404(calledFrom) {
-    //sendEmailToYourself("checkFor404 called with null errorMessage from: " + calledFrom, "ip: " + ipAddr);
     connectionVerified = false;
     verifyConnection();
     setTimeout(function () {
@@ -132,9 +131,8 @@ function xxPersistConnection() {
     }, 145000);
 }
 
-function getVisitorInfo() {
-    var info = {
-
+function getBrowserInfo() {
+    let browserInfo = {
         timeOpened: new Date(),
         timezone: (new Date()).getTimezoneOffset() / 60,
 
@@ -175,5 +173,5 @@ function getVisitorInfo() {
         //speed() { return position.coords.speed },
         //timestamp() { return position.timestamp },
     };
-    return info;
+    return browserInfo;
 }

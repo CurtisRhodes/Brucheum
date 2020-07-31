@@ -175,12 +175,12 @@ namespace OggleBooble.Api.MySqlDataContext
         public string LinkStatus { get; set; }
     }
 
-    [Table("OggleBooble.IpInfoCalls")]
+    [Table("OggleBooble.IpInfoCall")]
     public class IpInfoCall
     {
         [Key]
-        public int PkId { get; set; }
-        public string IpAddress { get; set; }
+        public int SessionId { get; set; }
+        public string BrowserInfo { get; set; }
         public DateTime Occured { get; set; }
     }
 

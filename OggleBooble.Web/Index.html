@@ -17,7 +17,6 @@
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
 
     <script src="Scripts/Common.js"></script>
-    <script src="Scripts/OggleHelpers.js"></script>
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/HitCounter.js"></script>
     <script src="Scripts/EventControl.js"></script>
@@ -80,10 +79,8 @@
     <div class="footer"></div>
 
     <script>
-        let spaPageId, dots = "",
-            promoIdx, promoMessagesArray = new Array(),
-            promoMessageRotator, promoMessageRotationSpeed = 15000,
-            updatedGalleriesCount = 25;
+        let spaPageId, dots = "", promoIdx, promoMessagesArray = new Array(),
+            promoMessageRotator, promoMessageRotationSpeed = 15000, updatedGalleriesCount = 25;
 
         $(document).ready(function () {
             //$('#footerLastBuild').html("last build: " + lastBuild + "3");
@@ -92,6 +89,11 @@
             setOggleHeader(3908, "loading");
             document.title = "loading settings : OggleBooble";
             loadOggleSettings();
+
+            if (isNullorUndefined(window.sessionStorage["sessionId"])) {
+                window.sessionStorage["sessionId"] = create_UUID();
+                console.log("sessionId created: " + window.sessionStorage["sessionId"]);
+            }
 
             params = getParams();
             if (params.subdomain === undefined)
@@ -102,7 +104,7 @@
             else
                 spaPageId = params.spa;
            
-            var getXMLsettingsWaiter = setInterval(function () {
+            let getXMLsettingsWaiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += "~ ";
                     $('#dots').html(dots);
@@ -111,22 +113,15 @@
                 else {
                     clearInterval(getXMLsettingsWaiter);
                     checkFor404("start");
-                    var verifyConnectionWaiter = setInterval(function () {
+                    let verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
                             $('#dots').html('');
 
                             localhostBypass();
 
-                            var visitorId = getCookieValue("VisitorId");
-                            if (isNullorUndefined(visitorId)) {
-                                console.log("isNullorUndefined(visitorId)");
-                                // getIpInfo(spaPageId);
-                            }
-                            else {
-                                console.log("visitorId found: " + visitorId);
-                                loadUserSettingsIntoLocalStorage(visitorId);
-                            }
+                            verifiyVisitor("index", spaPageId);
+
                             // ranker     homePageId = 3907;
                             // boobs      homePageId = 3908;
                             // porn       homePageId = 3909;
@@ -167,21 +162,23 @@
         function localhostBypass() {
             if (document.domain === 'localhost') {
                 setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+
+                let visitorId = getCookieValue("VisitorId");
+                console.log("localhostBypass visitorId: " + visitorId);
                 setCookieValue("UserName", "developer");
                 //window.localStorage["IsLoggedIn"] = "true";
-                console.log("localhostBypass()");
             }
         }
 
         function resizeIndexPage() {
             // height
-            var winH = $(window).height();
-            var headerH = $('header').height() + 50;
+            let winH = $(window).height();
+            let headerH = $('header').height() + 50;
             $('#topIndexPageSection').height((winH - headerH - 100));
             $('#topIndexPageSection').height((winH - headerH) * .65);
             // width
 
-            var winW = $(window).width();
+            let winW = $(window).width();
             $('section').css("background-color", "#d5d1ba");
             if (winW < 1500) {
                 $('section').css("background-color", "red");

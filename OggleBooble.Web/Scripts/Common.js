@@ -5,25 +5,24 @@
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 //<div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
+
 function setCookieValue(elementName, elementValue) {
     //alert("setCookieValue(" + elementName + "," + elementValue + ")");
     window.localStorage[elementName] = elementValue;
 
-    var decodedCookie = "";
+    let decodedCookie = "";
     if (document.cookie) {
-        var ipAddress = getCookieValue("IpAddress");
-        var visitorId = getCookieValue("VisitorId");
-        var userName = getCookieValue("UserName");
-        var isLoggedIn = getCookieValue("IsLoggedIn");
+        let visitorId = getCookieValue("VisitorId");
+        let userName = getCookieValue("UserName");
+        let isLoggedIn = getCookieValue("IsLoggedIn");
         decodedCookie = decodeURIComponent(document.cookie);
-        var cookieElements = decodedCookie.split(';');
-        var cookieItem; var cookieItemName; var cookieItemValue;
+        let cookieElements = decodedCookie.split(';');
+        let cookieItem, cookieItemName, cookieItemValue;
         for (var i = 0; i < cookieElements.length; i++) {
             cookieItem = cookieElements[i];
             cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
             cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
             if (cookieItemName === "UserName") userName = cookieItemValue;
-            if (cookieItemName === "IpAddress") ipAddress = cookieItemValue;
             if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
             if (cookieItemName === "IsLoggedIn") isLoggedIn = cookieItemValue;
         }
@@ -31,24 +30,22 @@ function setCookieValue(elementName, elementValue) {
 
     if (elementName === "IsLoggedIn") isLoggedIn = elementValue;
     if (elementName === "UserName") userName = elementValue;
-    if (elementName === "IpAddress") ipAddress = elementValue;
     if (elementName === "VisitorId") visitorId = elementValue;
     //deleteCookie();
     expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() + 9);
-    //var cookieString = "VisitorId=" + visitorId + ";IpAddress=" + ipAddress + ";User=" + user + ";path='/;expires=" + expiryDate.toUTCString();
-    var cookieString = "VisitorId:" + visitorId + ",IpAddress:" + ipAddress + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+    let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
     document.cookie = cookieString;
     //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
 }
 
 function getCookieValue(itemName) {
-    var returnValue = window.localStorage[itemName];
+    let returnValue = window.localStorage[itemName];
 
     if (isNullorUndefined(returnValue)) {
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var cookieElements = decodedCookie.split(',');
-        var cookieItem; var cookieItemName; var cookieItemValue;
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let cookieElements = decodedCookie.split(',');
+        let cookieItem, cookieItemName, cookieItemValue;
         for (var i = 0; i < cookieElements.length; i++) {
             cookieItem = cookieElements[i].split(':');
             cookieItemName = cookieItem[0].trim();//.substring(0, cookieElements[i].indexOf("=")).trim();
@@ -62,16 +59,6 @@ function getCookieValue(itemName) {
         }
     }
     return returnValue;
-}
-
-function setLocalValue(localName, localValue) {
-    alert("setLocalStorage[" + localName + "] = " + localValue);
-    window.localStorage[localName] = localValue;
-}
-
-function getLocalValue(localName) {
-    var localValue = getCookieValue(localName);
-    return localValue;
 }
 
 function loadOggleSettings() {
@@ -93,7 +80,7 @@ function loadOggleSettings() {
 }
 
 function includeHTML() {
-    var z, i, elmnt, file, xhttp;
+    let z, i, elmnt, file, xhttp;
     /* Loop through a collection of all HTML elements: */
     z = document.getElementsByTagName("*");
     for (i = 0; i < z.length; i++) {
@@ -120,7 +107,7 @@ function includeHTML() {
 }
 
 function getParams() {
-    var params = {},
+    let params = {},
         pairs = document.URL.split('?').pop().split('&');
     for (var i = 0, p; i < pairs.length; i++) {
         p = pairs[i].split('=');
@@ -130,45 +117,41 @@ function getParams() {
 }
 
 function dateString(dateObject) {
-    var d = new Date(dateObject);
-    var day = d.getDate();
-    var month = d.getMonth() + 1;
-    var year = d.getFullYear();
+    let d = new Date(dateObject), day = d.getDate(), month = d.getMonth() + 1, year = d.getFullYear();
     if (day < 10) {
         day = "0" + day;
     }
     if (month < 10) {
         month = "0" + month;
     }
-    var date = month + "/" + day + "/" + year;
-
-    return date;
+    return date = month + "/" + day + "/" + year;;
 };
 
 function dateString2(dateObject) {
-    var d = new Date(dateObject);
-    var day = d.getDate();
-    var month = d.getMonth() + 1;
-    //var year = d.getFullYear();
+    let d = new Date(dateObject), day = d.getDate(), month = d.getMonth() + 1;
     if (day < 10) {
         day = "0" + day;
     }
     if (month < 10) {
         month = "0" + month;
     }
-    var strDate = month + "/" + day; // + "/" + year;
-
-    return strDate;
+    return month + "/" + day;
 };
+
+function todayString() {
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+    return mm + '/' + dd + '/' + yyyy;
+}
 
 function resizePage() {
     //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, 
     // or using “transform” along with “transform - origin: 0 0”.album.html
 
     // set page width
-    let winW = $(window).width();
-    let lcW = $('.leftColumn').width();
-    let rcW = $('.rightColumn').width();
+    let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
     $('.middleColumn').width(winW - lcW - rcW);
 
     //set page height
@@ -176,19 +159,11 @@ function resizePage() {
     let headerH = $('header').height() + 50;
     $('.threeColumnLayout').css("min-height", winH - headerH);
 
-
-    //var winH = $(window).height();
-    //var headerH = $('header').height();
-    //$('.middleColumn').height(winH - headerH);
     mediaSavyHdrResize();
 }
 
 function letemPorn(response, pornType, folderId) {
-    // if (document.domain === 'localhost') alert("letemPorn: " + pornType);
     if (response === "ok") {
-        //  setUserPornStatus(pornType);
-        //<div onclick="goToPorn()">Nasty Porn</div>
-        //window.location.href = '/index.html?subdomain=porn';
         if (isNullorUndefined(pornType)) {
             logError("BUG", folderId, "isNullorUndefined(pornType)", "letemPorn");
             pornType = "UNK";
@@ -205,7 +180,7 @@ function letemPorn(response, pornType, folderId) {
 
 function displayStatusMessage(msgCode, message) {
 
-    var severityClassName;
+    let severityClassName;
     switch (msgCode) {
         case "ok":
             severityClassName = "severityOk";
@@ -237,14 +212,13 @@ function displayStatusMessage(msgCode, message) {
 }
 
 function refreshPage() {
-    //sendEmailToYourself("refreshPage from: " + calledFrom, "ip: " + ipAddr);
     if (document.domain === 'localhost')
         alert("checkFor404() refreshPage");
     window.location.href = ".";
 }
 
 function getXHRErrorDetails(jqXHR) {
-    var msg = '';
+    let msg = '';
     if (jqXHR.status === 0) {
         msg = 'Not connect.\n Verify Network.';
     } else if (jqXHR.status === 404) {
@@ -280,9 +254,9 @@ function isNullorUndefined(val) {
 
 function create_UUID() {
     // thank tohttps://www.w3resource.com/javascript-exercises/javascript-math-exercise-23.php
-    var dt = new Date().getTime();
-    var uuid = 'xxxxxxxx-2282-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = (dt + Math.random() * 16) % 16 | 0;
+    let dt = new Date().getTime();
+    let uuid = 'xxxxxxxx-2282-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let r = (dt + Math.random() * 16) % 16 | 0;
         dt = Math.floor(dt / 16);
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
@@ -329,12 +303,8 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
                     }
                 },
                 error: function (jqXHR) {
-                    var errorMessage = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404("logError")) {
-                        if (document.domain === 'localhost')
-                            alert("XHR error in logError!!: " + errorMessage);
-                        console.error("XHR error in logError!!: " + errorMessage);
-                    }
+                    if (!checkFor404("logError")) 
+                        if (document.domain === 'localhost') alert("XHR error in logError!!: " + getXHRErrorDetails(jqXHR));
                 }
             });
         } catch (e) {
@@ -402,15 +372,14 @@ function logDataActivity(activityModel) {
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            var errorMessage = getXHRErrorDetails(jqXHR);
             if (!checkFor404("logDataActivity"))
-                logError("XHR", activityModel.PageId, errorMessage, "logDataActivity");
+                logError("XHR", activityModel.PageId, getXHRErrorDetails(jqXHR), "logDataActivity");
         }
     });
 }
 
 function containsRomanNumerals(strLabel) {
-    var doesContain = false;
+    let doesContain = false;
     if (strLabel.indexOf(" I") > 0)
         doesContain = true;
     if (strLabel.indexOf(" V") > 0)
@@ -421,7 +390,7 @@ function containsRomanNumerals(strLabel) {
 }
 
 function changeFavoriteIcon(icon) {
-    var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/x-icon';
     link.rel = 'shortcut icon';
     switch (icon) {
@@ -497,17 +466,14 @@ function showCustomMessage(blogId, allowClickAnywhere) {
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("showCustomMessage")) {
-                logError("XHR", 3911, errorMessage, "showCustomMessage");
-            }
+            if (!checkFor404("showCustomMessage")) logError("XHR", 3911, getXHRErrorDetails(jqXHR), "showCustomMessage");
         }
     });
 }
 
 // EMAIL PROCESSES
 function isValidEmail(email) {
-    var emailReg = /^([\w-.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    let emailReg = /^([\w-.]+@([\w-]+\.)+[\w-]{2,4})?$/;
     //alert("emailReg.test(email): " + emailReg.test(email));
     return emailReg.test(email);
 }
@@ -568,9 +534,7 @@ function requestPrivilege(privilege) {
 }
 
 function dragElement(elmnt) {
-    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     if (document.getElementById(elmnt.id + "header")) {
-        // if present, the header is where you move the DIV from:
         document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
     } else {
         // otherwise, move the DIV from anywhere inside the DIV:
@@ -606,14 +570,6 @@ function closeDragElement() {
     // stop moving when mouse button is released:
     document.onmouseup = null;
     document.onmousemove = null;
-}
-
-function todayString() {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = today.getFullYear();
-    return mm + '/' + dd + '/' + yyyy;
 }
 
 function showMyAlert(message) {
