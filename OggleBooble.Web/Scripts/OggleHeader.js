@@ -117,6 +117,7 @@ function setHeaderMenu(folderId, subdomain) {
     let headerMenu;
     //rtpe(eventCode, calledFrom, eventDetail, pageId)
     switch (subdomain) {
+        case "root":
         case "boobs":
             headerMenu =
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +

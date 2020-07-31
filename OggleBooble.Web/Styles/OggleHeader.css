@@ -118,7 +118,7 @@
 
 .oggleDialogContainer {
     position: absolute;
-    z-index: 20;
+    z-index: 22;
     display: none;
     /* 
     min-width: 400px;

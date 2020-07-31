@@ -1,7 +1,7 @@
 ﻿let freePageHitsAllowed = 500;
 let freeImageHitsAllowed = 2500;
 
-function logImageHit(link, folderId, isInitialHit) {
+function logImageHit(linkId, folderId, isInitialHit) {
     try {
         if (isNullorUndefined(folderId)) {
             logError("IH1", folderId, "TROUBLE in logImageHit. folderId came in Null or Undefined", "HitCounter.js logImageHit");
@@ -15,17 +15,16 @@ function logImageHit(link, folderId, isInitialHit) {
             //getIpInfo(folderId, "logImageHit");
         }
 
-        let linkId = link.substr(link.lastIndexOf("_") + 1, 36);
-        let logImageHItData = {
-            VisitorId: visitorId,
-            PageId: folderId,
-            LinkId: linkId,
-            IsInitialHit: isInitialHit
-        };
+        //let linkId = link.substr(link.lastIndexOf("_") + 1, 36);
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
-            data: logImageHItData,
+            data: {
+                VisitorId: visitorId,
+                PageId: folderId,
+                LinkId: linkId,
+                IsInitialHit: isInitialHit
+            },
             success: function (imageHitSuccessModel) {
                 if (imageHitSuccessModel.Success === "ok") {
                     userPageHits = imageHitSuccessModel.UserPageHits;
@@ -64,7 +63,7 @@ function logPageHit(folderId) {
 
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&pageId=" + folderId,
+        url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
         success: function (pageHitSuccess) {
             if (pageHitSuccess.Success === "ok") {
                 if (visitorId !== "unidentified")
@@ -85,7 +84,7 @@ function logPageHit(folderId) {
 
 function isValidVisitorId() {
     let visitorId = getCookieValue("VisitorId");
-    if (visitorId.indexOf("-2282-") > 0)
+    //if (visitorId.indexOf("-2282-") > 0)
         return true;
 }
 

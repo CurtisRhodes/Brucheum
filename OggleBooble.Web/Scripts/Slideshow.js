@@ -9,9 +9,6 @@ function launchViewer(folderId, startItem, includeSubFolders) {
     spIncludeSubFolders = includeSubFolders;
     spSessionCount = 0;
 
-    if (!includeSubFolders)
-        logImageHit(startItem, folderId, true);
-
     if (typeof staticPageFolderName === 'string') {
         isStaticPage = "true";
         alert("get image array from DOM");
@@ -75,6 +72,9 @@ function getSlideshowItems(folderId, startItem) {
                                 break;
                             }
                         };
+
+                        //if (document.domain === 'localhost') alert("logImageHit(slideshow startItem: " + startItem + "  LinkId: " + imageViewerArray[imageViewerIndex].LinkId + ", folderId: " + folderId + ", true);");
+                        logImageHit(imageViewerArray[imageViewerIndex].LinkId, folderId, true);
                     }
                     //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
                     viewerShowing = true;
@@ -247,7 +247,7 @@ function slide(direction) {
 }
 
 function runSlideShow(action) {
-    console.log("run slideShow action: " + action + "  txtStartSlideShow: " + $('#txtStartSlideShow').html());
+    //console.log("run slideShow action: " + action + "  txtStartSlideShow: " + $('#txtStartSlideShow').html());
     //alert("run slideShow action: " + action + "  txtStartSlideShow: " + $('#txtStartSlideShow').html());
     if (action === 'start') {
         if ($('#txtStartSlideShow').html() === "stop slideshow") {

@@ -350,7 +350,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     //    alert("logEvent. eventCode: " + eventCode + "  folderId: " + folderId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
     //else
     {
-        let visitorId = getCookieValue("VisiorId");
+        let visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId))
             visitorId = "3:20";
         $.ajax({

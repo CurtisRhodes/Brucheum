@@ -176,35 +176,37 @@ namespace OggleBooble.Api.Controllers
             LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false, IsNewVisitor = false };
             try
             {
-                using (var db = new MySqlDataContext.OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     DateTime lastVisitDate = DateTime.MinValue;
-                    List<MySqlDataContext.Visit> visitorVisits = db.Visits.Where(v => v.VisitorId == visitorId).ToList();
+                    List<Visit> visitorVisits = db.Visits.Where(v => v.VisitorId == visitorId).ToList();
                     if (visitorVisits.Count() > 0)
                         lastVisitDate = db.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
-                    else {
-                        visitSuccessModel.IsNewVisitor = true;
-                    }
 
                     if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
                     {
-                        MySqlDataContext.Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                        Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                         if (visitor == null)
                         {
-                            db.Visits.Add(new MySqlDataContext.Visit()
+                            db.Visits.Add(new Visit()
                             {
                                 VisitorId = visitorId,
                                 VisitDate = DateTime.Now
                             });
                             db.SaveChanges();
-                            visitSuccessModel.VisitAdded = true;
-                            if (!visitSuccessModel.IsNewVisitor) {
-                                var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-                                if (registeredUser != null)
-                                    visitSuccessModel.UserName = " " + registeredUser.UserName;
-                                else
-                                    visitSuccessModel.UserName = ". Please log in";
-                            }
+                            visitSuccessModel.IsNewVisitor = true;
+                        }
+
+                        db.Visits.Add(new Visit() { VisitorId = visitorId, VisitDate = DateTime.Now });
+                        db.SaveChanges();
+                        visitSuccessModel.VisitAdded = true;
+                        if (!visitSuccessModel.IsNewVisitor)
+                        {
+                            var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+                            if (registeredUser != null)
+                                visitSuccessModel.UserName = " " + registeredUser.UserName;
+                            else
+                                visitSuccessModel.UserName = ". Please log in";
                         }
                     }
                     visitSuccessModel.Success = "ok";

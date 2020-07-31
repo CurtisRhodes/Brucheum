@@ -39,7 +39,7 @@ function getAlbumImages() {
                             $('#deepSlideshowButton').hide();
                             break;
                         default:
-                            logError("SWT", apFolderId, "folder tpe: " + albumImageInfo.FolderType, "getAlbumImages");
+                            logError("SWT", apFolderId, "folder type: " + albumImageInfo.FolderType + " folderId: " + apFolderId, "getAlbumImages");
                     }
 
                     //PROCESS IMAGES

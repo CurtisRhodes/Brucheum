@@ -28,6 +28,7 @@
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
             break;
         }
+        case "root":
         case "boobs": {  //    poses
             $('#footerCol1').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +
@@ -82,8 +83,10 @@
         }
         case "porn": {
             $('#footerCol1').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n");
+            $('#footerCol2').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"slut archive\"," + pageId + ")'>porn stars</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"softcore\"," + pageId + ")'>softcore</div>\n" +
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
             break;
         }
