@@ -1,5 +1,10 @@
 ﻿let pImgSrc, pLinkId, pFolderId, pFolderName, pFolderType, pModelFolderId, pMenuType, pos = {};
 
+//showContextMenu("Carousel", pos, imgSrc,
+//    carouselItemArray[imageIndex].LinkId,
+//    carouselItemArray[imageIndex].FolderId,
+//    carouselItemArray[imageIndex].FolderName);
+
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     event.preventDefault();
     window.event.returnValue = false;
@@ -26,10 +31,12 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
         $('#contextMenuContainer').fadeIn();
         $('#contextMenuContent').html(contextMenuHtml())
     }
+
     if (pMenuType === "Folder")
         ctxGetFolderDetails();
     else
         getLimitedImageDetails();
+
     $('.ogContextMenu').draggable();
     if (typeof pause === 'function') pause();
     if (isInRole("ADM")) $('.adminLink').show();
@@ -123,7 +130,12 @@ function getFullImageDetails() {
         url: settingsArray.ApiServer + "api/Image/getFullImageDetails?folderId=" + pFolderId + "&linkId=" + pLinkId,
         success: function (imageInfo) {
             if (imageInfo.Success === "ok") {
+
                 pModelFolderId = imageInfo.ModelFolderId;
+                if (imageInfo.ModelFolderId === 0) {
+                    pModelFolderId = pFolderId;
+                    //alert("pModelFolderId: " + imageInfo.ModelFolderId + "  changed to: " + pModelFolderId);
+                }
 
                 //pFolderType = imageInfo.FolderType;
                 // $('#aboveImageContainerMessageArea').html("pFolderType: " + pFolderType + "  IsOutsideFolderLink: " + imageInfo.IsOutsideFolderLink);
@@ -139,7 +151,7 @@ function getFullImageDetails() {
 
                 $('#imageInfoFileName').html(imageInfo.FileName);
                 $('#imageInfoFolderPath').html(imageInfo.FolderPath);
-                $('#imageInfoLinkId').html(imageInfo.Link);
+                $('#imageInfoLinkId').val(imageInfo.Link);
                 $('#imageInfoHeight').html(imageInfo.Height);
                 $('#imageInfoWidth').html(imageInfo.Width);
                 $('#imageInfoLastModified').html(imageInfo.LastModified);
@@ -217,7 +229,7 @@ function contextMenuAction(action) {
     switch (action) {
         case "showDialog": {
             if ($('#ctxModelName').html() === "unidenitified")
-                showUnknownModelDialog(pLinkId, pImgSrc);
+                showUnknownModelDialog(pImgSrc);
             else
                 showFolderInfoDialog(pModelFolderId, "img ctx");
             $("#contextMenuContainer").fadeOut();
@@ -299,7 +311,7 @@ function contextMenuHtml() {
         " <div id='imageInfoContainer' class='contextMenuInnerContainer'>\n" +
         "   <div><span class='ctxInfolabel'>file name</span><span id='imageInfoFileName' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxInfolabel'>folder path</span><span id='imageInfoFolderPath' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>link id</span><span id='imageInfoLinkId' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxInfolabel'>link id</span><input id='imageInfoLinkId'/></div>\n" +
         "   <div><span class='ctxInfolabel'>height</span><span id='imageInfoHeight' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxInfolabel'>width</span><span id='imageInfoWidth' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxInfolabel'>last modified</span><span id='imageInfoLastModified' class='ctxInfoValue'></span></div>\n" +

@@ -87,7 +87,7 @@ function getSlideshowItems(folderId, startItem) {
                 }
                 else {
                     $('#imagePageLoadingGif').hide();
-                    logError("BUG", folderId, success, "getSlideshowItems");
+                    logError("AJX", folderId, success, "getSlideshowItems");
                 }
             },
             error: function (jqXHR) {
@@ -331,10 +331,10 @@ function closeViewer(calledFrom) {
             closeMethod = calledFrom;
         }
         if (spSessionCount < 2) {
-            logEvent("SVC", pageId, "calledFrom", "Single Image Viewed. closeMethod: " + closeMethod);
+            logEvent("SVC", albumFolderId, "calledFrom", "Single Image Viewed. closeMethod: " + closeMethod);
         }
         else {
-            logEvent("SVC", pageId, "calledFrom", "Images Viewed: " + spSessionCount + " closed: " + closeMethod);
+            logEvent("SVC", albumFolderId, "calledFrom", "Images Viewed: " + spSessionCount + " closed: " + closeMethod);
         }
         resizeImageContainer();
         //if (spSessionCount > 20) {

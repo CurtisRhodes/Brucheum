@@ -188,16 +188,19 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    if (dbFolder != null)
+                    if (dbFolder == null)
                     {
-                        folderInfo.FolderType = dbFolder.FolderType;
-                        folderInfo.FolderName = dbFolder.FolderName;
-                        folderInfo.Parent = dbFolder.Parent;
-                        var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-                        if (dbFolderDetails != null)
-                            folderInfo.FolderComments = dbFolderDetails.FolderComments;
-                        folderInfo.Success = "ok";
+                        folderInfo.Success = "folder not found";
+                        return folderInfo;
                     }
+                    folderInfo.FolderType = dbFolder.FolderType;
+                    folderInfo.FolderName = dbFolder.FolderName;
+                    folderInfo.Parent = dbFolder.Parent;
+                    var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if (dbFolderDetails != null)
+                        folderInfo.FolderComments = dbFolderDetails.FolderComments;
+                    folderInfo.Success = "ok";
+                    folderInfo.Success = "ok";
                 }
             }
             catch (Exception ex) { folderInfo.Success = Helpers.ErrorDetails(ex); }

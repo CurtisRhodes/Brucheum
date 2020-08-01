@@ -108,7 +108,7 @@ function getAlbumImages() {
 
                     getDeepFolderCounts(albumImageInfo, 0);
                 }
-                else logError("BUG", apFolderId, albumImageInfo.Success, "getAlbumImages");
+                else logError("AJX", apFolderId, albumImageInfo.Success, "getAlbumImages");
             },
             error: function (jqXHR) {
                 $('#indexPageLoadingGif').hide();
@@ -167,7 +167,7 @@ function getAlbumPageInfo(folderId) {
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
             }
-            else logError("BUG",apFolderId, albumInfo.Success, "getAlbumPageInfo");
+            else logError("AJX",apFolderId, albumInfo.Success, "getAlbumPageInfo");
         },
         error: function (jqXHR) {
             if (!checkFor404("getAlbumPageInfo")) logError("XHR",apFolderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
@@ -210,7 +210,7 @@ function getDeepFolderCounts(folder, currentFolderImageLinks) {
                 else
                     $('#galleryBottomfileCount').html(deepFileCount.toLocaleString());
             }
-            else { logError("BUG", apFolderId, countsModel.Success, "getDeepFolderCounts"); }
+            else { logError("AJX", apFolderId, countsModel.Success, "getDeepFolderCounts"); }
         },
         error: function (jqXHR) {
             if (!checkFor404("getAlbumImages")) { logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "getDeepFolderCounts"); }
@@ -274,17 +274,19 @@ function setBreadCrumbs(breadCrumbModel) {
 }
 
 function setBadges(folderComments) {
-    if (folderComments.toUpperCase().indexOf("PLAYMATE OF THE YEAR") > -1) {
-        $('#badgesContainer').append("<a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>");
-    }
-    if (folderComments.toUpperCase().indexOf("BIGGEST BREASTED CENTERFOLDS") > -1) {
-        $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
-    }
-    if (folderComments.toUpperCase().indexOf("BLACK CENTERFOLDS") > -1) {
-        $('#badgesContainer').append("<div class='badgeImage blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
-    }
-    if (folderComments.toUpperCase().indexOf("HEF LIKES TWINS") > -1) {
-        $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
+    if (!isNullorUndefined(folderComments)) {
+        if (folderComments.toUpperCase().indexOf("PLAYMATE OF THE YEAR") > -1) {
+            $('#badgesContainer').append("<a href='/album.html?folder=4013'><img src='/Images/pmoy.png' title='Playmate of the year' class='badgeImage'></a>");
+        }
+        if (folderComments.toUpperCase().indexOf("BIGGEST BREASTED CENTERFOLDS") > -1) {
+            $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
+        }
+        if (folderComments.toUpperCase().indexOf("BLACK CENTERFOLDS") > -1) {
+            $('#badgesContainer').append("<div class='badgeImage blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
+        }
+        if (folderComments.toUpperCase().indexOf("HEF LIKES TWINS") > -1) {
+            $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
+        }
     }
 }
 
@@ -299,7 +301,7 @@ function directToStaticPage() {
             }
             else
                 if (!checkFor404("directToStaticPage"))
-                    logError("BUG", apFolderId, successModel.Success, "directToStaticPage");
+                    logError("AJX", apFolderId, successModel.Success, "directToStaticPage");
         },
         error: function (jqXHR) {
             if (!checkFor404("directToStaticPage"))
@@ -368,7 +370,7 @@ function chargeCredits(activityCode, apFolderId) {
             if (success === "ok") {
                 //displayStatusMessage("ok", "credits charged");
             }
-            else logError("BUG", apFolderId, success, "awardCredits");
+            else logError("AJX", apFolderId, success, "awardCredits");
         },
         error: function (jqXHR) {
             if (!checkFor404("awardCredits")) logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "awardCredits");

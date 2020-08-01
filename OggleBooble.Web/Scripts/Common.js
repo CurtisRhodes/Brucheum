@@ -264,25 +264,11 @@ function create_UUID() {
 }
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
-    if (document.domain === 'localhost')
+    if (document.domain === 'localhost' && errorCode !== "AIE")
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
     else
     {
         try {
-            if (isNullorUndefined(folderId)) {
-                if (document.domain === 'localhost')
-                    alert("Error in logError. folderId undefined. Called from: " + calledFrom + "  ErrorMessage: " + errorMessage);
-                folderId = 0;
-                //logError("BUG", folderId, "Page Id undefined in LogPageHit.", "logPageHit");
-            }
-            let visitorId = getCookieValue("VisitorId");
-
-
-            if (isNullorUndefined(visitorId)) {
-                setCookieValue("VisitorId", create_UUID());
-                setCookieValue("IsLoggedIn", "false");
-                //logError("BUG", folderId, "VisitorId undefined in LogPageHit.", "logPageHit");
-            }
             $.ajax({
                 type: "POST",
                 url: settingsArray.ApiServer + "api/Common/LogError",
@@ -335,7 +321,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             },
             success: function (success) {
                 if (success !== "ok") {
-                    logError("BUG", folderId, success, "logEvent");
+                    logError("AJX", folderId, success, "logEvent");
                 }
             },
             error: function (jqXHR) {
@@ -368,7 +354,7 @@ function logDataActivity(activityModel) {
                 }
             }
             else
-                logError("BUG", activityModel.PageId, success, "logDataActivity");
+                logError("AJX", activityModel.PageId, success, "logDataActivity");
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();

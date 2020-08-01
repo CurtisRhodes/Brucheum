@@ -9,8 +9,8 @@ function logImageHit(linkId, folderId, isInitialHit) {
         let visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
             visitorId = create_UUID();
-            setCookieValue("VisitorId", visitorId);
-            logError("VIV", folderId, "Visitor undefined", "logImageHit");
+            //setCookieValue("VisitorId", visitorId);
+            logError("IHO", folderId, "linkId: " + linkId, "logImageHit");
             //getIpInfo(folderId, "logImageHit");
         }
 
@@ -20,7 +20,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
             data: {
                 VisitorId: visitorId,
-                PageId: folderId,
+                FolderId: folderId,
                 LinkId: linkId,
                 IsInitialHit: isInitialHit
             },
@@ -31,7 +31,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
                     //checkForHitLimit("images", folderId, userPageHits, userImageHits);
                 }
                 else {
-                    logError("BUG", folderId, imageHitSuccessModel.Success, "logImageHit");
+                    logError("AJX", folderId, imageHitSuccessModel.Success, "logImageHit");
                 }
             },
             error: function (jqXHR) {
@@ -48,17 +48,15 @@ function logImageHit(linkId, folderId, isInitialHit) {
 function logPageHit(folderId) {
     //alert("logPageHit(" + folderId );  // + "," + visitorId + "," + calledFrom + ")");
     if (isNullorUndefined(folderId)) {
-        logError("BUG", folderId, "folderId undefined in LogPageHit.", "logPageHit"); 0
+        logError("PPP", folderId, "folderId undefined in LogPageHit.", "logPageHit"); 0
         return;
     }
-
-
 
     let visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
         visitorId = create_UUID();
         setCookieValue("VisitorId", visitorId);
-        logError("VIV", folderId, "VisitorId undefined in LogPageHit.", "logPageHit");
+        logError("VIP", folderId, "visitorId assigned: " + visitorId, "logPageHit");
         //getIpInfo(folderId, "logPageHit");
     }
 
@@ -72,7 +70,7 @@ function logPageHit(folderId) {
                 // checkForHitLimit("pages", folderId, pageHitSuccess.UserPageHits, pageHitSuccess.UserImageHits);
             }
             else {
-                logError("BUG", folderId, pageHitSuccess.Success, "logPageHit");
+                logError("AJX", folderId, pageHitSuccess.Success, "logPageHit");
             }
         },
         error: function (jqXHR) {
@@ -106,7 +104,7 @@ function logVisit(visitorId, folderId) {
                 }
             }
             else {
-                logError("BUG", folderId, logVisitSuccessModel.Success, "logVisit");
+                logError("AJX", folderId, logVisitSuccessModel.Success, "logVisit");
             }
         },
         error: function (jqXHR) {
@@ -139,7 +137,7 @@ function addVisitor(visitorData) {
                 //setCookieValue("IsLoggedIn", "true");
                 logEvent("NEW", folderId, addVisitorSuccess.EventDetail)
             }
-            else logError("BUG", folderId, addVisitorSuccess.Success, "addVisitor");
+            else logError("AJX", folderId, addVisitorSuccess.Success, "addVisitor");
         },
         error: function (jqXHR) {
             if (!checkFor404("addVisitor")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addVisitor");
@@ -184,14 +182,18 @@ function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {
 }
 
 function verifiyVisitor(calledFrom, folderId) {
+    //alert("verifiyVisitor");
     let visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
+        //alert("Undefined(visitorId) calling getIpInfo");
         getIpInfo(calledFrom, folderId);
     }
     else {
         console.log("visitorId found: " + visitorId);
-        if (!isNullorUndefined(window.localStorage["IpAddress"]))
+        if (isNullorUndefined(window.localStorage["IpAddress"])) {
+            alert("window.localStorage[IpAddress] undefined.   Calling getVisitorInfo");
             getVisitorInfo(visitorId, calledFrom, folderId);
+        }
     }
 }
 
@@ -202,12 +204,15 @@ function getVisitorInfo(visitorId, calledFrom, folderId) {
         success: function (visitorModel) {
             if (visitorModel.Success === "ok") {
                 if (isNullorUndefined(window.localStorage["IpAddress"])) {
-                    //setCookieValue("IpAddress", visitorModel.IpAddress);
                     window.localStorage["IpAddress"] = visitorModel.IpAddress;
+
+                    //alert("getVisitorInfo IpAddress: " + window.localStorage["IpAddress"]);
+                    //getIpInfo(calledFrom, folderId);
+                    //setCookieValue("IpAddress", visitorModel.IpAddress);
                     logError("REB", folderId, "had to look up IpAddress", calledFrom);
                 }
             }
-            else logError("BUG", folderId, visitorModel.Success, "getVisitorInfo");
+            else logError("AJX", folderId, visitorModel.Success, "getVisitorInfo");
         },
         error: function (jqXHR) {
             if (!checkFor404("getVisitorInfo"))
@@ -238,24 +243,35 @@ function getCloudflare(calledFrom, folderId) {
 }
 
 function getIpInfo(folderId, calledFrom) {
+
+    //alert("getBrowserInfo().browserPlatform(): " + getBrowserInfo().browserPlatform());
+
     console.log("calling iPInfo");
     try {
+
+        //alert("window.sessionStorage[sessionId]: " + window.sessionStorage["sessionId"]);
+        let sessionId = window.sessionStorage["sessionId"];
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogIpCall?sessionId",
             data: {
-                SessionId: window.sessionStorage["sessionId"],
-                BrowserInfo: getBrowserInfo
+                SessionId: sessionId,
+                BrowserInfo: getBrowserInfo().browserPlatform()
             },
             success: function (logIpCallSuccess) {
                 if (logIpCallSuccess == "ok") {
+
                     $.ajax({
                         type: "GET",
                         url: "https://ipinfo.io?token=ac5da086206dc4",
                         dataType: "JSON",
                         //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
                         success: function (ipResponse) {
-                            //alert("ipResponse: " + ipResponse);
+
+
+                            alert("ipResponse: " + ipResponse.ip);
+
+
                             window.localStorage["IpAddress"] = ipResponse.ip;
                             console.log("iPInfo success: " + window.localStorage["IpAddress"]);
 

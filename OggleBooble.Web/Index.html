@@ -92,6 +92,7 @@
 
             if (isNullorUndefined(window.sessionStorage["sessionId"])) {
                 window.sessionStorage["sessionId"] = create_UUID();
+                //alert("sessionId created: " + window.sessionStorage["sessionId"]);
                 console.log("sessionId created: " + window.sessionStorage["sessionId"]);
             }
 

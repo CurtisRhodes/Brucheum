@@ -43,10 +43,10 @@ function showFolderInfoDialog(folderId, calledFrom) {
                     logEvent("SMD", folderId, calledFrom, "folder type: " + folderInfo.FolderType);
 
                 }
-                else logError("BUG", folderId, folderInfo.Success, "getFolderDetails");
+                else logError("BUG", folderId, folderInfo.Success, "GetQuickFolderInfo");
             },
             error: function (jqXHR) {
-                if (!checkFor404("getFolderDetails")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getFolderDetails");
+                if (!checkFor404("getFolderDetails")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "GetQuickFolderInfo");
             }
         });
     }
@@ -68,6 +68,7 @@ function showBasicFolderInfoDialog() {
         "    <div id='folderInfoDialogFooter' class='folderDialogFooter'>\n" +
         "        <div id='btnCatDlgEdit' class='folderCategoryDialogButton' onclick='editFolderDialog()'>Edit</div>\n" +
         "        <div id='btnCatDlgDone' class='folderCategoryDialogButton' onclick='doneEditing()'>Done</div>\n" +
+        "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n" +
         "    </div>\n" +
         "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n" +
         "</div>\n");
@@ -76,6 +77,7 @@ function showBasicFolderInfoDialog() {
     //$('#centeredDialogContainer').css("top", 111);
     //$('#centeredDialogContainer').css("left", -350);
     $("#btnCatDlgDone").hide();
+    $("#btnCatDlgLinks").hide();
     $('#summernoteContainer').summernote({
         toolbar: "none",
     //    min-height: "200px"
@@ -118,19 +120,18 @@ function showFullModelDetails(folderId) {
                 $('#txtBoobs').val(((folderInfo.FakeBoobs) ? "fake" : "real"));
                 $('#txtMeasurements').val(folderInfo.Measurements);
                 setReadonlyFields();
-                //$('#txtStatus').val(folderInfo.LinkStatus);
+                $("#btnCatDlgLinks").show();
                 $("#summernoteContainer").summernote("code", folderInfo.FolderComments);
             }
             else {
                 $('#imagePageLoadingGif').hide();
-                //showMyAlert("unable to show folder info");
-                logError("BUG", folderId, folderInfo.Success, "getFolderDetails");
+                logError("BUG", folderId, folderInfo.Success, "showFullModelDetails");
             }
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             if (!checkFor404("getFolderDetails")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getFolderDetails");
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "showFullModelDetails");
             }
         }
     });
@@ -140,7 +141,6 @@ function modelInfoDetailHtml() {
 
     if (isLoggedIn()) {
         $('#folderInfoDialogFooter').append(
-            "        <div id='btnCatDlgCancel' class='folderCategoryDialogButton displayHidden' onclick='cancelEdit()'>Cancel</div>\n" +
             "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n");
     }
     //    "        <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
@@ -327,11 +327,12 @@ function showTrackbackDialog() {
         "   <div class='folderDialogFooter'>\n" +
         "       <div id='btnTbDlgAddEdit' class='folderCategoryDialogButton' onclick='tbAddEdit()'>add</div>\n" +
         "       <div id='btnTbDlgDelete' class='folderCategoryDialogButton displayHidden' onclick='tbDelete()'>delete</div>\n" +
-        "       <div class='folderCategoryDialogButton' onclick='$('#trackBackDialog').hide()'>Cancel</div>\n" +
+        "       <div class='folderCategoryDialogButton' onclick='$(\"#trackBackDialog\").hide()'>Cancel</div>\n" +
         "   </div>\n" +
         "</div>");
 
-    //$("#trackBackDialog").css("top", 105);
+    $("#trackBackDialog").css("top", 150);
+    $("#trackBackDialog").css("left", -250);
     $("#trackBackDialog").show();
     loadTrackBackItems();
 }
@@ -472,8 +473,7 @@ function xxcreatePosersIdentifiedFolder() {
     // 2. add new category folder row and folder detail row
 }
 
-
-function showUnknownModelDialog(pLinkId, imgSrc) {
+function showUnknownModelDialog(imgSrc) {
     $('#centeredDialogTitle').html("Unknown Poser");
     $('#centeredDialogContents').html(
         "<div class='flexContainer'>" +
@@ -500,7 +500,7 @@ function showUnknownModelDialog(pLinkId, imgSrc) {
         "   <div id='btnPoserCancel' class='folderCategoryDialogButton' onclick='dragableDialogClose()'>cancel</div>\n" +
         "</div>").show();
 
-    $('#centeredDialogContainer').css("top", $('.oggleHeader').height() - 50);
+    //$('#centeredDialogContainer').css("top", 250);
     $('#centeredDialogContainer').css("left", -350);
     $('#centeredDialogContainer').css("min-width", 470);
     $('#centeredDialogContainer').fadeIn();

@@ -105,6 +105,8 @@
                             $('#dots').html('');
                             changeFavoriteIcon("redBallon");
 
+                            verifiyVisitor("album", params.folder);
+
                             if (isInRole("NewUser")) {
                                 loadAlbum(params.folder);
                             }

@@ -145,7 +145,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (!physcialFileLinkIds.Contains(folderLink.ImageLinkId))
                     {
-                        var nonLocallink = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId).FirstOrDefault();
+                        var nonLocallink = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId && i.FolderId != folderId).FirstOrDefault();
                         if (nonLocallink != null)
                         {
                             var dbImageFile = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId).FirstOrDefault();
@@ -177,6 +177,13 @@ namespace OggleBooble.Api.Controllers
                                 db.CategoryImageLinks.Remove(folderLink);
                                 db.SaveChanges();
                                 repairReport.LinksRemoved++;
+
+                                var dbImageFile = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId).FirstOrDefault();
+                                if (dbImageFile != null) 
+                                {
+                                    dbImageFile.FolderId = 0;
+                                    db.SaveChanges();
+                                }
                             }
                             else
                             {

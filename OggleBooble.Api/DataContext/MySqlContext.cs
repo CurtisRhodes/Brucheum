@@ -179,7 +179,7 @@ namespace OggleBooble.Api.MySqlDataContext
     public class IpInfoCall
     {
         [Key]
-        public int SessionId { get; set; }
+        public string SessionId { get; set; }
         public string BrowserInfo { get; set; }
         public DateTime Occured { get; set; }
     }

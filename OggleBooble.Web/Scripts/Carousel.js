@@ -45,7 +45,6 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                     $.each(carouselCacheArray, function (idx, obj) {
                         carouselItemArray.push(obj);
                     });
-                    $('#carouselContainer').html(carouselHtml());
                     $('#thisCarouselImage').show();
                     carouselSkip += 100;
                     if (!vCarouselInterval) {
@@ -130,7 +129,7 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                         }
                     }
                     else {
-                        logError("BUG", 3908, carouselInfo.Success, "carousel.loadImages");
+                        logError("AJX", 3908, carouselInfo.Success, "carousel.loadImages");
                     }
                 },
                 error: function (jqXHR) {
@@ -224,17 +223,15 @@ function startCarousel() {
     }
 }
 
-function alreadyInLast100(idx) {
+function alreadyInLast100() {
     let idxStart = Math.max(0, carouselItemArray.length - 100);
     for (i = idxStart; i < imageHistory.length; i++) {
-        if (idx === imageHistory[i]) {
+        if (imageIndex === imageHistory[i]) {
             if (window.localStorage["IpAddress"] === "68.203.90.183") {
-                alert("Already shown try again: ");
+                //alert("Already shown try again: ");
+                console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
             }
-            else
-                alert("window.localStorage[IpAddress]: " + window.localStorage["IpAddress"]);
-            console.log("Already shown try again: ");
-            //logEvent("XXX", 366,"alreadyInLast100","")
+            logEvent("REJ", carouselItemArray[imageIndex].FolderId, "alreadyInLast100", carouselItemArray[imageIndex].LinkId);
             return true;
         }
     }
@@ -243,12 +240,12 @@ function alreadyInLast100(idx) {
 
 function intervalBody() {
     imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-    if (alreadyInLast100(imageIndex)) {
+    if (alreadyInLast100()) {
         if (debugMode) $('#hdrBtmRowSec3').html("already in last 100 flagged");
         imageIndex = Math.floor(Math.random() * carouselItemArray.length);
     }
     imageHistory.push(imageIndex);
-    $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + imageHistory.length.toLocaleString());
+    $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
     if (debugMode) $('#hdrBtmRowSec3').html("images: " + ++arryItemsShownCount);
 
     $('.carouselFooter').css("visibility", "hidden");
@@ -259,7 +256,7 @@ function intervalBody() {
             setLabelLinks();
             $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });            
             if (window.localStorage["IpAddress"] === "68.203.90.183")
-                $('#hdrBtmRowSec3').html(" imageIndex: " + imageIndex + "  carouselItemArray.length: " + carouselItemArray.length);
+                $('#hdrBtmRowSec3').html("imageIndex: " + imageIndex + "  imageHistory.length: " + imageHistory.length);
 
             //if (debugMode) $('#hdrBtmRowSec3').append(".len: " + imageHistory.length);
             //if (debugMode) $('#hdrBtmRowSec3').html("  Count: " + imageHistoryArrayCount);
