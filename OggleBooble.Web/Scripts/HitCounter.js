@@ -46,7 +46,6 @@ function logImageHit(linkId, folderId, isInitialHit) {
 }
 
 function logPageHit(folderId) {
-    //alert("logPageHit(" + folderId );  // + "," + visitorId + "," + calledFrom + ")");
     if (isNullorUndefined(folderId)) {
         logError("PPP", folderId, "folderId undefined in LogPageHit.", "logPageHit"); 0
         return;
@@ -81,7 +80,7 @@ function logPageHit(folderId) {
     });
 }
 
-////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////l
 
 function logVisit(visitorId, folderId) {
     if (isNullorUndefined(visitorId)) {
@@ -182,16 +181,23 @@ function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {
 }
 
 function verifiyVisitor(calledFrom, folderId) {
-    //alert("verifiyVisitor");
     let visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
-        //alert("Undefined(visitorId) calling getIpInfo");
-        getIpInfo(calledFrom, folderId);
+        if (isNullorUndefined(window.localStorage["IpAddress"])) {
+            if (getBrowserInfo().dataCookiesEnabled())
+                getIpInfo(folderId, calledFrom);
+            else
+                logError("IP2", folderId, "capta needed here. cookies not enabled", calledFrom);
+        }
+        else {
+            //  Ip found in local storage but not visitor Id
+            logError("IP3", folderId, "capta needed here", calledFrom);
+        }
+        //sst("Undefined(visitorId) calling getIpInfo");
     }
     else {
         console.log("visitorId found: " + visitorId);
         if (isNullorUndefined(window.localStorage["IpAddress"])) {
-            alert("window.localStorage[IpAddress] undefined.   Calling getVisitorInfo");
             getVisitorInfo(visitorId, calledFrom, folderId);
         }
     }
@@ -205,14 +211,21 @@ function getVisitorInfo(visitorId, calledFrom, folderId) {
             if (visitorModel.Success === "ok") {
                 if (isNullorUndefined(window.localStorage["IpAddress"])) {
                     window.localStorage["IpAddress"] = visitorModel.IpAddress;
-
-                    //alert("getVisitorInfo IpAddress: " + window.localStorage["IpAddress"]);
-                    //getIpInfo(calledFrom, folderId);
-                    //setCookieValue("IpAddress", visitorModel.IpAddress);
                     logError("REB", folderId, "had to look up IpAddress", calledFrom);
                 }
             }
-            else logError("AJX", folderId, visitorModel.Success, "getVisitorInfo");
+            else {
+                if (visitorModel.Success = "not found") {
+                    // add visitor
+                    if (isNullorUndefined(window.localStorage["IpAddress"])) {
+                        getIpInfo(folderId, calledFrom);
+                    }
+                    else
+                        logError("REB", folderId, "ip found but no visitor record Impossible", "getVisitorInfo");
+                }
+                else
+                    logError("AJX", folderId, visitorModel.Success, "getVisitorInfo");
+            }
         },
         error: function (jqXHR) {
             if (!checkFor404("getVisitorInfo"))
@@ -243,13 +256,9 @@ function getCloudflare(calledFrom, folderId) {
 }
 
 function getIpInfo(folderId, calledFrom) {
-
     //alert("getBrowserInfo().browserPlatform(): " + getBrowserInfo().browserPlatform());
-
     console.log("calling iPInfo");
     try {
-
-        //alert("window.sessionStorage[sessionId]: " + window.sessionStorage["sessionId"]);
         let sessionId = window.sessionStorage["sessionId"];
         $.ajax({
             type: "POST",
@@ -260,21 +269,14 @@ function getIpInfo(folderId, calledFrom) {
             },
             success: function (logIpCallSuccess) {
                 if (logIpCallSuccess == "ok") {
-
                     $.ajax({
                         type: "GET",
                         url: "https://ipinfo.io?token=ac5da086206dc4",
                         dataType: "JSON",
                         //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
                         success: function (ipResponse) {
-
-
-                            alert("ipResponse: " + ipResponse.ip);
-
-
                             window.localStorage["IpAddress"] = ipResponse.ip;
                             console.log("iPInfo success: " + window.localStorage["IpAddress"]);
-
                             let visitorId = getCookieValue("VisitorId");
                             if (isNullorUndefined(visitorId)) {
                                 addVisitor({
@@ -299,7 +301,15 @@ function getIpInfo(folderId, calledFrom) {
                         }
                     });
                 }
-                else logError("ERR", folderId, logIpCallSuccess, "LogIpCall/" + calledFrom);
+                else {
+
+                    if (logIpCallSuccess.indexOf("Duplicate Entry") > 0) {
+                        logError("IP1", folderId, "attempt to getIp multiple times for Session", "LogIpCall/" + calledFrom);
+                    }
+
+
+                    logError("ERR", folderId, logIpCallSuccess, "LogIpCall/" + calledFrom);
+                }
             },
             error: function (jqXHR) {
                 if (!checkFor404("LogIpCall")) {

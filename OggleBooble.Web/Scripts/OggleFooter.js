@@ -28,6 +28,7 @@
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
             break;
         }
+        case "blog":
         case "root":
         case "boobs": {  //    poses
             $('#footerCol1').html(

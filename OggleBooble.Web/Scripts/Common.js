@@ -263,7 +263,15 @@ function create_UUID() {
     return uuid;
 }
 
-function logError(errorCode, folderId, errorMessage, calledFrom) {
+function logError(errorCode, pFolderId, errorMessage, calledFrom) {
+
+    let folderId = Number(pFolderId);
+
+    if (isNullorUndefined(folderId))
+        folderId = 7777;
+    if (folderId === 0)
+        folderId = 9999;
+
     if (document.domain === 'localhost' && errorCode !== "AIE")
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
     else
@@ -293,7 +301,9 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
                         if (document.domain === 'localhost') alert("XHR error in logError!!: " + getXHRErrorDetails(jqXHR));
                 }
             });
-        } catch (e) {
+        }
+        catch (e)
+        {
             if (document.domain === 'localhost')
                 alert("Catch error in logError!!: " + e);
             console.error("Catch error in logError!!: " + e);
