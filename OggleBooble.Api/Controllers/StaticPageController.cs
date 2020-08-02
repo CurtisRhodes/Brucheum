@@ -51,9 +51,9 @@ namespace OggleBooble.Api.Controllers
                     var staticContent = new StringBuilder(
                     "<html>\n" +
                     " <head>\n" +
-                    "    <link href='Styles/Common.css' rel='stylesheet'/>\n" +
-                    "    <link href='Styles/OggleHeader.css' rel='stylesheet'/>\n" +
-                    "    <link href='Styles/AlbumPage.css' rel='stylesheet'/>\n" +
+                    "    <link href='/Styles/Common.css' rel='stylesheet'/>\n" +
+                    "    <link href='/Styles/OggleHeader.css' rel='stylesheet'/>\n" +
+                    "    <link href='/Styles/AlbumPage.css' rel='stylesheet'/>\n" +
                     "</head>\n" +
                     " <body>\n");
 
@@ -124,18 +124,18 @@ namespace OggleBooble.Api.Controllers
         {
             StringBuilder staticHeaderHtml = new StringBuilder("<div id='oggleHeader' class='stickyHeader boobsHeader'>" +
             "   <div class='siteLogoContainer' onclick='window.location.href=\"OggleBooble.com\"'>\n" +
-            "       <img id='divSiteLogo' class='siteLogo' src='Images/redballon.png' style='height: 60px;'>" +
+            "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png' style='height: 60px;'>" +
             "   </div>\n" +
             "   <div class='headerBodyContainer'>\n" +
             "       <div class='headerTopRow'>\n" +
             "           <div class='headerTitle' style='color: rgb(0, 0, 0); height: 28px;'>OggleBooble</div>\n" +
-            "           <div class='hdrTopRowMenu' style='font-size: 25px;margin-left:14px;'>handpicked images organized by category</div>\n" +
+            "           <div class='hdrTopRowMenu' style='font-size: 25px;margin-left:14px;' onclick='goHome()'>handpicked images organized by category</div>\n" +
             "           <div id='searchBox' class='oggleSearchBox'>\n" +
             "               <input class='oggleSearchBoxText'>" +
             "           </div>\n" +
             "       </div>\n" +
             "       <div class='headerBottomRow'>\n" +
-            "         <div class='bottomLeftHeaderArea' onclick='goHome()'>go to live page</div>\n" +
+            "         <div class='bottomLeftHeaderArea clickable' onclick='goHome()'>go to live page</div>\n" +
             "           <div class='breadCrumbArea'>");
             //$('#trackbackContainer').css("display", "inline-block");
             var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();

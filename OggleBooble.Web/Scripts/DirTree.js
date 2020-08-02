@@ -113,8 +113,8 @@ function buildDirTreeRecurr(parentNode, clickEvent) {
                 + "<div id='" + randomId + "aq' class='treeLabelDiv' "
                 + "onclick=" + clickEvent + "('" + thisNode.DanniPath + "','" + vwDir.Id + "') "
                 + "oncontextmenu=showDirTreeContextMenu('" + vwDir.Id + "') "
-                //+ "onmouseover=showFolderImage('" + encodeURI(folderImage) + "'); onmouseout=$('.dirTreeImageContainer').hide()>"
-                + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "')>"
+                + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "'); onmouseout=$('.dirTreeImageContainer').hide()>"
+                //+ "onmouseover=showFolderImage('" + encodeURI(folderImage) + "')>"
                 + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
                 + txtFileCount + "</span></div>" +
                 "<div class='" + expandClass + "' id=" + randomId + ">";

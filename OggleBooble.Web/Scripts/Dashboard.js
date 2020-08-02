@@ -5,21 +5,24 @@ function dashboardStartup() {
     changeFavoriteIcon("redBallon");
     $('#indexMiddleColumn').html(dashboardHtml());
     showDefaultWorkArea();
+
+    if (isInRole("oggle admin"))
+        viewId = "Admin";
+
     $('#dashboardDialog').draggable();
     $('#dashboardDialog').css("top", 250);
     $('#dashboardDialog').css("left", 450);
-    $('#dashboardContainer').show();
     $('.txtLinkPath').val('');
+
     setOggleHeader(3910, "dashboard");
     setOggleFooter(3910, "dashboard");
+
+
     loadHeaderTabs();
+    $('#divAddImages').show();
     setLeftMenu('Add Images');
-    document.title = "Dashboard : OggleBooble";
-    $('.dashboardContainerColumn').show();
-    setLeftMenu('Admin');
     loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick", false);
     //setSignalR();
-    //if (isInRole("oggle admin"))
     window.addEventListener("resize", resizeDashboardPage);
     resizeDashboardPage();
 }
@@ -35,6 +38,8 @@ function showDefaultWorkArea() {
         "      </div>\n" +
         "      <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
         "   </div>\n");
+    $('.dashboardContainerColumn').show();
+    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick", false);
 }
 
 function dashboardHtml() {
@@ -78,6 +83,8 @@ function rebuildDirectoryTree() {
 }
 
 function setLeftMenu(viewId) {
+
+
     $('#headerSubTitle').html(viewId);
     switch (viewId) {
         case "Add Images":
@@ -138,21 +145,25 @@ function setLeftMenu(viewId) {
     resizeDashboardPage();
 }
 
-function loadHeaderTabs() {
-    if (isInRole("ADD")) {
-        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
-        $('#divAddImages').show();
-    }
-    if (isInRole("ADD")) {
-        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Folders');\">Manage Folders</a>");
-    }
-    if (isInRole("ADM")) {
-        //alert("isInRole Oggle admin")
-        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Admin');\">Admin</a>");
-        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:showReportsSection();\">Reports</a>");
-        $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Roles');\">Manage Roles</a>");
-        $('#headerMessage').html("Oggle admin");
-        $('.adminLevelOption').show();
+function loadHeaderTabs(role) {
+    switch (role) {
+        case "ADD":
+            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
+            break;
+        case "PWR":
+            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
+            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Folders');\">Manage Folders</a>");
+            break;
+        case "ADM":
+            //alert("isInRole Oggle admin")
+            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
+            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Admin');\">Admin</a>");
+            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:showReportsSection();\">Reports</a>");
+            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Roles');\">Manage Roles</a>");
+            $('#headerMessage').html("Oggle admin");
+            //$('.adminLevelOption').show();
+            break;
+        default:
     }
 }
 

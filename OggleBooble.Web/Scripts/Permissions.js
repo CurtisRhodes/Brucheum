@@ -1,43 +1,38 @@
 ﻿
 function isInRole(roleName) {
     //alert("isInRole(" + roleName + ")");
+
     try {
-        
         //updateUserSettings(getCookieValue("VisitorId"), "Initial", loadInitialJson());
-
-
-        if (isNullorUndefined(window.localStorage["userSettings"]).Roles) {
-            //alert("isNullorUndefined userSettings");
+        if (isNullorUndefined(window.localStorage["userSettings"])) {
+            alert("isNullorUndefined userSettings");
             const visitorId = getCookieValue("VisitorId");
-
-            if (isNullorUndefined(visitorId))
+            if (isNullorUndefined(visitorId)) {
+                alert("isNullorUndefined visitorId");
                 return false;
-
-            //alert("initialize userSettings");
-            updateUserSettings(visitorId, "Initial", loadInitialJson());
-        }
-        //let userRoles;
-        try {
-            if (isNullorUndefined(window.localStorage["userSettings"])) {
-                //alert("userSettings Raw " + window.localStorage["userSettings"]);
-                let userSettings = window.localStorage["userSettings"];
-                //alert("userSettings: " + userSettings);
-                //userRoles = userSettings.Roles;
-                //if (!isNullorUndefined(userSettings.Roles)) alert("userRoles: " + userRoles);
             }
-        } catch (e) {
-            console.log("userSettings.Roles  not found yet");
+            alert("initialize userSettings");
+            updateUserSettings(visitorId, "Initial", loadInitialJson());
+            
+        }
+        else {
+            //alert("userSettings Raw " + window.localStorage["userSettings"]);
+            //let userSettings = window.localStorage["userSettings"];
+            //if()
+            //alert("userSettings: " + userSettings);
+            //userRoles = userSettings.Roles;
+            //if (!isNullorUndefined(userSettings.Roles)) alert("userRoles: " + userRoles);
+            //console.log("userSettings.Roles  not found yet");
             //alert("userSettings.Roles  not found yet");
-            return;
             //resetUserSettings();
             //userRoles = JSON.parse(window.localStorage["userPermissons"]);
-        }
 
-        //
-        //userRoles = JSON.parse(window.localStorage["userPermissons"]);
-        //alert("userRolesParse: " + userRoles);
-        //alert("userRoles[" + roleName + "]: " + userRoles[roleName]);
-        //alert("userRoles[roleName]: " + userRoles[roleName]);
+            //
+            //userRoles = JSON.parse(window.localStorage["userPermissons"]);
+            //alert("userRolesParse: " + userRoles);
+            //alert("userRoles[" + roleName + "]: " + userRoles[roleName]);
+            //alert("userRoles[roleName]: " + userRoles[roleName]);
+        }
         return true; // userRoles[roleName];
     } catch (e) {
         logError("BUG", 3908, e, "isInRole");
@@ -63,36 +58,38 @@ function isLoggedIn() {
     return userNameExist;
 }
 
-function loadUserSettingsIntoLocalStorage(visitorId) {
+function getUserSettings(visitorId) {
     try {
         //alert("who goes here?");
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/OggleUser/GetUserSettings?visitorId=" + visitorId,
             success: function (successModel) {
-
-                //alert("GetUserSettings.Success " + successModel.Success)
-
                 if (successModel.Success === "ok") {
-                    if (!isNullorUndefined(successModel.ReturnValue)) {
-                        //window.localStorage["userSettings"] = JSON.parse(successModel.ReturnValue);
-                        console.log("userSettings data loaded into local storage");
-                    }
-                    else 
-                        console.log("userSettings data empty");
+
+                    let userSettings = JSON.stringify(successModel.ReturnValue);
+
+
+
+
+                    // console.log("userSettings data loaded into local storage");
+
                 }
                 else
                     logError("BUG", 3098, successModel.Success, "getUserSettings");
             },
             error: function (jqXHR) {
-                if (!checkFor404(loadUserSettingsIntoLocalStorage))
+                if (!checkFor404("getUserSettings"))
                     logError("XHR", 3908, getXHRErrorDetails(jqXHR), "getUserSettings");
             }
         });
     } catch (e) {
-        logError("BUG", 3908, e, "loadUserSettingsIntoLocalStorage");
+        logError("BUG", 3908, e, "getUserSettings");
     }
 }
+
+
+
 
 function updateUserSettings(visitorId, settingName, settingJson) {
     try {
@@ -101,19 +98,14 @@ function updateUserSettings(visitorId, settingName, settingJson) {
             url: settingsArray.ApiServer + "api/OggleUser/UpdateUserSettings?visitorId=" + visitorId + "&settingName=" + settingName + "&settingJson=" + settingJson,
             success: function (successModel) {
                 if (successModel.Success === "ok") {
-                    if (isNullorUndefined(successModel.ReturnValue)) {
+                    if (!isNullorUndefined(successModel.ReturnValue)) {
+                        console.log("no user settings found");
 
-
-                        //alert("loadUserSettingsIntoLocalStorage: " + successModel.ReturnValue);
-                        //loadUserSettingsIntoLocalStorage(visitorId, settingName);
-
-
-                        console.log("no user permissions found local storage");
                     }
                     else {
-                        window.localStorage["userPermissons"] = successModel.ReturnValue;
+
+                        //window.localStorage["userPermissons"] = successModel.ReturnValue;
                         //displayStatusMessage("ok", "user settings updated");
-                        console.log("no user permissions upadted ok");
                     }
                 }
                 else
