@@ -40,8 +40,8 @@ function showDefaultWorkArea() {
 function dashboardHtml() {
     return "<img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
         "   <div id='dashboardContainer' class='fullScreenContainer'>\n" +
-        "      <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
         "   </div>\n" +
+        "      <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
         "   <div id='dashboardDialog' class='oggleDialogContainer displayHidden'>\n" +
         "      <div class='oggleDialogHeader'>" +
         "          <div id='dashboardDialogTitle' class='oggleDialogTitle'></div>" +
@@ -247,11 +247,8 @@ function showCreateStaticPagesDialog() {
     $('#dashboardDialog').fadeIn();    
 }
 function createStaticPages(justOne) {
-    //$('#createStaticPagesCrud').dialog("close");
-    //$('#createStaticPagesCrud').hide();
     $('#dashBoardLoadingGif').fadeIn();
     $('#dataifyInfo').show().html("creating static pages for " + pSelectedTreeFolderPath);
-    //$('#progressBar').show();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/StaticPage/Build?folderId=" + pSelectedTreeId + "&recurr=" + justOne,

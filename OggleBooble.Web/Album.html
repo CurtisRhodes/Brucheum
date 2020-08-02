@@ -105,6 +105,11 @@
                             $('#dots').html('');
                             changeFavoriteIcon("redBallon");
 
+                            if (isNullorUndefined(window.sessionStorage["sessionId"])) {
+                                window.sessionStorage["sessionId"] = create_UUID();
+                                console.log("sessionId created on Album page: " + window.sessionStorage["sessionId"]);
+                            }
+
                             verifiyVisitor("album", params.folder);
 
                             if (isInRole("NewUser")) {

@@ -220,8 +220,20 @@ function getVisitorInfo(visitorId, calledFrom, folderId) {
                     if (isNullorUndefined(window.localStorage["IpAddress"])) {
                         getIpInfo(folderId, calledFrom);
                     }
-                    else
-                        logError("REB", folderId, "ip found but no visitor record Impossible", "getVisitorInfo");
+                    else {
+
+                        logError("REB", folderId, "ip found but no visitor record.  Ip: " + window.localStorage["IpAddress"] , "getVisitorInfo");
+
+                        //addVisitor({
+                        //    IpAddress: data.ip,
+                        //    FolderId: folderId,
+                        //    CalledFrom: calledFrom,
+                        //    City: data.loc,
+                        //    Country: data.loc,
+                        //    Region: data.loc,
+                        //    GeoCode: data.ts
+                        //});
+                    }
                 }
                 else
                     logError("AJX", folderId, visitorModel.Success, "getVisitorInfo");
@@ -256,8 +268,6 @@ function getCloudflare(calledFrom, folderId) {
 }
 
 function getIpInfo(folderId, calledFrom) {
-    //alert("getBrowserInfo().browserPlatform(): " + getBrowserInfo().browserPlatform());
-    console.log("calling iPInfo");
     try {
         let sessionId = window.sessionStorage["sessionId"];
         $.ajax({
@@ -302,12 +312,9 @@ function getIpInfo(folderId, calledFrom) {
                     });
                 }
                 else {
-
                     if (logIpCallSuccess.indexOf("Duplicate Entry") > 0) {
                         logError("IP1", folderId, "attempt to getIp multiple times for Session", "LogIpCall/" + calledFrom);
                     }
-
-
                     logError("ERR", folderId, logIpCallSuccess, "LogIpCall/" + calledFrom);
                 }
             },

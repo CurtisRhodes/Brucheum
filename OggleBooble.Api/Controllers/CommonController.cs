@@ -328,12 +328,11 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.ErrorLogs.Add(new ErrorLog()
                     {
-                        PkId = Guid.NewGuid().ToString(),
                         VisitorId = logErrorModel.VisitorId,
                         ErrorCode = logErrorModel.ErrorCode,
                         ErrorMessage = logErrorModel.ErrorMessage,
                         CalledFrom = logErrorModel.CalledFrom,
-                        PageId = logErrorModel.FolderId,
+                        FolderId = logErrorModel.FolderId,
                         Occured = DateTime.Now
                     });
                     db.SaveChanges();

@@ -263,52 +263,50 @@ function create_UUID() {
     return uuid;
 }
 
-function logError(errorCode, pFolderId, errorMessage, calledFrom) {
+function logError(errorCode, folderId, errorMessage, calledFrom) {
 
-    let folderId = Number(pFolderId);
-
-    if (isNullorUndefined(folderId))
-        folderId = 7777;
-    if (folderId === 0)
-        folderId = 9999;
+    //let folderId = Number(pFolderId);
+    //    if (isNullorUndefined(folderId))
+    //    folderId = 7777;
+    //if (folderId === 0)
+    //    folderId = 9999;
 
     if (document.domain === 'localhost' && errorCode !== "AIE")
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
-    else
-    {
-        try {
-            $.ajax({
-                type: "POST",
-                url: settingsArray.ApiServer + "api/Common/LogError",
-                data: {
-                    VisitorId: getCookieValue("VisitorId"),
-                    ErrorCode: errorCode,
-                    PageId: folderId,
-                    ErrorMessage: errorMessage,
-                    CalledFrom: calledFrom
-                },
-                success: function (success) {
-                    if (success === "ok") {
-                        //displayStatusMessage("ok", "error message logged");
-                        console.log("error message logged.  Called from: " + calledFrom + " message: " + errorMessage);
-                    }
-                    else {
-                        console.error("ajx error in logError!!: " + success + " called from: " + calledFrom + "\nerrorMessage: " + errorMessage);
-                    }
-                },
-                error: function (jqXHR) {
-                    if (!checkFor404("logError")) 
-                        if (document.domain === 'localhost') alert("XHR error in logError!!: " + getXHRErrorDetails(jqXHR));
+
+
+    try {
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogError",
+            data: {
+                VisitorId: getCookieValue("VisitorId"),
+                ErrorCode: errorCode,
+                FolderId: folderId,
+                ErrorMessage: errorMessage,
+                CalledFrom: calledFrom
+            },
+            success: function (success) {
+                if (success === "ok") {
+                    //displayStatusMessage("ok", "error message logged");
+                    console.log("error message logged.  Called from: " + calledFrom + " message: " + errorMessage);
                 }
-            });
-        }
-        catch (e)
-        {
-            if (document.domain === 'localhost')
-                alert("Catch error in logError!!: " + e);
-            console.error("Catch error in logError!!: " + e);
-        }
+                else {
+                    console.error("ajx error in logError!!: " + success + " called from: " + calledFrom + "\nerrorMessage: " + errorMessage);
+                }
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("logError"))
+                    if (document.domain === 'localhost') alert("XHR error in logError!!: " + getXHRErrorDetails(jqXHR));
+            }
+        });
     }
+    catch (e) {
+        if (document.domain === 'localhost')
+            alert("Catch error in logError!!: " + e);
+        console.error("Catch error in logError!!: " + e);
+    }
+
 }
 
 function logEvent(eventCode, folderId, calledFrom, eventDetails) {

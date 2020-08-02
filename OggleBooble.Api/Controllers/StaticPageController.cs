@@ -1,5 +1,6 @@
 ﻿using OggleBooble.Api.Models;
 using OggleBooble.Api.MySqlDataContext;
+using Org.BouncyCastle.Crypto.Engines;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -28,16 +29,11 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    //SignalRHost.ProgressHub.PostToClient("Creating static files");
-                    //VwDirTree vwDirTree = db.VwDirTrees.Where(v => v.Id == folderId).First();
-                    //totalFiles = Math.Max(vwDirTree.GrandTotalFiles, vwDirTree.TotalFiles);
-                    //SignalRHost.ProgressHub.ShowProgressBar(totalFiles, 0);
                     VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                     var rootFolder = categoryFolder.RootFolder;
                     if (rootFolder == "centerfold")
-                    {
                         rootFolder = "playboy";
-                    }
+
                     CreatePage(folderId, rootFolder, categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""), resultsModel, db, recurr);
                 }
             }
@@ -45,25 +41,37 @@ namespace OggleBooble.Api.Controllers
             return resultsModel;
 
         }
-
-        private void CreatePage(int folderId, string rootFolder, string folderName,
-            StaticPageResultsModel resultsModel, OggleBoobleMySqlContext db, bool recurr)        {
+        private void CreatePage(int folderId, string rootFolder, string folderName, StaticPageResultsModel resultsModel, OggleBoobleMySqlContext db, bool recurr)
+        {
             try
             {
                 var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                 if ((dbFolder.FolderType == "singleModel") || (dbFolder.FolderType == "singleParent"))
                 {
-                    string staticContent =
+                    var staticContent = new StringBuilder(
                     "<html>\n" +
-                    " <head></head>\n" +
-                    " <body>\n" +
+                    " <head>\n" +
+                    "    <link href='Styles/Common.css' rel='stylesheet'/>\n" +
+                    "    <link href='Styles/OggleHeader.css' rel='stylesheet'/>\n" +
+                    "    <link href='Styles/AlbumPage.css' rel='stylesheet'/>\n" +
+                    "</head>\n" +
+                    " <body>\n");
+
+                    staticContent.Append(StaticHeader(db, folderId, folderName));
+                    staticContent.Append(CreateBody(folderId));
+
+                    staticContent.Append(
                     "   <script>\n" +
-                    "     (function(){window.location.href='https://ogglebooble.com/album.html?folder=" + folderId + "';})();\n" +
+                    "     function goHome() {" +
+                    "       window.location.href='https://ogglebooble.com/album.html?folder=" + folderId + "';" +
+                    "       }\n" +
                     "   </script>\n" +
                     " </body>\n" +
-                    "</html>";
-                   string success = WriteFileToDisk(staticContent, rootFolder, folderName);
-                    if (success != "ok") {
+                    "</html>");
+
+                    string success = WriteFileToDisk(staticContent.ToString(), rootFolder, folderName);
+                    if (success != "ok")
+                    {
                         resultsModel.Success = success;
                         return;
                     }
@@ -81,6 +89,107 @@ namespace OggleBooble.Api.Controllers
             }
             catch (Exception e) { resultsModel.Success = Helpers.ErrorDetails(e); }
             resultsModel.Success = "ok";
+        }
+        private string CreateBody(int folderId)
+        {
+            string settingsImgRepo = ConfigurationManager.AppSettings["ImageRepository"];
+            var teaserBody = new StringBuilder();
+            using (var db = new OggleBoobleMySqlContext())
+            {
+                var dbImages = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
+                //var dbImages = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
+                teaserBody.Append(
+                "    <div class='threeColumnLayout'>\n" +
+                "        <div class='leftColumn'></div>\n" +
+                "        <div class='middleColumn'>\n" +
+                "            <div id='imageContainer' class='galleryContainer'>\n");
+                for (int i = 0; i < 16; i++)
+                {
+                    teaserBody.Append("<div class='folderImageOutterFrame'>\n" +
+                        "<img class='thumbImage'" +
+                        " onclick='goHome()'" +
+                        " src='" + settingsImgRepo + "/" + dbImages[i].FileName + "'/></div>\n");
+                }
+                teaserBody.Append(
+                "           </div>\n" +
+                "       </div>\n" +
+                "        <div class='rightColumn'></div>\n" +
+                "    </div>\n");
+            }
+            return teaserBody.ToString();
+        }
+
+
+        private string StaticHeader(OggleBoobleMySqlContext db, int folderId, string folderName)
+        {
+            StringBuilder staticHeaderHtml = new StringBuilder("<div id='oggleHeader' class='stickyHeader boobsHeader'>" +
+            "   <div class='siteLogoContainer' onclick='window.location.href=\"OggleBooble.com\"'>\n" +
+            "       <img id='divSiteLogo' class='siteLogo' src='Images/redballon.png' style='height: 60px;'>" +
+            "   </div>\n" +
+            "   <div class='headerBodyContainer'>\n" +
+            "       <div class='headerTopRow'>\n" +
+            "           <div class='headerTitle' style='color: rgb(0, 0, 0); height: 28px;'>OggleBooble</div>\n" +
+            "           <div class='hdrTopRowMenu' style='font-size: 25px;margin-left:14px;'>handpicked images organized by category</div>\n" +
+            "           <div id='searchBox' class='oggleSearchBox'>\n" +
+            "               <input class='oggleSearchBoxText'>" +
+            "           </div>\n" +
+            "       </div>\n" +
+            "       <div class='headerBottomRow'>\n" +
+            "         <div class='bottomLeftHeaderArea' onclick='goHome()'>go to live page</div>\n" +
+            "           <div class='breadCrumbArea'>");
+            //$('#trackbackContainer').css("display", "inline-block");
+            var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
+            foreach (TrackbackLink trackbackLink in trackbackLinks)
+            {
+                switch (trackbackLink.SiteCode)
+                {
+                    case "FRE":
+                        staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">" + folderName + " Free Porn</a></div>");
+                        break;
+                    case "BAB":
+                        staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">Babepedia</a></div>");
+                        break;
+                }
+            }
+            staticHeaderHtml.Append("</div>\n</div>\n</div>\n</div>\n");
+            return staticHeaderHtml.ToString();
+        }
+
+        private string StaticStyle()
+        {
+            return "<style>" +
+            ":root {" +
+            "   --brucheumBlue: #74bac3;" +
+            "   --oggleBackgroundColor: #c1bad1;" +
+            "   --thumbnailBorderColor: #74bac3;" +
+            "}" +
+            "body {" +
+            "    background - color: var(--oggleBackgroundColor);" +
+            "    font - family: Verdana;" +
+            "    font - size: var(--normalFont);" +
+            "}" +
+            ".galleryContainer {" +
+            "    display: flex;" +
+            "    text - align: center;" +
+            "    background - color: #fff;" +
+            "    border: solid thin black;" +
+            "    min - height: 200px;" +
+            "    flex - wrap: wrap;" +
+            "    max - height: inherit;" +
+            "    overflow - y: scroll;" +
+            "    }" +
+            ".labelClass {" +
+            "   display: inline - block;" +
+            "   text - align: center;" +
+            "   margin - right: 4px;" +
+            "}" +
+            ".imageFrameClass {" +
+            "    background - color: var(--thumbnailBorderColor);" +
+            "    border: solid 6px var(--thumbnailBorderColor);" +
+            "    border - radius: 4px;" +
+            "    margin: 4px;" +
+            "    }" +
+            "</style>";
         }
 
         private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle)

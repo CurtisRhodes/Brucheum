@@ -188,13 +188,17 @@ namespace OggleBooble.Api.MySqlDataContext
     public class ErrorLog
     {
         [Key]
-        public string PkId { get; set; }
+        [Column(Order = 0)]
         public string VisitorId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public DateTime Occured { get; set; }
+        [Key]
+        [Column(Order = 2)]
         public string ErrorCode { get; set; }
         public string CalledFrom { get; set; }
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
         public string ErrorMessage { get; set; }
-        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.PageHitTotals")]
