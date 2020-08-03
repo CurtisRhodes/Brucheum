@@ -110,6 +110,26 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
+        [HttpPut]
+        [Route("api/CatFolder/Move")]
+        public string Move(int folderId, int newParent)
+        {
+            string success = "";
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    dbFolder.Parent = newParent;
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+
         [HttpGet]
         [Route("api/CatFolder/GetSearchResults")]
         public SearchResultsModel GetSearchResults(string searchString)

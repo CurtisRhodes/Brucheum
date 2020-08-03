@@ -1,39 +1,4 @@
-﻿/*
-    .boobsHeader {
-    background: var(--brucheumBlue);
-    border-top: #40767d 3px solid;
-    border-bottom: #decd6f 3px solid;
-}
-
-            //"stickyHeader boobsHeader''siteLogoContainer'>\n" +
-            //" ass='siteLogo'
-            //"   <div class='headerBodyContainer'>\n" +
-            //"       <div class='headerTopRow'>\n" +
-            //"           <div id='bannerTitle' class='headerTitle' style='color: rgb(0, 0, 0); height: 28px;'>OggleBooble</div>\n" +
-            //"           <div id='mainMenuContainer' class='hdrTopRowMenu' style='font-size: 25px;'>index</div>\n" +
-            //"           <div id='topRowRightContainer'></div>           <div id='searchBox' class='oggleSearchBox'>\n" +
-            //"               <span id='notUserName' title='Esc clears search.'>search</span>" +
-            //"                   <input class='oggleSearchBoxText' id='txtSearch'>" +
-            //"           </div>\n" +
-            //"       </div>\n" +
-            //"       <div class='headerBottomRow'>\n" +
-            //"           <div class='bottomRowSection1'>\n" +
-            //"               <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
-            //"               <div id='breadcrumbContainer' class='breadCrumbArea'>\n" +
-            //"               <div id='badgesContainer' class='badgesSection'></div>\n" +
-            //"               <div id='hdrBtmRowSec3' class='hdrBtmRowOverflow'>imageIndex: 756  imageHistory.length: 4</div>\n" +
-            //"           </div>\n" +
-            //"           <div id='divLoginArea' class='loginArea'>\n" +
-            //"               <div id='optionNotLoggedIn' class='displayHidden' style='display: block;'>\n" +
-            //"                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
-            //"                   <div id='btnLayoutLogin' class='hoverTab'><a href='javascript:showLoginDialog(3908)'>Log In</a></div>\n" +
-
-
-*/
-
-
-
-.stickyHeader {
+﻿.stickyHeader {
     position: sticky;
     top: 0;
     margin: 0;
@@ -60,7 +25,6 @@
     border-top: #40767d 3px solid;
     border-bottom: #407d6e 5px solid;
 }
-
 
 .headerBodyContainer {
     float: left;
