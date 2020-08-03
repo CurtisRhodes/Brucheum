@@ -311,7 +311,17 @@ function directToStaticPage() {
 
 function resizeImageContainer() {
     //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
-    resizePage();
+
+    // set page width
+    let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
+    $('.middleColumn').width(winW - lcW - rcW);
+    //set page height
+    let winH = $(window).height();
+    let headerH = $('header').height() + 70;
+    $('.threeColumnLayout').css("height", winH - headerH);
+
+
+
     $('#imageContainer').width($('.middleColumn').width());
     $('#imageContainer').css("max-height", $('.middleColumn').height() - 50);
     if (viewerShowing) 

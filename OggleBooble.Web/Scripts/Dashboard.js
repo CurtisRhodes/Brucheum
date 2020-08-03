@@ -2,29 +2,24 @@
 let dshBrdSubDirTreeId;
 
 function dashboardStartup() {
+    document.title = "dashboard : OggleBooble";
     changeFavoriteIcon("redBallon");
     $('#indexMiddleColumn').html(dashboardHtml());
-    showDefaultWorkArea();
-
-    if (isInRole("oggle admin"))
-        viewId = "Admin";
-
     $('#dashboardDialog').draggable();
     $('#dashboardDialog').css("top", 250);
     $('#dashboardDialog').css("left", 450);
     $('.txtLinkPath').val('');
-
     setOggleHeader(3910, "dashboard");
     setOggleFooter(3910, "dashboard");
-
-
-    loadHeaderTabs();
+    showDefaultWorkArea();
     $('#divAddImages').show();
-    setLeftMenu('Add Images');
-    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick", false);
-    //setSignalR();
+
+    //if (isInRole("oggle admin"))
+    role = "ADM";
+    loadHeaderTabs(role);
+    setLeftMenu(role);
+    loadDashboardDirTree();
     window.addEventListener("resize", resizeDashboardPage);
-    resizeDashboardPage();
 }
 
 function showDefaultWorkArea() {
@@ -57,36 +52,30 @@ function dashboardHtml() {
 }  
 
 function resizeDashboardPage() {
-    resizePage();
-
-    // HEIGHT
-    //let winH = $(window).height
-
-    let heightFF = -45, widthFF = -30;
-    let adjH = $('.threeColumnLayout').height() - $('header').height() + heightFF;
-    $('#dashboardContainer').css("height", adjH);
-
-    // WIDTH
+    let widthFF = -39;
+    // width
+    let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
+    $('#dashboardContainer').css("width", winW - lcW - rcW);
     let middleColumnW = $('#dashboardContainer').width() - $('#dashboardRightColumn').width() - $('#dashboardLeftColumn').width();
-    $('#dashboardMiddleColumn').css("width", middleColumnW + widthFF);
+    $('#dashboardMiddleColumn').css("width", middleColumnW);
 
-    //$('#mainMenuContainer').html("w: " + $('#dashboardMiddleColumn').width() + " widthFF: " + widthFF +
-    //    "                            h: " + $('#dashboardContainer').height() + " heightFF: " + heightFF);
+    //height
+    let winH = $(window).height();
+    let headerH = $('#oggleHeader').height();
+    //$('.threeColumnLayout').css("height", winH - headerH);
+    //let adjH = $('.threeColumnLayout').height() - $('header').height();
+    $('#dashboardContainer').css("height", winH - headerH + widthFF);
 
-    //$('#sortToolImageArea').css("height", $('#sortToolSection').height() - $('#sortToolHeader').height());  // - $('#sortToolFooter').height())
-    $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
-
+    //$('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
+    //alert("dashboardContainer height: " + adjH + " middleColumnW: " + middleColumnW);
 }
 
 function rebuildDirectoryTree() {
     loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick", true);
 }
 
-function setLeftMenu(viewId) {
-
-
-    $('#headerSubTitle').html(viewId);
-    switch (viewId) {
+function setLeftMenu(role) {
+    switch (role) {
         case "Add Images":
             //$('.workAreaContainer').hide();
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='rebuildDirectoryTree()'>ReBuild Dir Tree</div>");
@@ -109,16 +98,16 @@ function setLeftMenu(viewId) {
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
             break;
-        case "Reports":
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='showPerfMetrics()'>Performance Metrics</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='pageHitReport()'>Page Hit Report</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='FeedbackReport()'>Feedback</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='errorLogReport()'>Error Log</div>");
-            break;
-        case "Admin":
+        //case "Reports":
+        //    $('#dashboardLeftMenu').html("<div class='clickable' onclick='showPerfMetrics()'>Performance Metrics</div>");
+        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='pageHitReport()'>Page Hit Report</div>");
+        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>");
+        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>");
+        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>");
+        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='FeedbackReport()'>Feedback</div>");
+        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='errorLogReport()'>Error Log</div>");
+        //    break;
+        case "ADM":
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='rebuildDirectoryTree()'>ReBuild Dir Tree</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddImageLinkDialog()'>Add Image Link</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCreateStaticPagesDialog()'>Create Static Pages</div>");
@@ -140,14 +129,13 @@ function setLeftMenu(viewId) {
 
             break;
         default:
-            alert("view not undestood: " + viewId);
+            alert("view not undestood: " + role);
     }
-    resizeDashboardPage();
 }
 
 function loadHeaderTabs(role) {
     switch (role) {
-        case "ADD":
+        case "LOW":
             $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
             break;
         case "PWR":
@@ -337,12 +325,6 @@ function addImageLink() {
             if (successModel.Success === "ok") {
                 displayStatusMessage("ok", "image link added");
                 $('#txtImageLink').val("");
-                resizeDashboardPage();
-
-                //if (successModel.ReturnValue !== "0") {
-                //    alert("set image: " + successModel.ReturnValue + " as folder image for " + pSelectedTreeId);
-                //    setFolderImage(successModel.ReturnValue, pSelectedTreeId, "folder");
-                //}
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "NIA",
@@ -379,9 +361,16 @@ function previewLinkImage() {
 function showCreateNewFolderDialog() {
     $('#dashboardDialogTitle').html("Create New Folder");
     $('#dashboardDialogContents').html(
+        //"       <div></div>\n" +
         "       <div><span>parent</span><input id='txtCreateFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
         "       <div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput' /></div>\n" +
         "       <div class='roundendButton' onclick='performCreateNewFolder()'>Create Folder</div>\n");
+    $('#txtNewFolderTitle').keydown(function (event) {
+        if (event.keyCode === 13) {
+            //alert("keydown 13");
+            performCreateNewFolder();
+        }
+    });
     $("#txtCreateFolderParent").val(pSelectedTreeFolderPath);
     $('#dashboardDialog').fadeIn();
 }
@@ -560,6 +549,8 @@ function showMoveManyTool() {
         "           <div id='moveManyCountContainer' class='floatRight'></div>" +
         "       </div>\n" +
         "   </div>\n");
+
+
     $('#txtMoveManySource').val(pSelectedTreeFolderPath);
     // $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
 
@@ -580,7 +571,6 @@ function showMoveManyTool() {
                     $('#moveManyImageArea').append("<div class='sortBox'><img class='sortBoxImage' src='" + imgRepo + "/" + obj.FileName + "'/>" +
                         "<br/><input type='checkbox' class='loadManyCheckbox' imageId="  + obj.LinkId + "></div>");
                 });
-                //resizePage();
                 $('#moveManyCountContainer').html(imgLinks.Links.length.toLocaleString());
             }
             else {
@@ -889,7 +879,6 @@ function SaveFileAs() {
                     if (successModel.Success === "ok") {
                         displayStatusMessage("ok", "image link added");
                         $('#txtNewLink').val("");
-                        resizeDashboardPage();
                     }
                     else
                         alert("postImage: " + success);
@@ -1029,6 +1018,23 @@ function XXtestAddVisitor() {
     addVisitor(3309, "dashboard");
 }
 
+function dshBrdSubDirTreeClick(danniPath, folderId) {
+    dshBrdSubDirTreeId = folderId;
+    let selectedMMFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
+    $('#txtMoveManyDestination').val(selectedMMFolderPath);
+    $('#txtscNewFolderName').val(selectedMMFolderPath);
+    $('#txtNewMoveDestiation').val(selectedMMFolderPath);
+    $('#mmDirTreeContainer').fadeOut();
+}
+
+
+
+function loadDashboardDirTree() {
+    $('#dashBoardLoadingGif').show();
+    $('#dataifyInfo').show().html("loading directory tree");
+    loadDirectoryTree(1, "dashboardRightColumn", "dashBoardDirTreeClick", false);
+}
+
 function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
     showAddImageLinkDialog();
@@ -1036,15 +1042,8 @@ function onDirTreeComplete() {
     setTimeout(function () { $('#dataifyInfo').hide() }, 2500);
 }
 
-function dshBrdSubDirTreeClick(danniPath, folderId) {
-     dshBrdSubDirTreeId = folderId;
-    let selectedMMFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
-    $('#txtMoveManyDestination').val(selectedMMFolderPath);
-    $('#txtscNewFolderName').val(selectedMMFolderPath);
-    $('#txtNewMoveDestiation').val(selectedMMFolderPath);
-        
-    $('#mmDirTreeContainer').fadeOut();
-}
+
+
 function dashBoardDirTreeClick(danniPath, folderId) {
     pSelectedTreeId = folderId;
     pSelectedTreeFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");

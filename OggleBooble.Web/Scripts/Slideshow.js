@@ -78,7 +78,6 @@ function getSlideshowItems(folderId, startItem) {
                     }
                     //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
                     viewerShowing = true;
-                    resizePage();
                     resizeViewer();
                     explodeViewer();
                     $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);

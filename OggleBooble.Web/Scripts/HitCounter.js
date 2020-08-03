@@ -8,13 +8,10 @@ function logImageHit(linkId, folderId, isInitialHit) {
         }
         let visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
+            verifiyVisitor("logImageHit", folderId);
             visitorId = create_UUID();
-            //setCookieValue("VisitorId", visitorId);
             logError("IHO", folderId, "linkId: " + linkId, "logImageHit");
-            //getIpInfo(folderId, "logImageHit");
         }
-
-        //let linkId = link.substr(link.lastIndexOf("_") + 1, 36);
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
@@ -53,10 +50,13 @@ function logPageHit(folderId) {
 
     let visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
+        verifiyVisitor("logPageHit", folderId);
         visitorId = create_UUID();
-        setCookieValue("VisitorId", visitorId);
         logError("VIP", folderId, "visitorId assigned: " + visitorId, "logPageHit");
-        //getIpInfo(folderId, "logPageHit");
+    }
+
+    if (visitorId.indexOf("-2282-")) {
+        logEvent("XOM", folderId, "logPageHit", "On me");
     }
 
     $.ajax({
@@ -186,14 +186,14 @@ function verifiyVisitor(calledFrom, folderId) {
         if (isNullorUndefined(window.localStorage["IpAddress"])) {
             if (getBrowserInfo().dataCookiesEnabled())
                 getIpInfo(folderId, calledFrom);
-            else
+            else {
                 logError("IP2", folderId, "capta needed here. cookies not enabled", calledFrom);
+            }
         }
         else {
             //  Ip found in local storage but not visitor Id
             logError("IP3", folderId, "capta needed here", calledFrom);
         }
-        //sst("Undefined(visitorId) calling getIpInfo");
     }
     else {
         console.log("visitorId found: " + visitorId);
@@ -288,7 +288,13 @@ function getIpInfo(folderId, calledFrom) {
                             window.localStorage["IpAddress"] = ipResponse.ip;
                             console.log("iPInfo success: " + window.localStorage["IpAddress"]);
                             let visitorId = getCookieValue("VisitorId");
-                            if (isNullorUndefined(visitorId)) {
+
+                            if (visitorId.indexOf("-2282-")) {
+                                logEvent("XOM", folderId, "logPageHit", "On me");
+
+                            }
+
+                            if ((isNullorUndefined(visitorId)) || (visitorId.indexOf("-2282-"))) {
                                 addVisitor({
                                     IpAddress: ipResponse.ip,
                                     FolderId: folderId,

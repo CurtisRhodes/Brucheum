@@ -1,42 +1,20 @@
 ﻿
 function isInRole(roleName) {
-    //alert("isInRole(" + roleName + ")");
-
     try {
-        //updateUserSettings(getCookieValue("VisitorId"), "Initial", loadInitialJson());
-        if (isNullorUndefined(window.localStorage["userSettings"])) {
-            alert("isNullorUndefined userSettings");
+        if (isNullorUndefined(window.localStorage["userRole"])) {
             const visitorId = getCookieValue("VisitorId");
-            if (isNullorUndefined(visitorId)) {
-                alert("isNullorUndefined visitorId");
-                return false;
-            }
-            alert("initialize userSettings");
-            updateUserSettings(visitorId, "Initial", loadInitialJson());
-            
+            if (isNullorUndefined(visitorId))
+                window.localStorage["userRole"] = "no";
+            else
+                window.localStorage["userRole"] = "normal";
+            console.log("low role added to localstorage");
         }
-        else {
-            //alert("userSettings Raw " + window.localStorage["userSettings"]);
-            //let userSettings = window.localStorage["userSettings"];
-            //if()
-            //alert("userSettings: " + userSettings);
-            //userRoles = userSettings.Roles;
-            //if (!isNullorUndefined(userSettings.Roles)) alert("userRoles: " + userRoles);
-            //console.log("userSettings.Roles  not found yet");
-            //alert("userSettings.Roles  not found yet");
-            //resetUserSettings();
-            //userRoles = JSON.parse(window.localStorage["userPermissons"]);
-
-            //
-            //userRoles = JSON.parse(window.localStorage["userPermissons"]);
-            //alert("userRolesParse: " + userRoles);
-            //alert("userRoles[" + roleName + "]: " + userRoles[roleName]);
-            //alert("userRoles[roleName]: " + userRoles[roleName]);
-        }
-        return true; // userRoles[roleName];
-    } catch (e) {
-        logError("BUG", 3908, e, "isInRole");
-    }
+        let userRole = window.localStorage["userRole"];
+        if (userRole === "admin")
+            return true;
+        if (userRole === roleName)
+            return true;
+    } catch (e) { logError("BUG", 3908, e, "isInRole"); }
 }
 
 function resetUserSettings() {
@@ -87,7 +65,6 @@ function getUserSettings(visitorId) {
         logError("BUG", 3908, e, "getUserSettings");
     }
 }
-
 
 
 

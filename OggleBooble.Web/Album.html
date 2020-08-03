@@ -133,13 +133,18 @@
             });
 
         });
+
         function resizeAlbumPage() {
-            var visH = $(window).height() - $('#oggleHeader').height();
-            $('.threeColumnLayout').css("min-height", visH);
-            $('#feedbackBanner').css("top", visH - 100);
-            $('.middleColumn').css("min-height", visH);
+            // set page width
+            let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
+            $('.threeColumnLayout').css("width", winW);
+            $('.middleColumn').width(winW - lcW - rcW);
+            //set page height
+            let winH = $(window).height();
+            let headerH = $('#oggleHeader').height();
+            $('.threeColumnLayout').css("min-height", winH - headerH);
 
-
+            $('#feedbackBanner').css("top", winH);
             //$('#aboveImageContainerMessageArea').html("resize: visH: " + visH + "  col: " + $('.threeColumnLayout').height() + "  con: " + $('#imageContainer').height());
         }
 

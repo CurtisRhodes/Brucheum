@@ -32,7 +32,6 @@ body {
     /*width: 100%;*/
     background-color: var(--oggleBackgroundColor);
     display: flex;
-    border-top: solid 7px black;
 }
 
     .threeColumnLayout .leftColumn {
@@ -183,7 +182,7 @@ body {
 }
 
 .footer {
-    margin-top: 44px;
+    margin-top: 4px;
     border-top: solid 4px #feb236;
     font-family: Arial;
     background-color: #333;

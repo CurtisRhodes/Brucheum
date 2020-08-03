@@ -183,10 +183,6 @@ function loadBlogEntry(blogId) {
                     $('#blogPageTitle').html(model.CommentTitle);
                     $('#blogPageBody').html(model.CommentText);
                     $('#blogPageImage').attr("src", model.Link);
-                    //if ($('#blogPageBody').height() > $('#middleColumn').height()) {
-                    //    $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
-                    //    resizePage();
-                    //}
                     $('#btnAddEdit').html("Save");
                     $('#btnNewCancel').show();
                 }
@@ -224,10 +220,8 @@ function loadFolderComment(folderId) {
 
                 if ($('#blogPageBody').height() > $('#middleColumn').height()) {
                     $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
-                    resizePage();
+                    resizeBlogPage();
                 }
-
-
                 $('#btnAddEdit').html("Save");
                 $('#btnNewCancel').show();
             }
@@ -445,19 +439,19 @@ function saveBlogEntry() {
 }
 
 function resizeBlogPage() {
-    resizePage();
+    // set page width
+    let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
+    $('.middleColumn').width(winW - lcW - rcW);
+    //set page height
+    let winH = $(window).height();
+    let headerH = $('header').height() + 70;
+    $('.threeColumnLayout').css("height", winH - headerH);
+
     $('#blogEditor').height($('#middleColumn').height() - 100);
-    //$('#blogEditor').width($('#blogEditArea').width() - $('.blogListItem').width());
     $('#blogEditor').width($('#blogEditArea').width() - 300);    
-    //$('#oggleBlogSummerNote').width($('#blogEditor').width());
-    //var editorWidth = $('#blogEditor').width("-=6");
-    //$('.oggleBlogEditor .note-editable').width(editorWidth);
     $('.note-editor').width($('#blogEditor').width());
     $('.note-editor').height($('#blogEditArea').height() * .75);
     $('.note-editable').height($('.note-editor').height() - 50);
-
-    //$('.singleBlogEntryContainer').height($('#middleColumn').height() - 185);
-    //$('.blogArticleJogContainer').height($('#middleColumn').height() - 185);
 }
 
 function blogBodyHtml() {

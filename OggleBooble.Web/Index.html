@@ -155,36 +155,10 @@
                 }
             }, 300);
 
-            window.addEventListener("resize", resizePage());
             window.addEventListener("resize", resizeIndexPage);
             resizeIndexPage();
         });
 
-        function localhostBypass() {
-            if (document.domain === 'localhost') {
-                setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-
-                let visitorId = getCookieValue("VisitorId");
-                console.log("localhostBypass visitorId: " + visitorId);
-                setCookieValue("UserName", "developer");
-                //window.localStorage["IsLoggedIn"] = "true";
-            }
-        }
-
-        function resizeIndexPage() {
-            // height
-            let winH = $(window).height();
-            let headerH = $('header').height() + 50;
-            $('#topIndexPageSection').height((winH - headerH - 100));
-            $('#topIndexPageSection').height((winH - headerH) * .65);
-            // width
-
-            let winW = $(window).width();
-            $('section').css("background-color", "#d5d1ba");
-            if (winW < 1500) {
-                $('section').css("background-color", "red");
-            }
-        }
     </script>
 </body>
 </html>

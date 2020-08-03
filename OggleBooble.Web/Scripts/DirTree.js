@@ -10,8 +10,6 @@ function loadDirectoryTree(startNode, container, clickEvent, forceRebuild) {
     totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
     settingsImgRepo = settingsArray.ImageRepo;
     var start = Date.now();
-    $('#dashBoardLoadingGif').show();
-    $('#dataifyInfo').show().html("loading directory tree");
 
     if (!forceRebuild && !isNullorUndefined(window.localStorage["dirTree"]) && (startNode === 1)) {
         console.log("dir tree cache bypass");

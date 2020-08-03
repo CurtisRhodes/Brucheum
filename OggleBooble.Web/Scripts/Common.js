@@ -146,22 +146,6 @@ function todayString() {
     return mm + '/' + dd + '/' + yyyy;
 }
 
-function resizePage() {
-    //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, 
-    // or using “transform” along with “transform - origin: 0 0”.album.html
-
-    // set page width
-    let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
-    $('.middleColumn').width(winW - lcW - rcW);
-
-    //set page height
-    let winH = $(window).height();
-    let headerH = $('header').height() + 50;
-    $('.threeColumnLayout').css("min-height", winH - headerH);
-
-    mediaSavyHdrResize();
-}
-
 function letemPorn(response, pornType, folderId) {
     if (response === "ok") {
         if (isNullorUndefined(pornType)) {

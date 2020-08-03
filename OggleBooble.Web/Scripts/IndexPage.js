@@ -1,5 +1,4 @@
-﻿
-function indexStartup() {
+﻿function indexStartup() {
     $('#indexMiddleColumn').html(indexPageHTML());
     setOggleHeader(3908, "index");
     setOggleFooter(3908, "index");
@@ -64,6 +63,7 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                 $('.sectionLabel').show();
                 console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes");
                 resizeIndexPage();
+                setTimeout(function () { resizeIndexPage(); }, 300);
             }
             else {
                 logError("BUG", 3908, latestUpdates.Success, "loadUpdatedGalleriesBoxes");
@@ -163,4 +163,37 @@ function goToPorn() {
 
     // if user porn status not already set
     showCustomMessage(35);
+}
+
+function localhostBypass() {
+    if (document.domain === 'localhost') {
+        setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+
+        let visitorId = getCookieValue("VisitorId");
+        console.log("localhostBypass visitorId: " + visitorId);
+        setCookieValue("UserName", "developer");
+        //window.localStorage["IsLoggedIn"] = "true";
+    }
+}
+
+function resizeIndexPage() {
+
+    // set page width
+    let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
+    $('.middleColumn').width(winW - lcW - rcW);
+    //set page height
+    let winH = $(window).height();
+    let headerH = $('#oggleHeader').height();
+    $('.threeColumnLayout').css("min-height", winH - headerH);
+//    alert("winH: " + winH + " headerH: " + headerH + "= " + $('.threeColumnLayout').height());
+
+    // height
+    $('#topIndexPageSection').height((winH - headerH - 100));
+    $('#topIndexPageSection').height((winH - headerH) * .65);
+    // width
+
+    $('section').css("background-color", "#d5d1ba");
+    if (winW < 1500) {
+        $('section').css("background-color", "red");
+    }
 }
