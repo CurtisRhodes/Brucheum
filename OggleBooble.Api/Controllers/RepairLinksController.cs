@@ -165,7 +165,7 @@ namespace OggleBooble.Api.Controllers
                                 if (dbImageFile.FolderId != folderId)
                                 {
                                     dbImageFile.FolderId = folderId;
-                                    //db.SaveChanges();
+                                    db.SaveChanges();
                                     //repairReport.ImageFileAdded++;
 
                                 }

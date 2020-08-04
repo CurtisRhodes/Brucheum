@@ -380,7 +380,7 @@ function tbAddEdit() {
                     $('#btnTbDlgDelete').hide();
 
                 }
-                else logError("AJX, folderId, successModel.Success, "addTrackback");                
+                else logError("AJX", folderId, successModel.Success, "addTrackback");                
             },
             error: function (jqXHR) {
                 if (!checkFor404("addTrackback"))

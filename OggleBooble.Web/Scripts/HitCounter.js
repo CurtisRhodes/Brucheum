@@ -211,7 +211,7 @@ function getVisitorInfo(visitorId, calledFrom, folderId) {
             if (visitorModel.Success === "ok") {
                 if (isNullorUndefined(window.localStorage["IpAddress"])) {
                     window.localStorage["IpAddress"] = visitorModel.IpAddress;
-                    logError("REB", folderId, "had to look up IpAddress", calledFrom);
+                    logError("REB", folderId, "had to look up IpAddress session: " + window.sessionStorage["sessionId"], "getVisitorInfo/" + calledFrom);
                 }
             }
             else {
@@ -221,7 +221,6 @@ function getVisitorInfo(visitorId, calledFrom, folderId) {
                         getIpInfo(folderId, calledFrom);
                     }
                     else {
-
                         logError("REB", folderId, "ip found but no visitor record.  Ip: " + window.localStorage["IpAddress"] , "getVisitorInfo");
 
                         //addVisitor({
@@ -319,8 +318,8 @@ function getIpInfo(folderId, calledFrom) {
                 }
                 else {
                     //'ERROR: Duplicate entry ''71ede59e-2282-9610-b246-8344b5bd6c1f-2020-08-04 08:45:18'' for key ''VisitorId'''
-                    if (logIpCallSuccess.indexOf("Duplicate Entry") > 0) {
-                        logError("IPI", folderId, "attempt to getIp multiple times for Session", "LogIpCall/" + calledFrom);
+                    if (logIpCallSuccess.indexOf("Duplicate") > 0) {
+                        logError("IPI", folderId, "attempt to getIp multiple times for Session: "+sessionId, "LogIpCall/" + calledFrom);
                     }
                     logError("AJX", folderId, logIpCallSuccess, "LogIpCall/" + calledFrom);
                 }

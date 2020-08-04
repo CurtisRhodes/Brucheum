@@ -217,8 +217,10 @@ function performRepairLinks(justOne) {
                         alert("problem displaying repair report: " + e);
                     }
                 }
-                else
-                    logError("AJX", apFolderId, success, "performRepairLinks");
+                else {
+                    //logError("AJX", apFolderId, repairReport.Success, "performRepairLinks");
+                    alert(repairReport.Success);
+                }
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
@@ -899,10 +901,9 @@ function prepareXhamsterPage() {
             url: settingsArray.ApiServer + "/api/xHampster?folderId=" + pSelectedTreeId,
             success: function (success) {
                 $('#dashBoardLoadingGif').hide();
-                if (success === "ok") {
+                if (success === "ok") 
                     displayStatusMessage("ok", "Xhamster Page created");
-                }
-                else "AJX", apFolderId, success, "prepareXhamsterPage");
+                else logError("AJX", apFolderId, success, "prepareXhamsterPage");
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();

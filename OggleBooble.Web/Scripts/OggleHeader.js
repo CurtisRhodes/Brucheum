@@ -133,7 +133,7 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",123)'>ultra juggs</a> \n";
             break;
         }
-        case "cybergirls":
+        case "cybergirl":
         case "playboy":
         case "centerfold": {
             $('header').switchClass('pornHeader', 'boobsHeader');
