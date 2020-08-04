@@ -57,7 +57,7 @@ function perfomCopyLink(linkId) {
                 awardCredits("LKC", pDirTreeId);
             }
             else {
-                logError("BUG", pDirTreeId, success, "perfomCopyLink");
+                logError("AJX", pDirTreeId, success, "perfomCopyLink");
             }
         },
         error: function (xhr) {
@@ -105,7 +105,7 @@ function moveFile(request, linkId, folderId) {
                 });
             }
             else {
-                logError("BUG", folderId, success, "moveFile");
+                logError("AJX", folderId, success, "moveFile");
             }
         },
         error: function (xhr) {
@@ -144,11 +144,11 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                 }
                 else {
                     $('#imagePageLoadingGif').hide();
-                    logError("BUG", folderId, success, "attemptRemoveLink");
+                    logError("AJX", folderId, success, "attemptRemoveLink");
                 }
             }
         },
-        error: function (xhr) {
+        error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             if (!checkFor404("attemptRemoveLink")) {
                 logError("XHR", folderId, getXHRErrorDetails(jqXHR), "attemptRemoveLink");
@@ -199,7 +199,7 @@ function performDeleteImage(linkId) {
                     });
                 }
                 else {
-                    logError("BUG", 3908, success, "performDeleteImage");
+                    logError("AJX", 3908, success, "performDeleteImage");
                 }
             }
         },
@@ -242,7 +242,7 @@ function performRenameFolder(folderId, newFolderName) {
                 });
             }
             else {
-                logError("BUG", folderId, success, "performRenameFolder");
+                logError("AJX", folderId, success, "performRenameFolder");
             }
         },
         error: function (xhr) {
@@ -266,7 +266,7 @@ function setFolderImage(linkId, folderId, level) {
                 $("#imageContextMenu").fadeOut();
             }
             else {
-                logError("BUG", folderId, success, "setFolderImage");
+                logError("AJX", folderId, success, "setFolderImage");
             }
         },
         error: function (jqXHR) {
@@ -307,7 +307,7 @@ function nonFtpMoveCopy() {
                 }
             }
             else {
-                logError("BUG", MoveCopyImageModel.SourceFolderId, success, "nonFtpMoveCopy");
+                logError("AJX", MoveCopyImageModel.SourceFolderId, success, "nonFtpMoveCopy");
             }
         },
         error: function (xhr) {

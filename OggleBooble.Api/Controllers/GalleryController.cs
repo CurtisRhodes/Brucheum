@@ -98,9 +98,13 @@ namespace OggleBooble.Api.Controllers
                             LinkStatus = trackbackLink.LinkStatus
                         });
                     }
-                    if(db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault() != null) 
-                        albumInfo.FolderComments = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault().FolderComments;
-
+                    var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if (dbFolderDetails != null)
+                    {
+                        albumInfo.FolderComments = dbFolderDetails.FolderComments;
+                        albumInfo.StaticFile = dbFolderDetails.StaticFile;
+                        //albumInfo.StaticFileUpdate = dbFolderDetails.StaticFileUpdate.Value;
+                    }
                     #region BreadCrumbs
                     VirtualFolder thisFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                     albumInfo.BreadCrumbs.Add(new BreadCrumbItemModel()

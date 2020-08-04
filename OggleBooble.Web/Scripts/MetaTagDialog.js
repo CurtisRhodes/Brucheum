@@ -74,7 +74,7 @@ function getMetaTags(folderId, linkId) {
                     });
                 }
                 else {
-                    logError("BUG", folderId, success, "getMetaTags");
+                    logError("AJX", folderId, success, "getMetaTags");
                 }
             },
             error: function (jqXHR) {
@@ -100,7 +100,7 @@ function loadMetaTagForEditing(tagId) {
                 metaTagModel.TagId = tagId;
             }
             else
-                logError("BUG", 3908, model.Tag, "loadMetaTagForEditing");
+                logError("AJX", 3908, model.Tag, "loadMetaTagForEditing");
         },
         error: function (jqXHR) {
             if (!checkFor404("loadMetaTagForEditing")) {
@@ -134,7 +134,7 @@ function editMetaTag() {
                     getMetaTags(metaTagModel.FolderId);
                 }
                 else
-                    logError("BUG", 3908, success, "editMetaTag");
+                    logError("AJX", 3908, success, "editMetaTag");
             },
             error: function (jqXHR) {
                 if (!checkFor404("editMetaTag")) {
@@ -158,7 +158,7 @@ function addMetaTag() {
                     getMetaTags(metaTagModel.FolderId, metaTagModel.LinkId);
                 }
                 else
-                    logError("BUG", 3908, success, "addMetaTag");
+                    logError("AJX", 3908, success, "addMetaTag");
             },
             error: function (jqXHR) {
                 if (!checkFor404("addMetaTag")) {

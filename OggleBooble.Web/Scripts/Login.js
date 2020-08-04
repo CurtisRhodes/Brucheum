@@ -38,7 +38,7 @@ function attemptLogin() {
                 }
                 else {
                     $('#loginValidationSummary').html(success).show();
-                    logError("BUG", loginFromPageId, success, "attemptLogin");
+                    logError("AJX", loginFromPageId, success, "attemptLogin");
                 }
             },
             error: function (jqXHR) {
@@ -222,7 +222,7 @@ function attemptRegister() {
                         // show welcom to Oggle Booble message.
                     }
                     else {
-                        logError("BUG", loginFromPageId, success, "attemptRegister");
+                        logError("AJX", loginFromPageId, success, "attemptRegister");
                         $('#registerValidationSummary').html(response).show();
                     }
                 },

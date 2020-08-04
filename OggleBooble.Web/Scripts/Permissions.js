@@ -14,7 +14,7 @@ function isInRole(roleName) {
             return true;
         if (userRole === roleName)
             return true;
-    } catch (e) { logError("BUG", 3908, e, "isInRole"); }
+    } catch (e) { logError("CAT", 3908, e, "isInRole"); }
 }
 
 function resetUserSettings() {
@@ -54,7 +54,7 @@ function getUserSettings(visitorId) {
 
                 }
                 else
-                    logError("BUG", 3098, successModel.Success, "getUserSettings");
+                    logError("AJX", 3098, successModel.Success, "getUserSettings");
             },
             error: function (jqXHR) {
                 if (!checkFor404("getUserSettings"))
@@ -62,7 +62,7 @@ function getUserSettings(visitorId) {
             }
         });
     } catch (e) {
-        logError("BUG", 3908, e, "getUserSettings");
+        logError("CAT", 3908, e, "getUserSettings");
     }
 }
 
@@ -86,7 +86,7 @@ function updateUserSettings(visitorId, settingName, settingJson) {
                     }
                 }
                 else
-                    logError("BUG", 3908, successModel.Success, "updateUserSettings");
+                    logError("AJX", 3908, successModel.Success, "updateUserSettings");
             },
             error: function (jqXHR) {
                 if (!checkFor404("updateUserSettings"))
@@ -94,7 +94,7 @@ function updateUserSettings(visitorId, settingName, settingJson) {
             }
         });
     } catch (e) {
-        logError("BUG", 3908, e, "updateUserSettings");
+        logError("CAT", 3908, e, "updateUserSettings");
     }
 }
 

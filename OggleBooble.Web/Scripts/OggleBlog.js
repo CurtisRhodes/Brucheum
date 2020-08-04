@@ -46,7 +46,7 @@ function loadBlogDropDowns() {
                 //alert("Select; " + $('#blogDisplayCommentTypeSelect').html());
             }
             else
-                logError("BUG", 3911, refs.Success, "loadBlogDropDowns");
+                logError("AJX", 3911, refs.Success, "loadBlogDropDowns");
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
@@ -148,7 +148,7 @@ function loadFolderComments() {
                 resizeBlogPage();
             }
             else
-                logError("BUG", 3911, categoryCommentContainer.Success, "loadFolderComments");
+                logError("AJX", 3911, categoryCommentContainer.Success, "loadFolderComments");
         },
         error: function (jqXHR) {
             if (!checkFor404("loadBlogArticles"))
@@ -187,7 +187,7 @@ function loadBlogEntry(blogId) {
                     $('#btnNewCancel').show();
                 }
                 else {
-                    logError("BUG", folderId, model.Success, "loadBlogEntry");
+                    logError("AJX", folderId, model.Success, "loadBlogEntry");
                 }
             },
             error: function (jqXHR) {
@@ -226,7 +226,7 @@ function loadFolderComment(folderId) {
                 $('#btnNewCancel').show();
             }
             else 
-                logError("BUG", folderId, folderInfo.Success, "loadFolderComment");
+                logError("AJX", folderId, folderInfo.Success, "loadFolderComment");
         },
         error: function (jqXHR) {
             $('#blogLoadingGif').hide();
@@ -322,7 +322,7 @@ function loadBlogList(commentType) {
                         $('#blogLoadingGif').hide();
                     }
                     else {
-                        logError("BUG", 3911, success, "loadBlogList");
+                        logError("AJX", 3911, success, "loadBlogList");
                         $('#blogLoadingGif').hide();
                     }
                     resizeBlogPage();
@@ -353,7 +353,7 @@ function loadBlogList(commentType) {
                         }
                     }
                     else {
-                        logError("BUG", folderId, blogCommentModelContainer.Success, "loadBlogList(");
+                        logError("AJX", folderId, blogCommentModelContainer.Success, "loadBlogList(");
                     }
                     resizeBlogPage();
                 },
@@ -405,7 +405,7 @@ function saveBlogEntry() {
                         blogObject.Id = successModel.ReturnValue;
                     }
                     else 
-                        logError("BUG", 3911, successModel.Success, "saveBlogEntry");
+                        logError("AJX", 3911, successModel.Success, "saveBlogEntry");
                 },
                 error: function (jqXHR) {
                     if (!checkFor404("saveBlogEntry")) 
@@ -424,7 +424,7 @@ function saveBlogEntry() {
                         loadBlogList(blogObject.CommentType);
                     }
                     else 
-                        logError("BUG", 3911, success, "saveBlogEntry");
+                        logError("AJX", 3911, success, "saveBlogEntry");
                 },
                 error: function (jqXHR) {
                     var errorMessage = getXHRErrorDetails(jqXHR);

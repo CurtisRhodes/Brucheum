@@ -64,7 +64,7 @@ function loadBoobsRanker(rankPref) {
 
             }
             else {
-                logError("BUG", 3907, container.Success, "loadBoobsRanker");
+                logError("AJX", 3907, container.Success, "loadBoobsRanker");
             }
         },
         error: function (jqXHR) {
@@ -180,7 +180,7 @@ function unloadBoobsRanker(rankPref) {
                 $('#footerMessage').html("removed " + kkk + " " + rankPref + " items");
             }
             else {
-                logError("BUG", 3907, container.Success, "unloadBoobsRanker");
+                logError("AJX", 3907, container.Success, "unloadBoobsRanker");
             }
         },
         error: function (jqXHR) {
@@ -358,7 +358,7 @@ function imageClick(selectedSide) {
                     $('#rankerBox' + selectedSide).removeClass("bigRedBorder");
                 }
                 else {
-                    logError("BUG", 3907, success, "imageClick");
+                    logError("AJX", 3907, success, "imageClick");
                 }
             },
             error: function (jqXHR) {

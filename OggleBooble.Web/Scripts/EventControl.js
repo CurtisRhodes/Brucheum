@@ -118,12 +118,12 @@ function performEvent(eventCode, calledFrom, eventDetail, folderId) {
                 case "freedback": showFeedbackDialog(); break;
                 case "slut archive": window.location.href = "/album.html?folder=440"; break;
                 default:
-                    logError("BUG", folderId, "Uncaught Case: " + eventDetail, "performEvent/footer link click");
+                    logError("SWT", folderId, "Uncaught Case: " + eventDetail, "performEvent/footer link click");
                     break;
             }
             break;
         default:
-            logError("BUG", folderId, "Uncaught Case: " + eventDetail, "performEvent");
+            logError("SWT", folderId, "Uncaught Case: " + eventDetail, "performEvent");
     }
 }
 

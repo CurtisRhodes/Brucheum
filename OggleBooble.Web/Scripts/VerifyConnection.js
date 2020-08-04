@@ -119,7 +119,7 @@ function xxPersistConnection() {
                     }
                 }
                 else {
-                    logError("BUG", 3908, successModel.Success, "persistConnection");
+                    logError("AJX", 3908, successModel.Success, "persistConnection");
                     connectionVerified = false;
                 }
             },

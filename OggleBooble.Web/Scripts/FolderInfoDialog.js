@@ -41,9 +41,8 @@ function showFolderInfoDialog(folderId, calledFrom) {
                     }
 
                     logEvent("SMD", folderId, calledFrom, "folder type: " + folderInfo.FolderType);
-
                 }
-                else logError("BUG", folderId, folderInfo.Success, "GetQuickFolderInfo");
+                else logError("AJX", folderId, folderInfo.Success, "GetQuickFolderInfo");
             },
             error: function (jqXHR) {
                 if (!checkFor404("getFolderDetails")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "GetQuickFolderInfo");
@@ -125,7 +124,7 @@ function showFullModelDetails(folderId) {
             }
             else {
                 $('#imagePageLoadingGif').hide();
-                logError("BUG", folderId, folderInfo.Success, "showFullModelDetails");
+                logError("AJX", folderId, folderInfo.Success, "showFullModelDetails");
             }
         },
         error: function (jqXHR) {
@@ -237,7 +236,7 @@ function saveFolderDialog() {
                 $('#summernoteContainer').summernote('focus');
             }
             else {
-                logError("BUG", objFolderInfo.Id, success, "saveFolderDialog");
+                logError("AJX", objFolderInfo.Id, success, "saveFolderDialog");
             }
         },
         error: function (jqXHR) {
@@ -295,7 +294,7 @@ function updateFolderDetail() {
                 displayStatusMessage("ok", "Model info updated");
             }
             else {
-                logError("BUG", objFolderInfo.Id, success, "updateFolderDetail");
+                logError("AJX", objFolderInfo.Id, success, "updateFolderDetail");
             }
         },
         error: function (jqXHR) {
@@ -381,7 +380,7 @@ function tbAddEdit() {
                     $('#btnTbDlgDelete').hide();
 
                 }
-                else logError("BUG", folderId, successModel.Success, "addTrackback");                
+                else logError("AJX, folderId, successModel.Success, "addTrackback");                
             },
             error: function (jqXHR) {
                 if (!checkFor404("addTrackback"))
@@ -429,7 +428,7 @@ function xxcreatePosersIdentifiedFolder() {
                                 displayStatusMessage("ok", "image moved to newfolder");
                             }
                             else
-                                logError("BUG", defaultParentFolder, moveImageSuccessModel.Success, "createPosersIdentifiedFolder/MoveImage");
+                                logError("AJX", defaultParentFolder, moveImageSuccessModel.Success, "createPosersIdentifiedFolder/MoveImage");
                         },
                         error: function (jqXHR) {
                             var errorMessage = getXHRErrorDetails(jqXHR);
@@ -439,7 +438,7 @@ function xxcreatePosersIdentifiedFolder() {
                     });
                 }
                 else
-                    logError("BUG", defaultParentFolder, successModel.Success, "createPosersIdentifiedFolder");
+                    logError("AJX", defaultParentFolder, successModel.Success, "createPosersIdentifiedFolder");
             },
             error: function (jqXHR) {
                 if (!checkFor404("createPosersIdentifiedFolder"))

@@ -66,7 +66,7 @@ function saveFeedback() {
                 showMyAlert("Thank you for your feedback");
             }
             else {
-                logError("BUG", feedbackPageId, success, "saveFeedback");
+                logError("AJX", feedbackPageId, success, "saveFeedback");
             }
         },
         error: function (jqXHR) {

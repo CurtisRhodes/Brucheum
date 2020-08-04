@@ -16,7 +16,7 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class StaticPageController : ApiController
     {
-        //private readonly string httpLocation = "https://ogglebooble.com/static/";
+        private readonly string httpLocation = "https://ogglebooble.com/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
@@ -98,6 +98,9 @@ namespace OggleBooble.Api.Controllers
             using (var db = new OggleBoobleMySqlContext())
             {
                 var dbImages = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
+                if (dbImages.Count < 16) {
+                    dbImages = db.VwLinks.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
+                }
                 //var dbImages = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
                 teaserBody.Append(
                 "<div class='threeColumnLayout'><div class='leftColumn'></div>" +
@@ -201,12 +204,10 @@ namespace OggleBooble.Api.Controllers
                 }
                 FtpWebRequest webRequest = null;
                 //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
-                string ftpPath = ftpHost + "ogglebooble/static";
-                string destination = ftpPath + "/" + rootFolder + "/" + pageTitle + ".html";
-                if (rootFolder == "")
-                    destination = ftpPath + "/" + pageTitle + ".html";
+                string ftpFileName = ftpHost + "ogglebooble/static/" + rootFolder + "/" + pageTitle + ".html";
+                string httpFileName = httpLocation + "static/" + rootFolder + "/" + pageTitle + ".html";
 
-                webRequest = (FtpWebRequest)WebRequest.Create(destination);
+                webRequest = (FtpWebRequest)WebRequest.Create(ftpFileName);
                 webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
                 webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 using (System.IO.Stream requestStream = webRequest.GetRequestStream())
@@ -218,7 +219,7 @@ namespace OggleBooble.Api.Controllers
                     requestStream.Close();
                 }
 
-                success = recordPageCreation(rootFolder, folderId, destination, db);
+        success = recordPageCreation(rootFolder, folderId, httpFileName, db);
 
 
                 success = "ok";
@@ -227,7 +228,7 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-        private string recordPageCreation(string rootFolder, int folderId, string staticFileName, OggleBoobleMySqlContext db)
+        private string recordPageCreation(string rootFolder, int folderId, string httpFileName, OggleBoobleMySqlContext db)
         {
             string success;
             try
@@ -238,13 +239,13 @@ namespace OggleBooble.Api.Controllers
                     db.FolderDetails.Add(new FolderDetail()
                     {
                         FolderId = folderId,
-                        StaticFile = staticFileName,
+                        StaticFile = httpFileName,
                         StaticFileUpdate = DateTime.Now
                     });
                 }
                 else
                 {
-                    dbFolderDetail.StaticFile = staticFileName;
+                    dbFolderDetail.StaticFile = httpFileName;
                     dbFolderDetail.StaticFileUpdate = DateTime.Now;
                 }
                 db.SaveChanges();

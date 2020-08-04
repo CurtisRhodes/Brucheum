@@ -3,14 +3,14 @@
 function logImageHit(linkId, folderId, isInitialHit) {
     try {
         if (isNullorUndefined(folderId)) {
-            logError("IH1", folderId, "TROUBLE in logImageHit. folderId came in Null or Undefined", "HitCounter.js logImageHit");
+            logError("IHE", folderId, "folderId came in Null or Undefined", "logImageHit");
             return;
         }
         let visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
             verifiyVisitor("logImageHit", folderId);
             visitorId = create_UUID();
-            logError("IHO", folderId, "linkId: " + linkId, "logImageHit");
+            logError("IHE", folderId, "visitorId assigned: " + visitorId + " linkId: " + linkId, "logImageHit");
         }
         $.ajax({
             type: "POST",
@@ -44,7 +44,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
 
 function logPageHit(folderId) {
     if (isNullorUndefined(folderId)) {
-        logError("PPP", folderId, "folderId undefined in LogPageHit.", "logPageHit"); 0
+        logError("PHF", folderId, "folderId undefined in LogPageHit.", "logPageHit"); 0
         return;
     }
 
@@ -52,7 +52,7 @@ function logPageHit(folderId) {
     if (isNullorUndefined(visitorId)) {
         verifiyVisitor("logPageHit", folderId);
         visitorId = create_UUID();
-        logError("VIP", folderId, "visitorId assigned: " + visitorId, "logPageHit");
+        logError("PHF", folderId, "visitorId assigned: " + visitorId + " linkId: " + linkId, "logPageHit");
     }
 
     if (visitorId.indexOf("-2282-")) {
@@ -187,12 +187,12 @@ function verifiyVisitor(calledFrom, folderId) {
             if (getBrowserInfo().dataCookiesEnabled())
                 getIpInfo(folderId, calledFrom);
             else {
-                logError("IP2", folderId, "capta needed here. cookies not enabled", calledFrom);
+                logError("VVE", folderId, "capta needed here. cookies not enabled", calledFrom);
             }
         }
         else {
             //  Ip found in local storage but not visitor Id
-            logError("IP3", folderId, "capta needed here", calledFrom);
+            logError("VVE", folderId, "capta needed here", calledFrom);
         }
     }
     else {
@@ -318,10 +318,11 @@ function getIpInfo(folderId, calledFrom) {
                     });
                 }
                 else {
+                    //'ERROR: Duplicate entry ''71ede59e-2282-9610-b246-8344b5bd6c1f-2020-08-04 08:45:18'' for key ''VisitorId'''
                     if (logIpCallSuccess.indexOf("Duplicate Entry") > 0) {
-                        logError("IP1", folderId, "attempt to getIp multiple times for Session", "LogIpCall/" + calledFrom);
+                        logError("IPI", folderId, "attempt to getIp multiple times for Session", "LogIpCall/" + calledFrom);
                     }
-                    logError("ERR", folderId, logIpCallSuccess, "LogIpCall/" + calledFrom);
+                    logError("AJX", folderId, logIpCallSuccess, "LogIpCall/" + calledFrom);
                 }
             },
             error: function (jqXHR) {

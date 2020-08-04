@@ -82,7 +82,7 @@ function runMetricsMatrixReport() {
                     runMostImageHits();
                 }
                 else {
-                    logError("BUG", 3910, metricsMatrixResults.Success, "metricsMatrixReport");
+                    logError("AJX", 3910, metricsMatrixResults.Success, "metricsMatrixReport");
                 }
             },
             error: function (jqXHR) {
@@ -114,7 +114,7 @@ function runMostVisitedPages() {
                 $("#mostPopularPagesContainer").append("</table>");
             }
             else {
-                logError("BUG", 3910, popularPages.Success, "mostVisitedPages");
+                logError("AJX", 3910, popularPages.Success, "mostVisitedPages");
             }
         },
         error: function (jqXHR) {
@@ -143,7 +143,7 @@ function runMostImageHits() {
                 $("#mostImageHitsContainer").append("</table>");
             }
             else {
-                logError("BUG", 3910, mostImageHits.Success, "runMostImageHits");
+                logError("AJX", 3910, mostImageHits.Success, "runMostImageHits");
             }
         },
         error: function (jqXHR) {
@@ -188,7 +188,7 @@ function runEventActivityReport() {
                 $("#divStandardReportCount").html(" Total: " + activityReport.HitCount.toLocaleString());
             }
             else {
-                logError("BUG", 3910, activityReport.Success, "eventActivityReport");
+                logError("AJX", 3910, activityReport.Success, "eventActivityReport");
             }
         },
         error: function (jqXHR) {
@@ -228,7 +228,7 @@ function runLatestImageHitsReport() {
                 $("#divStandardReportCount").html(" Total: " + imageHitActivityReport.HitCount.toLocaleString());
             }
             else {
-                logError("BUG", 3910, imageHitActivityReport.Success, "showLatestImageHitsReport");
+                logError("AJX", 3910, imageHitActivityReport.Success, "showLatestImageHitsReport");
             }
         },
         error: function (jqXHR) {
@@ -283,7 +283,7 @@ function runMostActiveUsersReport() {
                 $("#divStandardReportCount").html(" Total: " + mostActiveUsersReport.HitCount.toLocaleString());
             }
             else {
-                logError("BUG", 3910, mostActiveUsersReport.Success, "mostActiveUsersReport");
+                logError("AJX", 3910, mostActiveUsersReport.Success, "mostActiveUsersReport");
             }
         },
         error: function (jqXHR) {
@@ -336,7 +336,7 @@ function runPageHitReport() {
                 $("#reportsFooter").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
-                logError("BUG", 3910, success, "pageHitsReport");
+                logError("AJX", 3910, success, "pageHitsReport");
             }
         },
         error: function (jqXHR) {
@@ -403,7 +403,7 @@ function errorLogReport() {
                 $('#dashboardMiddleColumn').html(html);
             }
             else {
-                logError("BUG", 3910, errorLogReport.Success, "errorLogReport");
+                logError("AJX", 3910, errorLogReport.Success, "errorLogReport");
                 alert("PageHitsReport: " + errorLogReport.Success);
             }
         },

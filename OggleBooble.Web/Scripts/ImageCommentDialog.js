@@ -59,7 +59,7 @@ function loadComment() {
                 }
             }
             else {
-                logError("BUG", imageComment.FolderId, comment.Success, "addImageComment");
+                logError("AJX", imageComment.FolderId, comment.Success, "addImageComment");
             }
         },
         error: function (jqXHR) {
@@ -101,7 +101,7 @@ function addImageComment() {
                 if (success.includes("title"))
                     alert("Please add a title");
                 else {
-                    logError("BUG", FolderId, success, "addImageComment");                    
+                    logError("AJX", FolderId, success, "addImageComment");                    
                 }
             }
         },
@@ -123,7 +123,7 @@ function editImageComment() {
                 displayStatusMessage("ok", "Entry Updated");
             }
             else {
-                logError("BUG", imageComment.FolderId, success, "addImageComment");
+                logError("AJX", imageComment.FolderId, success, "addImageComment");
             }
         },
         error: function (jqXHR) {

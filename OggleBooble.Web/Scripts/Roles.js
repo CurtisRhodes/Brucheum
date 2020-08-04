@@ -22,7 +22,7 @@ function loadCooseBox(column,option) {
                         });
                     }
                     else
-                        logError("BUG", 3910, usersModel.Success, "roles/loadCooseBox");
+                        logError("AJX", 3910, usersModel.Success, "roles/loadCooseBox");
                 },
                 error: function (jqXHR) {
                     if (!checkFor404("roles/loadCooseBox")) {
@@ -70,7 +70,7 @@ function loadCooseBox(column,option) {
                     });
                 }
                 else {
-                    logError("BUG", 3910, roleModel.Success, "roles/loadCooseBox");
+                    logError("AJX", 3910, roleModel.Success, "roles/loadCooseBox");
                 }
             },
             error: function (jqXHR) {
@@ -139,7 +139,7 @@ function loadUserRoles(whichType) {
 
                 }
                 else {
-                    logError("BUG", 3910, roleModel.Success, "api/Roles/loadUserRoles");
+                    logError("AJX", 3910, roleModel.Success, "api/Roles/loadUserRoles");
                 }
             },
             error: function (jqXHR) {
@@ -220,7 +220,7 @@ function RemoveUserRole(selectedUserName, selectedRoleId) {
                     //displayStatusMessage("ok", "Role [" + selectedRoleName + "] Removed");
                 }
                 else 
-                    logError("BUG", 3910, success, "RemoveUserRole");                
+                    logError("AJX", 3910, success, "RemoveUserRole");                
             },
             error: function (jqXHR) {
                 if (!checkFor404("RemoveUserRole")) {
@@ -253,7 +253,7 @@ function loadAaddEditRoles() {
                     });
                 }
                 else
-                    logError("BUG", 3910, roleModel.Success, "loadAaddEditRoles");
+                    logError("AJX", 3910, roleModel.Success, "loadAaddEditRoles");
             },
             error: function (jqXHR) {
                 if (!checkFor404("loadAaddEditRoles")) {
@@ -293,7 +293,7 @@ function addRole() {
                     $('#btnRoleToggle').hide();
                 }
                 else 
-                    logError("BUG", 3910, success, "addRole");
+                    logError("AJX", 3910, success, "addRole");
             },
             error: function (jqXHR) {
                 if (!checkFor404("addRole")) 
@@ -321,7 +321,7 @@ function updateRole(newName) {
                     $('#btnRoleToggle').hide();
                 }
                 else 
-                    logError("BUG", 3910, success, "updateRole");
+                    logError("AJX", 3910, success, "updateRole");
             },
             error: function (jqXHR) {
                 if (!checkFor404("updateRole")) 

@@ -135,10 +135,11 @@ function defaultFooter(pageId, rootFolder) {
         "       <div id='footerCol4' class='footerColCustContainer'></div>\n" +        
         "    </div>\n" +
         "    <div class='footerCol'>\n" +  // column 5
+        "       <div id='footerPageHits'></div>\n" +
         "       <div id='footerCol5' class='footerColCustContainer'></div>\n" +
         "       <div>page type: " + rootFolder + "</div>\n" +
         "       <div id='footerFolderType'></div>\n" +
-        "       <div id='footerPageHits'></div>\n" +
+        "       <div id='footerStaticPage'></div>\n" +
         //"  <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
         //"  <div id='footerLastBuild' class='footerVersionMessage'></div>\n";
         "    </div>\n" +

@@ -218,7 +218,7 @@ function performRepairLinks(justOne) {
                     }
                 }
                 else
-                    logError("BUG", apFolderId, success, "performRepairLinks");
+                    logError("AJX", apFolderId, success, "performRepairLinks");
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
@@ -441,7 +441,7 @@ function performMoveFolder() {
                 });
             }
             else
-                logError("BUG", pSelectedTreeId, success, "dashboard.js movefolder");
+                logError("AJX", pSelectedTreeId, success, "dashboard.js movefolder");
         },
         error: function (xhr) {
             $('#dashBoardLoadingGif').hide();
@@ -902,7 +902,7 @@ function prepareXhamsterPage() {
                 if (success === "ok") {
                     displayStatusMessage("ok", "Xhamster Page created");
                 }
-                else logError("BUG", apFolderId, success, "prepareXhamsterPage");
+                else "AJX", apFolderId, success, "prepareXhamsterPage");
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();

@@ -46,7 +46,7 @@ function loadDirectoryTree(startNode, container, clickEvent, forceRebuild) {
                     }
                 }
                 else {
-                    logError("BUG", startNode, dirTreeModel.Success, "loadDirectoryTree");
+                    logError("AJX", startNode, dirTreeModel.Success, "loadDirectoryTree");
                 }
             },
             error: function (jqXHR) {
@@ -196,7 +196,7 @@ function refreshDirTree(startNode) {
                 }
             }
             else {
-                logError("BUG", startNode, dirTreeModel.Success, "loadDirectoryTree");
+                logError("AJX", startNode, dirTreeModel.Success, "loadDirectoryTree");
             }
         },
         error: function (jqXHR) {

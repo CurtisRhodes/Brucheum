@@ -161,7 +161,9 @@ function getAlbumPageInfo(folderId) {
                 //$('#headerMessage').html("page hits: " + albumInfo.PageHits.toLocaleString());
                 $('#footerPageHits').html("page hits: " + albumInfo.PageHits.toLocaleString());
                 $('#footerFolderType').html("folder type: " + albumInfo.FolderType);
-
+                if (!isNullorUndefined(albumInfo.StaticFile)) {
+                    $('#footerStaticPage').html("<a href='" + albumInfo.StaticFile + "'>static page</a>\n");
+                }
                 setBreadCrumbs(albumInfo.BreadCrumbs);
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
@@ -335,12 +337,12 @@ $(window).resize(function () {
 
 function galleryImageError(linkId, imgSrc) {
     $('#' + linkId).attr('src', "Images/redballon.png");
-    logError("AIE", apFolderId, "image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
+    logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "galleryImage");
     //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
 
 function subFolderImgError(imgSrc) {
-    logError("FIE", apFolderId, "image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album subFolderImgError");
+    logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "subFolderImg");
     //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
 

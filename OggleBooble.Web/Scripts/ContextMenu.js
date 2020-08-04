@@ -114,7 +114,7 @@ function getLimitedImageDetails() {
                 getFullImageDetails();
             }
             else {
-                logError("BUG", pFolderId, imageInfo.Success, "getLimitedImageDetails");
+                logError("AJX", pFolderId, imageInfo.Success, "getLimitedImageDetails");
             }
         },
         error: function (xhr) {
@@ -170,7 +170,7 @@ function getFullImageDetails() {
                 console.log("getFullImageDetails: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
             }
             else {
-                logError("BUG", pFolderId, imageInfo.Success, "getFullImageDetails");
+                logError("AJX", pFolderId, imageInfo.Success, "getFullImageDetails");
             }
         },
         error: function (xhr) {
@@ -294,7 +294,7 @@ function contextMenuAction(action) {
             setFolderImage(pLinkId, pFolderId, "parent");
             break;
         default: {
-            logError("BUG", pFolderId, "Unhandeled switch Action: " + action, "contextMenuAction");
+            logError("SWT", pFolderId, "action: " + action, "contextMenuAction");
         }
     }
 }

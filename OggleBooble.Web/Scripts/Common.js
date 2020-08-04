@@ -440,7 +440,7 @@ function showCustomMessage(blogId, allowClickAnywhere) {
             else {
                 //if (entry.Success.indexOf("Option not supported") > -1) {
                 if (!checkFor404("showCustomMessage"))
-                    logError("BUG", 3111, entry.Success, "showCustomMessage");
+                    logError("AJX", 3111, entry.Success, "showCustomMessage");
             }
         },
         error: function (jqXHR) {

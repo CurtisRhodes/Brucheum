@@ -537,24 +537,16 @@ function carouselContextMenu() {
 }
 
 function imgErrorThrown() {
-    //" + imageIndex + "
-    //carouselItemArray[imageIndex].FileName;
     $('#thisCarouselImage').attr('src', "Images/redballon.png");
     carouselImageViews -= 1;
     carouselImageErrors++;
+    logError("ILF", carouselItemArray[imageIndex].FolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "Carousel");
+
     if (document.domain === 'localhost') {
         pause();
         alert("image error\npage: " + carouselItemArray[imageIndex].FolderId +
             ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
             ",\nActivity: " + carouselItemArray[imageIndex].LinkId);
-    }
-    else {
-        logDataActivity({
-            VisitorId: getCookieValue("VisitorId"),
-            ActivityCode: "IME",
-            PageId: carouselItemArray[imageIndex].FolderId,
-            Activity: carouselItemArray[imageIndex].LinkId
-        });
         console.log("image error\npage: " + carouselItemArray[imageIndex].FolderId +
             ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
             ",\nActivity: " + carouselItemArray[imageIndex].LinkId);

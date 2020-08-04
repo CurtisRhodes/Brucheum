@@ -70,9 +70,8 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                 resizeIndexPage();
                 setTimeout(function () { resizeIndexPage(); }, 300);
             }
-            else {
-                logError("BUG", 3908, latestUpdates.Success, "loadUpdatedGalleriesBoxes");
-            }
+            else logError("AJX", 3908, latestUpdates.Success, "loadUpdatedGalleriesBoxes");
+            
         },
         error: function (jqXHR) {
             if (!checkFor404("loadUpdatedGalleriesBoxes")) {
@@ -84,7 +83,7 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
 
 function latestGalleryImageError(folderId, thisItemSrc) {    
     $('#lt' + folderId).attr('src', "Images/redballon.png");
-    logError("LIE", folderId, "image not found thisItemSrc: " + thisItemSrc, "Index latestGalleryImageError");
+    logError("ILF", folderId, "Src: " + thisItemSrc, "get latest Galleries");
 }
 
 function launchPromoMessages() {
