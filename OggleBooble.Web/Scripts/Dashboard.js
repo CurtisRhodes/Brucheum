@@ -12,13 +12,8 @@ function dashboardStartup() {
     setOggleHeader(3910, "dashboard");
     setOggleFooter(3910, "dashboard");
     showDefaultWorkArea();
-    $('#divAddImages').show();
 
     //if (isInRole("oggle admin"))
-    role = "ADM";
-    loadHeaderTabs(role);
-    setLeftMenu(role);
-    loadDashboardDirTree(false);
     window.addEventListener("resize", resizeDashboardPage);
 }
 
@@ -33,8 +28,15 @@ function showDefaultWorkArea() {
         "      </div>\n" +
         "      <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
         "   </div>\n");
+    $('#dashboardContainer').show();
     $('.dashboardContainerColumn').show();
-    $('#dashboardRightColumn').show();
+    loadDashboardDirTree(false);
+    role = "ADM";
+    loadHeaderTabs(role);
+    setLeftMenu(role);
+    $('#divAddImages').show();
+    //$('#dashboardLeftColumn').show();
+    //$('#dashboardRightColumn').show();
 }
 
 function dashboardHtml() {

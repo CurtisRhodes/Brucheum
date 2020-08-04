@@ -110,6 +110,7 @@ body {
     background-color: #ddd;
     border: 1px solid #ccc;
     border-radius: 3px;
+    width: 100%;
 }
 
 .validationError {
@@ -303,6 +304,30 @@ body {
     z-index: 31;
     display: none;
 }
+
+    .loadingGif img {
+        height: 15px;
+    }
+
+.containerloadingGif {
+    position: relative;
+    left: 50px;
+    top: 20px;
+    height: 80px;
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 .settingsConsole {
     margin-top: 33px;

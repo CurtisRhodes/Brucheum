@@ -108,13 +108,6 @@
     display: none;
 }
 
-.loadingGif {
-    left: 150px;
-    top: 200px;
-    height: 140px;
-    display: none;
-}
-
 .addLinkCrudArea {
     font-size: 16px;
     border: solid .5px #555;

@@ -69,7 +69,7 @@ namespace OggleBooble.Api.Controllers
                     " </body>\n" +
                     "</html>");
 
-                    string success = WriteFileToDisk(staticContent.ToString(), rootFolder, folderName);
+                    string success = WriteFileToDisk(staticContent.ToString(), rootFolder, folderName, folderId, db);
                     if (success != "ok")
                     {
                         resultsModel.Success = success;
@@ -90,6 +90,7 @@ namespace OggleBooble.Api.Controllers
             catch (Exception e) { resultsModel.Success = Helpers.ErrorDetails(e); }
             resultsModel.Success = "ok";
         }
+
         private string CreateBody(int folderId)
         {
             string settingsImgRepo = ConfigurationManager.AppSettings["ImageRepository"];
@@ -99,26 +100,19 @@ namespace OggleBooble.Api.Controllers
                 var dbImages = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                 //var dbImages = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
                 teaserBody.Append(
-                "    <div class='threeColumnLayout'>\n" +
-                "        <div class='leftColumn'></div>\n" +
-                "        <div class='middleColumn'>\n" +
-                "            <div id='imageContainer' class='galleryContainer'>\n");
+                "<div class='threeColumnLayout'><div class='leftColumn'></div>" +
+                "<div class='middleColumn'><div id='imageContainer' class='galleryContainer'>\n");
                 for (int i = 0; i < 16; i++)
                 {
-                    teaserBody.Append("<div class='folderImageOutterFrame'>\n" +
-                        "<img class='thumbImage'" +
-                        " onclick='goHome()'" +
+                    teaserBody.Append("<div class='folderImageOutterFrame'>" +
+                        "<img class='thumbImage' onclick='goHome()'" +
                         " src='" + settingsImgRepo + "/" + dbImages[i].FileName + "'/></div>\n");
                 }
                 teaserBody.Append(
-                "           </div>\n" +
-                "       </div>\n" +
-                "        <div class='rightColumn'></div>\n" +
-                "    </div>\n");
+                "</div></div><div class='rightColumn'></div></div>\n");
             }
             return teaserBody.ToString();
         }
-
 
         private string StaticHeader(OggleBoobleMySqlContext db, int folderId, string folderName)
         {
@@ -192,7 +186,7 @@ namespace OggleBooble.Api.Controllers
             "</style>";
         }
 
-        private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle)
+        private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle, int folderId, OggleBoobleMySqlContext db)
         {
             string success;
             try
@@ -208,11 +202,11 @@ namespace OggleBooble.Api.Controllers
                 FtpWebRequest webRequest = null;
                 //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
                 string ftpPath = ftpHost + "ogglebooble/static";
-
+                string destination = ftpPath + "/" + rootFolder + "/" + pageTitle + ".html";
                 if (rootFolder == "")
-                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + pageTitle + ".html");
-                else
-                    webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + rootFolder + "/" + pageTitle + ".html");
+                    destination = ftpPath + "/" + pageTitle + ".html";
+
+                webRequest = (FtpWebRequest)WebRequest.Create(destination);
                 webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
                 webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 using (System.IO.Stream requestStream = webRequest.GetRequestStream())
@@ -223,9 +217,43 @@ namespace OggleBooble.Api.Controllers
                     requestStream.Flush();
                     requestStream.Close();
                 }
+
+                success = recordPageCreation(rootFolder, folderId, destination, db);
+
+
                 success = "ok";
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
+        }
+
+        private string recordPageCreation(string rootFolder, int folderId, string staticFileName, OggleBoobleMySqlContext db)
+        {
+            string success;
+            try
+            {
+                var dbFolderDetail = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                if (dbFolderDetail == null)
+                {
+                    db.FolderDetails.Add(new FolderDetail()
+                    {
+                        FolderId = folderId,
+                        StaticFile = staticFileName,
+                        StaticFileUpdate = DateTime.Now
+                    });
+                }
+                else
+                {
+                    dbFolderDetail.StaticFile = staticFileName;
+                    dbFolderDetail.StaticFileUpdate = DateTime.Now;
+                }
+                db.SaveChanges();
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
             return success;
         }
     }

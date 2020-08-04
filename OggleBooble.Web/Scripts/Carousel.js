@@ -51,14 +51,15 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                         imageIndex = Math.floor(Math.random() * carouselCacheArray.length);
                         imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
                         mainImageClickId = carouselItemArray[imageIndex].FolderId;
-
                         $('#thisCarouselImage').attr('src', imgSrc);
-                        $('#carouselImageContainer').show();
-                        $('#thisCarouselImage').show();
-                        resizeIndexPage();
-                        resizeCarousel();
-
-                        startCarousel();
+                        $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+                            $('#carouselFooter').fadeIn();
+                            setLabelLinks();
+                            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+                            resizeIndexPage();
+                            resizeCarousel();
+                            startCarousel();
+                        });
 
                         let delta = (Date.now() - absolueStart) / 1000;
                         if (debugMode) $('#hdrBtmRowSec3').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
@@ -223,21 +224,6 @@ function startCarousel() {
     }
 }
 
-function alreadyInLast100() {
-    let idxStart = Math.max(0, carouselItemArray.length - 100);
-    for (i = idxStart; i < imageHistory.length; i++) {
-        if (imageIndex === imageHistory[i]) {
-            if (window.localStorage["IpAddress"] === "68.203.90.183") {
-                //alert("Already shown try again: ");
-                console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
-            }
-            logEvent("REJ", carouselItemArray[imageIndex].FolderId, "alreadyInLast100", carouselItemArray[imageIndex].LinkId);
-            return true;
-        }
-    }
-   return false;
-}
-
 function intervalBody() {
     imageIndex = Math.floor(Math.random() * carouselItemArray.length);
     if (alreadyInLast100()) {
@@ -255,9 +241,8 @@ function intervalBody() {
             $('#carouselFooter').fadeIn();
             setLabelLinks();
             $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });            
-            if (window.localStorage["IpAddress"] === "68.203.90.183")
-                $('#hdrBtmRowSec3').html("imageIndex: " + imageIndex + "  imageHistory.length: " + imageHistory.length);
-
+            //if (window.localStorage["IpAddress"] === "68.203.90.183")
+            //    $('#hdrBtmRowSec3').html("imageIndex: " + imageIndex + "  imageHistory.length: " + imageHistory.length);
             //if (debugMode) $('#hdrBtmRowSec3').append(".len: " + imageHistory.length);
             //if (debugMode) $('#hdrBtmRowSec3').html("  Count: " + imageHistoryArrayCount);
             //if (debugMode) $('#hdrBtmRowSec3').append("  a[" + (imageHistory.length - 1) + "]: " + imageHistory[imageHistory.length - 1]);
@@ -387,6 +372,24 @@ function resizeCarousel() {
     $('#thisCarouselImage').height($('#topIndexPageSection').height() - carouselFooterHeight);
     $('.carouselFooter').width($('#thisCarouselImage').width());
     $('.carouselFooter').css("visibility", "visible");
+}
+
+function alreadyInLast100() {
+    let idxStart = Math.max(0, carouselItemArray.length - 300);
+    for (i = idxStart; i < imageHistory.length; i++) {
+        if (imageIndex === imageHistory[i]) {
+            if (window.localStorage["IpAddress"] === "68.203.90.183") {
+                $('#hdrBtmRowSec3').html("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
+                //alert("Already shown try again: ");
+                beep();
+                console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
+            }
+            logEvent("REJ", carouselItemArray[imageIndex].FolderId, "alreadyInLast100", carouselItemArray[imageIndex].LinkId);
+            return true;
+        }
+    }
+    $('#hdrBtmRowSec3').html("");
+    return false;
 }
 
 function clickSpeed(speed) {

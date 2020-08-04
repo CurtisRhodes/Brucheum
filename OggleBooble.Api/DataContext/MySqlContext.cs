@@ -349,6 +349,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public bool? FakeBoobs { get; set; }
         public int TotalChildFiles { get; set; }
         public int SubFolderCount { get; set; }
+        public string StaticFile { get; set; }
+        public DateTime? StaticFileUpdate { get; set; }
     }
 
     // VIEWS

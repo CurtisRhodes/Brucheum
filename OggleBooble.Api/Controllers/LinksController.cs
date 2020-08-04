@@ -225,6 +225,7 @@ namespace OggleBooble.Api.Controllers
                     string oldFileName;
                     string newFileName;
                     string linkId;
+                    int sortOrder;
                     for (int i = 0; i < moveManyModel.ImageLinkIds.Length; i++) {
                         linkId = moveManyModel.ImageLinkIds[i];
                         dbImageFile = db.ImageFiles.Where(f => f.Id == linkId).First();
@@ -236,8 +237,10 @@ namespace OggleBooble.Api.Controllers
                             dbImageFile.FolderId = moveManyModel.DestinationFolderId;
                             dbImageFile.FileName = newFileName;
                             var oldLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
+                            sortOrder = oldLink.SortOrder;
                             db.CategoryImageLinks.Remove(oldLink);
-                            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink() { ImageCategoryId = dbDestFolder.Id, ImageLinkId = linkId, SortOrder = 999 });
+                            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink() 
+                            { ImageCategoryId = dbDestFolder.Id, ImageLinkId = linkId, SortOrder = sortOrder });
                         }
                         else
                             return success;

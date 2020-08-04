@@ -6,6 +6,7 @@
     document.title = "welcome : OggleBooble";
     //launchPromoMessages();
     launchCarousel("boobs");
+    $('.indexPageSection').show();
     loadUpdatedGalleriesBoxes(updatedGalleriesCount, "boobs");
 }
 
@@ -16,6 +17,7 @@ function pornStartup() {
     changeFavoriteIcon("porn");
     document.title = "OgglePorn";
     launchCarousel("porn");
+    $('#updatedGalleriesSectionLoadingGif').show();
     loadUpdatedGalleriesBoxes(updatedGalleriesCount, "porn");
     // set porn colors
 
@@ -28,7 +30,9 @@ function indexPageHTML() {
         "    </div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +
-        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'></div>\n" +
+        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
+        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' src='Images/loader.gif' />"+
+        "       </div>\n" +
         "    </div>\n" +
         "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
         "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
@@ -36,11 +40,13 @@ function indexPageHTML() {
 
 function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
     let settingsImgRepo = settingsArray.ImageRepo, thisItemSrc;
+    $('#updatedGalleriesSectionLoadingGif').show();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numItmes + "&rootFolder=" + subdomain,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
+                //$('#updatedGalleriesSectionLoadingGif').hide();
                 $('#updatedGalleriesSection').html("");
                 $.each(latestUpdates.LatestTouchedGalleries, function (idx, LatestUpdate) {
                     if (!isNullorUndefined(LatestUpdate.ImageFile)) {
@@ -59,7 +65,6 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                             "</div>");
                     }
                 });
-                $('.indexPageSection').show();
                 $('.sectionLabel').show();
                 console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes");
                 resizeIndexPage();

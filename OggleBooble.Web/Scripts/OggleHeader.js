@@ -116,6 +116,7 @@ function setHeaderMenu(folderId, subdomain) {
     let headerMenu;
     //rtpe(eventCode, calledFrom, eventDetail, pageId)
     switch (subdomain) {
+        case "index":
         case "root":
         case "boobs":
             headerMenu =
@@ -175,10 +176,6 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4271)'>retro</a>,\n";
             break;
         }
-        case "index": {
-            headerMenu = "index";
-            break;
-        }
         case "dashboard": {
             headerMenu = "dashboard";
             break;
@@ -189,7 +186,7 @@ function setHeaderMenu(folderId, subdomain) {
         }
         default:
             logError("SWT", hdrFolderId, "subdomain: " + subdomain, "setHeaderMenu");
-            headerMenu = subdomain;
+            headerMenu = "? " + subdomain;
 
     }
     return headerMenu;
