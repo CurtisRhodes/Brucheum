@@ -1,5 +1,5 @@
-﻿let pDirTreeId, pDirTreeFolderName;
-
+﻿
+let pDirTreeId;
 function linkDialogdirTreeClick(path, id) {
     //alert("linkDialogdirTreeClick path: " + path + ", id: " + id);
     pDirTreeId = id;
@@ -10,7 +10,7 @@ function linkDialogdirTreeClick(path, id) {
     $('#dirTreeResults').html(path.replace(/%20/g, " "));
 }
 
-function showDirTreeDialog(imgSrc, treeStart) {
+function showDirTreeDialog(imgSrc) {
     //alert("showDirTreeDialog(imgSrc: " + imgSrc + ", treeStart: " + treeStart);
     $('#centeredDialogContents').html(
         "   <div>" +
@@ -21,8 +21,9 @@ function showDirTreeDialog(imgSrc, treeStart) {
         "       <div id='linkManipulateClick'></div>\n" +
         "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif' /></div>\n" +
         "   </div>");
+    if (isNullorUndefined($('#linkManipulateDirTree').val()))
+        loadDirectoryTree(1, "linkManipulateDirTree", "linkDialogdirTreeClick", true);
 
-    loadDirectoryTree(treeStart, "linkManipulateDirTree", "linkDialogdirTreeClick", true);
     //var winH = $(window).height();
     //var dlgH = $('#centeredDialog').height();
     //$('#centeredDialog').css("top", (winH - dlgH) / 2);
@@ -31,7 +32,7 @@ function showDirTreeDialog(imgSrc, treeStart) {
 
 function showCopyLinkDialog(linkId, folderId, imgSrc) {
     //alert("showCopyLinkDialog(linkId: " + linkId + ", folderId: " + folderId + ", imgSrc: " + imgSrc);
-    showDirTreeDialog(imgSrc, 1);
+    showDirTreeDialog(imgSrc);
     $('#centeredDialogTitle').html("Copy Link");
     $('#linkManipulateClick').html(
         "<div class='roundendButton' onclick='perfomCopyLink(\"" + linkId + "\")'>Copy</div>");
@@ -70,14 +71,13 @@ function perfomCopyLink(linkId) {
 
 // showMoveLinkDialog(pLinkId, pFolderId, pImgSrc)
 function showMoveLinkDialog(linkId, folderId, imgSrc) {
-    showDirTreeDialog(imgSrc, 1);
+    showDirTreeDialog(imgSrc);
     $('#centeredDialogTitle').html("Move Link");
     $('#linkManipulateClick').html(
         "<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\"," + folderId + ")'>Move</div>");
 }
 
 function showArchiveLinkDialog(linkId, folderId, imgSrc) {
-    showDirTreeDialog(imgSrc, 3);
     $('#centeredDialogTitle').html("Archive Image");
     $('#linkManipulateClick').html(
     "<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\"," + folderId + ")'>Archive</div>");

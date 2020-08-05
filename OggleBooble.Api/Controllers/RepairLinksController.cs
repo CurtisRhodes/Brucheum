@@ -66,9 +66,9 @@ namespace OggleBooble.Api.Controllers
                         {
 
                             int fWidth = 0; int fHeight = 0; long fSize = 0;
-                            //if()
+                            //if()  
 
-                            string imgFileName = "/"+imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
+                            string imgFileName = "F:/Danni/img/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
                             using (var fileStream = new FileStream(imgFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                             {
                                 fSize = fileStream.Length;

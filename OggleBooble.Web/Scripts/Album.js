@@ -17,6 +17,12 @@ function loadAlbum(folderId) {
     getAlbumPageInfo(folderId)
 }
 
+function playVideo() {
+
+    //$('.video').click(function () { this.paused ? this.play() : this.pause(); });
+
+}
+
 function getAlbumImages() {
     var getImagesStart = Date.now();
     $('#indexPageLoadingGif').show();
@@ -49,21 +55,40 @@ function getAlbumImages() {
                     // IMAGES
                     $('#imageContainer').html('');
                     $.each(albumImageInfo.ImageLinks, function (idx, obj) {
-                        //imageFrameClass = "defaultImageFrame";
+
                         let imgSrc = settingsImgRepo + "/" + obj.FileName;
-                        let imageHtml = "<div class='" + imageFrameClass + "'>\n" +
-                            "<img id='" + obj.LinkId + "' class='thumbImage'\n" +
-                            " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\")'\n" +
-                            " alt='" + obj.LinkId + "'\n" +
-                            " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + imgSrc + "\")'\n" +
-                            " onclick='launchViewer(" + obj.FolderId + ",\"" + obj.LinkId + "\",false)' src='" + imgSrc + "'/>\n";
 
-                        if (obj.FolderId !== obj.SrcId)
-                            imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
-                                obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail\"," + obj.SrcId + ")' /></div>\n";
 
-                        imageHtml += "</div>\n";
-                        $('#imageContainer').append(imageHtml);
+                        //$('.video').click(function () { this.paused ? this.play() : this.pause(); });
+
+
+                        if (obj.FileName.endsWith("mpg")) {
+                            $('#imageContainer').append(
+                                "<video id='" + obj.LinkId + "' controls='controls' class='thumbImage' " +
+                                //" poster='images/cslips02.png'>" +
+                                " onclick='this.play();alert(\"play\");' poster='images/cslips02.png'>" +
+                                //"<source src='https://www.fullxxxvideos.net/videos/14037/big-natural-boobs-russian-teen-alice-wayne-fucked-good.mp4?k=D8QkfCmSnW6LcosbMy_H1Q&amp;t=1594778017' type='video/mp4' label=''>" +
+                                "   <source src='" + imgSrc + "' type='video/mp4' label='label'>" +
+                                "</video>");
+                        }
+                        else {
+
+                            //imageFrameClass = "defaultImageFrame";
+                            //let imgSrc = settingsImgRepo + "/" + obj.FileName;
+                            let imageHtml = "<div class='" + imageFrameClass + "'>\n" +
+                                "<img id='" + obj.LinkId + "' class='thumbImage'\n" +
+                                " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\")'\n" +
+                                " alt='" + obj.LinkId + "'\n" +
+                                " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + imgSrc + "\")'\n" +
+                                " onclick='launchViewer(" + obj.FolderId + ",\"" + obj.LinkId + "\",false)' src='" + imgSrc + "'/>\n";
+
+                            if (obj.FolderId !== obj.SrcId)
+                                imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
+                                    obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail\"," + obj.SrcId + ")' /></div>\n";
+
+                            imageHtml += "</div>\n";
+                            $('#imageContainer').append(imageHtml);
+                        }
                     });
                     //$('#galleryBottomfileCount').html(albumImageInfo.ImageLinks.length.toLocaleString());
 

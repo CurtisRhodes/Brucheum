@@ -255,7 +255,7 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
     //if (folderId === 0)
     //    folderId = 9999;
 
-    if (document.domain === 'localhost' && errorCode !== "AIE")
+    if (document.domain === 'localhost' && errorCode !== "ILF")
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
 
 
