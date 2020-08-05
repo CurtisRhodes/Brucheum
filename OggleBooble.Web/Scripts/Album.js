@@ -61,8 +61,7 @@ function getAlbumImages() {
 
                         //$('.video').click(function () { this.paused ? this.play() : this.pause(); });
 
-
-                        if (obj.FileName.endsWith("mpg")) {
+                        if (obj.FileName.endsWith("mpg") || obj.FileName.endsWith("mp4")) {
                             $('#imageContainer').append(
                                 "<video id='" + obj.LinkId + "' controls='controls' class='thumbImage' " +
                                 //" poster='images/cslips02.png'>" +
