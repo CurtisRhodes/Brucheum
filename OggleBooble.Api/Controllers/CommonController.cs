@@ -20,25 +20,23 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpPost]
         [Route("api/Common/AddVisitor")]
-        public AddVisitorSuccessModel AddVisitor(AddVisitorModel visitorData)
+        public SuccessModel AddVisitor(AddVisitorModel visitorData)
         {
-            var addVisitorSuccess = new AddVisitorSuccessModel();
+            var addVisitorSuccess = new SuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == visitorData.FolderId).FirstOrDefault();
-                    if (categoryFolder != null)
-                        addVisitorSuccess.PageName = categoryFolder.FolderName;
+                    //VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == visitorData.FolderId).FirstOrDefault();
+                    //if (categoryFolder != null)
+                    //    addVisitorSuccess.PageName = categoryFolder.FolderName;
 
-                    var existingVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (existingVisitor != null)
+                    var dbExistingVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    if (dbExistingVisitor != null)
                     {
-                        addVisitorSuccess.VisitorId = existingVisitor.VisitorId;
-                        addVisitorSuccess.EventDetail += "Visitor Id already exists";
-                        var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == existingVisitor.VisitorId).FirstOrDefault();
-                        if (registeredUser != null)
-                            addVisitorSuccess.UserName = registeredUser.UserName;
+                        addVisitorSuccess.ReturnValue = dbExistingVisitor.VisitorId;
+                        addVisitorSuccess.Success = "IpAddress already exists";
+                        return addVisitorSuccess;
                     }
                     else
                     {
@@ -56,8 +54,7 @@ namespace OggleBooble.Api.Controllers
                         };
                         db.Visitors.Add(newVisitor);
                         db.SaveChanges();
-                        addVisitorSuccess.EventDetail = "New visitor added";
-                        addVisitorSuccess.VisitorId = newVisitorId;
+                        addVisitorSuccess.ReturnValue = newVisitorId;
                     }
                     addVisitorSuccess.Success = "ok";
                 }

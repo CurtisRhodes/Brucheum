@@ -138,14 +138,6 @@ namespace OggleBooble.Api.Models
         public string Country { get; set; }
         public string GeoCode { get; set; }
     }
-    public class AddVisitorSuccessModel
-    {
-        public string VisitorId { get; set; }
-        public string EventDetail { get; set; }
-        public string Success { get; set; }
-        public string PageName { get; set; }
-        public string UserName { get; set; }
-    }
     public class FeedBackModel
     {
         public string VisitorId { get; set; }
