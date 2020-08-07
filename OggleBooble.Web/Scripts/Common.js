@@ -300,6 +300,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     {
         let visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId))
+            verifiyVisitor(calledFrom, folderId);
             visitorId = "3:20";
         $.ajax({
             type: "POST",

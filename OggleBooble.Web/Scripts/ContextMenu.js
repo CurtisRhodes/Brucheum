@@ -227,6 +227,12 @@ function ctxGetFolderDetails() {
 
 function contextMenuAction(action) {
     switch (action) {
+        case "download":
+            if (isLoggedIn())
+                alert("still working on this feature. Send site developer an email to request folder");
+            else
+                alert("You must be logged in to download an album");
+            break;
         case "showDialog": {
             if ($('#ctxModelName').html() === "unidenitified")
                 showUnknownModelDialog(pImgSrc);

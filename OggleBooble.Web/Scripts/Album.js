@@ -6,6 +6,8 @@ function loadAlbum(folderId) {
         logError("BUG", 999, "folderId not found", "loadAlbum");
         return;
     }
+    logPageHit(folderId);
+
     apFolderId = folderId;
 
     apVisitorId = getCookieValue("VisitorId");
@@ -177,7 +179,6 @@ function getAlbumPageInfo(folderId) {
                     });
                 }
 
-                logPageHit(folderId);
                 $('#folderCommentButton').fadeIn();
                 setOggleHeader(folderId, albumInfo.RootFolder);
                 setBadges(albumInfo.FolderComments);

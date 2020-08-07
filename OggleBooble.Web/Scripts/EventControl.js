@@ -3,18 +3,19 @@ function rtpe(eventCode, calledFrom, eventDetail, folderId) {
     try {
         var visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
-            logError("BUG", folderId, "visitorId not set ", "reportThenPerformEvent/" + calledFrom);
+            verifiyVisitor(calledFrom, folderId);
+            logError("VVE", folderId, "sessionId: " + window.sessionStorage["sessionId"], "reportThenPerformEvent/" + calledFrom);
             visitorId = "unknown";
         }
-        logEvent(eventCode, folderId, calledFrom, eventDetail);
-        performEvent(eventCode, calledFrom, eventDetail, folderId);
+        logEvent(eventCode, folderId, "(rtpe) " + calledFrom, eventDetail);
+        performEvent(eventCode, eventDetail, folderId);
     }
     catch (e) {
         logError("CAT", folderId, e, "reportThenPerformEvent/" + calledFrom);
     }
 }
 
-function performEvent(eventCode, calledFrom, eventDetail, folderId) {
+function performEvent(eventCode, eventDetail, folderId) {
     if (eventCode === "PRN") {
         //  setUserPornStatus(pornType);
     }

@@ -181,6 +181,7 @@ namespace OggleBooble.Api.MySqlDataContext
         [Key]
         public string SessionId { get; set; }
         public string BrowserInfo { get; set; }
+        public string IpAddress { get; set; }
         public DateTime Occured { get; set; }
     }
 

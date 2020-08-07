@@ -67,11 +67,18 @@ namespace OggleBooble.Api.Controllers
         [Route("api/Common/LogVisit")]
         public LogVisitSuccessModel LogVisit(string visitorId)
         {
-            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false, IsNewVisitor = false };
+            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    var dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (dbVisitor == null) {
+                        visitSuccessModel.Success = "VisitorId not found";
+                        return visitSuccessModel;
+                    }
+
+                    //  { VisitAdded = false, IsNewVisitor = false }
                     DateTime lastVisitDate = DateTime.MinValue;
                     List<Visit> visitorVisits = db.Visits.Where(v => v.VisitorId == visitorId).ToList();
                     if (visitorVisits.Count() > 0)
@@ -115,30 +122,56 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/Common/GetVisitor")]
-        public GetVisitorModel GetVisitor(string visitorId)
+        public SuccessModel GetVisitor(string visitorId)
         {
-            var visitorModel = new GetVisitorModel();
+            var successModel = new SuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
-                        visitorModel.Success = "not found";
+                        successModel.Success = "not found";
                     else
                     {
-                        visitorModel.IpAddress = dbVisitor.IpAddress;
-                        visitorModel.Success = "ok";
+                        successModel.ReturnValue = dbVisitor.IpAddress;
+                        successModel.Success = "ok";
                     }
                 }
             }
             catch (Exception ex)
             {
-                visitorModel.Success = Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
-            return visitorModel;
+            return successModel;
         }
-        
+
+        [HttpGet]
+        [Route("api/Common/GetVisitorFromIp")]
+        public SuccessModel GetVisitorFromIp (string ipAddress)
+        {
+            var successModel = new SuccessModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    Visitor dbVisitor = db.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
+                    if (dbVisitor == null)
+                        successModel.Success = "not found";
+                    else
+                    {
+                        successModel.ReturnValue = dbVisitor.VisitorId;
+                        successModel.Success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
+        }
+
         [HttpPost]
         [Route("api/Common/LogIpCall")]
         public string LogIpCall(IpInfoCall callData)
@@ -162,6 +195,30 @@ namespace OggleBooble.Api.Controllers
             {
                 success = Helpers.ErrorDetails(ex);
             }
+            return success;
+        }
+
+        [HttpPut]
+        [Route("api/Common/VerifyIpCall")]
+        public string VerifyIpCall(IpInfoCall callData)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    IpInfoCall dbIpInfoCall = db.IpInfoCalls.Where(ip => ip.SessionId == callData.SessionId).FirstOrDefault();
+                    if (dbIpInfoCall == null)
+                        return "ipInfoCall record not found";
+                    else
+                    {
+                        dbIpInfoCall.IpAddress = callData.IpAddress;
+                        db.SaveChanges();
+                        success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
     }
