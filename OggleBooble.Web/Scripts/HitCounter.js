@@ -172,6 +172,7 @@ function verifiyVisitor(calledFrom, folderId) {
     let visitorId = getCookieValue("VisitorId");
 
     if (isNullorUndefined(visitorId)) {
+        console.log("visitorId not found from: " + calledFrom + ", folderId: " + folderId);
         getIpInfo(folderId, calledFrom);
     }
     else {
@@ -276,14 +277,14 @@ function getIpInfo(folderId, calledFrom) {
             logError("BUG", folderId, "sessionId null in getIpInfo", calledFrom);
             return;
         }
-        let visitorId = getCookieValue("VisitorId");
-        if (!isNullorUndefined(visitorId)) {
 
-            getVisitorInfo(calledFrom, folderId);
-            logError("BUG", folderId, "calling getVisitorInfo. Tried to call getIpInfo for visitorId: " + visitorId, calledFrom);
+        //let visitorId = getCookieValue("VisitorId");
+        //if (!isNullorUndefined(visitorId)) {
+        //    getVisitorInfo(calledFrom, folderId);
+        //    logError("BUG", folderId, "calling getVisitorInfo. Tried to call getIpInfo for visitorId: " + visitorId, calledFrom);
+        //    return;
+        //}
 
-            return;
-        }
         let ipAddress = window.localStorage["IpAddress"];
         if (isValidIpAddress(ipAddress)) {
             logError("BUG", folderId, "tried to call getIpInfo for IpAddress: " + ipAddress, calledFrom);
