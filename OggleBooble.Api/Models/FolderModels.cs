@@ -21,7 +21,6 @@ namespace OggleBooble.Api.Models
     {
         public FolderDetailModel()
         {
-            TrackBackItems = new List<TrackbackLink>();
             InternalLinks = new Dictionary<int, string>();
         }
         public int FolderId { get; set; }
@@ -32,7 +31,6 @@ namespace OggleBooble.Api.Models
         public string HomeTown { get; set; }
         public string Measurements { get; set; }
         public Dictionary<int, string> InternalLinks { get; set; }
-        public List<TrackbackLink> TrackBackItems { get; set; }
         public string FolderComments { get; set; }
         public string FolderImage { get; set; }
         public DateTime? Birthday { get; set; }
@@ -40,6 +38,17 @@ namespace OggleBooble.Api.Models
         public string FolderType { get; set; }
         public string Success { get; set; }
     }
+
+    public class TrackbackItemsModel
+    {
+        public TrackbackItemsModel()
+        {
+            TrackBackItems = new List<TrackbackLink>();
+        }
+        public List<TrackbackLink> TrackBackItems { get; set; }
+        public string Success { get; set; }
+    }
+
 
     public class SearchResultsModel
     {

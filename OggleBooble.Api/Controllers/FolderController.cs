@@ -271,16 +271,6 @@ namespace OggleBooble.Api.Controllers
                         folderDetailModel.Measurements = FolderDetails.Measurements;
                         folderDetailModel.FakeBoobs = FolderDetails.FakeBoobs;
                     }
-                    var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
-                    foreach (TrackbackLink trackbackLink in trackbackLinks)
-                    {
-                        folderDetailModel.TrackBackItems.Add(new TrackbackLink()
-                        {
-                            SiteCode = trackbackLink.SiteCode,
-                            Href = trackbackLink.Href,
-                            LinkStatus = trackbackLink.LinkStatus
-                        });
-                    }
                     folderDetailModel.Success = "ok";
                 }
             }
@@ -324,7 +314,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/Links/AddEditTrackBackLink")]
+        [Route("api/FolderDetail/AddEditTrackBackLink")]
         public TrackbackSuccessModel AddEditTrackBackLink(TrackbackLink trackBackItem)
         {
             var successModel = new TrackbackSuccessModel();
@@ -366,6 +356,35 @@ namespace OggleBooble.Api.Controllers
                 successModel.Success = Helpers.ErrorDetails(ex);
             }
             return successModel;
+        }
+
+        [HttpPost]
+        [Route("api/FolderDetail/GetTrackBackLinks")]
+        public TrackbackItemsModel GetTrackBackLinks(int folderId)
+        {
+            var trackbackItems = new TrackbackItemsModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
+                    foreach (TrackbackLink trackbackLink in trackbackLinks)
+                    {
+                        trackbackItems.TrackBackItems.Add(new TrackbackLink()
+                        {
+                            SiteCode = trackbackLink.SiteCode,
+                            Href = trackbackLink.Href,
+                            LinkStatus = trackbackLink.LinkStatus
+                        });
+                    }
+                    trackbackItems.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                trackbackItems.Success = Helpers.ErrorDetails(ex);
+            }
+            return trackbackItems;
         }
     }
 }

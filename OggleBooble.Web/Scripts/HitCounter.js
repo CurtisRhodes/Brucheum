@@ -278,12 +278,12 @@ function getIpInfo(folderId, calledFrom) {
             return;
         }
 
-        //let visitorId = getCookieValue("VisitorId");
-        //if (!isNullorUndefined(visitorId)) {
-        //    getVisitorInfo(calledFrom, folderId);
-        //    logError("BUG", folderId, "calling getVisitorInfo. Tried to call getIpInfo for visitorId: " + visitorId, calledFrom);
-        //    return;
-        //}
+        let visitorId = getCookieValue("VisitorId");
+        if (!isNullorUndefined(visitorId)) {
+            getVisitorInfo(calledFrom, folderId);
+            logError("BUG", folderId, "calling getVisitorInfo. Tried to call getIpInfo for visitorId: " + visitorId, calledFrom);
+            return;
+        }
 
         let ipAddress = window.localStorage["IpAddress"];
         if (isValidIpAddress(ipAddress)) {

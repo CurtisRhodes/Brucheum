@@ -69,8 +69,8 @@ function showBasicFolderInfoDialog() {
         "        <div id='btnCatDlgDone' class='folderCategoryDialogButton' onclick='doneEditing()'>Done</div>\n" +
         "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n" +
         "    </div>\n" +
-        "    <div id='trackBackDialog' class='floatingDialogBox'></div>\n" +
-        "</div>\n");
+        "</div>\n" +
+        "<div id='trackBackDialog' class='floatingDialogBox'></div>\n");
 
     //$(".note-editable").css('font-size', '16px');
     //$('#centeredDialogContainer').css("top", 111);
@@ -312,7 +312,7 @@ function showTrackbackDialog() {
     $("#trackBackDialog").html(
         "<div>\n" +
         "   <div id='bb'class='oggleDialogHeader'>" +
-        "       <div id='cc' class='oggleDialogTitle'>Trackbacks</div>" +
+        "       <div id='cc' class='oggleDialogTitle'>Trackback Links</div>" +
         "       <div id='ddd' class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#trackBackDialog\").hide()'/></div>\n" +
         "   </div>\n" +
         "   <div>link <input id='txtTrackBackLink'  class='roundedInput' style='width:85%' /></div>" +
@@ -326,36 +326,78 @@ function showTrackbackDialog() {
         "   </div>\n" +
         "   <div class='folderDialogFooter'>\n" +
         "       <div id='btnTbDlgAddEdit' class='folderCategoryDialogButton' onclick='tbAddEdit()'>add</div>\n" +
-        "       <div id='btnTbDlgDelete' class='folderCategoryDialogButton displayHidden' onclick='tbDelete()'>delete</div>\n" +
-        "       <div class='folderCategoryDialogButton' onclick='$(\"#trackBackDialog\").hide()'>Cancel</div>\n" +
+        //"       <div id='btnTbDlgDelete' class='folderCategoryDialogButton displayHidden' onclick='tbDelete()'>delete</div>\n" +
+        "       <div id='btnTbAddCancel' class='folderCategoryDialogButton' onclick='btnTbAddCancel()'>Cancel</div>\n" +
         "   </div>\n" +
         "</div>");
 
     $("#trackBackDialog").css("top", 150);
-    $("#trackBackDialog").css("left", -250);
-    $("#trackBackDialog").show();
+    $("#trackBackDialog").css("left", -550);
+    $('#selTrackBackLinkSite').val("").attr('disabled', 'disabled');
+    $('#txtTrackBackStatus').val("").attr('disabled', 'disabled');
+    $('#txtTrackBackLink').val("").attr('disabled', 'disabled');
+    $('#btnTbAddCancel').hide();
+    $("#trackBackDialog").draggable().show();
     loadTrackBackItems();
 }
 function loadTrackBackItems() {
-    $("#trackBackDialog").draggable();  //.resizable();
-    $.each(objFolderInfo.TrackBackItems, function (idx, obj) {
-        $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
-    });
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/FolderDetail/GetTrackBackLinks?folderId=" + objFolderInfo.FolderId,
+        success: function (trackbackModel) {
+            if (trackbackModel.Success === "ok") {
+                $('#ulExistingLinks').html("");
+                $.each(trackbackModel.TrackBackItems, function (idx, obj) {
+                    $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
+                });
+            }
+            else {
+                logError("AJX", objFolderInfo.FolderId, trackbackModel.Success, "loadTrackBackItems");
+            }
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("updateFolderDetail"))
+                logError("XHR", objFolderInfo.FolderId, getXHRErrorDetails(jqXHR), "updateFolderDetail");
+        }
+    })
 }
-
+function btnTbAddCancel() {
+    if ($('#btnTbAddCancel').html() === "cancel") {
+        $('#btnTbAddCancel').hide();
+        $('#selTrackBackLinkSite').val("").attr('disabled', 'disabled');
+        $('#txtTrackBackStatus').val("").attr('disabled', 'disabled');
+        $('#txtTrackBackLink').val("").attr('disabled', 'disabled');
+        $('#btntbdlgaddedit').html("add");
+    }
+}
 function loadTbForEdit(idx) {
     let selectedLink = objFolderInfo.TrackBackItems[idx];
-    $('#selTrackBackLinkSite').val(selectedLink.SiteCode);
-    $('#txtTrackBackStatus').val(selectedLink.LinkStatus);
-    $('#txtTrackBackLink').val(selectedLink.Href);
+    $('#selTrackBackLinkSite').val(selectedLink.SiteCode).attr('disabled', 'disabled');
+    $('#txtTrackBackStatus').val(selectedLink.LinkStatus).attr('disabled', 'disabled');
+    $('#txtTrackBackLink').val(selectedLink.Href).attr('disabled', 'disabled');
     $('#btnTbDlgAddEdit').html("edit");
-    $('#btnTbDlgDelete').show();
 }
 function tbAddEdit() {
+    if ($('#btntbdlgaddedit').html() === "add") {
+        $('#seltrackbacklinksite').val("");
+        $('#txttrackbackstatus').val("");
+        $('#txttrackbacklink').val("");
+        $('#btntbdlgaddedit').html("save");
+        $("#btnTbAddCancel").html("cancel").show();
+        return;
+    }
     if ($('#btnTbDlgAddEdit').html() === "edit") {
+        $('#selTrackBackLinkSite').removeAttr('disabled');
+        $('#txtTrackBackStatus').removeAttr('disabled');
+        $('#txtTrackBackLink').removeAttr('disabled');
+        $('#btnTbDlgAddEdit').html("save");
+        $("#btnTbAddCancel").html("cancel").show();
+        return;
+    }
+    if ($('#btnTbDlgAddEdit').html() === "save") {
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "api/Links/AddEditTrackBackLink",
+            url: settingsArray.ApiServer + "api/FolderDetail/AddEditTrackBackLink",
             data: {
                 PageId: objFolderInfo.FolderId,
                 SiteCode: $('#selTrackBackLinkSite').val(),
@@ -369,17 +411,13 @@ function tbAddEdit() {
                     else
                         displayStatusMessage("ok", "trackback link updated");
 
-                    $('#ulExistingLinks').html("");
-                    $.each(successModel.TrackBackItems, function (idx, obj) {
-                        $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
-                    });
+                    loadTrackBackItems();
 
                     $('#btnTbDlgAddEdit').html("add");
                     $('#selTrackBackLinkSite').val("");
                     $('#txtTrackBackStatus').val("");
                     $('#txtTrackBackLink').val("");
                     $('#btnTbDlgDelete').hide();
-
                 }
                 else logError("AJX", folderId, successModel.Success, "addTrackback");                
             },
@@ -388,12 +426,6 @@ function tbAddEdit() {
                     logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addTrackback");
             }
         });
-    }
-    if ($('#btnTbDlgAddEdit').html() === "add") {
-        $('#selTrackBackLinkSite').val("");
-        $('#txtTrackBackStatus').val("");
-        $('#txtTrackBackLink').val("");
-        $('#btnTbDlgAddEdit').html("edit");
     }
 }
 function tbDelete() { }
