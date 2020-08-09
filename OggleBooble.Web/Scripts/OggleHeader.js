@@ -449,7 +449,7 @@ function headerHtml(folderId, subdomain) {
         "       </div>\n" +
         "   </div>\n" +
 
-        "<div id='indexCatTreeContainer' class='oggleHidden'></div>\n" +
+        "<div id='indexCatTreeContainer' class='oggleDialogContainer'></div>\n" +
 
         "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +

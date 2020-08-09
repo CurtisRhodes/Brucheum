@@ -1,15 +1,4 @@
 ﻿
-let pDirTreeId;
-function linkDialogdirTreeClick(path, id) {
-    //alert("linkDialogdirTreeClick path: " + path + ", id: " + id);
-    pDirTreeId = id;
-    pDirTreeFolderName = path;
-
-    pDestinationId = id;
-    pDestinationFolderName = path;
-    $('#dirTreeResults').html(path.replace(/%20/g, " "));
-}
-
 function showDirTreeDialog(imgSrc) {
     //alert("showDirTreeDialog(imgSrc: " + imgSrc + ", treeStart: " + treeStart);
     $('#centeredDialogContents').html(
@@ -21,8 +10,9 @@ function showDirTreeDialog(imgSrc) {
         "       <div id='linkManipulateClick'></div>\n" +
         "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif' /></div>\n" +
         "   </div>");
+    activeDirTree = "linkManipulateDirTree";
     if (isNullorUndefined($('#linkManipulateDirTree').val()))
-        loadDirectoryTree(1, "linkManipulateDirTree", "linkDialogdirTreeClick", true);
+        loadDirectoryTree(1, "linkManipulateDirTree", false);
 
     //var winH = $(window).height();
     //var dlgH = $('#centeredDialog').height();
@@ -42,9 +32,9 @@ function perfomCopyLink(linkId) {
     $('#imagePageLoadingGif').show();
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pDirTreeId,
+        url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pSelectedTreeId,
         success: function (success) {
-            $('#imagePageLoadingGif').hide();
+            $('#imagePageLoadingGif').hide();fo``   
             $('#centeredDialog').fadeOut();
             $('#centeredDialogContainer').fadeOut();
             if (success === "ok") {
@@ -52,18 +42,18 @@ function perfomCopyLink(linkId) {
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKC",
-                    PageId: pDirTreeId,
-                    Activity: "copy: " + linkId + " to: " + pDirTreeId
+                    PageId: lmSelectedTreeId,
+                    Activity: "copy: " + linkId + " to: " + pSelectedTreeFolderPath
                 });
-                awardCredits("LKC", pDirTreeId);
+                awardCredits("LKC", lmSelectedTreeId);
             }
             else {
-                logError("AJX", pDirTreeId, success, "perfomCopyLink");
+                logError("AJX", lmSelectedTreeId, success, "perfomCopyLink");
             }
         },
         error: function (xhr) {
             if (!checkFor404("perfomCopyLink")) {
-                logError("XHR", pDirTreeId, getXHRErrorDetails(jqXHR), "perfomCopyLink");
+                logError("XHR", lmSelectedTreeId, getXHRErrorDetails(jqXHR), "perfomCopyLink");
             }
         }
     });
@@ -78,6 +68,7 @@ function showMoveLinkDialog(linkId, folderId, imgSrc) {
 }
 
 function showArchiveLinkDialog(linkId, folderId, imgSrc) {
+    showDirTreeDialog(imgSrc);
     $('#centeredDialogTitle').html("Archive Image");
     $('#linkManipulateClick').html(
     "<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\"," + folderId + ")'>Archive</div>");
@@ -87,7 +78,7 @@ function moveFile(request, linkId, folderId) {
     $('#imagePageLoadingGif').show();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/Links/MoveLink?linkId=" + linkId + "&destinationFolderId=" + pDirTreeId + "&request=" + request,
+        url: settingsArray.ApiServer + "api/Links/MoveLink?linkId=" + linkId + "&destinationFolderId=" + lmSelectedTreeId + "&request=" + request,
         success: function (success) {
             $('#imagePageLoadingGif').hide();
             if (success === "ok") {
@@ -95,7 +86,7 @@ function moveFile(request, linkId, folderId) {
                     slide("next");
                 dragableDialogClose();
                 getAlbumImages(folderId);
-                displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pDirTreeId);
+                displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
                 $('#centeredDialogContainer').fadeOut();
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
@@ -237,8 +228,8 @@ function performRenameFolder(folderId, newFolderName) {
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKM",
-                    PageId: pDestinationId,
-                    Activity: linkId + ' moved to ' + pDestinationFolderName
+                    PageId: lmSelectedTreeId,
+                    Activity: linkId + ' renamed to ' + newFolderName
                 });
             }
             else {

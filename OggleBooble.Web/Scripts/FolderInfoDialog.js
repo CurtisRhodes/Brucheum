@@ -87,6 +87,7 @@ function showBasicFolderInfoDialog() {
     if (!isLoggedIn()) {
         ///showMyAlert("you must be logged in to edit folder comments");
         $("#btnCatDlgEdit").hide();
+        $("#btnCatDlgLinks").hide();
     }
     $('#centeredDialogContainer').mouseleave(function () {
         if (allowDialogClose) dragableDialogClose();
@@ -138,10 +139,10 @@ function showFullModelDetails(folderId) {
 
 function modelInfoDetailHtml() {
 
-    if (isLoggedIn()) {
-        $('#folderInfoDialogFooter').append(
-            "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n");
-    }
+    //if (isLoggedIn()) {
+    //    $('#folderInfoDialogFooter').append(
+    //        "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n");
+    //}
     //    "        <div id='btnCatDlgMeta' class='folderCategoryDialogButton' onclick='addMetaTags()'>add meta tags</div>\n" +
 
     return "<div class='poserLabels' class='floatLeft'>\n" +

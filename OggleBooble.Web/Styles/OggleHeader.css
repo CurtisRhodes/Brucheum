@@ -307,3 +307,11 @@
     height: 100px;
     cursor: pointer;
 }
+
+.catDirTreeDialog {
+    max-height: 555px;
+    overflow: auto;
+    top: 100px;
+    left: 100px;
+    width: 388px;
+}

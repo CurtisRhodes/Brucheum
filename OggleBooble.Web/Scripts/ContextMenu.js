@@ -237,7 +237,10 @@ function contextMenuAction(action) {
             if ($('#ctxModelName').html() === "unidenitified")
                 showUnknownModelDialog(pImgSrc);
             else
-                showFolderInfoDialog(pModelFolderId, "img ctx");
+                if (isNullorUndefined(pModelFolderId))
+                    showFolderInfoDialog(pFolderId, "img ctx");
+                else
+                    showFolderInfoDialog(pModelFolderId, "img ctx");
             $("#contextMenuContainer").fadeOut();
             break;
         }

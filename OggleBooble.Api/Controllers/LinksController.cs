@@ -298,8 +298,8 @@ namespace OggleBooble.Api.Controllers
                         //if (request == "ARK")
 
                         db.SaveChanges();
+                        success = "ok";
                     }
-                    success = "ok";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }

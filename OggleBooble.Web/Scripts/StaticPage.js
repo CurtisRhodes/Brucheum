@@ -119,7 +119,7 @@ function resizeStaticPage() {
     $('#feedbackBanner').css("top", $('#middleColumn').height() - 150);
 }
 
-function showCatListDialog(root) {
+function xxshowCatListDialog(root) {
     buildDirTree($('#staticCatTreeContainer'), "staticCatTreeContainer", root);
     $('#staticCatTreeContainer').dialog({
         show: { effect: "fade" },

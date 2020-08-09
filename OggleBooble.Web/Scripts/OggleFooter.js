@@ -21,18 +21,21 @@
 
     switch (rootFolder) {
         //rtpe(code,calledfrom,detail,pageId)
-        case "index": {
-            $('#footerCol1').html(
-                "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n");
-            $('#footerCol2').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
-            break;
-        }
         case "blog":
         case "root":
-        case "boobs": {  //    poses
+        case "index": {
             $('#footerCol1').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +
+                "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n" +
+                "<div class='clickable' onclick='window.location.href=\"index.html?folderId=1142\", \"_blank\"'>Centerfolds</div>\n");
+            $('#footerCol2').html(
+                "<div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n" +
+                "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n");
+            break;
+        }
+        case "boobs": {  //    poses 
+            $('#footerCol1').html(
+                "<div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n" +
+                "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n" +
                 "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n");
             $('#footerCol2').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n" +
@@ -45,7 +48,8 @@
         }
         case "archive": {  // big naturals
             $('#footerCol1').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +
+                "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n" +
+                "<div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n" +
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
             $('#footerCol2').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n");
@@ -58,13 +62,10 @@
         }
         case "soft": {
             $('#footerCol1').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +
-                "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
+                "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n");
             $('#footerCol2').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"rejects\",\"rejects\"," + pageId + ")'>Rejects</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"archive\"," + pageId + ")'>Archive</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Porn Rater</div>\n");
             break;
         }
         case "playboy":
@@ -84,16 +85,18 @@
         }
         case "porn": {
             $('#footerCol1').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n");
+                "<div class='clickable' onclick='showCatListDialog(440)'>Slut List</div>\n" +
+                "<div class='clickable' onclick='showCatListDialog(242)'>Porn Categories</div>\n");
             $('#footerCol2').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"slut archive\"," + pageId + ")'>porn stars</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"softcore\"," + pageId + ")'>softcore</div>\n" +
+                "<div class='clickable' onclick='window.location.href=\"album.html?folder=3909\", \"_blank\"'>Big Naturals</div>\n" +
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
             break;
         }
         case "sluts":  {
             $('#footerCol1').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>porn star list</div>\n" +
+                "<div class='clickable' onclick='showCatListDialog(440)'>Slut List</div>\n" +
+                "<div class='clickable' onclick='showCatListDialog(242)'>Porn Categories</div>\n" +
                 "<div class='clickable' onclick='window.location.href=\"index.html?spa=porn\", \"_blank\"'>Oggle Porn</div>\n");
             $('#footerCol2').html(
                 //"<div class='clickable' onclick='window.location.href=\"index.html, \"_blank\"'>Oggle Booble</div>\n" +

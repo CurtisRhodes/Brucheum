@@ -1,6 +1,7 @@
 ﻿let verbosity = 5, freeVisitorHitsAllowed = 7500, settingsArray = {}, userRoles = [], settingsImgRepo,
     viewerShowing = false, waitingForReportThenPerformEvent = true, forgetShowingCustomMessage = true,
     debugMode = false;
+let pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
 
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -385,20 +386,58 @@ function changeFavoriteIcon(icon) {
     document.getElementsByTagName('head')[0].appendChild(link);
 }
 
+function commonDirTreeClick(danniPath, folderId) {
+    //alert("activeDirTree: "+activeDirTree);
+    pSelectedTreeId = folderId;
+    pSelectedTreeFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
+
+    $('.txtLinkPath').val(pSelectedTreeFolderPath);
+    //$("#mainMenuContainer").html($('.txtLinkPath').val());
+    switch (activeDirTree) {
+        case "catListDialog":
+            window.location.href = "\album.html?folder=" + folderId;
+            break;
+        case "linkManipulateDirTree": $('#dirTreeResults').html(pSelectedTreeFolderPath); break;
+        case "moveFolder": $('#txtNewMoveDestiation').val(pSelectedTreeFolderPath); break
+        case "moveMany":
+            $('#txtMoveManyDestination').val(danniPath);
+            $('#mmDirTreeContainer').fadeOut();
+            break;
+        case "stepchild": $('#txtscNewFolderName').val(pSelectedTreeFolderPath); break;
+        default:
+    }
+}
+
+function showCatListDialog(root) {
+    $('#indexCatTreeContainer').html(
+        "      <div id='dtDialogContainer' class='oggleDialogContainer catDirTreeDialog'>\n" +    // draggableDialog
+        "           <div id='dtDialogHeader'class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
+        "               <div id='dtDialogTitle' class='oggleDialogTitle'></div>" +
+        "               <div id='dtDialogCloseButton' class='oggleDialogCloseButton'>" +
+        "               <img src='/images/poweroffRed01.png' onclick='$(\"#indexCatTreeContainer\").hide()'/></div>\n" +
+        "           </div>\n" +
+        "           <div id='dtDialogContents' class='oggleDialogContents'></div>\n" +
+        "      </div>\n");
+    activeDirTree = "catListDialog";
+    loadDirectoryTree(root, "dtDialogContents", false);
+
+    switch (root) {
+        case 2: $('#dtDialogTitle').html("boob categories"); break;
+        case 3: $('#dtDialogTitle').html("big naturals"); break;
+        case 242: $('#dtDialogTitle').html("porn pages"); break;
+        case 440: $('#dtDialogTitle').html("porn stars"); break;
+    }
+
+    $('#indexCatTreeContainer').show();
+    $('#dtDialogContainer').draggable().show();    
+    alert("showCatListDialog: " + root);
+}
+
 // GET BUILD INFO
 function getFileDate() {
      
 
 
-}
-
-function indexCatTreeContainerClick(path, folderId, treeId) {
-    try {
-        window.location.href = "/album.html?folder=" + folderId;
-        $('#indexCatTreeContainer').dialog('close');
-    } catch (e) {
-        logError("CAT", folderId, e, "indexCatTreeContainerClick");
-    }
 }
 
 function slowlyShowCustomMessage(blogId) {

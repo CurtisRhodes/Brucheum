@@ -5,7 +5,7 @@
 let totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
 let dataLoadTime;
 
-function loadDirectoryTree(startNode, container, clickEvent, forceRebuild) {
+function loadDirectoryTree(startNode, container, forceRebuild) {
     dataLoadTime = (Date.now() - start) / 1000;
     totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
     settingsImgRepo = settingsArray.ImageRepo;
@@ -29,8 +29,7 @@ function loadDirectoryTree(startNode, container, clickEvent, forceRebuild) {
                     //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
                     //$('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
                     start = Date.now();
-                    buildDirTreeRecurr(dirTreeModel, clickEvent);
-                    //strdirTree += "<div class='dirTreeImageContainer floatingDirTreeImage'><img class='dirTreeImage' /></div>";
+                    buildDirTreeRecurr(dirTreeModel);
 
                     if (startNode === 1) {
                         window.localStorage["dirTree"] = strdirTree;
@@ -46,19 +45,19 @@ function loadDirectoryTree(startNode, container, clickEvent, forceRebuild) {
                     }
                 }
                 else {
-                    logError("AJX", startNode, dirTreeModel.Success, "loadDirectoryTree");
+                    logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
                 }
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
-                if (!checkFor404("loadDirectoryTree"))
-                    logError("XHR", startNode, getXHRErrorDetails(jqXHR), "loadDirectoryTree");
+                if (!checkFor404("BuildCatTree"))
+                    logError("XHR", startNode, getXHRErrorDetails(jqXHR), "BuildCatTree");
             }
         });
     }
 }
 
-function buildDirTreeRecurr(parentNode, clickEvent) {
+function buildDirTreeRecurr(parentNode) {
     dirTreeTab += dirTreeTabIndent;
     let txtFileCount = "";
     let expandClass = "";
@@ -105,7 +104,7 @@ function buildDirTreeRecurr(parentNode, clickEvent) {
                 "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
                 + "<span id='S" + randomId + "' onclick='toggleDirTree(\"" + randomId + "\")' >[" + expandMode + "] </span>"
                 + "<div id='" + randomId + "aq' class='treeLabelDiv' "
-                + "onclick=" + clickEvent + "('" + thisNode.DanniPath + "','" + vwDir.Id + "') "
+                + "onclick=commonDirTreeClick('" + thisNode.DanniPath + "','" + vwDir.Id + "') "
                 + "oncontextmenu=showDirTreeContextMenu('" + vwDir.Id + "') "
                 + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') onmouseout=$('.dirTreeImageContainer').hide()>"
                 //+ "onmouseover=showFolderImage('" + encodeURI(folderImage) + "')>"
@@ -114,7 +113,7 @@ function buildDirTreeRecurr(parentNode, clickEvent) {
                 "<div class='" + expandClass + "' id=" + randomId + ">";
 
             dirTreeTabIndent = 22;
-            buildDirTreeRecurr(thisNode, clickEvent);
+            buildDirTreeRecurr(thisNode);
             strdirTree += "</div>";
             dirTreeTab -= dirTreeTabIndent;
         }
@@ -168,7 +167,7 @@ function showFolderStats(folderId) {
 
 }
 
-function refreshDirTree(startNode) {
+function xxrefreshDirTree(startNode) {
     alert("refreshDirTree");
     $.ajax({
         type: "GET",
@@ -179,13 +178,12 @@ function refreshDirTree(startNode) {
                 //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
                 $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
                 start = Date.now();
-                buildDirTreeRecurr(dirTreeModel, clickEvent);
-                //strdirTree += "<div class='dirTreeImageContainer floatingDirTreeImage'><img class='dirTreeImage' /></div>";
+                buildDirTreeRecurr(dirTreeModel);
 
                 if (startNode === 1) {
                     window.localStorage["dirTree"] = strdirTree;
                 }
-                $('#' + container + '').html(strdirTree);
+                //$('#' + container + '').html(strdirTree);
 
                 var htmlBuildTime = (Date.now() - start) / 1000;
                 $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
@@ -196,13 +194,13 @@ function refreshDirTree(startNode) {
                 }
             }
             else {
-                logError("AJX", startNode, dirTreeModel.Success, "loadDirectoryTree");
+                logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
             }
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("loadDirectoryTree"))
-                logError("XHR", startNode, getXHRErrorDetails(jqXHR), "loadDirectoryTree");
+            if (!checkFor404("BuildCatTree"))
+                logError("XHR", startNode, getXHRErrorDetails(jqXHR), "BuildCatTree");
         }
     });
 }
@@ -216,7 +214,7 @@ function dirTreeSuccess() {
     if (startNode === 1) {
         window.localStorage["dirTree"] = strdirTree;
     }
-    $('#' + container + '').html(strdirTree);
+    //$('#' + container + '').html(strdirTree);
 
     var htmlBuildTime = (Date.now() - start) / 1000;
     $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
@@ -226,5 +224,4 @@ function dirTreeSuccess() {
         onDirTreeComplete();
     }
 }
-
 
