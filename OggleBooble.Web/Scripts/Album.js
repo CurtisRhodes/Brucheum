@@ -35,21 +35,6 @@ function getAlbumImages() {
             success: function (albumImageInfo) {
                 $('#indexPageLoadingGif').hide();
                 if (albumImageInfo.Success === "ok") {
-                    apFolderRoot = albumImageInfo.RootFolder;
-                    switch (albumImageInfo.FolderType) {
-                        case "singleParent":
-                        case "multiFolder":
-                            $('#deepSlideshowButton').show();
-                            break;
-                        case "singleModel":
-                        case "singleChild":
-                        case "multiModel":
-                            $('#deepSlideshowButton').hide();
-                            break;
-                        default:
-                            logError("SWT", apFolderId, "folder type: " + albumImageInfo.FolderType + " folderId: " + apFolderId, "getAlbumImages");
-                    }
-
                     //PROCESS IMAGES
                     let labelClass = "defaultSubFolderImage";
                     let imageFrameClass = "folderImageOutterFrame";
@@ -111,8 +96,6 @@ function getAlbumImages() {
                                 "<img id='" + folder.LinkId + "' class='folderImage'\n" +
                                 "onerror='subFolderImgError(\"" + imgSrc + "\")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
                                 "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div><span Id='fc" + folder.FolderId + "'>" + countStr + "</span></div>");
-
-                            getDeepFolderCounts(folder, albumImageInfo.ImageLinks.length);
                         });
                     }
 
@@ -120,18 +103,9 @@ function getAlbumImages() {
                     resizeImageContainer();
                     //$('#footerMessage').html(": " + imagesModel.Files.length);
                     $('#folderCommentButton').fadeIn();
-
-                    let activityCode = "PGV"
-                    if (albumImageInfo.RootFolder === "centerfold")
-                        activityCode = "PBV";
-                    chargeCredits(activityCode, apFolderId);
-                    //getDeepFolderCounts(folderId);
-
                     let delta = (Date.now() - getImagesStart) / 1000;
                     console.log("GetAlbumImages took: " + delta.toFixed(3));
                     $('.footer').show();
-
-                    getDeepFolderCounts(albumImageInfo, 0);
                 }
                 else logError("AJX", apFolderId, albumImageInfo.Success, "getAlbumImages");
             },
@@ -156,11 +130,26 @@ function getAlbumPageInfo(folderId) {
             if (albumInfo.Success === "ok") {
 
                 apFolderName = albumInfo.FolderName;
-                //apFolderType = albumInfo.FolderType;
+                apFolderType = albumInfo.FolderType;
+                document.title = apFolderName + " : OggleBooble";
 
+                switch (albumInfo.FolderType) {
+                    case "singleParent":
+                    case "multiFolder":
+                        $('#deepSlideshowButton').show();
+                        getDeepFolderCounts(apFolderId, albumInfo.FileCount);
+                        break;
+                    case "singleModel":
+                    case "singleChild":
+                    case "multiModel":
+                        $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
+                        $('#deepSlideshowButton').hide();
+                        break;
+                    default:
+                        logError("SWT", apFolderId, "folder type: " + albumInfo.FolderType + " folderId: " + apFolderId, "getAlbumImages");
+                }
                 if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + albumInfo.FolderType);
 
-                document.title = apFolderName + " : OggleBooble";
                 $('#seoPageName').html(albumInfo.FolderName);
 
                 if ((albumInfo.TrackBackItems.length > 0)) {
@@ -180,9 +169,11 @@ function getAlbumPageInfo(folderId) {
                 }
 
                 $('#folderCommentButton').fadeIn();
+
                 setOggleHeader(folderId, albumInfo.RootFolder);
                 setBadges(albumInfo.FolderComments);
                 setOggleFooter(folderId, albumInfo.RootFolder);
+
                 //$('#headerMessage').html("page hits: " + albumInfo.PageHits.toLocaleString());
                 $('#footerPageHits').html("page hits: " + albumInfo.PageHits.toLocaleString());
                 $('#footerFolderType').html("folder type: " + albumInfo.FolderType);
@@ -190,6 +181,9 @@ function getAlbumPageInfo(folderId) {
                     $('#footerStaticPage').html("<a href='" + albumInfo.StaticFile + "'>static page</a>\n");
                 }
                 setBreadCrumbs(albumInfo.BreadCrumbs);
+
+                chargeCredits(apFolderId, albumInfo.RootFolder);
+
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
             }
@@ -218,9 +212,6 @@ function getDeepFolderCounts(folder, currentFolderImageLinks) {
                         $('#fc' + countsModel.FolderId).html(countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString());
                     }
                 }
-                //if (apFolderRoot === "centerfold")
-                //var delta = (Date.now() - deepStart) / 1000;
-                //console.log("getDeepFolderCounts took: " + delta.toFixed(3));
                 deepFileCount += countsModel.TtlFileCount;
                 deepFolderCount += countsModel.TtlFolderCount;
                 if (Number(folder.FolderId) === Number(apFolderId)) {
@@ -382,7 +373,12 @@ function checkAlbumCost() {
         alert("You must be logged in to view this album");
 }
 
-function chargeCredits(activityCode, apFolderId) {
+function chargeCredits(apFolderId, rootFolder) {
+
+    let activityCode = "PGV"
+    if (rootFolder === "centerfold")
+        activityCode = "PBV";
+
     if (apVisitorId === "stillOkUnknown")
         // at this time this bypass is not handled
         return;

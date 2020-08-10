@@ -188,6 +188,7 @@ namespace OggleBooble.Api.Controllers
                                 {
                                     dbImageFile.FolderId = 0;
                                     db.SaveChanges();
+                                    //repairReport.MissingFiles++;
                                 }
                             }
                             else

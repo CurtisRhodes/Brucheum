@@ -35,15 +35,11 @@ namespace OggleBooble.Api.Controllers
         [Route("api/GalleryPage/GetAlbumImages")]
         public GalleryImagesAndFoldersModel GetAlbumImages(int folderId)
         {
-            var albumImageInfo = new GalleryImagesAndFoldersModel() { FolderId = folderId };
+            var albumImageInfo = new GalleryImagesAndFoldersModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                    albumImageInfo.RootFolder = dbCategoryFolder.RootFolder;
-                    albumImageInfo.FolderType = dbCategoryFolder.FolderType;
-
                     // SUB FOLDERS
                     List<VwDirTree> dbFolderRows = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
                     foreach (VwDirTree row in dbFolderRows)
@@ -85,9 +81,7 @@ namespace OggleBooble.Api.Controllers
                     albumInfo.FolderType = dbCategoryFolder.FolderType;
 
                     albumInfo.FileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
-                    albumInfo.SubFolderCount = db.VirtualFolders.Where(f => f.Parent == folderId).Count();
 
-                    //List<string> subFolderNames = db.VirtualFolders.Where(f => f.Parent == folderId).Select(f=>f.FolderName).ToList();
                     var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
                     foreach (TrackbackLink trackbackLink in trackbackLinks)
                     {

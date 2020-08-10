@@ -30,28 +30,13 @@ namespace OggleBooble.Api.Models
             ImageLinks = new List<VwLink>();
             Folders = new List<GalleryFolderModel>();
         }
-        public int FolderId { get; set; }
-        public string RootFolder { get; set; }
-        public string FolderType { get; set; }
         public List<VwLink> ImageLinks { get; set; }
         public List<GalleryFolderModel> Folders { get; set; }
         public string Success { get; set; }
     }
 
-    //LinkId = Guid.NewGuid().ToString(),
-    //FolderId = row.Id,
-    //DirectoryName = row.FolderName,
-    //ParentId = row.Parent,
-    //FileCount = row.FileCount,
-    //IsStepChild = row.IsStepChild,
-    //FolderImage = row.FolderImage
-
     public class GalleryFolderModel
     {
-        //public GalleryFolderModel()
-        //{
-        //    SubDirs = new List<CategoryTreeModel>();
-        //}
         public string LinkId { get; set; }
         public int FolderId { get; set; }
         public int ParentId { get; set; }
@@ -60,12 +45,6 @@ namespace OggleBooble.Api.Models
         public int FileCount { get; set; }
         public int IsStepChild { get; set; }
         public string RootFolder { get; set; }
-        //public int SubDirCount { get; set; }
-        //public int ChildFiles { get; set; }
-
-        //public int Links { get; set; }
-        //public string DanniPath { get; set; }
-        //public List<CategoryTreeModel> SubDirs { get; set; }
     }
 
     public class AlbumInfoModel
@@ -81,7 +60,6 @@ namespace OggleBooble.Api.Models
         public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
         public string FolderComments { get; set; }
         public int FileCount { get; set; }
-        public int SubFolderCount { get; set; }
         public int PageHits { get; set; }
         public int UserImageHits { get; set; }
         public int UserPageHits { get; set; }

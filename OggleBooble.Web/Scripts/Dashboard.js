@@ -9,7 +9,7 @@
     setOggleHeader(3910, "dashboard");
     setOggleFooter(3910, "dashboard");
     showDefaultWorkArea();
-
+    //let pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
     //if (isInRole("oggle admin"))
     window.addEventListener("resize", resizeDashboardPage);
 }
@@ -1012,6 +1012,7 @@ function XXtestAddVisitor() {
 }
 
 function loadDashboardDirTree(forceRefresh) {
+    activeDirTree = "dashboard";
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("loading directory tree");
     loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
@@ -1020,12 +1021,4 @@ function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
     setTimeout(function () { $('#dataifyInfo').hide() }, 1500);
 }
-
-function dashBoardDirTreeClick(danniPath, folderId) {
-    pSelectedTreeId = folderId;
-    pSelectedTreeFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
-    $('.txtLinkPath').val(pSelectedTreeFolderPath);
-    //$("#mainMenuContainer").html($('.txtLinkPath').val());
-}
-
 

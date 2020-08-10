@@ -390,10 +390,11 @@ function commonDirTreeClick(danniPath, folderId) {
     //alert("activeDirTree: "+activeDirTree);
     pSelectedTreeId = folderId;
     pSelectedTreeFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
-
-    $('.txtLinkPath').val(pSelectedTreeFolderPath);
     //$("#mainMenuContainer").html($('.txtLinkPath').val());
     switch (activeDirTree) {
+        case "dashboard":
+            $('.txtLinkPath').val(pSelectedTreeFolderPath);
+            break;
         case "catListDialog":
             window.location.href = "\album.html?folder=" + folderId;
             break;

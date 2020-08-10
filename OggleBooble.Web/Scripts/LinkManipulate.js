@@ -42,18 +42,18 @@ function perfomCopyLink(linkId) {
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKC",
-                    PageId: lmSelectedTreeId,
+                    PageId: pSelectedTreeId,
                     Activity: "copy: " + linkId + " to: " + pSelectedTreeFolderPath
                 });
-                awardCredits("LKC", lmSelectedTreeId);
+                awardCredits("LKC", pSelectedTreeId);
             }
             else {
-                logError("AJX", lmSelectedTreeId, success, "perfomCopyLink");
+                logError("AJX", pSelectedTreeId, success, "perfomCopyLink");
             }
         },
         error: function (xhr) {
             if (!checkFor404("perfomCopyLink")) {
-                logError("XHR", lmSelectedTreeId, getXHRErrorDetails(jqXHR), "perfomCopyLink");
+                logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "perfomCopyLink");
             }
         }
     });
@@ -78,7 +78,7 @@ function moveFile(request, linkId, folderId) {
     $('#imagePageLoadingGif').show();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/Links/MoveLink?linkId=" + linkId + "&destinationFolderId=" + lmSelectedTreeId + "&request=" + request,
+        url: settingsArray.ApiServer + "api/Links/MoveLink?linkId=" + linkId + "&destinationFolderId=" + pSelectedTreeId + "&request=" + request,
         success: function (success) {
             $('#imagePageLoadingGif').hide();
             if (success === "ok") {
@@ -228,7 +228,7 @@ function performRenameFolder(folderId, newFolderName) {
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKM",
-                    PageId: lmSelectedTreeId,
+                    PageId: pSelectedTreeId,
                     Activity: linkId + ' renamed to ' + newFolderName
                 });
             }
