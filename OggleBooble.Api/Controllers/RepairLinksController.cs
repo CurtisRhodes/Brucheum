@@ -47,11 +47,11 @@ namespace OggleBooble.Api.Controllers
                 VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                 string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
-                if (physcialFiles[0].StartsWith("ERROR")) 
+                if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR"))
                 {
                     repairReport.Success = physcialFiles[0];
                     return;
-                }               
+                }
                 var categoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
                 // loop 1 
                 for (int i = 0; i < physcialFiles.Length; i++)
