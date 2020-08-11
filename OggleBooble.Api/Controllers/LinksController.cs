@@ -96,7 +96,7 @@ namespace OggleBooble.Api.Controllers
             {
                 DirTreeModelNode childNode = new DirTreeModelNode() { VwDirTree = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
                 parentNode.SubDirs.Add(childNode);
-                if (vNode.IsStepChild == 0)
+                if (vNode.FolderType != "StepChild")
                     GetDirTreeChildNodes(dirTreeModel, childNode, VwDirTrees, (dPath + "/" + vNode.FolderName).Replace(" ", "%20"));
             }
         }

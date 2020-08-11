@@ -8,18 +8,9 @@ namespace OggleBooble.Api.Models
 {
     public class SubFolderCountModel
     {
-        public SubFolderCountModel()
-        {
-            SubFolders = new List<SubFolderCountModel>();
-        }
         public int FolderId { get; set; }
-        //public string RootFolder { get; set; }
-        //public string FolderType { get; set; }
-        public int FileCount { get; set; }
         public int TtlFileCount { get; set; }
         public int TtlFolderCount { get; set; }
-
-        public List<SubFolderCountModel> SubFolders { get; set; }
         public string Success { get; set; }
     }
 
@@ -41,8 +32,10 @@ namespace OggleBooble.Api.Models
         public int FolderId { get; set; }
         public int ParentId { get; set; }
         public string DirectoryName { get; set; }
+        public string FolderType { get; set; }
         public string FolderImage { get; set; }
         public int FileCount { get; set; }
+        public int SubDirCount { get; set; }
         public int IsStepChild { get; set; }
         public string RootFolder { get; set; }
     }

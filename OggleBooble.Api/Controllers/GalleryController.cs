@@ -51,7 +51,8 @@ namespace OggleBooble.Api.Controllers
                             DirectoryName = row.FolderName,
                             ParentId = row.Parent,
                             FileCount = row.FileCount,
-                            IsStepChild = row.IsStepChild,
+                            FolderType = row.FolderType,
+                            SubDirCount = row.SubDirCount,
                             FolderImage = row.FolderImage,
                             RootFolder = row.RootFolder
                         });
@@ -145,74 +146,91 @@ namespace OggleBooble.Api.Controllers
         [Route("api/GalleryPage/GetSubFolderCounts")]
         public SubFolderCountModel GetSubFolderCounts(int folderId)
         {
-            //step 1 get this data from the database
-            // step 2 use this to Refresh the database after changes are made
             var subFolderModel = new SubFolderCountModel() { FolderId = folderId };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbFolderDetail = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
-                    if (dbFolderDetail != null)
-                        if (dbFolderDetail.TotalChildFiles != 0)
+                    var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if (dbFolderDetails != null)
+                    {
+                        if (dbFolderDetails.TotalChildFiles != null)
                         {
-                            subFolderModel.TtlFileCount = dbFolderDetail.TotalChildFiles;
-                            subFolderModel.TtlFolderCount = dbFolderDetail.SubFolderCount;
+                            subFolderModel.TtlFileCount = dbFolderDetails.TotalChildFiles.Value;
+                            subFolderModel.TtlFolderCount = dbFolderDetails.SubFolderCount ?? 0;
+                            //UpdateFolderCounts(folderId);
                             subFolderModel.Success = "ok";
                             return subFolderModel;
                         }
-                    //subFolderModel.RootFolder = db.VirtualFolders.Where(f => f.Parent == folderId).First().RootFolder;
-                    subFolderModel.TtlFileCount = subFolderModel.FileCount = db.CategoryImageLinks.Where(l => l .ImageCategoryId == folderId).Count();
-                    
-                    
-                    subFolderModel.TtlFolderCount = db.VirtualFolders.Where(f => f.Parent == folderId).Count();
-                    AddChildSubFolders(folderId, subFolderModel, db);
-                    SaveFileCounts(subFolderModel, db);
-                    AddChildSubFolders(folderId, subFolderModel, db);
-                    subFolderModel.Success = "ok";
+                    }
+                    var rootFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                    GetSubFolderCountsRecurr(subFolderModel, rootFolder, db);
+                    SaveFileCounts(folderId, subFolderModel.TtlFileCount, subFolderModel.TtlFolderCount);
                 }
+                subFolderModel.Success = "ok";
             }
-            catch (Exception ex) {
-                subFolderModel.Success = Helpers.ErrorDetails(ex); 
-            }
+            catch (Exception ex) { subFolderModel.Success = Helpers.ErrorDetails(ex); }
             return subFolderModel;
         }
-        private void AddChildSubFolders(int parentId, SubFolderCountModel parentFolderModel, OggleBoobleMySqlContext db)
-        {
-            var subDirs = db.VirtualFolders.Where(f => f.Parent == parentId).ToList();
-            foreach (VirtualFolder subDir in subDirs)
+        private void UpdateFolderCounts(int folderId) {
+            var subFolderModel = new SubFolderCountModel() { FolderId = folderId };
+            using (var db = new OggleBoobleMySqlContext())
             {
-                var thisSubFolder = new SubFolderCountModel();
-                parentFolderModel.SubFolders.Add(thisSubFolder);
-                thisSubFolder.FolderId = subDir.Id;
-                thisSubFolder.FileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subDir.Id).Count();
-                var subsubFolders = db.VirtualFolders.Where(f => f.Parent == subDir.Id).ToList();
-                foreach (VirtualFolder subsubFolder in subsubFolders)
+                var rootFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                GetSubFolderCountsRecurr(subFolderModel, rootFolder, db);
+                SaveFileCounts(folderId, subFolderModel.TtlFileCount, subFolderModel.TtlFolderCount);
+
+            }
+        }
+        private void GetSubFolderCountsRecurr(SubFolderCountModel subFolderModel, VirtualFolder parentFolder, OggleBoobleMySqlContext db) 
+        {
+            subFolderModel.TtlFileCount += db.ImageFiles.Where(i => i.FolderId == parentFolder.Id).Count();
+            if ((parentFolder.FolderType == "multiFolder") || (parentFolder.FolderType == "singleParent"))
+            {
+                //foreach (VirtualFolder childSubFolder in db.VirtualFolders.Where(f => f.Parent == parentFolder.Id).ToList())
+                foreach (VwDirTree vwDirTree in db.VwDirTrees.Where(f => f.Parent == parentFolder.Id).ToList())
                 {
-                    AddChildSubFolders(subsubFolder.Id, thisSubFolder, db);
+                    if (vwDirTree.FolderType == "StepChild")
+                    {
+                        subFolderModel.TtlFolderCount++;
+                        subFolderModel.TtlFileCount += db.CategoryImageLinks.Where(i => i.ImageCategoryId == vwDirTree.Id).Count();
+                        var stChild = db.VirtualFolders.Where(f => f.Id == vwDirTree.Id).First();
+                        GetSubFolderCountsRecurr(subFolderModel, stChild, db);
+                    }
+                }
+                foreach (VirtualFolder childSubFolder in db.VirtualFolders.Where(f => f.Parent == parentFolder.Id).ToList())
+                {
+                    subFolderModel.TtlFolderCount++;
+                    subFolderModel.TtlFileCount += db.CategoryImageLinks.Where(i => i.ImageCategoryId == childSubFolder.Id).Count();
+                    GetSubFolderCountsRecurr(subFolderModel, childSubFolder, db);
                 }
             }
         }
 
-        private void SaveFileCounts(SubFolderCountModel parentFolderModel, OggleBoobleMySqlContext db) {
-            foreach (SubFolderCountModel subFolder in parentFolderModel.SubFolders)
-            {  // drop down to last node
-                subFolder.TtlFileCount = subFolder.FileCount;
-                subFolder.TtlFolderCount = subFolder.SubFolders.Count();
-                parentFolderModel.TtlFolderCount += subFolder.SubFolders.Count();
-                parentFolderModel.TtlFileCount += subFolder.FileCount;
-            }
-            if (parentFolderModel.TtlFileCount > 0)
+        private string SaveFileCounts(int folderId, int fileCount,int folderCount)
+        {
+            string success;
+            try
             {
-                var folderDetail = db.FolderDetails.Where(d => d.FolderId == parentFolderModel.FolderId).FirstOrDefault();
-                if (folderDetail != null)
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    //folderDetail = new FolderDetail() { FolderId = parentFolderModel.FolderId };
-                    folderDetail.TotalChildFiles = parentFolderModel.TtlFileCount;
-                    folderDetail.SubFolderCount = parentFolderModel.TtlFolderCount;
+                    var dbFolderDetail = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
+                    if (dbFolderDetail == null)
+                    {
+                        dbFolderDetail = new FolderDetail() { FolderId = folderId, TotalChildFiles = fileCount, SubFolderCount=folderCount };
+                        db.FolderDetails.Add(dbFolderDetail);
+                    }
+                    else
+                    {
+                        dbFolderDetail.TotalChildFiles = fileCount;
+                        dbFolderDetail.SubFolderCount = folderCount;
+                    }
                     db.SaveChanges();
+                    success = "ok";
                 }
             }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
         }
 
         [HttpPut]

@@ -34,7 +34,7 @@ function perfomCopyLink(linkId) {
         type: "POST",
         url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pSelectedTreeId,
         success: function (success) {
-            $('#imagePageLoadingGif').hide();fo``   
+            $('#imagePageLoadingGif').hide();
             $('#centeredDialog').fadeOut();
             $('#centeredDialogContainer').fadeOut();
             if (success === "ok") {

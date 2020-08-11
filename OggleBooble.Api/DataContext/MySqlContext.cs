@@ -348,8 +348,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public DateTime? Birthday { get; set; }
         public string FolderComments { get; set; }
         public bool? FakeBoobs { get; set; }
-        public int TotalChildFiles { get; set; }
-        public int SubFolderCount { get; set; }
+        public int? TotalChildFiles { get; set; }
+        public int? SubFolderCount { get; set; }
         public string StaticFile { get; set; }
         public DateTime? StaticFileUpdate { get; set; }
     }
@@ -389,26 +389,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public int ImageHits { get; set; }
     }
 
-    //[Table("OggleBooble.DirTree")]
-    //public partial class DirTree
-    //{
-    //    [Key]
-    //    [Column(Order = 0)]
-    //    public int Id { get; set; }
-    //    [Key]
-    //    [Column(Order = 1)]
-    //    public int Parent { get; set; }
-    //    public string FolderName { get; set; }
-    //    public string RootFolder { get; set; }
-    //    public string FolderImage { get; set; }
-    //    public int FileCount { get; set; }
-    //    public int SubDirCount { get; set; }
-    //    public int ChildFiles { get; set; }
-    //    public int LinkCount { get; set; }
-    //    public int IsStepChild { get; set; }
-    //    public int SortOrder { get; set; }
-    //}
-
     [Table("OggleBooble.VwDirTree")]
     public partial class VwDirTree
     {
@@ -420,9 +400,10 @@ namespace OggleBooble.Api.MySqlDataContext
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }
+        public string FolderType { get; set; }
         public string FolderImage { get; set; }
         public int FileCount { get; set; }
-        public int IsStepChild { get; set; }
+        public int SubDirCount { get; set; }
         public int SortOrder { get; set; }
     }
 

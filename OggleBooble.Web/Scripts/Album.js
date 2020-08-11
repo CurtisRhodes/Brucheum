@@ -42,11 +42,7 @@ function getAlbumImages() {
                     // IMAGES
                     $('#imageContainer').html('');
                     $.each(albumImageInfo.ImageLinks, function (idx, obj) {
-
                         let imgSrc = settingsImgRepo + "/" + obj.FileName;
-
-
-                        //$('.video').click(function () { this.paused ? this.play() : this.pause(); });
 
                         if (obj.FileName.endsWith("mpg") || obj.FileName.endsWith("mp4")) {
                             $('#imageContainer').append(
@@ -84,9 +80,17 @@ function getAlbumImages() {
                         let countStr = "?";
                         let imgSrc = "?";
                         $.each(albumImageInfo.Folders, function (idx, folder) {
-                            countStr = albumImageInfo.Folders.length + "/" + folder.FileCount.toLocaleString();
-                            if (isNullorUndefined(folder.FolderImage))
+                            if ((folder.FolderType === "singleParent") || (folder.FolderType === "multiFolder")) {
+                                countStr = "?";
+                                getDeepFolderCounts(folder.FolderId, folder.FileCount);
+                            }
+                            else 
+                                countStr = folder.FileCount.toLocaleString();
+
+                            if (isNullorUndefined(folder.FolderImage)) {
                                 imgSrc = "/Images/binaryCodeRain.gif";
+                                logError("ERR", folder.FolderId, "FolderImage missing", "getAlbumImages");
+                            }
                             else
                                 imgSrc = settingsImgRepo + folder.FolderImage;
 
@@ -96,6 +100,7 @@ function getAlbumImages() {
                                 "<img id='" + folder.LinkId + "' class='folderImage'\n" +
                                 "onerror='subFolderImgError(\"" + imgSrc + "\")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
                                 "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div><span Id='fc" + folder.FolderId + "'>" + countStr + "</span></div>");
+
                         });
                     }
 
@@ -137,7 +142,6 @@ function getAlbumPageInfo(folderId) {
                     case "singleParent":
                     case "multiFolder":
                         $('#deepSlideshowButton').show();
-                        getDeepFolderCounts(apFolderId, albumInfo.FileCount);
                         break;
                     case "singleModel":
                     case "singleChild":
@@ -198,10 +202,13 @@ function getAlbumPageInfo(folderId) {
 function getDeepFolderCounts(folder, currentFolderImageLinks) {
     deepFileCount += currentFolderImageLinks;
     //let deepStart = Date.now();
-    $('#fc' + folder.FolderId).html("?");
+    $('#fc' + folder).html("?");
+
+    // if (folder.FolderId === 1196) alert("1196: " + folder.FolderType);
+
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folder.FolderId,
+        url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folder,
         success: function (countsModel) {
             if (countsModel.Success === "ok") {
                 if (folder.FolderId !== apFolderId) {
