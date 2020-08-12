@@ -1,10 +1,12 @@
-﻿function indexStartup() {
+﻿let latestGallerySubdomain;
+function indexStartup() {
     $('#indexMiddleColumn').html(indexPageHTML());
     setOggleHeader(3908, "index");
     setOggleFooter(3908, "index");
     changeFavoriteIcon("redBallon");
     document.title = "welcome : OggleBooble";
     //launchPromoMessages();
+    latestGallerySubdomain = "boobs";
     launchCarousel("boobs");
     $('.indexPageSection').show();
     loadUpdatedGalleriesBoxes(updatedGalleriesCount, "boobs");
@@ -16,6 +18,7 @@ function pornStartup() {
     setOggleFooter(spaPageId, "porn");
     changeFavoriteIcon("porn");
     document.title = "OgglePorn";
+    latestGallerySubdomain = "porn";
     launchCarousel("porn");
     $('#updatedGalleriesSectionLoadingGif').show();
     loadUpdatedGalleriesBoxes(updatedGalleriesCount, "porn");
@@ -38,12 +41,13 @@ function indexPageHTML() {
         "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
 }
 
-function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
+function loadUpdatedGalleriesBoxes(numItmes) {
     let settingsImgRepo = settingsArray.ImageRepo, thisItemSrc;
     $('#updatedGalleriesSectionLoadingGif').show();
+    let getLatestStart = Date.now();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numItmes + "&rootFolder=" + subdomain,
+        url: settingsArray.ApiServer + "api/LatestUpdates/GetLatestUpdatedFolders?take=" + numItmes + "&root=" + latestGallerySubdomain,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
                 //$('#updatedGalleriesSectionLoadingGif').hide();
@@ -66,12 +70,12 @@ function loadUpdatedGalleriesBoxes(numItmes, subdomain) {
                     }
                 });
                 $('.sectionLabel').show();
-                console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes");
                 resizeIndexPage();
                 setTimeout(function () { resizeIndexPage(); }, 300);
+                var delta = (Date.now() - getLatestStart) / 1000;
+                console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes.  Took: " + delta.toFixed(3));
             }
             else logError("AJX", 3908, latestUpdates.Success, "loadUpdatedGalleriesBoxes");
-            
         },
         error: function (jqXHR) {
             if (!checkFor404("loadUpdatedGalleriesBoxes")) {

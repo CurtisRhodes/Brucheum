@@ -13,10 +13,10 @@ using System.Runtime.InteropServices;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class IndexPageController : ApiController
+    public class CarouselController : ApiController
     {
         [HttpGet]
-        [Route("api/IndexPage/GetCarouselImages")]
+        //[Route("api/IndexPage/GetCarouselImages")]
         public CarouselInfoModel GetCarouselImages(string root, int skip, int take, bool includeLandscape, bool includePortrait)
         {
             CarouselInfoModel carouselInfo = new CarouselInfoModel();
@@ -47,22 +47,25 @@ namespace OggleBooble.Api.Controllers
             return carouselInfo;
         }
 
+    }
+    
+    [EnableCors("*", "*", "*")]
+    public class LatestUpdatesController : ApiController
+    {
         [HttpGet]
-        [Route("api/IndexPage/GetLatestUpdatedFolders")]
-        public LatestUpdatesModel GetLatestUpdatedFolders(int take, string rootFolder)
+        //[Route("api/IndexPage/GetLatestUpdatedFolders")]
+        public LatestUpdatesModel GetLatestUpdatedFolders(int take, string root)
         {
             LatestUpdatesModel updatesModel = new LatestUpdatesModel();
             try
             {
+                var allGalleries = new List<VwLatestTouchedGalleries>();
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    if (rootFolder == "porn")
-                        updatesModel.LatestTouchedGalleries = db.VwLatestTouched.
-                            Where(l => l.RootFolder == "porn" || l.RootFolder == "sluts").Take(take).ToList();
-                    else
-                        updatesModel.LatestTouchedGalleries = db.VwLatestTouched.
-                            Where(l => l.RootFolder != "porn").Where(l => l.RootFolder != "sluts").Take(take).ToList();
+                    allGalleries = updatesModel.LatestTouchedGalleries = db.VwLatestTouched.ToList();
                 }
+                //updatesModel.LatestTouchedGalleries = allGalleries.Where(g => g.Root == root).Skip(0).Take(take).ToList();
+                updatesModel.LatestTouchedGalleries = allGalleries.Where(g => g.Root == root).Take(take).ToList();
                 updatesModel.Success = "ok";
             }
             catch (Exception ex)

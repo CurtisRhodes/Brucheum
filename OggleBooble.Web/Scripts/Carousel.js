@@ -1,8 +1,9 @@
-﻿let imageIndex = 0, numImages = 0, numFolders = 0, rotationSpeed = 7000, intervalSpeed = 600,
+﻿const rotationSpeed = 7000, intervalSpeed = 600, specialLaunchCode = 103;
+let imageIndex = 0, numImages = 0, numFolders = 0, 
     carouselItemArray = [], imageHistory = [], absolueStart,
     carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
-    imgSrc, jsCarouselSettings, nextRoot = 1, specialLaunchCode = 112, arryItemsShownCount = 0;
+    imgSrc, jsCarouselSettings, nextRoot = 1, arryItemsShownCount = 0;
 
 function launchCarousel(startRoot) {
     absolueStart = Date.now();
@@ -34,9 +35,13 @@ function reloadCache() {
 }
 
 function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includeLandscape, includePortrait) {
+
     settingsImgRepo = settingsArray.ImageRepo;
+    console.log("loadImages. take: " + carouselTake);
+
     try {
-        if (carouselTake === specialLaunchCode) {
+        if (carouselTake == specialLaunchCode) {
+            console.log("carouselTake: " + carouselTake + ", specialLaunchCode: " + specialLaunchCode);
             $('#carouselContainer').html(carouselHtml());
             if (rootFolder === "boobs") {
                 if (!isNullorUndefined(window.localStorage["carouselCache"])) {
@@ -52,14 +57,12 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                         imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
                         mainImageClickId = carouselItemArray[imageIndex].FolderId;
                         $('#thisCarouselImage').attr('src', imgSrc);
-                        $('#thisCarouselImage').attr('src', imgSrc).load(function () {
-                            $('#carouselFooter').fadeIn();
-                            setLabelLinks();
-                            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-                            resizeIndexPage();
-                            resizeCarousel();
-                            startCarousel();
-                        });
+                        setLabelLinks();
+                        $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+                        resizeIndexPage();
+                        resizeCarousel();
+                        startCarousel("specialLaunchCode carouselTake: " + carouselTake);
+                        $('#carouselFooter').fadeIn();
 
                         let delta = (Date.now() - absolueStart) / 1000;
                         if (debugMode) $('#hdrBtmRowSec3').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
@@ -68,12 +71,16 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                     }
                 }
             }
-            loadImages(rootFolder, absolueStart, carouselSkip, specialLaunchCode + 1, includeLandscape, includePortrait);
+            loadImages(rootFolder, absolueStart, carouselSkip, 500, includeLandscape, includePortrait);
         }
         else {
+            if (carouselTake == specialLaunchCode) {
+                carouselTake = 555;
+                console.log("specialLaunchCode fell through");
+            }
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/IndexPage/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
+                url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
                     "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
                 success: function (carouselInfo) {
                     if (carouselInfo.Success === "ok") {
@@ -110,7 +117,7 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                             resizeIndexPage();
                             resizeCarousel();
 
-                            startCarousel();
+                            startCarousel("ajax");
 
                             let delta = (Date.now() - absolueStart) / 1000;
                             if (debugMode) $('#hdrBtmRowSec3').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
@@ -213,9 +220,9 @@ function refreshCache() {
     console.log("refreshed carousel cache");
 }
 
-function startCarousel() {
+function startCarousel(calledFrom) {
     if (vCarouselInterval)
-        console.log("carousel interval already started")
+        console.log("carousel interval already started. Called from: " + calledFrom);
     else {
         $('.assuranceArrows').show();
         vCarouselInterval = setInterval(function () {
@@ -399,7 +406,7 @@ function clickSpeed(speed) {
         rotationSpeed += 800;
     clearInterval(vCarouselInterval);
     vCarouselInterval = null;
-    startCarousel();
+    startCarousel("speed");
 }
 function togglePause() {
     if ($('#pauseButton').html() === "||")
@@ -417,7 +424,7 @@ function resume() {
     intervalBody();
     clearInterval(vCarouselInterval);
     vCarouselInterval = null;
-    startCarousel();
+    startCarousel("resume");
     $('#pauseButton').html("||");
 }
 
@@ -540,7 +547,7 @@ function imgErrorThrown() {
     $('#thisCarouselImage').attr('src', "Images/redballon.png");
     carouselImageViews -= 1;
     carouselImageErrors++;
-    logError("ILF", carouselItemArray[imageIndex].FolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "Carousel");
+    logError("ILF", carouselItemArray[imageIndex].FolderId, "linkId: " + carouselItemArray[imageIndex].LinkId + " imgSrc: " + imgSrc, "Carousel");
 
     if (document.domain === 'localhost') {
         pause();

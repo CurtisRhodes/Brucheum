@@ -43,7 +43,7 @@ namespace OggleBooble.Api.Controllers
         private void PerformFolderChecks(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)
         {
             try
-            {
+            { 
                 VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                 string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
@@ -91,6 +91,7 @@ namespace OggleBooble.Api.Controllers
                                 Width = fWidth
                             });
                             db.SaveChanges();
+                            repairReport.ImageFileAdded++;
                         }
                         catch (Exception ex)
                         {

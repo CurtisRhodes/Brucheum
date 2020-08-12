@@ -510,7 +510,7 @@ namespace OggleBooble.Api.MySqlDataContext
         [Key]
         public int FolderId { get; set; }
         public string FolderName { get; set; }
-        public string RootFolder { get; set; }
+        public string Root { get; set; }
         public string ImageFile { get; set; }
         public DateTime Acquired { get; set; }
     }
