@@ -116,7 +116,7 @@ function setLeftMenu(role) {
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddStepChildFolderDialog()'>Copy Folder</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>");
+            $('#dashboardLeftMenu').append("<div class='clickable' onclick='performMoveManyTool();'>Move Many</div>");
             $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddVideoLink();\">Add Video Link</div>");
 
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
@@ -520,12 +520,17 @@ function showAddEditRoles() {
 }
 
 // MOVE MANY
-function showMoveManyTool() {
+let mmSourceFolderId, mmSelectedTreeFolderPath;
+function performMoveManyTool() {
     if (isNullorUndefined(pSelectedTreeFolderPath)) {
         alert("select a folder");
         return;
     }
-    let sourceFolderId = pSelectedTreeId;
+    mmSourceFolderId = pSelectedTreeId;
+    mmSelectedTreeFolderPath = pSelectedTreeFolderPath;
+    showMoveManyTool();
+}
+function showMoveManyTool() {
     $('#dashboardContainer').html(
         "   <div id='moveManySection' class='fullScreenSection'>" +
         "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
@@ -544,12 +549,13 @@ function showMoveManyTool() {
         "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
         "       <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
         "       <div id='moveManyFooter' class='workareaFooter'>\n" +
-        "           <button onclick='moveCheckedImages(" + sourceFolderId + ")'>Move</button>\n" +
+        "           <button onclick='moveCheckedImages(" + mmSourceFolderId + ")'>Move</button>\n" +
         "           <div id='moveManyCountContainer' class='floatRight'></div>" +
         "       </div>\n" +
         "   </div>\n");
+    //let lblMoveManyDestination = $('#txtMoveManyDestination').val().replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
 
-    $('#txtMoveManySource').val(pSelectedTreeFolderPath);
+    $('#txtMoveManySource').val(mmSelectedTreeFolderPath);
     $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyHeader').height());
     activeDirTree = "moveMany";
     loadDirectoryTree(1, "mmDirTreeContainer", false);
@@ -560,7 +566,7 @@ function showMoveManyTool() {
     let imgRepo = settingsArray.ImageRepo;
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Links/GetImageLinks?folderId=" + pSelectedTreeId,
+        url: settingsArray.ApiServer + "api/Links/GetImageLinks?folderId=" + mmSourceFolderId,
         success: function (imgLinks) {
             $('#dashBoardLoadingGif').hide();
             if (imgLinks.Success === "ok") {
@@ -590,7 +596,7 @@ function mmSelectAll() {
         $('.loadManyCheckbox').prop("checked", false);
 }
 function moveCheckedImages() {
-    if (sourceFolderId == pSelectedTreeId) {
+    if (mmSourceFolderId == pSelectedTreeId) {
         alert("select a destination");
         return;
     }
@@ -600,9 +606,10 @@ function moveCheckedImages() {
             checkedImages.push($(this).find("input").attr("imageId"));
         }
     });
-    if (confirm("move " + checkedImages.length + " images to " + $('#txtMoveManyDestination').val())) {
+    let lblMoveManyDestination = $('#txtMoveManyDestination').val().replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
+    if (confirm("move " + checkedImages.length + " images to " + lblMoveManyDestination)) {
         var moveManyModel = {
-            SourceFolderId: sourceFolderId,
+            SourceFolderId: mmSourceFolderId,
             DestinationFolderId: pSelectedTreeId,
             ImageLinkIds: checkedImages
         };
