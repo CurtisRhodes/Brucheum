@@ -188,6 +188,10 @@ function getAlbumPageInfo(folderId) {
 
                 chargeCredits(apFolderId, albumInfo.RootFolder);
 
+                if ((albumInfo.FolderType === "singleParent") || (albumInfo.FolderType === "multiFolder")) {
+                    getDeepFolderCounts(apFolderId, albumInfo.FileCount);
+                }
+
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
             }
@@ -199,19 +203,16 @@ function getAlbumPageInfo(folderId) {
     });
 }
 
-function getDeepFolderCounts(folder, currentFolderImageLinks) {
+function getDeepFolderCounts(folderId, currentFolderImageLinks) {
     deepFileCount += currentFolderImageLinks;
     //let deepStart = Date.now();
-    $('#fc' + folder).html("?");
-
-    // if (folder.FolderId === 1196) alert("1196: " + folder.FolderType);
-
+    $('#fc' + folderId).html("?");
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folder,
+        url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folderId,
         success: function (countsModel) {
             if (countsModel.Success === "ok") {
-                if (folder.FolderId !== apFolderId) {
+                if (folderId !== apFolderId) {
                     if (countsModel.TtlFileCount > 0) {
                         $('#fc' + countsModel.FolderId).html(countsModel.TtlFileCount.toLocaleString());
                     }
@@ -221,7 +222,11 @@ function getDeepFolderCounts(folder, currentFolderImageLinks) {
                 }
                 deepFileCount += countsModel.TtlFileCount;
                 deepFolderCount += countsModel.TtlFolderCount;
-                if (Number(folder.FolderId) === Number(apFolderId)) {
+
+                //alert("folderId(" + folderId + ") === apFolderId(" + apFolderId + ") " + folderId === apFolderId + " deepFolderCount: " + deepFolderCount);
+                if (folderId == apFolderId)
+                {
+                    //alert("folderId === apFolderId  deepFolderCount: " + deepFolderCount);
                     if (deepFolderCount < 2) 
                         $('#galleryBottomfileCount').html(deepFileCount.toLocaleString());                    
                     else {
@@ -231,8 +236,6 @@ function getDeepFolderCounts(folder, currentFolderImageLinks) {
                             $('#galleryBottomfileCount').html(deepFolderCount.toLocaleString() + " / " + deepFileCount.toLocaleString());
                     }
                 }
-                else
-                    $('#galleryBottomfileCount').html(deepFileCount.toLocaleString());
             }
             else { logError("AJX", apFolderId, countsModel.Success, "getDeepFolderCounts"); }
         },
