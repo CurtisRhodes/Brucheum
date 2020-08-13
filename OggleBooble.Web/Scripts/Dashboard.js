@@ -183,32 +183,24 @@ function performRepairLinks(justOne) {
                         $('#dataifyInfo').append(", Files: " + repairReport.PhyscialFilesProcessed);
                         $('#dataifyInfo').append(", Links: " + repairReport.LinkRecordsProcessed);
                         $('#dataifyInfo').append(", Image rows: " + repairReport.ImageFilesProcessed);
-                        if (repairReport.OrphanCatLinkRecs.length > 0)
-                            $('#dataifyInfo').append(", Orphan Links: " + repairReport.OrphanCatLinkRecs.length);
-                        if (repairReport.OrphanImageFileRecs.length > 0)
-                            $('#dataifyInfo').append(", Orphan Recs: " + repairReport.OrphanImageFileRecs.length);
-                        if (repairReport.ImagesDownLoaded > 0)
-                            $('#dataifyInfo').append(", Images DownLoaded: " + repairReport.ImagesDownLoaded);
-                        if (repairReport.LinksEdited > 0)
-                            $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
-                        if (repairReport.ImagesRenamed > 0)
-                            $('#dataifyInfo').append(", Images Renamed: " + repairReport.ImagesRenamed);
-                        if (repairReport.NewLinksAdded > 0)
-                            $('#dataifyInfo').append(", New Links Added: " + repairReport.NewLinksAdded);
-                        if (repairReport.ImagesMoved > 0)
-                            $('#dataifyInfo').append(", Images Moved: " + repairReport.ImagesMoved);
+                        //if (repairReport.ImagesDownLoaded > 0)
+                        //    $('#dataifyInfo').append(", Images DownLoaded: " + repairReport.ImagesDownLoaded);
+                        //if (repairReport.LinksEdited > 0)
+                        //    $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
+                        //if (repairReport.ImageFilesAdded > 0)
+                        //    $('#dataifyInfo').append(", ImageFilesAdded: " + repairReport.ImagesRenamed);
+
+                        if (repairReport.ImageFilesZeroed > 0)
+                            $('#dataifyInfo').append(", Image Files Zeroed: " + repairReport.ImageFilesZeroed);
+                        if (repairReport.ImageFilesMoved > 0)
+                            $('#dataifyInfo').append(", Images Moved: " + repairReport.ImageFilesMoved);
                         if (repairReport.LinksRemoved > 0)
                             $('#dataifyInfo').append(", Links Removed: " + repairReport.LinksRemoved);
                         if (repairReport.CatLinksAdded > 0)
                             $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
                         if (repairReport.ImageFileAdded > 0)
                             $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImageFileAdded);
-                        if (repairReport.MissingFiles.length > 0) {
 
-                            $('#dataifyInfo').append(", No Link Files: " + repairReport.MissingFiles.length);
-
-
-                        }
                         repairReport.Errors.forEach(function (element) {
                             $('#repairLinksReport').append("<div> errors: " + element + "</div>");
                         });

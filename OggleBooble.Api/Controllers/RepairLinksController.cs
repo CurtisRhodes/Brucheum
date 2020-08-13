@@ -15,6 +15,7 @@ namespace OggleBooble.Api.Controllers
     public class RepairLinksController : ApiController
     {
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string tempFolder = ConfigurationManager.AppSettings["tempFolder"];
         private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
         private readonly string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
@@ -52,31 +53,23 @@ namespace OggleBooble.Api.Controllers
                     repairReport.Success = physcialFiles[0];
                     return;
                 }
+                int fWidth = 0; int fHeight = 0; long fSize = 0; string physcialFileName, physcialFileLinkId;
                 var categoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
-                // loop 1 
+                // 1 loop through physcial files
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
-                    var physcialFileName = physcialFiles[i];
-                    var physcialFileLinkId = physcialFileName.Substring(physcialFileName.IndexOf("_") + 1, 36);
-
-                    // 1. check for physicalFiles with ImageFile row
+                    physcialFileLinkId = physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36);
+                    // check if there is a link record for every file in the directory
                     if (db.ImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault() == null)
                     {
                         try
-                        {
-
-                            int fWidth = 0; int fHeight = 0; long fSize = 0;
-                            //if()  
-
-                            string imgFileName = "F:/Danni/img/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
+                        {   
+                            string imgFileName = "F:/Danni/img/" + dbCategoryFolder.FolderPath + "/" + physcialFiles[i];
                             using (var fileStream = new FileStream(imgFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                             {
                                 fSize = fileStream.Length;
                                 using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
-                                {
-                                    fWidth = image.Width;
-                                    fHeight = image.Height;
-                                }
+                                { fWidth = image.Width; fHeight = image.Height; }
                             }
 
                             db.ImageFiles.Add(new ImageFile()
@@ -84,75 +77,56 @@ namespace OggleBooble.Api.Controllers
                                 Id = physcialFileLinkId,
                                 Acquired = DateTime.Today,
                                 ExternalLink = "?",
-                                FileName = physcialFileName,
+                                FileName = physcialFiles[i],
                                 FolderId = folderId,
                                 Height = fHeight,
                                 Size = fSize,
                                 Width = fWidth
                             });
                             db.SaveChanges();
-                            repairReport.ImageFileAdded++;
+                            repairReport.ImageFilesAdded++;
                         }
-                        catch (Exception ex)
-                        {
-                            repairReport.Errors.Add(Helpers.ErrorDetails(ex));
-
-                            repairReport.MissingFiles.Add(physcialFileLinkId);
-
-                            db.EventLogs.Add(new EventLog()
-                            {
-                                EventCode = "MIg",
-                                EventDetail = physcialFileLinkId,
-                                PageId = folderId,
-                                VisitorId = "admin",
-                                Occured = DateTime.Now
-                            });
-                            db.SaveChanges();
-                        }
+                        catch (Exception ex) { repairReport.Errors.Add(Helpers.ErrorDetails(ex)); }
                     }
-                    //                    else
+
+                    // 1. check if there is an ImageLink record for every file in the directory
+                    // check if there is a CategoryImageLinks record for every file in the directory
+                    if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFileLinkId).FirstOrDefault() == null)
                     {
-                        // 2. check for physicalFiles with no link
-                        if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFileLinkId && il.ImageCategoryId == folderId).FirstOrDefault() == null)
-                        {
-                            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
-                            {
-                                ImageCategoryId = folderId,
-                                ImageLinkId = physcialFileLinkId,
-                                SortOrder = 1313
-                            });
-                            repairReport.MissingLinks.Add(physcialFileLinkId);
-                            db.EventLogs.Add(new EventLog()
-                            {
-                                EventCode = "MIL",
-                                EventDetail = physcialFileLinkId,
-                                PageId = folderId,
-                                VisitorId = "admin",
-                                Occured = DateTime.Now
-                            });
-                            db.SaveChanges();
-                            repairReport.CatLinksAdded++;
-                        }
+                        db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = physcialFileLinkId, SortOrder = 1313 });
+                        db.SaveChanges();
+                        repairReport.CatLinksAdded++;
                     }
                     repairReport.PhyscialFilesProcessed++;
                 }
-
-                // loop 2 
-                var physcialFileLinkIds = new List<string>();
-                for (int i = 0; i < physcialFiles.Length; i++)
-                {
-                    physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36));
-                }
+                // 2 loop through database records
                 var folderLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
-
+                var physcialFileLinkIds = new List<string>();
+                for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36)); }
                 // check if there is a physcial file in the folder for every link in the table.
-                // there can be more links than files. That's the point.
                 foreach (CategoryImageLink folderLink in folderLinks)
                 {
                     if (!physcialFileLinkIds.Contains(folderLink.ImageLinkId))
                     {
                         var nonLocallink = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId && i.FolderId != folderId).FirstOrDefault();
-                        if (nonLocallink != null)
+                        if (nonLocallink == null)
+                        {
+                            // link does not exist in ImageFiles
+                            var badImageLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == folderLink.ImageLinkId).ToList();
+                            //repairReport.OrphanCatLinkRecs.Add(folderLink.ImageLinkId);
+                            db.CategoryImageLinks.RemoveRange(badImageLinks);
+                            db.SaveChanges();
+                            repairReport.LinksRemoved += badImageLinks.Count();
+
+                            var dbImageFile = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId).FirstOrDefault();
+                            if (dbImageFile != null)
+                            {
+                                dbImageFile.FolderId = 0;
+                                db.SaveChanges();
+                                repairReport.ImageFilesZeroed++;
+                            }
+                        }
+                        else
                         {
                             var dbImageFile = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId).FirstOrDefault();
                             if (dbImageFile == null)
@@ -167,61 +141,50 @@ namespace OggleBooble.Api.Controllers
                                 {
                                     dbImageFile.FolderId = folderId;
                                     db.SaveChanges();
-                                    //repairReport.ImageFileAdded++;
-
+                                    repairReport.ImageFilesMoved++;
                                 }
                             }
 
-                            // we have a valid link
-                        }
-                        else
-                        {
-                            var dbAllImageLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == folderLink.ImageLinkId).ToList();
-                            if (dbAllImageLinks.Count() == 1)
-                            {
-                                repairReport.OrphanCatLinkRecs.Add(folderLink.ImageLinkId);
-                                db.CategoryImageLinks.Remove(folderLink);
-                                db.SaveChanges();
-                                repairReport.LinksRemoved++;
-
-                                var dbImageFile = db.ImageFiles.Where(i => i.Id == folderLink.ImageLinkId).FirstOrDefault();
-                                if (dbImageFile != null) 
-                                {
-                                    dbImageFile.FolderId = 0;
-                                    db.SaveChanges();
-                                    //repairReport.MissingFiles++;
-                                }
-                            }
-                            else
-                            {
-                                repairReport.BadFileNames++;
-
-                            }
                         }
                     }
                     repairReport.LinkRecordsProcessed++;
                 }
 
                 // loop 3
-                var existingImageFiles = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
-                foreach (ImageFile existingImageFile in existingImageFiles)
+                var dbImageFiles = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
+                foreach (ImageFile imageFile in dbImageFiles)
                 {
                     // check if there is a physcial file in the folder for every ImageFile with a FolderId equaling the folderId.
-                    if (!physcialFileLinkIds.Contains(existingImageFile.Id))
+                    if (!physcialFileLinkIds.Contains(imageFile.Id))
                     {
-                        // I'd have to scann ever physical folder's links prove there is no file for this file link.
-                        //var dbImageFile = db.ImageFiles.Where(i => i.Id == existingImageFile.Id).FirstOrDefault();
-                        //if ((dbImageFile == null) || (dbImageFile.FolderId == folderId))
+                        var dbAllImageFiles = db.ImageFiles.Where(i => i.Id == imageFile.Id).FirstOrDefault();
+                        if (dbAllImageFiles == null)
                         {
-                            repairReport.OrphanImageFileRecs.Add(existingImageFile.Id);
-                            //db.ImageFiles.Remove(existingImageFile);
+                            //if (dbAllImageFiles.FolderId != folderId) 
+                            //db.ImageFiles.Remove()
+                            imageFile.FolderId = 0;
+                            db.SaveChanges();
+                            repairReport.ImageFilesZeroed++;
+                        }
+                        else
+                        {
+                            if (dbAllImageFiles.FolderId == folderId)
+                                repairReport.Errors.Add("contains may not be working");
+                            else
+                            {
+                                // MOVE FILE WHERE IT BELONGS
 
-                            var dbBadLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == existingImageFile.Id).ToList();
-                            //db.CategoryImageLinks.RemoveRange(dbBadLinks);
+                                new LinksController().MoveFile(imageFile.Id, dbAllImageFiles.FolderId, "MOV");
+                                repairReport.ImageFilesMoved++;
+                            }
+                        }
 
-                            //db.SaveChanges();
-                            repairReport.DirNotFound++;
-                            //repairReport.LinksRemoved += dbBadLinks.Count();
+                        if (db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id && l.ImageCategoryId == folderId).FirstOrDefault() != null)
+                        {
+                            // but possibly a deleted dupe
+                            db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = imageFile.Id, SortOrder = 871 });
+                            db.SaveChanges();
+                            repairReport.CatLinksAdded++;
                         }
                     }
                     repairReport.ImageFilesProcessed++;

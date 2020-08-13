@@ -431,7 +431,7 @@ function showCatListDialog(root) {
 
     $('#indexCatTreeContainer').show();
     $('#dtDialogContainer').draggable().show();    
-    alert("showCatListDialog: " + root);
+    //alert("showCatListDialog: " + root);
 }
 
 // GET BUILD INFO

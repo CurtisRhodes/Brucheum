@@ -114,7 +114,8 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
         type: "DELETE",
         url: settingsArray.ApiServer + "api/Links/RemoveLink?linkId=" + linkId + "&folderId=" + folderId,
         success: function (success) {
-            if (success === "single link" || success === "home folder Link") {
+            //alert("attemptRemoveLink   success: " + success);
+            if ((success == "single link") || (success == "home folder Link")) {
                 $('#imagePageLoadingGif').hide();
                 showConfirmDeteteImageDialog(linkId, imgSrc, success);
             }
@@ -157,17 +158,17 @@ function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
             "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked' />  duplicate</div>\n" +
             "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons' />  bad link</div>\n" +
             "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons' />  low quality</div>\n" +
-            "    <div class='roundendButton' onclick='performDeleteImage(" + linkId + ")'>ok</div>\n");
+            "    <div class='roundendButton' onclick='performDeleteImage(\"" + linkId + "\")'>ok</div>\n");
     }
     if (errMsg === "home folder Link") {
         $('#centeredDialogTitle').html("Remove Home Folder Link");
         $('#centeredDialogContents').html("<div class='oggleDialogWindow'>\n" +
             "    <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
             "    <div>Are you sure you want to remove the home folder Link</div>\n" +
-            "    <div class='roundendButton' onclick='performRemoveHomeFolderLink(" + linkId + ")'>confirm</div>\n" +
+            "    <div class='roundendButton' onclick='performRemoveHomeFolderLink(\"" + linkId + "\")'>confirm</div>\n" +
             "</div>\n");
     }
-    $('#centeredDialog').fadeIn();
+    $('#centeredDialogContainer').fadeIn();
 }
 
 function performDeleteImage(linkId) {
