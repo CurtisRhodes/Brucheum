@@ -325,7 +325,7 @@ namespace OggleBooble.Api.Controllers
                         var unsortedList = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
                         GetChildGalleryItems(folderId, unsortedList, db);
                         //slideshowItemModel.SlideshowItems = (IList<VwSlideshowItem>)unsortedList.OrderBy(i => i.LinkId).ToList();
-                        slideshowItemModel.SlideshowItems = unsortedList.OrderBy(i => i.LinkId).ToList();
+                        slideshowItemModel.SlideshowItems = unsortedList.OrderBy(i => i.SortOrder).ToList();
                     }
                     else {
                         slideshowItemModel.SlideshowItems = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();

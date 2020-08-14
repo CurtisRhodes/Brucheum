@@ -16,14 +16,14 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     pFolderName = folderName;
     pMenuType = menuType;
 
-    if (document.domain === 'localhost')
-        $('#aboveImageContainerMessageArea').html("pMenuType: " + pMenuType);
-
     if (menuType === "Slideshow") {
         $('#slideshowCtxMenuContainer').css("top", pos.y);
         $('#slideshowCtxMenuContainer').css("left", pos.x);
         $('#slideshowCtxMenuContainer').fadeIn();
         $('#slideshowContextMenuContent').html(contextMenuHtml())
+
+
+
     }
     else {
         $('#contextMenuContainer').css("top", pos.y);

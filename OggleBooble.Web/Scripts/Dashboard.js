@@ -199,7 +199,7 @@ function performRepairLinks(justOne) {
                         if (repairReport.CatLinksAdded > 0)
                             $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
                         if (repairReport.ImageFileAdded > 0)
-                            $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImageFileAdded);
+                            $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImagesFileAdded);
 
                         repairReport.Errors.forEach(function (element) {
                             $('#repairLinksReport').append("<div> errors: " + element + "</div>");

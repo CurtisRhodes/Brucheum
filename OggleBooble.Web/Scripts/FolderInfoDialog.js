@@ -347,8 +347,10 @@ function loadTrackBackItems() {
         success: function (trackbackModel) {
             if (trackbackModel.Success === "ok") {
                 $('#ulExistingLinks').html("");
+                objFolderInfo.TrackBackItems = trackbackModel.TrackBackItems;
                 $.each(trackbackModel.TrackBackItems, function (idx, obj) {
                     $('#ulExistingLinks').append("<li class='clickable' onclick='loadTbForEdit(" + idx + ")' >" + obj.SiteCode + " - " + obj.LinkStatus + "</li>");
+
                 });
             }
             else {

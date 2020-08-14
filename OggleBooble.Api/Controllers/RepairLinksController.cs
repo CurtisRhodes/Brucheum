@@ -41,6 +41,43 @@ namespace OggleBooble.Api.Controllers
             return repairReport;
         }
 
+        private string CreateImageFileRecord(int folderId,string linkId,string path, string fileName, OggleBoobleMySqlContext db)
+        {
+            string success;
+            try
+            {
+                int fWidth = 0; int fHeight = 0; long fSize = 0;
+                string imgFileName = tempFolder + "/" + path + "/" + fileName;
+                using (var fileStream = new FileStream(imgFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    fSize = fileStream.Length;
+                    using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                    { fWidth = image.Width; fHeight = image.Height; }
+                }
+
+                db.ImageFiles.Add(new ImageFile()
+                {
+                    Id = linkId,
+                    Acquired = DateTime.Today,
+                    ExternalLink = "?",
+                    FileName = fileName,
+                    FolderId = folderId,
+                    Height = fHeight,
+                    Size = fSize,
+                    Width = fWidth
+                });
+                db.SaveChanges();
+
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+
         private void PerformFolderChecks(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)
         {
             try
@@ -53,45 +90,33 @@ namespace OggleBooble.Api.Controllers
                     repairReport.Success = physcialFiles[0];
                     return;
                 }
-                int fWidth = 0; int fHeight = 0; long fSize = 0; string physcialFileName, physcialFileLinkId;
+                string physcialFileLinkId, createImageFileSuccess;
                 var categoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
                 // 1 loop through physcial files
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
                     physcialFileLinkId = physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36);
-                    // check if there is a link record for every file in the directory
-                    if (db.ImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault() == null)
-                    {
-                        try
-                        {   
-                            string imgFileName = "F:/Danni/img/" + dbCategoryFolder.FolderPath + "/" + physcialFiles[i];
-                            using (var fileStream = new FileStream(imgFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                            {
-                                fSize = fileStream.Length;
-                                using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
-                                { fWidth = image.Width; fHeight = image.Height; }
-                            }
-
-                            db.ImageFiles.Add(new ImageFile()
-                            {
-                                Id = physcialFileLinkId,
-                                Acquired = DateTime.Today,
-                                ExternalLink = "?",
-                                FileName = physcialFiles[i],
-                                FolderId = folderId,
-                                Height = fHeight,
-                                Size = fSize,
-                                Width = fWidth
-                            });
-                            db.SaveChanges();
-                            repairReport.ImageFilesAdded++;
-                        }
-                        catch (Exception ex) { repairReport.Errors.Add(Helpers.ErrorDetails(ex)); }
-                    }
-
                     // 1. check if there is an ImageLink record for every file in the directory
-                    // check if there is a CategoryImageLinks record for every file in the directory
-                    if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFileLinkId).FirstOrDefault() == null)
+                    var dbImageFile = db.ImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault();
+                    if (dbImageFile == null)
+                    {
+                        createImageFileSuccess = CreateImageFileRecord(folderId, physcialFileLinkId, dbCategoryFolder.FolderPath, physcialFiles[i], db);
+                        if (createImageFileSuccess == "ok")
+                            repairReport.ImageFilesAdded++;
+                        else
+                            repairReport.Errors.Add(createImageFileSuccess);
+                    }
+                    else
+                    {
+                        if (dbImageFile.FolderId != folderId)
+                        {
+                            dbImageFile.FolderId = folderId;
+                            db.SaveChanges();
+                            repairReport.ImageFilesMoved++;
+                        }
+                    }
+                    // 2. check if there is a CategoryImageLinks record for every file in the directory
+                    if (categoryImageLinks.Where(il => il.ImageLinkId == physcialFileLinkId && il.ImageCategoryId == folderId).FirstOrDefault() == null)
                     {
                         db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = physcialFileLinkId, SortOrder = 1313 });
                         db.SaveChanges();
@@ -202,7 +227,6 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex)
             {
                 repairReport.Success = Helpers.ErrorDetails(ex);
-                return;
             }
         }
     }

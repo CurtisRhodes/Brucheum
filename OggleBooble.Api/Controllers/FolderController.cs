@@ -358,7 +358,7 @@ namespace OggleBooble.Api.Controllers
             return successModel;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("api/FolderDetail/GetTrackBackLinks")]
         public TrackbackItemsModel GetTrackBackLinks(int folderId)
         {
