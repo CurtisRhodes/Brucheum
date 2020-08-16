@@ -67,18 +67,18 @@ namespace OggleBooble.Api.Models
         public int LinkRecordsProcessed { get; set; }
         public int ImageFilesProcessed { get; set; }
 
-        public int LinksRemoved { get; set; }
+        public int CatLinksRemoved { get; set; }
         public int ImageFilesAdded { get; set; }
         public int ImageFilesMoved { get; set; }
-        public int ImageFilesZeroed { get; set; }
+        //public int ImageFilesZeroed { get; set; }
         public int CatLinksAdded { get; set; }
-        //public int DirNotFound { get; set; }
+        public int ZeroLenFileRemoved { get; set; }
         //public int ImagesRenamed { get; set; }
         //public int LinksEdited { get; set; }
         //public int NewLinksAdded { get; set; }
         //public int ImagesDownLoaded { get; set; }
         //public int ImagesMoved { get; set; }
-        //public int BadFileNames { get; set; }
+        public int NoLinkImageFiles { get; set; }
         //public int BadLinks { get; set; }
         //public bool isSubFolder { get; set; }
         //public List<string> MissingFiles { get; set; }

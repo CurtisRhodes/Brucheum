@@ -183,23 +183,23 @@ function performRepairLinks(justOne) {
                         $('#dataifyInfo').append(", Files: " + repairReport.PhyscialFilesProcessed);
                         $('#dataifyInfo').append(", Links: " + repairReport.LinkRecordsProcessed);
                         $('#dataifyInfo').append(", Image rows: " + repairReport.ImageFilesProcessed);
-                        //if (repairReport.ImagesDownLoaded > 0)
-                        //    $('#dataifyInfo').append(", Images DownLoaded: " + repairReport.ImagesDownLoaded);
+                        //if (repairReport.Errors.length > 0)
+                            $('#dataifyInfo').append(", Errors: " + repairReport.Errors.length);
                         //if (repairReport.LinksEdited > 0)
                         //    $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
                         //if (repairReport.ImageFilesAdded > 0)
                         //    $('#dataifyInfo').append(", ImageFilesAdded: " + repairReport.ImagesRenamed);
 
-                        if (repairReport.ImageFilesZeroed > 0)
-                            $('#dataifyInfo').append(", Image Files Zeroed: " + repairReport.ImageFilesZeroed);
+                        if (repairReport.ZeroLenFileRemoved > 0)
+                            $('#dataifyInfo').append(", Image Files Zeroed: " + repairReport.ZeroLenFileRemoved);
                         if (repairReport.ImageFilesMoved > 0)
                             $('#dataifyInfo').append(", Images Moved: " + repairReport.ImageFilesMoved);
-                        if (repairReport.LinksRemoved > 0)
-                            $('#dataifyInfo').append(", Links Removed: " + repairReport.LinksRemoved);
+                        if (repairReport.CatLinksRemoved > 0)
+                            $('#dataifyInfo').append(", Links Removed: " + repairReport.CatLinksRemoved);
                         if (repairReport.CatLinksAdded > 0)
                             $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
                         if (repairReport.ImageFileAdded > 0)
-                            $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImagesFileAdded);
+                            $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImageFilesAdded);
 
                         repairReport.Errors.forEach(function (element) {
                             $('#repairLinksReport').append("<div> errors: " + element + "</div>");
