@@ -9,6 +9,9 @@ function setOggleHeader(folderId, subdomain) {
     $('#oggleHeader').addClass('boobsHeader');
     $('#divSiteLogo').attr("src", "/Images/redballon.png");
     $('#bannerTitle').html("OggleBooble");
+
+    //$('header').switchClass('pornHeader', 'boobsHeader');
+
     //changeFavoriteIcon("loading");
     //changeFavoriteIcon("redBallon");
 
@@ -43,7 +46,7 @@ function setHdrBottomRow(folderId, subdomain) {
     switch (subdomain) {
         case "index": 
         case "root": {
-             $('#breadcrumbContainer').append(addBannerButton("ranker", "big naturals"));
+            $('#breadcrumbContainer').append(addBannerButton("ranker", "big naturals"));
             $('#breadcrumbContainer').append(addBannerButton("centerfold"));
             $('#breadcrumbContainer').append(addBannerButton("archive"));
             break;
@@ -97,10 +100,10 @@ function setHdrBottomRow(folderId, subdomain) {
         }
         case "porn":
         case "sluts": {
+            changeFavoriteIcon("porn");
             $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
             $('#bannerTitle').html("OgglePorn");
-            changeFavoriteIcon("porn");
             $('#topRowRightContainer').html(addBannerButton("archive"));
             $('#topRowRightContainer').append(addBannerButton("ranker", "porn"));
             break;
@@ -136,12 +139,11 @@ function setHeaderMenu(folderId, subdomain) {
         case "cybergirl":
         case "playboy":
         case "centerfold": {
-            $('header').switchClass('pornHeader', 'boobsHeader');
-            headerMenu =
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",1132)'>Centerfolds,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",1986)'> magazine covers,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",3796)'> cybergirls,</a> and\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",2601)'> extras</a>\n";
+            headerMenu = "every playboy centerfold";
+                //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",1132)'>Centerfolds,</a>\n" +
+                //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",1986)'> magazine covers,</a>\n" +
+                //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",3796)'> cybergirls,</a> and\n" +
+                //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",2601)'> extras</a>\n";
             break;
         }
         case "soft": {
@@ -395,7 +397,7 @@ function addBannerButton(bannerType, rankerType) {
                 "</div>\n";
         case "centerfold":
             return "<div class='headerBannerButton'>\n" +
-                "   <div class='clickable' onclick='window.open(\"album.html?folder=1132\", \"_blank\")'>every Playboy Centefold</div>" +
+                "   <div class='clickable' onclick='window.open(\"index.html?spa=3912\", \"_blank\")'>every Playboy Centefold</div>" +
                 "</div>\n";
         case "poses":
             return "<div class='headerBannerButton'>\n" +
@@ -407,6 +409,16 @@ function addBannerButton(bannerType, rankerType) {
     }
 }
 
+function topLogoClick(folderId, subdomain) {
+    if ((subdomain == "centerfold") || (subdomain == "playboy")) {
+        window.open("index.html?spa=3912");
+    }
+    if ((subdomain == "porn") || (subdomain == "sluts"))
+        window.open("index.html?spa=3909");
+    else
+        alert("topLogoClick  folderId: " + folderId + ", subdomain: " + subdomain);
+}
+
 //<img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
 // title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
 // \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
@@ -414,7 +426,7 @@ function addBannerButton(bannerType, rankerType) {
 
 function headerHtml(folderId, subdomain) {
     return "<div class='siteLogoContainer'>" +
-        "       <a href='javascript:rtpe(\"HBC\"," + folderId + ",\"" + subdomain + "\"," + folderId + ")'>" +
+        "       <a href='javascript:topLogoClick(" + folderId + ",\"" + subdomain + "\")'>" +
         "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png'/></a>" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +

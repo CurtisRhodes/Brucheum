@@ -15,6 +15,13 @@
     height: 233px;
 }
 
+.playboyShell {
+    background-color: #000;
+    margin: 10px;
+    border: solid gold 4px;
+    border-radius: 20px;
+}
+
 .indexPageSection {
     margin-top: 26px;
     width: 100%;

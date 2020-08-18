@@ -84,12 +84,12 @@ function getAlbumImages() {
                                 countStr = "?";
                                 getDeepFolderCounts(folder.FolderId, folder.FileCount);
                             }
-                            else 
+                            else
                                 countStr = folder.FileCount.toLocaleString();
 
                             if (isNullorUndefined(folder.FolderImage)) {
                                 imgSrc = "/Images/binaryCodeRain.gif";
-                                logError("ERR", folder.FolderId, "FolderImage missing", "getAlbumImages");
+                                logError("FIM", folder.FolderId, "FolderImage missing", "getAlbumImages");
                             }
                             else
                                 imgSrc = settingsImgRepo + folder.FolderImage;
@@ -112,7 +112,12 @@ function getAlbumImages() {
                     console.log("GetAlbumImages took: " + delta.toFixed(3));
                     $('.footer').show();
                 }
-                else logError("AJX", apFolderId, albumImageInfo.Success, "getAlbumImages");
+                else {
+                    if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
+                        checkFor404("getAlbumImages");
+                    else
+                        logError("AJX", apFolderId, albumImageInfo.Success, "getAlbumImages");
+                }
             },
             error: function (jqXHR) {
                 $('#indexPageLoadingGif').hide();

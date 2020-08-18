@@ -374,6 +374,7 @@ function changeFavoriteIcon(icon) {
     link.type = 'image/x-icon';
     link.rel = 'shortcut icon';
     switch (icon) {
+        case "centerfold": link.href = 'https://ogglebooble.com/images/playboyballon.png'; break;
         case "porn": link.href = 'https://ogglebooble.com/images/cslips03.png'; break;
         case "soft": link.href = 'https://ogglebooble.com/images/redwoman.ico'; break;
         case "loading":

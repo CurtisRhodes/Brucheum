@@ -166,6 +166,7 @@ function performRepairLinks(justOne) {
     var start = Date.now();
     $('#dataifyInfo').show().html("checking and repairing links");
     $('#dashBoardLoadingGif').fadeIn();
+    alert("settingsArray.LocalImgRepo: " + settingsArray.LocalImgRepo);
     try {
         $.ajax({
             type: "GET",

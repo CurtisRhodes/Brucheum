@@ -23,6 +23,33 @@ function pornStartup() {
     $('#updatedGalleriesSectionLoadingGif').show();
     loadUpdatedGalleriesBoxes(updatedGalleriesCount, "porn");
     // set porn colors
+}
+
+function playboyStartup() {
+    $('#indexMiddleColumn').html(playboyPageHTML());
+    setOggleHeader(spaPageId, "centerfold");
+    setOggleFooter(spaPageId, "centerfold");
+    changeFavoriteIcon("centerfold");
+    document.title = "Every Playboy Centerfold";
+    latestGallerySubdomain = "centerfold";
+    launchCarousel("centerfold");
+    $('#updatedGalleriesSectionLoadingGif').show();
+    loadUpdatedGalleriesBoxes(updatedGalleriesCount, "centerfold");
+}
+
+function playboyPageHTML() {
+    return "<div class='playboyShell'> <div class='indexPageSection' id='topIndexPageSection'>\n" +
+        "       <div class='sectionLabel'>random galleries</div>\n" +
+        "           <div id='carouselContainer'></div>\n" +
+        "    </div>\n" +
+        "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
+        "    <div class='indexPageSection' id='bottomSection'>\n" +
+        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
+        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' src='Images/loader.gif' />" +
+        "       </div>\n" +
+        "    </div></div>\n" +
+        "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
+        "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
 
 }
 

@@ -80,7 +80,7 @@
             $('#deepSlideshow').hide();
             $('#imageContainer').hide();            
             params = getParams();
-            if (params.folder == undefined) {
+            if (isNullorUndefined(params.folder)) {
                 window.location.href = "Index.html";
             }
             resizeAlbumPage();
