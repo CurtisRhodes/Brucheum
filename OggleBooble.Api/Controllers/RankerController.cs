@@ -55,7 +55,7 @@ namespace OggleBooble.Api.Controllers
                         Winner = vote.Winner,
                         Looser = vote.Looser,
                         VisitorId = vote.VisitorId,
-                        VoteDate = DateTime.Now
+                        Occured = DateTime.Now
                     });
                     db.SaveChanges();
                     success = "ok";

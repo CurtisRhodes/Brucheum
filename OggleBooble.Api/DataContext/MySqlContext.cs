@@ -266,7 +266,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Winner { get; set; }
         public string Looser { get; set; }
         public string VisitorId { get; set; }
-        public DateTime VoteDate { get; set; }
+        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.Visitor")]

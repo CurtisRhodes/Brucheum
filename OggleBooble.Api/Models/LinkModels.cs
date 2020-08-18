@@ -63,7 +63,7 @@ namespace OggleBooble.Api.Models
             //OrphanImageFileRecs = new List<string>();
             Errors = new List<string>();
         }
-        public string localImgRepo { get; set; }
+        public string LocalImgRepo { get; set; }
         public int PhyscialFilesProcessed { get; set; }
         public int LinkRecordsProcessed { get; set; }
         public int ImageFilesProcessed { get; set; }

@@ -25,6 +25,7 @@ function rankerStartup(rankPref) {
     $('#indexMiddleColumn').html(rankerHTML());
     setInitialCheckbox(rankPref);
     loadBoobsRanker(rankPref);
+    changeFavoriteIcon("redBallon");
     setOggleHeader(spaPageId, "dashboard");
     setOggleFooter(spaPageId, "blog");
     setRankerBreadcrumbMessage();
@@ -34,6 +35,8 @@ function rankerStartup(rankPref) {
 function loadBoobsRanker(rankPref) {
     //alert("loadBoobsRanker: " + rankPref);
     //$('#boobsRankerLoadingGif').show();
+    settingsImgRepo = settingsArray.ImageRepo;
+
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Ranker/LoadRankerImages?rootFolder=" + rankPref + "&skip=" + skip + "&take=" + take,
@@ -42,7 +45,7 @@ function loadBoobsRanker(rankPref) {
             if (container.Success === "ok") {
                 $.each(container.RankerLinks, function (idx, obj) {
                     rankerLinksArray[idx + skip] = new Image();
-                    rankerLinksArray[idx + skip].src = obj.Link;
+                    rankerLinksArray[idx + skip].src = settingsImgRepo + "/" + obj.Link;
                     rankerLinksArray[idx + skip].Id = obj.LinkId;
                     rankerLinksArray[idx + skip].rankPref = rankPref;
                     rankerLinksArray[idx + skip].FolderId = obj.FolderId;
@@ -346,7 +349,7 @@ function imageClick(selectedSide) {
         }
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "api/Ranker",
+            url: settingsArray.ApiServer + "api/Ranker/InsertVote",
             data: {
                 Winner: winnerLinkId,
                 Looser: looserLinkId,
@@ -386,24 +389,24 @@ function rankerHTML() {
         "            <div class='boobsRankerTitle'>Boobs Ranker</div>\n" +
         "            <div class='rankerImageContainer'>\n" +
         "                <div class='rankerImageFloatBox'>\n" +
-        "                    <div id='rankerBoxLeft' class='rankerImageSlotBox' onclick='imageClick('Left')'></div>\n" +
-        "                    <div id='rankerLeftText' class='rankerImageName' onclick='jumpToFolder('left')'></div>\n" +
+        "                    <div id='rankerBoxLeft' class='rankerImageSlotBox' onclick='imageClick(\"Left\")'></div>\n" +
+        "                    <div id='rankerLeftText' class='rankerImageName' onclick='jumpToFolder(\"left\")'></div>\n" +
         "                </div>\n" +
         "                <div id='divCountDown' class='roundCountDowner'>\n" +
         "                    <div id='countDownNumber' class='countDownNumberContainer'></div>\n" +
         "                </div>\n" +
         "                <div class='rankerImageFloatBox'>\n" +
-        "                    <div id='rankerBoxRight' class='rankerImageSlotBox' onclick='imageClick('Right')'></div>\n" +
-        "                    <div id='rankerRightText' class='rankerImageName' onclick='jumpToFolder('right')'></div>\n" +
+        "                    <div id='rankerBoxRight' class='rankerImageSlotBox' onclick='imageClick(\"Right\")'></div>\n" +
+        "                    <div id='rankerRightText' class='rankerImageName' onclick='jumpToFolder(\"right\")'></div>\n" +
         "                </div>\n" +
         "            </div>\n" +
         "        </div>\n" +
         "        <div class='floatLeft'>\n" +
-        "            <div class='domCkBox'><input id='ckBoxBoobs' onchange='checkDomain('boobs', $(this).is(':checked'))' type='checkbox' />poses and shapes</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxPlayboy' onchange='checkDomain('playboy', $(this).is(':checked'))' type='checkbox' />Playboy playmates</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxArchive' onchange='checkDomain('archive', $(this).is(':checked'))' type='checkbox' />archive</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxPorn' onchange='checkDomain('porn', $(this).is(':checked'))' type='checkbox' />porn</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxSluts' onchange='checkDomain('sluts', $(this).is(':checked'))' type='checkbox' />sluts</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxBoobs' onchange='checkDomain(\"boobs\", $(this).is(\":checked\"))' type='checkbox' />poses and shapes</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxPlayboy' onchange='checkDomain(\"playboy\", $(this).is(\":checked\"))' type='checkbox' />Playboy playmates</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxArchive' onchange='checkDomain(\"archive\", $(this).is(\":checked\"))' type='checkbox' />archive</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxPorn' onchange='checkDomain(\"porn\", $(this).is(\":checked\"))' type='checkbox' />porn</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxSluts' onchange='checkDomain(\"sluts\", $(this).is(\":checked\"))' type='checkbox' />sluts</div>\n" +
         "        </div>\n" +
         "    </div>";
 }

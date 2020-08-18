@@ -14,7 +14,7 @@ function showFeedbackDialog(pageId) {
     });
 
     $('#centeredDialog').css("top", $('.oggleHeader').height() + 20);
-    $("#centeredDialog").fadeIn();
+    $('#centeredDialogContainer').fadeIn();
 
     getUserEmail();
 }
@@ -90,7 +90,7 @@ function feedbackDialogHtml() {
         "   <div style='display:table; width: 100%'>\n"+
         "       <div style='display:table-cell; width:65px; text-align:right;'>email: </div>" +
         "       <div id='errFeedbackEmail' class='validationError'></div>\n" +
-        "       <input id='txtFeedbackEmail'  style='display:table-cell; width:100%'/>\n" +
+        "       <input id='txtFeedbackEmail' style='roundedInput; width:100%'/>\n" +
         "   </div>\n" +
         "   <div class='folderDialogFooter'>\n" +
         "       <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedback()'>Send</div>\n" +

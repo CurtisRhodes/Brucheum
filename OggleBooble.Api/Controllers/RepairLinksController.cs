@@ -26,7 +26,7 @@ namespace OggleBooble.Api.Controllers
         [Route("api/RepairLinks/Repair")]
         public RepairReportModel RepairLinks(int folderId, string localImgRepo ,bool recurr)
         {
-            RepairReportModel repairReport = new RepairReportModel() { localImgRepo = localImgRepo };
+            RepairReportModel repairReport = new RepairReportModel() { LocalImgRepo = localImgRepo };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -53,7 +53,34 @@ namespace OggleBooble.Api.Controllers
                     repairReport.Success = physcialFiles[0];
                     return;
                 }
-                string physcialFileLinkId, createImageFileSuccess;
+
+                // 2 loop through database records
+                var imageFiles = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
+                var physcialFileLinkIds = new List<string>();
+                for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36)); }
+                // check if there is a physcial file in the folder for every imageFile row with FolderId in the table.
+                foreach (ImageFile imageFileRec in imageFiles)
+                {
+                    if (!physcialFileLinkIds.Contains(imageFileRec.Id))
+                    { // extra imagelink file?
+                        var dbImageFileInAnyFolder = db.ImageFiles.Where(i => i.Id == imageFileRec.Id).FirstOrDefault();
+                        if (dbImageFileInAnyFolder != null)
+                        {
+                            // move image file
+                            if (dbImageFileInAnyFolder.FolderId != folderId)
+                            {
+                                dbImageFileInAnyFolder.FolderId = folderId;
+                                db.SaveChanges();
+                                repairReport.ImageFilesMoved++;
+                            }
+                            // else repairReport.Errors.Add("Orphan ImageFile row: " + imageFileRec.Id);
+                        }
+                    }
+                    repairReport.LinkRecordsProcessed++;
+                }
+
+
+                string physcialFileLinkId;
                 var categoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
                 // 1 loop through physcial files
                 for (int i = 0; i < physcialFiles.Length; i++)
@@ -71,7 +98,7 @@ namespace OggleBooble.Api.Controllers
                             {
                                 int fWidth = 0; int fHeight = 0; long fSize = 0;
                                 DateTime creationTime = DateTime.Today;
-                                string imgFileName = repairReport.localImgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFiles[i];
+                                string imgFileName = repairReport.LocalImgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFiles[i];
                                 FileInfo fileInfo = new FileInfo(imgFileName);
                                 if (fileInfo.Exists)
                                 {
@@ -138,20 +165,8 @@ namespace OggleBooble.Api.Controllers
                 }
 
 
-                // 2 loop through database records
-                var imageFiles = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
-                var physcialFileLinkIds = new List<string>();
-                for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36)); }
-                // check if there is a physcial file in the folder for every imageFile row with FolderId in the table.
-                foreach (ImageFile imageFileRec in imageFiles)
-                {
-                    if (!physcialFileLinkIds.Contains(imageFileRec.Id))
-                    { // extra imagelink file?
 
-                        repairReport.Errors.Add("Orphan ImageFile row: " + imageFileRec.Id);
-                    }
-                    repairReport.LinkRecordsProcessed++;
-                }
+
                 if (recurr)
                 {
                     var childFolders = db.VirtualFolders.Where(c => c.Parent == folderId).ToList();

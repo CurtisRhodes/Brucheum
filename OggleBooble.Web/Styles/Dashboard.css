@@ -4,6 +4,11 @@
     border-left: solid 4px var(--oggleBorderColor); /*#cd49d3;*/
 }
 
+.errorInfobox {
+    max-height: 300px;
+    border: solid 2px #000;
+    overflow-y: auto;
+}
 
 .noWrap td {
     white-space: nowrap;
