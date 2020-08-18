@@ -14,8 +14,6 @@ function rtpe(eventCode, calledFrom, eventDetail, folderId) {
         logError("CAT", folderId, e, "rtpe/" + calledFrom);
     }
 }
-
-
 // "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +
 
 function performEvent(eventCode, eventDetail, folderId) {

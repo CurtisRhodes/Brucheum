@@ -2,9 +2,8 @@
 <settings>
  
   <setting name="ApiServer" value="https://localhost:44305/"></setting>
-
   <setting name="ImageRepo" value="https://img.ogglebooble.com/"></setting>
-  <setting name="Owner" value="Randy Roads"></setting>
+  <setting name="LocalImgRepo" value="F:\Danni\img\"></setting>
   <setting name="ProductName" value="Flitter"></setting>
   <setting name="ColorScheme" value="Hot Pink"></setting>
   <setting name="LogoImage" value="HappyMan"></setting>

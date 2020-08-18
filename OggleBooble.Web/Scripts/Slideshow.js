@@ -9,20 +9,6 @@ function launchViewer(folderId, startItem, includeSubFolders) {
     spIncludeSubFolders = includeSubFolders;
     spSessionCount = 0;
 
-    if (typeof staticPageFolderName === 'string') {
-        isStaticPage = "true";
-        alert("get image array from DOM");
-        // get image array from DOM
-        //var imageArray = new Array();
-        //$('#imageContainer').children().each(function () {
-        //    imageArray.push({
-        //        Id: $(this).attr("id"),
-        //        Link: $(this).find("img").attr("src")
-        //    });
-        //});
-        //launchViewer(folderId, linkId, false);
-        //$('#fileCount').hide();
-    }
     getSlideshowItems(folderId, startItem);
     slideShowButtonsActive = true;
     settingsImgRepo = settingsArray.ImageRepo;
@@ -142,15 +128,6 @@ function incrimentExplode() {
     $('#viewerImageContainer').css('left', ($('#slideShowContainer').width() - $('#viewerImage').width()) / 2);
     //   alert("dlgW: " + $('#slideShowContainer').width() + "imgW: " + $('#viewerImage').width());
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
-        if (imageViewerFolderName === undefined) {
-            if (typeof staticPageFolderName === 'string') {
-                logError("IS1", folderId, StaticPageFolderName, "slideshow.js explodeViewer");
-                currentfolderName = staticPageFolderName;
-            }
-            else {
-                logError("IS1", folderId, "typeof staticPageFolderName", "slideshow.js explodeViewer");
-            }
-        }
         $('#viewerButtonsRow').show();
         clearInterval(exploderInterval);
         $('#slideShowContainer').css('top', 0);

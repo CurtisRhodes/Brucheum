@@ -30,18 +30,18 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                    var rootFolder = categoryFolder.RootFolder;
-                    if (rootFolder == "centerfold")
-                        rootFolder = "playboy";
+                   // var rootFolder = categoryFolder.RootFolder;
+                   // if (rootFolder == "centerfold")
+                   //     rootFolder = "playboy";
 
-                    CreatePage(folderId, rootFolder, categoryFolder.FolderName.Replace(".OGGLEBOOBLE.COM", ""), resultsModel, db, recurr);
+                    CreatePage(folderId, resultsModel, db, recurr);
                 }
             }
             catch (Exception e) { resultsModel.Success = Helpers.ErrorDetails(e); }
             return resultsModel;
 
         }
-        private void CreatePage(int folderId, string rootFolder, string folderName, StaticPageResultsModel resultsModel, OggleBoobleMySqlContext db, bool recurr)
+        private void CreatePage(int folderId, StaticPageResultsModel resultsModel, OggleBoobleMySqlContext db, bool recurr)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace OggleBooble.Api.Controllers
                     "</head>\n" +
                     " <body>\n");
 
-                    staticContent.Append(StaticHeader(db, folderId, folderName));
+                    staticContent.Append(StaticHeader(db, folderId));
                     staticContent.Append(CreateBody(folderId));
 
                     staticContent.Append(
@@ -69,7 +69,7 @@ namespace OggleBooble.Api.Controllers
                     " </body>\n" +
                     "</html>");
 
-                    string success = WriteFileToDisk(staticContent.ToString(), rootFolder, folderName, folderId, db);
+                    string success = WriteFileToDisk(staticContent.ToString(), dbFolder.FolderName, folderId, db);
                     if (success != "ok")
                     {
                         resultsModel.Success = success;
@@ -82,7 +82,7 @@ namespace OggleBooble.Api.Controllers
                     List<VirtualFolder> categoryFolders = db.VirtualFolders.Where(f => f.Parent == folderId).ToList();
                     foreach (VirtualFolder dbCategoryFolder in categoryFolders)
                     {
-                        CreatePage(dbCategoryFolder.Id, rootFolder, dbCategoryFolder.FolderName, resultsModel, db, true);
+                        CreatePage(dbCategoryFolder.Id, resultsModel, db, true);
                     }
                 }
                 resultsModel.FoldersProcessed++;
@@ -117,7 +117,7 @@ namespace OggleBooble.Api.Controllers
             return teaserBody.ToString();
         }
 
-        private string StaticHeader(OggleBoobleMySqlContext db, int folderId, string folderName)
+        private string StaticHeader(OggleBoobleMySqlContext db, int folderId)
         {
             StringBuilder staticHeaderHtml = new StringBuilder("<div id='oggleHeader' class='stickyHeader boobsHeader'>" +
             "   <div class='siteLogoContainer' onclick='window.location.href=\"OggleBooble.com\"'>\n" +
@@ -141,7 +141,8 @@ namespace OggleBooble.Api.Controllers
                 switch (trackbackLink.SiteCode)
                 {
                     case "FRE":
-                        staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">" + folderName + " Free Porn</a></div>");
+                        //staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">" + folderName + " Free Porn</a></div>");
+                        staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">Free Porn</a></div>");
                         break;
                     case "BAB":
                         staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">Babepedia</a></div>");
@@ -189,7 +190,7 @@ namespace OggleBooble.Api.Controllers
             "</style>";
         }
 
-        private string WriteFileToDisk(string staticContent, string rootFolder, string pageTitle, int folderId, OggleBoobleMySqlContext db)
+        private string WriteFileToDisk(string staticContent, string pageTitle, int folderId, OggleBoobleMySqlContext db)
         {
             string success;
             try
@@ -204,8 +205,9 @@ namespace OggleBooble.Api.Controllers
                 }
                 FtpWebRequest webRequest = null;
                 //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
-                string ftpFileName = ftpHost + "ogglebooble/static/" + rootFolder + "/" + pageTitle + ".html";
-                string httpFileName = httpLocation + "static/" + rootFolder + "/" + pageTitle + ".html";
+               
+                string ftpFileName = ftpHost + "ogglebooble/" + pageTitle + ".html";
+                string httpFileName = httpLocation + "/" + pageTitle + ".html";
 
                 webRequest = (FtpWebRequest)WebRequest.Create(ftpFileName);
                 webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
@@ -219,16 +221,14 @@ namespace OggleBooble.Api.Controllers
                     requestStream.Close();
                 }
 
-        success = recordPageCreation(rootFolder, folderId, httpFileName, db);
-
-
-                success = "ok";
+                success = RecordPageCreation(folderId, httpFileName, db);
+                //success = "ok";
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
             return success;
         }
 
-        private string recordPageCreation(string rootFolder, int folderId, string httpFileName, OggleBoobleMySqlContext db)
+        private string RecordPageCreation(int folderId, string httpFileName, OggleBoobleMySqlContext db)
         {
             string success;
             try

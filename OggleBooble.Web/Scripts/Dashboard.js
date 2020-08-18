@@ -169,7 +169,7 @@ function performRepairLinks(justOne) {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/RepairLinks/Repair?folderId=" + pSelectedTreeId + "&recurr=" + justOne,
+            url: settingsArray.ApiServer + "api/RepairLinks/Repair?folderId=" + pSelectedTreeId + "&localImgRepo" + settingsArray.LocalImgRepo+ "&recurr=" + justOne,
             success: function (repairReport) {
                 $('#dashBoardLoadingGif').hide();
                 $("#centeredDialogContents").fadeOut();
@@ -183,7 +183,13 @@ function performRepairLinks(justOne) {
                         $('#dataifyInfo').append(", Files: " + repairReport.PhyscialFilesProcessed);
                         $('#dataifyInfo').append(", Links: " + repairReport.LinkRecordsProcessed);
                         $('#dataifyInfo').append(", Image rows: " + repairReport.ImageFilesProcessed);
-                        //if (repairReport.Errors.length > 0)
+                        if (repairReport.Errors.length > 0) {
+                            $('#dashboardMiddleColumn').append("<div class='repairErrorReport'></div>");
+                            $.each(repairReport.Errors, function (idx, obj) {
+                                $('#repairErrorReport').append("<div>"+obj+"</div>");
+                            })
+                        }
+
                             $('#dataifyInfo').append(", Errors: " + repairReport.Errors.length);
                         //if (repairReport.LinksEdited > 0)
                         //    $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);

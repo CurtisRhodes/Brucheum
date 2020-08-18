@@ -170,16 +170,19 @@ function isValidIpAddress() {
 
 function verifiyVisitor(calledFrom, folderId) {
     let visitorId = getCookieValue("VisitorId");
-
     if (isNullorUndefined(visitorId)) {
-        console.log("visitorId not found from: " + calledFrom + ", folderId: " + folderId);
-        getIpInfo(folderId, calledFrom);
+        performCaptureTest(folderId, calledFrom);
+        logError("VVE", folderId, "low volume testing", "verifiyVisitor/" + calledFrom);
+        //console.log("visitorId not found from: " + calledFrom + ", folderId: " + folderId);
+        if (!getBrowserInfo().dataCookiesEnabled()) {
+            getIpInfo(folderId, calledFrom);
+        }
     }
     else {
-        console.log("visitorId found: " + visitorId);
+        //console.log("visitorId found: " + visitorId);
         if (!isValidIpAddress(window.localStorage["IpAddress"])) {
+            console.log("looking up IpAddress for: " + visitorId);
             getVisitorInfo(visitorId, calledFrom, folderId);
-            // logError("IPI", folderId, "localStorage[IpAddress]: " + window.localStorage["IpAddress"], calledFrom);
         }
     }
 }
@@ -224,9 +227,11 @@ function getVisitorInfo(visitorId, calledFrom, folderId) {
         url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + visitorId,
         success: function (visitorModel) {
             if (visitorModel.Success === "ok") {
-                window.localStorage["IpAddress"] = visitorModel.IpAddress;
-                logError("REB", folderId, "had to look up IpAddress: " + window.localStorage["IpAddress"] +
-                    " session: " + window.sessionStorage["sessionId"], "getVisitorInfo/" + calledFrom);
+                if (!isValidIpAddress()) {
+                    window.localStorage["IpAddress"] = visitorModel.IpAddress;
+                    logError("REB", folderId, "had to look up IpAddress: " + window.localStorage["IpAddress"] +
+                        " session: " + window.sessionStorage["sessionId"], "getVisitorInfo/" + calledFrom);
+                }
             }
             else {
                 if (visitorModel.Success = "not found") {
@@ -431,4 +436,3 @@ function logSuccessfullIpCall(folderId, calledFrom) {
         }
     });
 }
-

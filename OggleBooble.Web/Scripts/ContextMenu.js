@@ -16,21 +16,10 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     pFolderName = folderName;
     pMenuType = menuType;
 
-    if (menuType === "Slideshow") {
-        $('#slideshowCtxMenuContainer').css("top", pos.y);
-        $('#slideshowCtxMenuContainer').css("left", pos.x);
-        $('#slideshowCtxMenuContainer').fadeIn();
-        $('#slideshowContextMenuContent').html(contextMenuHtml())
-
-
-
-    }
-    else {
-        $('#contextMenuContainer').css("top", pos.y);
-        $('#contextMenuContainer').css("left", pos.x);
-        $('#contextMenuContainer').fadeIn();
-        $('#contextMenuContent').html(contextMenuHtml())
-    }
+    $('#contextMenuContainer').css("top", pos.y);
+    $('#contextMenuContainer').css("left", pos.x);
+    $('#contextMenuContainer').fadeIn();
+    $('#contextMenuContent').html(contextMenuHtml())
 
     if (pMenuType === "Folder")
         ctxGetFolderDetails();
