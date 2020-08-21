@@ -22,7 +22,6 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
     settingsImgRepo = settingsArray.ImageRepo;
     try {
         if (carouselTake == specialLaunchCode) {
-            //console.log("carouselTake: " + carouselTake + ", specialLaunchCode: " + specialLaunchCode);
             $('#carouselContainer').html(carouselHtml());
 
             if (rootFolder === "boobs") {
@@ -63,27 +62,28 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                     imageIndex = Math.floor(Math.random() * carouselItemArray.length);
                     imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
                     mainImageClickId = carouselItemArray[imageIndex].FolderId;
-                    $('#thisCarouselImage').attr('src', imgSrc);
+                    $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+                        $('#carouselImageContainer').fadeIn();
+                        $('.carouselFooter').width($('#thisCarouselImage').width());
+                        $('.carouselFooter').css("visibility", "visible");
+                        $('#carouselFooter').fadeIn();
+                        resizeIndexPage();
+                        resizeCarousel();
+                        //$('#thisCarouselImage').height($('#topIndexPageSection').height() - 40);
+                    });
                     setLabelLinks();
-                    $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-                    resizeIndexPage();
-                    resizeCarousel();
-                    startCarousel("specialLaunchCode carouselTake: " + carouselTake);
-                    $('#carouselFooter').fadeIn();
+                    //$('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
 
+                    startCarousel("specialLaunchCode");
                     let delta = (Date.now() - absolueStart) / 1000;
-                    if (debugMode) $('#hdrBtmRowSec3').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
+                    if (debugMode) $('#badgesContainer').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
                     console.log("startCarousel from load carouselCache launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                     $('#footerMessage2').html("initial " + rootFolder + " launch from cache took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                 }
             }
-            loadImages(rootFolder, absolueStart, carouselSkip, 500, includeLandscape, includePortrait);
+            loadImages(rootFolder, absolueStart, carouselSkip, 987, includeLandscape, includePortrait);
         }
         else {
-            if (carouselTake == specialLaunchCode) {
-                carouselTake = 555;
-                console.log("specialLaunchCode fell through");
-            }
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
@@ -124,17 +124,16 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                             resizeCarousel();
                             startCarousel("ajax");
                             let delta = (Date.now() - absolueStart) / 1000;
-                            if (debugMode) $('#hdrBtmRowSec3').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
+                            if (debugMode) $('#badgesContainer').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
                             console.log("startCarousel without cache launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                             $('#footerMessage2').html("startCarousel without cache launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                         }
 
                         if (carouselInfo.Links.length === carouselTake) {
-                            console.log("loadImages. take: " + carouselTake);
-                            $('#footerMessage2').html("loadImages. take: " + carouselTake);
+                            console.log("loadImages. " + rootFolder + " take: " + carouselTake);
+                            $('#footerMessage2').html("loadImages. " + rootFolder + " take: " + carouselTake);
                             carouselSkip += carouselTake;
-                            carouselTake = 1000;
-                            loadImages(rootFolder, absolueStart, carouselSkip, 2000, includeLandscape, includePortrait);
+                            loadImages(rootFolder, absolueStart, carouselSkip, 1005, includeLandscape, includePortrait);
                         }
                         else {
                             addMoreRootsToCarousel(rootFolder);
@@ -158,12 +157,12 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
 function addMoreRootsToCarousel(rootFolder) {
     if (nextRoot === 1) {
         nextRoot = 2;
-        if (jsCarouselSettings.includeArchive) {
+        //if (jsCarouselSettings.includeArchive) {
             $('#footerMessage2').html("loading archive");
             console.log("loading archive");
             loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
             return;
-        }
+        //}
     }
     if (nextRoot === 2) {
         nextRoot = 3;
@@ -214,25 +213,24 @@ function addMoreRootsToCarousel(rootFolder) {
 }
 
 function refreshCache(rootFolder) {
-    //if ((rootFolder === "boobs") && (isNullorUndefined(window.localStorage["carouselCache"]))) {
     let jsnObj = "[";  //new JSONArray();
     for (i = 0; i < 101; i++) {
         let ix = Math.floor(Math.random() * carouselItemArray.length);
         jsnObj += (JSON.stringify(carouselItemArray[ix])) + ",";
     }
-    if (rootFolder === "porn") {
-        window.localStorage["pornCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
-        console.log("refreshed porn cache");
+    switch (rootFolder) {
+        case "porn":
+            window.localStorage["pornCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+            break;
+        case "centerfold":
+            window.localStorage["centerfoldCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+            break;
+        default:
+            window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
     }
-    if (rootFolder === "centerfold") {
-        window.localStorage["centerfoldCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
-        console.log("refreshed centerfold cache");
-}
-    if (rootFolder === "boobs") {
-        window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
-        console.log("refreshed boobs cache");
-    }
-    setTimeout(function () { $('#footerMessage2').html("") }, 8000);
+    $('#footerMessage2').html("refreshed " + rootFolder + " cache");
+    console.log("refreshed " + rootFolder + " cache");
+    setTimeout(function () { $('#footerMessage2').html("") }, 12000);
 }
 
 function startCarousel(calledFrom) {
@@ -249,12 +247,12 @@ function startCarousel(calledFrom) {
 function intervalBody() {
     imageIndex = Math.floor(Math.random() * carouselItemArray.length);
     if (alreadyInLast100()) {
-        if (debugMode) $('#hdrBtmRowSec3').html("already in last 100 flagged");
+        if (debugMode) $('#badgesContainer').html("already in last 100 flagged");
         imageIndex = Math.floor(Math.random() * carouselItemArray.length);
     }
     imageHistory.push(imageIndex);
     $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
-    if (debugMode) $('#hdrBtmRowSec3').html("images: " + ++arryItemsShownCount);
+    //if (debugMode) $('#badgesContainer').html("images: " + ++arryItemsShownCount);
 
     $('.carouselFooter').css("visibility", "hidden");
     $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
@@ -264,7 +262,7 @@ function intervalBody() {
             setLabelLinks();
             $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });            
             //if (window.localStorage["IpAddress"] === "68.203.90.183")
-            //    $('#hdrBtmRowSec3').html("imageIndex: " + imageIndex + "  imageHistory.length: " + imageHistory.length);
+            //    $('#badgesContainer').html("imageIndex: " + imageIndex + "  imageHistory.length: " + imageHistory.length);
             //if (debugMode) $('#hdrBtmRowSec3').append(".len: " + imageHistory.length);
             //if (debugMode) $('#hdrBtmRowSec3').html("  Count: " + imageHistoryArrayCount);
             //if (debugMode) $('#hdrBtmRowSec3').append("  a[" + (imageHistory.length - 1) + "]: " + imageHistory[imageHistory.length - 1]);
@@ -401,7 +399,7 @@ function alreadyInLast100() {
     for (i = idxStart; i < imageHistory.length; i++) {
         if (imageIndex === imageHistory[i]) {
             if (window.localStorage["IpAddress"] === "68.203.90.183") {
-                $('#hdrBtmRowSec3').html("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
+                $('#badgesContainer').html("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
                 //alert("Already shown try again: ");
                 beep();
                 console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
@@ -410,7 +408,7 @@ function alreadyInLast100() {
             return true;
         }
     }
-    $('#hdrBtmRowSec3').html("");
+    $('#badgesContainer').html("");
     return false;
 }
 
@@ -510,7 +508,7 @@ function assuranceArrowClick(direction) {
         let popimage = settingsImgRepo + carouselItemArray[popimageIndex].FileName;
         $('#thisCarouselImage').attr('src', popimage);
 
-        $('#hdrBtmRowSec3').html("len1: " + len1 + " imageIndex: " + imageIndex + "  len2: " + len2 + "  new index: " + popimageIndex);
+        $('#badgesContainer').html("len1: " + len1 + " imageIndex: " + imageIndex + "  len2: " + len2 + "  new index: " + popimageIndex);
 
 
         //if (debugMode) $('#hdrBtmRowSec3').html("indx: " + indx);
