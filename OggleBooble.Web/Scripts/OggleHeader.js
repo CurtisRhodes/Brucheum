@@ -410,13 +410,18 @@ function addBannerButton(bannerType, rankerType) {
 }
 
 function topLogoClick(folderId, subdomain) {
-    if ((subdomain == "centerfold") || (subdomain == "playboy")) {
-        window.open("index.html?spa=3912");
+    switch (subdomain) {
+        case "centerfold":
+        case "playboy":
+            window.open("index.html?spa=3912");
+            break;
+        case "porn":
+        case "sluts":
+            window.open("index.html?spa=3909");
+            break;
+        default:
+            window.location.href = "Index.html";
     }
-    if ((subdomain == "porn") || (subdomain == "sluts"))
-        window.open("index.html?spa=3909");
-    else
-        alert("topLogoClick  folderId: " + folderId + ", subdomain: " + subdomain);
 }
 
 //<img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +

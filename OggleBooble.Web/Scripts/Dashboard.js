@@ -34,6 +34,8 @@ function showDefaultWorkArea() {
     $('#divAddImages').show();
     showAddImageLinkDialog();
     resizeDashboardPage();
+    $('.txtLinkPath').val(pSelectedTreeFolderPath);
+
     //$('#dataifyInfo').hide();
     //$('#dashboardLeftColumn').show();
     //$('#dashboardRightColumn').show();
@@ -166,7 +168,7 @@ function performRepairLinks(justOne) {
     var start = Date.now();
     $('#dataifyInfo').show().html("checking and repairing links");
     $('#dashBoardLoadingGif').fadeIn();
-    alert("settingsArray.LocalImgRepo: " + settingsArray.LocalImgRepo);
+    //alert("settingsArray.LocalImgRepo: " + settingsArray.LocalImgRepo);
     try {
         $.ajax({
             type: "GET",

@@ -155,7 +155,6 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
     }
 }
 
-
 function addMoreRootsToCarousel(rootFolder) {
     if (nextRoot === 1) {
         nextRoot = 2;
@@ -213,6 +212,7 @@ function addMoreRootsToCarousel(rootFolder) {
         refreshCache(rootFolder);
     }
 }
+
 function refreshCache(rootFolder) {
     //if ((rootFolder === "boobs") && (isNullorUndefined(window.localStorage["carouselCache"]))) {
     let jsnObj = "[";  //new JSONArray();

@@ -30,16 +30,12 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-                   // var rootFolder = categoryFolder.RootFolder;
-                   // if (rootFolder == "centerfold")
-                   //     rootFolder = "playboy";
 
                     CreatePage(folderId, resultsModel, db, recurr);
                 }
             }
             catch (Exception e) { resultsModel.Success = Helpers.ErrorDetails(e); }
             return resultsModel;
-
         }
         private void CreatePage(int folderId, StaticPageResultsModel resultsModel, OggleBoobleMySqlContext db, bool recurr)
         {
@@ -48,9 +44,40 @@ namespace OggleBooble.Api.Controllers
                 var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                 if ((dbFolder.FolderType == "singleModel") || (dbFolder.FolderType == "singleParent"))
                 {
+                    string folderImage = "";
+                    var dbVwDirTree = db.VwDirTrees.Where(t => t.Id == folderId).FirstOrDefault();
+                    if (dbVwDirTree != null) 
+                        folderImage = "https://ogglebooble.com/img/" + dbVwDirTree.FolderImage;
                     var staticContent = new StringBuilder(
                     "<html>\n" +
                     " <head>\n" +
+                    "    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />" +
+                    "    <title>"+ dbFolder.FolderName + " : OggleBooble</title>" +
+                    "    <meta http-equiv='Content-Type' content='text/html; charset = UTF-8' />" +
+                    "    <meta name='referrer' content='always'/>\n" +
+                    "    <meta name='description' content='Ogglebooble is a large collection of natural big breasted girls." +
+                            " You'll find hundreds of photos of each model. Ogglebooble also has the web's largest collection of free Playboy images" +
+                            "Ogglebooble also has a large galley for every Playboy Centerfold. Pictures organized by poses.'/>\n" +
+                    "    <meta name='keywords' content='" + dbFolder.FolderName + ",big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold," +
+                    "        centerfolds, Playboy Playmates, poses, naked ladies by poses '/>\n" +
+
+                    "   <meta property='og:title' content='" + dbFolder.FolderName + "- Free pics, videos & biography'/>\n" +
+                    "   <meta property='og:description' content='" + dbFolder.FolderName + " - Free pics, videos & biography'/>\n" +
+                    "   <meta property='og:url' content='https://www.Ogglebooble.com/" + dbFolder.FolderName + "'/>\n" +
+                    "   <meta property='og:site_name' content='OggleBooble'/>\n" +
+                    "   <meta name='og:type' content='website'>\n" +
+                    "<meta property='og:type' content='website'/><meta property='og:image' content='" + folderImage + "'/>\n" +
+
+                    //<link rel="search" href="https://www.Oggglebooble.com/data/opensearchdescription.xml" 
+                    //"   <OpenSearchDescription xmlns = 'http://a9.com/-/spec/opensearch/1.1/' >\n" +
+                    //< ShortName > Babepedia </ ShortName >
+                    //< Tags > babepedia pornstars babes models photos videos free galleries pics </ Tags >
+                    //< Url type = "text/html" template = "http://www.babepedia.com/search/{searchTerms}" />
+                    //< Image height = "24" width = "24" type = "image/x-icon" > http://www.babepedia.com/favicon.ico</Image>
+                    //< Query role = "example" searchTerms = "Tiffany" />
+                    //< AdultContent > TRUE </ AdultContent >
+                    //</ OpenSearchDescription >
+
                     "    <link href='/Styles/Common.css' rel='stylesheet'/>\n" +
                     "    <link href='/Styles/OggleHeader.css' rel='stylesheet'/>\n" +
                     "    <link href='/Styles/AlbumPage.css' rel='stylesheet'/>\n" +
@@ -63,12 +90,12 @@ namespace OggleBooble.Api.Controllers
                     staticContent.Append(
                     "   <script>\n" +
                     "     function goHome() {" +
-                    "       window.location.href='https://ogglebooble.com/album.html?folder=" + folderId + "';" +
+                    "       window.location.href='https://ogglebooble.com/album.html?folder=" + folderId + "&tic=si';" +
                     "       }\n" +
                     "   </script>\n" +
                     " </body>\n" +
                     "</html>");
-
+ 
                     string success = WriteFileToDisk(staticContent.ToString(), dbFolder.FolderName, folderId, db);
                     if (success != "ok")
                     {
@@ -126,68 +153,32 @@ namespace OggleBooble.Api.Controllers
             "   <div class='headerBodyContainer'>\n" +
             "       <div class='headerTopRow'>\n" +
             "           <div class='headerTitle' style='color: rgb(0, 0, 0); height: 28px;'>OggleBooble</div>\n" +
-            "           <div class='hdrTopRowMenu' style='font-size: 25px;margin-left:14px;' onclick='goHome()'>handpicked images organized by category</div>\n" +
-            "           <div id='searchBox' class='oggleSearchBox'>\n" +
-            "               <input class='oggleSearchBoxText'>" +
-            "           </div>\n" +
-            "       </div>\n" +
-            "       <div class='headerBottomRow'>\n" +
-            "         <div class='bottomLeftHeaderArea clickable' onclick='goHome()'>go to live page</div>\n" +
-            "           <div class='breadCrumbArea'>");
-            //$('#trackbackContainer').css("display", "inline-block");
+            "           <div class='hdrTopRowMenu' style='font-size: 25px;margin-left:14px;margin-top:4px;'>\n");
+            //                "handpicked images organized by category
+            var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
             var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
             foreach (TrackbackLink trackbackLink in trackbackLinks)
             {
                 switch (trackbackLink.SiteCode)
                 {
-                    case "FRE":
-                        //staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">" + folderName + " Free Porn</a></div>");
-                        staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">Free Porn</a></div>");
-                        break;
                     case "BAB":
-                        staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">Babepedia</a></div>");
+                        staticHeaderHtml.Append("<div class=\"trackBackLink\"><a href='" + trackbackLink.Href + "' target=\"_blank\">Babepedia</a></div>\n");
+                        break;
+                    case "FRE":
+                        staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">" + dbFolder.FolderName + " Free Porn</a></div>\n");
                         break;
                 }
             }
-            staticHeaderHtml.Append("</div>\n</div>\n</div>\n</div>\n");
+            staticHeaderHtml.Append("</div>\n<div id='searchBox' class='oggleSearchBox'>\n" +
+            "               <input class='oggleSearchBoxText'>" +
+            "           </div>\n" +
+            "       </div>\n" +  // headerTopRow
+            "       <div class='headerBottomRow'>\n" +
+            "           <div style='display:inline-block' >"+ dbFolder.RootFolder + "</div>\n" +
+            "           <div style='display:inline-block; text-align:center; font-size:18px' onclick='goHome()'>");
+            var dbParent = db.VirtualFolders.Where(p => p.Id == dbFolder.Parent).First();
+            staticHeaderHtml.Append(dbParent.FolderName + " / " + dbFolder.FolderName + "</div>\n</div>\n</div>\n</div>\n");
             return staticHeaderHtml.ToString();
-        }
-
-        private string StaticStyle()
-        {
-            return "<style>" +
-            ":root {" +
-            "   --brucheumBlue: #74bac3;" +
-            "   --oggleBackgroundColor: #c1bad1;" +
-            "   --thumbnailBorderColor: #74bac3;" +
-            "}" +
-            "body {" +
-            "    background - color: var(--oggleBackgroundColor);" +
-            "    font - family: Verdana;" +
-            "    font - size: var(--normalFont);" +
-            "}" +
-            ".galleryContainer {" +
-            "    display: flex;" +
-            "    text - align: center;" +
-            "    background - color: #fff;" +
-            "    border: solid thin black;" +
-            "    min - height: 200px;" +
-            "    flex - wrap: wrap;" +
-            "    max - height: inherit;" +
-            "    overflow - y: scroll;" +
-            "    }" +
-            ".labelClass {" +
-            "   display: inline - block;" +
-            "   text - align: center;" +
-            "   margin - right: 4px;" +
-            "}" +
-            ".imageFrameClass {" +
-            "    background - color: var(--thumbnailBorderColor);" +
-            "    border: solid 6px var(--thumbnailBorderColor);" +
-            "    border - radius: 4px;" +
-            "    margin: 4px;" +
-            "    }" +
-            "</style>";
         }
 
         private string WriteFileToDisk(string staticContent, string pageTitle, int folderId, OggleBoobleMySqlContext db)
