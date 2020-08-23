@@ -27,7 +27,7 @@ function pornStartup() {
 
 function playboyStartup() {
     $('#indexMiddleColumn').html(playboyPageHTML());
-    setOggleHeader(spaPageId, "centerfold");
+    setOggleHeader(spaPageId, "playboyIndex");
     setOggleFooter(spaPageId, "centerfold");
     changeFavoriteIcon("centerfold");
     document.title = "Every Playboy Centerfold";

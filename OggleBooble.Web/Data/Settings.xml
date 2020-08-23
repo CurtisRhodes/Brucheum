@@ -3,13 +3,14 @@
  
   <setting name="ApiServer" value="https://localhost:44305/"></setting>
   <setting name="ImageRepo" value="https://img.ogglebooble.com/"></setting>
-  <setting name="LocalImgRepo" value="F:\Danni\img\"></setting>
+  <setting name="LocalImgRepo" value="C:\temp\img\"></setting>
   <setting name="ProductName" value="Flitter"></setting>
   <setting name="ColorScheme" value="Hot Pink"></setting>
   <setting name="LogoImage" value="HappyMan"></setting>
   <setting name="Schema" value="FGTRE"></setting>
 </settings>
 
+<!--<setting name="LocalImgRepo" value="F:\Danni\img\"></setting>-->
 <!--<setting name="ApiServer" value="https://api.curtisrhodes.com/"></setting>-->
 <!--<setting name="ApiServer" value="https://api.ogglebooble.com/"></setting>-->
 <!--<setting name="ApiServer" value="bad server name"></setting>-->

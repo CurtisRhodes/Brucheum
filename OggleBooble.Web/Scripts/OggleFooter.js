@@ -21,6 +21,8 @@
 
     switch (rootFolder) {
         //rtpe(code,calledfrom,detail,pageId)
+        case "playboyIndex":
+            break;
         case "blog":
         case "root":
         case "index": {
