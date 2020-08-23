@@ -65,6 +65,8 @@
     border: solid .5px #d8c86a;
     border-radius: 3px 4px;
     height: 25px;
+    overflow: hidden;
+    width: 200px;
 }
 .boobDropDown {
     display: block;
