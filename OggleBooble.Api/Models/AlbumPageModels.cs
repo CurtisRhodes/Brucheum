@@ -59,7 +59,7 @@ namespace OggleBooble.Api.Models
         public string LastModified { get; set; }
         public string FolderType { get; set; }
         public string StaticFile { get; set; }
-        public DateTime StaticFileUpdate { get; set; }
+        public string StaticFileUpdate { get; set; }
         public string Success { get; set; }
     }
 

@@ -98,7 +98,7 @@ namespace OggleBooble.Api.Controllers
                     {
                         albumInfo.FolderComments = dbFolderDetails.FolderComments;
                         albumInfo.StaticFile = dbFolderDetails.StaticFile;
-                        //albumInfo.StaticFileUpdate = dbFolderDetails.StaticFileUpdate.Value;
+                        albumInfo.StaticFileUpdate = dbFolderDetails.StaticFileUpdate.Value.ToShortDateString();
                     }
                     #region BreadCrumbs
                     VirtualFolder thisFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();

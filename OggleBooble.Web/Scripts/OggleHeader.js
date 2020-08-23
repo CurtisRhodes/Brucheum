@@ -409,7 +409,7 @@ function addBannerButton(bannerType, rankerType) {
     }
 }
 
-function topLogoClick(folderId, subdomain) {
+function topLogoClick(subdomain) {
     switch (subdomain) {
         case "centerfold":
         case "playboy":
@@ -431,7 +431,7 @@ function topLogoClick(folderId, subdomain) {
 
 function headerHtml(folderId, subdomain) {
     return "<div class='siteLogoContainer'>" +
-        "       <a href='javascript:topLogoClick(" + folderId + ",\"" + subdomain + "\")'>" +
+        "       <a href='javascript:topLogoClick(\"" + subdomain + "\")'>" +
         "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png'/></a>" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +

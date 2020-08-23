@@ -257,20 +257,17 @@ function createStaticPages(justOne) {
             if (results.Success === "ok") {
                 displayStatusMessage("ok", "done");
                 $('#dataifyInfo').html(" folders: " + results.FoldersProcessed + "  pages created: " + results.PagesCreated);
-
-                //public class StaticPageResultsModel {
-                //    public int FolderId { get; set; }
-                //    public int PagesCreated { get; set; }
-                //    public int FoldersProcessed { get; set; }
-                //    public string Success { get; set; }
-                //}
-
-                //$('#txtNewLink').val("");
-                //$('#progressBar').hide();
-                //$('#dataifyInfo').hide();
             }
-            else
-                alert("createStaticPages: " + results.Success);
+            else {
+                if (results.Errors.length > 0) {
+                    $('#dashboardMiddleColumn').append("<div id='repairErrorReport' class='errorInfobox'></div>");
+                    $.each(results.Errors, function (idx, obj) {
+                        $('#repairErrorReport').append("<div>" + obj + "</div>");
+                    })
+                }
+                alert(results.Success);
+                $('#dataifyInfo').append(", Errors: " + results.Errors.length);
+            }
         },
         error: function (xhr) {
             $('#dashBoardLoadingGif').hide();

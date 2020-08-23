@@ -26,9 +26,14 @@ namespace OggleBooble.Api.Models
 
     public class StaticPageResultsModel
     {
+        public StaticPageResultsModel()
+        {
+            Errors = new List<string>();
+        }
         public int FolderId { get; set; }
         public int PagesCreated { get; set; }
         public int FoldersProcessed { get; set; }
+        public List<string> Errors { get; set; }
         public string Success { get; set; }
     }
 

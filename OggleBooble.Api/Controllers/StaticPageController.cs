@@ -24,13 +24,12 @@ namespace OggleBooble.Api.Controllers
         [HttpGet]
         public StaticPageResultsModel Build(int folderId, bool recurr)
         {
-            var resultsModel = new StaticPageResultsModel();
+            var resultsModel = new StaticPageResultsModel() { Success = "ok" };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
-
                     CreatePage(folderId, resultsModel, db, recurr);
                 }
             }
@@ -39,20 +38,22 @@ namespace OggleBooble.Api.Controllers
         }
         private void CreatePage(int folderId, StaticPageResultsModel resultsModel, OggleBoobleMySqlContext db, bool recurr)
         {
+            if (resultsModel.Success != "ok")
+                return;
             try
-            {
+            {                
                 var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                 if ((dbFolder.FolderType == "singleModel") || (dbFolder.FolderType == "singleParent"))
                 {
                     string folderImage = "";
                     var dbVwDirTree = db.VwDirTrees.Where(t => t.Id == folderId).FirstOrDefault();
-                    if (dbVwDirTree != null) 
+                    if (dbVwDirTree != null)
                         folderImage = "https://ogglebooble.com/img/" + dbVwDirTree.FolderImage;
                     var staticContent = new StringBuilder(
                     "<html>\n" +
                     " <head>\n" +
                     "    <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />" +
-                    "    <title>"+ dbFolder.FolderName + " : OggleBooble</title>" +
+                    "    <title>" + dbFolder.FolderName + " : OggleBooble</title>" +
                     "    <meta http-equiv='Content-Type' content='text/html; charset = UTF-8' />" +
                     "    <meta name='referrer' content='always'/>\n" +
                     "    <meta name='description' content='Ogglebooble is a large collection of natural big breasted girls." +
@@ -82,6 +83,7 @@ namespace OggleBooble.Api.Controllers
                     "    <link href='/Styles/OggleHeader.css' rel='stylesheet'/>\n" +
                     "    <link href='/Styles/AlbumPage.css' rel='stylesheet'/>\n" +
                     "</head>\n" +
+
                     " <body>\n");
 
                     staticContent.Append(StaticHeader(db, folderId));
@@ -95,27 +97,33 @@ namespace OggleBooble.Api.Controllers
                     "   </script>\n" +
                     " </body>\n" +
                     "</html>");
- 
-                    string success = WriteFileToDisk(staticContent.ToString(), dbFolder.FolderName, folderId, db);
-                    if (success != "ok")
+
+                    string writeToDiskSuccess = WriteFileToDisk(staticContent.ToString(), dbFolder.FolderName, folderId, db);
+                    if (writeToDiskSuccess != "ok")
                     {
-                        resultsModel.Success = success;
-                        return;
+                        resultsModel.Errors.Add(writeToDiskSuccess + "  " + dbFolder.FolderName);
+                        resultsModel.Success = writeToDiskSuccess + "  " + dbFolder.FolderName;
                     }
-                    resultsModel.PagesCreated++;
+                    else
+                        resultsModel.PagesCreated++;
                 }
                 if (recurr)
                 {
-                    List<VirtualFolder> categoryFolders = db.VirtualFolders.Where(f => f.Parent == folderId).ToList();
-                    foreach (VirtualFolder dbCategoryFolder in categoryFolders)
+                    if (resultsModel.Success == "ok")
                     {
-                        CreatePage(dbCategoryFolder.Id, resultsModel, db, true);
+                        List<VirtualFolder> categoryFolders = db.VirtualFolders.Where(f => f.Parent == folderId).ToList();
+                        foreach (VirtualFolder dbCategoryFolder in categoryFolders)
+                        {
+                            CreatePage(dbCategoryFolder.Id, resultsModel, db, true);
+                        }
                     }
                 }
                 resultsModel.FoldersProcessed++;
             }
-            catch (Exception e) { resultsModel.Success = Helpers.ErrorDetails(e); }
-            resultsModel.Success = "ok";
+            catch (Exception e) {
+                resultsModel.Errors.Add(Helpers.ErrorDetails(e));
+                resultsModel.Success = "err";
+            }
         }
 
         private string CreateBody(int folderId)
@@ -187,9 +195,10 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 // todo  write the image as a file to x.ogglebooble  4/1/19
-                string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
+                //string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
+                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
 
-                using (var staticFile = System.IO.File.Open(tempFilePath + "/temp.html", System.IO.FileMode.Create))
+                using (var staticFile = System.IO.File.Open(appDataPath + "/temp.html", System.IO.FileMode.Create))
                 {
                     Byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(staticContent);
                     staticFile.Write(byteArray, 0, byteArray.Length);
@@ -205,7 +214,7 @@ namespace OggleBooble.Api.Controllers
                 webRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 using (System.IO.Stream requestStream = webRequest.GetRequestStream())
                 {
-                    byte[] fileContents = System.IO.File.ReadAllBytes(tempFilePath + "/temp.html");
+                    byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "/temp.html");
                     webRequest.ContentLength = fileContents.Length;
                     requestStream.Write(fileContents, 0, fileContents.Length);
                     requestStream.Flush();

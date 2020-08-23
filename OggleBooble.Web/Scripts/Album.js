@@ -187,7 +187,7 @@ function getAlbumPageInfo(folderId) {
                 $('#footerPageHits').html("page hits: " + albumInfo.PageHits.toLocaleString());
                 $('#footerFolderType').html("folder type: " + albumInfo.FolderType);
                 if (!isNullorUndefined(albumInfo.StaticFile)) {
-                    $('#footerStaticPage').html("<a href='" + albumInfo.StaticFile + "'>static page</a>\n");
+                    $('#footerStaticPage').html("<a href='" + albumInfo.StaticFile + "'>static page created: " + albumInfo.StaticFileUpdate + "</a>\n");
                 }
                 setBreadCrumbs(albumInfo.BreadCrumbs);
 
