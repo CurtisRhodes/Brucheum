@@ -6,9 +6,6 @@ function setOggleHeader(folderId, subdomain) {
     hdrSubdomain = subdomain;
 
     $('#oggleHeader').html(headerHtml(folderId, subdomain));
-    $('#oggleHeader').addClass('boobsHeader');
-    $('#divSiteLogo').attr("src", "/Images/redballon.png");
-    $('#bannerTitle').html("OggleBooble");
 
     //$('header').switchClass('pornHeader', 'boobsHeader');
 
@@ -44,6 +41,7 @@ function setOggleHeader(folderId, subdomain) {
 function setHeaderMenu(folderId, subdomain) {
     switch (subdomain) {
         case "loading": {
+            $('#oggleHeader').addClass('boobsHeader');
             $('#mainMenuContainer').html("loading");
             $("#divLoginArea").hide();
             break;
@@ -64,6 +62,10 @@ function setHeaderMenu(folderId, subdomain) {
         }
         case "index":
         case "root": {
+            $('#oggleHeader').switchClass('oggleSoft', 'boobsHeader');
+            //$('#oggleHeader').addClass('boobsHeader');
+            $('#divSiteLogo').attr("src", "/Images/redballon.png");
+            $('#bannerTitle').html("OggleBooble");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
@@ -79,7 +81,10 @@ function setHeaderMenu(folderId, subdomain) {
             changeFavoriteIcon("redBallon");
             break;
         }
-        case "boobs": // poses        
+        case "boobs": {// poses        
+            $('#oggleHeader').addClass('boobsHeader');
+            $('#divSiteLogo').attr("src", "/Images/redballon.png");
+            $('#bannerTitle').html("OggleBooble");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
@@ -92,6 +97,7 @@ function setHeaderMenu(folderId, subdomain) {
             $('#hdrBtmRowSec3').append(addBannerButton("archive"));
             changeFavoriteIcon("redBallon");
             break;
+        }
         case "archive": {
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1103)'>russian spys,</a> \n" +
@@ -121,6 +127,19 @@ function setHeaderMenu(folderId, subdomain) {
             $('#hdrBtmRowSec3').append(addBannerButton("ranker", "softcore"));
             break;
         }
+        case "playboyIndex":
+            $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
+            $('#mainMenuContainer').html("every playboy centerfold");
+            $('#breadcrumbContainer').html(
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",243)'>1950's</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",420)'>1960's</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",498)'>1970's</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",357)'>1980's</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",397)'>1990's</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",397)'>2000's</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",397)'>2010's</a>,\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",411)'>2020's</a>\n");
+            break;
         case "playboy":
         case "cybergirl": {
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");

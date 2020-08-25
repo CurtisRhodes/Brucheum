@@ -268,13 +268,14 @@ namespace OggleBooble.Api.Controllers
 
                     VirtualFolder dbSourceFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).First();
                     string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath;
-                    string assumedFileName = dbSourceFolder.FolderName + "_" + linkId + ext;
+                    string fileName = dbImageFile.FileName;
+                    //string assumedFileName = dbSourceFolder.FolderName + "_" + linkId + ext;
 
                     VirtualFolder dbDestFolder = db.VirtualFolders.Where(i => i.Id == destinationFolderId).First();
                     string destFtpPath = ftpHost + ftpRepo + "/" + dbDestFolder.FolderPath;
                     string newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
 
-                    success = FtpUtilies.MoveFile(sourceFtpPath + "/" + assumedFileName, destFtpPath + "/" + newFileName);
+                    success = FtpUtilies.MoveFile(sourceFtpPath + "/" + fileName, destFtpPath + "/" + newFileName);
 
                     if (success == "ok")
                     {  // update ImageFile
@@ -296,6 +297,7 @@ namespace OggleBooble.Api.Controllers
                             db.CategoryImageLinks.Remove(existinglink);
                         }
                         //if (request == "ARK")
+
 
                         db.SaveChanges();
                         success = "ok";

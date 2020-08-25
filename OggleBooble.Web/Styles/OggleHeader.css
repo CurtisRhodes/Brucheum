@@ -13,7 +13,11 @@
     border-top: #40767d 3px solid;
     border-bottom: #decd6f 3px solid;
 }
-
+.playboyHeader {
+    background-color: #000;
+    border-top: #40767d 3px solid;
+    border-bottom: #decd6f 11px solid;
+}
 .pornHeader {
     background-color: #cab37e;
     border-top: #40767d 3px solid;
