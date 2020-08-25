@@ -179,12 +179,17 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var folderToMove = db.VirtualFolders.Where(f => f.Id == stepchildModel.DestinationId).First();
-                    var srcFolder = db.VirtualFolders.Where(f => f.Id == stepchildModel.SourceFileId).First();
-                    var stepChild = new MySqlDataContext.StepChild();
-                    stepChild.Parent = stepchildModel.SourceFileId;
-                    if (stepchildModel.FolderName == "") stepChild.FolderName = folderToMove.FolderName;
-                    //Parent=
+                    var folderToMove = db.VirtualFolders.Where(f => f.Id == stepchildModel.SourceFileId).First();
+                    db.StepChildren.Add(new MySqlDataContext.StepChild()
+                    {
+                        Parent = stepchildModel.DestinationId,
+                        Child = stepchildModel.SourceFileId,
+                        FolderName = stepchildModel.FolderName ?? folderToMove.FolderName,
+                        Link = stepchildModel.LinkId ?? folderToMove.FolderImage,
+                        SortOrder = stepchildModel.SortOrder
+                    });
+                    db.SaveChanges();
+                    success = "ok";
                 }
             }
             catch (Exception ex)

@@ -307,10 +307,11 @@ function addImageLink() {
         return;
     }
     $('#dataifyInfo').show().html("Adding ImageLink");
-    var newLink = {};
-    newLink.Link = $('#txtImageLink').val();
-    newLink.FolderId = pSelectedTreeId;
-    newLink.Path = pSelectedTreeFolderPath;
+    var newLink = {
+        Link: $('#txtImageLink').val(),
+        FolderId: pSelectedTreeId,
+        Path: pSelectedTreeFolderPath
+    };
     $('#dashBoardLoadingGif').fadeIn();
     $.ajax({
         type: "POST",
@@ -322,11 +323,18 @@ function addImageLink() {
             if (successModel.Success === "ok") {
                 displayStatusMessage("ok", "image link added");
                 $('#txtImageLink').val("");
+
+                //dataAction.PkId = Guid.NewGuid().ToString();
+                //dataAction.VisitorId = changeLog.VisitorId;
+                //dataAction.PageId = changeLog.FolderId;
+                //dataAction.ActivityCode = changeLog.ActivityCode;
+                //dataAction.Activity = changeLog.Activity;
+                //dataAction.Occured = DateTime.Now;
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "NIA",
-                    PageId: pSelectedTreeId,
-                    Activity: newLink.Link
+                    FolderId: pSelectedTreeId,
+                    Activity: pSelectedTreeFolderPath
                 });
             }
             else {
@@ -451,11 +459,14 @@ function performMoveFolder() {
 // COPY FOLDER  (create stepchild)
 function showAddStepChildFolderDialog() {
     let destinationId = pSelectedTreeId;  // captured before 
+    alert("destinationId: " + destinationId);
     $('#dashboardDialogTitle').html("Create Stepchild Folder");
     $('#dashboardDialogContents').html(
-        "    <div><span>folder to copy</span><input id='txtStepParent' class='txtLinkPath roundedInput' readonly='readonly' /></div>\n" +
+        "    <div><span>folder to copy</span><input id='txtStepParent' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
+        "    <div><span>new parent</span><input id='txtscSourceFolderName' class='roundedInput' readonly='readonly'/>\n" +
+        "       <img class='dialogDirTreeButton' src='/Images/caretDown.png' onclick='$(\"#scDirTreeContainer\").toggle()'/></div>\n" +
         "    <div><span>new name</span><input id='txtscNewFolderName' class='roundedInput' /></div>\n" +
-        "    <div><span>link</span><input id='txtCustomFolderLink' class='roundedInput' /></div>\n" +
+        "    <div><span>new link</span><input id='txtCustomFolderLink' class='roundedInput' /></div>\n" +
         "    <div class='roundendButton' onclick='perfomAddStepChildFolder($(" + destinationId + ").is(\":checked\"))'>Create Stepchild</div>\n" +
         "       <div id='scDirTreeContainer' class='floatingDirTreeContainer'></div>\n");
     $("#txtStepParent").val(pSelectedTreeFolderPath);
@@ -475,10 +486,10 @@ function perfomAddStepChildFolder(destinationId) {
             FolderName: $('#txtscNewFolderName').val(),
             SortOrder: 1998
         },
-        success: function (successModel) {
+        success: function (success) {
             $('#dashBoardLoadingGif').hide();
             $('#dataifyInfo').hide();
-            if (successModel.Success === "ok") {
+            if (success === "ok") {
                 displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " copied to " + $('.txtPartialDirTreePath').val());
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
@@ -492,11 +503,11 @@ function perfomAddStepChildFolder(destinationId) {
                 //$('#moveFolderCrud').dialog("close");
             }
             else
-                alert("copy stepchild: " + successModel.Success);
+                alert("add stepchild: " + success);
         },
         error: function (xhr) {
             $('#dashBoardLoadingGif').hide();
-            alert("Move Folder xhr error: " + getXHRErrorDetails(xhr));
+            alert("add stepchild xhr error: " + getXHRErrorDetails(xhr));
         }
     });
 }

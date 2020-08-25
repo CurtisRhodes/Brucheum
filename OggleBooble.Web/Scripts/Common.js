@@ -399,13 +399,18 @@ function commonDirTreeClick(danniPath, folderId) {
         case "catListDialog":
             window.location.href = "\album.html?folder=" + folderId;
             break;
-        case "linkManipulateDirTree": $('#dirTreeResults').html(pSelectedTreeFolderPath); break;
-        case "moveFolder": $('#txtNewMoveDestiation').val(pSelectedTreeFolderPath); break
+        case "linkManipulateDirTree":
+            $('#dirTreeResults').html(pSelectedTreeFolderPath); break;
+        case "moveFolder":
+            $('#txtNewMoveDestiation').val(pSelectedTreeFolderPath); break
         case "moveMany":
             $('#txtMoveManyDestination').val(danniPath);
             $('#mmDirTreeContainer').fadeOut();
             break;
-        case "stepchild": $('#txtscNewFolderName').val(pSelectedTreeFolderPath); break;
+        case "stepchild":
+            $('#txtscSourceFolderName').val(pSelectedTreeFolderPath);
+            $('#scDirTreeContainer').fadeOut();
+            break;
         default:
     }
 }

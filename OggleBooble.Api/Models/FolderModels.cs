@@ -110,6 +110,6 @@ namespace OggleBooble.Api.Models
         public int DestinationId { get; set; }
         public string LinkId { get; set; }
         public string FolderName { get; set; }
-        public string SortOrder { get; set; }
+        public int SortOrder { get; set; }
     }
 }
