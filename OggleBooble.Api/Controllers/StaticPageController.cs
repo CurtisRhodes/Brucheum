@@ -134,7 +134,7 @@ namespace OggleBooble.Api.Controllers
             {
                 var dbImages = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
                 if (dbImages.Count < 16) {
-                    dbImages = db.VwLinks.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
+                    dbImages.AddRange(db.VwLinks.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList());
                 }
                 //var dbImages = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
                 teaserBody.Append(
