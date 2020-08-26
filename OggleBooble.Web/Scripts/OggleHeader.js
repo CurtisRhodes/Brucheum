@@ -129,33 +129,49 @@ function setHeaderMenu(folderId, subdomain) {
         }
         case "playboyIndex":
             $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
-            $('#mainMenuContainer').html("every playboy centerfold");
+            // top row
+            // <div id='bannerTitle' class='headerTitle'></div >\n" +
+            $('#bannerTitle').html("every playboy centerfold");  // 1132
+            $('#mainMenuContainer').html(
+                "<a href='javascript:rtpe(\"PBB\",3912,\"magazine covers\",1986)'>magazine covers</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",3912,\"pictorials\",4015)'>pictorials</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",3912,\"extras\",2601)'>extras</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",3912,\"cybergirls\",3796)'>cybergirls</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",3912,\"Pmoy\",4013)'>Pmoy</a>\n");
+            // <div id='topRowRightContainer'></div>" +
+
+            // bottom row
+            // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
             $('#breadcrumbContainer').html(
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",243)'>1950's</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",420)'>1960's</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",498)'>1970's</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",357)'>1980's</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",397)'>1990's</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",397)'>2000's</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",397)'>2010's</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",411)'>2020's</a>\n");
+                "<a href='javascript:rtpe(\"PYC\",3912,\"1950\",621)'>1950's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",3912,\"1960\",638)'>1960's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",3912,\"1970\",639)'>1970's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",3912,\"1980\",640)'>1980's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",3912,\"1990\",628)'>1990's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",3912,\"2000\",641)'>2000's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",3912,\"2010\",513)'>2010's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",3912,\"2020\",4128)'>2020's</a>\n");
+            // <div id='badgesContainer' class='badgesSection'></div>\n" +
+            // <div id='hdrBtmRowSec3' class='hdrBtmRowOverflow'></div>\n" +
             break;
         case "playboy":
-        case "cybergirl": {
-            $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
-            $('#topRowRightContainer').html(addBannerButton("archive"));
-            $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
-            break;
-        }
+        case "cybergirl": 
         case "centerfold": {
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
-            $('#topRowRightContainer').html(addBannerButton("archive"));
+            $('#mainMenuContainer').html(
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"playboy\",1132)'>Centerfolds,</a>\n" +
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"magazine covers\",1986)'>magazine covers</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"pictorials\",4015)'>pictorials</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"extras\",2601)'>extras</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"cybergirls\",3796)'>cybergirls</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"Pmoy\",4013)'>Pmoy</a>\n");
             $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
-            $('#mainMenuContainer').html("every playboy centerfold");
-            //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",1132)'>Centerfolds,</a>\n" +
-            //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",1986)'> magazine covers,</a>\n" +
-            //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",3796)'> cybergirls,</a> and\n" +
-            //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"playboy\",2601)'> extras</a>\n";
+            //$('#topRowRightContainer').html(addBannerButton("archive"));
+            // bottom row
+            // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
+            $('#breadcrumbContainer').html("every playboy centerfold");
+            // <div id='badgesContainer' class='badgesSection'></div>\n" +
+            // <div id='hdrBtmRowSec3' class='hdrBtmRowOverflow'></div>\n" +
             break;
         }
         case "porn": {

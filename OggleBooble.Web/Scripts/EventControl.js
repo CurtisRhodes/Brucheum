@@ -1,5 +1,4 @@
-﻿
-function rtpe(eventCode, calledFrom, eventDetail, folderId) {
+﻿function rtpe(eventCode, calledFrom, eventDetail, folderId) {
     try {
         var visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
@@ -57,6 +56,8 @@ function performEvent(eventCode, eventDetail, folderId) {
         case "BCC":  // Breadcrumb Clicked
         case "BLC":  // banner link clicked
         case "EPC":  // every playmate clicked
+        case "PYC":  // playboy year clicked
+        case "PBB":  // playboy breadcrumb click
         case "BAC":  // Babes Archive Clicked
             window.location.href = "/album.html?folder=" + folderId;  //  open page in same window
             break;
