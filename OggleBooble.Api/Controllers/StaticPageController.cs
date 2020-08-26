@@ -140,7 +140,7 @@ namespace OggleBooble.Api.Controllers
                 teaserBody.Append(
                 "<div class='threeColumnLayout'><div class='leftColumn'></div>" +
                 "<div class='middleColumn'><div id='imageContainer' class='galleryContainer'>\n");
-                for (int i = 0; i < 16; i++)
+                for (int i = 0; i < Math.Min(dbImages.Count, 18); i++)
                 {
                     teaserBody.Append("<div class='folderImageOutterFrame'>" +
                         "<img class='thumbImage' onclick='goHome()'" +
