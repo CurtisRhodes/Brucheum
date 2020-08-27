@@ -106,11 +106,6 @@
                             $('#dots').html('');
                             changeFavoriteIcon("redBallon");
 
-                            if (isNullorUndefined(window.sessionStorage["sessionId"])) {
-                                window.sessionStorage["sessionId"] = create_UUID();
-                                console.log("sessionId created on Album page: " + window.sessionStorage["sessionId"]);
-                            }
-
                             if (isNullorUndefined(params.tic)) {
                                 let visitorId = getCookieValue("VisitorId");
                                 if (isNullorUndefined(visitorId)) {

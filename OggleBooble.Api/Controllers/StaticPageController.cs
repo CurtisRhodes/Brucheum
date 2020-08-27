@@ -154,9 +154,9 @@ namespace OggleBooble.Api.Controllers
 
         private string StaticHeader(OggleBoobleMySqlContext db, int folderId)
         {
-            StringBuilder staticHeaderHtml = new StringBuilder("<div id='oggleHeader' class='stickyHeader boobsHeader' onclick='goHome()'>" +
+            StringBuilder staticHeaderHtml = new StringBuilder("<div id='oggleHeader' class='stickyHeader boobsHeader'>" +
             "   <div class='siteLogoContainer'>\n" +
-            "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png' style='height: 60px;'>" +
+            "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png' style='height: 60px;' onclick='goHome()'>" +
             "   </div>\n" +
             "   <div class='headerBodyContainer'>\n" +
             "       <div class='headerTopRow'>\n" +
@@ -177,10 +177,7 @@ namespace OggleBooble.Api.Controllers
                         break;
                 }
             }
-            staticHeaderHtml.Append("</div><span>(this is a static page for search engines and trackback links<br/>click anywhere to go to the main page)" +
-                "</span><div id='searchBox' class='oggleSearchBox'>\n" +
-            "               <input class='oggleSearchBoxText'>" +
-            "           </div>\n" +
+            staticHeaderHtml.Append("</div style='margin-left:20px;' onclick='goHome()'>(this is a static page for search engines and trackback links<br/>click anywhere to go to the main page)" +
             "       </div>\n" +  // headerTopRow
             "       <div class='headerBottomRow'>\n" +
             "           <div style='display:inline-block' >"+ dbFolder.RootFolder + "</div>\n" +

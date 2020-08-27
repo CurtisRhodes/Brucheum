@@ -91,12 +91,6 @@
             document.title = "loading settings : OggleBooble";
             loadOggleSettings();
 
-            if (isNullorUndefined(window.sessionStorage["sessionId"])) {
-                window.sessionStorage["sessionId"] = create_UUID();
-                //alert("sessionId created: " + window.sessionStorage["sessionId"]);
-                console.log("sessionId created: " + window.sessionStorage["sessionId"]);
-            }
-
             params = getParams();
             if (params.subdomain === undefined)
                 subdomain = "index";
