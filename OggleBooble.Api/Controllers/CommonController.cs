@@ -20,47 +20,31 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpPost]
         [Route("api/Common/AddVisitor")]
-        public SuccessModel AddVisitor(AddVisitorModel visitorData)
+        public string AddVisitor(AddVisitorModel visitorData)
         {
-            var addVisitorSuccess = new SuccessModel();
+            string success;
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    //VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == visitorData.FolderId).FirstOrDefault();
-                    //if (categoryFolder != null)
-                    //    addVisitorSuccess.PageName = categoryFolder.FolderName;
-
-                    var dbExistingVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (dbExistingVisitor != null)
+                    var newVisitor = new Visitor()
                     {
-                        addVisitorSuccess.ReturnValue = dbExistingVisitor.VisitorId;
-                        addVisitorSuccess.Success = "IpAddress already exists";
-                        return addVisitorSuccess;
-                    }
-                    else
-                    {
-                        string newVisitorId = Guid.NewGuid().ToString();
-                        var newVisitor = new Visitor()
-                        {
-                            VisitorId = newVisitorId,
-                            InitialPage = visitorData.FolderId,
-                            City = visitorData.City,
-                            Country = visitorData.Country,
-                            GeoCode = visitorData.GeoCode,
-                            Region = visitorData.Region,
-                            InitialVisit = DateTime.Now,
-                            IpAddress = visitorData.IpAddress
-                        };
-                        db.Visitors.Add(newVisitor);
-                        db.SaveChanges();
-                        addVisitorSuccess.ReturnValue = newVisitorId;
-                    }
-                    addVisitorSuccess.Success = "ok";
+                        VisitorId = visitorData.VisitorId,
+                        InitialPage = visitorData.FolderId,
+                        City = visitorData.City,
+                        Country = visitorData.Country,
+                        GeoCode = visitorData.GeoCode,
+                        Region = visitorData.Region,
+                        InitialVisit = DateTime.Now,
+                        IpAddress = visitorData.IpAddress
+                    };
+                    db.Visitors.Add(newVisitor);
+                    db.SaveChanges();
+                    success = "ok";
                 }
             }
-            catch (Exception ex) { addVisitorSuccess.Success = Helpers.ErrorDetails(ex); }
-            return addVisitorSuccess;
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
         }
         
         [HttpPost]

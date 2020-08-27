@@ -132,6 +132,7 @@ namespace OggleBooble.Api.Models
     public class AddVisitorModel
     {
         public int FolderId { get; set; }
+        public string VisitorId { get; set; }
         public string IpAddress { get; set; }
         public string City { get; set; }
         public string Region { get; set; }

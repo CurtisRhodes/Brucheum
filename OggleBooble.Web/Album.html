@@ -101,6 +101,7 @@
                             $('#dots').html(dots);
                         }
                         else {
+
                             clearInterval(waiter2);
                             $('#dots').html('');
                             changeFavoriteIcon("redBallon");
@@ -110,17 +111,17 @@
                                 console.log("sessionId created on Album page: " + window.sessionStorage["sessionId"]);
                             }
 
-                            console.log("verifiyVisitor");
-                            verifiyVisitor("album", params.folder);
+                            if (isNullorUndefined(params.tic)) {
+                                let visitorId = getCookieValue("VisitorId");
+                                if (isNullorUndefined(visitorId)) {
+                                    getIpInfo(params.folder, "aa");
+                                }
+                            }
+                            else
+                                addVisit(params.folder);
 
-                            if (isInRole("NewUser")) {
-                                loadAlbum(params.folder);
-                            }
-                            else {
-                                //directToStaticPage(params.folder);
-                                //alert("document.domain: " + document.domain);
-                                loadAlbum(params.folder);
-                            }
+                            loadAlbum(params.folder);
+                            //if (isInRole("NewUser")) {
                         }
                     }, 300);
                 }

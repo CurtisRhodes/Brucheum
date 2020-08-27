@@ -13,9 +13,9 @@ function setCookieValue(elementName, elementValue) {
 
     let decodedCookie = "";
     if (document.cookie) {
-        let visitorId = getCookieValue("VisitorId");
-        let userName = getCookieValue("UserName");
-        let isLoggedIn = getCookieValue("IsLoggedIn");
+        //let visitorId = getCookieValue("VisitorId");
+        //let userName = getCookieValue("UserName");
+        //let isLoggedIn = getCookieValue("IsLoggedIn");
         decodedCookie = decodeURIComponent(document.cookie);
         let cookieElements = decodedCookie.split(';');
         let cookieItem, cookieItemName, cookieItemValue;
@@ -35,7 +35,8 @@ function setCookieValue(elementName, elementValue) {
     //deleteCookie();
     expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() + 9);
-    let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+    //let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+    let cookieString = "VisitorId:" + visitorId + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
     document.cookie = cookieString;
     //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
 }
@@ -239,13 +240,16 @@ function isNullorUndefined(val) {
 
 function create_UUID() {
     // thank tohttps://www.w3resource.com/javascript-exercises/javascript-math-exercise-23.php
-    let dt = new Date().getTime();
-    let uuid = 'xxxxxxxx-2282-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        let r = (dt + Math.random() * 16) % 16 | 0;
-        dt = Math.floor(dt / 16);
-        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    //let dt = new Date().getTime();
+    //let uuid = 'xxxxxxxx-2282-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    //    let r = (dt + Math.random() * 16) % 16 | 0;
+    //    dt = Math.floor(dt / 16);
+    //    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    //});
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
     });
-    return uuid;
 }
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
