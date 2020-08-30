@@ -189,7 +189,6 @@
     <Compile Include="Controllers\RankerController.cs" />
     <Compile Include="Controllers\RepairLinksController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
-    <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\StaticPageController.cs" />
     <Compile Include="DataContext\MySqlContext.cs" />
     <Compile Include="DataContext\MSSqlContext.cs" />
@@ -206,7 +205,7 @@
     <Compile Include="Models\LocalModels.cs" />
     <Compile Include="Models\RankerModels.cs" />
     <Compile Include="Models\ReportModels.cs" />
-    <Compile Include="Models\RoleModels.cs" />
+    <Compile Include="Models\UserModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

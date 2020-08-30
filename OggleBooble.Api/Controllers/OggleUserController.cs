@@ -41,7 +41,7 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/Login/AddUser")]
-        public string AddUser(RegisteredUser registeredUserModel)
+        public string AddUser(RegisteredUserModel registeredUserModel, string clearPassword)
         {
             string success = "";
             try
@@ -53,12 +53,20 @@ namespace OggleBooble.Api.Controllers
                         success = "user name already exists";
                     else
                     {
-                        registeredUserModel.Pswrd = HashSHA256(registeredUserModel.Pswrd);
-                        registeredUserModel.Created = DateTime.Now;
-                        //registeredUserModel.IpAddress = Helpers.GetIPAddress();
-                        db.RegisteredUsers.Add(registeredUserModel);
+                        RegisteredUser dbNewUser = new RegisteredUser()
+                        {
+                            Pswrd = HashSHA256(clearPassword),
+                            UserName = registeredUserModel.UserName,
+                            FirstName = registeredUserModel.FirstName,
+                            LastName = registeredUserModel.LastName,
+                            Status = registeredUserModel.Status,
+                            UserRole = registeredUserModel.UserRole,
+                            UserSettings = registeredUserModel.UserSettings,
+                            UserCredits=registeredUserModel.UserCredits,
+                            Created = DateTime.Now
+                        };
+                        db.RegisteredUsers.Add(dbNewUser);
                         db.SaveChanges();
-
                         success = "ok";
                     }
                 }
@@ -72,12 +80,34 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/Login/GetUserInfo")]
-        public RegisteredUser GetUserInfo(string visitorId)
+        public RegisteredUserModel GetUserInfo(string visitorId)
         {
-            var registeredUser = new RegisteredUser();
-            using (var db = new OggleBoobleMySqlContext())
+            var registeredUser = new RegisteredUserModel();
+            try
             {
-                registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbRegisteredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+                    if (dbRegisteredUser == null)
+                        registeredUser.Success = "not found";
+                    else
+                    {
+                        registeredUser.VisitorId = dbRegisteredUser.VisitorId;
+                        registeredUser.UserName = dbRegisteredUser.UserName;
+                        registeredUser.FirstName = dbRegisteredUser.FirstName;
+                        registeredUser.LastName = dbRegisteredUser.LastName;
+                        registeredUser.UserRole = dbRegisteredUser.UserRole;
+                        registeredUser.Status = dbRegisteredUser.Status;
+                        registeredUser.UserSettings = dbRegisteredUser.UserSettings;
+                        registeredUser.Email = dbRegisteredUser.Email;
+                        registeredUser.Created = dbRegisteredUser.Created;
+                        registeredUser.Success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                registeredUser.Success = Helpers.ErrorDetails(ex);
             }
             return registeredUser;
         }
@@ -104,80 +134,38 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-        [HttpGet]
-        [Route("api/OggleUser/GetUserSettings")]
-        public SuccessModel GetUserSettings(string visitorId)
-        {
-            var successModel = new SuccessModel();
-            try
-            {
-                using (var mdb = new OggleBoobleMySqlContext())
-                {
-                    var dbRegisteredUsers = mdb.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-                    if (dbRegisteredUsers != null) 
-                    {
-                        successModel.ReturnValue = dbRegisteredUsers.UserSettings;
-                    }
-                }
-                successModel.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                successModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return successModel;
-        }
-
         [HttpPut]
-        [Route("api/OggleUser/UpdateUserSettings")]
-        public SuccessModel UpdateUserSettings(string visitorId, string settingName, string settingJson)
+        [Route("api/OggleUser/UpdateUser")]
+        public string UpdateUser(RegisteredUserModel userInfo)
         {
-            var successModel = new SuccessModel();
+            string success;
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-                    if (dbUser != null)
+                    var dbUser = db.RegisteredUsers.Where(u => u.VisitorId == userInfo.VisitorId).FirstOrDefault();
+                    if (dbUser == null)
+                        success= "not found";
+                    else
                     {
-                        string json = JsonConvert.SerializeObject(settingJson);
-                        if (settingName == "Initial")
-                        {
-                            //var x = JsonConvert.DeserializeObject(dbUser.UserSettings);
-                            dbUser.UserSettings = JsonConvert.SerializeObject(settingJson);
-                            //dbUser.UserSettings = JsonConvert.DeserializeObject(settingJson).ToString();
-                            dbUser.UserSettings = settingJson;
-                            db.SaveChanges();
-                            successModel.Success = "ok";
-                        }
-                        else {
-                            string userSettingsRaw = dbUser.UserSettings;
-                            //var userSettingsParse = JsonConvert.DeserializeObject(dbUser.UserSettings);
-                            //var test1 = userSettingsParse
-                        
-                        }
-
-
-                        // replace section
-                        //var dbUser = mdb.RegisteredUsers.Where(r => r.UserName == userName).FirstOrDefault();
-                        //var currentSettings = dbUser.UserSettings;
-
-                        //int startindex = currentSettings.IndexOf(settingName);
-                        //int lenToEnd = currentSettings.Substring(startindex, currentSettings.IndexOf("}") + 1).Length;
-                        //string elementRemoved = currentSettings.Remove(startindex, lenToEnd);
-                        //dbUser.UserSettings = elementRemoved + settingJson;
-
-                        //mdb.SaveChanges();
-                        //successModel.Success = "ok";
-                        //successModel.ReturnValue = dbUser.UserSettings;
+                        dbUser.UserName = userInfo.UserName;
+                        dbUser.LastName = userInfo.LastName;
+                        dbUser.FirstName = userInfo.FirstName;
+                        dbUser.Status = userInfo.Status;
+                        dbUser.UserSettings = userInfo.UserSettings;
+                        dbUser.UserRole = userInfo.UserRole;
+                        dbUser.UserCredits = userInfo.UserCredits;
+                        dbUser.Email = userInfo.Email;
+                        db.SaveChanges();                        
+                        success = "ok";
                     }
                 }
             }
             catch (Exception ex)
             {
-                successModel.Success = Helpers.ErrorDetails(ex);
+                success = Helpers.ErrorDetails(ex);
             }
-            return successModel;
+            return success;
         }
 
         private static string HashSHA256(string value)

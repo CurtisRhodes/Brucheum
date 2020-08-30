@@ -178,7 +178,9 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Email { get; set; }
         public DateTime Created { get; set; }
         public string Status { get; set; }
+        public string UserRole { get; set; }
         public string UserSettings { get; set; }
+        public int UserCredits { get; set; }
         public string Pswrd { get; set; }
     }
 
