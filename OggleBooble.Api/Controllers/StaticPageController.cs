@@ -177,10 +177,11 @@ namespace OggleBooble.Api.Controllers
                         break;
                 }
             }
-            staticHeaderHtml.Append("</div style='margin-left:20px;' onclick='goHome()'>(this is a static page for search engines and trackback links<br/>click anywhere to go to the main page)" +
+            staticHeaderHtml.Append("</div style='margin-left:20px;' onclick='goHome()'>(this is a static page for search engines and trackback links<br/>" +
+            "   click on any image to go to the main page)" +
             "       </div>\n" +  // headerTopRow
             "       <div class='headerBottomRow'>\n" +
-            "           <div style='display:inline-block' >"+ dbFolder.RootFolder + "</div>\n" +
+            "           <div style='display:inline-block' >" + dbFolder.RootFolder + "</div>\n" +
             "           <div style='display:inline-block; text-align:center; font-size:18px' onclick='goHome()'>");
             var dbParent = db.VirtualFolders.Where(p => p.Id == dbFolder.Parent).First();
             staticHeaderHtml.Append(dbParent.FolderName + " / " + dbFolder.FolderName + "</div>\n</div>\n</div>\n</div>\n");

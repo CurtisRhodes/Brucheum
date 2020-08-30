@@ -20,31 +20,39 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpPost]
         [Route("api/Common/AddVisitor")]
-        public string AddVisitor(AddVisitorModel visitorData)
+        public AddVisitorSuccessModel AddVisitor(AddVisitorModel visitorData)
         {
-            string success;
+            var addVisitorSuccess = new AddVisitorSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var newVisitor = new Visitor()
+                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    if (dbExistingIpVisitor == null)
                     {
-                        VisitorId = visitorData.VisitorId,
-                        InitialPage = visitorData.FolderId,
-                        City = visitorData.City,
-                        Country = visitorData.Country,
-                        GeoCode = visitorData.GeoCode,
-                        Region = visitorData.Region,
-                        InitialVisit = DateTime.Now,
-                        IpAddress = visitorData.IpAddress
-                    };
-                    db.Visitors.Add(newVisitor);
-                    db.SaveChanges();
-                    success = "ok";
+                        var newVisitor = new Visitor()
+                        {
+                            VisitorId = visitorData.VisitorId,
+                            InitialPage = visitorData.FolderId,
+                            City = visitorData.City,
+                            Country = visitorData.Country,
+                            GeoCode = visitorData.GeoCode,
+                            Region = visitorData.Region,
+                            InitialVisit = DateTime.Now,
+                            IpAddress = visitorData.IpAddress
+                        };
+                        db.Visitors.Add(newVisitor);
+                        db.SaveChanges();
+                        addVisitorSuccess.Success = "ok";
+                    }
+                    else {
+                        addVisitorSuccess.VisitorId = dbExistingIpVisitor.VisitorId;
+                        addVisitorSuccess.Success = "existing Ip";
+                    }
                 }
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
+            catch (Exception ex) { addVisitorSuccess.Success = Helpers.ErrorDetails(ex); }
+            return addVisitorSuccess;
         }
         
         [HttpPost]
@@ -155,56 +163,6 @@ namespace OggleBooble.Api.Controllers
             }
             return successModel;
         }
-
-        [HttpPost]
-        [Route("api/Common/LogIpCall")]
-        public string LogIpCall(IpInfoCall callData)
-        {
-            string success;
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    db.IpInfoCalls.Add(new IpInfoCall()
-                    {
-                        SessionId = callData.SessionId,
-                        BrowserInfo = callData.BrowserInfo,
-                        Occured = DateTime.Now
-                    });
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        [HttpPut]
-        [Route("api/Common/VerifyIpCall")]
-        public string VerifyIpCall(IpInfoCall callData)
-        {
-            string success;
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    IpInfoCall dbIpInfoCall = db.IpInfoCalls.Where(ip => ip.SessionId == callData.SessionId).FirstOrDefault();
-                    if (dbIpInfoCall == null)
-                        return "ipInfoCall record not found";
-                    else
-                    {
-                        dbIpInfoCall.IpAddress = callData.IpAddress;
-                        db.SaveChanges();
-                        success = "ok";
-                    }
-                }
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
     }
 
     [EnableCors("*", "*", "*")]
@@ -303,6 +261,60 @@ namespace OggleBooble.Api.Controllers
                 pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
             }
             return pageHitSuccessModel;
+        }
+
+        [HttpPost]
+        [Route("api/Common/LogIpHit")]
+        public string LogIpHit(IpHitModel ipHitModel)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.IpInfoHits.Add(new IpInfoHit()
+                    {
+                        VisitorId = ipHitModel.VisitorId,
+                        IpAddress = ipHitModel.IpAddress,
+                        FolderId = ipHitModel.FolderId,
+                        Occured = DateTime.Now
+                    });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpPost]
+        [Route("api/Common/LogStaticPageHit")]
+        public string LogStaticPageHit(string visitorId, int folderId, string calledFrom)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.StaticPageHits.Add(new StaticPageHit()
+                    {
+                        VisitorId = visitorId,
+                        FolderId = folderId,
+                        CalledFrom = calledFrom,
+                        Occured = DateTime.Now
+                    });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
         }
     }
 

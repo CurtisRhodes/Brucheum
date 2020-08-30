@@ -96,7 +96,7 @@ function getAlbumImages() {
 
                             $('#imageContainer').append("<div class='" + imageFrameClass + "'\n" +
                                 " oncontextmenu='albumContextMenu(\"Folder\",\"" + folder.LinkId + "\"," + folder.FolderId + ",\"" + imgSrc + "\")'\n" +
-                                " onclick='rtpe(\"SUB\"," + apFolderId + "," + folder.IsStepChild + "," + folder.FolderId + ")'>\n" +
+                                " onclick='rtpe(\"SUB\",\"called from: " + apFolderId + "\",\"" + folder.DirectoryName + "\"," + folder.FolderId + ")'>\n" +
                                 "<img id='" + folder.LinkId + "' class='folderImage'\n" +
                                 "onerror='subFolderImgError(\"" + imgSrc + "\",\"" + folder.LinkId + "\")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
                                 "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div><span Id='fc" + folder.FolderId + "'>" + countStr + "</span></div>");

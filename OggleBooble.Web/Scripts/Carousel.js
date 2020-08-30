@@ -23,7 +23,6 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
     try {
         if (carouselTake == specialLaunchCode) {
             $('#carouselContainer').html(carouselHtml());
-
             if (rootFolder === "boobs") {
                 if (!isNullorUndefined(window.localStorage["carouselCache"])) {
                     console.log("loading boobs from cache");
@@ -111,6 +110,11 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                                 LinkId: obj.LinkId,
                                 FileName: obj.FileName
                             });
+
+                            if (carouselItemArray.length === 127) {
+                                refreshCache(rootFolder);
+                            }
+                            
                         });
 
                         if (!vCarouselInterval) {
@@ -246,9 +250,11 @@ function startCarousel(calledFrom) {
 
 function intervalBody() {
     imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-    if (alreadyInLast100()) {
-        if (debugMode) $('#badgesContainer').html("already in last 100 flagged");
-        imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+    if (carouselItemArray.length > 1000) {
+        if (alreadyInLast100()) {
+            if (debugMode) $('#badgesContainer').html("already in last 100 flagged");
+            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+        }
     }
     imageHistory.push(imageIndex);
     $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());

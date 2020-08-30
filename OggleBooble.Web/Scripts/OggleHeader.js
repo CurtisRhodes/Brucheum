@@ -131,7 +131,8 @@ function setHeaderMenu(folderId, subdomain) {
             $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
             // top row
             // <div id='bannerTitle' class='headerTitle'></div >\n" +
-            $('#bannerTitle').html("every playboy centerfold");  // 1132
+            $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
+            $('#bannerTitle').html("<span style='color:#fff;'>every playboy centerfold</span>");  // 1132
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"PBB\",3912,\"magazine covers\",1986)'>magazine covers</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",3912,\"pictorials\",4015)'>pictorials</a>,\n" +
@@ -139,6 +140,9 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"PBB\",3912,\"cybergirls\",3796)'>cybergirls</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",3912,\"Pmoy\",4013)'>Pmoy</a>\n");
             // <div id='topRowRightContainer'></div>" +
+            $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
+            $('#topRowRightContainer').append(addBannerButton("archive"));
+            $('#topRowRightContainer').append(addBannerButton("porn", "OgglePorn"));
 
             // bottom row
             // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
@@ -166,7 +170,8 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"cybergirls\",3796)'>cybergirls</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"Pmoy\",4013)'>Pmoy</a>\n");
             $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
-            //$('#topRowRightContainer').html(addBannerButton("archive"));
+            $('#topRowRightContainer').append(addBannerButton("archive"));
+            $('#topRowRightContainer').append(addBannerButton("porn", "OgglePorn"));
             // bottom row
             // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
             $('#breadcrumbContainer').html("every playboy centerfold");
@@ -228,7 +233,8 @@ function setLoginSection(subdomain) {
     let userName = getCookieValue("UserName");
     if (!isNullorUndefined(userName)) {
         let isLoggedIn = getCookieValue("IsLoggedIn");
-        if (!isNullorUndefined(isLoggedIn)) {
+        //alert("isLoggedIn: " + isLoggedIn);
+        if (isLoggedIn == "true") {
             $('#spnUserName').html(userName);
             $('#optionLoggedIn').show();
             $('#optionNotLoggedIn').hide();
@@ -493,7 +499,7 @@ function headerHtml(folderId, subdomain) {
         "               <div id='optionLoggedIn' class='displayHidden'>\n" +
         //"                   <div class='hoverTab' id='dashboardMenuItem' class='displayHidden'><a href='/index.html?subdomain=dashboard'>Dashboard</a></div>\n" +
         "                   <div class='hoverTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
-        "                   <div class='hoverTab'><a href='javascript:onLogoutClick(" + folderId + ")'>Log Out</a></div>\n" +
+        "                   <div class='hoverTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
         "               </div>\n" +
         "               <div id='optionNotLoggedIn' class='displayHidden'>\n" +
         "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +

@@ -2,9 +2,9 @@
     try {
         var visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
-            verifiyVisitor(calledFrom, folderId);
-            logError("VVE", folderId, "sessionId: " + window.sessionStorage["sessionId"], "rtpe/" + calledFrom);
-            visitorId = "unknown";
+            //verifiyVisitor(calledFrom, folderId);
+            logError("VVE", folderId,"isNullorUndefined(visitorId)", "rtpe/" + calledFrom);
+            //visitorId = "unknown";
         }
         logEvent(eventCode, folderId, "(rtpe) " + calledFrom, eventDetail);
         performEvent(eventCode, eventDetail, folderId);

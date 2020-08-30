@@ -14,10 +14,10 @@ namespace OggleBooble.Api.MySqlDataContext
         public OggleBoobleMySqlContext() : base("name=GoDaddyMySql") { }
 
         public virtual DbSet<VirtualFolder> VirtualFolders { get; set; }
-        //public virtual DbSet<ImageLink> ImageLinks { get; set; }       
+        public virtual DbSet<StaticPageHit> StaticPageHits { get; set; }       
         public virtual DbSet<ImageFile> ImageFiles { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
-        //public virtual DbSet<DirTree> DirTrees { get; set; }
+        public virtual DbSet<IpInfoHit> IpInfoHits { get; set; }
         public virtual DbSet<ImageHit> ImageHits { get; set; }
         public virtual DbSet<PageHit> PageHits { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
@@ -37,7 +37,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
         public virtual DbSet<PageHitTotals> PageHitTotal { get; set; }
         public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
-        public virtual DbSet<IpInfoCall> IpInfoCalls { get; set; }
         public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
 
@@ -54,6 +53,27 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<ImageComment> ImageComments { get; set; }
         public virtual DbSet<UserCredit> UserCredits { get; set; }
     }
+
+    [Table("OggleBooble.StaticPageHit")]
+    public class StaticPageHit
+    {
+        [Key]
+        public string VisitorId { get; set; }
+        public string CalledFrom { get; set; }
+        public int FolderId { get; set; }
+        public DateTime Occured { get; set; }
+    }
+
+    [Table("OggleBooble.IpInfoHit")]
+    public class IpInfoHit
+    {
+        [Key]
+        public string VisitorId { get; set; }
+        public string IpAddress { get; set; }
+        public int FolderId { get; set; }
+        public DateTime Occured { get; set; }
+    }
+
 
     [Table("OggleBooble.ChangeLog")]
     public class ChangeLog
@@ -173,16 +193,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public string SiteCode { get; set; }
         public string Href { get; set; }
         public string LinkStatus { get; set; }
-    }
-
-    [Table("OggleBooble.IpInfoCall")]
-    public class IpInfoCall
-    {
-        [Key]
-        public string SessionId { get; set; }
-        public string BrowserInfo { get; set; }
-        public string IpAddress { get; set; }
-        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.ErrorLog")]

@@ -109,17 +109,13 @@ namespace OggleBooble.Api.Models
         public string EventDetail { get; set; }
         public int FolderId { get; set; }
     }
-    //public class GetVisitorModel
-    //{
-    //    public string VisitorId { get; set; }
-    //    public string UserName { get; set; }
-    //    public string IpAddress { get; set; }
-    //    public string City { get; set; }
-    //    public string Region { get; set; }
-    //    public string Country { get; set; }
-    //    public string GeoCode { get; set; }
-    //    public string Success { get; set; }
-    //}
+
+    public class IpHitModel
+    {
+        public string VisitorId { get; set; }
+        public string IpAddress { get; set; }
+        public int FolderId { get; set; }
+    }
 
     public class LogVisitSuccessModel
     {
@@ -138,6 +134,11 @@ namespace OggleBooble.Api.Models
         public string Region { get; set; }
         public string Country { get; set; }
         public string GeoCode { get; set; }
+    }
+    public class AddVisitorSuccessModel
+    {
+        public string VisitorId { get; set; }
+        public string Success { get; set; }
     }
     public class FeedBackModel
     {

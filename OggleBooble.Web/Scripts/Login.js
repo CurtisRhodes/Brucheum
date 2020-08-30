@@ -22,6 +22,7 @@ function showLoginDialog() {
 }
 
 function attemptLogin() {
+
     var userName = $('#txtLoginUserName').val();
     var clearPasswod = $('#txtLoginClearPassword').val();
     if (validateLogin()) {
@@ -265,7 +266,6 @@ function validateRegister() {
     $('#errRegisterPassword').hide();
     return true;
 }
-
 
 var registerEmail;
 var requestedPrivileges = [];

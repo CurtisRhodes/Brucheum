@@ -101,20 +101,14 @@
                             $('#dots').html(dots);
                         }
                         else {
-
                             clearInterval(waiter2);
                             $('#dots').html('');
                             changeFavoriteIcon("redBallon");
+                            localhostBypass();
 
-                            if (isNullorUndefined(params.tic)) {
-                                let visitorId = getCookieValue("VisitorId");
-                                if (isNullorUndefined(visitorId)) {
-                                    getIpInfo(params.folder, "aa");
-                                }
-                            }
-                            else
-                                addVisit(params.folder);
-
+                            if (!isNullorUndefined(params.tic))
+                                logStaticPageHit(params.folder, "album");
+                            
                             loadAlbum(params.folder);
                             //if (isInRole("NewUser")) {
                         }

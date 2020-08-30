@@ -2,6 +2,7 @@
 function isInRole(roleName) {
     try {
         if (isNullorUndefined(window.localStorage["userRole"])) {
+            $.ajax()
             const visitorId = getCookieValue("VisitorId");
             if (isNullorUndefined(visitorId))
                 window.localStorage["userRole"] = "no";
@@ -28,12 +29,14 @@ function resetUserSettings() {
 }
 
 function isLoggedIn() {
-    if (document.domain === 'localhost')
-        return true;
-    var userNameExist = true;
-    if (isNullorUndefined(getCookieValue("UserName")))
-        userNameExist = false;
-    return userNameExist;
+    //if (document.domain === 'localhost')
+    //    return true;
+    //var userNameExist = true;
+    //if (isNullorUndefined(getCookieValue("UserName")))
+    //    userNameExist = false;
+    //return userNameExist;
+    var isLoggedIn = getCookieValue("IsLoggedIn");
+    return isLoggedIn == "true";
 }
 
 function getUserSettings(visitorId) {

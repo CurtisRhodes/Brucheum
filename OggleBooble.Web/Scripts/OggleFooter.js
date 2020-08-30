@@ -1,7 +1,7 @@
 ﻿function setOggleFooter(pageId, rootFolder) {
     //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
 
-    $('.footer').html(defaultFooter(pageId, rootFolder));
+    $('.footer').html(defaultFooterHTML(pageId, rootFolder));
 
     // ranker     homePageId = 3907;
     // boobs      homePageId = 3908;
@@ -120,8 +120,9 @@
     }
 }
 
-function defaultFooter(pageId, rootFolder) {
-    return "<div class='flexContainer'>\n" +
+function defaultFooterHTML(pageId, rootFolder) {
+    var defaultFooter =
+        "<div class='flexContainer'>\n" +
         "    <div class='footerCol'>\n" +  // column 1
         "       <div class='clickable' onclick='rtpe(\"FLC\",\"feedback\"," + rootFolder + "\"," + pageId + ")'>Feedback</div>\n" +
         "       <div id='footerCol1' class='footerColCustContainer'></div>\n" +
@@ -137,23 +138,29 @@ function defaultFooter(pageId, rootFolder) {
         "    <div class='footerCol'>\n" +  // column 4
         //          window.open("/album.html?folder=" + pageId, "_blank");  // open in new tab
         "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>dashboard</div>\n" +
-        "       <div id='footerCol4' class='footerColCustContainer'></div>\n" +        
-        "    </div>\n" +
-        "    <div class='footerCol'>\n" +  // column 5
-        "       <div id='footerPageHits'></div>\n" +
-        "       <div id='footerCol5' class='footerColCustContainer'></div>\n" +
-        "       <div>page type: " + rootFolder + "</div>\n" +
-        "       <div id='footerFolderType'></div>\n" +
-        "       <div id='footerStaticPage'></div>\n" +
-        //"  <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
-        //"  <div id='footerLastBuild' class='footerVersionMessage'></div>\n";
-        "    </div>\n" +
-        "</div>\n" +
-        "<div class='footerFooter'>\n" +
-        "    <div id='footerMessage'></div>\n" +
-        "    <div id='footerMessage2'></div>\n" +
-        "    <div id='copyright'>&copy; 2020 - <a href='https://curtisrhodes.com/IntelDsgn'>Intelligent Design SoftWare</a></div>\n" +
-        "</div>\n" +
-        "</div>\n";
+        "       <div id='footerCol4' class='footerColCustContainer'></div>\n" +
+        "    </div>\n";
+
+    if (isInRole("admin")) {
+        defaultFooter +=
+            "    <div class='footerCol'>\n" +  // column 5
+            "       <div id='footerPageHits'></div>\n" +
+            "       <div id='footerCol5' class='footerColCustContainer'></div>\n" +
+            "       <div>page type: " + rootFolder + "</div>\n" +
+            "       <div id='footerFolderType'></div>\n" +
+            "       <div id='footerStaticPage'></div>\n" +
+            //"  <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
+            //"  <div id='footerLastBuild' class='footerVersionMessage'></div>\n";
+            "    </div>\n";            
     }
+    defaultFooter +=
+        "   </div>\n<div class='footerFooter'>\n" +
+        "       <div id='footerMessage'></div>\n" +
+        "       <div id='footerMessage2'></div>\n" +
+        "       <div id='copyright'>&copy; 2020 - <a href='https://curtisrhodes.com/IntelDsgn'>Intelligent Design SoftWare</a></div>\n" +
+        "   </div>\n" +
+        "</div>\n";
+
+    return defaultFooter;
+}
 

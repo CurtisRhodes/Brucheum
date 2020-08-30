@@ -10,27 +10,25 @@ let pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
 function setCookieValue(elementName, elementValue) {
     //alert("setCookieValue(" + elementName + "," + elementValue + ")");
     window.localStorage[elementName] = elementValue;
-
-    let decodedCookie = "";
+    let visitorId = null, isLoggedIn = "true", decodedCookie = "";
     if (document.cookie) {
-        //let visitorId = getCookieValue("VisitorId");
-        //let userName = getCookieValue("UserName");
-        //let isLoggedIn = getCookieValue("IsLoggedIn");
         decodedCookie = decodeURIComponent(document.cookie);
-        let cookieElements = decodedCookie.split(';');
+        //       let cookieObj = JSON.parse(decodeURIComponent(document.cookie));
+        // cookieObj.elementName = elementValue;
+        // $.each(cookieObj, function (idx, obj) {
         let cookieItem, cookieItemName, cookieItemValue;
+        let cookieElements = decodedCookie.split(",");
         for (var i = 0; i < cookieElements.length; i++) {
             cookieItem = cookieElements[i];
             cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
             cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
-            if (cookieItemName === "UserName") userName = cookieItemValue;
+            //if (cookieItemName === "UserName") userName = cookieItemValue;
             if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
             if (cookieItemName === "IsLoggedIn") isLoggedIn = cookieItemValue;
         }
     }
-
     if (elementName === "IsLoggedIn") isLoggedIn = elementValue;
-    if (elementName === "UserName") userName = elementValue;
+    //if (elementName === "UserName") userName = elementValue;
     if (elementName === "VisitorId") visitorId = elementValue;
     //deleteCookie();
     expiryDate = new Date();
@@ -46,10 +44,10 @@ function getCookieValue(itemName) {
 
     if (isNullorUndefined(returnValue)) {
         let decodedCookie = decodeURIComponent(document.cookie);
-        let cookieElements = decodedCookie.split(',');
+        let cookieElements = decodedCookie.split(",");
         let cookieItem, cookieItemName, cookieItemValue;
         for (var i = 0; i < cookieElements.length; i++) {
-            cookieItem = cookieElements[i].split(':');
+            cookieItem = cookieElements[i].split(":");
             cookieItemName = cookieItem[0].trim();//.substring(0, cookieElements[i].indexOf("=")).trim();
             cookieItemValue = cookieItem[1];//.substring(cookieElements[i].indexOf("=") + 1);
             if (cookieItemName === itemName) {
@@ -305,8 +303,8 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     {
         let visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId))
-            verifiyVisitor(calledFrom, folderId);
-            visitorId = "3:20";
+            //verifiyVisitor(calledFrom, folderId);
+            visitorId = "unknown";
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogEvent",
