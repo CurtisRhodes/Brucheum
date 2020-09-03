@@ -59,8 +59,12 @@ function logPageHit(folderId) {
     }
 
     if (visitorId.indexOf("-2282-") > 0) {
-        //getIpInfo(folderId, "logPageHit/-2282-");
-        logEvent("XOM", folderId, "logPageHit", "-2282-");
+        getIpInfo(folderId, "logPageHit/-2282-");
+        logError("XOM", folderId, "-2282-", "logPageHit");
+    }
+    if (visitorId == "bypass") {
+        getIpInfo(folderId, "logPageHit/bypass");
+        logError("XOM", folderId, "-2282-", "logPageHit");
     }
 
     $.ajax({
@@ -71,7 +75,12 @@ function logPageHit(folderId) {
                 logVisit(visitorId, folderId);
             }
             else {
-                logError("AJX", folderId, pageHitSuccess.Success, "logPageHit");
+                if (pageHitSuccess.Success == "VisitorId not found") {
+                    getIpInfo(folderId, "logPageHit");
+                    //logError("XOM", folderId, "-2282-", "logPageHit");
+                }
+                else
+                    logError("AJX", folderId, pageHitSuccess.Success, "visitorId: " + visitorId, "logPageHit");
             }
         },
         error: function (jqXHR) {
@@ -87,6 +96,11 @@ function logVisit(visitorId, folderId) {
         logError("BUG", folderId, "log visit called with no visitorId", "logVisit");
         return;
     }
+    if (visitorId == "bypass") {
+        getIpInfo(folderId, "logVisit");
+        return;
+    }
+
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
@@ -104,11 +118,11 @@ function logVisit(visitorId, folderId) {
             }
             else {
                 if (logVisitSuccessModel.Success === "VisitorId not found") {
-                    //setCookieValue("VisitorId", "bypass");
                     logError("LGV", folderId, "VisitorId: " + visitorId + " not found in Visitor table", "logVisit");
                     //getIpInfo(folderId, "logVisit");
                 }
-                logError("AJX", folderId, logVisitSuccessModel.Success, "logVisit");
+                else
+                    logError("AJX", folderId, logVisitSuccessModel.Success, "logVisit");
             }
         },
         error: function (jqXHR) {
@@ -123,8 +137,10 @@ function getIpInfo(folderId, calledFrom) {
     try {
         let visitorId = getCookieValue("VisitorId");
         if (!isNullorUndefined(visitorId)) {
-            logError("BUG", folderId, "attempt to getIpInfo for visitorId: " + visitorId, calledFrom);
-            return;
+            if (visitorId != "bypass") {
+                logError("BUG", folderId, "attempt to getIpInfo for visitorId: " + visitorId, "getIpInfo/" + calledFrom);
+                return;
+            }
         }
         if (isNullorUndefined(window.sessionStorage["sessionId"])) {
             window.sessionStorage["sessionId"] = "we have been here before";

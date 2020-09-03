@@ -9,37 +9,41 @@
 var loginFromPageId;
 function showLoginDialog() {
     $('#centeredDialogTitle').html("Log In to OggleBooble");
- +   $('#centeredDialogContents').html(loginDialogHtml());
-
-    // $("#centeredDialogContainer").css("width", "400");
-
+    $('#centeredDialogContents').html(loginDialogHtml());
+    $("#txtLoginClearPassword").keyup(function (event) {
+        if (event.keyCode === 13) {
+            attemptLogin();
+        }
+    });
     $("#vailShell").fadeIn();
-    $("#centeredDialogContainer").fadeIn();
+    $("#centeredDialogContainer").draggable().fadeIn();
     $('.validationError').hide();
-
     if (typeof pause === 'function')
         pause();
 }
 
 function attemptLogin() {
-
     var userName = $('#txtLoginUserName').val();
     var clearPasswod = $('#txtLoginClearPassword').val();
     if (validateLogin()) {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + userName + "&passWord=" + clearPasswod,
-            success: function (success) {
-                if (success === "ok") {
+            success: function (successModel) {
+                if (successModel.Success === "ok") {
                     setCookieValue("UserName", userName);
                     setCookieValue("IsLoggedIn", true);
+                    setCookieValue("VisitorId", successModel.ReturnValue);
                     logEvent("LOG", loginFromPageId, "Successfull log in: " + getCookieValue("UserName"));
                     displayStatusMessage("ok", "thanks for logging in " + userName);
+                    window.localStorage["userRole"] = null;
                     window.location.href = ".";
                 }
                 else {
-                    $('#loginValidationSummary').html(success).show();
-                    logError("AJX", loginFromPageId, success, "attemptLogin");
+                    if (successModel.ReturnValue == "valid")
+                        $('#loginValidationSummary').html(successModel.Success).show();
+                    else
+                        logError("AJX", loginFromPageId, successModel.Success, "attemptLogin");
                 }
             },
             error: function (jqXHR) {
@@ -77,20 +81,19 @@ function profilePease() {
 }
 
 function cancelLogin() {
-    $('#modalContainer').hide();
-    //$('#loginDialog').hide();
+    dragableDialogClose();
     if (typeof resume === 'function')
         resume();
 }
+
 function transferToRegisterPopup() {
     //$('#loginDialog').dialog('close');
-    $('#modalContainer').hide();
     //$('#loginDialog').hide();
-    onRegisterClick();
+    showRegisterDialog(loginFromPageId);
 }
 
 function loginDialogHtml() {
-    return  "<div id='errLoginUserName' class='validationError'>Required</div>\n" +
+    let loginHtml = "<div id='errLoginUserName' class='validationError'>Required</div>\n" +
         "    <label>User Name</label><br>\n" +
         "    <input id='txtLoginUserName' class='roundedInput'><br>\n" +
         "    <div id='errLoginPassword' class='validationError'>Required</div>\n" +
@@ -134,50 +137,29 @@ function loginDialogHtml() {
         //"       Google\n" +
         //"   </div>\n" +
         "</div>\n";
+    return loginHtml;
 }
-
-$("#txtLoginClearPassword").keyup(function (event) {
-    if (event.keyCode === 13) {
-        alert("$(#txtLoginClearPassword).keyup");
-        attemptLogin();
-    }
-});
 
 function checkFaceBookLoginState() {
     alert("checkFaceBookLoginState()");
 }
 
-function showRegisterDialogHtml() {
-    $('#registerDialogContainer').html(
-        "<div id='registerUserDialog' class='modalDialog' title='Register'>\n" +
-        "   <div id='registerValidationSummary' class='validationError'></div>\n" +
-        "   <div id='errRegisterUserName' class='validationError'>Required</div>\n" +
-        "   <label style='white-space:nowrap;'>user name</label><span class='requiredField' title='required'>  *</span><br>\n" +
-        "   <input id='txtRegisterUserName' type='text' class='roundedInput' placeholder='your go by name'><br>\n" +
-        "   <div id='errRegisterPassword' class='validationError'>Password Required</div>\n" +
-        "   <label>password</label><span class='requiredField' title='required'>  *</span><br>\n" +
-        "   <input id='txtRegisterClearPassword' class='roundedInput' placeholder='********'><br>\n" +
-        "   <label style='white-space:nowrap;'>retype password</label><span class='requiredField' title='retype Password required'>  *</span><br>\n" +
-        "   <input id='txtRegisterClearPasswordRetype' class='roundedInput' autocomplete='off' placeholder='********'><br>\n" +
-        "   <div class='rememberMe'>\n" +
-        "       <input id='ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)\n" +
-        "   </div>\n" +
-        "   <label style='white-space:nowrap;'>First Name</label>\n" +
-        "   <input id='txtFirstName' type='text' class='roundedInput'><br>\n" +
-        "   <label style='white-space:nowrap;'>Last Name</label>\n" +
-        "   <input style='white-space:nowrap;' id='txtLastName' type='text' class='roundedInput'><br>\n" +
-        "   <label>Email</label>\n" +
-        "   <input id='txtEmail' type='email' class='roundedInput' placeholder='you@example.org'><br>\n" +
-        "   <button class='roundendButton submitButton' onclick='attemptRegister()'>Submit</button>\n" +
-        "</div>\n");
-}
+///////////////////////////////////////////////////////////////////////////////////////
 
-function showRegisterDialog(pageId) {
-    logEvent("RDO", pageId, "YESS!!!");
-    $('#customMessage').hide();
-    forgetShowingCustomMessage = true;
-    $('#modalContainer').show();
-    $('#registerUserDialog').show();
+function showRegisterDialog(folderId) {
+    loginFromPageId = folderId;
+    let visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId)) {
+        getIpInfo(folderId, "showRegisterDialog");
+        logError("BUG", folderId, "attempt to register with no visitorId", "showRegisterDialog");
+    }
+    $('#centeredDialogTitle').html("Register and Login to OggleBooble");
+    $('#centeredDialogContents').html(registerDialogHtml());
+    $("#vailShell").fadeIn();
+    $("#centeredDialogContainer").draggable().fadeIn();
+    $('.validationError').hide();
+    // $("#centeredDialogContainer").css("width", "400");
+    logEvent("RDO", folderId, "YESS!!!");
     if (typeof pause === 'function')
         pause();
 }
@@ -185,46 +167,39 @@ function showRegisterDialog(pageId) {
 function attemptRegister() {
     if (validateRegister()) {
         try {
-            //if (document.domain === 'localhost') alert("attempting to register");
-            var registeredUserModel = {};
-            registeredUserModel.VisitorId = getCookieValue("VisitorId");
-            registeredUserModel.UserName = $('#txtRegisterUserName').val();
-            registeredUserModel.Pswrd = $('#txtRegisterClearPassword').val();
-            registeredUserModel.FirstName = $('#txtFirstName').val();
-            registeredUserModel.LastName = $('#txtLastName').val();
-            registeredUserModel.Email = $('#txtEmail').val();
-            registeredUserModel.IpAddress = window.localStorage["IpAddress"];
-            registeredUserModel.Status = "NEW";
-
             $.ajax({
                 type: "POST",
                 url: settingsArray.ApiServer + "/api/Login/RegisterUser",
-                data: registeredUserModel,
-                success: function (success) {
-                    if (success === "ok") {
-                        $('#registerUserDialog').dialog('close');
-                        //alert("register happened. Attempt Login");
-                        console.log("register happened. Attempt Login");
-                        setCookieValue("UserName", registeredUserModel.UserName);
-                        attemptLogin(registeredUserModel.UserName, registeredUserModel.Pswrd);
-
-                        //if (document.domain === 'localhost') alert("register success");
-                        $('#spnUserName').html(getCookieValue("UserName"));
-                        $('#optionLoggedIn').show();
-                        $('#optionNotLoggedIn').hide();
-
-                        logEvent("REG", loginFromPageId, "User: " + registeredUserModel.UserName);
-
-                        //registerEmail = $('#txtEmail').val();
-                        //alert("registerEmail: " + registerEmail);
-                        showCustomMessage(96, false);
-                        //setTimeout(function () { $('#userEmail').text($('#txtEmail').val()); }, 2000);
-                        //displayStatusMessage("ok", "thanks for Registering in " + getCookieValue("UserName"));
-                        // show welcom to Oggle Booble message.
+                data: {
+                    VisitorId: getCookieValue("VisitorId"),
+                    UserName: $('#txtRegisterUserName').val(),
+                    ClearPassword: $('#txtRegisterClearPassword').val(),
+                    FirstName: $('#txtRegisterFirstName').val(),
+                    LastName: $('#txtLastName').val(),
+                    UserRole: "normal",
+                    UserCredits: 5000,
+                    Email: $('#txtRegisterEmail').val(),
+                    Status: "NEW"
+                },
+                success: function (successModel) {
+                    if (successModel.Success === "ok") {
+                        registerHappyPath();
                     }
                     else {
-                        logError("AJX", loginFromPageId, success, "attemptRegister");
-                        $('#registerValidationSummary').html(response).show();
+                        if (successModel.Success == "user name already exists") {
+                            $('#errRegisterUserName').text("user name already exists").show();
+                        }
+                        else {
+                            if (successModel.Success == "visitorId already exists") {
+                                setCookieValue("VisitorId", successModel.ReturnValue);
+                                registerHappyPath(successModel.Success);
+
+                            }
+                            else {
+                                logError("AJX", loginFromPageId, success, "attemptRegister");
+                                $('#registerValidationSummary').html(response).show();
+                            }
+                        }
                     }
                 },
                 error: function (jqXHR) {
@@ -239,15 +214,38 @@ function attemptRegister() {
     }
 }
 
+function registerHappyPath(successMessage) {
+    sendEmailToYourself("Someone Registed !!","");
+    if (successMessage == "visitorId already exists") 
+        displayStatusMessage("ok", "thanks for Registering " + $('#txtRegisterUserName').val());
+    else
+        displayStatusMessage("warning", "thanks for Registering " + $('#txtRegisterUserName').val() + " but " + successMessage);
+
+    setCookieValue("IsLoggedIn", "true");
+    setCookieValue("IsLoggedIn", "true");
+    setCookieValue("UserName", $('#txtRegisterUserName').val());
+    $('#spnUserName').html(getCookieValue("UserName"));
+    $('#optionLoggedIn').show();
+    $('#optionNotLoggedIn').hide();
+    dragableDialogClose();
+    if (typeof resume === 'function')
+        resume();
+
+
+    //window.location.href = ".";
+    showCustomMessage(96, false);
+
+}
+
 function validateRegister() {
     if ($('#txtRegisterUserName').val() === "") {
-        $('#errUserName').show();
+        $('#errRegisterUserName').show();
         return false;
     }
-    $('#errUserName').hide();
+    $('#errRegisterUserName').hide();
 
     if ($('#txtRegisterClearPassword').val() === "") {
-        $('#errRegisterPassword').show();
+        $('#errRegisterPassword').text("password required").show();
         return false;
     }
 
@@ -259,12 +257,42 @@ function validateRegister() {
         $('#errRegisterPassword').text("password retype does not match").show();
         return false;
     }
-
-    //<input id="txtFirstName" type="text" class="roundedInput"><br>
-    //<input style="white-space:nowrap;" id="txtLastName" type="text" class="roundedInput"><br>
-    //<input id="txtEmail" type="email" class="roundedInput" placeholder="you@example.org"><br>
     $('#errRegisterPassword').hide();
+    if ($('#txtRegisterEmail').val() === "") {
+        $('#errRegisterEmail').show();
+        return false;
+    }
+    if (!isValidEmail($('#txtRegisterEmail').val())) {
+        $('#errRegisterEmail').html("invalid email").show();
+        hasValidtionErrors = true;
+    }
+    $('#errRegisterEmail').hide();
+    if ($('#txtRegisterFirstName').val() === "")
+        $('#txtRegisterFirstName').val("unknown");
     return true;
+}
+
+function registerDialogHtml() {
+    return "   <div id='registerValidationSummary' class='validationError'></div>\n" +
+        "   <div id='errRegisterUserName' class='validationError'>Required</div>\n" +
+        "   <label style='white-space:nowrap;'>user name</label><span class='requiredField' title='required'>  *</span><br>\n" +
+        "   <input id='txtRegisterUserName' type='text' class='roundedInput' placeholder='your go by name'><br>\n" +
+        "   <div id='errRegisterPassword' class='validationError'>Password Required</div>\n" +
+        "   <label>password</label><span class='requiredField' title='required'> *</span><br>\n" +
+        "   <input id='txtRegisterClearPassword' class='roundedInput' placeholder='********'><br>\n" +
+        "   <label style='white-space:nowrap;'>retype password</label><span class='requiredField' title='retype Password required'>  *</span><br>\n" +
+        "   <input id='txtRegisterClearPasswordRetype' class='roundedInput' autocomplete='off' placeholder='********'><br>\n" +
+        "   <div class='rememberMe'>\n" +
+        "       <input id='ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)\n" +
+        "   </div>\n" +
+        "   <label style='white-space:nowrap;'>First Name</label>\n" +
+        "   <input id='txtRegisterFirstName' type='text' class='roundedInput'><br>\n" +
+        "   <label style='white-space:nowrap;'>Last Name</label>\n" +
+        "   <input style='white-space:nowrap;' id='txtLastName' type='text' class='roundedInput'><br>\n" +
+        "   <div id='errRegisterEmail' class='validationError'>Email Required</div>\n" +
+        "   <label>Email</label>\n" +
+        "   <input id='txtRegisterEmail' type='email' class='roundedInput' placeholder='you@example.org'><br>\n" +
+        "   <button class='roundendButton submitButton' onclick='attemptRegister()'>Submit</button>\n";
 }
 
 var registerEmail;

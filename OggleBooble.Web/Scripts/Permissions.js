@@ -1,21 +1,30 @@
 ﻿
 function isInRole(roleName) {
     try {
-        if (isNullorUndefined(window.localStorage["userRole"])) {
-            $.ajax()
-            const visitorId = getCookieValue("VisitorId");
-            if (isNullorUndefined(visitorId))
-                window.localStorage["userRole"] = "no";
-            else
-                window.localStorage["userRole"] = "normal";
-            console.log("low role added to localstorage");
+        if (roleName == "not registered")
+            return false;
+        if (document.domain === 'localhost')
+            return true;
+        const visitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(visitorId)) {
+            console.log("visitorId undefined in isInRole")
+            return false;
         }
-        let userRole = window.localStorage["userRole"];
-        if (userRole === "admin")
-            return true;
-        if (userRole === roleName)
-            return true;
-    } catch (e) { logError("CAT", 3908, e, "isInRole"); }
+
+        if (isNullorUndefined(window.localStorage["userRole"])) {
+            console.log("calling getUserInfo from isInRole")
+            getUserInfo("isInRole", roleName);
+        }
+        else {
+            let userRole = window.localStorage["userRole"];
+            console.log("userRole from localStorage: " + userRole + " for visitorId: " + visitorId);
+            if (userRole === "admin")
+                return true;
+            if (userRole === roleName)
+                return true;
+        }
+    }
+    catch (e) { logError("CAT", 3908, e, "isInRole"); }
 }
 
 function resetUserSettings() {
@@ -29,47 +38,53 @@ function resetUserSettings() {
 }
 
 function isLoggedIn() {
-    //if (document.domain === 'localhost')
-    //    return true;
-    //var userNameExist = true;
-    //if (isNullorUndefined(getCookieValue("UserName")))
-    //    userNameExist = false;
-    //return userNameExist;
+    if (document.domain === 'localhost')
+        return true;
     var isLoggedIn = getCookieValue("IsLoggedIn");
     return isLoggedIn == "true";
 }
 
-function getUserSettings(visitorId) {
+function getUserInfo(valueRequested, details) {
     try {
-        //alert("who goes here?");
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/OggleUser/GetUserSettings?visitorId=" + visitorId,
-            success: function (successModel) {
-                if (successModel.Success === "ok") {
-
-                    let userSettings = JSON.stringify(successModel.ReturnValue);
-
-
-
-
-                    // console.log("userSettings data loaded into local storage");
-
+        let visitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(visitorId)) {
+            logError("BUG", 1, "I thought visitorId had been tested", "getUserInfo");
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + visitorId,
+                success: function (userInfoModel) {
+                    if (userInfoModel.Success === "ok") {
+                        //window.localStorage["userRole"]
+                        //let userSettings = JSON.stringify(successModel.ReturnValue);
+                        if (isNullorUndefined(window.localStorage["userRole"]))
+                            window.localStorage["userRole"] = userInfoModel.UserRole;
+                        if (valueRequested == "isInRole") {
+                            isInRole(details)
+                        }
+                        // console.log("userSettings data loaded into local storage");
+                    }
+                    else {
+                        if (userInfoModel.Success == "not registered") {
+                            if (valueRequested == "isInRole") {
+                                isInRole("not registered");
+                            }
+                        }
+                        else
+                            logError("AJX", 2, userInfoModel.Success + ". visitorId: " + visitorId, "getUserInfo(permissions)");
+                    }
+                },
+                error: function (jqXHR) {
+                    if (!checkFor404("getUserInfo"))
+                        logError("XHR", 1, getXHRErrorDetails(jqXHR), "getUserInfo");
                 }
-                else
-                    logError("AJX", 3098, successModel.Success, "getUserSettings");
-            },
-            error: function (jqXHR) {
-                if (!checkFor404("getUserSettings"))
-                    logError("XHR", 3908, getXHRErrorDetails(jqXHR), "getUserSettings");
-            }
-        });
+            });
+        }
     } catch (e) {
-        logError("CAT", 3908, e, "getUserSettings");
+        logError("CAT", 3908, e, "getUserInfo");
     }
 }
-
-
 
 function updateUserSettings(visitorId, settingName, settingJson) {
     try {

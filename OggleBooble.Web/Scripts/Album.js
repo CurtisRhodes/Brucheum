@@ -135,7 +135,7 @@ function getAlbumPageInfo(folderId) {
     var infoStart = Date.now();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + apVisitorId + "&folderId=" +apFolderId,
+        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + apVisitorId + "&folderId=" + apFolderId,
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
 
@@ -143,20 +143,20 @@ function getAlbumPageInfo(folderId) {
                 apFolderType = albumInfo.FolderType;
                 document.title = apFolderName + " : OggleBooble";
 
-                switch (albumInfo.FolderType) {
-                    case "singleParent":
-                    case "multiFolder":
-                        $('#deepSlideshowButton').show();
-                        break;
-                    case "singleModel":
-                    case "singleChild":
-                    case "multiModel":
-                        $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
-                        $('#deepSlideshowButton').hide();
-                        break;
-                    default:
-                        logError("SWT", apFolderId, "folder type: " + albumInfo.FolderType + " folderId: " + apFolderId, "getAlbumImages");
+                if (albumInfo.FolderType == "singleModel" || albumInfo.FolderType == "singleChild") {
+                    chargeCredits(apFolderId, albumInfo.RootFolder, albumInfo.FolderType);
+                    $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
+                    $('#deepSlideshowButton').hide();
                 }
+                if ((albumInfo.FolderType === "singleParent") || (albumInfo.FolderType === "multiFolder")) {
+                    getDeepFolderCounts(apFolderId, albumInfo.FileCount);
+                    $('#deepSlideshowButton').show();
+                }
+                if (albumInfo.FolderType === multiModel) {
+                    $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
+                    $('#deepSlideshowButton').hide();
+                }
+
                 if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + albumInfo.FolderType);
 
                 $('#seoPageName').html(albumInfo.FolderName);
@@ -170,6 +170,9 @@ function getAlbumPageInfo(folderId) {
                                 break;
                             case "BAB":
                                 $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Babepedia</a></div>");
+                                break;
+                            case "IND":
+                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Indexx</a></div>");
                                 break;
                             default:
                                 logError("SWT", folderId, "site code: " + obj.SiteCode, "getAlbumPageInfo/TrackBackItems");
@@ -191,19 +194,13 @@ function getAlbumPageInfo(folderId) {
                 }
                 setBreadCrumbs(albumInfo.BreadCrumbs);
 
-                chargeCredits(apFolderId, albumInfo.RootFolder);
-
-                if ((albumInfo.FolderType === "singleParent") || (albumInfo.FolderType === "multiFolder")) {
-                    getDeepFolderCounts(apFolderId, albumInfo.FileCount);
-                }
-
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
             }
-            else logError("AJX",apFolderId, albumInfo.Success, "getAlbumPageInfo");
+            else logError("AJX", apFolderId, albumInfo.Success, "getAlbumPageInfo");
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumPageInfo")) logError("XHR",apFolderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
+            if (!checkFor404("getAlbumPageInfo")) logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
         }
     });
 }
@@ -340,7 +337,7 @@ function directToStaticPage() {
                 logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "directToStaticPage");
         }
     });
-}
+} 
 
 function resizeImageContainer() {
     //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
@@ -388,9 +385,10 @@ function checkAlbumCost() {
         alert("You must be logged in to view this album");
 }
 
-function chargeCredits(apFolderId, rootFolder) {
 
-    let activityCode = "PGV"
+
+function chargeCredits(apFolderId, rootFolder) {
+        let activityCode = "PGV"  //  
     if (rootFolder === "centerfold")
         activityCode = "PBV";
 
@@ -424,6 +422,7 @@ function chargeCredits(apFolderId, rootFolder) {
         }
     });
 }
+
         
 function slowlyShowFolderInfoDialog(folderId) {
     forgetHomeFolderInfoDialog = false;

@@ -6,11 +6,7 @@ function setOggleHeader(folderId, subdomain) {
     hdrSubdomain = subdomain;
 
     $('#oggleHeader').html(headerHtml(folderId, subdomain));
-
-    //$('header').switchClass('pornHeader', 'boobsHeader');
-
-    //changeFavoriteIcon("loading");
-    //changeFavoriteIcon("redBallon");
+    $('#bodydiv').html(bodyHtml(folderId, subdomain));
 
     $('#centeredDialogContents').resizable({
         resize: function () {
@@ -401,10 +397,10 @@ function centeredDialogCancelDragMode() {
     $('#centeredDialogContents').draggable({ disabled: true });
 }
 function dragableDialogClose() {
+    $("#vailShell").fadeOut();
     $('#centeredDialogContainer').fadeOut();
     if (typeof resume === 'function') resume();
 }
-
 function addBannerButton(bannerType, rankerType) {
     switch (bannerType) {
         case "ranker":
@@ -502,15 +498,16 @@ function headerHtml(folderId, subdomain) {
         "                   <div class='hoverTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
         "               </div>\n" +
         "               <div id='optionNotLoggedIn' class='displayHidden'>\n" +
-        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
+        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog(" + folderId + ")'>Register</a></div>\n" +
         "                   <div id='btnLayoutLogin' class='hoverTab'><a href='javascript:showLoginDialog(" + folderId + ")'>Log In</a></div>\n" +
         "               </div>\n" +
         "           </div>\n" +
         "       </div>\n" +
-        "   </div>\n" +
+        "   </div>\n";
+}
 
-        "<div id='indexCatTreeContainer' class='oggleDialogContainer'></div>\n" +
-
+function bodyHtml(folderId, subdomain) {
+    return "<div id='indexCatTreeContainer' class='oggleDialogContainer'></div>\n" +
         "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "       <div id='customMessage' class='customMessageContainer' ></div>\n" +

@@ -65,6 +65,7 @@
 </head>
 <body>
     <div id="oggleHeader" class="stickyHeader boobsHeader"></div>
+    <div id="bodydiv"></div>
     <div class="threeColumnLayout">
         <div id="leftColumnArea" class="leftColumn">
             <div id="pabh" class="promoBox"></div>
@@ -99,7 +100,7 @@
                 spaPageId = 3908;
             else
                 spaPageId = params.spa;
-           
+
             let getXMLsettingsWaiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += "~ ";

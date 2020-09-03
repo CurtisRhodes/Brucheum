@@ -73,12 +73,13 @@
             <div id="feedbackBanner" class="fixedMessageButton">feedback</div>
         </div>
     </div>
+    <div id="bodydiv"></div>
     <div class="footer"></div>
     <script>
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
         $(document).ready(function () {
             $('#deepSlideshow').hide();
-            $('#imageContainer').hide();            
+            $('#imageContainer').hide();
             params = getParams();
             if (isNullorUndefined(params.folder)) {
                 window.location.href = "Index.html";
@@ -108,7 +109,12 @@
 
                             if (!isNullorUndefined(params.tic))
                                 logStaticPageHit(params.folder, "album");
-                            
+                            else {
+                                let visitorId = getCookieValue("VisitorId");
+                                if (isNullorUndefined(visitorId))
+                                    getIpInfo(params.folder, "album");
+                            }
+
                             loadAlbum(params.folder);
                             //if (isInRole("NewUser")) {
                         }

@@ -15,67 +15,89 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpGet]
         [Route("api/Login/VerifyLogin")]
-        public string VerifyLogin(string userName, string passWord)
+        public SuccessModel VerifyLogin(string userName, string passWord)
         {
-            string success = "";
+            SuccessModel successModel = new SuccessModel();
             using (var db = new OggleBoobleMySqlContext())
             {
                 string encryptedPassword = HashSHA256(passWord);
                 RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName && u.Pswrd == encryptedPassword).FirstOrDefault();
                 if (dbRegisteredUser != null)
                 {
-                    //--record Login
-                    success = "ok";
+                    successModel.ReturnValue = dbRegisteredUser.VisitorId;
+                    successModel.Success = "ok";
                 }
                 else
                 {
                     dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName).FirstOrDefault();
                     if (dbRegisteredUser == null)
-                        success = "user name not found";
+                    {
+                        successModel.ReturnValue = "valid";
+                        successModel.Success = "user name not found";
+                    }
                     else
-                        success = "password fail";
+                    {
+                        successModel.ReturnValue = "valid";
+                        successModel.Success = "password fail";
+                    }
                 }
             }
-            return success;
+            return successModel;
         }
 
         [HttpPost]
-        [Route("api/Login/AddUser")]
-        public string AddUser(RegisteredUserModel registeredUserModel, string clearPassword)
+        [Route("api/Login/RegisterUser")]
+        public SuccessModel AddUser(RegisteredUserModel registeredUserModel)
         {
-            string success = "";
+            SuccessModel successModel = new SuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == registeredUserModel.UserName).FirstOrDefault();
-                    if (dbRegisteredUser != null)
-                        success = "user name already exists";
+                    RegisteredUser dbUserName = db.RegisteredUsers.Where(u => u.UserName == registeredUserModel.UserName).FirstOrDefault();
+                    if (dbUserName != null)
+                    {
+                        successModel.Success = "user name already exists";
+                        return successModel;
+                    }
+                    string visitorId = registeredUserModel.VisitorId;
+
+                    RegisteredUser dbUserVisitorId = db.RegisteredUsers.Where(u => u.VisitorId == registeredUserModel.VisitorId).FirstOrDefault();
+                    if (dbUserVisitorId != null)
+                    {
+                        visitorId = successModel.ReturnValue = Guid.NewGuid().ToString();
+                    }
+                    //return "user name already exists";
+                    RegisteredUser dbNewUser = new RegisteredUser()
+                    {
+                        VisitorId = visitorId,
+                        Pswrd = HashSHA256(registeredUserModel.ClearPassword),
+                        UserName = registeredUserModel.UserName,
+                        FirstName = registeredUserModel.FirstName,
+                        LastName = registeredUserModel.LastName,
+                        Status = registeredUserModel.Status,
+                        UserRole = registeredUserModel.UserRole,
+                        Email = registeredUserModel.Email,
+                        UserSettings = registeredUserModel.UserSettings,
+                        UserCredits = registeredUserModel.UserCredits,
+                        Created = DateTime.Now
+                    };
+                    db.RegisteredUsers.Add(dbNewUser);
+                    db.SaveChanges();
+                    if (visitorId == registeredUserModel.VisitorId)
+                        successModel.Success = "ok";
                     else
                     {
-                        RegisteredUser dbNewUser = new RegisteredUser()
-                        {
-                            Pswrd = HashSHA256(clearPassword),
-                            UserName = registeredUserModel.UserName,
-                            FirstName = registeredUserModel.FirstName,
-                            LastName = registeredUserModel.LastName,
-                            Status = registeredUserModel.Status,
-                            UserRole = registeredUserModel.UserRole,
-                            UserSettings = registeredUserModel.UserSettings,
-                            UserCredits=registeredUserModel.UserCredits,
-                            Created = DateTime.Now
-                        };
-                        db.RegisteredUsers.Add(dbNewUser);
-                        db.SaveChanges();
-                        success = "ok";
+                        successModel.ReturnValue = visitorId;
+                        successModel.Success = "visitorId already exists";
                     }
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return successModel;
         }
 
         [HttpGet]
@@ -89,7 +111,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     var dbRegisteredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
                     if (dbRegisteredUser == null)
-                        registeredUser.Success = "not found";
+                        registeredUser.Success = "not registered";
                     else
                     {
                         registeredUser.VisitorId = dbRegisteredUser.VisitorId;
@@ -110,28 +132,6 @@ namespace OggleBooble.Api.Controllers
                 registeredUser.Success = Helpers.ErrorDetails(ex);
             }
             return registeredUser;
-        }
-
-        [HttpPost]
-        [Route("api/User/AwardCredits")]
-        public string AwardCredits(UserCredit userCredit)
-        {
-            string success;
-            try
-            {
-                userCredit.Occured = DateTime.Now;
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    db.UserCredits.Add(userCredit);
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
         }
 
         [HttpPut]
@@ -180,6 +180,57 @@ namespace OggleBooble.Api.Controllers
                 sb.Append(hash[i].ToString("X2"));
             }
             return sb.ToString();
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class UserCreditsController : ApiController
+    {
+        [HttpPost]
+        [Route("api/User/AwardCredits")]
+        public string AwardCredits(UserCredit userCredit)
+        {
+            string success;
+            try
+            {
+                userCredit.Occured = DateTime.Now;
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.UserCredits.Add(userCredit);
+                    var dbUser = db.RegisteredUsers.Where(r => r.VisitorId == userCredit.VisitorId).FirstOrDefault();
+                    if (dbUser != null) {
+                        dbUser.UserCredits = db.UserCredits.Where(c => c.VisitorId == userCredit.VisitorId).Sum(c => c.Credits);
+                    }
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpGet]
+        [Route("api/Login/GetUserCredits")]
+        public SuccessModel GetUserCredits(string visitorId)
+        {
+            var successModel = new SuccessModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    int totalCredits = db.UserCredits.Where(c => c.VisitorId == visitorId).Sum(c => c.Credits);
+                    successModel.ReturnValue = totalCredits.ToString();
+                    successModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
         }
     }
 }

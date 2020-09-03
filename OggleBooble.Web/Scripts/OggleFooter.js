@@ -75,7 +75,7 @@
         case "centerfold": {
             $('#footerCol1').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"cybergirls\"," + pageId + ")'>cybergirls</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"magazine covers\"," + pageId + ")'>magazine covers</div>\n" +
+                //"<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"magazine covers\"," + pageId + ")'>magazine covers</div>\n" +
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"extras\"," + pageId + ")'>Playboy extras</div>\n");
             $('#footerCol2').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"playmate dir tree\"," + pageId + ")'>Playmate List</div>\n" +
@@ -135,23 +135,22 @@ function defaultFooterHTML(pageId, rootFolder) {
         "       <div class='clickable' onclick='rtpe(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
         "       <div id='footerCol3' class='footerColCustContainer'></div>\n" +
         "    </div>\n" +
-        "    <div class='footerCol'>\n" +  // column 4
-        //          window.open("/album.html?folder=" + pageId, "_blank");  // open in new tab
-        "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>dashboard</div>\n" +
+        "    <div class='footerCol'>\n"+  // column 4
+        "       <div id='footerPageHits'></div>\n" +
         "       <div id='footerCol4' class='footerColCustContainer'></div>\n" +
         "    </div>\n";
 
     if (isInRole("admin")) {
         defaultFooter +=
             "    <div class='footerCol'>\n" +  // column 5
-            "       <div id='footerPageHits'></div>\n" +
+            "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>dashboard</div>\n" +
             "       <div id='footerCol5' class='footerColCustContainer'></div>\n" +
             "       <div>page type: " + rootFolder + "</div>\n" +
             "       <div id='footerFolderType'></div>\n" +
             "       <div id='footerStaticPage'></div>\n" +
             //"  <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
             //"  <div id='footerLastBuild' class='footerVersionMessage'></div>\n";
-            "    </div>\n";            
+            "    </div>\n"; 
     }
     defaultFooter +=
         "   </div>\n<div class='footerFooter'>\n" +

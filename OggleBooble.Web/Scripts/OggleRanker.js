@@ -17,7 +17,8 @@ function rankerStartup(rankPref) {
 
     if (isNullorUndefined(rankPref))
         rankPref = "boobs";
-
+    if (rankPref === "poses")
+        rankPref = "boobs";
     if (rankPref === "big%20naturals")
         rankPref = "archive";
 
@@ -133,6 +134,10 @@ function setInitialCheckbox(rankPref) {
 
 function killTimer(rankPref) {
     switch (rankPref) {
+        case "poses":
+            clearInterval(throttleBoobs);
+            throttleBoobs = false;
+            break;
         case "boobs":
             clearInterval(throttleBoobs);
             throttleBoobs = false;
@@ -198,6 +203,7 @@ function unloadBoobsRanker(rankPref) {
 function addMore(rankPref) {
     take = 200;
     switch (rankPref) {
+        case "poses":
         case "boobs":
             if (!throttleBoobs) {
                 throttleBoobs = setInterval(function () {
@@ -303,6 +309,7 @@ function setFolderNameColor(rankPref, textObject) {
             textObject.css("color", "#446983")
             break;
         case "playmates":
+        case "playboy":
         case "centerfold":
             textObject.css("color", "#ed11ef")
             break;
@@ -314,7 +321,7 @@ function setFolderNameColor(rankPref, textObject) {
             textObject.css("color", "#249c40")
             break;
         default:
-            logError("SWT", 3908, "unknown switch option" + rankPref, "setFolderNameColor");
+            logError("SWT", 3908, "unknown switch option: " + rankPref, "setFolderNameColor");
             break;
     }
 }

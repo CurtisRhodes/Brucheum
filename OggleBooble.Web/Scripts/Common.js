@@ -9,6 +9,7 @@ let pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
 
 function setCookieValue(elementName, elementValue) {
     //alert("setCookieValue(" + elementName + "," + elementValue + ")");
+    try {
     window.localStorage[elementName] = elementValue;
     let visitorId = null, isLoggedIn = "true", decodedCookie = "";
     if (document.cookie) {
@@ -22,21 +23,24 @@ function setCookieValue(elementName, elementValue) {
             cookieItem = cookieElements[i];
             cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
             cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
-            //if (cookieItemName === "UserName") userName = cookieItemValue;
+            if (cookieItemName === "UserName") userName = cookieItemValue;
             if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
             if (cookieItemName === "IsLoggedIn") isLoggedIn = cookieItemValue;
         }
     }
     if (elementName === "IsLoggedIn") isLoggedIn = elementValue;
-    //if (elementName === "UserName") userName = elementValue;
+    if (elementName === "UserName") userName = elementValue;
     if (elementName === "VisitorId") visitorId = elementValue;
     //deleteCookie();
     expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() + 9);
-    //let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
-    let cookieString = "VisitorId:" + visitorId + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+    let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+    //let cookieString = "VisitorId:" + visitorId + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
     document.cookie = cookieString;
     //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
+    } catch (e) {
+        
+    }
 }
 
 function getCookieValue(itemName) {
@@ -372,48 +376,59 @@ function containsRomanNumerals(strLabel) {
 }
 
 function changeFavoriteIcon(icon) {
-    let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-    link.type = 'image/x-icon';
-    link.rel = 'shortcut icon';
-    switch (icon) {
-        case "centerfold": link.href = 'https://ogglebooble.com/images/playboyballon.png'; break;
-        case "porn": link.href = 'https://ogglebooble.com/images/cslips03.png'; break;
-        case "soft": link.href = 'https://ogglebooble.com/images/redwoman.ico'; break;
-        case "loading":
-            link.href = "https://ogglebooble.com/images/loader.gif";
-            link.type = 'image/gif';
-            break;
-        case "redBallon": link.href = 'Images/favicon.png'; break;
-        default: link.href = 'Images/favicon.png';
+    try {
+        let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        switch (icon) {
+            case "centerfold": link.href = 'https://ogglebooble.com/images/playboyballon.png'; break;
+            case "porn": link.href = 'https://ogglebooble.com/images/cslips03.png'; break;
+            case "soft": link.href = 'https://ogglebooble.com/images/redwoman.ico'; break;
+            case "loading":
+                link.href = "https://ogglebooble.com/images/loader.gif";
+                link.type = 'image/gif';
+                //link = "<link rel='icon' href='https://ogglebooble.com/images/loader.gif' type='image/gif' />";
+                break;
+            case "redBallon": link.href = 'Images/favicon.png'; break;
+            default: link.href = 'Images/favicon.png'; break;
+        }
+        document.getElementsByTagName('head')[0].appendChild(link);
+    } catch (e) {
+        logError("CAT", 3992, e, "changeFavoriteIcon");
     }
-    document.getElementsByTagName('head')[0].appendChild(link);
 }
 
+function animateFaviconGif() { }
+
 function commonDirTreeClick(danniPath, folderId) {
-    //alert("activeDirTree: "+activeDirTree);
-    pSelectedTreeId = folderId;
-    pSelectedTreeFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
-    //$("#mainMenuContainer").html($('.txtLinkPath').val());
-    switch (activeDirTree) {
-        case "dashboard":
-            $('.txtLinkPath').val(pSelectedTreeFolderPath);
-            break;
-        case "catListDialog":
-            window.location.href = "\album.html?folder=" + folderId;
-            break;
-        case "linkManipulateDirTree":
-            $('#dirTreeResults').html(pSelectedTreeFolderPath); break;
-        case "moveFolder":
-            $('#txtNewMoveDestiation').val(pSelectedTreeFolderPath); break
-        case "moveMany":
-            $('#txtMoveManyDestination').val(danniPath);
-            $('#mmDirTreeContainer').fadeOut();
-            break;
-        case "stepchild":
-            $('#txtscSourceFolderName').val(pSelectedTreeFolderPath);
-            $('#scDirTreeContainer').fadeOut();
-            break;
-        default:
+    try {
+        //alert("activeDirTree: "+activeDirTree);
+        pSelectedTreeId = folderId;
+        pSelectedTreeFolderPath = danniPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
+        //$("#mainMenuContainer").html($('.txtLinkPath').val());
+        switch (activeDirTree) {
+            case "dashboard":
+                $('.txtLinkPath').val(pSelectedTreeFolderPath);
+                break;
+            case "catListDialog":
+                window.location.href = "\album.html?folder=" + folderId;
+                break;
+            case "linkManipulateDirTree":
+                $('#dirTreeResults').html(pSelectedTreeFolderPath); break;
+            case "moveFolder":
+                $('#txtNewMoveDestiation').val(pSelectedTreeFolderPath); break
+            case "moveMany":
+                $('#txtMoveManyDestination').val(danniPath);
+                $('#mmDirTreeContainer').fadeOut();
+                break;
+            case "stepchild":
+                $('#txtscSourceFolderName').val(pSelectedTreeFolderPath);
+                $('#scDirTreeContainer').fadeOut();
+                break;
+            default:
+        }
+    } catch (e) {
+        logError("CAT", folderId, e, "commonDirTreeClick");
     }
 }
 
@@ -461,21 +476,21 @@ function slowlyShowCustomMessage(blogId) {
 }
 
 function showCustomMessage(blogId, allowClickAnywhere) {
-    alert("showCustomMessage(" + blogId + ")");
+    //alert("showCustomMessage(" + blogId + ")");
     if (typeof pause === 'function') {
         pause();
     }
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/OggleBlog/?blogId=" + blogId,
+        url: settingsArray.ApiServer + "api/OggleBlog/GetBlogComment?blogId=" + blogId +"&userId=kluge",
         success: function (entry) {
             if (entry.Success === "ok") {
-                $('#centeredDialogContainer').css("top", 200);
+
                 $('#centeredDialogTitle').html(entry.CommentTitle);
                 $('#centeredDialogContents').html(entry.CommentText);
-
-                $('#centeredDialogContainer').css("left", (window.innerWidth - $('#centeredDialog').width()) * .5);
-                $('#centeredDialogContainer').show();
+                $("#centeredDialogContainer").draggable().fadeIn();
+                //$('#centeredDialogContainer').css("top", 200);
+                //$('#centeredDialogContainer').css("left", (window.innerWidth - $('#centeredDialog').width()) * .5);
 
                 if (allowClickAnywhere) {
                     $('#centeredDialogCloseButton').prop('title', 'click anywhere on dialog to close');
@@ -489,11 +504,11 @@ function showCustomMessage(blogId, allowClickAnywhere) {
             else {
                 //if (entry.Success.indexOf("Option not supported") > -1) {
                 if (!checkFor404("showCustomMessage"))
-                    logError("AJX", 3111, entry.Success, "showCustomMessage");
+                    logError("AJX", 3111, "error: " + entry.Success, "showCustomMessage");
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("showCustomMessage")) logError("XHR", 3911, getXHRErrorDetails(jqXHR), "showCustomMessage");
+            if (!checkFor404("showCustomMessage")) logError("XHR", 3911, "XHR error: " + getXHRErrorDetails(jqXHR), "showCustomMessage");
         }
     });
 }
@@ -506,53 +521,61 @@ function isValidEmail(email) {
 }
 
 function sendEmail(to, from, subject, message) {
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "api/Common/SendEmail",
-        data: {
-            To: to,
-            From: from,
-            Subject: subject,
-            Message: message
-        },
-        success: function (success) {
-            if (success === "ok") {
-                //$('#footerMessage').html("email sent");
-                //displayStatusMessage("ok", "email sent");
+    try {
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/Common/SendEmail",
+            data: {
+                To: to,
+                From: from,
+                Subject: subject,
+                Message: message
+            },
+            success: function (success) {
+                if (success === "ok") {
+                    //$('#footerMessage').html("email sent");
+                    //displayStatusMessage("ok", "email sent");
+                }
+                else
+                    logError("BUG", 3992, success, "sendEmail");
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("sendEmailToYourself"))
+                    logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
             }
-            else
-                logError("BUG", 3992, success, "sendEmail");
-        },
-        error: function (jqXHR) {
-            if (!checkFor404("sendEmailToYourself"))
-                logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
-        }
-    });
+        });
+    } catch (e) {
+        logError("CAT", 3992, e, "sendEmail");
+    }
 }
 
 function sendEmailToYourself(subject, message) {
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "api/Common/SendEmail",
-        data: {
-            To: "CurtishRhodes@hotmail.com",
-            From: "info@api.Ogglebooble.com",
-            Subject: subject,
-            Message: message
-        },
-        success: function (success) {
-            if (success === "ok") {
-                $('#footerMessage').html("email sent");
-                displayStatusMessage("ok", "email sent");
+    try {
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/Common/SendEmail",
+            data: {
+                To: "CurtishRhodes@hotmail.com",
+                From: "info@api.Ogglebooble.com",
+                Subject: subject,
+                Message: message
+            },
+            success: function (success) {
+                if (success === "ok") {
+                    $('#footerMessage').html("email sent");
+                    displayStatusMessage("ok", "email sent");
+                }
+                else
+                    logError("BUG", 3992, success, "sendEmailToYourself");
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("sendEmailToYourself"))
+                    logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
             }
-            else
-                logError("BUG", 3992, success, "sendEmailToYourself");
-        },
-        error: function (jqXHR) {
-            if (!checkFor404("sendEmailToYourself"))
-                logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
-        }
-    });
+        });
+    } catch (e) {
+        logError("CAT", 3992, e, "sendEmailToYourself");
+    }
 }
 
 function requestPrivilege(privilege) {
