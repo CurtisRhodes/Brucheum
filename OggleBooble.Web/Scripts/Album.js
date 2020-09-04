@@ -152,7 +152,7 @@ function getAlbumPageInfo(folderId) {
                     getDeepFolderCounts(apFolderId, albumInfo.FileCount);
                     $('#deepSlideshowButton').show();
                 }
-                if (albumInfo.FolderType === multiModel) {
+                if (albumInfo.FolderType === "multiModel") {
                     $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
                     $('#deepSlideshowButton').hide();
                 }

@@ -12,7 +12,9 @@ function showReportsSection() {
         "                <div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>\n" +
         "                <div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>\n" +
         "                <div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
+        "                <div class='clickable' onclick='runPlayboyListReport()'>Centerfold List</div>\n" +
         "                <div class='clickable' onclick='errorLogReport()'>Error Log</div>\n" +
+//        "                <div class='clickable' onclick='buildCenterfoldList()'>Build Centerfold List</div>\n" +
         "         </div>\n" +
         "      </div>\n" +
         "       <div id='reportsMiddleColumn' class='dashboardContainerColumn'>\n" +
@@ -432,9 +434,7 @@ function FeedbackReport() {
             if (feedbackReport.Success === "ok") {
                 var kludge = "<table class='mostAvtiveUsersTable'>";
                 kludge += "<tr><th>ip</th><th>Page</th><th>Type</th><th>Occured</th><th>User</th><th>Email</th><th>Comment</th></tr>";
-
                 $.each(feedbackReport.FeedbackRows, function (idx, obj) {
-
                     kludge += "<tr><td>" + obj.IpAddress + "</td>";
                     kludge += "<td>" + obj.Parent + "/" + obj.Folder + "</td>";
                     //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
@@ -459,3 +459,105 @@ function FeedbackReport() {
         }
     });
 }
+
+function int2Month(nMonth) {
+    switch (nMonth) {
+        case 1: return "January";
+        case 2: return "February";
+        case 3: return "March";
+        case 4: return "April";
+        case 5: return "May";
+        case 6: return "June";
+        case 7: return "July";
+        case 8: return "August";
+        case 9: return "September";
+        case 10: return "October";
+        case 11: return "November";
+        case 12: return "December";
+        default: return nMonth;
+    }
+}
+
+function buildCenterfoldList() {
+    let start = Date.now();
+    $('#dashBoardLoadingGif').show();
+    $('#dataifyInfo').show().html("building Centerfold List");
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Report/BuildCenterfoldList?rootFolder=1132",
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+            if (success == "ok") {
+                let delta = Date.now() - start;
+                let minutes = Math.floor(delta / 60000);
+                let seconds = (delta % 60000 / 1000).toFixed(0);
+                console.log("build Centerfold List took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                $('#dataifyInfo').html("centerfold List took: " + minutes + ":" + seconds);
+            }
+            else {
+                logError("AJX", 3910, success, "runPlayboyListReport");
+            }
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            if (!checkFor404("runPlayboyListReport")) {
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "runPlayboyListReport");
+            }
+        }
+    });
+
+}
+
+function runPlayboyListReport() {
+    if (connectionVerified) {
+        $('#dashBoardLoadingGif').show();
+        $('#reportsHeaderTitle').html("Playboy List");
+        $('#workAreaContainer').css("height", $('#dashboardContainer').height());
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Report/PlayboyList",
+            success: function (folderReport) {
+                if (folderReport.Success == "ok") {
+                    $('#reportsContentArea').html("<div></div>");
+                    let pbDecade = "", pbYear = "";
+                    $.each(folderReport.PlayboyReportItems, function (idx, folderReport) {
+                        if (folderReport.FolderDecade != pbDecade) {
+                            $('#reportsContentArea').append("<div class='pbDecade'>" + folderReport.FolderDecade + "</div>");
+                            pbDecade = folderReport.FolderDecade;
+                        }
+                        if (folderReport.FolderYear != pbYear) {
+                            $('#reportsContentArea').append("<div class='pbYear'>" + folderReport.FolderYear + "</div>");
+                            pbYear = folderReport.FolderYear;
+                        }
+                        $('#reportsContentArea').append("<div>" +
+                            "<div class='pbRow' style='width:66px;'>" + int2Month(folderReport.FolderMonth) + "</div>" +
+                            "<div class='pbRow' " +
+                            "onmouseover=showCenterfoldImage('" + encodeURI(folderReport.ImageSrc) + "') onmouseout=$('.dirTreeImageContainer').hide()>" +
+                            "<a href='" + folderReport.StaticFile + "' target=\"_blank\">" + folderReport.FolderName + " </a></div ></div > ");
+                    });
+                    $('#dashBoardLoadingGif').hide();
+                }
+                else {
+                    $('#dashBoardLoadingGif').hide();
+                    logError("AJX", 3910, folderReport.Success, "runPlayboyListReport");
+                }
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("runPlayboyListReport")) {
+                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "runPlayboyListReport");
+                }
+            }
+        });
+    } 
+    else
+        alert("unable to run report");
+}
+
+function showCenterfoldImage(link) {
+    $('.dirTreeImageContainer').css("top", event.clientY - 100);
+    $('.dirTreeImageContainer').css("left", event.clientX + 10);
+    $('.dirTreeImage').attr("src", link);
+    $('.dirTreeImageContainer').show();
+    //$('#footerMessage').html(link);
+}
+

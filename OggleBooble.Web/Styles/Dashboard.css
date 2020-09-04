@@ -367,7 +367,25 @@ workAreaHeaderDetailRow {
     overflow: auto;
     margin-right: 30px;
 }
-
+.pbDecade {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.pbYear {
+    margin-left: 20px;
+    font-family: Constantia;
+    font-size: 17px;
+}
+.pbMonth {
+    margin-left: 40px;
+    font-size: 14px;
+}
+.pbRow {
+    display:inline-block;
+    margin-left: 60px;
+}
+.pbSrc {
+    height: 45px;
+}
 
 
 

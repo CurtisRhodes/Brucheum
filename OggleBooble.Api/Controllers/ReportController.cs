@@ -13,6 +13,8 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class ReportController : ApiController
     {
+        private readonly string imgRepo = System.Configuration.ConfigurationManager.AppSettings["ImageRepository"];
+
         [HttpGet]
         [Route("api/Report/MetricMatrixReport")]
         public MetricsMatrixResults MetricsMatrixReport()
@@ -309,6 +311,116 @@ namespace OggleBooble.Api.Controllers
                 errorLog.Success = Helpers.ErrorDetails(ex);
             }
             return errorLog;
+        }
+
+        public class PlayboyReportModel
+        {
+            public PlayboyReportModel()
+            {
+                PlayboyReportItems = new List<PlayboyReportItemModel>();
+            }
+            public List<PlayboyReportItemModel> PlayboyReportItems { get; set; }
+            public string Success { get; set; }
+        }
+
+        public class PlayboyReportItemModel
+        {
+            public string FolderDecade { get; set; }
+            public string FolderYear { get; set; }
+            public int FolderMonth { get; set; }
+            public int FolderId { get; set; }
+            public string FolderName { get; set; }
+            public string ImageSrc { get; set; }
+            public string StaticFile { get; set; }
+        }
+
+        [HttpPost]
+        [Route("api/Report/BuildCenterfoldList")]
+        public string BuildCenterfoldList(int rootFolder)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    string imgSrc, staticFile;
+                    var dbPlayboyDecades = db.VirtualFolders.Where(f => f.Parent == rootFolder).OrderBy(f => f.SortOrder).ToList();
+                    foreach (var dbPlayboyDecade in dbPlayboyDecades)
+                    {
+                        var dbPlayboyYears = db.VirtualFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
+                        foreach (var dbPlayboyYear in dbPlayboyYears)
+                        {
+                            var dbPlayboyMonths = db.VirtualFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
+                            foreach (var dbPlaymate in dbPlayboyMonths)
+                            {
+                                imgSrc = "Images/redballon.png";
+                                var dbImageFile = db.ImageFiles.Where(i => i.Id == dbPlaymate.FolderImage).FirstOrDefault();
+                                if (dbImageFile != null)
+                                {
+                                    var dbImageFileCatFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
+                                    if (dbImageFileCatFolder != null)
+                                        imgSrc = imgRepo + "/" + dbImageFileCatFolder.FolderPath + "/" + dbImageFile.FileName;
+                                }
+                                staticFile = "";
+                                var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == dbPlaymate.Id).FirstOrDefault();
+                                if (dbFolderDetails != null)
+                                    staticFile = dbFolderDetails.StaticFile;
+
+                                db.Centerfolds.Add(new Centerfold()
+                                {
+                                    FolderId = dbPlaymate.Id,
+                                    FolderName = dbPlaymate.FolderName,
+                                    FolderDecade = dbPlayboyDecade.FolderName,
+                                    FolderYear = dbPlayboyYear.FolderName,
+                                    FolderMonth = dbPlaymate.SortOrder,
+                                    StaticFile = staticFile,
+                                    ImageSrc = imgSrc
+                                });
+                                db.SaveChanges();
+                            }
+                        }
+                    }
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpGet]
+        [Route("api/Report/PlayboyList")]
+        public PlayboyReportModel PlayboyList()
+        {
+            PlayboyReportModel centerfoldReport = new PlayboyReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbCenterfolds = db.Centerfolds.ToList();
+                    foreach (Centerfold centerfold in dbCenterfolds)
+                    {
+                        centerfoldReport.PlayboyReportItems.Add(new PlayboyReportItemModel()
+                        {
+                            FolderId = centerfold.FolderId,
+                            FolderName = centerfold.FolderName,
+                            FolderDecade = centerfold.FolderDecade,
+                            FolderYear = centerfold.FolderYear,
+                            FolderMonth = centerfold.FolderMonth,
+                            ImageSrc = centerfold.ImageSrc,
+                            StaticFile = centerfold.StaticFile
+                        });
+                    }
+                    centerfoldReport.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                centerfoldReport.Success = Helpers.ErrorDetails(ex);
+            }
+            return centerfoldReport;
         }
     }
 }

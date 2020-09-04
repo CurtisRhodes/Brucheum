@@ -52,6 +52,21 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<VwErrorReport> VwErrorReportRows { get; set; }
         public virtual DbSet<ImageComment> ImageComments { get; set; }
         public virtual DbSet<UserCredit> UserCredits { get; set; }
+        public virtual DbSet<Centerfold> Centerfolds { get; set; }
+    }
+
+    [Table("OggleBooble.CenterfoldList")]
+    public class Centerfold
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public string FolderDecade { get; set; }
+        public string FolderYear { get; set; }
+        public int FolderMonth { get; set; }
+        public string ImageSrc { get; set; }
+        public string StaticFile { get; set; }
     }
 
     [Table("OggleBooble.StaticPageHit")]

@@ -69,6 +69,7 @@ function resizeDashboardPage() {
     //$('.threeColumnLayout').css("height", winH - headerH);
     //let adjH = $('.threeColumnLayout').height() - $('header').height();
     $('#dashboardContainer').css("height", winH - headerH + widthFF);
+    //$('#workAreaContainer').css("height", $('#dashboardContainer').height();
     //$('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyFooter').height());
     //alert("dashboardContainer height: " + adjH + " middleColumnW: " + middleColumnW);
 }
@@ -799,7 +800,7 @@ function emergencyFolderLocationFix() {
     });
 }
 function MoveManyCleanup() {
-    var start = Date.now();
+    let start = Date.now();
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("fixing folder location " + $('.txtLinkPath').val());
     $.ajax({
@@ -808,9 +809,9 @@ function MoveManyCleanup() {
         success: function (repairReportModel) {
             $('#dashBoardLoadingGif').hide();
             if (repairReportModel.Success === "ok") {
-                var delta = Date.now() - start;
-                var minutes = Math.floor(delta / 60000);
-                var seconds = (delta % 60000 / 1000).toFixed(0);
+                let delta = Date.now() - start;
+                let minutes = Math.floor(delta / 60000);
+                let seconds = (delta % 60000 / 1000).toFixed(0);
                 console.log("emergencyFolderLocationFix took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                 $('#dataifyInfo').show().html("loc fix took: " + minutes + ":" + seconds + " rows processed  " + repairReportModel.RowsProcessed + " recs fixed: " + repairReportModel.LinksEdited + " Errors: " + repairReportModel.Errors.length);
             }
