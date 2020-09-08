@@ -380,6 +380,21 @@ function slideshowHtml() {
         "  <div class='floatRight clickable' onclick='closeViewer(\"click\");' > <img title='you may use the {esc} key' src='/Images/close.png'/> </div>\n" +
         "</div>\n" +
         "<div id='leftClickArea'  class='hiddenClickArea' oncontextmenu='slideshowContextMenu()'  onclick='slideClick(\"prev\")' title='previous\nwill cancel slideshow'></div>\n" +
+        "<div id='slideshowCtxMenuContainer' class='ogContextMenu' style='z-index: 35;'  onmouseleave='$(this).fadeOut()'>" +
+        "   <div id='slideshowContextMenuContent'></div>\n" +
+        "</div>\n" +
+        "<div class='centeringOuterShell'>\n" +
+        "   <div class='centeringInnerShell'>\n" +
+        "      <div id='slideShowDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
+        "           <div class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
+        "               <div id='slideShowDialogTitle' class='oggleDialogTitle'></div>" +
+        "               <div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
+        "               <img src='/images/poweroffRed01.png' onclick='slideShowDialogClose()'/></div>\n" +
+        "           </div>\n" +
+        "           <div id='slideShowDialogContents' class='oggleDialogContents'></div>\n" +
+        "      </div>\n" +
+        "   </div>\n" +
+        "</div>\n" +
         "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")' " +
         "title='next\ndouble click to start slideshow'></div>\n" +
         "<div class='centeringOuterShell'>\n" +
@@ -391,12 +406,13 @@ function slideshowHtml() {
         "        </div>\n" +
         "    </div>\n" +
         "</div>\n" +
-        "<div id='slideshowCtxMenuContainer' class='ogContextMenu' style='z-index: 35;'  onmouseleave='$(this).fadeOut()'>" +
-        "   <div id='slideshowContextMenuContent'></div>\n" +
-        "</div>\n" +
        "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";
 }
 
+function slideShowDialogClose() {
+    //alert("slideShowDialogClose()");
+    $('#slideShowDialogContainer').fadeOut();
+}
 
 
 

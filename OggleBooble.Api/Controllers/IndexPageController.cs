@@ -48,7 +48,7 @@ namespace OggleBooble.Api.Controllers
         }
 
     }
-    
+
     [EnableCors("*", "*", "*")]
     public class LatestUpdatesController : ApiController
     {
@@ -59,19 +59,39 @@ namespace OggleBooble.Api.Controllers
             LatestUpdatesModel updatesModel = new LatestUpdatesModel();
             try
             {
-                var allGalleries = new List<VwLatestTouchedGalleries>();
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    allGalleries = updatesModel.LatestTouchedGalleries = db.VwLatestTouched.ToList();
+                    db.Database.ExecuteSqlCommand("call OggleBooble.spLatestTouchedGalleries()");
+
+                    List<LatestTouchedGalleries> dbLatestTouchedGalleries = null;
+                    if ((root == "porn") || (root == "sluts"))
+                    {
+                        dbLatestTouchedGalleries = db.LatestTouchedGalleries
+                           .Where(t => t.RootFolder == "porn" || t.RootFolder == "sluts")
+                           .OrderByDescending(t => t.Acquired)
+                           .ToList();
+                    }
+                    if ((root == "archive") || (root == "boobs"))
+                    {
+                        dbLatestTouchedGalleries = db.LatestTouchedGalleries
+                           .Where(t => t.RootFolder == "archive" || t.RootFolder == "boobs")
+                           .OrderByDescending(t => t.Acquired)
+                           .ToList();
+                    }
+                    if ((root == "playboy") || (root == "centerfold"))
+                    {
+                        dbLatestTouchedGalleries = db.LatestTouchedGalleries
+                            .Where(t => t.RootFolder == root)
+                            .OrderByDescending(t => t.Acquired)
+                            .ToList();
+                    }
+                    updatesModel.LatestTouchedGalleries = dbLatestTouchedGalleries
+                        .Take(take).ToList();
+
                 }
-                //updatesModel.LatestTouchedGalleries = allGalleries.Where(g => g.Root == root).Skip(0).Take(take).ToList();
-                updatesModel.LatestTouchedGalleries = allGalleries.Where(g => g.Root == root).Take(take).ToList();
                 updatesModel.Success = "ok";
             }
-            catch (Exception ex)
-            {
-                updatesModel.Success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { updatesModel.Success = Helpers.ErrorDetails(ex); }
             return updatesModel;
         }
     }

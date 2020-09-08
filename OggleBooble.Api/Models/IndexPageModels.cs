@@ -10,9 +10,9 @@ namespace OggleBooble.Api.Models
     {
         public LatestUpdatesModel()
         {
-            LatestTouchedGalleries = new List<VwLatestTouchedGalleries>();
+            LatestTouchedGalleries = new List<LatestTouchedGalleries>();
         }
-        public List<VwLatestTouchedGalleries> LatestTouchedGalleries { get; set; }
+        public List<LatestTouchedGalleries> LatestTouchedGalleries { get; set; }
         public string Success { get; set; }
     }
 

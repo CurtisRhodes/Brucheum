@@ -47,12 +47,26 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<VwMostActiveUsersForToday> MostActiveUsersForToday { get; set; }
         public virtual DbSet<VwSlideshowItem> VwSlideshowItems { get; set; }
         public virtual DbSet<VwCarouselItem> VwCarouselImages { get; set; }
-        public virtual DbSet<VwLatestTouchedGalleries> VwLatestTouched { get; set; }
+        public virtual DbSet<LatestTouchedGalleries> LatestTouchedGalleries { get; set; }
         public virtual DbSet<VwImageHit> VwImageHits { get; set; }
         public virtual DbSet<VwErrorReport> VwErrorReportRows { get; set; }
         public virtual DbSet<ImageComment> ImageComments { get; set; }
         public virtual DbSet<UserCredit> UserCredits { get; set; }
         public virtual DbSet<Centerfold> Centerfolds { get; set; }
+        public virtual DbSet<Performance> Performances { get; set; }
+    }
+
+    [Table("OggleBooble.Performance")]
+    public class Performance
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public DateTime ReportDay { get; set; }
+        public string DayString { get; set; }
+        public int? NewVisitors { get; set; }
+        public int? Visits { get; set; }
+        public int? PageHits { get; set; }
+        public int? ImageHits { get; set; }
     }
 
     [Table("OggleBooble.CenterfoldList")]
@@ -430,7 +444,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public string FolderType { get; set; }
         public string FolderImage { get; set; }
         public int FileCount { get; set; }
-        public int SubDirCount { get; set; }
+        public int TotalChildFiles { get; set; }
+        public int SubFolderCount { get; set; }
         public int SortOrder { get; set; }
     }
 
@@ -531,13 +546,13 @@ namespace OggleBooble.Api.MySqlDataContext
         public string HitDate { get; set; }
         public string HitTime { get; set; }
     }
-    [Table("OggleBooble.VwLatestTouchedGalleries")]
-    public class VwLatestTouchedGalleries
+    [Table("OggleBooble.LatestTouchedGalleries")]
+    public class LatestTouchedGalleries
     {
         [Key]
         public int FolderId { get; set; }
         public string FolderName { get; set; }
-        public string Root { get; set; }
+        public string RootFolder { get; set; }
         public string ImageFile { get; set; }
         public DateTime Acquired { get; set; }
     }

@@ -1,10 +1,9 @@
 ﻿
 function isInRole(roleName) {
     try {
-        if (roleName == "not registered")
-            return false;
-        if (document.domain === 'localhost')
-            return true;
+        if (document.domain === 'localhost') return true;
+        if (roleName == "not registered") return false;
+
         const visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
             console.log("visitorId undefined in isInRole")
@@ -26,6 +25,22 @@ function isInRole(roleName) {
     }
     catch (e) { logError("CAT", 3908, e, "isInRole"); }
 }
+
+function getUserRole() {
+
+    if (document.domain === 'localhost') return "admin";
+
+    if (!isNullorUndefined(window.localStorage["userRole"]))
+        return window.localStorage["userRole"];
+
+    const visitorId = getCookieValue("VisitorId");
+    if (isNullorUndefined(visitorId)) {
+        window.localStorage["userRole"] = "not registered";
+        return window.localStorage["userRole"];
+    }
+    getUserInfo("getUserRole", details);
+}
+
 
 function resetUserSettings() {
     let jstring1 = "{";
@@ -56,23 +71,21 @@ function getUserInfo(valueRequested, details) {
                 url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + visitorId,
                 success: function (userInfoModel) {
                     if (userInfoModel.Success === "ok") {
-                        //window.localStorage["userRole"]
-                        //let userSettings = JSON.stringify(successModel.ReturnValue);
                         if (isNullorUndefined(window.localStorage["userRole"]))
                             window.localStorage["userRole"] = userInfoModel.UserRole;
-                        if (valueRequested == "isInRole") {
-                            isInRole(details)
-                        }
-                        // console.log("userSettings data loaded into local storage");
                     }
                     else {
                         if (userInfoModel.Success == "not registered") {
-                            if (valueRequested == "isInRole") {
-                                isInRole("not registered");
-                            }
+                            window.localStorage["userRole"] = "not registered";
                         }
                         else
                             logError("AJX", 2, userInfoModel.Success + ". visitorId: " + visitorId, "getUserInfo(permissions)");
+                    }
+                    if (valueRequested == "isInRole") {
+                        isInRole(details)
+                    }
+                    if (valueRequested == "getUserRole") {
+                        getUserRole();
                     }
                 },
                 error: function (jqXHR) {

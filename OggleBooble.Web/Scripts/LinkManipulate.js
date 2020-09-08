@@ -1,7 +1,6 @@
 ﻿
-function showDirTreeDialog(imgSrc) {
-    //alert("showDirTreeDialog(imgSrc: " + imgSrc + ", treeStart: " + treeStart);
-    $('#centeredDialogContents').html(
+function showDirTreeDialog(imgSrc, pMenuType, title) {
+    let dirTreeDialogHtml =
         "   <div>" +
         "       <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
         "       <div id='dirTreeResults' class='pusedoTextBox'></div>\n" +
@@ -9,23 +8,30 @@ function showDirTreeDialog(imgSrc) {
         "           onclick='$(\"#linkManipulateDirTree\").toggle()'/></div>\n" +
         "       <div id='linkManipulateClick'></div>\n" +
         "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif' /></div>\n" +
-        "   </div>");
+        "   </div>";
+    if (pMenuType == "Slideshow") {
+        // console.log("")
+        $('#slideShowDialogContents').html(dirTreeDialogHtml);
+        $('#slideShowDialogTitle').html(title);
+        $('#slideShowDialogContainer').draggable().fadeIn();
+    }
+    else {
+        $('#centeredDialogContents').html(dirTreeDialogHtml);
+        $('#centeredDialogTitle').html(title);
+        $('#centeredDialogContainer').draggable().fadeIn();
+    }
+    $('#centeredDialog').css("top", 100);
     activeDirTree = "linkManipulateDirTree";
-    if (isNullorUndefined($('#linkManipulateDirTree').val()))
+    if (isNullorUndefined($('#linkManipulateDirTree').val())) {
         loadDirectoryTree(1, "linkManipulateDirTree", false);
-
+    }
     //var winH = $(window).height();
     //var dlgH = $('#centeredDialog').height();
-    //$('#centeredDialog').css("top", (winH - dlgH) / 2);
-    $('#centeredDialogContainer').fadeIn();
 }
-
-function showCopyLinkDialog(linkId, folderId, imgSrc) {
-    //alert("showCopyLinkDialog(linkId: " + linkId + ", folderId: " + folderId + ", imgSrc: " + imgSrc);
-    showDirTreeDialog(imgSrc);
-    $('#centeredDialogTitle').html("Copy Link");
-    $('#linkManipulateClick').html(
-        "<div class='roundendButton' onclick='perfomCopyLink(\"" + linkId + "\")'>Copy</div>");
+    
+function showCopyLinkDialog(linkId, pMenuType, imgSrc) {
+    showDirTreeDialog(imgSrc, pMenuType, "Copy Link");
+    $('#linkManipulateClick').html("<div class='roundendButton' onclick='perfomCopyLink(\"" + linkId + "\")'>Copy</div>");
 }
 
 function perfomCopyLink(linkId) {
@@ -59,19 +65,14 @@ function perfomCopyLink(linkId) {
     });
 }
 
-// showMoveLinkDialog(pLinkId, pFolderId, pImgSrc)
-function showMoveLinkDialog(linkId, folderId, imgSrc) {
-    showDirTreeDialog(imgSrc);
-    $('#centeredDialogTitle').html("Move Link");
-    $('#linkManipulateClick').html(
-        "<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\"," + folderId + ")'>Move</div>");
+function showMoveLinkDialog(linkId, folderId, pMenuType, imgSrc) {
+    showDirTreeDialog(imgSrc, pMenuType, "Move Link");
+    $('#linkManipulateClick').html("<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\"," + folderId + ")'>Move</div>");
 }
 
-function showArchiveLinkDialog(linkId, folderId, imgSrc) {
-    showDirTreeDialog(imgSrc);
-    $('#centeredDialogTitle').html("Archive Image");
-    $('#linkManipulateClick').html(
-    "<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\"," + folderId + ")'>Archive</div>");
+function showArchiveLinkDialog(linkId, folderId, imgSrc, pMenuType) {
+    showDirTreeDialog(imgSrc, pMenuType, "Archive Image");
+    $('#linkManipulateClick').html("<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\"," + folderId + ")'>Archive</div>");
 }
 
 function moveFile(request, linkId, folderId) {
@@ -85,6 +86,7 @@ function moveFile(request, linkId, folderId) {
                 if (viewerShowing)
                     slide("next");
                 dragableDialogClose();
+                slideShowDialogClose();
                 getAlbumImages(folderId);
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
                 $('#centeredDialogContainer').fadeOut();
@@ -310,4 +312,5 @@ function nonFtpMoveCopy() {
         }
     });
 }
+
 

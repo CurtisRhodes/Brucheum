@@ -6,7 +6,6 @@ let totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expa
 let dataLoadTime;
 
 function loadDirectoryTree(startNode, container, forceRebuild) {
-    dataLoadTime = (Date.now() - start) / 1000;
     totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
     settingsImgRepo = settingsArray.ImageRepo;
     var start = Date.now();
@@ -24,11 +23,8 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
             url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
             success: function (dirTreeModel) {
                 if (dirTreeModel.Success === "ok") {
-                    var dataLoadTime = (Date.now() - start) / 1000;
-
                     //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
                     //$('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
-                    start = Date.now();
                     buildDirTreeRecurr(dirTreeModel);
 
                     if (startNode === 1) {
@@ -80,25 +76,20 @@ function buildDirTreeRecurr(parentNode) {
                         expandMode = "+";
                 }
             }
-            txtFileCount = "(" + vwDir.FileCount + ")";
-
-            if (!isNullorUndefined(thisNode.SubDirs)) {
-                if (thisNode.SubDirs.length > 0) {
-                    //txtFileCount = "(" + parentNode.SubDirs.length + ")";
-                    if(vwDir.FileCount>0)
-                        txtFileCount = "(" + vwDir.FileCount + " / [" + thisNode.SubDirs.length + "]";
+            if (vwDir.SubFolderCount > 0) {
+                //txtFileCount = "(" + parentNode.SubDirs.length + ")";
+                if (vwDir.FileCount > 0)
+                    txtFileCount = "[" + vwDir.SubFolderCount.toLocaleString() + "] (" + vwDir.TotalChildFiles.toLocaleString() + ") {" + vwDir.FileCount + "}";
+                else {
+                    if (thisNode.SubDirs.length == vwDir.SubFolderCount)
+                        txtFileCount = thisNode.SubDirs.length + " (" + vwDir.TotalChildFiles.toLocaleString() + ")";
                     else
-                        txtFileCount = "[" + thisNode.SubDirs.length + "]";
-
-                    //totalFiles = 0;
-                    //if (vwDir.FileCount > 0) {
-                    //    txtFileCount = "(z" + thisNode.SubDirs.length + " / " + vwDir.FileCount + " + " + (getChildFileCounts(thisNode) - vwDir.FileCount).toLocaleString() + ")";
-                    //}
-                    //else {
-                    //    txtFileCount = "(" + thisNode.SubDirs.length + ")";
-                    //}
+                        txtFileCount = thisNode.SubDirs.length + " [" + vwDir.SubFolderCount.toLocaleString() + " / " + vwDir.TotalChildFiles.toLocaleString() + "]";
                 }
             }
+            else
+                txtFileCount = "(" + vwDir.FileCount + ")";
+
             let randomId = create_UUID();
             strdirTree +=
                 "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"

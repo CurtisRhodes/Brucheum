@@ -362,11 +362,20 @@ workAreaHeaderDetailRow {
     }
 
 .subreportContainer {
+    margin-top: 5px;
     float: left;
-    border: solid thin #606060;
+    border: solid thin red;
     overflow: auto;
     margin-right: 30px;
+    margin-left: 10px;
 }
+    .subreportContainer div {
+        padding-left: 12px;
+    }
+    .subreportContainer div a {
+        margin-right: 22px;
+    }
+
 .pbDecade {
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

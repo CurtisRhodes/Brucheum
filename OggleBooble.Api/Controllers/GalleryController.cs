@@ -52,7 +52,7 @@ namespace OggleBooble.Api.Controllers
                             ParentId = row.Parent,
                             FileCount = row.FileCount,
                             FolderType = row.FolderType,
-                            SubDirCount = row.SubDirCount,
+                            SubDirCount = row.SubFolderCount,
                             FolderImage = row.FolderImage,
                             RootFolder = row.RootFolder
                         });
@@ -314,6 +314,17 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    slideshowItemModel.SlideshowItems = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
+                    if (includeSubFolders)
+                    {
+                        var unsortedList = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
+                        GetChildGalleryItems(folderId, unsortedList, db);
+                        slideshowItemModel.SlideshowItems = unsortedList.ToList();
+                    }
+                    else
+                    {
+                        slideshowItemModel.SlideshowItems = db.VwSlideshowItems.Where(s => s.FolderId == folderId).OrderBy(s => s.SortOrder).ToList();
+                    }
                     var categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     if (categoryFolder == null)
                     {
@@ -322,19 +333,8 @@ namespace OggleBooble.Api.Controllers
                     }
                     slideshowItemModel.FolderName = categoryFolder.FolderName;
                     slideshowItemModel.RootFolder = categoryFolder.RootFolder;
-
-                    if (includeSubFolders)
-                    {
-                        var unsortedList = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
-                        GetChildGalleryItems(folderId, unsortedList, db);
-                        //slideshowItemModel.SlideshowItems = (IList<VwSlideshowItem>)unsortedList.OrderBy(i => i.LinkId).ToList();
-                        slideshowItemModel.SlideshowItems = unsortedList.OrderBy(i => i.SortOrder).ToList();
-                    }
-                    else {
-                        slideshowItemModel.SlideshowItems = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
-                    } 
+                    slideshowItemModel.Success = "ok";
                 }
-                slideshowItemModel.Success = "ok";
             }
             catch (Exception ex)
             {

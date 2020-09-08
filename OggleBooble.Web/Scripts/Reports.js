@@ -39,16 +39,18 @@ function showReportsSection() {
 
 function runMetricsMatrixReport() {
     if (connectionVerified) {
+        $('#workAreaContainer').css("height", $('#dashboardContainer').height());
         $('#dashBoardLoadingGif').show();
-        $('#reportsHeaderTitle').html("Performance Metrics" + todayString());
-        
+        $('#reportsHeaderTitle').html("Performance Metrics  " + todayString());
+
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Report/MetricMatrixReport",
             success: function (metricsMatrixResults) {
                 $('#dashBoardLoadingGif').hide();
                 if (metricsMatrixResults.Success === "ok") {
-
+                    //alert("metricsMatrixResults.Success: " + metricsMatrixResults.Success);
+                    //alert("metricsMatrixResults.matrixModelRows: " + metricsMatrixResults.matrixModelRows.length);
                     $('#reportsContentArea').html(
                         "<div id='doubleRowReport'>" +
                         "   <div id='mmTopRow'>" +
@@ -60,26 +62,27 @@ function runMetricsMatrixReport() {
                         "   </div>" +
                         "</div>");
 
-                    var kludge = "<table><tr><th></th><th>Today</th><th>Yesterday</th><th>-2 Days</th><th>-3 Days</th><th>-4 Days</th>" +
-                        "<th>-5 Days</th><th>-6 Days</th></tr>";
-                    $.each(metricsMatrixResults.MatrixRows, function (idx, row) {
-                        kludge += "<tr><td>" + row.Column + "</td> ";
-                        kludge += "<td>" + row.Today.toLocaleString() + "</td>";
-                        kludge += "<td>" + row.Yesterday.toLocaleString() + "</td>";
-                        kludge += "<td>" + row.Two_Days_ago.toLocaleString() + "</td>";
-                        kludge += "<td>" + row.Three_Days_ago.toLocaleString() + "</td>";
-                        kludge += "<td>" + row.Four_Days_ago.toLocaleString() + "</td>";
-                        kludge += "<td>" + row.Five_Days_ago.toLocaleString() + "</td>";
-                        kludge += "<td>" + row.Six_Days_ago.toLocaleString() + "</td>";
-                    });
-                    kludge += "</tr></table>";
-                    $("#dailyActivityReportContainer").html(kludge);
-                    $("#reportsFooter").html("<button onclick='moveCheckedImages()'>Move</button>\n");
+                    $("#dailyActivityReportContainer").html("<div id='fxShell' class='flexbox'>");
+                    $("#fxShell").html("<div><div>&nbsp;</div><div>&nbsp;</div>" +
+                        "<div>NewVisitors</div>" +
+                        "<div>Visits</div>" +
+                        "<div>PageHits</div>" +
+                        "<div>ImageHits</div></div>");
 
+                    let i, mLen = 8;
+                    for (i = mLen; i > -1; i--) {
+                        $("#fxShell").append("<div><div class='center'>" + metricsMatrixResults.matrixModelRows[i].DayofWeek + "</div>" +
+                            "<div><div class='center'>&nbsp;" + metricsMatrixResults.matrixModelRows[i].DateString + "&nbsp;</div>" +
+                            "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].NewVisitors.toLocaleString() + "</div>" +
+                            "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].Visits.toLocaleString() + "</div>" +
+                            "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].PageHits.toLocaleString() + "</div>" +
+                            "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].ImageHits.toLocaleString() + "</div></div>");
+                    };
+                    $("#fxShell").append("</div>")
+                    $("#reportsFooter").html("<button onclick='rerun()'>reload</button>\n");
 
-                    $("#btnPopPages").show();
-                    $("#btnMostImageHits").show();
-
+                    //$("#btnPopPages").show();
+                    //$("#btnMostImageHits").show();
                     runMostVisitedPages();
                     runMostImageHits();
                 }
@@ -105,15 +108,13 @@ function runMostVisitedPages() {
         url: settingsArray.ApiServer + "api/Report/MostVisitedPagesReport",
         success: function (popularPages) {
             $('#dashBoardLoadingGif').hide();
-
-            $("#mostPopularPagesContainer").css("height", $("#reportsSection").height() - $("#dailyActivityReportContainer").height());
-
+            $('.subreportContainer').css("height", $('#dashboardContainer').height() - $("#dailyActivityReportContainer").height() * 2.13);
             if (popularPages.Success === "ok") {
-                $("#mostPopularPagesContainer").html("<table><tr colspan=2><th>Most Popular Pages " + todayString() + "</th></tr>");
+                $("#mostPopularPagesContainer").html("<div>Most Popular Pages " + todayString() + "</div>");
                 $.each(popularPages.Items, function (idx, obj) {
-                    $("#mostPopularPagesContainer").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" + obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
+                    $("#mostPopularPagesContainer").append("<div>" +
+                        "<a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" + obj.PageName + "</a>" + obj.PageHits + "</div>");
                 });
-                $("#mostPopularPagesContainer").append("</table>");
             }
             else {
                 logError("AJX", 3910, popularPages.Success, "mostVisitedPages");
@@ -135,14 +136,12 @@ function runMostImageHits() {
         url: settingsArray.ApiServer + "/api/Report/MostImageHitsReport",
         success: function (mostImageHits) {
             $('#dashBoardLoadingGif').hide();
-            $("#mostImageHitsContainer").css("height", $("#reportsSection").height() - $("#dailyActivityReportContainer").height());
             if (mostImageHits.Success === "ok") {
-                $("#mostImageHitsContainer").html("<table><tr colspan=2><th>Most Image Hits" + todayString() + "</th></tr>");
+                $("#mostImageHitsContainer").html("<div>Most Image Hits" + todayString() + "</div>");
                 $.each(mostImageHits.Items, function (idx, obj) {
-                    $("#mostImageHitsContainer").append("<tr><td><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
-                        obj.PageName + "</a></td><td>" + obj.PageHits + "</td></tr>");
+                    $("#mostImageHitsContainer").append("<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
+                        obj.PageName + "</a>" + obj.PageHits + "</div>");
                 });
-                $("#mostImageHitsContainer").append("</table>");
             }
             else {
                 logError("AJX", 3910, mostImageHits.Success, "runMostImageHits");

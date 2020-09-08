@@ -44,26 +44,23 @@ namespace OggleBooble.Api.Models
         public int PageHits { get; set; }
     }
 
-    public class MetricsMatrixResults
+    public class MatrixResultsModel
     {
-        public MetricsMatrixResults()
+        public MatrixResultsModel()
         {
-            MatrixRows = new List<MatrixRowModel>();
+            matrixModelRows = new List<MatrixModel>();
         }
-        public List<MatrixRowModel> MatrixRows { get; set; }
+        public List<MatrixModel> matrixModelRows { get; set; }
         public string Success { get; set; }
     }
-
-    public class MatrixRowModel
+    public class MatrixModel
     {
-        public string Column { get; set; }
-        public int Today { get; set; }
-        public int Yesterday { get; set; }
-        public int Two_Days_ago { get; set; }
-        public int Three_Days_ago { get; set; }
-        public int Four_Days_ago { get; set; }
-        public int Five_Days_ago { get; set; }
-        public int Six_Days_ago { get; set; }
+        public string DayofWeek { get; set; }
+        public string DateString { get; set; }
+        public int? NewVisitors { get; set; }
+        public int? Visits { get; set; }
+        public int? PageHits { get; set; }
+        public int? ImageHits { get; set; }
     }
 
     public class ErrorLogReportModel

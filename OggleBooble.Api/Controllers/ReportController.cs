@@ -17,9 +17,9 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/Report/MetricMatrixReport")]
-        public MetricsMatrixResults MetricsMatrixReport()
+        public MatrixResultsModel MetricsMatrixReport()
         {
-            var metricsMatrixResults = new MetricsMatrixResults();
+            var metricsMatrixResults = new MatrixResultsModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -27,20 +27,18 @@ namespace OggleBooble.Api.Controllers
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.SaveChanges();
-                    //VwPageHit vwPageHit = dbm.VwPageHits.FirstOrDefault();
-                    List<MetricsMatrix> matrices = db.VwMetricsMatrices.ToList();
-                    foreach (MetricsMatrix matrix in matrices)
+                    db.Database.ExecuteSqlCommand("call OggleBooble.spDailyVisits()");
+                    var performanceRows = db.Performances.ToList();
+                    foreach (Performance performanceRow in performanceRows)
                     {
-                        metricsMatrixResults.MatrixRows.Add(new MatrixRowModel()
+                        metricsMatrixResults.matrixModelRows.Add(new MatrixModel()
                         {
-                            Column = matrix.Column,
-                            Today = matrix.Today,
-                            Yesterday = matrix.Yesterday,
-                            Two_Days_ago = matrix.Two_Days_ago,
-                            Three_Days_ago = matrix.Three_Days_ago,
-                            Four_Days_ago = matrix.Four_Days_ago,
-                            Five_Days_ago = matrix.Five_Days_ago,
-                            Six_Days_ago = matrix.Six_Days_ago
+                            DayofWeek = performanceRow.ReportDay.DayOfWeek.ToString(),
+                            DateString = performanceRow.DayString,
+                            NewVisitors = performanceRow.NewVisitors,
+                            Visits = performanceRow.Visits,
+                            PageHits = performanceRow.PageHits,
+                            ImageHits = performanceRow.ImageHits
                         });
                     }
 

@@ -1,10 +1,5 @@
 ﻿let pImgSrc, pLinkId, pFolderId, pFolderName, pFolderType, pModelFolderId, pMenuType, pos = {};
 
-//showContextMenu("Carousel", pos, imgSrc,
-//    carouselItemArray[imageIndex].LinkId,
-//    carouselItemArray[imageIndex].FolderId,
-//    carouselItemArray[imageIndex].FolderName);
-
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     event.preventDefault();
     window.event.returnValue = false;
@@ -16,10 +11,18 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     pFolderName = folderName;
     pMenuType = menuType;
 
-    $('#contextMenuContainer').css("top", pos.y);
-    $('#contextMenuContainer').css("left", pos.x);
-    $('#contextMenuContainer').fadeIn();
-    $('#contextMenuContent').html(contextMenuHtml())
+    if (pMenuType === "Slideshow") {
+        $('#slideshowCtxMenuContainer').css("top", pos.y);
+        $('#slideshowCtxMenuContainer').css("left", pos.x);
+        $('#slideshowCtxMenuContainer').fadeIn();
+        $('#slideshowContextMenuContent').html(contextMenuHtml())
+    }
+    else {
+        $('#contextMenuContainer').css("top", pos.y);
+        $('#contextMenuContainer').css("left", pos.x);
+        $('#contextMenuContainer').fadeIn();
+        $('#contextMenuContent').html(contextMenuHtml())
+    }
 
     if (pMenuType === "Folder")
         ctxGetFolderDetails();
@@ -40,8 +43,10 @@ $('.contextMenuContent').mouseover(function (e) {
 });
 
 function getLimitedImageDetails() {
+    $('#ctxMenuType').hide();
     $('#ctxNewTab').hide();
     $('#ctxImageShowLinks').hide();
+    $('#ctxCloseSlideShow').hide();
     $('#ctxDownLoad').hide();
     $('#ctxModelName').html("<img class='ctxloadingGif' src='Images/loader.gif'/>");
     //let start = Date.now();
@@ -57,10 +62,14 @@ function getLimitedImageDetails() {
 
             if (imageInfo.Success === "ok") {
 
+                //$('#ctxMenuType').html(pMenuType).show();
                 $('#ctxModelName').html(imageInfo.FolderType);
-                //if (pMenuType === "Folder")
                 switch (pMenuType) {
                     case "Slideshow":
+
+                        $('#ctxMenuType').html(pMenuType).show();
+                        $('#ctxCloseSlideShow').show();
+                        break;
                     case "Carousel":
                         $('#ctxNewTab').show();
                         break;
@@ -82,7 +91,7 @@ function getLimitedImageDetails() {
                     case "multiModel":
                     case "multiFolder":
                         $('#ctxSeeMore').hide();
-                        $('#ctxModelName').html("unidenitified");
+                        $('#ctxModelName').html("unknown model");
                         if ((imageInfo.ModelFolderId !== 0) && (pFolderId != imageInfo.ModelFolderId)) {
                             $('#ctxModelName').html(imageInfo.ModelFolderName);
                             $('#ctxSeeMore').show();
@@ -223,7 +232,7 @@ function contextMenuAction(action) {
                 alert("You must be logged in to download an album");
             break;
         case "showDialog": {
-            if ($('#ctxModelName').html() === "unidenitified")
+            if ($('#ctxModelName').html() === "unknown model")
                 showUnknownModelDialog(pImgSrc);
             else
                 if (isNullorUndefined(pModelFolderId))
@@ -233,6 +242,9 @@ function contextMenuAction(action) {
             $("#contextMenuContainer").fadeOut();
             break;
         }
+        case "closeSlideShow":
+            closeViewer("context menu");
+            break;
         case "openInNewTab": {
             // rtpe(eventCode, calledFrom, eventDetail, pageId)
             rtpe("ONT", "context menu", pFolderName, pFolderId);
@@ -267,15 +279,15 @@ function contextMenuAction(action) {
             $('#linkInfoContainer').toggle();
             break;
         case "archive":
-            showArchiveLinkDialog(pLinkId, pFolderId, pImgSrc);
+            showArchiveLinkDialog(pLinkId, pFolderId, pImgSrc, pMenuType);
             break;
         case "copy":
             //alert("contextMenuAction/copy (pLinkId: " + pLinkId + ", pFolderId: " + pFolderId + ", pImgSrc: " + pImgSrc);
-            showCopyLinkDialog(pLinkId, pFolderId, pImgSrc);
+            showCopyLinkDialog(pLinkId, pMenuType, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
         case "move":
-            showMoveLinkDialog(pLinkId, pFolderId, pImgSrc);
+            showMoveLinkDialog(pLinkId, pFolderId, pMenuType, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
         case "rename":
@@ -298,13 +310,15 @@ function contextMenuAction(action) {
 }
 
 function contextMenuHtml() {
-    return "<div id='ctxModelName' onclick='contextMenuAction(\"showDialog\")'>model name</div>\n" +
+    return "<div id='ctxMenuType' class='contextMenuInnerContainer'></div>\n" +        
+        "<div id='ctxModelName' onclick='contextMenuAction(\"showDialog\")'>model name</div>\n" +
         "<div id='ctxSeeMore' onclick='contextMenuAction(\"see more\")'>see more of her</div>\n" +
         "<div id='ctxNewTab' onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
         "<div id='ctxComment' onclick='contextMenuAction(\"comment\")'>Comment</div>\n" +
         "<div id='ctxExplode' onclick='contextMenuAction(\"explode\")'>explode</div>\n" +
+        "<div id='ctxCloseSlideShow' onclick='contextMenuAction(\"closeSlideShow\")'>close slideshow</div>\n" +
         "<div id='ctxImageShowLinks' onclick='contextMenuAction(\"showLinks\")'>Show Links</div>\n" +
-        " <div id='linkInfoContainer' class='contextMenuInnerContainer'></div>\n" +        
+        "<div id='linkInfoContainer' class='contextMenuInnerContainer'></div>\n" +        
         "<div id='ctxInfo' onclick='contextMenuAction(\"info\")'>Show Image info</div>\n" +
         " <div id='imageInfoContainer' class='contextMenuInnerContainer'>\n" +
         "   <div><span class='ctxInfolabel'>file name</span><span id='imageInfoFileName' class='ctxInfoValue'></span></div>\n" +
