@@ -13,14 +13,16 @@ function showDirTreeDialog(imgSrc, pMenuType, title) {
         // console.log("")
         $('#slideShowDialogContents').html(dirTreeDialogHtml);
         $('#slideShowDialogTitle').html(title);
+        $('#slideShowDialogContainer').css("top", 33 + $(window).scrollTop());
         $('#slideShowDialogContainer').draggable().fadeIn();
     }
     else {
         $('#centeredDialogContents').html(dirTreeDialogHtml);
         $('#centeredDialogTitle').html(title);
+        $('#centeredDialogContainer').css("top", 33 + $(window).scrollTop());
         $('#centeredDialogContainer').draggable().fadeIn();
     }
-    $('#centeredDialog').css("top", 100);
+
     activeDirTree = "linkManipulateDirTree";
     if (isNullorUndefined($('#linkManipulateDirTree').val())) {
         loadDirectoryTree(1, "linkManipulateDirTree", false);

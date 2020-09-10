@@ -64,15 +64,13 @@
                      title='slideshow includes all child folders'
                      onclick='launchDeepSlideShow();'>gallery slideshow</div>
             </div>
-            <div id="imageContainer" class="galleryContainer">
-                <div id="bodydiv"></div>
-            </div>
+            <div id="imageContainer" class="galleryContainer"></div>
             <div id="slideShowContainer" class="fullScreenViewer"></div>
             <div id="galleryBottomfileCount" class="countContainer"></div>
             <div id="trackbackContainer" class="trackbackLinkContainer"><div>trackback links</div><div id="trackbackLinkArea" class="trackbackArea"></div></div>
         </div>
         <div class="rightColumn">
-            <div id="feedbackBanner" class="fixedMessageButton">feedback</div>
+            <div id="feedbackButton" class="floatingFeedbackButton">feedback</div>
         </div>
     </div>
     <div class="footer"></div>
@@ -108,8 +106,10 @@
                             changeFavoriteIcon("redBallon");
                             localhostBypass();
 
-                            if (!isNullorUndefined(params.tic))
+                            if (!isNullorUndefined(params.tic)) {
                                 logStaticPageHit(params.folder, "album");
+                                window.location.href = "album.html?folder=" + params.folder;
+                            }
                             else {
                                 let visitorId = getCookieValue("VisitorId");
                                 if (isNullorUndefined(visitorId))
@@ -126,7 +126,7 @@
             window.addEventListener("resize", resizeAlbumPage);
             resizeAlbumPage();
 
-            $('#feedbackBanner').on("click", function () {
+            $('#feedbackButton').on("click", function () {
                 showFeedbackDialog(params.folder);
             });
 
@@ -140,9 +140,9 @@
             //set page height
             let winH = $(window).height();
             let headerH = $('#oggleHeader').height();
-            $('.threeColumnLayout').css("min-height", winH - headerH);
+            //$('.threeColumnLayout').css("min-height", winH - headerH);
+            $('.threeColumnLayout').css("height", winH - headerH);
 
-            $('#feedbackBanner').css("top", winH);
             //$('#aboveImageContainerMessageArea').html("resize: visH: " + visH + "  col: " + $('.threeColumnLayout').height() + "  con: " + $('#imageContainer').height());
         }
 

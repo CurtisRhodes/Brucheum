@@ -2,23 +2,6 @@
     //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
 
     $('.footer').html(defaultFooterHTML(pageId, rootFolder));
-
-    // ranker     homePageId = 3907;
-    // boobs      homePageId = 3908;
-    // porn       homePageId = 3909;
-    // dashboard  homePageId = 3910;
-    // blog       homePageId = 3911;
-    //playboy	1243
-    //archive	1131
-    //centerfold	828
-    //porn	266
-    //boobs	193
-    //sluts	159
-    //soft	72
-    //cybergirl	26
-    //special	11
-    //root	2            $('#footerCol1').html(
-
     switch (rootFolder) {
         //rtpe(code,calledfrom,detail,pageId)
         case "playboyIndex":
@@ -162,4 +145,3 @@ function defaultFooterHTML(pageId, rootFolder) {
 
     return defaultFooter;
 }
-

@@ -6,6 +6,7 @@
     skip = 0, take = 40,
     throttleBoobs = false,
     throttlePlayboy = false,
+    throttleSoftcore = false,
     throttleArchive = false,
     throttlePorn = false,
     throttleSluts = false,
@@ -122,6 +123,9 @@ function setInitialCheckbox(rankPref) {
         case "sluts":
             $('#ckBoxSluts').prop('checked', true);
             break;
+        case "softcore":
+            $('#ckBoxSluts').prop('checked', true);
+            break;
         case "archive":
             $('#ckBoxArchive').prop('checked', true);
             break;
@@ -146,6 +150,11 @@ function killTimer(rankPref) {
         case "centerfold":
             clearInterval(throttlePlayboy);
             throttlePlayboy = false;
+            break;
+        case "softcore":
+            $('#ckBoxSoft').prop('checked', true);
+            clearInterval(throttleSoftcore);
+            throttleSoftcore = false;
             break;
         case "archive":
             clearInterval(throttleArchive);
@@ -216,6 +225,14 @@ function addMore(rankPref) {
         case "centerfold":
             if (!throttlePlayboy) {
                 throttlePlayboy = setInterval(function () {
+                    skip = rankerLinksArray.length;
+                    loadBoobsRanker(rankPref);
+                }, 15000);
+            }
+            break;
+        case "softcore":
+            if (!throttleSoftcore) {
+                throttleSoftcore = setInterval(function () {
                     skip = rankerLinksArray.length;
                     loadBoobsRanker(rankPref);
                 }, 15000);
@@ -411,7 +428,8 @@ function rankerHTML() {
         "        <div class='floatLeft'>\n" +
         "            <div class='domCkBox'><input id='ckBoxBoobs' onchange='checkDomain(\"boobs\", $(this).is(\":checked\"))' type='checkbox' />poses and shapes</div>\n" +
         "            <div class='domCkBox'><input id='ckBoxPlayboy' onchange='checkDomain(\"playboy\", $(this).is(\":checked\"))' type='checkbox' />Playboy playmates</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxArchive' onchange='checkDomain(\"archive\", $(this).is(\":checked\"))' type='checkbox' />archive</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxArchive' onchange='checkDomain(\"archive\", $(this).is(\":checked\"))' type='checkbox' />big naturals</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxSoft' onchange='checkDomain(\"boobs\", $(this).is(\":checked\"))' type='checkbox' />poses and shapes</div>\n" +
         "            <div class='domCkBox'><input id='ckBoxPorn' onchange='checkDomain(\"porn\", $(this).is(\":checked\"))' type='checkbox' />porn</div>\n" +
         "            <div class='domCkBox'><input id='ckBoxSluts' onchange='checkDomain(\"sluts\", $(this).is(\":checked\"))' type='checkbox' />sluts</div>\n" +
         "        </div>\n" +

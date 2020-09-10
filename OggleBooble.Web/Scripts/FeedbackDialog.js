@@ -5,11 +5,11 @@ function showFeedbackDialog(pageId) {
     $('#centeredDialogContents').html(feedbackDialogHtml());
     $('#centeredDialogTitle').html("feedback");
     $('#feedbackDialogSummerNoteTextArea').summernote({
-        height: 300,
+        height: 200,
         toolbar: [['codeview']]
     });
-    $('#centeredDialog').css("top", $('.oggleHeader').height() + 20);
-    $('#centeredDialogContainer').fadeIn();
+    $('#centeredDialog').css("top", $('.oggleHeader').height() + 120);
+    $('#centeredDialogContainer').draggable().fadeIn();
     getUserEmail();
 }
 
@@ -75,7 +75,7 @@ function saveFeedback() {
 }
 
 function feedbackDialogHtml() {
-    return "<div id='feedbackDialog' class='oggleDialog' >\n" +
+    return "<div id='feedbackDialog' class='roundedDialog' >\n" +
         "   <div id='errFeedbackRadioButtons' class='validationError'></div>\n"+
         "    <div class='feedbackRadioButtons'>\n" +
         "       <input type='radio' name='feedbackRadio' value='complement'><span> complement</span>\n" +

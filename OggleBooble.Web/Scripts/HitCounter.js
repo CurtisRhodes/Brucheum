@@ -59,8 +59,9 @@ function logPageHit(folderId) {
     }
 
     if (visitorId.indexOf("-2282-") > 0) {
+        logError("XOM", folderId, "-2282- " + visitorId, "logPageHit");
+        setCookieValue("VisitorId", "bypass");
         getIpInfo(folderId, "logPageHit/-2282-");
-        logError("XOM", folderId, "-2282-", "logPageHit");
     }
     if (visitorId == "bypass") {
         getIpInfo(folderId, "logPageHit/bypass");
@@ -117,9 +118,10 @@ function logVisit(visitorId, folderId) {
                 }
             }
             else {
-                if (logVisitSuccessModel.Success === "VisitorId not found") {
+                if (logVisitSuccessModel.Success == "VisitorId not found") {
                     logError("LGV", folderId, "VisitorId: " + visitorId + " not found in Visitor table", "logVisit");
-                    //getIpInfo(folderId, "logVisit");
+                    setCookieValue("VisitorId", "bypass");
+                    getIpInfo(folderId, "logVisit");
                 }
                 else
                     logError("AJX", folderId, logVisitSuccessModel.Success, "logVisit");

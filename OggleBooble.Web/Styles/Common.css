@@ -71,10 +71,10 @@ body {
     margin: 0;
 }
 
-.oggleDialog {
-    background-color: var(--oggleDialogBackgroundColor);
+.roundedDialog {
     padding: 6px;
-    font-size: 18px;
+    /* font-size: 18px;*/
+    border-radius: 6px;
 }
 
 .center {
@@ -421,9 +421,9 @@ body {
     display: none;
 }
 
-.fixedMessageButton {
-    position: absolute;
-    bottom: 10px;
+.floatingFeedbackButton {
+    position: fixed;
+    bottom: 20px;
     right: 5px;
     height: 30px;
     padding: 5px;

@@ -76,10 +76,6 @@ function onLogoutClick(pageId) {
     window.location.href = ".";
 }
 
-function profilePease() {
-    alert("profilePease");
-}
-
 function cancelLogin() {
     dragableDialogClose();
     if (typeof resume === 'function')
@@ -142,6 +138,103 @@ function loginDialogHtml() {
 
 function checkFaceBookLoginState() {
     alert("checkFaceBookLoginState()");
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+let showUserProfilePageId;
+function showUserProfileDialog(pageId) {
+    if (typeof pause === 'function') pause();
+    showUserProfilePageId = pageId;
+    $('#centeredDialogContents').html(userProfileHtml());
+    $('#centeredDialogTitle').html("update user profile");
+    $('#centeredDialog').css("top", $('#oggleHeader').height() + 120);
+    $('#centeredDialogContainer').draggable().fadeIn();
+    loadUserProfile();
+}
+
+function userProfileHtml() {
+    return "<div id='userProfileDialog' class='roundedDialog' >\n" +
+        "   <div><label style='white-space:nowrap;'>user name</label><input id='txtUserProfileName' class='roundedInput' placeholder='your go by name'></div>\n" +
+        "   <div><label style='white-space:nowrap;'>First Name</label><input id='txtUserProfileFirstName' class='roundedInput'></div>\n" +
+        "   <div><label style='white-space:nowrap;'>Last Name</label><input id='txtUserProfileLastName' class='roundedInput'></div>\n" +
+        "       <div id='errUserProfileEmail' class='validationError'></div>\n" +
+        "   <div><label>Email</label><input id='txtUserProfileEmail' style='roundedInput; width:100%'/>\n" +
+        "   <div class='folderDialogFooter'>\n" +
+        "       <div id='btnUserProfileSave' class='roundendButton' onclick='updateUserProfile()'>Save</div>\n" +
+        "       <div id='btnUserProfileCancel' class='roundendButton' onclick='dragableDialogClose()'>Cancel</div>\n" +
+        "   </div>\n" +
+        "</div>\n";
+}
+
+let userProfileData = {};
+function loadUserProfile() {
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + getCookieValue("VisitorId"),
+            success: function (registeredUser) {
+                if (registeredUser.Success == "ok") {
+                    $('#txtUserProfileName').val(registeredUser.UserName);
+                    $('#txtUserProfileFirstName').val(registeredUser.FirstName);
+                    $('#txtUserProfileLastName').val(registeredUser.LastName);
+                    $('#txtUserProfileEmail').val(registeredUser.Email);
+                    userProfileData = {
+                        VisitorId: registeredUser.VisitorId,
+                        UserName: registeredUser.UserName,
+                        FirstName: registeredUser.FirstName,
+                        LastName: registeredUser.LastName,
+                        Email: registeredUser.Email,
+                        Status: registeredUser.Status,
+                        UserRole: registeredUser.UserRole,
+                        UserSettings: registeredUser.UserSettings,
+                        UserCredits: registeredUser.UserCredits
+                    };
+                    alert("userProfileData.VisitorId: " + userProfileData.VisitorId);
+                }
+                else
+                    logError("AJX", showUserProfilePageId, registeredUser.Success, "loadUserProfile");
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("loadUserProfile")) {
+                    logError("XHR", showUserProfilePageId, getXHRErrorDetails(jqXHR), "loadUserProfile");
+                }
+            }
+        });
+    } catch (e) {
+        logError("CAT", showUserProfilePageId, e, "loadUserProfile");
+    }
+}
+
+function updateUserProfile() {
+    try {
+        userProfileData.UserName = $('#txtUserProfileName').val();
+        userProfileData.FirstName = $('#txtUserProfileFirstName').val();
+        userProfileData.LastName = $('#txtUserProfileLastName').val();
+        userProfileData.Email = $('#txtUserProfileEmail').val();
+
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/OggleUser/UpdateUser",
+            data: userProfileData,
+            success: function (success) {
+                if (success == "ok") {
+                    displayStatusMessage("ok", "user profile updated");
+                }
+                else {
+                    logError("AJX", showUserProfilePageId, success, "updateUserProfile");
+                    displayStatusMessage("error", "unable to update user profile: " + success);
+                }
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("updateUserProfile")) {
+                    logError("XHR", showUserProfilePageId, getXHRErrorDetails(jqXHR), "updateUserProfile");
+                }
+            }
+        });
+    } catch (e) {
+        logError("CAT", showUserProfilePageId, e, "updateUserProfile");
+    }
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

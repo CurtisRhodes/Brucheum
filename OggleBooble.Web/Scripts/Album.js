@@ -1,5 +1,4 @@
-﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId,// apFolderType,
-    deepFileCount = 0, deepFolderCount = 0;
+﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId, deepFileCount = 0, deepFolderCount = 0;
 
 function loadAlbum(folderId) {
     if (isNullorUndefined(folderId)) {
@@ -141,7 +140,10 @@ function getAlbumPageInfo(folderId) {
 
                 apFolderName = albumInfo.FolderName;
                 apFolderType = albumInfo.FolderType;
-                document.title = apFolderName + " : OggleBooble";
+                if ((apFolderRoot == "porn") || (apFolderRoot == "porn"))
+                    document.title = apFolderName + " : OgglePorn";
+                else
+                    document.title = apFolderName + " : OggleBooble";
 
                 if (albumInfo.FolderType == "singleModel" || albumInfo.FolderType == "singleChild") {
                     chargeCredits(apFolderId, albumInfo.RootFolder, albumInfo.FolderType);
@@ -197,7 +199,13 @@ function getAlbumPageInfo(folderId) {
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
             }
-            else logError("AJX", apFolderId, albumInfo.Success, "getAlbumPageInfo");
+            else {
+                if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {
+                    logError("MIS", apFolderId, albumInfo.Success, "getAlbumImages");
+                    window.location.href = "Index.html";
+                }
+                logError("AJX", apFolderId, albumInfo.Success, "getAlbumPageInfo");
+            }
         },
         error: function (jqXHR) {
             if (!checkFor404("getAlbumPageInfo")) logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
@@ -248,8 +256,9 @@ function getDeepFolderCounts(folderId, currentFolderImageLinks) {
 }
 
 function albumContextMenu(menuType, linkId, folderId, imgSrc) {
+    //alert("$(window).scrollTop(): " + $(window).scrollTop() + " event.clientY: " + event.clientY);    
     pos.x = event.clientX;
-    pos.y = event.clientY;
+    pos.y = event.clientY + $(window).scrollTop();
     showContextMenu(menuType, pos, imgSrc, linkId, folderId, apFolderName);
 }
 
@@ -385,8 +394,6 @@ function checkAlbumCost() {
         alert("You must be logged in to view this album");
 }
 
-
-
 function chargeCredits(apFolderId, rootFolder) {
         let activityCode = "PGV"  //  
     if (rootFolder === "centerfold")
@@ -422,7 +429,6 @@ function chargeCredits(apFolderId, rootFolder) {
         }
     });
 }
-
         
 function slowlyShowFolderInfoDialog(folderId) {
     forgetHomeFolderInfoDialog = false;

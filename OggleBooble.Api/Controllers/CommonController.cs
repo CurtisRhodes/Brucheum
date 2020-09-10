@@ -456,9 +456,9 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (var db = new MySqlDataContext.OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.FeedBacks.Add(new MySqlDataContext.FeedBack()
+                    db.FeedBacks.Add(new FeedBack()
                     {
                         FeedBackComment = feedBackModel.FeedBackComment,
                         FeedBackType = feedBackModel.FeedBackType,

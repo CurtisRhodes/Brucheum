@@ -92,6 +92,9 @@ function showBasicFolderInfoDialog() {
     $('#centeredDialogContainer').mouseleave(function () {
         if (allowDialogClose) dragableDialogClose();
     });
+
+    $('#centeredDialogContainer').css("top", 33 + $(window).scrollTop());
+    //alert("top " + $('#centeredDialogContainer').offset.top);
     $('#centeredDialogContainer').draggable().fadeIn();
 }
 
@@ -380,11 +383,11 @@ function loadTbForEdit(idx) {
     $('#btnTbDlgAddEdit').html("edit");
 }
 function tbAddEdit() {
-    if ($('#btntbdlgaddedit').html() === "add") {
-        $('#seltrackbacklinksite').val("");
-        $('#txttrackbackstatus').val("");
-        $('#txttrackbacklink').val("");
-        $('#btntbdlgaddedit').html("save");
+    if ($('#btnTbDlgAddEdit').html() === "add") {
+        $('#selTrackBackLinkSite').val("").removeAttr('disabled');
+        $('#txtTrackBackStatus').val("").removeAttr('disabled');
+        $('#txtTrackBackLink').val("").removeAttr('disabled');
+        $('#btnTbDlgAddEdit').html("save");
         $("#btnTbAddCancel").html("cancel").show();
         return;
     }

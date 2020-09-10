@@ -6,7 +6,6 @@ function setOggleHeader(folderId, subdomain) {
     hdrSubdomain = subdomain;
 
     $('#oggleHeader').html(headerHtml(folderId, subdomain));
-    $('#bodydiv').html(bodyHtml(folderId, subdomain));
 
     $('#centeredDialogContents').resizable({
         resize: function () {
@@ -177,6 +176,7 @@ function setHeaderMenu(folderId, subdomain) {
         }
         case "porn": {
             changeFavoriteIcon("porn");
+            //$(document).text
             $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
             $('#bannerTitle').html("OgglePorn");
@@ -494,7 +494,7 @@ function headerHtml(folderId, subdomain) {
         "           <div id='divLoginArea' class='loginArea'>\n" +
         "               <div id='optionLoggedIn' class='displayHidden'>\n" +
         //"                   <div class='hoverTab' id='dashboardMenuItem' class='displayHidden'><a href='/index.html?subdomain=dashboard'>Dashboard</a></div>\n" +
-        "                   <div class='hoverTab' title='modify profile'><a href='javascript:profilePease()'>Hello <span id='spnUserName'></span></a></div>\n" +
+        "                   <div class='hoverTab' title='modify profile'><a href='javascript:showUserProfileDialog(" + folderId + ")'>Hello <span id='spnUserName'></span></a></div>\n" +
         "                   <div class='hoverTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
         "               </div>\n" +
         "               <div id='optionNotLoggedIn' class='displayHidden'>\n" +
@@ -503,11 +503,9 @@ function headerHtml(folderId, subdomain) {
         "               </div>\n" +
         "           </div>\n" +
         "       </div>\n" +
-        "   </div>\n";
-}
+        "   </div>\n" +
 
-function bodyHtml(folderId, subdomain) {
-    return "<div id='indexCatTreeContainer' class='oggleDialogContainer'></div>\n" +
+        "<div id='indexCatTreeContainer' class='oggleDialogContainer'></div>\n" +
         "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "       <div id='customMessage' class='customMessageContainer' ></div>\n" +
