@@ -20,6 +20,12 @@ function pornStartup() {
     document.title = "OgglePorn";
     latestGallerySubdomain = "porn";
     launchCarousel("porn");
+    $('.threeColumnLayout').css("background-color", "#d279a6");
+    //if (subdomain == "porn")
+    //    $('.threeColumnLayout').css("background-color", "var(--oggleBackgroundColor)");
+    //else
+    //    $('.threeColumnLayout').css("background-color", "#d279a6");
+
     $('#updatedGalleriesSectionLoadingGif').show();
     loadUpdatedGalleriesBoxes(updatedGalleriesCount, "porn");
     // set porn colors

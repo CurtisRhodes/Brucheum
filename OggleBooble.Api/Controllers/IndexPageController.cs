@@ -63,31 +63,24 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.Database.ExecuteSqlCommand("call OggleBooble.spLatestTouchedGalleries()");
 
-                    List<LatestTouchedGalleries> dbLatestTouchedGalleries = null;
                     if ((root == "porn") || (root == "sluts"))
                     {
-                        dbLatestTouchedGalleries = db.LatestTouchedGalleries
+                        updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
                            .Where(t => t.RootFolder == "porn" || t.RootFolder == "sluts")
-                           .OrderByDescending(t => t.Acquired)
-                           .ToList();
+                           .OrderByDescending(t => t.Acquired).Take(take).ToList();
                     }
                     if ((root == "archive") || (root == "boobs"))
                     {
-                        dbLatestTouchedGalleries = db.LatestTouchedGalleries
+                        updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
                            .Where(t => t.RootFolder == "archive" || t.RootFolder == "boobs")
-                           .OrderByDescending(t => t.Acquired)
-                           .ToList();
+                           .OrderByDescending(t => t.Acquired).Take(take).ToList();
                     }
                     if ((root == "playboy") || (root == "centerfold"))
                     {
-                        dbLatestTouchedGalleries = db.LatestTouchedGalleries
+                        updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
                             .Where(t => t.RootFolder == root)
-                            .OrderByDescending(t => t.Acquired)
-                            .ToList();
+                            .OrderByDescending(t => t.Acquired).Take(take).ToList();
                     }
-                    updatesModel.LatestTouchedGalleries = dbLatestTouchedGalleries
-                        .Take(take).ToList();
-
                 }
                 updatesModel.Success = "ok";
             }

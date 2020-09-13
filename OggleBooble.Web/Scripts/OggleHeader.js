@@ -133,12 +133,10 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"PBB\",3912,\"pictorials\",4015)'>pictorials</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",3912,\"extras\",2601)'>extras</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",3912,\"cybergirls\",3796)'>cybergirls</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",3912,\"Pmoy\",4013)'>Pmoy</a>\n");
+                "<a href='javascript:rtpe(\"PBB\",3912,\"Pmoy\",4013)'>Pmoy</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",3912,\"Pmoy\",4932)'>just centerfolds</a>\n");
             // <div id='topRowRightContainer'></div>" +
             $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
-            $('#topRowRightContainer').append(addBannerButton("archive"));
-            $('#topRowRightContainer').append(addBannerButton("porn", "OgglePorn"));
-
             // bottom row
             // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
             $('#breadcrumbContainer').html(
@@ -152,6 +150,8 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"PYC\",3912,\"2020\",4128)'>2020's</a>\n");
             // <div id='badgesContainer' class='badgesSection'></div>\n" +
             // <div id='hdrBtmRowSec3' class='hdrBtmRowOverflow'></div>\n" +
+            $('#hdrBtmRowSec3').append(addBannerButton("archive"));
+            $('#hdrBtmRowSec3').append(addBannerButton("porn", "OgglePorn"));
             break;
         case "playboy":
         case "cybergirl": 
@@ -176,7 +176,7 @@ function setHeaderMenu(folderId, subdomain) {
         }
         case "porn": {
             changeFavoriteIcon("porn");
-            //$(document).text
+            //$('.threeColumnLayout').css("background-color", "var(--oggleBackgroundColor)");
             $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
             $('#bannerTitle').html("OgglePorn");
@@ -410,9 +410,9 @@ function addBannerButton(bannerType, rankerType) {
                 "</div>\n";
         case "porn":
             return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='window.open(\"album.html?folder=242\", \"_blank\")'>" + rankerType + "</div>" +
+                "   <div class='clickable' onclick='window.open(\"index.html?spa=3909\", \"_blank\")'>" + rankerType + "</div>" +
                 "</div>\n";
-            break;
+            break;  // https//ogglebooble.com/index.html?spa=3909
         case "softcore":
             return "<div class='headerBannerButton'>" +
                 //"   <div class='clickable' onclick='window.open(\"album.html?folder=5233\", \"_blank\")'>" + rankerType + "</div>" +

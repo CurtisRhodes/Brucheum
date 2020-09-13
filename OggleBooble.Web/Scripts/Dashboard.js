@@ -1,8 +1,14 @@
 ﻿function dashboardStartup() {
     document.title = "dashboard : OggleBooble";
     changeFavoriteIcon("redBallon");
-    $('.txtLinkPath').val('');
     $('#indexMiddleColumn').html(dashboardHtml());
+
+    $('#addLinkCrudArea').keydown(function (event) {
+        if (event.keyCode === 13) {
+            //alert("keydown 13");
+            addImageLink();
+        }
+    });
     $('#dashboardDialog').draggable();
     $('#dashboardDialog').css("top", 250);
     $('#dashboardDialog').css("left", 450);
@@ -10,48 +16,101 @@
     setOggleHeader(3910, "dashboard");
     setOggleFooter(3910, "dashboard");
     let userRole = getUserRole();
-    //alert("userRole: " + userRole);
     if (userRole == "not registered") {
-        alert("not registered");
+        //alert("not registered");
         window.location.href = "Index.html";
     }
     loadHeaderTabs(userRole);
     setLeftMenu(userRole);
-
-    $('#divAddImages').show();
-    showAddImageLinkDialog();
-    $('.txtLinkPath').val(pSelectedTreeFolderPath);
-
-    //$('#dataifyInfo').hide();
-    //$('#dashboardLeftColumn').show();
-    //$('#dashboardRightColumn').show();
-    //let pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
-    //if (isInRole("oggle admin"))
     resizeDashboardPage();
     loadDashboardDirTree(false);
     window.addEventListener("resize", resizeDashboardPage);
 }
 
 function showDefaultWorkArea() {
-    $('#dashboardContainer').html(
+    $('.fullScreenSection').hide();
+    $('#defaultSection').show();
+    activeDirTree = "dashboard";
+}
+
+function dashboardHtml() {
+    return "<img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
+        "<div id='dashboardContainer' class='fullScreenContainer'>" +
         "   <div id='defaultSection' class='fullScreenSection flexbox'>\n" +
         "      <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
         "          <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
         "      </div>\n" +
         "      <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
-        "          <div id='workAreaContainer' class='workAreaContainer'></div>\n" +
+        "          <div id='workAreaContainer' class='workAreaContainer'>" +
+        "               <div id='addImageLinkDialog'>\n" +
+        "                   <div id='addLinkCrudArea' class='addLinkCrudArea'>\n" +
+        "                       <div class='flexbox'>\n" +
+        "                           <label>link</label><input id='txtImageLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()'/>\n" +
+        "                       </div>\n" +
+        "                       <div class='flexbox'>\n" +
+        "                           <label>path</label><input class='roundedInput txtLinkPath' readonly='readonly' />\n" +
+        "                       </div>\n" +
+        "                       <div class='roundendButton' tabindex='2' onclick='addImageLink()'>Insert</div>\n" +
+        "                   </div>\n" +
+        "                   <img id='imgLinkPreview' class='linkImage' />\n" +
+        "               </div>\n" +
+        "          </div>\n" +
         "      </div>\n" +
         "      <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
-        "   </div>\n");
-    $('#dashboardContainer').show();
-    $('.dashboardContainerColumn').show();
-}
-
-function dashboardHtml() {
-    return "<img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
-        "   <div id='dashboardContainer' class='fullScreenContainer'>\n" +
         "   </div>\n" +
-        "      <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
+        "   <div id='moveManySection' class='fullScreenSection'>" +
+        "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
+        "           <div class='workAreaHeaderArea'>\n" +
+        "               <div class='workAreaHeaderTitle'>Move Many</div>\n" +
+        "               <div class='workAreaHeaderDetailRow'>\n" +
+        "                   <div class='moveManyHeaderLabel'>source</div><input id='txtMoveManySource' class='roundedInput' style='width:65%' readonly='readonly' /><br />" +
+        "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly' />" +
+        "                   <img class='dialogDirTreeButton' src='/Images/caretDown.png' " +
+        "                      onclick='$(\"#mmDirTreeContainer\").toggle()'/>\n" +
+        "                   <div class='floatRight'><input type='checkbox' id='mmCkSelectAll' onclick='mmSelectAll()'>  Select All</div>\n" +
+        "               </div>\n" +
+        "           </div>\n" +
+        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='showDefaultWorkArea()'></div>\n" +
+        "       </div>\n" +
+        "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
+        "       <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
+        "       <div id='moveManyFooter' class='workareaFooter'>\n" +
+        "           <button onclick='moveCheckedImages(" + mmSourceFolderId + ")'>Move</button>\n" +
+        "           <div id='moveManyCountContainer' class='floatRight'></div>" +
+        "       </div>\n" +
+        "   </div>\n" +
+        "   <div id='sortToolSection' class='fullScreenSection'>" +
+        "       <div id='sortToolHeader' class='workAreaHeader'>\n" +
+        "           <div id='sortTableHeader' class='workAreaHeaderTitle'></div>\n" +
+        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png'" +
+        "           onclick='showDefaultWorkArea()'></div>\n" +
+        "       </div>\n" +
+        "       <div>\n" +
+        "           <div id='sortToolImageArea'  class='workAreaDisplayContainer'></div>\n" +
+        "           <div id='sortToolFooter' class='workareaFooter'>\n" +
+        "               <button onclick='updateSortOrder()'>ReSort</button>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "   </div>\n" +
+        "   <div id='reportsSection' class='fullScreenSection flexbox'>\n" +
+        "      <div id='reportsLeftColumn' class='dashboardContainerColumn'>\n" +
+        "          <div id='reportsLeftMenu' class='oggleVerticalMenu' ></div>\n" +
+        "      </div>\n" +
+        "       <div id='reportsMiddleColumn' class='dashboardContainerColumn'>\n" +
+        "           <div class='workAreaContainer'>" +
+        "               <div id='reportsHeader' class='workAreaHeader'>\n" +
+        "                   <div class='workAreaHeaderArea'>\n" +
+        "                       <div id='reportsHeaderTitle' class='workAreaHeaderTitle'>Reports</div>\n" +
+        "                       <div class='reportsHeaderDetailRow'></div>\n" +
+        "                   </div>\n" +
+        "                   <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='showDefaultWorkArea()'></div>\n" +
+        "               </div>\n" +
+        "               <div id='reportsContentArea' class='workAreaDisplayContainer'></div>\n" +
+        "               <div id='reportsFooter' class='workareaFooter'></div>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "   </div>\n" +
+        "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
         "   <div id='dashboardDialog' class='oggleDialogContainer displayHidden'>\n" +
         "      <div class='oggleDialogHeader'>" +
         "          <div id='dashboardDialogTitle' class='oggleDialogTitle'></div>" +
@@ -59,7 +118,7 @@ function dashboardHtml() {
         "      </div>\n" +
         "      <div id='dashboardDialogContents' class='oggleDialogContents'></div>\n" +
         "   </div>\n";
-}  
+}
 
 function resizeDashboardPage() {
     let widthFF = -39;
@@ -83,50 +142,49 @@ function resizeDashboardPage() {
 function setLeftMenu(role) {
     switch (role) {
         case "normal":
-            //$('.workAreaContainer').hide();
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='loadDashboardDirTree(true)'>ReBuild Dir Tree</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showUpLoadFileDialog()'>Upload a file</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddImageLinkDialog()'>Add Image Link</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='loadDashboardDirTree(true)'>ReBuild Dir Tree</div>\n" +
+                "<div class='clickable' onclick='showUpLoadFileDialog()'>Upload a file</div>\n" +
+                "<div class='clickable' onclick='showDefaultWorkArea()'>Add Image Link</div>\n");
             $('#divAddImages').show();
             break;
         case "power user": {
             //$('.workAreaContainer').hide();
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='loadDashboardDirTree(true)'>ReBuild Dir Tree</div>");
-
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#createNewFolderDialog').dialog('open');\">Create New Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddStepChildFolderDialog()'>Copy Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick=\"$('#renameFolderCrud').dialog('open');\">Rename Folder</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='loadDashboardDirTree(true)'>ReBuild Dir Tree</div>\n" +
+                "<div class='clickable' onclick='showSortTool()'>Sort Tool</div>\n" +
+                "<div class='clickable' onclick=\"$('#createNewFolderDialog').dialog('open');\">Create New Folder</div>\n" +
+                "<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>\n" +
+                "<div class='clickable' onclick='showAddStepChildFolderDialog()'>Copy Folder</div>\n" +
+                "<div class='clickable' onclick=\"$('#renameFolderCrud').dialog('open');\">Rename Folder</div>");
             break;
         }
         case "Manage Roles":
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='showAssignRolesDialog()'>Assign User Roles</div>\n" +
+                "<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
             break;
-        //case "Reports":
-        //    $('#dashboardLeftMenu').html("<div class='clickable' onclick='showPerfMetrics()'>Performance Metrics</div>");
-        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='pageHitReport()'>Page Hit Report</div>");
-        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>");
-        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>");
-        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>");
-        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='FeedbackReport()'>Feedback</div>");
-        //    $('#dashboardLeftMenu').append("<div class='clickable' onclick='errorLogReport()'>Error Log</div>");
-        //    break;
+        case "reports":
+            $('#reportsLeftMenu').html("<div class='clickable' onclick='runMetricsMatrixReport()'>Performance Metrics</div>\n" +
+                "<div class='clickable' onclick='runPageHitReport()'>Page Hit Report</div>\n" +
+                "<div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>\n" +
+                "<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>\n" +
+                "<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>\n" +
+                "<div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
+                "<div class='clickable' onclick='runPlayboyListReport()'>Centerfold List</div>\n" +
+                "<div class='clickable' onclick='errorLogReport()'>Error Log</div>");
+            //  <div class='clickable' onclick='buildCenterfoldList()'>Build Centerfold List</div>\n" +
+            break;
         case "admin":
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='loadDashboardDirTree(true)'>ReBuild Dir Tree</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddImageLinkDialog()'>Add Image Link</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCreateStaticPagesDialog()'>Create Static Pages</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showRepairLinksDialog()'>Repair Links</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>");
-
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showSortTool()'>Sort Tool</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showCreateNewFolderDialog(" + pSelectedTreeId + ")';\">Create New Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddStepChildFolderDialog()'>Copy Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='performMoveManyTool();'>Move Many</div>");
-            $('#dashboardLeftMenu').append("<div class='clickable' onclick='showAddVideoLink();\">Add Video Link</div>");
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='loadDashboardDirTree(true)'>ReBuild Dir Tree</div>\n" +
+                "<div class='clickable' onclick='showDefaultWorkArea()'>Add Image Link</div>\n" +
+                "<div class='clickable' onclick='showCreateStaticPagesDialog()'>Create Static Pages</div>\n" +
+                "<div class='clickable' onclick='showRepairLinksDialog()'>Repair Links</div>\n" +
+                "<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>\n" +
+                "<div class='clickable' onclick='showSortTool()'>Sort Tool</div>\n" +
+                "<div class='clickable' onclick='showCreateNewFolderDialog(" + pSelectedTreeId + ")';\">Create New Folder</div>\n" +
+                "<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>\n" +
+                "<div class='clickable' onclick='showAddStepChildFolderDialog()'>Copy Folder</div>\n" +
+                "<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>\n" +
+                "<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>\n" +
+                "<div class='clickable' onclick='showAddVideoLink();\">Add Video Link</div>");
 
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
@@ -137,12 +195,12 @@ function setLeftMenu(role) {
         default:
             alert("view not undestood: " + role);
     }
-}
+} 
 
 function loadHeaderTabs(role) {
     switch (role) {
         case "normal":
-            $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
+            $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('normal');\">Add Images</a>");
             break;
         case "power user":
             $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
@@ -150,16 +208,23 @@ function loadHeaderTabs(role) {
             break;
         case "admin":
             //alert("isInRole Oggle admin")
-            $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Add Images');\">Add Images</a>");
-            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('admin');\">Admin</a>");
+            $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('normal');showDefaultWorkArea()\">Add Images</a>");
+            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('admin');showDefaultWorkArea()\">Admin</a>");
             $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:showReportsSection();\">Reports</a>");
-            $('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Roles');\">Manage Roles</a>");
+            //$('#breadcrumbContainer').append("<a class='activeBreadCrumb' href=\"javascript:setLeftMenu('Manage Roles');\">Manage Roles</a>");
             $('#headerMessage').html("Oggle admin");
             //$('.adminLevelOption').show();
             break;
         default:
             alert("headerTabs role not undestood: " + role);
     }
+}
+
+function showReportsSection() {
+    $('.fullScreenSection').hide();
+    $('#reportsSection').show();
+    setLeftMenu("reports");
+    $('#reportsMiddleColumn').css("width", $('#dashboardContainer').width() - $('#reportsLeftColumn').width());
 }
 
 // REPAIR FUNCTIONS
@@ -207,6 +272,8 @@ function performRepairLinks(justOne) {
                         //if (repairReport.ImageFilesAdded > 0)
                         //    $('#dataifyInfo').append(", ImageFilesAdded: " + repairReport.ImagesRenamed);
 
+                        if (repairReport.ImagesRenamed > 0)
+                            $('#dataifyInfo').append(", Image Files Renamed: " + repairReport.ImagesRenamed);
                         if (repairReport.ZeroLenFileRemoved > 0)
                             $('#dataifyInfo').append(", Image Files Zeroed: " + repairReport.ZeroLenFileRemoved);
                         if (repairReport.ImageFilesMoved > 0)
@@ -285,26 +352,6 @@ function createStaticPages(justOne) {
 }
 
 // ADD IMAGE LINK
-function showAddImageLinkDialog() {
-    $('#workAreaContainer').html(
-        "<div id='addLinkCrudArea' class='addLinkCrudArea'>\n" +
-        "   <div class='flexbox'>\n" +
-        "       <label>link</label><input id='txtImageLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()'/>\n" +
-        "   </div>\n" +
-        "   <div class='flexbox'>\n" +
-        "       <label>path</label><input class='roundedInput txtLinkPath' readonly='readonly' />\n" +
-        "   </div>\n" +
-        "    <div class='roundendButton' tabindex='2' onclick='addImageLink()'>Insert</div>\n" +
-        "</div>\n" +
-        "<img id='imgLinkPreview' class='linkImage' />\n").show();
-
-    $('#addLinkCrudArea').keydown(function (event) {
-        if (event.keyCode === 13) {
-            //alert("keydown 13");
-            addImageLink();
-        }
-    });
-}
 function addImageLink() {
     if (isNullorUndefined($('#txtImageLink').val())) {
         alert("invalid link");
@@ -538,48 +585,23 @@ function showAddEditRoles() {
 
 // MOVE MANY
 let mmSourceFolderId, mmSelectedTreeFolderPath;
-function performMoveManyTool() {
+function showMoveManyTool() {
     if (isNullorUndefined(pSelectedTreeFolderPath)) {
         alert("select a folder");
         return;
     }
     mmSourceFolderId = pSelectedTreeId;
     mmSelectedTreeFolderPath = pSelectedTreeFolderPath;
-    showMoveManyTool();
-}
-function showMoveManyTool() {
-    $('#dashboardContainer').html(
-        "   <div id='moveManySection' class='fullScreenSection'>" +
-        "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
-        "           <div class='workAreaHeaderArea'>\n" +
-        "               <div class='workAreaHeaderTitle'>Move Many</div>\n" +
-        "               <div class='workAreaHeaderDetailRow'>\n" +
-        "                   <div class='moveManyHeaderLabel'>source</div><input id='txtMoveManySource' class='roundedInput' style='width:65%' readonly='readonly' /><br />" +
-        "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly' />" +
-        "                   <img class='dialogDirTreeButton' src='/Images/caretDown.png' " +
-        "                      onclick='$(\"#mmDirTreeContainer\").toggle()'/>\n" +
-        "                   <div class='floatRight'><input type='checkbox' id='mmCkSelectAll' onclick='mmSelectAll()'>  Select All</div>\n" +
-        "               </div>\n" +
-        "           </div>\n" +
-        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='showDefaultWorkArea()'></div>\n" +
-        "       </div>\n" +
-        "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
-        "       <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
-        "       <div id='moveManyFooter' class='workareaFooter'>\n" +
-        "           <button onclick='moveCheckedImages(" + mmSourceFolderId + ")'>Move</button>\n" +
-        "           <div id='moveManyCountContainer' class='floatRight'></div>" +
-        "       </div>\n" +
-        "   </div>\n");
-    //let lblMoveManyDestination = $('#txtMoveManyDestination').val().replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
-
+    $('.fullScreenSection').hide();
+    $('#moveManySection').show();
     $('#txtMoveManySource').val(mmSelectedTreeFolderPath);
     $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyHeader').height());
     activeDirTree = "moveMany";
-    loadDirectoryTree(1, "mmDirTreeContainer", false);
-    //$('#moveManyHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " "));
-    $('#txtMoveManyDestination').val("");
+    loadDirectoryTree(1, "mmDirTreeContainer", true);
+    loadMMcheckboxes();
+}
+function loadMMcheckboxes() {
     $('#dashBoardLoadingGif').fadeIn();
-    // get image links
     let imgRepo = settingsArray.ImageRepo;
     $.ajax({
         type: "GET",
@@ -590,22 +612,21 @@ function showMoveManyTool() {
                 $('#moveManyImageArea').html("");
                 $.each(imgLinks.Links, function (ndx, obj) {
                     $('#moveManyImageArea').append("<div class='sortBox'><img class='sortBoxImage' src='" + imgRepo + "/" + obj.FileName + "'/>" +
-                        "<br/><input type='checkbox' class='loadManyCheckbox' imageId="  + obj.LinkId + "></div>");
+                        "<br/><input type='checkbox' class='loadManyCheckbox' imageId=" + obj.LinkId + "></div>");
                 });
                 $('#moveManyCountContainer').html(imgLinks.Links.length.toLocaleString());
             }
             else {
-                alert("showMoveManyTool: " + imageLinksModel.Success);
+                alert("moveManyTool: " + imageLinksModel.Success);
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("showMoveManyTool")) 
-                sendEmailToYourself("XHR ERROR in Dashboard.js showMoveManyTool", "Message: " + errorMessage);            
-            alert("showMoveManyTool xhr error: " + errorMessage);
+            if (!checkFor404("moveManyTool"))
+                sendEmailToYourself("XHR ERROR in Dashboard.js moveManyTool", "Message: " + errorMessage);
+            alert("moveManyTool xhr error: " + errorMessage);
         }
-    });
-}
+    });}
 function mmSelectAll() {
     if ($('#mmCkSelectAll').is(":checked"))
         $('.loadManyCheckbox').prop("checked", true);
@@ -638,8 +659,7 @@ function moveCheckedImages() {
             success: function (success) {
                 $('#dashBoardLoadingGif').hide();
                 if (success === "ok") {
-                    showMoveManyTool();
-                    //$('#txtMoveManyDestination').val(moveManyModel);
+                    loadMMcheckboxes();
                 }
                 else
                     alert("moveCheckedImages: " + success);
@@ -652,7 +672,7 @@ function moveCheckedImages() {
             }
         });
     }
-    console.log("leaving move many");
+    //console.log("leaving move many");
 }
 
 // SORT TOOL
@@ -661,21 +681,8 @@ function showSortTool() {
         alert("select a folder");
         return;
     }
-    $('#dashboardContainer').html(
-        "   <div id='sortToolSection' class='fullScreenSection'>" +
-        "       <div id='sortToolHeader' class='workAreaHeader'>\n" +
-        "           <div id='sortTableHeader' class='workAreaHeaderTitle'></div>\n" +
-        "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png'" +
-        "           onclick='showDefaultWorkArea()'></div>\n" +
-        "       </div>\n" +
-        "       <div>\n" +
-        "           <div id='sortToolImageArea'  class='workAreaDisplayContainer'></div>\n" +
-        "           <div id='sortToolFooter' class='workareaFooter'>\n" +
-        "               <button onclick='updateSortOrder()'>ReSort</button>\n" +
-        "           </div>\n" +
-        "       </div>\n" +
-        "   </div>\n");
-    //$('#sortToolImageArea').css("height", $('#sortToolSection').height() - $('#sortToolHeader').height());  // - $('#sortToolFooter').height())
+    $('.fullScreenSection').hide();
+    $('#sortToolSection').show();
     $('#sortToolImageArea').css("height", $('#dashboardContainer').height() - $('#sortToolHeader').height());
     loadSortImages();
 }
@@ -1040,6 +1047,7 @@ function loadDashboardDirTree(forceRefresh) {
     $('#dataifyInfo').show().html("loading directory tree");
     loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
 }
+
 function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
     resizeDashboardPage();

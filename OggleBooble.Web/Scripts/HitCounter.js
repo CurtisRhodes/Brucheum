@@ -94,8 +94,16 @@ function logPageHit(folderId) {
 
 function logVisit(visitorId, folderId) {
     if (isNullorUndefined(visitorId)) {
-        logError("BUG", folderId, "log visit called with no visitorId", "logVisit");
-        return;
+        let cookieVisitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(cookieVisitorId)) {
+            logError("BUG", folderId, "log visit called with no visitorId", "logVisit");
+            getIpInfo(folderId, "logVisit");
+            return;
+        }
+        else {
+            logError("BUG", folderId, "log visit visitorId param came in empty", "logVisit");
+
+        }
     }
     if (visitorId == "bypass") {
         getIpInfo(folderId, "logVisit");
@@ -144,7 +152,8 @@ function getIpInfo(folderId, calledFrom) {
                 return;
             }
         }
-        if (isNullorUndefined(window.sessionStorage["sessionId"])) {
+        if (isNullorUndefined(window.sessionStorage["sessionId"]))
+        {
             window.sessionStorage["sessionId"] = "we have been here before";
             visitorId = create_UUID();
             $.ajax({
@@ -153,53 +162,58 @@ function getIpInfo(folderId, calledFrom) {
                 dataType: "JSON",
                 //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
                 success: function (ipResponse) {
-                    $.ajax({
-                        type: "POST",
-                        url: settingsArray.ApiServer + "api/Common/AddVisitor",
-                        data: {
-                            VisitorId: visitorId,
-                            IpAddress: ipResponse.ip,
-                            FolderId: folderId,
-                            CalledFrom: calledFrom,
-                            City: ipResponse.city,
-                            Country: ipResponse.country,
-                            Region: ipResponse.region,
-                            GeoCode: ipResponse.loc
-                        },
-                        success: function (addVisitorSuccess) {
-                            if (addVisitorSuccess.Success == "ok") {
-                                setCookieValue("VisitorId", visitorId);
-                                let cookieTest = getCookieValue("VisitorId");
-                                if (cookieTest === visitorId) {
-                                    logEvent("NEW", folderId, calledFrom, cookieTest);
-                                    if (calledFrom == "logStaticPageHit")
-                                        logStaticPageHit(folderId, "getIpInfo");
-                                }
-                                else {
-                                    logError("CTF", folderId, "getIpInfo", calledFrom);
-                                }
-                            }
-                            else
-                                if (addVisitorSuccess.Success == "existing Ip") {
-                                    logError("BAD", folderId, "wasted Ip call", "getIpInfo");
-                                    setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
-
+                    if (isNullorUndefined(ipResponse.ip)) {
+                        logError("BUG", folderId, "ipInfo came back with no ip. VisitorId: " + visitorId, "getIpInfo/" + calledFrom);
+                    }
+                    else {
+                        $.ajax({
+                            type: "POST",
+                            url: settingsArray.ApiServer + "api/Common/AddVisitor",
+                            data: {
+                                VisitorId: visitorId,
+                                IpAddress: ipResponse.ip,
+                                FolderId: folderId,
+                                CalledFrom: calledFrom,
+                                City: ipResponse.city,
+                                Country: ipResponse.country,
+                                Region: ipResponse.region,
+                                GeoCode: ipResponse.loc
+                            },
+                            success: function (addVisitorSuccess) {
+                                if (addVisitorSuccess.Success == "ok") {
+                                    setCookieValue("VisitorId", visitorId);
                                     let cookieTest = getCookieValue("VisitorId");
-                                    if (cookieTest === addVisitorSuccess.VisitorId) {
+                                    if (cookieTest === visitorId) {
+                                        logEvent("NEW", folderId, calledFrom, cookieTest);
                                         if (calledFrom == "logStaticPageHit")
                                             logStaticPageHit(folderId, "getIpInfo");
                                     }
-                                    else
-                                        logError("CTF", folderId, "existing Ip", "getIpInfo/" + calledFrom);
+                                    else {
+                                        logError("CTF", folderId, "getIpInfo", calledFrom);
+                                    }
                                 }
                                 else
-                                    logError("AJX", folderId, success, "addVisitor");
-                        },
-                        error: function (jqXHR) {
-                            if (!checkFor404("addVisitor")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addVisitor");
-                        }
-                    });
-                    logIpHit(visitorId, ipResponse.ip, folderId);
+                                    if (addVisitorSuccess.Success == "existing Ip") {
+                                        logError("BAD", folderId, "wasted Ip call", "getIpInfo");
+                                        setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
+
+                                        let cookieTest = getCookieValue("VisitorId");
+                                        if (cookieTest === addVisitorSuccess.VisitorId) {
+                                            if (calledFrom == "logStaticPageHit")
+                                                logStaticPageHit(folderId, "getIpInfo");
+                                        }
+                                        else
+                                            logError("CTF", folderId, "existing Ip", "getIpInfo/" + calledFrom);
+                                    }
+                                    else
+                                        logError("AJX", folderId, success, "addVisitor");
+                            },
+                            error: function (jqXHR) {
+                                if (!checkFor404("addVisitor")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addVisitor");
+                            }
+                        });
+                        logIpHit(visitorId, ipResponse.ip, folderId);
+                    }
                 },
                 error: function (jqXHR) {
                     if (!checkFor404("getIpInfo")) {

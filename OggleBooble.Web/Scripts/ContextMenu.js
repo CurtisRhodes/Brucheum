@@ -11,6 +11,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     pFolderName = folderName;
     pMenuType = menuType;
 
+
     if (pMenuType === "Slideshow") {
         $('#slideshowCtxMenuContainer').css("top", pos.y);
         $('#slideshowCtxMenuContainer').css("left", pos.x);
@@ -18,7 +19,10 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
         $('#slideshowContextMenuContent').html(contextMenuHtml())
     }
     else {
-        $('#contextMenuContainer').css("top", pos.y);
+        let y = pos.y - $(window).scrollTop();
+        //alert("scrollTop: " + $(window).scrollTop() + " x: " + x + "  pMenuType: " + pMenuType);
+
+        $('#contextMenuContainer').css("top", y);
         $('#contextMenuContainer').css("left", pos.x);
         $('#contextMenuContainer').fadeIn();
         $('#contextMenuContent').html(contextMenuHtml())

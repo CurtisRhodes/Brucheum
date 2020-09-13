@@ -34,7 +34,6 @@
     /*border: solid thin #111;*/
     box-sizing: padding-box;
     background-color: var(--oggleBackgroundColor);
-    display: none;
 }
 
 .xxdashboardRightContainerColumn {
@@ -51,7 +50,7 @@
 .oggleVerticalMenu {
     min-width: 15%;
     margin-top: 12px;
-    overflow: auto;
+    overflow-y: auto;
     padding-right: 36px;
 }
     .oggleVerticalMenu div {

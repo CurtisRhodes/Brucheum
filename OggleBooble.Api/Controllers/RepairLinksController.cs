@@ -62,10 +62,12 @@ namespace OggleBooble.Api.Controllers
                     var physcialFileLinkId = physcialFileName.Substring(physcialFileName.IndexOf("_") + 1, 36);
 
                     // 1. check for physicalFile in folder with no ImageFile row
-                    if (dbFolderImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault() == null)
+                    var dbFolderImageFile = dbFolderImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault();
+                    if (dbFolderImageFile== null)
                     {
                         var dbOtherFoldeImageLink = db.ImageFiles.Where(il => il.Id == physcialFileLinkId).FirstOrDefault();
-                        if (dbOtherFoldeImageLink != null) {
+                        if (dbOtherFoldeImageLink != null)
+                        {
                             if (dbOtherFoldeImageLink.FolderId != folderId)
                             {
                                 dbOtherFoldeImageLink.FolderId = folderId;
@@ -75,7 +77,8 @@ namespace OggleBooble.Api.Controllers
                             else
                                 repairReport.Errors.Add("how did this happen");
                         }
-                        else {
+                        else
+                        {
                             // create new ImageFile record
                             try
                             {
@@ -116,11 +119,19 @@ namespace OggleBooble.Api.Controllers
                             }
                         }
                     }
+                    else {
+                        if (dbFolderImageFile.FileName != physcialFileName)
+                        {
+                            dbFolderImageFile.FileName = physcialFileName;
+                            db.SaveChanges();
+                            repairReport.ImagesRenamed++;
+                        }
+                    }
                     // 2. check for physicalFiles with no link
                     if (dbFolderCatLinks.Where(il => il.ImageLinkId == physcialFileLinkId && il.ImageCategoryId == folderId).FirstOrDefault() == null)
                     {
-                        var otherFolderCatLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == physcialFileLinkId).FirstOrDefault();
-                        if(otherFolderCatLinks==null)
+                        //var otherFolderCatLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == physcialFileLinkId).FirstOrDefault();
+                        ///if (otherFolderCatLinks == null)
                         {
                             db.CategoryImageLinks.Add(new CategoryImageLink()
                             {

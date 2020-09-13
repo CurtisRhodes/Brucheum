@@ -1,42 +1,5 @@
 ﻿// REPORTS
 let activeReport = "";
-
-function showReportsSection() {
-    $('#dashboardContainer').html(
-        "   <div id='reportsSection' class='fullScreenSection flexbox'>\n" +
-        "       <div id='reportsLeftColumn' class='dashboardContainerColumn'>\n" +
-        "           <div id='dashboardLeftMenu' class='oggleVerticalMenu'>" +
-        "                <div class='clickable' onclick='runMetricsMatrixReport()'>Performance Metrics</div>\n" +
-        "                <div class='clickable' onclick='runPageHitReport()'>Page Hit Report</div>\n" +
-        "                <div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>\n" +
-        "                <div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>\n" +
-        "                <div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>\n" +
-        "                <div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
-        "                <div class='clickable' onclick='runPlayboyListReport()'>Centerfold List</div>\n" +
-        "                <div class='clickable' onclick='errorLogReport()'>Error Log</div>\n" +
-//        "                <div class='clickable' onclick='buildCenterfoldList()'>Build Centerfold List</div>\n" +
-        "         </div>\n" +
-        "      </div>\n" +
-        "       <div id='reportsMiddleColumn' class='dashboardContainerColumn'>\n" +
-        "           <div class='workAreaContainer'>" +
-        "               <div id='reportsHeader' class='workAreaHeader'>\n" +
-        "                   <div class='workAreaHeaderArea'>\n" +
-        "                       <div id='reportsHeaderTitle' class='workAreaHeaderTitle'>Reports</div>\n" +
-        "                       <div class='reportsHeaderDetailRow'></div>\n" +
-        "                   </div>\n" +
-        "                   <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='showDefaultWorkArea()'></div>\n" +
-        "               </div>\n" +
-        "               <div id='reportsContentArea' class='workAreaDisplayContainer'></div>\n" +
-        "               <div id='reportsFooter' class='workareaFooter'></div>\n" +
-        "           </div>\n" +
-        "       </div>\n" +
-        //"       <div id='dashboardRightColumn' class='dashboardContainerColumn'>RIGHT</div>\n" +
-        "   </div>\n");
-    $('#reportsMiddleColumn').css("width", $('#dashboardContainer').width() - $('#reportsLeftColumn').width());
-    $('.dashboardContainerColumn').show();
-    
-}
-
 function runMetricsMatrixReport() {
     if (connectionVerified) {
         $('#workAreaContainer').css("height", $('#dashboardContainer').height());

@@ -4,10 +4,15 @@ function showFeedbackDialog(pageId) {
     feedbackPageId = pageId;
     $('#centeredDialogContents').html(feedbackDialogHtml());
     $('#centeredDialogTitle').html("feedback");
-    $('#feedbackDialogSummerNoteTextArea').summernote({
+    $('#feedbackDialogSummernoteContainer').summernote({
         height: 200,
         toolbar: [['codeview']]
     });
+    $('#feedbackDialogSummernoteContainer').focus();
+    $('#feedbackDialogSummernoteContainer').summernote('focus');
+
+    //$("#feedbackDialogSummernoteContainer").summernote("code", "_");
+
     $('#centeredDialog').css("top", $('.oggleHeader').height() + 120);
     $('#centeredDialogContainer').draggable().fadeIn();
     getUserEmail();
@@ -83,7 +88,9 @@ function feedbackDialogHtml() {
         "       <input type='radio' name='feedbackRadio' value='report error'><span> report error</span>\n" +
         "   </div>\n" +
         "   <div id='errFeedbackText' class='validationError'></div>\n" +
-        "   <div id='feedbackDialogSummerNoteTextArea'></div>\n" +
+        "    <div class='modelInfoCommentArea'>\n" +
+        "       <textarea id='feedbackDialogSummernoteContainer'></textarea>\n" +
+        "    </div>\n" +
         "   <div style='display:table; width: 100%'>\n"+
         "       <div style='display:table-cell; width:65px; text-align:right;'>email: </div>" +
         "       <div id='errFeedbackEmail' class='validationError'></div>\n" +
