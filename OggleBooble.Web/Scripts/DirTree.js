@@ -23,8 +23,6 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
             url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
             success: function (dirTreeModel) {
                 if (dirTreeModel.Success === "ok") {
-                    //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
-                    //$('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
                     buildDirTreeRecurr(dirTreeModel);
 
                     if (startNode === 1) {
@@ -32,15 +30,12 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
                     }
                     $('#' + container + '').html(strdirTree);
 
-                    var htmlBuildTime = (Date.now() - start) / 1000;
-                    $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
-                    console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
-
                     if (typeof onDirTreeComplete === 'function') {
                         onDirTreeComplete();
                     }
                 }
                 else {
+                    $('#dashBoardLoadingGif').hide();
                     logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
                 }
             },

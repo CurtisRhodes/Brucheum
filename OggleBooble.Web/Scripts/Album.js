@@ -1,4 +1,4 @@
-﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId, deepFileCount = 0, deepFolderCount = 0;
+﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId, ttlFiles, ttlFolders;
 
 function loadAlbum(folderId) {
     if (isNullorUndefined(folderId)) {
@@ -24,13 +24,14 @@ function playVideo() {
 
 }
 
-function getAlbumImages() {
+function getAlbumImages(folderId) {
     var getImagesStart = Date.now();
     $('#indexPageLoadingGif').show();
+    $('#galleryBottomfileCount').html("?");
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + apFolderId,
+            url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + folderId,
             success: function (albumImageInfo) {
                 $('#indexPageLoadingGif').hide();
                 if (albumImageInfo.Success === "ok") {
@@ -71,20 +72,14 @@ function getAlbumImages() {
                             $('#imageContainer').append(imageHtml);
                         }
                     });
-                    //$('#galleryBottomfileCount').html(albumImageInfo.ImageLinks.length.toLocaleString());
 
                     //  SUBFOLDERS 
                     if (albumImageInfo.Folders.length > 0) {
-                        //$('#galleryBottomfileCount').html("# " + albumImageInfo.ImageLinks.length.toLocaleString() + "/" + albumImageInfo.Folders.length);
-                        let countStr = "?";
-                        let imgSrc = "?";
+                        let imgSrc;
                         $.each(albumImageInfo.Folders, function (idx, folder) {
                             if ((folder.FolderType === "singleParent") || (folder.FolderType === "multiFolder")) {
-                                countStr = "?";
-                                getDeepFolderCounts(folder.FolderId, folder.FileCount);
+                                getDeepFolderCounts(folder.FolderId, folder.FileCount, albumImageInfo.Folders.length);
                             }
-                            else
-                                countStr = folder.FileCount.toLocaleString();
 
                             if (isNullorUndefined(folder.FolderImage)) {
                                 imgSrc = "/Images/binaryCodeRain.gif";
@@ -95,11 +90,10 @@ function getAlbumImages() {
 
                             $('#imageContainer').append("<div class='" + imageFrameClass + "'\n" +
                                 " oncontextmenu='albumContextMenu(\"Folder\",\"" + folder.LinkId + "\"," + folder.FolderId + ",\"" + imgSrc + "\")'\n" +
-                                " onclick='rtpe(\"SUB\",\"called from: " + apFolderId + "\",\"" + folder.DirectoryName + "\"," + folder.FolderId + ")'>\n" +
+                                " onclick='rtpe(\"SUB\",\"called from: " + folderId + "\",\"" + folder.DirectoryName + "\"," + folder.FolderId + ")'>\n" +
                                 "<img id='" + folder.LinkId + "' class='folderImage'\n" +
                                 "onerror='subFolderImgError(\"" + imgSrc + "\",\"" + folder.LinkId + "\")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
-                                "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div><span Id='fc" + folder.FolderId + "'>" + countStr + "</span></div>");
-
+                                "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div><span Id='fc" + folder.FolderId + "'>" + folder.FileCount + "</span></div>");
                         });
                     }
 
@@ -115,18 +109,18 @@ function getAlbumImages() {
                     if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
                         checkFor404("getAlbumImages");
                     else
-                        logError("AJX", apFolderId, albumImageInfo.Success, "getAlbumImages");
+                        logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
                 }
             },
             error: function (jqXHR) {
                 $('#indexPageLoadingGif').hide();
                 if (!checkFor404("getAlbumImages")) {
-                    logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "getAlbumImages");
+                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumImages");
                 }
             }
         });
     } catch (e) {
-        logError("CAT",apFolderId, e, "getAlbumImages");
+        logError("CAT",folderId, e, "getAlbumImages");
     }
 }
 
@@ -134,10 +128,9 @@ function getAlbumPageInfo(folderId) {
     var infoStart = Date.now();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + apVisitorId + "&folderId=" + apFolderId,
+        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + apVisitorId + "&folderId=" + folderId,
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
-
                 apFolderName = albumInfo.FolderName;
                 apFolderType = albumInfo.FolderType;
                 if ((apFolderRoot == "porn") || (apFolderRoot == "porn"))
@@ -145,17 +138,13 @@ function getAlbumPageInfo(folderId) {
                 else
                     document.title = apFolderName + " : OggleBooble";
 
-                if (albumInfo.FolderType == "singleModel" || albumInfo.FolderType == "singleChild") {
-                    chargeCredits(apFolderId, albumInfo.RootFolder, albumInfo.FolderType);
-                    $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
-                    $('#deepSlideshowButton').hide();
-                }
                 if ((albumInfo.FolderType === "singleParent") || (albumInfo.FolderType === "multiFolder")) {
-                    getDeepFolderCounts(apFolderId, albumInfo.FileCount);
+                    getDeepFolderCounts(folderId, albumInfo.FileCount, albumInfo.FolderCount);
                     $('#deepSlideshowButton').show();
                 }
-                if (albumInfo.FolderType === "multiModel") {
+                else {
                     $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
+                    chargeCredits(folderId, albumInfo.RootFolder, albumInfo.FolderType);
                     $('#deepSlideshowButton').hide();
                 }
 
@@ -196,61 +185,73 @@ function getAlbumPageInfo(folderId) {
                 }
                 setBreadCrumbs(albumInfo.BreadCrumbs);
 
+                if ((albumInfo.FolderType === "singleParent") || (albumInfo.FolderType === "multiFolder")) {
+                    $.ajax({
+                        type: "GET",
+                        url: settingsArray.ApiServer + "api/GalleryPage/UpdateFolderCounts?folderId=" + folderId,
+                        success: function (countsModel) {
+                            if (countsModel.Success === "ok") {
+                                if ((albumInfo.FolderCount != countsModel.TtlFolderCount) && (albumInfo.FolderCount !== 0))
+                                    $('#galleryBottomfileCount').html("((" + albumInfo.FolderCount + ") " + countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
+                                else
+                                    $('#galleryBottomfileCount').html(countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
+                            }
+                            else {
+                                if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
+                                    checkFor404("getAlbumImages");
+                                else
+                                    logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
+                            }
+                        },
+                        error: function (jqXHR) {
+                            logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumImages");
+                        }
+                    });
+                }
+
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
             }
             else {
                 if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {
-                    logError("MIS", apFolderId, albumInfo.Success, "getAlbumImages");
+                    logError("MIS", folderId, albumInfo.Success, "getAlbumImages");
                     window.location.href = "Index.html";
                 }
-                logError("AJX", apFolderId, albumInfo.Success, "getAlbumPageInfo");
+                logError("AJX", folderId, albumInfo.Success, "getAlbumPageInfo");
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumPageInfo")) logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
+            if (!checkFor404("getAlbumPageInfo")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
         }
     });
 }
 
-function getDeepFolderCounts(folderId, currentFolderImageLinks) {
-    deepFileCount += currentFolderImageLinks;
-    //let deepStart = Date.now();
+function getDeepFolderCounts(folderId, folderFileCount, folderCount) {
+    ttlFiles += folderFileCount;
     $('#fc' + folderId).html("?");
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folderId,
         success: function (countsModel) {
             if (countsModel.Success === "ok") {
-                if (folderId !== apFolderId) {
-                    if (countsModel.TtlFileCount > 0) {
-                        $('#fc' + countsModel.FolderId).html(countsModel.TtlFileCount.toLocaleString());
-                    }
-                    if (countsModel.TtlFolderCount > 1) {
-                        $('#fc' + countsModel.FolderId).html(countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString());
-                    }
+                if (countsModel.TtlFileCount > 0) {
+                    $('#fc' + countsModel.FolderId).html(countsModel.TtlFileCount.toLocaleString());
                 }
-                deepFileCount += countsModel.TtlFileCount;
-                deepFolderCount += countsModel.TtlFolderCount;
-
-                //alert("folderId(" + folderId + ") === apFolderId(" + apFolderId + ") " + folderId === apFolderId + " deepFolderCount: " + deepFolderCount);
-                if (folderId == apFolderId)
-                {
-                    //alert("folderId === apFolderId  deepFolderCount: " + deepFolderCount);
-                    if (deepFolderCount < 2) 
-                        $('#galleryBottomfileCount').html(deepFileCount.toLocaleString());                    
-                    else {
-                        if (apFolderRoot === "centerfold")
-                            $('#galleryBottomfileCount').html("c " + deepFolderCount.toLocaleString());
-                        else
-                            $('#galleryBottomfileCount').html(deepFolderCount.toLocaleString() + " / " + deepFileCount.toLocaleString());
+                if (countsModel.TtlFolderCount > 1) {
+                    $('#fc' + countsModel.FolderId).html(countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString());
+                }
+                if (folderId == apFolderId) {
+                    if ((folderCount != countsModel.TtlFolderCount) && (folderCount !== 0)) {
+                        $('#galleryBottomfileCount').html("(" + folderCount + ") " + countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
                     }
+                    else
+                        $('#galleryBottomfileCount').html(countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
                 }
             }
-            else { logError("AJX", apFolderId, countsModel.Success, "getDeepFolderCounts"); }
+            else { logError("AJX", folderId, countsModel.Success, "getDeepFolderCounts"); }
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumImages")) { logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "getDeepFolderCounts"); }
+            if (!checkFor404("getAlbumImages")) { logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getDeepFolderCounts"); }
         }
     });
 }
@@ -394,7 +395,7 @@ function checkAlbumCost() {
         alert("You must be logged in to view this album");
 }
 
-function chargeCredits(apFolderId, rootFolder) {
+function chargeCredits(folderId, rootFolder) {
         let activityCode = "PGV"  //  
     if (rootFolder === "centerfold")
         activityCode = "PBV";
@@ -415,17 +416,17 @@ function chargeCredits(apFolderId, rootFolder) {
         data: {
             VisitorId: apVisitorId,
             ActivityCode: activityCode,
-            PageId: apFolderId,
+            PageId: folderId,
             Credits: credits
         },
         success: function (success) {
             if (success === "ok") {
                 //displayStatusMessage("ok", "credits charged");
             }
-            else logError("AJX", apFolderId, success, "awardCredits");
+            else logError("AJX", folderId, success, "awardCredits");
         },
         error: function (jqXHR) {
-            if (!checkFor404("awardCredits")) logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "awardCredits");
+            if (!checkFor404("awardCredits")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "awardCredits");
         }
     });
 }

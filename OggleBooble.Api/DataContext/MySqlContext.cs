@@ -373,7 +373,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public int Child { get; set; }
         public string Link { get; set; }
         public string FolderName { get; set; }
-        public string RootFolder { get; set; }
         public int SortOrder { get; set; }
     }
 

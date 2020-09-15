@@ -186,7 +186,6 @@ namespace OggleBooble.Api.Controllers
                         Child = stepchildModel.SourceFileId,
                         FolderName = stepchildModel.FolderName ?? folderToMove.FolderName,
                         Link = stepchildModel.LinkId ?? folderToMove.FolderImage,
-                        RootFolder = "stepchild",
                         SortOrder = stepchildModel.SortOrder
                     });
                     db.SaveChanges();
