@@ -288,7 +288,6 @@ function closeViewer(calledFrom) {
     event.preventDefault();
     window.event.returnValue = false;
     $('#imageContainer').fadeIn();
-    //slideShowContainer
     $('#slideShowContainer').effect('blind', { mode: 'hide', direction: 'vertical' }, 500);
     viewerShowing = false;
     spSlideShowRunning = false;
@@ -308,15 +307,6 @@ function closeViewer(calledFrom) {
             logEvent("SVC", albumFolderId, "calledFrom", "Images Viewed: " + spSessionCount + " closed: " + closeMethod);
         }
         resizeImageContainer();
-        //if (spSessionCount > 20) {
-        //    if (document.domain === 'localhost') {
-        //        alert("Close Slideshow ." + imageViewerFolderName + ".\nImages Viewed: " + spSessionCount,
-        //    }
-        //    else {
-        //        sendEmailToYourself("slideshow: " + imageViewerFolderName + ". Images Viewed: " + spSessionCount,
-        //            "Close method: " + closeMethod +
-        //    }
-        //}
     }
     spSessionCount = 0;
 }

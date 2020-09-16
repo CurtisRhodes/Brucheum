@@ -23,6 +23,8 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
             ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
         ]
     });
+    $("#imageCommentEditor").summernote('codeview.toggle');
+    setTimeout(function () { $("#imageCommentEditor").summernote('codeview.toggle'); }, 800);
 
     $(".note-editable").css('font-size', '15px');
     $(".modelDialogInput").prop('readonly', true);;

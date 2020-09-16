@@ -294,7 +294,6 @@ function showBlogPage(itemId, commentType) {
         setBlogView("showBlogPage");
 
     } catch (e) {
-        //sendEmailToYourself("catch in Blog.js showBlogPage", "display BlogEntry catch: " + e);
         alert("display BlogEntry catch: " + e);
     }
 }

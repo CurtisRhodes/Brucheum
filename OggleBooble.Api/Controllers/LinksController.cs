@@ -91,12 +91,12 @@ namespace OggleBooble.Api.Controllers
         }
         private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<VwDirTree> VwDirTrees, string dPath)
         {
-            var vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.VwDirTree.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+            List<VwDirTree> vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.VwDirTree.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
             foreach (VwDirTree vNode in vwDirTreeNodes)
             {
                 DirTreeModelNode childNode = new DirTreeModelNode() { VwDirTree = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
                 parentNode.SubDirs.Add(childNode);
-                if (vNode.FolderType != "StepChild")
+                if (vNode.IsStepChild == 0)
                     GetDirTreeChildNodes(dirTreeModel, childNode, VwDirTrees, (dPath + "/" + vNode.FolderName).Replace(" ", "%20"));
             }
         }

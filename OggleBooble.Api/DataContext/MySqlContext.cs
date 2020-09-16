@@ -54,6 +54,18 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<UserCredit> UserCredits { get; set; }
         public virtual DbSet<Centerfold> Centerfolds { get; set; }
         public virtual DbSet<Performance> Performances { get; set; }
+        public virtual DbSet<FolderComment> FolderComments { get; set; }        
+    }
+
+    [Table("OggleBooble.FolderComment")]
+    public class FolderComment
+    {
+        [Key]
+        public string PkId { get; set; }
+        public string VisitorId { get; set; }
+        public int FolderId { get; set; }
+        public string CommentText { get; set; }
+        public DateTime Posted { get; set; }
     }
 
     [Table("OggleBooble.Performance")]
@@ -446,6 +458,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int TotalChildFiles { get; set; }
         public int SubFolderCount { get; set; }
         public int SortOrder { get; set; }
+        public int IsStepChild { get; set; }
     }
 
     [Table("OggleBooble.VwLinks")]

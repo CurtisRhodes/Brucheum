@@ -6,6 +6,24 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
+    public class FolderCommentSuccessModel
+    {
+        public FolderCommentSuccessModel()
+        {
+            FolderComments = new List<FolderComment>();
+        }
+        public List<FolderComment> FolderComments { get; set; }
+        public string Success { get; set; }
+    }
+    public class FolderCommentModel
+    {
+        public string PkId { get; set; }
+        public string VisitorId { get; set; }
+        public int FolderId { get; set; }
+        public string CommentText { get; set; }
+        public DateTime Posted { get; set; }
+    }
+
     public class TrackbackSuccessModel
     {
         public TrackbackSuccessModel()

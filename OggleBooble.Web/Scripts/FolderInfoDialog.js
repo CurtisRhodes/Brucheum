@@ -308,7 +308,7 @@ function updateFolderDetail() {
     });
 }
 
-// TRACKBACK DIALOG
+///////////////// TRACKBACK DIALOG  ////////////
 function showTrackbackDialog() {
     $('#btnCatDlgEdit').html("pause");
     allowDialogClose = false;
@@ -435,7 +435,7 @@ function tbAddEdit() {
 }
 function tbDelete() { }
 
-////////////////////////////////
+//////////////// Identify Poser ////////////////
 
 function xxcreatePosersIdentifiedFolder() {
     var defaultParentFolder = 917;
@@ -510,11 +510,11 @@ function xxcreatePosersIdentifiedFolder() {
     // 2. add new category folder row and folder detail row
 }
 
-function showUnknownModelDialog(imgSrc) {
+function showUnknownModelDialog(imgSrc, linkId, folderId) {
     $('#centeredDialogTitle').html("Unknown Poser");
     $('#centeredDialogContents').html(
         "<div class='flexContainer'>" +
-        "   <div class='floatRight'>" +
+        "   <div class='floatLeft'>" +
         "          <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
         "   </div>" +
 
@@ -524,30 +524,30 @@ function showUnknownModelDialog(imgSrc) {
         "       <a class='dialogEditButton' href='javascript:IamThisModel()'>I am in this image</a>\n" +
         "   </div>" +
 
-        "   <div id='identifyPoserDialog' class='floatLeft displayHidden'>\n" +
-        "       <span>name</span><input id='txtPoserIdentifier class='roundedInput'/>\n" +
-        "       <span>comment</span>"+
+        "   <div id='identifyPoserDialog' class='floatLeft displayHidden' style='width:400px'>\n" +
+        "       <span>I think this poser&apos;s name is</span><input id='txtPoserIdentified' class='roundedInput'/>\n" +
+        "       <div>comment</div>" +
         "       <div class='modelInfoCommentArea'>\n" +
         "          <textarea id='poserSummernoteContainer'></textarea>\n" +
         "       </div>\n" +
         "   </div>" +
         "</div>" +
         "<div id='poserDialogFooter' class='folderDialogFooter'>\n" +
-        "   <div id='btnPoserSave'   class='folderCategoryDialogButton' onclick='poserSave()'>save</div>\n" +
+        "   <div id='btnPoserSave' style='margin-left:114px;'  class='folderCategoryDialogButton' onclick='poserSave(\"" + linkId + "\"," + folderId + ")'>save</div>\n" +
         "   <div id='btnPoserCancel' class='folderCategoryDialogButton' onclick='dragableDialogClose()'>cancel</div>\n" +
-        "</div>").show();
+        "</div>");
 
-    //$('#centeredDialogContainer').css("top", 250);
+    $('#centeredDialogContainer').css("top", 125);
     $('#centeredDialogContainer').css("left", -350);
-    $('#centeredDialogContainer').css("min-width", 470);
-    $('#centeredDialogContainer').fadeIn();
-    $('#centeredDialogContainer').mouseleave(function () { dragableDialogClose(); });
+    //$('#centeredDialogContainer').css("min-width", 470);
+    //$('#centeredDialogContainer').mouseleave(function () { dragableDialogClose(); });
     $('#poserSummernoteContainer').summernote({
         toolbar: [['codeview']],
         height: "100"
     });
     $("#btnPoserSave").hide();
     $("#btnPoserCancel").hide();
+    $('#centeredDialogContainer').draggable().fadeIn();
     allowDialogClose = true;
 }
 function IamThisModel() {
@@ -555,15 +555,29 @@ function IamThisModel() {
 
 }
 function showIdentifyPoserDialog() {
+    $('#centeredDialogTitle').html("Identify Unknown Poser");
     $("#identifyPoserDialog").show();
     $("#unknownPoserDialog").hide();
     $("#btnPoserSave").show();
     $("#btnPoserCancel").show();
     allowDialogClose = false;
 }
-function poserSave() {
-    sendEmailToYourself("poser identified !!!", "OH MY GOD");
+
+function poserSave(linkId, folderId) {
+
+    if (document.domain !== "localhost")
+        sendEmail("CurtishRhodes@hotmail.com", "PoserIdentified@Ogglebooble.com", "poser identified !!!<br/>" +
+            "suggested name: " + $('#txtPoserIdentified').val() + "<br/>" +
+            "visitor: " + getCookieValue("VisitorId") + "<br/>" +
+            "folderId: " + folderId + "<br/>" +
+            "linkId: " + linkId);
+    else
+        alert("sendEmail(CurtishRhodes@hotmail.com, PoserIdentified@Ogglebooble.com,\nposer identified !!!\n" +
+            "suggested name: " + $('#txtPoserIdentified').val() +
+            "\nvisitor: " + getCookieValue("VisitorId") + "\nfolderId: " + folderId + "\nlinkId: " + linkId);
+
     showMyAlert("Thank you for your input\nYou have earned 1000 credits.");
+    dragableDialogClose();
 }
 
 function addHrefToExternalLinks() {

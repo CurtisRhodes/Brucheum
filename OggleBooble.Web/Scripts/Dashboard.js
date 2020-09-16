@@ -616,17 +616,13 @@ function loadMMcheckboxes() {
                 });
                 $('#moveManyCountContainer').html(imgLinks.Links.length.toLocaleString());
             }
-            else {
-                alert("moveManyTool: " + imageLinksModel.Success);
-            }
+            else { logError("AJX", mmSourceFolderId, imgLinks.Success, "getDeepFolderCounts"); }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("moveManyTool"))
-                sendEmailToYourself("XHR ERROR in Dashboard.js moveManyTool", "Message: " + errorMessage);
-            alert("moveManyTool xhr error: " + errorMessage);
+            if (!checkFor404("getAlbumImages")) { logError("XHR", mmSourceFolderId, getXHRErrorDetails(jqXHR), "loadMMcheckboxes"); }
         }
-    });}
+    });
+}
 function mmSelectAll() {
     if ($('#mmCkSelectAll').is(":checked"))
         $('.loadManyCheckbox').prop("checked", true);
@@ -661,18 +657,13 @@ function moveCheckedImages() {
                 if (success === "ok") {
                     loadMMcheckboxes();
                 }
-                else
-                    alert("moveCheckedImages: " + success);
+                else { logError("AJX", mmSourceFolderId, success, "moveCheckedImages"); }
             },
             error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("moveCheckedImages"))
-                    sendEmailToYourself("XHR ERROR in Dashboard.js moveCheckedImages", "Message: " + errorMessage);
-                alert("moveCheckedImages xhr error: " + errorMessage);
+                if (!checkFor404("getAlbumImages")) { logError("XHR", success, getXHRErrorDetails(jqXHR), "moveCheckedImages"); }
             }
         });
     }
-    //console.log("leaving move many");
 }
 
 // SORT TOOL
@@ -709,17 +700,10 @@ function updateSortOrder() {
                 $('#dataifyInfo').html("reloading");
                 loadSortImages();
             }
-            else {
-                alert("updateSortOrder: " + success);
-            }
+            else { logError("AJX", mmSourceFolderId, success, "moveCheckedImages"); }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("updateSortOrder")) {
-                sendEmailToYourself("XHR ERROR in Dashboard.js updateSortOrder",
-                    "/api/ImagePage/GetImageLinks?folderId=" + pSelectedTreeId + " Message: " + errorMessage);
-            }
-            alert("updateSortOrder xhr error: " + errorMessage);
+            if (!checkFor404("getAlbumImages")) { logError("XHR", success, getXHRErrorDetails(jqXHR), "moveCheckedImages"); }
         }
     });
 }
@@ -740,18 +724,10 @@ function loadSortImages() {
                 });
                 $('#dataifyInfo').hide();
             }
-            else {
-                alert("loadSortImages: " + imageLinksModel.Success);
-            }
+            else { logError("AJX", pSelectedTreeId, imgLinks.Success, "loadSortImages"); }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("loadSortImages")) {
-
-                //sendEmailToYourself("XHR ERROR in Dashboard.js prepareXhamsterPage",
-                //    " / api / ImagePage / GetImageLinks ? folderId =" + pSelectedTreeId + " Message: " + errorMessage);
-            }
-            alert("loadSortImages xhr error: " + errorMessage);
+            if (!checkFor404("getAlbumImages")) { logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "loadSortImages"); }
         }
     });
 }
@@ -994,14 +970,10 @@ function XXloadProperties() {
                 displayStatusMessage("ok", "done");
                 $('#dataifyInfo').hide();
             }
-            else
-                alert("GetFileProps: " + success);
+            else { logError("AJX", pSelectedTreeId, success, "XXloadProperties"); }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("loadProperties")) {
-                sendEmailToYourself("XHR ERROR in Blog.js putBlogEntry", "/api/OggleBlog Message: " + errorMessage);
-            }
+            if (!checkFor404("getAlbumImages")) { logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "XXloadProperties"); }
         }
     });
 }
@@ -1020,17 +992,10 @@ function XXmergeFolders() {
                 if (success === "ok") {
                     displayStatusMessage("ok", "collapse succeded");
                 }
-                else {
-                    sendEmailToYourself("jquery fail in FolderCategory.js collapseChildFolder", success);
-                    //alert("collapseChildFolder: " + success);
-                }
+                else { logError("AJX", pSelectedTreeId, success, "XXloadProperties"); }
             },
             error: function (jqXHR) {
-                $('#dashBoardLoadingGif').hide();
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("collapseChildFolder")) {
-                    sendEmailToYourself("XHR ERROR in Dashboard.js collapseChildFolder", "/api/MoveImage/CollapseFolder?folderId=" + pSelectedTreeId + " Message: " + errorMessage);
-                }
+                if (!checkFor404("getAlbumImages")) { logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "XXloadProperties"); }
             }
         });
     }

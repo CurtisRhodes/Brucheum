@@ -9,10 +9,10 @@
     color: var(--oggleTitleColor);
 }
 .knownModelIndicator {
-    display: inline-block;
     position: relative;
-    bottom: -85px;
-    right: 25px;
+    bottom: 23px;
+    right: -121px;
+    margin-bottom: -25px;
 }
     .knownModelIndicator img {
         height: 20px;

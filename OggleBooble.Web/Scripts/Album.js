@@ -132,11 +132,14 @@ function getAlbumPageInfo(folderId) {
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
                 apFolderName = albumInfo.FolderName;
+                $('#folderCommentButton').on("click", function () {
+                    showFolderCommentDialog(folderId, albumInfo.FolderName);
+                });
                 apFolderType = albumInfo.FolderType;
                 if ((apFolderRoot == "porn") || (apFolderRoot == "porn"))
-                    document.title = apFolderName + " : OgglePorn";
+                    document.title = albumInfo.FolderName + " : OgglePorn";
                 else
-                    document.title = apFolderName + " : OggleBooble";
+                    document.title = albumInfo.FolderName + " : OggleBooble";
 
                 if ((albumInfo.FolderType === "singleParent") || (albumInfo.FolderType === "multiFolder")) {
                     getDeepFolderCounts(folderId, albumInfo.FileCount, albumInfo.FolderCount);
@@ -209,6 +212,11 @@ function getAlbumPageInfo(folderId) {
                     });
                 }
 
+
+                //if (document.domain !== "localhost") {
+                //    sendEmail("CurtishRhodes@hotmail.com", "Album.Visited@Ogglebooble.com", albumInfo.FolderName + " page visited", "all I want is to see an email");
+                //}
+
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
             }
@@ -261,27 +269,6 @@ function albumContextMenu(menuType, linkId, folderId, imgSrc) {
     pos.x = event.clientX;
     pos.y = event.clientY + $(window).scrollTop();
     showContextMenu(menuType, pos, imgSrc, linkId, folderId, apFolderName);
-}
-
-function setAlbumPageCSS() {
-
-    //let imageEditor = isInRole("Image Editor");
-
-    //if (albumImageInfo.RootFolder === "porn" || albumImageInfo.RootFolder === "sluts") {
-    //    imageFrameClass = "pornFolderImageOutterFrame";
-    //}
-    //if (imageEditor) {
-    //    if (albumImageInfo.RootFolder === "archive") {
-    //        if (albumImageInfo.dirTree.SubDirs.length > 1) {
-    //            imageFrameClass = "multiLinkImageFrame";
-    //        }
-    //    }
-    //    else {
-    //        if (imagesModel.dirTree.SubDirs.length > 1) {
-    //            imageFrameClass = "nonLocalImageFrame";
-    //        }
-    //    }// imageModelFile
-    //}  // startSlideShow(folderId, linkId)
 }
 
 function setBreadCrumbs(breadCrumbModel) {

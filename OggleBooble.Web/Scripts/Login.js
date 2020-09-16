@@ -308,7 +308,9 @@ function attemptRegister() {
 }
 
 function registerHappyPath(successMessage) {
-    sendEmailToYourself("Someone Registed !!","");
+
+    sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!", "OH MY GOD");
+
     if (successMessage == "visitorId already exists") 
         displayStatusMessage("ok", "thanks for Registering " + $('#txtRegisterUserName').val());
     else
@@ -396,7 +398,9 @@ function authenticateEmail(usersEmail) {
         privileges += obj + ", ";
     });
     logEvent("", loginFromPageId, "authenticateEmail");
-    sendEmailToYourself("Acess Requested", " user: " + getCookieValue("UserName") + " has requsted " + privileges);
+
+    sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!", "OH MY GOD");
+
     alert("Thank you for registering " + getCookieValue("UserName") + "\n please reply to the two factor authentitifcation email sent to you" +
         "\nYou will then be granted the access you requested." + "\nThe menu item 'Dashboard' will appear next to your 'Hello' message");
     dragableDialogClose();

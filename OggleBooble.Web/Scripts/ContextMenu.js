@@ -237,7 +237,7 @@ function contextMenuAction(action) {
             break;
         case "showDialog": {
             if ($('#ctxModelName').html() === "unknown model")
-                showUnknownModelDialog(pImgSrc);
+                showUnknownModelDialog(pImgSrc, pLinkId, pFolderId);
             else
                 if (isNullorUndefined(pModelFolderId))
                     showFolderInfoDialog(pFolderId, "img ctx");
@@ -264,7 +264,7 @@ function contextMenuAction(action) {
             break;
         }
         case "explode": {
-          //rtpe(eventCode, calledFrom, eventDetail, pageId)
+            //rtpe(eventCode, calledFrom, eventDetail, pageId)
             //rtpe("EXP", pFolderName, pImgSrc, pFolderId);
             window.open(pImgSrc, "_blank");
             break;

@@ -255,17 +255,8 @@ function create_UUID() {
 }
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
-
-    //let folderId = Number(pFolderId);
-    //    if (isNullorUndefined(folderId))
-    //    folderId = 7777;
-    //if (folderId === 0)
-    //    folderId = 9999;
-
     if (document.domain === 'localhost' && errorCode !== "ILF")
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
-
-
     try {
         $.ajax({
             type: "POST",
@@ -540,41 +531,12 @@ function sendEmail(to, from, subject, message) {
                     logError("BUG", 3992, success, "sendEmail");
             },
             error: function (jqXHR) {
-                if (!checkFor404("sendEmailToYourself"))
+                if (!checkFor404("sendEmail"))
                     logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
             }
         });
     } catch (e) {
         logError("CAT", 3992, e, "sendEmail");
-    }
-}
-
-function sendEmailToYourself(subject, message) {
-    try {
-        $.ajax({
-            type: "PUT",
-            url: settingsArray.ApiServer + "api/Common/SendEmail",
-            data: {
-                To: "CurtishRhodes@hotmail.com",
-                From: "info@api.Ogglebooble.com",
-                Subject: subject,
-                Message: message
-            },
-            success: function (success) {
-                if (success === "ok") {
-                    $('#footerMessage').html("email sent");
-                    displayStatusMessage("ok", "email sent");
-                }
-                else
-                    logError("BUG", 3992, success, "sendEmailToYourself");
-            },
-            error: function (jqXHR) {
-                if (!checkFor404("sendEmailToYourself"))
-                    logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
-            }
-        });
-    } catch (e) {
-        logError("CAT", 3992, e, "sendEmailToYourself");
     }
 }
 

@@ -392,4 +392,56 @@ namespace OggleBooble.Api.Controllers
             return trackbackItems;
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class FolderCommentController : ApiController
+    {
+        [HttpPost]
+        [Route("api/FolderComment/AddFolderComment")]
+        public string AddEditTrackBackLink(FolderCommentModel folderCommentModel)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.FolderComments.Add(new FolderComment()
+                    {
+                        PkId = Guid.NewGuid().ToString(),
+                        VisitorId = folderCommentModel.VisitorId,
+                        FolderId = folderCommentModel.FolderId,
+                        CommentText = folderCommentModel.CommentText,
+                        Posted = DateTime.Now
+                    });
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpGet]
+        [Route("api/FolderComment/GetFolderComments")]
+        public FolderCommentSuccessModel GetFolderComments(int folderId)
+        {
+            var folderCommentSuccessModel = new FolderCommentSuccessModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    folderCommentSuccessModel.FolderComments = db.FolderComments.Where(f => f.FolderId == folderId).ToList();
+                    folderCommentSuccessModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                folderCommentSuccessModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return folderCommentSuccessModel;
+        }
+    }
 }
