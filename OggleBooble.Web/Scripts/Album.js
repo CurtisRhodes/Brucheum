@@ -47,9 +47,7 @@ function getAlbumImages(folderId) {
                         if (obj.FileName.endsWith("mpg") || obj.FileName.endsWith("mp4")) {
                             $('#imageContainer').append(
                                 "<video id='" + obj.LinkId + "' controls='controls' class='thumbImage' " +
-                                " poster='images/cslips02.png'>" +
-                                //" onclick='this.play();alert(\"play\");' poster='images/cslips02.png'>" +
-                                //"<source src='https://www.fullxxxvideos.net/videos/14037/big-natural-boobs-russian-teen-alice-wayne-fucked-good.mp4?k=D8QkfCmSnW6LcosbMy_H1Q&amp;t=1594778017' type='video/mp4' label=''>" +
+                                " poster='" + obj.Poster + "' >" +
                                 "   <source src='" + imgSrc + "' type='video/mp4' label='label'>" +
                                 "</video>");
                         }

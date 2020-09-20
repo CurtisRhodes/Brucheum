@@ -475,6 +475,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Orientation { get; set; }
         public bool Islink { get; set; }
         public int SortOrder { get; set; }
+        public string Poster { get; set; }
     }
 
     // REPORT VIEWS

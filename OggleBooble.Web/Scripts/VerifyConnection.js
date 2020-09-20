@@ -1,105 +1,92 @@
 ﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false,
-    verifyConnectionCount = 0, verifyConnectionCountLimit = 17,
-    inCheckFor404Loop = false, checkFor404Loop;
+    verifyConnectionCount = 0, verifyConnectionCountLimit = 17, verifyConnectionLoop = null;
     //persisConnectionInterval, persisConnectionIntervalRunning = false;
+
 
 function checkFor404(calledFrom) {
     connectionVerified = false;
-    verifyConnection();
-    setTimeout(function () {
-        if (!connectionVerified) {
-            verifyConnection();
-            console.log("calling verifyConnection");
+    let xmlSettingsLoop = setInterval(function () {
+        if (settingsArray.ApiServer === undefined) {
         }
-    }, 800);
-
-    if (!connectionVerified) {
-        if (!inCheckFor404Loop) {
-            document.title = "loading : OggleBooble";
-            changeFavoriteIcon("loading");
-            checkFor404Loop = setInterval(function () {
+        else {
+            clearInterval(xmlSettingsLoop);
+            verifyConnectionFunction();
+            setTimeout(function () {
                 if (connectionVerified) {
-                    changeFavoriteIcon("redBallon");
+                    console.log("connection verified right off");
+                    return true;
                 }
                 else {
-                    if (++verifyConnectionCount === 3) {
-                        $('#customMessage').html(
-                            "<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/altair04.gif' height='200' /></div>\n").show();
-                        $('#customMessageContainer').css("top", 200);
-
-                    }
-                    if (verifyConnectionCount > verifyConnectionCountLimit) {
-                        if (!canIgetaConnectionMessageShowing) {
-                            $('#customMessage').html(
-                                "<div class='shaddowBorder'>" +
-                                "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
-                                "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-                                "</div>").show();
-
-                            console.log("canIgetaConnection message showing");
-                            var visitorId = getCookieValue("VisiorId");
-                            if (isNullorUndefined(visitorId))
-                                visitorId = "--";
-                            canIgetaConnectionMessageShowing = true;
-                            if (document.domain !== 'localhost')
-                                logError("404", 3910, "SERVICE DOWN", "checkFor404 /" + calledFrom);
-                        }
-                    }
-                    verifyConnection();
+                    verifyConnectionCount = 0;
+                    verifyConnectionLoop = setInterval(verifyConnectionFunction, 1600);
+                    document.title = "loading : OggleBooble";
+                    changeFavoriteIcon("loading");
+                    console.log("calling verifyConnection");
                 }
-            }, 1600);
-            inCheckFor404Loop = true;
+            }, 2500);
         }
-    }
-    return !connectionVerified;
+    }, 300);
 }
 
-function verifyConnection() {
-
-    if (isNullorUndefined(settingsArray.ApiServer)) {
-        console.error("verifyConnection settingsArray.ApiServer not defined");
-        connectionVerified = false;
-        return;
+function verifyConnectionFunction() {
+    if (++verifyConnectionCount === 3) {
+        $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/altair04.gif' height='200' /></div>\n").show();
+        $('#customMessageContainer').css("top", 200);
     }
-    else {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Common/VerifyConnection",
-            success: function (successModel) {
-                if (successModel.Success === "ok") {
-                    if (successModel.ConnectionVerified) {
-                        clearInterval(checkFor404Loop);
-                        inCheckFor404Loop = false;
+    if (!canIgetaConnectionMessageShowing) {
+        if (verifyConnectionCount > verifyConnectionCountLimit) {
+            canIgetaConnectionMessageShowing = true;
+            $('#customMessage').html(
+                "<div class='shaddowBorder'>" +
+                "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
+                "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
+                "</div>").show();
 
-                        connectionVerified = true;
-                        verifyConnectionCount = 0;
-
-                        console.log("verifyConnection: connection verified");
-                        $('#customMessage').hide();
-                        canIgetaConnectionMessageShowing = false;
-                        //if (!persisConnectionIntervalRunning)
-                        //    persistConnection();
-                    }
-                    else {
-                        //if (document.domain === "local host") alert("verifyConnection: " + successModel.Success)
-                        connectionVerified = false;
-                    }
+            console.log("canIgetaConnection message showing");
+            var visitorId = getCookieValue("VisiorId");
+            if (isNullorUndefined(visitorId))
+                visitorId = "--";
+            if (document.domain !== 'localhost')
+                logError("404", 3910, "SERVICE DOWN", "checkFor404");
+        }
+    }
+    let vUrl = settingsArray.ApiServer + "api/Common/VerifyConnection";
+    $.ajax({
+        type: "GET",
+        url: vUrl,
+        success: function (successModel) {
+            if (successModel.Success === "ok") {
+                if (successModel.ConnectionVerified) {
+                    clearInterval(verifyConnectionLoop);
+                    connectionVerified = true;
+                    changeFavoriteIcon("redBallon");
+                    $('#customMessage').hide();
+                    canIgetaConnectionMessageShowing = false;
+                    if (!persisConnectionIntervalRunning)
+                        persistConnection();
                 }
                 else {
-                    if (document.domain === "local host") alert("verifyConnection JQA: " + successModel.Success)
+                    console.log("verifyConnection: " + successModel.Success);
                     connectionVerified = false;
                 }
-            },
-            error: function (jqXHR) {
-                var errorMessage = getXHRErrorDetails(jqXHR);
-                if (document.domain === "local host") alert("verifyConnection XHR: " + errorMessage)
+            }
+            else {
+                //if (document.domain === "local host") alert("verifyConnection JQA: " + successModel.Success);
+                //console.log("verifyConnection: " + successModel.Success);
+                //console.log("ERR:" + successModel.Success);
+                console.log("vUrl:" + vUrl + "\nERR:" + successModel.Success);
                 connectionVerified = false;
             }
-        });
-    }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            if (document.domain === "local host") alert("verifyConnection XHR: " + errorMessage)
+            connectionVerified = false;
+        }
+    });
 }
 
-function xxPersistConnection() {
+function PersistConnection() {
     persistConnectionIntervalRunning = true;
     persistConnectionInterval = setInterval(function () {
         $.ajax({
@@ -128,7 +115,7 @@ function xxPersistConnection() {
                 connectionVerified = false;
             }
         });
-    }, 145000);
+    }, 145,000);
 }
 
 function getBrowserInfo() {
