@@ -13,6 +13,8 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class GalleryPageController : ApiController
     {
+        private readonly string devlVisitorId = System.Configuration.ConfigurationManager.AppSettings["ImageRepository"];
+
         [HttpGet]
         [Route("api/GalleryPage/UpdateDirTree")]
         public string UpdateDirTree()
@@ -124,8 +126,13 @@ namespace OggleBooble.Api.Controllers
                         });
                         parent = parentDb.Parent;
                     }
-                    #endregion                
+                    #endregion
+
+                    db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
+                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
+
                     albumInfo.PageHits = db.PageHits.Where(h => h.PageId == folderId).Count();
+
                     var dbPageHitTotals = db.PageHitTotal.Where(h => h.PageId == folderId).FirstOrDefault();
                     if (dbPageHitTotals != null)
                     {

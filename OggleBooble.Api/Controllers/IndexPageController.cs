@@ -75,10 +75,10 @@ namespace OggleBooble.Api.Controllers
                            .Where(t => t.RootFolder == "archive" || t.RootFolder == "boobs")
                            .OrderByDescending(t => t.Acquired).Take(take).ToList();
                     }
-                    if ((root == "playboy") || (root == "centerfold"))
+                    if ((root == "playboy") || (root == "centerfold") || (root == "cybergirl"))
                     {
                         updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
-                            .Where(t => t.RootFolder == root)
+                            .Where(t => t.RootFolder == "playboy")
                             .OrderByDescending(t => t.Acquired).Take(take).ToList();
                     }
                 }

@@ -34,12 +34,13 @@
         case "archive": {  // big naturals
             $('#footerCol1').html(
                 "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n" +
-                "<div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
+                "<div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n");
             $('#footerCol2').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
                 //"<div class='clickable' onclick='rtpe(\"FLC\",\"videos\",\"videos\"," + pageId + ")'>Videos</div>\n" +
             $('#footerCol3').html(
+                "<div class='clickable' onclick='window.location.href=\"index.html?spa=5233\", \"_blank\"'>softcore</div>\n" +
                 "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n");
             $('#footerCol4').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n");
