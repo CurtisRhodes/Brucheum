@@ -316,9 +316,9 @@ namespace OggleBooble.Api.Controllers
                     slideshowItemModel.SlideshowItems = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
                     if (includeSubFolders)
                     {
-                        var unsortedList = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
-                        GetChildGalleryItems(folderId, unsortedList, db);
-                        slideshowItemModel.SlideshowItems = unsortedList.ToList();
+                        var slideshowItems = db.VwSlideshowItems.Where(s => s.FolderId == folderId).ToList();
+                        GetChildGalleryItems(folderId, slideshowItems, db);
+                        slideshowItemModel.SlideshowItems = slideshowItems.OrderBy(i => i.LinkId).ToList();
                     }
                     else
                     {
@@ -344,13 +344,13 @@ namespace OggleBooble.Api.Controllers
             return slideshowItemModel;
         }
 
-        private void GetChildGalleryItems(int parentFolderId, List<VwSlideshowItem> unsortedList, OggleBoobleMySqlContext db)
+        private void GetChildGalleryItems(int parentFolderId, List<VwSlideshowItem> slideshowItems, OggleBoobleMySqlContext db)
         {
             var subFolders = db.VirtualFolders.Where(f => f.Parent == parentFolderId).ToList();
             foreach (VirtualFolder subFolder in subFolders)
             {
-                unsortedList.AddRange(db.VwSlideshowItems.Where(s => s.FolderId == subFolder.Id).ToList());
-                GetChildGalleryItems(subFolder.Id, unsortedList, db);
+                slideshowItems.AddRange(db.VwSlideshowItems.Where(s => s.FolderId == subFolder.Id).ToList());
+                GetChildGalleryItems(subFolder.Id, slideshowItems, db);
             }
         }
 

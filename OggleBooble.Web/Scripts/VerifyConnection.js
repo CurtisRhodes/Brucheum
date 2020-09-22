@@ -1,6 +1,6 @@
 ﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false,
-    verifyConnectionCount = 0, verifyConnectionCountLimit = 17, verifyConnectionLoop = null;
-    //persisConnectionInterval, persisConnectionIntervalRunning = false;
+    verifyConnectionCount = 0, verifyConnectionCountLimit = 17, verifyConnectionLoop = null,
+    persisConnectionInterval, persisConnectionIntervalRunning = false;
 
 
 function checkFor404(calledFrom) {
@@ -86,7 +86,7 @@ function verifyConnectionFunction() {
     });
 }
 
-function PersistConnection() {
+function persistConnection() {
     persistConnectionIntervalRunning = true;
     persistConnectionInterval = setInterval(function () {
         $.ajax({
@@ -115,7 +115,7 @@ function PersistConnection() {
                 connectionVerified = false;
             }
         });
-    }, 145,000);
+    }, 145000);
 }
 
 function getBrowserInfo() {

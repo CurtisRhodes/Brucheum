@@ -98,9 +98,17 @@ function explodeViewer() {
     $('#viewerImage').attr("src", settingsImgRepo + imageViewerArray[imageViewerIndex].FileName);
     $('#viewerImage').removeClass('redSides');
     $('#viewerButtonsRow').hide();
+
     exploderInterval = setInterval(function () {
         incrimentExplode();
     }, exploderSpeed);
+
+    if (spIncludeSubFolders) {
+        setTimeout(function () {
+            runSlideShow("start");
+            console.log("runSlideShow(start)");
+        }, slideShowSpeed);        
+    }
 }
 
 function incrimentExplode() {
