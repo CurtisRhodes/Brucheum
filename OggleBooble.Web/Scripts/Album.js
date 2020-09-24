@@ -96,7 +96,7 @@ function getAlbumImages(folderId) {
                     }
 
                     $('#imageContainer').show();
-                    resizeImageContainer();
+                    resizeAlbumPage();
                     //$('#footerMessage').html(": " + imagesModel.Files.length);
                     $('#folderCommentButton').fadeIn();
                     let delta = (Date.now() - getImagesStart) / 1000;
@@ -342,33 +342,10 @@ function directToStaticPage() {
     });
 } 
 
-function resizeImageContainer() {
-    //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
-
-    // set page width
-    let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
-    $('.middleColumn').width(winW - lcW - rcW);
-    //set page height
-    let winH = $(window).height();
-    let headerH = $('header').height() + 70;
-    $('.threeColumnLayout').css("height", winH - headerH);
-
-
-
-    $('#imageContainer').width($('.middleColumn').width());
-    $('#imageContainer').css("max-height", $('.middleColumn').height() - 50);
-    if (viewerShowing) 
-        resizeViewer();
-    $('#feedbackBanner').css("top", $('.middleColumn').height() - 150);
-}
-
-$(window).resize(function () {
-    resizeImageContainer();
-});
-
 function galleryImageError(linkId, imgSrc) {
     $('#' + linkId).attr('src', "Images/redballon.png");
-    logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "galleryImage");
+    if (!checkFor404("Album.js"))
+        logError("ILF", apFolderId, "imgSrc: " + imgSrc, "galleryImage");
     //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
 

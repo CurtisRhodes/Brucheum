@@ -419,7 +419,10 @@ function awardCredits(activityCode, pageId) {
         case "IMC": credits = 200; break; // Image Comment
         case "NIA": credits = 200; break; // New Image Added
         case "FIE": credits = 100; break; // Folder Info Edited
-        default: alert("unhandled awardCredits activityCode: " + activityCode);
+        default:
+            logError("SWT", pageId, "activityCode: " + activityCode, "awardCredits");
+            credits = -10;
+            //alert("unhandled awardCredits activityCode: " + activityCode);
     }
     $.ajax({
         type: "POST",
@@ -435,7 +438,7 @@ function awardCredits(activityCode, pageId) {
                 //displayStatusMessage("ok", "credits charged");
             }
             else {
-                logError("XHR", pageId, success, "awardCredits");
+                logError("AJX", pageId, success, "awardCredits");
             }
         },
         error: function (jqXHR) {

@@ -132,20 +132,25 @@
 
         });
 
+            //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
         function resizeAlbumPage() {
             // set page width
-            let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
-            $('.threeColumnLayout').css("width", winW);
-            $('.middleColumn').width(winW - lcW - rcW);
+            //let winW = $(window).width();
+            //let lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
+            $('.threeColumnLayout').css("width", $(window).width());
+            //$('.middleColumn').width(winW - lcW - rcW);
+            //$('#imageContainer').width($('.middleColumn').width());
+
             //set page height
             let winH = $(window).height();
             let headerH = $('#oggleHeader').height();
-            //$('.threeColumnLayout').css("min-height", winH - headerH);
             $('.threeColumnLayout').css("height", winH - headerH);
+            $('.middleColumn').css("height", winH - headerH);
+            $('#imageContainer').css("max-height", $('.middleColumn').height() - 50);
 
-            //$('#aboveImageContainerMessageArea').html("resize: visH: " + visH + "  col: " + $('.threeColumnLayout').height() + "  con: " + $('#imageContainer').height());
+            if (viewerShowing)
+                resizeViewer();
         }
-
     </script>
 </body>
 </html>

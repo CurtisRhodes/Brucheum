@@ -22,6 +22,7 @@ function checkFor404(calledFrom) {
                     document.title = "loading : OggleBooble";
                     changeFavoriteIcon("loading");
                     console.log("calling verifyConnection");
+                    return false;
                 }
             }, 2500);
         }
