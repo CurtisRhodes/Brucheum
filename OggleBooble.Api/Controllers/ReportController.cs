@@ -7,6 +7,9 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using IronPdf;
+using System.Drawing;
+using System.IO;
 
 namespace OggleBooble.Api.Controllers
 {
@@ -419,6 +422,32 @@ namespace OggleBooble.Api.Controllers
                 centerfoldReport.Success = Helpers.ErrorDetails(ex);
             }
             return centerfoldReport;
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class PdfController : ApiController
+    {
+        [HttpGet]
+        [Route("api/Pdf/RipPdf")]
+        public string RipPdf(string sourceFile, string destinationPath)
+        {
+            string success;
+            try
+            {
+                var pdf = PdfDocument.FromFile(sourceFile);
+
+                DirectoryInfo dirInfo = new DirectoryInfo(destinationPath);
+                if (!dirInfo.Exists)
+                    dirInfo.Create();
+
+                pdf.RasterizeToImageFiles(destinationPath, 450, 800, ImageType.Jpeg);
+                //Dimensions and page ranges may be specified
+                //pdf.RasterizeToImageFiles(@"C:\image\folder\thumbnail_*.jpg", 100, 80);
+                success = "ok";
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
         }
     }
 }

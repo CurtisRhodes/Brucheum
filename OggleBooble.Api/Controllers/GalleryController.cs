@@ -56,7 +56,8 @@ namespace OggleBooble.Api.Controllers
                             FolderType = row.FolderType,
                             SubDirCount = row.SubFolderCount,
                             FolderImage = row.FolderImage,
-                            RootFolder = row.RootFolder
+                            RootFolder = row.RootFolder,
+                            IsStepChild = row.IsStepChild
                         });
                     }
 

@@ -33,7 +33,7 @@ function runMetricsMatrixReport() {
                         "<div>ImageHits</div></div>");
 
                     let i, mLen = 8;
-                    for (i = mLen; i > -1; i--) {
+                    for (i = 0; i > 10; i++) { //for (i = mLen; i > -1; i--) {
                         $("#fxShell").append("<div><div class='center'>" + metricsMatrixResults.matrixModelRows[i].DayofWeek + "</div>" +
                             "<div><div class='center'>&nbsp;" + metricsMatrixResults.matrixModelRows[i].DateString + "&nbsp;</div>" +
                             "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].NewVisitors.toLocaleString() + "</div>" +
@@ -522,4 +522,3 @@ function showCenterfoldImage(link) {
     $('.dirTreeImageContainer').show();
     //$('#footerMessage').html(link);
 }
-

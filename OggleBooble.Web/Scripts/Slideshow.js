@@ -381,6 +381,7 @@ function slideshowHtml() {
         "<div id='slideshowCtxMenuContainer' class='ogContextMenu' style='z-index: 35;'  onmouseleave='$(this).fadeOut()'>" +
         "   <div id='slideshowContextMenuContent'></div>\n" +
         "</div>\n" +
+        "<div id='divStatusMessage'></div>\n" +
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "      <div id='slideShowDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
@@ -404,7 +405,7 @@ function slideshowHtml() {
         "        </div>\n" +
         "    </div>\n" +
         "</div>\n" +
-       "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";
+        "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";
 }
 
 function slideShowDialogClose() {

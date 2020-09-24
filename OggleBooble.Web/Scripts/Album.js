@@ -88,7 +88,7 @@ function getAlbumImages(folderId) {
 
                             $('#imageContainer').append("<div class='" + imageFrameClass + "'\n" +
                                 " oncontextmenu='albumContextMenu(\"Folder\",\"" + folder.LinkId + "\"," + folder.FolderId + ",\"" + imgSrc + "\")'\n" +
-                                " onclick='rtpe(\"SUB\",\"called from: " + folderId + "\",\"" + folder.DirectoryName + "\"," + folder.FolderId + ")'>\n" +
+                                " onclick='folderClick(" + folder.FolderId + "," + folder.IsStepChild + ")'>\n" +
                                 "<img id='" + folder.LinkId + "' class='folderImage'\n" +
                                 "onerror='subFolderImgError(\"" + imgSrc + "\",\"" + folder.LinkId + "\")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
                                 "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div><span Id='fc" + folder.FolderId + "'>" + folder.FileCount + "</span></div>");
@@ -120,6 +120,14 @@ function getAlbumImages(folderId) {
     } catch (e) {
         logError("CAT",folderId, e, "getAlbumImages");
     }
+}
+
+function folderClick(folderId, isStepChild) {
+    if (isStepChild == 1)
+        window.open("/album.html?folder=" + folderId, "_blank");  // open in new tab
+    else
+        window.location.href = "/album.html?folder=" + folderId;  //  open page in same window
+    //" onclick='rtpe(\"SUB\",\"called from: " + folderId + "\",\"" + folder.DirectoryName + "\"," + folder.FolderId + ")'>\n" +
 }
 
 function getAlbumPageInfo(folderId) {

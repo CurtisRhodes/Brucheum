@@ -184,6 +184,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showAddStepChildFolderDialog()'>Copy Folder</div>\n" +
                 "<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>\n" +
+                "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf()</div>\n" +
                 "<div class='clickable' onclick='showAddVideoLink();\">Add Video Link</div>");
 
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
@@ -1019,3 +1020,41 @@ function onDirTreeComplete() {
     setTimeout(function () { $('#dataifyInfo').hide() }, 1500);
 }
 
+function showRipPdfDialog() {
+    //let pdfFile = "1 - January 1991.pdf";
+    //let pdfFolder = "02 February";
+
+    $('#dashboardDialogTitle').html("Rip pdf");
+    $('#dashboardDialogContents').html(
+        "<div><span>Pdf File</span><input id='txtPdfFile' class='inlineInput roundedInput'/></div>\n" +
+        "<div><span>Dest Folder</span><input id='txtDestFolder' class='inlineInput roundedInput' /></div>\n" +
+        "<div class='roundendButton' onclick='performRipPdfDialog()'>rip one</div>\n");
+    $('#dashboardDialog').fadeIn();
+}
+
+function performRipPdfDialog() {
+    let pdfFile = $('#txtPdfFile').val();
+    let pdfFolder = $('#txtDestFolder').val();
+    let sourceFile = "C://Users/Curtis/Documents/playboy pdfs/" + pdfFile;
+    // Playboy_1991-2000\Playboy 1991
+    let destinationRootPath = "C://Users/Curtis/Documents/playboy pdfs/";
+    let destinationPath = destinationRootPath + pdfFolder;
+
+    $('#dashBoardLoadingGif').fadeIn();
+    $('#dataifyInfo').show().html("ripping " + pdfFile);
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Pdf/RipPdf?sourceFile=" + sourceFile + "&destinationPath=" + destinationPath,
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+            if (success === "ok") {
+                $('#dataifyInfo').show().html("done");
+            }
+            else { logError("AJX", 2020, success, "RipPdf"); }
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            if (!checkFor404("getAlbumImages")) { logError("XHR", 2020, getXHRErrorDetails(jqXHR), "RipPdf"); }
+        }
+    });
+}

@@ -43,8 +43,8 @@ function perfomCopyLink(linkId) {
         url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pSelectedTreeId,
         success: function (success) {
             $('#imagePageLoadingGif').hide();
-            $('#centeredDialog').fadeOut();
-            $('#centeredDialogContainer').fadeOut();
+            dragableDialogClose();
+            slideShowDialogClose();
             if (success === "ok") {
                 displayStatusMessage("ok", "link copied")
                 logDataActivity({
@@ -53,9 +53,10 @@ function perfomCopyLink(linkId) {
                     PageId: pSelectedTreeId,
                     Activity: "copy: " + linkId + " to: " + pSelectedTreeFolderPath
                 });
-                awardCredits("LKC", pSelectedTreeId);
+                //awardCredits("LKC", pSelectedTreeId);
             }
             else {
+                displayStatusMessage("warning", success);
                 logError("AJX", pSelectedTreeId, success, "perfomCopyLink");
             }
         },
