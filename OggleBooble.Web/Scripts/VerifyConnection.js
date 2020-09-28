@@ -26,6 +26,7 @@ function checkFor404(calledFrom) {
                 }
             }, 2500);
         }
+
     }, 300);
 }
 

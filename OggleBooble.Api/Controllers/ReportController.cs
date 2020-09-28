@@ -433,21 +433,48 @@ namespace OggleBooble.Api.Controllers
         public string RipPdf(string sourceFile, string destinationPath)
         {
             string success;
+            int pdfPageCount, startPageNumber = 1, endPageNumber = 100;
             try
             {
-                var pdf = PdfDocument.FromFile(sourceFile);
-
+                using (PdfDocument pdf = PdfDocument.FromFile(sourceFile))
+                {
+                    pdfPageCount = pdf.PageCount - 2;
+                }
                 DirectoryInfo dirInfo = new DirectoryInfo(destinationPath);
                 if (!dirInfo.Exists)
                     dirInfo.Create();
 
-                pdf.RasterizeToImageFiles(destinationPath, 450, 800, ImageType.Jpeg);
-                //Dimensions and page ranges may be specified
-                //pdf.RasterizeToImageFiles(@"C:\image\folder\thumbnail_*.jpg", 100, 80);
+                while (endPageNumber < pdfPageCount) {
+                    RipSegment(sourceFile, destinationPath, Enumerable.Range(startPageNumber, endPageNumber));
+                    startPageNumber += endPageNumber;
+                    endPageNumber += 100;
+                }
                 success = "ok";
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        private string RipSegment(string sourceFile, string destinationPath, IEnumerable<int> pageNumbers)
+        {
+            string success;
+            try
+            {
+                using (PdfDocument pdf = PdfDocument.FromFile(sourceFile))
+                {
+                    pdf.RasterizeToImageFiles(destinationPath, pageNumbers, 450, 800, ImageType.Jpeg);
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
             return success;
         }
     }
 }
+

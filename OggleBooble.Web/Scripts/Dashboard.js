@@ -1033,15 +1033,15 @@ function showRipPdfDialog() {
 }
 
 function performRipPdfDialog() {
-    let pdfFile = $('#txtPdfFile').val();
-    let pdfFolder = $('#txtDestFolder').val();
-    let sourceFile = "C://Users/Curtis/Documents/playboy pdfs/" + pdfFile;
+    let sourceFile = $('#txtPdfFile').val();
+    let destinationPath = $('#txtDestFolder').val();
+    // let sourceFile = "C://Users/Curtis/Documents/playboy pdfs/" + pdfFile;
     // Playboy_1991-2000\Playboy 1991
-    let destinationRootPath = "C://Users/Curtis/Documents/playboy pdfs/";
-    let destinationPath = destinationRootPath + pdfFolder;
+    //let destinationRootPath = "C://Users/Curtis/Documents/playboy pdfs/";
+    //let destinationPath = destinationRootPath + pdfFolder;
 
     $('#dashBoardLoadingGif').fadeIn();
-    $('#dataifyInfo').show().html("ripping " + pdfFile);
+    $('#dataifyInfo').show().html("ripping " + sourceFile);
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Pdf/RipPdf?sourceFile=" + sourceFile + "&destinationPath=" + destinationPath,
