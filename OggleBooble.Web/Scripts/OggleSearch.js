@@ -88,7 +88,7 @@ function performSearch(searchString) {
                         $.each(SearchResultsModel.SearchResults, function (idx, searchResult) {
                             $('#searchResultsDiv').append("<li id=" + searchResult.FolderId +
                                 " onclick='jumpToSelected(" + searchResult.FolderId + ")' onkeydown='linkItemKeyDown(event)'  >" +
-                                searchResult.Parent + "/" + searchResult.FolderName + "</li>");
+                                searchResult.FolderPath + "</li>");
                         });
                         $('#searchResultsDiv').append("</ul>").show();
                         $('#divLoginArea').hide();

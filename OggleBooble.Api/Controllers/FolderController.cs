@@ -138,28 +138,18 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
-                {
-                    //searchResultsModel.SearchResults =
-                    List<SearchResult> startsWithSearchResults =
-                        (from f in db.VirtualFolders
-                         where f.FolderName.StartsWith(searchString)
-                         select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
-                    foreach (SearchResult searchResult in startsWithSearchResults)
-                    {
-                        if (!Helpers.ContainsRomanNumeral(searchResult.FolderName))
-                            searchResultsModel.SearchResults.Add(searchResult);
-                    }
-                    List<SearchResult> containsSearchResults = 
-                        (from f in db.VirtualFolders
-                         where f.FolderName.Contains(searchString)
-                         select new SearchResult() { FolderId = f.Id, FolderName = f.FolderName, Parent = f.RootFolder }).ToList();
+               {
+                    searchResultsModel.SearchResults.AddRange(
+                    (from f in db.VirtualFolders
+                     where (f.FolderName.StartsWith(searchString) && ((f.FolderType == "singleModel") || (f.FolderType == "singleParent")))
+                     select new SearchResult() { FolderId = f.Id, FolderPath = f.FolderPath }).ToList());
 
-                    foreach (SearchResult searchResult in containsSearchResults)
-                    {
-                        if (!searchResult.FolderName.ToLower().StartsWith(searchString.ToLower()))
-                            if (!Helpers.ContainsRomanNumeral(searchResult.FolderName))
-                                searchResultsModel.SearchResults.Add(searchResult);
-                    }
+                    searchResultsModel.SearchResults.AddRange(
+                        (from f in db.VirtualFolders
+                         where ((f.FolderName.Contains(searchString)) && (!f.FolderName.StartsWith(searchString))
+                         && ((f.FolderType == "singleModel") || (f.FolderType == "singleParent")))
+                         select new SearchResult() { FolderId = f.Id, FolderPath = f.FolderPath }).ToList());
+
                 }
                 searchResultsModel.Success = "ok";
             }

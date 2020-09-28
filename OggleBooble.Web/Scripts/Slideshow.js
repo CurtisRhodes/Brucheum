@@ -160,7 +160,7 @@ function slideClick(direction) {
         else {
             slide(direction);
             spSessionCount++;
-            //logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+            logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
         }
     }
 }

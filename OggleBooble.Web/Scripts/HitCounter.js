@@ -58,15 +58,15 @@ function logPageHit(folderId) {
         return;
     }
 
-    if (visitorId.indexOf("-2282-") > 0) {
-        logError("XOM", folderId, "-2282- " + visitorId, "logPageHit");
-        setCookieValue("VisitorId", "bypass");
-        getIpInfo(folderId, "logPageHit/-2282-");
-    }
-    if (visitorId == "bypass") {
-        getIpInfo(folderId, "logPageHit/bypass");
-        logError("XOM", folderId, "-2282-", "logPageHit");
-    }
+    //if (visitorId.indexOf("-2282-") > 0) {
+    //    logError("XOM", folderId, "-2282- " + visitorId, "logPageHit");
+    //    setCookieValue("VisitorId", "bypass");
+    //    getIpInfo(folderId, "logPageHit/-2282-");
+    //}
+    //if (visitorId == "bypass") {
+    //    getIpInfo(folderId, "logPageHit/bypass");
+    //    logError("XOM", folderId, "-2282-", "logPageHit");
+    //}
 
     $.ajax({
         type: "POST",
@@ -282,7 +282,8 @@ function logStaticPageHit(folderId, calledFrom) {
     });
 }
 
-////////////////////////////////////////////////////////////////////////l
+//////////////////////////////////////////////////////////////////
+
 function getCloudflare(calledFrom, folderId) {
     $.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
         console.log("Cloudflare IP: " + data.ip);
@@ -340,12 +341,3 @@ function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {
     // Request extra privdleges 
     // pay me to do some programming for you and I'll let you in on all my source code
 }
-
-
-
-
-
-
-
-
-

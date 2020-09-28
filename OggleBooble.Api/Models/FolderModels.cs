@@ -80,8 +80,7 @@ namespace OggleBooble.Api.Models
 
     public class SearchResult
     {
-        public string FolderName { get; set; }
-        public string Parent { get; set; }
+        public string FolderPath { get; set; }
         public int FolderId { get; set; }
     }
 

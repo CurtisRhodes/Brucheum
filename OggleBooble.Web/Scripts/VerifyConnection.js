@@ -1,7 +1,5 @@
-﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false,
-    verifyConnectionCount = 0, verifyConnectionCountLimit = 17, verifyConnectionLoop = null,
-    persisConnectionInterval, persisConnectionIntervalRunning = false;
-
+﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0,
+    verifyConnectionCountLimit = 17, verifyConnectionLoop = null, persistConnectionInterval = null;
 
 function checkFor404(calledFrom) {
     connectionVerified = false;
@@ -31,6 +29,10 @@ function checkFor404(calledFrom) {
 }
 
 function verifyConnectionFunction() {
+    if (connectionVerified) {
+        clearInterval(verifyConnectionLoop);
+        return;
+    }
     if (++verifyConnectionCount === 3) {
         $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/altair04.gif' height='200' /></div>\n").show();
         $('#customMessageContainer').css("top", 200);
@@ -64,8 +66,8 @@ function verifyConnectionFunction() {
                     changeFavoriteIcon("redBallon");
                     $('#customMessage').hide();
                     canIgetaConnectionMessageShowing = false;
-                    if (!persisConnectionIntervalRunning)
-                        persistConnection();
+                    //if (persistConnectionInterval == null)
+                    //    persistConnection();
                 }
                 else {
                     console.log("verifyConnection: " + successModel.Success);
@@ -89,35 +91,36 @@ function verifyConnectionFunction() {
 }
 
 function persistConnection() {
-    persistConnectionIntervalRunning = true;
-    persistConnectionInterval = setInterval(function () {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Common/VerifyConnection",
-            success: function (successModel) {
-                if (successModel.Success === "ok") {
-                    if (successModel.ConnectionVerified) {
-                        //clearInterval(checkFor404Loop);
-                        inCheckFor404Loop = false;
-                        connectionVerified = true;
-                        verifyConnectionCount = 0;
-                        console.log("persist Connection ok");
+    if (persistConnectionInterval == null) {
+        persistConnectionInterval = setInterval(function () {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Common/VerifyConnection",
+                success: function (successModel) {
+                    if (successModel.Success === "ok") {
+                        if (successModel.ConnectionVerified) {
+                            //clearInterval(checkFor404Loop);
+                            inCheckFor404Loop = false;
+                            connectionVerified = true;
+                            verifyConnectionCount = 0;
+                            console.log("persist Connection ok");
+                        }
+                        else {
+                            logError("ERR", 3908, successModel.Success, "persistConnection");
+                        }
                     }
                     else {
-                        logError("ERR", 3908, successModel.Success, "persistConnection");
+                        logError("AJX", 3908, successModel.Success, "persistConnection");
+                        connectionVerified = false;
                     }
-                }
-                else {
-                    logError("AJX", 3908, successModel.Success, "persistConnection");
+                },
+                error: function (jqXHR) {
+                    //logError("XHR", 3980, getXHRErrorDetails(jqXHR), "persistConnection");
                     connectionVerified = false;
                 }
-            },
-            error: function (jqXHR) {
-                //logError("XHR", 3980, getXHRErrorDetails(jqXHR), "persistConnection");
-                connectionVerified = false;
-            }
-        });
-    }, 145000);
+            });
+        }, 145000);
+    }
 }
 
 function getBrowserInfo() {

@@ -33,14 +33,14 @@ function runMetricsMatrixReport() {
                         "<div>ImageHits</div></div>");
 
                     let i, mLen = 8;
-                    for (i = 0; i > 10; i++) { //for (i = mLen; i > -1; i--) {
+                    for (i = 0; i < 10; i++) { //for (i = mLen; i > -1; i--) {
                         $("#fxShell").append("<div><div class='center'>" + metricsMatrixResults.matrixModelRows[i].DayofWeek + "</div>" +
                             "<div><div class='center'>&nbsp;" + metricsMatrixResults.matrixModelRows[i].DateString + "&nbsp;</div>" +
                             "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].NewVisitors.toLocaleString() + "</div>" +
                             "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].Visits.toLocaleString() + "</div>" +
                             "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].PageHits.toLocaleString() + "</div>" +
                             "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].ImageHits.toLocaleString() + "</div></div>");
-                    };
+                    }
                     $("#fxShell").append("</div>")
                     $("#reportsFooter").html("<button onclick='rerun()'>reload</button>\n");
 
