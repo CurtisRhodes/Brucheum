@@ -444,11 +444,33 @@ namespace OggleBooble.Api.Controllers
                 if (!dirInfo.Exists)
                     dirInfo.Create();
 
-                while (endPageNumber < pdfPageCount) {
-                    RipSegment(sourceFile, destinationPath, Enumerable.Range(startPageNumber, endPageNumber));
+                while (startPageNumber < pdfPageCount)
+                {
+                    success = RipSegment(sourceFile, destinationPath, Enumerable.Range(startPageNumber, endPageNumber));
                     startPageNumber += endPageNumber;
                     endPageNumber += 100;
                 }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpGet]
+        [Route("api/Pdf/RipPdfRange")]
+        public string RipPdfRange(string sourceFile, string destinationPath, int startPage, int endPage)
+        {
+            string success;
+            try
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(destinationPath);
+                if (!dirInfo.Exists)
+                    dirInfo.Create();
+
+                RipSegment(sourceFile, destinationPath, Enumerable.Range(startPage, endPage));
                 success = "ok";
             }
             catch (Exception ex)
@@ -463,11 +485,11 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                using (PdfDocument pdf = PdfDocument.FromFile(sourceFile))
-                {
-                    pdf.RasterizeToImageFiles(destinationPath, pageNumbers, 450, 800, ImageType.Jpeg);
-                    success = "ok";
-                }
+                PdfDocument pdf = PdfDocument.FromFile(sourceFile);
+                pdf.RasterizeToImageFiles(destinationPath, pageNumbers, 450, 800, ImageType.Jpeg);
+                pdf.Dispose();
+                pdf = null;
+                success = "ok";
             }
             catch (Exception ex)
             {

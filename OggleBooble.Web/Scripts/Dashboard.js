@@ -1020,41 +1020,57 @@ function onDirTreeComplete() {
     setTimeout(function () { $('#dataifyInfo').hide() }, 1500);
 }
 
+// RIP PDF
 function showRipPdfDialog() {
-    //let pdfFile = "1 - January 1991.pdf";
-    //let pdfFolder = "02 February";
 
     $('#dashboardDialogTitle').html("Rip pdf");
     $('#dashboardDialogContents').html(
-        "<div><span>Pdf File</span><input id='txtPdfFile' class='inlineInput roundedInput'/></div>\n" +
-        "<div><span>Dest Folder</span><input id='txtDestFolder' class='inlineInput roundedInput' /></div>\n" +
-        "<div class='roundendButton' onclick='performRipPdfDialog()'>rip one</div>\n");
+        "<div><span>pdf file</span><input id='txtPdfFile' class='inlineInput roundedInput'/></div>\n" +
+        "<div><span>dest folder</span><input id='txtDestFolder' class='inlineInput roundedInput'/></div>\n" +
+        "<div><span>start page</span><input id='txtStartPage'/><span>end page</span><input id='txtEndPage'/></div>\n" +
+        "<div class='roundendButton' onclick='performRipPdf()'>rip one</div>\n");
     $('#dashboardDialog').fadeIn();
 }
 
-function performRipPdfDialog() {
+function performRipPdf() {
     let sourceFile = $('#txtPdfFile').val();
     let destinationPath = $('#txtDestFolder').val();
-    // let sourceFile = "C://Users/Curtis/Documents/playboy pdfs/" + pdfFile;
-    // Playboy_1991-2000\Playboy 1991
-    //let destinationRootPath = "C://Users/Curtis/Documents/playboy pdfs/";
-    //let destinationPath = destinationRootPath + pdfFolder;
-
     $('#dashBoardLoadingGif').fadeIn();
     $('#dataifyInfo').show().html("ripping " + sourceFile);
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Pdf/RipPdf?sourceFile=" + sourceFile + "&destinationPath=" + destinationPath,
-        success: function (success) {
-            $('#dashBoardLoadingGif').hide();
-            if (success === "ok") {
-                $('#dataifyInfo').show().html("done");
+
+    if ($('#txtStartPage').val() != "") {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Pdf/RipPdfRange?sourceFile=" + sourceFile + "&destinationPath=" + destinationPath + "&startPage=" +
+                $('#txtStartPage').val() + "&endPage=" + $('#txtEndPage').val(),
+            success: function (success) {
+                $('#dashBoardLoadingGif').hide();
+                if (success === "ok") {
+                    $('#dataifyInfo').show().html("done");
+                }
+                else { logError("AJX", 2020, success, "RipPdf"); }
+            },
+            error: function (jqXHR) {
+                $('#dashBoardLoadingGif').hide();
+                if (!checkFor404("getAlbumImages")) { logError("XHR", 2020, getXHRErrorDetails(jqXHR), "RipPdf"); }
             }
-            else { logError("AJX", 2020, success, "RipPdf"); }
-        },
-        error: function (jqXHR) {
-            $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("getAlbumImages")) { logError("XHR", 2020, getXHRErrorDetails(jqXHR), "RipPdf"); }
-        }
-    });
+        });
+    }
+    else {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Pdf/RipPdf?sourceFile=" + sourceFile + "&destinationPath=" + destinationPath,
+            success: function (success) {
+                $('#dashBoardLoadingGif').hide();
+                if (success === "ok") {
+                    $('#dataifyInfo').show().html("done");
+                }
+                else { logError("AJX", 2020, success, "RipPdf"); }
+            },
+            error: function (jqXHR) {
+                $('#dashBoardLoadingGif').hide();
+                if (!checkFor404("getAlbumImages")) { logError("XHR", 2020, getXHRErrorDetails(jqXHR), "RipPdf"); }
+            }
+        });
+    }
 }
