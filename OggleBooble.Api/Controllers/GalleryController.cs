@@ -165,7 +165,8 @@ namespace OggleBooble.Api.Controllers
                     var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
                     if (dbFolderDetails == null)
                     {
-                        db.FolderDetails.Add(new FolderDetail() { FolderId = folderId });
+                        dbFolderDetails = new FolderDetail() { FolderId = folderId };
+                        db.FolderDetails.Add(dbFolderDetails);
                         db.SaveChanges();
                     }
 

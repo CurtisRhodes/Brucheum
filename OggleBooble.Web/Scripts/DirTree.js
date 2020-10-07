@@ -23,11 +23,17 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
             url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
             success: function (dirTreeModel) {
                 if (dirTreeModel.Success === "ok") {
+
                     buildDirTreeRecurr(dirTreeModel);
+
+                    strdirTree += "<div id='dirTreeCtxMenu'></div>";
+
 
                     if (startNode === 1) {
                         window.localStorage["dirTree"] = strdirTree;
                     }
+
+
                     $('#' + container + '').html(strdirTree);
 
                     if (typeof onDirTreeComplete === 'function') {
@@ -56,7 +62,7 @@ function buildDirTreeRecurr(parentNode) {
     $.each(parentNode.SubDirs, function (idx, thisNode) {
         //if (!isNullorUndefined(thisNode.VwDirTree))
         {
-            let vwDir = thisNode.VwDirTree;
+            let vwDir = thisNode.ThisNode;
 
             if (isNullorUndefined(vwDir.FolderImage))
                 folderImage = "Images/redballon.png";
@@ -90,8 +96,8 @@ function buildDirTreeRecurr(parentNode) {
                 "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
                 + "<span id='S" + randomId + "' onclick='toggleDirTree(\"" + randomId + "\")' >[" + expandMode + "] </span>"
                 + "<div id='" + randomId + "aq' class='treeLabelDiv' "
-                + "onclick=commonDirTreeClick('" + thisNode.DanniPath + "','" + vwDir.Id + "') "
-                + "oncontextmenu=showDirTreeContextMenu('" + vwDir.Id + "') "
+                + "onclick=commonDirTreeClick('" + thisNode.DanniPath + "'," + vwDir.Id + ") "
+                + "oncontextmenu=showDirTreeContextMenu(" + vwDir.Id + ") "
                 + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') onmouseout=$('.dirTreeImageContainer').hide()>"
                 //+ "onmouseover=showFolderImage('" + encodeURI(folderImage) + "')>"
                 + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
@@ -133,15 +139,15 @@ function showFolderImage(link) {
     //$('#footerMessage').html(link);
 }
 
-function showDirTreeContextMenu(folderId) {
+function showDirTreeContextMenu(vwDirId) {
     event.preventDefault();
     window.event.returnValue = false;
 
-    $('body').append(
+    $('#dirTreeCtxMenu').html(
         "<div id='dashboardContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
-        "    <div onclick='window.open(\"/album.html?folder=" + folderId + "\", \"_blank\")'>Open Folder</div>\n" +
-        "    <div onclick='showFolderInfoDialog(" + folderId + ",\"dirTree ctx\")'>Show Folder Info</div>\n" +
-        "    <div onclick='showFolderStats(" + folderId + ")'>Show Folder stats</div>\n" +
+        "    <div onclick='window.open(\"/album.html?folder=" + vwDirId + "\", \"_blank\")'>Open Folder</div>\n" +
+        "    <div onclick='showFolderInfoDialog(" + vwDirId + ",\"dirTree ctx\")'>Show Folder Info</div>\n" +
+        "    <div onclick='showFolderStats(" + vwDirId + ")'>Show Folder stats</div>\n" +
         "</div>\n");
     $('#dashboardContextMenu').css("top", event.clientY + 5);
     $('#dashboardContextMenu').css("left", event.clientX);
@@ -149,7 +155,7 @@ function showDirTreeContextMenu(folderId) {
 }
 
 function showFolderStats(folderId) {
-    alert("showFolderStats\nFolderId: " + folderId);
+    alert("showFolderStats\nFolderId: " + folderId + "\npSelectedTreeId: " + pSelectedTreeId);
 
 }
 

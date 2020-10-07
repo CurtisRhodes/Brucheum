@@ -11,7 +11,7 @@
 .knownModelIndicator {
     position: relative;
     bottom: 23px;
-    right: -121px;
+    text-align:right;
     margin-bottom: -25px;
 }
     .knownModelIndicator img {

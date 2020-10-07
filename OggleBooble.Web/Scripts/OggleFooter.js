@@ -1,7 +1,37 @@
 ﻿function setOggleFooter(pageId, rootFolder) {
     //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
 
-    $('.footer').html(defaultFooterHTML(pageId, rootFolder));
+    $('.footer').html("<div class='flexContainer'>\n" +
+        "    <div class='footerCol'>\n" +  // column 1
+        "       <div class='clickable' onclick='rtpe(\"FLC\",\"feedback\"," + rootFolder + "\"," + pageId + ")'>Feedback</div>\n" +
+        "       <div id='footerCol1' class='footerColCustContainer'></div>\n" +
+        "    </div>\n" +
+        "    <div class='footerCol'>\n" + // column 2
+        "       <div class='clickable' onclick='window.location.href=\"index.html?spa=3911\", \"_blank\"'>Blog</div>\n" +
+        "       <div id='footerCol2' class='footerColCustContainer'></div>\n" +
+        "    </div>\n" +
+        "    <div class='footerCol'>\n" + // column 3
+        "       <div class='clickable' onclick='rtpe(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
+        "       <div id='footerCol3' class='footerColCustContainer'></div>\n" +
+        "    </div>\n" +
+        "    <div class='footerCol'>\n" +  // column 4
+        "       <div id='footerPageHits'></div>\n" +
+        "       <div id='footerCol4' class='footerColCustContainer'></div>\n" +
+        "    </div>\n" +
+        "    <div class='footerCol'>\n" +  // column 5
+        "       <div id='footerCol5' class='footerColCustContainer'></div>\n" +
+        "    </div>\n" +
+        "    <div class='footerCol'>\n" +  // column 5
+        "       <div id='footerCol6' class='footerColCustContainer'></div>\n" +
+        "    </div>\n" +
+        "   </div>\n<div class='footerFooter'>\n" +
+        "       <div id='footerMessage'></div>\n" +
+        "       <div id='footerMessage2'></div>\n" +
+        "       <div id='copyright'>&copy; 2020 - <a href='https://curtisrhodes.com/IntelDsgn'>Intelligent Design SoftWare</a></div>\n" +
+        "   </div>\n" +
+        "</div>\n"
+    );
+
     switch (rootFolder) {
         //rtpe(code,calledfrom,detail,pageId)
         case "playboyIndex":
@@ -94,6 +124,36 @@
             $('#footerCol1').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"rejects\",\"rejects\"," + pageId + ")'>Rejects</div>\n" +
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"videos\",\"videos\"," + pageId + ")'>Videos</div>\n");
+
+            //$('#footerCol5').html(`<!-- Histats.com  (div with counter) --><div id="histats_counter"></div>
+            //    <!-- Histats.com  START  (aync)-->
+            //    <script type="text/javascript">var _Hasync= _Hasync|| [];
+            //    _Hasync.push(['Histats.start', '1,4458214,4,28,115,60,00000001']);
+            //    _Hasync.push(['Histats.fasi', '1']);
+            //    _Hasync.push(['Histats.track_hits', '']);
+            //    (function() {
+            //    var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+            //    hs.src = ('//s10.histats.com/js15_as.js');
+            //    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+            //    })();</script>
+            //    <noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?4458214&101" alt="counter" border="0"></a></noscript>
+            //    <!-- Histats.com  END  -->`
+            //);
+
+            $('#footerCol6').html(`<!-- Histats.com  (div with counter) --><div id="histats_counter"></div>
+                <!-- Histats.com  START  (aync)-->
+                <script type="text/javascript">var _Hasync= _Hasync|| [];
+                _Hasync.push(['Histats.start', '1,4458214,4,30,130,80,00010101']);
+                _Hasync.push(['Histats.fasi', '1']);
+                _Hasync.push(['Histats.track_hits', '']);
+                (function() {
+                var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+                hs.src = ('//s10.histats.com/js15_as.js');
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+                })();</script>
+                <noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?4458214&101" alt="page hit counter" border="0"></a></noscript>
+                <!-- Histats.com  END  -->`
+            );
             break;
         }
         default: {
@@ -102,47 +162,15 @@
             break;
         }
     }
+
+    if (isInRole("admin")) {
+        $('#footerCol5').html(
+            "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>dashboard</div>\n" +
+            "       <div>page type: " + rootFolder + "</div>\n" +
+            "       <div id='footerFolderType'></div>\n" +
+            "       <div id='footerStaticPage'></div>\n");
+    }
 }
 
 function defaultFooterHTML(pageId, rootFolder) {
-    var defaultFooter =
-        "<div class='flexContainer'>\n" +
-        "    <div class='footerCol'>\n" +  // column 1
-        "       <div class='clickable' onclick='rtpe(\"FLC\",\"feedback\"," + rootFolder + "\"," + pageId + ")'>Feedback</div>\n" +
-        "       <div id='footerCol1' class='footerColCustContainer'></div>\n" +
-        "    </div>\n" +
-        "    <div class='footerCol'>\n" + // column 2
-        "       <div class='clickable' onclick='window.location.href=\"index.html?spa=3911\", \"_blank\"'>Blog</div>\n" +
-        "       <div id='footerCol2' class='footerColCustContainer'></div>\n" +
-        "    </div>\n" +
-        "    <div class='footerCol'>\n" + // column 3
-        "       <div class='clickable' onclick='rtpe(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
-        "       <div id='footerCol3' class='footerColCustContainer'></div>\n" +
-        "    </div>\n" +
-        "    <div class='footerCol'>\n"+  // column 4
-        "       <div id='footerPageHits'></div>\n" +
-        "       <div id='footerCol4' class='footerColCustContainer'></div>\n" +
-        "    </div>\n";
-
-    if (isInRole("admin")) {
-        defaultFooter +=
-            "    <div class='footerCol'>\n" +  // column 5
-            "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>dashboard</div>\n" +
-            "       <div id='footerCol5' class='footerColCustContainer'></div>\n" +
-            "       <div>page type: " + rootFolder + "</div>\n" +
-            "       <div id='footerFolderType'></div>\n" +
-            "       <div id='footerStaticPage'></div>\n" +
-            //"  <div class='footerMessage'>last modified: " + lastModified + "</div>\n" +
-            //"  <div id='footerLastBuild' class='footerVersionMessage'></div>\n";
-            "    </div>\n"; 
-    }
-    defaultFooter +=
-        "   </div>\n<div class='footerFooter'>\n" +
-        "       <div id='footerMessage'></div>\n" +
-        "       <div id='footerMessage2'></div>\n" +
-        "       <div id='copyright'>&copy; 2020 - <a href='https://curtisrhodes.com/IntelDsgn'>Intelligent Design SoftWare</a></div>\n" +
-        "   </div>\n" +
-        "</div>\n";
-
-    return defaultFooter;
 }

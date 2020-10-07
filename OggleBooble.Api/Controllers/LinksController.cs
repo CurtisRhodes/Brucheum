@@ -73,7 +73,7 @@ namespace OggleBooble.Api.Controllers
                 }
 
                 var vRootNode = VwDirTrees.Where(v => v.Id == root).First();
-                DirTreeModelNode rootNode = new DirTreeModelNode() { VwDirTree = vRootNode };
+                DirTreeModelNode rootNode = new DirTreeModelNode() { ThisNode = vRootNode };
                 dirTreeModel.SubDirs.Add(rootNode);
 
                 //GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees);
@@ -91,10 +91,10 @@ namespace OggleBooble.Api.Controllers
         }
         private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<VwDirTree> VwDirTrees, string dPath)
         {
-            List<VwDirTree> vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.VwDirTree.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+            List<VwDirTree> vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.ThisNode.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
             foreach (VwDirTree vNode in vwDirTreeNodes)
             {
-                DirTreeModelNode childNode = new DirTreeModelNode() { VwDirTree = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
+                DirTreeModelNode childNode = new DirTreeModelNode() { ThisNode = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
                 parentNode.SubDirs.Add(childNode);
                 if (vNode.IsStepChild == 0)
                     GetDirTreeChildNodes(dirTreeModel, childNode, VwDirTrees, (dPath + "/" + vNode.FolderName).Replace(" ", "%20"));

@@ -12,6 +12,7 @@ function checkFor404(calledFrom) {
             setTimeout(function () {
                 if (connectionVerified) {
                     console.log("connection verified right off");
+                    tryHitStats();
                     return true;
                 }
                 else {
@@ -24,17 +25,31 @@ function checkFor404(calledFrom) {
                 }
             }, 2500);
         }
-
     }, 300);
+}
+
+function tryHitStats() {
+    var _Hasync = _Hasync || [];
+    _Hasync.push(['Histats.start', '1,4458214,4,0,0,0,00010000']);
+    _Hasync.push(['Histats.fasi', '1']);
+    _Hasync.push(['Histats.track_hits', '']);
+    (function () {
+        var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+        hs.src = ('//s10.histats.com/js15_as.js');
+        //hs.src = ('https://10.histats.com/js15_as.js');
+        //(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+    })();
+    console.log("calling tryHitStats");
 }
 
 function verifyConnectionFunction() {
     if (connectionVerified) {
         clearInterval(verifyConnectionLoop);
+        tryHitStats();
         return;
     }
     if (++verifyConnectionCount === 3) {
-        $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/altair04.gif' height='200' /></div>\n").show();
+        $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor.gif' height='300' /></div>\n").show();
         $('#customMessageContainer').css("top", 200);
     }
     if (!canIgetaConnectionMessageShowing) {

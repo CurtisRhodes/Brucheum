@@ -46,6 +46,8 @@ namespace OggleBooble.Api.Controllers
             {
                 VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                 string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
+                RenameFiles(ftpPath);
+
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
                 if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR"))
                 {
@@ -221,6 +223,37 @@ namespace OggleBooble.Api.Controllers
                 repairReport.Success = Helpers.ErrorDetails(ex);
                 return;
             }
+        }
+
+        private string RenameFiles(string ftpPath) {
+            string success;
+            try
+            {
+                string fileName,  newFileName, ext, possibleGuid;
+                bool fileok;
+                string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
+                for (int i = 0; i < physcialFiles.Length; i++)
+                {
+                    fileok = false;
+                    fileName = physcialFiles[i];
+                    if (fileName.LastIndexOf("_") > 0)
+                    {
+                        if (fileName.Length > 40)
+                        {
+                            possibleGuid = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                            fileok = Guid.TryParse(possibleGuid, out Guid outGuid);                           
+                        }
+                    }
+                    if (!fileok) {
+                        ext = fileName.Substring(fileName.LastIndexOf("."));
+                        newFileName = fileName.Substring(0, fileName.LastIndexOf(".")) + "_" + Guid.NewGuid().ToString() + ext;
+                        FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                    }
+                }
+                success = "ok";
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
         }
     }
 }

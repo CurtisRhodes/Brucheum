@@ -48,7 +48,7 @@ namespace OggleBooble.Api.Models
             SubDirs = new List<DirTreeModelNode>();
         }
         public List<DirTreeModelNode> SubDirs { get; set; }
-        public VwDirTree VwDirTree { get; set; }
+        public VwDirTree ThisNode  { get; set; }
         public string DanniPath { get; set; }
     }
 

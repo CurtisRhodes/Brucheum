@@ -81,7 +81,7 @@ function setHeaderMenu(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#bannerTitle').html("OggleBooble");
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>naturals</a> organized by\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",,3916)'> positions,</a>\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
@@ -95,6 +95,7 @@ function setHeaderMenu(folderId, subdomain) {
         }
         case "archive": {
             $('#mainMenuContainer').html(
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>naturals</a>\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1103)'>russian spys,</a> \n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1107)'>sweater meat,</a> \n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",123)'>ultra juggs</a> \n");
@@ -125,13 +126,13 @@ function setHeaderMenu(folderId, subdomain) {
         case "playboyIndex":
             $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
             // top row
-            // <div id='bannerTitle' class='headerTitle'></div >\n" +
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
             $('#bannerTitle').html("<span style='color:#fff;'>every playboy centerfold</span>");  // 1132
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"PBB\",3912,\"magazine covers\",1986)'>magazine covers</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",3912,\"pictorials\",4015)'>pictorials</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",3912,\"extras\",2601)'>extras</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",3912,\"special\",6076)'>special editions</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",3912,\"cybergirls\",3796)'>cybergirls</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",3912,\"Pmoy\",4013)'>Pmoy</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",3912,\"Pmoy\",4932)'>just centerfolds</a>\n");
@@ -162,14 +163,16 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"magazine covers\",1986)'>magazine covers</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"pictorials\",4015)'>pictorials</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"extras\",2601)'>extras</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"special\",6076)'>special editions</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"cybergirls\",3796)'>cybergirls</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"cybergirls\",6095)'>muses</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"Pmoy\",4013)'>Pmoy</a>\n");
             $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
-            $('#topRowRightContainer').append(addBannerButton("archive"));
-            $('#topRowRightContainer').append(addBannerButton("porn", "OgglePorn"));
             // bottom row
             // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
             $('#breadcrumbContainer').html("every playboy centerfold");
+            $('#hdrBtmRowSec3').append(addBannerButton("archive"));
+            $('#hdrBtmRowSec3').append(addBannerButton("porn", "OgglePorn"));
             // <div id='badgesContainer' class='badgesSection'></div>\n" +
             // <div id='hdrBtmRowSec3' class='hdrBtmRowOverflow'></div>\n" +
             break;
