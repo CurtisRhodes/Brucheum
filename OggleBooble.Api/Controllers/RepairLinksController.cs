@@ -46,7 +46,12 @@ namespace OggleBooble.Api.Controllers
             {
                 VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                 string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
-                RenameFiles(ftpPath);
+                string folderName = dbCategoryFolder.FolderName;
+                if (dbCategoryFolder.FolderType == "singleChild") {
+                    VirtualFolder dbParentFolder = db.VirtualFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
+                    folderName = dbParentFolder.FolderName;
+                }
+                RenameFiles(ftpPath, folderName,  repairReport);
 
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
                 if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR"))
@@ -188,23 +193,7 @@ namespace OggleBooble.Api.Controllers
                         {// orphan image file 
                             repairReport.Errors.Add("orphan image file");
                             existingImageFile.FolderId = 0;
-
                         }
-
-                        // I'd have to scann ever physical folder's links prove there is no file for this file link.
-                        //var dbImageFile = db.ImageFiles.Where(i => i.Id == existingImageFile.Id).FirstOrDefault();
-                        //if ((dbImageFile == null) || (dbImageFile.FolderId == folmagederId))
-
-                        //repairReport.OrphanImageFileRecs.Add(existingImageFile.Id);
-                        //db.ImageFiles.Remove(existingImageFile);
-
-                        //var dbBadLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == existingImageFile.Id).ToList();
-                        //db.CategoryImageLinks.RemoveRange(dbBadLinks);
-
-                        //db.SaveChanges();
-                        //repairReport.DirNotFound++;
-                        //repairReport.LinksRemoved += dbBadLinks.Count();
-
                     }
                     repairReport.ImageFilesProcessed++;
                 }
@@ -225,30 +214,39 @@ namespace OggleBooble.Api.Controllers
             }
         }
 
-        private string RenameFiles(string ftpPath) {
+        private string RenameFiles(string ftpPath, string folderName, RepairReportModel repairReport)
+        {
             string success;
             try
             {
-                string fileName,  newFileName, ext, possibleGuid;
-                bool fileok;
+                string fileName, newFileName, ext, possibleGuid = "";
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
-                    fileok = false;
                     fileName = physcialFiles[i];
+                    ext = fileName.Substring(fileName.LastIndexOf("."));
                     if (fileName.LastIndexOf("_") > 0)
                     {
                         if (fileName.Length > 40)
                         {
                             possibleGuid = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
-                            fileok = Guid.TryParse(possibleGuid, out Guid outGuid);                           
+                            if (Guid.TryParse(possibleGuid, out Guid outGuid))
+                            {
+                                if (fileName != (folderName + "_" + possibleGuid + ext))
+                                {
+                                    newFileName = folderName + "_" + possibleGuid + ext;
+                                    FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                                    repairReport.ImagesRenamed++;
+                                }
+                            }
                         }
-                    }
-                    if (!fileok) {
-                        ext = fileName.Substring(fileName.LastIndexOf("."));
-                        newFileName = fileName.Substring(0, fileName.LastIndexOf(".")) + "_" + Guid.NewGuid().ToString() + ext;
-                        FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                    }
+                        else
+                        {
+                            newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
+                            FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                            repairReport.ImagesRenamed++;
+                        }
+                    } //newFileName = fileName.Substring(0, fileName.LastIndexOf(".")) + "_" + Guid.NewGuid().ToString() + ext;
                 }
                 success = "ok";
             }

@@ -188,15 +188,9 @@ namespace OggleBooble.Api.Controllers
                 {
                     var linksToRemove = db.CategoryImageLinks.Where(l => l.ImageLinkId == linkId).ToList();
                     db.CategoryImageLinks.RemoveRange(linksToRemove);
-
-
-
                     ImageFile reject = db.ImageFiles.Where(i => i.Id == linkId).First();
-
-
-
-
-                    db.ImageFiles.Remove(reject);
+                    reject.FolderId = -6;
+                    //db.ImageFiles.Remove(reject);
                     db.SaveChanges();
                     success = "ok";
                 }
@@ -229,9 +223,13 @@ namespace OggleBooble.Api.Controllers
                     for (int i = 0; i < moveManyModel.ImageLinkIds.Length; i++) {
                         linkId = moveManyModel.ImageLinkIds[i];
                         dbImageFile = db.ImageFiles.Where(f => f.Id == linkId).First();
-                        oldFileName = sourceFtpPath + "/" + dbImageFile.FileName;
-                        newFileName = dbDestFolder.FolderName + "_" + linkId + dbImageFile.FileName.Substring(dbImageFile.FileName.Length - 4);
-                        success = FtpUtilies.MoveFile(oldFileName, destFtpPath + "/" + newFileName);
+                        oldFileName = dbImageFile.FileName;
+                        string ext = dbImageFile.FileName.Substring(dbImageFile.FileName.LastIndexOf("."));
+                        newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
+                        if (dbDestFolder.Parent == dbSourceFolder.Id)
+                            newFileName = oldFileName;
+
+                        success = FtpUtilies.MoveFile(sourceFtpPath + "/" + oldFileName, destFtpPath + "/" + newFileName);
                         if (success == "ok")
                         {                            
                             dbImageFile.FolderId = moveManyModel.DestinationFolderId;
@@ -273,7 +271,10 @@ namespace OggleBooble.Api.Controllers
 
                     VirtualFolder dbDestFolder = db.VirtualFolders.Where(i => i.Id == destinationFolderId).First();
                     string destFtpPath = ftpHost + ftpRepo + "/" + dbDestFolder.FolderPath;
+
                     string newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
+                    if (dbSourceFolder.Id == dbDestFolder.Parent)
+                        newFileName = dbSourceFolder.FolderName + "_" + linkId + ext;
 
                     success = FtpUtilies.MoveFile(sourceFtpPath + "/" + fileName, destFtpPath + "/" + newFileName);
 
