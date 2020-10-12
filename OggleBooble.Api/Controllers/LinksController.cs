@@ -234,16 +234,23 @@ namespace OggleBooble.Api.Controllers
                         {                            
                             dbImageFile.FolderId = moveManyModel.DestinationFolderId;
                             dbImageFile.FileName = newFileName;
+                            db.SaveChanges();
+
                             var oldLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
                             sortOrder = oldLink.SortOrder;
                             db.CategoryImageLinks.Remove(oldLink);
+                            db.SaveChanges();
                             db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink() 
-                            { ImageCategoryId = dbDestFolder.Id, ImageLinkId = linkId, SortOrder = sortOrder });
+                            { 
+                                ImageCategoryId = dbDestFolder.Id, 
+                                ImageLinkId = linkId, 
+                                SortOrder = sortOrder 
+                            });
+                            db.SaveChanges();
                         }
                         else
                             return success;
                     }
-                    db.SaveChanges();
                     success = "ok";
                 }
             }

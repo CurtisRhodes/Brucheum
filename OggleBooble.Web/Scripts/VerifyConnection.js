@@ -49,7 +49,7 @@ function verifyConnectionFunction() {
         return;
     }
     if (++verifyConnectionCount === 3) {
-        $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor.gif' height='300' /></div>\n").show();
+        $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
         $('#customMessageContainer').css("top", 200);
     }
     if (!canIgetaConnectionMessageShowing) {

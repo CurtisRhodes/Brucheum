@@ -62,7 +62,7 @@ namespace OggleBooble.Api.Controllers
                 var dbFolderCatLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
                 var dbFolderImageFiles = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
 
-                // loop through physcial files
+                // loop1A through physcial files
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
                     var physcialFileName = physcialFiles[i];
@@ -153,50 +153,72 @@ namespace OggleBooble.Api.Controllers
                     repairReport.PhyscialFilesProcessed++;
                 }
 
-                // loop through folder catLinks
                 var physcialFileLinkIds = new List<string>();
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
                     physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36));
                 }
 
-                // check if there is a physcial file in the folder for every link in the table.
-                // there can be more links than files. That's the point.
-                foreach (CategoryImageLink folderCatLink in dbFolderCatLinks)
-                {
-                    if (!physcialFileLinkIds.Contains(folderCatLink.ImageLinkId))
-                    {
-                        // we have an extra cat link
-                        var nonLocallink = db.ImageFiles.Where(i => i.Id == folderCatLink.ImageLinkId && i.FolderId != folderId).FirstOrDefault();
-                        if (nonLocallink == null)
-                        {
-                            var dbOtherFolderFileLink = db.ImageFiles.Where(i => i.Id == folderCatLink.ImageLinkId).FirstOrDefault();
-                            if (dbOtherFolderFileLink == null)
-                            {
-                                db.CategoryImageLinks.Remove(folderCatLink);
-                                db.SaveChanges();
-                                repairReport.CatLinksRemoved++;
-                            }
-                        }
-                    }
-                    repairReport.LinkRecordsProcessed++;
-                }
-
-                // loop 3
+                // loop 2A loop through image files
                 foreach (ImageFile existingImageFile in dbFolderImageFiles)
                 {
                     // check if there is a physcial file in the folder for every ImageFile with a FolderId equaling the folderId.
                     if (!physcialFileLinkIds.Contains(existingImageFile.Id))
                     {
-                        var otherFolderCatFiles = db.CategoryImageLinks.Where(l => l.ImageLinkId == existingImageFile.Id).ToList();
-                        if (otherFolderCatFiles == null)
-                        {// orphan image file 
+                        var otherFolderImageFile = db.ImageFiles.Where(l => l.Id == existingImageFile.Id).FirstOrDefault();
+                        if (otherFolderImageFile == null)
+                        {
+                            // orphan image file 
                             repairReport.Errors.Add("orphan image file");
-                            existingImageFile.FolderId = 0;
+                            db.ImageFiles.Remove(existingImageFile);
+                            db.SaveChanges();
+                            repairReport.ImageFilesRemoved++;
+                        }
+                        else 
+                        {
+                            // image file 
+                            if (otherFolderImageFile.FolderId == folderId)
+                            {
+                                repairReport.Errors.Add("just said this not here");
+
+                                //var of2 = db.ImageFiles.Where(i=>i.ExternalLink)
+
+                            }
+                            else
+                            { 
+                            // move file
+
+                            }
                         }
                     }
                     repairReport.ImageFilesProcessed++;
                 }
+
+                // loop 2B
+                // check if there is a physcial file in the folder for every link in the table.
+                // there can be more links than files. That's the point. 
+                foreach (CategoryImageLink folderCatLink in dbFolderCatLinks)
+                {
+                    if (!physcialFileLinkIds.Contains(folderCatLink.ImageLinkId))
+                    {
+                        //var nonLocallink = db.ImageFiles.Where(i => i.Id == folderCatLink.ImageLinkId && i.FolderId != folderId).FirstOrDefault();
+                        var nonLocallinks = db.CategoryImageLinks.Where(i => (i.ImageLinkId == folderCatLink.ImageLinkId) && (i.ImageCategoryId != folderId)).ToList();
+                        if (nonLocallinks == null)
+                        {
+                            // physcial file with no catlink
+                            db.CategoryImageLinks.Add(new CategoryImageLink()
+                            {
+                                ImageCategoryId = folderId,
+                                ImageLinkId = folderCatLink.ImageLinkId,
+                                SortOrder = 1010
+                            });
+                            db.SaveChanges();
+                            repairReport.CatLinksAdded++;
+                        }
+                    }
+                    repairReport.LinkRecordsProcessed++;
+                }
+
                 if (recurr)
                 {
                     var childFolders = db.VirtualFolders.Where(c => c.Parent == folderId).ToList();
