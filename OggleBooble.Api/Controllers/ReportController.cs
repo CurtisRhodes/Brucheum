@@ -13,13 +13,18 @@ using System.IO;
 using System.Text;
 using Microsoft.SqlServer.Server;
 using System.Configuration;
+using System.Threading.Tasks;
 
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
     public class ReportController : ApiController
     {
-        private readonly string imgRepo = System.Configuration.ConfigurationManager.AppSettings["ImageRepository"];
+        private readonly string httpLocation = "https://ogglebooble.com/";
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        //private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
 
         [HttpGet]
         [Route("api/Report/MetricMatrixReport")]
@@ -346,6 +351,7 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 var stringBuilder = new StringBuilder("<html><head>");
+                //MessageHub hub = new MessageHub();
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     string imgSrc;
@@ -364,6 +370,7 @@ namespace OggleBooble.Api.Controllers
                         var dbPlayboyYears = db.VirtualFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
                         foreach (var dbPlayboyYear in dbPlayboyYears)
                         {
+                            //hub.SendMessage("xx", dbPlayboyYear.FolderName);
                             stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "\n");
                             var dbPlayboyMonths = db.VirtualFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
                             foreach (VirtualFolder dbPbmonth in dbPlayboyMonths)
@@ -378,7 +385,7 @@ namespace OggleBooble.Api.Controllers
                                     //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
                                     //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
                                     "<a href='https://ogglebooble.com/album.html?folder=" + dbPbmonth.Id + "'>" +
-                                    "<div class='pbItemCntr'><img class='pbImg' src=" + imgSrc + ">" +
+                                    "<div class='pbItemCntr'><img class='pbImg' src='" + httpLocation + imgSrc + "'>" +
                                     "<div class='pbLabel01'>" + dbPbmonth.FolderName + "</div></div></a></div>\n");
                             }
                             stringBuilder.Append("</div>\n");
@@ -386,16 +393,15 @@ namespace OggleBooble.Api.Controllers
                         stringBuilder.Append("</div>\n");
                     }
                 }
-                stringBuilder.Append("<script>\nfunction showCenterfoldImage(link)\n {" +
-                    "$('.dirTreeImageContainer').css('top', event.clientY - 100);\n" +
-                    "$('.dirTreeImageContainer').css('left', event.clientX + 10);\n" +
-                    "$('.dirTreeImage').attr('src', link);\n" +
-                    "$('.dirTreeImageContainer').show();}\n</script>");
+                //stringBuilder.Append("<script>\nfunction showCenterfoldImage(link)\n {" +
+                //    "$('.dirTreeImageContainer').css('top', event.clientY - 100);\n" +
+                //    "$('.dirTreeImageContainer').css('left', event.clientX + 10);\n" +
+                //    "$('.dirTreeImage').attr('src', link);\n" +
+                //    "$('.dirTreeImageContainer').show();}\n</script>");
 
                 //$('#footerMessage').html(link);
                 stringBuilder.Append("\n</body>\n</html>");
                 success = WriteFileToDisk(stringBuilder.ToString(), "CenterfoldList");
-                success = "ok";
             }
             catch (Exception ex)
             {
@@ -404,10 +410,6 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-        private readonly string httpLocation = "https://ogglebooble.com/";
-        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
-        private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
-        private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         private string WriteFileToDisk(string staticContent, string pageTitle)
         {
             string success;
@@ -446,8 +448,6 @@ namespace OggleBooble.Api.Controllers
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
             return success;
         }
-
-
 
         [HttpGet]
         [Route("api/Report/PlayboyList")]

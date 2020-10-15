@@ -11,6 +11,8 @@ signalr.on("ReceiveMessage", function (user, message) {
     //var li = document.createElement("li");
     //li.textContent = encodedMsg;
     alert(encodedMsg);
+    $('#dataifyInfo').show().html(encodedMsg);
+
     //document.getElementById("messagesList").appendChild(li);
 });
 

@@ -16,6 +16,7 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class StaticPageController : ApiController
     {
+        private readonly int staticPageImageCount = 25;
         private readonly string httpLocation = "https://ogglebooble.com/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
@@ -133,14 +134,14 @@ namespace OggleBooble.Api.Controllers
             using (var db = new OggleBoobleMySqlContext())
             {
                 var dbImages = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
-                if (dbImages.Count < 16) {
+                if (dbImages.Count < staticPageImageCount) {
                     dbImages.AddRange(db.VwLinks.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList());
                 }
                 //var dbImages = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
                 teaserBody.Append(
                 "<div class='threeColumnLayout'><div class='leftColumn'></div>" +
                 "<div class='middleColumn'><div id='imageContainer' class='galleryContainer'>\n");
-                for (int i = 0; i < Math.Min(dbImages.Count, 18); i++)
+                for (int i = 0; i < Math.Min(dbImages.Count, staticPageImageCount); i++)
                 {
                     teaserBody.Append("<div class='folderImageOutterFrame'>" +
                         "<img class='thumbImage' onclick='goHome()'" +

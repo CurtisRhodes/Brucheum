@@ -5,14 +5,14 @@ using System.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
-
-namespace OggleBooble.Api.Hubs
+namespace OggleBooble.Api
 {
-    public class MessageHub:Hub
+    public class MessageHub : Hub
     {
-        public async Task SendMessage(string user, string message)
+        public  string SendMessage(string user, string message)
         {
-            await Clients.All.SendAsync("RecieveMessage", user, message);
+            Clients.All.SendAsync("RecieveMessage", user, message);
+            return "ok";
         }
     }
 }
