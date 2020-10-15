@@ -10,6 +10,9 @@ using System.Web.Http.Cors;
 using IronPdf;
 using System.Drawing;
 using System.IO;
+using System.Text;
+using Microsoft.SqlServer.Server;
+using System.Configuration;
 
 namespace OggleBooble.Api.Controllers
 {
@@ -342,47 +345,57 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
+                var stringBuilder = new StringBuilder("<html><head>");
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    string imgSrc, staticFile;
+                    string imgSrc;
                     var dbPlayboyDecades = db.VirtualFolders.Where(f => f.Parent == rootFolder).OrderBy(f => f.SortOrder).ToList();
+                    stringBuilder.Append("\n<style>\n" +
+                        ".pbDecade { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}\n" +
+                        ".pbYear { margin-left: 20px; font-family: Constantia; font-size: 17px;}\n" +
+                        ".pbMonth { margin-left: 40px; font-size: 14px;}\n" +
+                        ".pbRow { display:inline-block; margin-left: 60px;}\n" +
+                        ".pbItemCntr { display:inline-block;}\n" +
+                        ".pbImg { height: 45px;}\n</style>\n");
+                    stringBuilder.Append("</head>\n<body>\n");
                     foreach (var dbPlayboyDecade in dbPlayboyDecades)
                     {
+                        stringBuilder.Append("<div class='pbDecadeLabel'>" + dbPlayboyDecade.FolderName + "</div><div class='pbDecade'>\n");
                         var dbPlayboyYears = db.VirtualFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
                         foreach (var dbPlayboyYear in dbPlayboyYears)
                         {
+                            stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "\n");
                             var dbPlayboyMonths = db.VirtualFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
-                            foreach (var dbPlaymate in dbPlayboyMonths)
+                            foreach (VirtualFolder dbPbmonth in dbPlayboyMonths)
                             {
                                 imgSrc = "Images/redballon.png";
-                                var dbImageFile = db.ImageFiles.Where(i => i.Id == dbPlaymate.FolderImage).FirstOrDefault();
-                                if (dbImageFile != null)
+                                if (dbPbmonth.FolderImage != null)
                                 {
-                                    var dbImageFileCatFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
-                                    if (dbImageFileCatFolder != null)
-                                        imgSrc = imgRepo + "/" + dbImageFileCatFolder.FolderPath + "/" + dbImageFile.FileName;
+                                    var dbImageFile = db.ImageFiles.Where(i => i.Id == dbPbmonth.FolderImage).FirstOrDefault();
+                                    imgSrc = dbPbmonth.FolderPath + "/" + dbImageFile.FileName;
                                 }
-                                staticFile = "";
-                                var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == dbPlaymate.Id).FirstOrDefault();
-                                if (dbFolderDetails != null)
-                                    staticFile = dbFolderDetails.StaticFile;
-
-                                db.Centerfolds.Add(new Centerfold()
-                                {
-                                    FolderId = dbPlaymate.Id,
-                                    FolderName = dbPlaymate.FolderName,
-                                    FolderDecade = dbPlayboyDecade.FolderName,
-                                    FolderYear = dbPlayboyYear.FolderName,
-                                    FolderMonth = dbPlaymate.SortOrder,
-                                    StaticFile = staticFile,
-                                    ImageSrc = imgSrc
-                                });
-                                db.SaveChanges();
+                                stringBuilder.Append("<div class='pbRow' style='width:66px;'>" +
+                                    //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
+                                    //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
+                                    "<a href='https://ogglebooble.com/album.html?folder=" + dbPbmonth.Id + "'>" +
+                                    "<div class='pbItemCntr'><img class='pbImg' src=" + imgSrc + ">" +
+                                    "<div class='pbLabel01'>" + dbPbmonth.FolderName + "</div></div></a></div>\n");
                             }
+                            stringBuilder.Append("</div>\n");
                         }
+                        stringBuilder.Append("</div>\n");
                     }
-                    success = "ok";
                 }
+                stringBuilder.Append("<script>\nfunction showCenterfoldImage(link)\n {" +
+                    "$('.dirTreeImageContainer').css('top', event.clientY - 100);\n" +
+                    "$('.dirTreeImageContainer').css('left', event.clientX + 10);\n" +
+                    "$('.dirTreeImage').attr('src', link);\n" +
+                    "$('.dirTreeImageContainer').show();}\n</script>");
+
+                //$('#footerMessage').html(link);
+                stringBuilder.Append("\n</body>\n</html>");
+                success = WriteFileToDisk(stringBuilder.ToString(), "CenterfoldList");
+                success = "ok";
             }
             catch (Exception ex)
             {
@@ -390,6 +403,51 @@ namespace OggleBooble.Api.Controllers
             }
             return success;
         }
+
+        private readonly string httpLocation = "https://ogglebooble.com/";
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        private string WriteFileToDisk(string staticContent, string pageTitle)
+        {
+            string success;
+            try
+            {
+                // todo  write the image as a file to x.ogglebooble  4/1/19
+                //string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
+                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+
+                using (var staticFile = File.Open(appDataPath + "/temp.html", FileMode.Create))
+                {
+                    Byte[] byteArray = Encoding.ASCII.GetBytes(staticContent);
+                    staticFile.Write(byteArray, 0, byteArray.Length);
+                }
+                FtpWebRequest webRequest = null;
+                //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
+
+                string ftpFileName = ftpHost + "ogglebooble/" + pageTitle + ".html";
+                string httpFileName = httpLocation + "/" + pageTitle + ".html";
+
+                webRequest = (FtpWebRequest)WebRequest.Create(ftpFileName);
+                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
+                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                using (Stream requestStream = webRequest.GetRequestStream())
+                {
+                    byte[] fileContents = File.ReadAllBytes(appDataPath + "/temp.html");
+                    webRequest.ContentLength = fileContents.Length;
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+
+                //success = RecordPageCreation(folderId, httpFileName, db);
+                success = "ok";
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
+        }
+
+
 
         [HttpGet]
         [Route("api/Report/PlayboyList")]
@@ -401,22 +459,46 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     var dbCenterfolds = db.Centerfolds.ToList();
-                    foreach (Centerfold centerfold in dbCenterfolds)
-                    {
-                        centerfoldReport.PlayboyReportItems.Add(new PlayboyReportItemModel()
-                        {
-                            FolderId = centerfold.FolderId,
-                            FolderName = centerfold.FolderName,
-                            FolderDecade = centerfold.FolderDecade,
-                            FolderYear = centerfold.FolderYear,
-                            FolderMonth = centerfold.FolderMonth,
-                            ImageSrc = centerfold.ImageSrc,
-                            StaticFile = centerfold.StaticFile
-                        });
-                    }
                     centerfoldReport.Success = "ok";
                 }
             }
+
+
+            //foreach (Centerfold centerfold in dbCenterfolds)
+            //{
+            //    centerfoldReport.PlayboyReportItems.Add(new PlayboyReportItemModel()
+            //    {
+            //        FolderId = centerfold.FolderId,
+            //        FolderName = centerfold.FolderName,
+            //        FolderDecade = centerfold.FolderDecade,
+            //        FolderYear = centerfold.FolderYear,
+            //        FolderMonth = centerfold.FolderMonth,
+            //        ImageSrc = centerfold.ImageSrc,
+            //        StaticFile = centerfold.StaticFile
+            //    });
+            //}
+
+            //string writeToDiskSuccess = WriteFileToDisk(staticContent.ToString(), dbFolder.FolderName, folderId, db);
+            //if (writeToDiskSuccess != "ok")
+            //{
+            //    resultsModel.Errors.Add(writeToDiskSuccess + "  " + dbFolder.FolderName);
+            //    resultsModel.Success = writeToDiskSuccess + "  " + dbFolder.FolderName;
+            //}
+            //else
+            //    resultsModel.PagesCreated++;
+
+
+            //db.Centerfolds.Add(new Centerfold()
+            //{
+            //    FolderId = dbPlaymate.Id,
+            //    FolderName = dbPlaymate.FolderName,
+            //    FolderDecade = dbPlayboyDecade.FolderName,
+            //    FolderYear = dbPlayboyYear.FolderName,
+            //    FolderMonth = dbPlaymate.SortOrder,
+            //    StaticFile = staticFile,
+            //    ImageSrc = imgSrc
+            //});
+            //db.SaveChanges();
             catch (Exception ex)
             {
                 centerfoldReport.Success = Helpers.ErrorDetails(ex);

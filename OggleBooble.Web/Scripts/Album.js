@@ -18,12 +18,6 @@ function loadAlbum(folderId) {
     getAlbumPageInfo(folderId)
 }
 
-function playVideo() {
-
-    //$('.video').click(function () { this.paused ? this.play() : this.pause(); });
-
-}
-
 function getAlbumImages(folderId) {
     var getImagesStart = Date.now();
     $('#indexPageLoadingGif').show();
@@ -146,6 +140,19 @@ function getAlbumPageInfo(folderId) {
                     document.title = albumInfo.FolderName + " : OgglePorn";
                 else
                     document.title = albumInfo.FolderName + " : OggleBooble";
+
+                //function addMetaTags() {
+                //jQuery("head").append('<meta property="og:url" content="' + url + '">');
+                jQuery("head").append("<meta property='og:title' content='" + albumInfo.FolderName + ">");
+                let aKeywords = "big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold, ";
+                jQuery("head").append("<meta property='keywords' content='" + aKeywords + albumInfo.FolderName + ">");
+
+                //<meta name="description" content="Ogglebooble is a large collection of natural big breasted girls" />
+                //    <meta name="keywords" content="big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold" />
+                //    <!--< meta property = 'og:title' content = '" + dbFolder.FolderName + "- Free pics, videos & biography' /> -->
+                //< !--< meta property = 'og:description' content = '" + dbFolder.FolderName + " - Free pics, videos & biography' /> -->
+                //< !--< meta property = "og:url" content = "https://www.Ogglebooble.com/" + dbFolder.FolderName + "'/>-->
+                //    < meta property = "og:site_name" content = "OggleBooble" />
 
                 if ((albumInfo.FolderType === "singleParent") || (albumInfo.FolderType === "multiFolder")) {
                     getDeepFolderCounts(folderId, albumInfo.FileCount, albumInfo.FolderCount);

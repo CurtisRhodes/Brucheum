@@ -16,12 +16,13 @@ function checkFor404(calledFrom) {
                     return true;
                 }
                 else {
-                    verifyConnectionCount = 0;
-                    verifyConnectionLoop = setInterval(verifyConnectionFunction, 1600);
-                    document.title = "loading : OggleBooble";
-                    changeFavoriteIcon("loading");
-                    console.log("calling verifyConnection");
-                    return false;
+                    if (verifyConnectionCount === 0) {
+                        verifyConnectionLoop = setInterval(verifyConnectionFunction, 1600);
+                        document.title = "loading : OggleBooble";
+                        changeFavoriteIcon("loading");
+                        console.log("calling verifyConnection");
+                        return false;
+                    }
                 }
             }, 2500);
         }
@@ -45,12 +46,14 @@ function tryHitStats() {
 function verifyConnectionFunction() {
     if (connectionVerified) {
         clearInterval(verifyConnectionLoop);
+        verifyConnectionCount = 0;
         tryHitStats();
         return;
     }
-    if (++verifyConnectionCount === 3) {
+    if (++verifyConnectionCount === 4) {
         $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
         $('#customMessageContainer').css("top", 200);
+
     }
     if (!canIgetaConnectionMessageShowing) {
         if (verifyConnectionCount > verifyConnectionCountLimit) {

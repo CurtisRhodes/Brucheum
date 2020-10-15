@@ -377,7 +377,7 @@ function slideshowHtml() {
         "  <div class='floatRight clickable' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png'/> </div>\n" +
         "  <div class='floatRight clickable' onclick='closeViewer(\"click\");' > <img title='you may use the {esc} key' src='/Images/close.png'/> </div>\n" +
         "</div>\n" +
-        "<div id='leftClickArea'  class='hiddenClickArea' oncontextmenu='slideshowContextMenu()'  onclick='slideClick(\"prev\")' title='previous\nwill cancel slideshow'></div>\n" +
+        "<div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"prev\")'></div>\n" +
         "<div id='slideshowCtxMenuContainer' class='ogContextMenu' style='z-index: 35;'  onmouseleave='$(this).fadeOut()'>" +
         "   <div id='slideshowContextMenuContent'></div>\n" +
         "</div>\n" +
@@ -394,8 +394,7 @@ function slideshowHtml() {
         "      </div>\n" +
         "   </div>\n" +
         "</div>\n" +
-        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")' " +
-        "title='next\ndouble click to start slideshow'></div>\n" +
+        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")'</div>\n" +
         "<div class='centeringOuterShell'>\n" +
         "    <div class='centeringInnerShell'>\n" +
         "        <div id='viewerImageContainer' class='flexContainer'>\n" +

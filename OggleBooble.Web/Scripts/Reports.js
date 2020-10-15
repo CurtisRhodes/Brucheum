@@ -457,13 +457,13 @@ function buildCenterfoldList() {
                 $('#dataifyInfo').html("centerfold List took: " + minutes + ":" + seconds);
             }
             else {
-                logError("AJX", 3910, success, "runPlayboyListReport");
+                logError("AJX", 3910, success, "buildCenterfoldList");
             }
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("runPlayboyListReport")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "runPlayboyListReport");
+            if (!checkFor404("buildCenterfoldList")) {
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "buildCenterfoldList");
             }
         }
     });
@@ -498,6 +498,14 @@ function runPlayboyListReport() {
                             "<a href='" + folderReport.StaticFile + "' target=\"_blank\">" + folderReport.FolderName + " </a></div ></div > ");
                     });
                     $('#dashBoardLoadingGif').hide();
+
+                    //string writeToDiskSuccess = WriteFileToDisk(staticContent.ToString(), dbFolder.FolderName, folderId, db);
+                    //if (writeToDiskSuccess != "ok") {
+                    //    resultsModel.Errors.Add(writeToDiskSuccess + "  " + dbFolder.FolderName);
+                    //    resultsModel.Success = writeToDiskSuccess + "  " + dbFolder.FolderName;
+                    //}
+                    //else
+                    //    resultsModel.PagesCreated++;
                 }
                 else {
                     $('#dashBoardLoadingGif').hide();
