@@ -113,7 +113,7 @@ namespace OggleBooble.Api.Models
         public string Country { get; set; }
         public int PageId { get; set; }
         public string FolderName { get; set; }
-        public int PageHits { get; set; }
+        public string FolderType { get; set; }
         public int ImageHits { get; set; }
         public string HitDate { get; set; }
         public string HitTime { get; set; }

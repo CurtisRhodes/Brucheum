@@ -2,9 +2,6 @@
 
 let signalr = new signalR.HubConnectionBuilder().withUrl("/messageHub").build();
 
-//Disable send button until connection is established
-document.getElementById("sendButton").disabled = true;
-
 signalr.on("ReceiveMessage", function (user, message) {
     let msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     let encodedMsg = user + " says " + msg;

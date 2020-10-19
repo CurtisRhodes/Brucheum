@@ -50,7 +50,10 @@ function verifyConnectionFunction() {
         tryHitStats();
         return;
     }
-    if (++verifyConnectionCount === 4) {
+
+    console.log("SERVICE DOWN " + verifyConnectionCount);
+
+    if (++verifyConnectionCount === 3) {
         $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
         $('#customMessageContainer').css("top", 200);
 

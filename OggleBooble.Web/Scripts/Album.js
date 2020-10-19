@@ -136,7 +136,7 @@ function getAlbumPageInfo(folderId) {
                     showFolderCommentDialog(folderId, albumInfo.FolderName);
                 });
                 apFolderType = albumInfo.FolderType;
-                if ((apFolderRoot == "porn") || (apFolderRoot == "porn"))
+                if (albumInfo.RootFolder == "porn")
                     document.title = albumInfo.FolderName + " : OgglePorn";
                 else
                     document.title = albumInfo.FolderName + " : OggleBooble";

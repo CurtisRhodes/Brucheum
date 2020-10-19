@@ -270,28 +270,14 @@ function runPageHitReport() {
         success: function (pageHitReportModel) {
             $('#dashBoardLoadingGif').hide();
             if (pageHitReportModel.Success === "ok") {
-                var kludge = "<table class='mostAvtiveUsersTable'>";
-                kludge += "<tr><th>ip</th><th>City</th><th>Page</th><th>Pages Visited </th><th>&nbsp;  Images Hit</th><th>Hit</th></tr>";
-                var lastIp = "";
+                let kludge = "<table class='mostAvtiveUsersTable'>";
+                kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>&nbsp;images hit</th><th>hit time</th></tr>";
                 $.each(pageHitReportModel.Items, function (idx, obj) {
-                    //if (obj.IpAddress === lastIp) {
-                    //    kludge += "<tr><td></td><td></td>";
-                    //}
-                    //else {
                     kludge += "<tr><td>" + obj.IpAddress + "</td>";
                     kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
-                    //}
-                    if (isNullorUndefined(obj.FolderName))
-                        kludge += "<td>null</a></td>";
-                    else
-                        kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
-                    if (obj.IpAddress === lastIp) {
-                        kludge += "<td></td><td></td>";
-                    } else {
-                        kludge += "<td>" + obj.PageHits + "</td>";
-                        kludge += "<td>" + obj.ImageHits + "</td>";
-                        lastIp = obj.IpAddress;
-                    }
+                    kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    kludge += "<td>" + obj.FolderType + "</td>";
+                    kludge += "<td>" + obj.ImageHits + "</td>";
                     kludge += "<td>" + obj.HitTime + "</td></tr>";
                 });
                 kludge += "</table>";

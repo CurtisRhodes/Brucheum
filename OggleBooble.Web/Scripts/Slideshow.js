@@ -1,6 +1,7 @@
 ﻿let exploderInterval, slideShowSpeed = 5000, viewerH = 50, viewerW = 50, viewerT = 0, viewerL = 0, windowW = $(window).width(), windowH = $(window).height(),
     Xincrimentor = 15, Yincrimentor = 10, exploderSpeed = 18, imageViewerFolderId, imageViewerArray = {}, imageViewerIndex = 0, imageViewerIntervalTimer,
-    imageViewerFolderName, albumFolderId, spSlideShowRunning, spSessionCount = 0, slideShowButtonsActive = false, spIncludeSubFolders;
+    imageViewerFolderName, albumFolderId, spSlideShowRunning, spSessionCount = 0, slideShowButtonsActive = false, spIncludeSubFolders, slideshowSpped = 570,
+    imgSrc = new Image();
 
 function launchViewer(folderId, startItem, includeSubFolders) {
     spSlideShowRunning = false;
@@ -14,17 +15,6 @@ function launchViewer(folderId, startItem, includeSubFolders) {
     settingsImgRepo = settingsArray.ImageRepo;
 
     window.addEventListener("resize", resizeViewer);
-}
-
-function resizeViewer() {
-    $('#leftClickArea').css('left', 0);
-    $('#rightClickArea').css('left', $(window).width() / 2);
-    $('#viewerImage').height($(window).height() - 30);
-    $('.slideshowNavgArrows img').height($(window).height() - 30);
-    $('#slideShowContainer').css('width', "100%");
-    $(window).scrollTop(0);
-    //if ($('#viewerButtonsRow').width() > $(window).width())
-    //alert("$('#viewerButtonsRow').width(): " + $('#viewerButtonsRow').width() + "  window.width: " + $(window).width());
 }
 
 function getSlideshowItems(folderId, startItem) {
@@ -99,16 +89,22 @@ function explodeViewer() {
     $('#viewerImage').removeClass('redSides');
     $('#viewerButtonsRow').hide();
 
-    exploderInterval = setInterval(function () {
-        incrimentExplode();
-    }, exploderSpeed);
-
-    if (spIncludeSubFolders) {
-        setTimeout(function () {
-            runSlideShow("start");
-            console.log("runSlideShow(start)");
-        }, slideShowSpeed);        
-    }
+    setTimeout(function () { $('#imagePageLoadingGif').show() }, 500);
+    let tempImgSrc = new Image();
+    tempImgSrc.onload = function () {
+        $('#imagePageLoadingGif').hide();
+        setTimeout(function () { $('#imagePageLoadingGif').hide() }, 500);
+        exploderInterval = setInterval(function () {
+            incrimentExplode();
+        }, exploderSpeed);
+        if (spIncludeSubFolders) {
+            setTimeout(function () {
+                runSlideShow("start");
+                console.log("runSlideShow(start)");
+            }, slideShowSpeed);
+        }
+    };
+    tempImgSrc.src = settingsImgRepo + imageViewerArray[imageViewerIndex].FileName;
 }
 
 function incrimentExplode() {
@@ -134,14 +130,17 @@ function incrimentExplode() {
     $('#slideShowContainer').width(viewerW);
     $('#viewerImageContainer').height(viewerH);
     $('#viewerImageContainer').css('left', ($('#slideShowContainer').width() - $('#viewerImage').width()) / 2);
+
     //   alert("dlgW: " + $('#slideShowContainer').width() + "imgW: " + $('#viewerImage').width());
     if ((viewerT === 0) && (viewerL === 0) && (viewerH === windowH) && (viewerW === windowW)) {
         $('#viewerButtonsRow').show();
         clearInterval(exploderInterval);
         $('#slideShowContainer').css('top', 0);
         $('#slideShowContainer').css('left', 0);
-        if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId)
+
+        if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
             $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
+        }
         resizeViewer();
     }
 }
@@ -167,62 +166,83 @@ function slideClick(direction) {
 
 function slide(direction) {
     try {
-        // SLIDE OUT OF VIEW
-        if (direction === 'next') {  // LEFT TO RIGHT OUT THE RIGHT SIDE
-            imageViewerIndex++;
-            if (imageViewerIndex >= imageViewerArray.length)
-                imageViewerIndex = 0;
-            $('#viewerImage').css("transform", "translateX(1500px)");
-        }
-        else {// if (direction === 'prev')        
-            imageViewerIndex--;
-            if (imageViewerIndex < 0)
-                imageViewerIndex = imageViewerArray.length - 1;
-            $('#viewerImage').css("transform", "translateX(-1500px)");
-        }
+        let showLoadingGif = true;
+        setTimeout(function () {
+            if (showLoadingGif)
+                $('#imagePageLoadingGif').show()
+        }, 500);
+        let tempImgSrc = new Image();
+        tempImgSrc.onload = function () {
+            showLoadingGif = false;
+            $('#imagePageLoadingGif').hide();
+            //setTimeout(function () { $('#imagePageLoadingGif').hide() }, 502);
+            //let startLoadTime = Date.now();
+            //imgSrc.onload = function () {
 
-        $('.slideshowNavgArrows').css('visibility', 'hidden');
-        $('#slideshowImageLabel').fadeOut();
-        $('#thumbImageContextMenu').fadeOut();
-        let startLoadTime = Date.now();
-        let imgSrc = settingsImgRepo + imageViewerArray[imageViewerIndex].FileName;
-        $('#viewerImage').attr("src", imgSrc).on("load", function () {
-            let timeToLoad = (Date.now() - startLoadTime);
+            $('#viewerImage').css("transform", "translateX(0)");
+            // SLIDE OUT OF VIEW
+            if (direction === 'next') {  // LEFT TO RIGHT OUT THE RIGHT SIDE
+                $('#viewerImage').css("transform", "translateX(1500px)", slideShowSpeed);
+            }
+            else { // 'prev'        
+                $('#viewerImage').css("transform", "translateX(-1500px)", slideShowSpeed);
+            }
+            $('.slideshowNavgArrows').css('visibility', 'hidden');
+            $('#slideshowImageLabel').fadeOut();
+            $('#thumbImageContextMenu').fadeOut();
+
             setTimeout(function () {
                 $('#viewerImage').hide();
                 if (direction === 'next') {
-                    // SLIDE FROM THE LEFT TO THE CENTER
-                    $('#viewerImage').css("transform", "translateX(-1500px)");
-                    setTimeout(function () {
-                        $('#viewerImage').show();
-                        $('#viewerImage').css("transform", "translateX(0)");
-                    }, 280);
+                    $('#viewerImage').css("transform", "translateX(-3200px)");
                 }
-                else {  // SLIDE TO THE CENTER FORM THE RIGHT
-                    $('#viewerImage').css("transform", "translateX(1500px)");
-                    setTimeout(function () {
-                        $('#viewerImage').show();
-                        $('#viewerImage').css("transform", "translateX(0)");
-                    }, 280);
+                else {
+                    $('#viewerImage').css("transform", "translateX(3200px)");
                 }
-                spSessionCount++;
-                $('#viewerImageContainer').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
-                if (spIncludeSubFolders) {
-                    $('#imageViewerHeaderTitle').html(imageViewerArray[imageViewerIndex].ImageFolderName + " / " + imageViewerFolderName);
-                }
-                if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
-                    $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
-                }
-                resizeViewer();
                 setTimeout(function () {
-                    $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
-                }, 800);
-            }, 500 - timeToLoad);
-        });
-        //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
+                    imgSrc.src = tempImgSrc.src;
+                    $('#viewerImage').attr("src", imgSrc.src);
+                    $('#viewerImage').show();
+                    $('#viewerImage').css("transform", "translateX(0)", slideShowSpeed);
+                    setTimeout(function () {
+                        $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
+                    }, 600);
+                    if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
+                        $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
+                    }
+                }, 400);
+            }, 300);
+            //resizeViewer();
+        };
+
+        if (direction === 'next') { 
+            if (++imageViewerIndex >= imageViewerArray.length)
+                imageViewerIndex = 0;
+        }
+        else {
+            if (--imageViewerIndex < 0)
+                imageViewerIndex = imageViewerArray.length - 1;
+        }
+        tempImgSrc.src = settingsImgRepo + imageViewerArray[imageViewerIndex].FileName;
+        spSessionCount++;
+        $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
     } catch (e) {
         logError("CAT", 3910, e, "slide");
     }
+}
+
+function resizeViewer() {
+    //alert("$('#viewerImageContainer').css('left'): " + $('#viewerImageContainer').css('left'));
+   
+    $('#viewerImage').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
+    $('#leftClickArea').css('left', 0);
+    $('#rightClickArea').css('left', $(window).width() / 2);
+    $('#viewerImage').height($(window).height() - 30);
+    $('.slideshowNavgArrows img').height($(window).height() - 30);
+    $('#slideShowContainer').css('width', "100%");
+    $(window).scrollTop(0);
+    //if ($('#viewerButtonsRow').width() >  $(window).width())
+    //alert("$('#viewerButtonsRow').width(): " + $('#viewerButtonsRow').width() + "  window.width: " + $(window).width());
 }
 
 function runSlideShow(action) {
@@ -394,7 +414,7 @@ function slideshowHtml() {
         "      </div>\n" +
         "   </div>\n" +
         "</div>\n" +
-        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")'</div>\n" +
+        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")'></div>\n" +
         "<div class='centeringOuterShell'>\n" +
         "    <div class='centeringInnerShell'>\n" +
         "        <div id='viewerImageContainer' class='flexContainer'>\n" +

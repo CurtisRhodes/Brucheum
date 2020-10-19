@@ -420,7 +420,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int SortOrder { get; set; }
     }
 
-    [Table("OggleBooble.vwPageHits")]
+    [Table("OggleBooble.VwPageHits")]
     public class VwPageHit
     {
         [Key]
@@ -437,7 +437,8 @@ namespace OggleBooble.Api.MySqlDataContext
         [Key]
         [Column(Order = 2)]
         public string HitTime { get; set; }
-        public int PageHits { get; set; }
+        public string FolderType { get; set; }
+        //public int PageHits { get; set; }
         public int ImageHits { get; set; }
     }
 

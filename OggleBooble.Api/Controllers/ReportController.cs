@@ -234,8 +234,10 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.SaveChanges();
-                    List<VwPageHit> vwPageHits = db.VwPageHits.Take(500).ToList();
 
+                    //List<VwPageHit> vwPageHits = db.VwPageHits.Take(500).ToList();
+
+                    List<VwPageHit> vwPageHits = db.VwPageHits.ToList();
                     pageHitReportModel.HitCount = db.PageHits.Count();
 
                     foreach (VwPageHit item in vwPageHits)
@@ -248,7 +250,8 @@ namespace OggleBooble.Api.Controllers
                             Country = item.Country,
                             PageId = item.PageId,
                             FolderName = item.FolderName, // ?? "?",item.FolderName.Replace("OGGLEBOOBLE.COM", ""),
-                            PageHits = item.PageHits,
+                            //PageHits = item.PageHits,
+                            FolderType = item.FolderType,
                             ImageHits = item.ImageHits,
                             HitDate = item.HitDate,
                             HitTime = item.HitTime
@@ -357,21 +360,21 @@ namespace OggleBooble.Api.Controllers
                     string imgSrc;
                     var dbPlayboyDecades = db.VirtualFolders.Where(f => f.Parent == rootFolder).OrderBy(f => f.SortOrder).ToList();
                     stringBuilder.Append("\n<style>\n" +
-                        ".pbDecade { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}\n" +
-                        ".pbYear { margin-left: 20px; font-family: Constantia; font-size: 17px;}\n" +
-                        ".pbMonth { margin-left: 40px; font-size: 14px;}\n" +
-                        ".pbRow { display:inline-block; margin-left: 60px;}\n" +
-                        ".pbItemCntr { display:inline-block;}\n" +
-                        ".pbImg { height: 45px;}\n</style>\n");
+                        ".pbDecade { margin - left: 20px; font - family: 'Segoe UI', Tahoma; font - size: 35px; }\n" +
+                        ".pbYear { margin - left: 80px; color:#000; font-size: 30px;}\n" +
+                        ".pbMonth { margin - left: 40px; font - size: 20px; }\n" +
+                        ".pbRow { display: inline - block; margin - left: 60px; }\n" +
+                        ".pbItemCntr { display: inline - block; }\n" +
+                        ".pbImg { height: 45px; }\n</style>\n");
                     stringBuilder.Append("</head>\n<body>\n");
                     foreach (var dbPlayboyDecade in dbPlayboyDecades)
                     {
-                        stringBuilder.Append("<div class='pbDecadeLabel'>" + dbPlayboyDecade.FolderName + "</div><div class='pbDecade'>\n");
+                        stringBuilder.Append("<div class='pbDecade'>" + dbPlayboyDecade.FolderName + "</div>\n");
                         var dbPlayboyYears = db.VirtualFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
                         foreach (var dbPlayboyYear in dbPlayboyYears)
                         {
                             //hub.SendMessage("xx", dbPlayboyYear.FolderName);
-                            stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "\n");
+                            stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "</div>\n<div>\n");
                             var dbPlayboyMonths = db.VirtualFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
                             foreach (VirtualFolder dbPbmonth in dbPlayboyMonths)
                             {
@@ -384,7 +387,7 @@ namespace OggleBooble.Api.Controllers
                                 stringBuilder.Append("<div class='pbRow' style='width:66px;'>" +
                                     //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
                                     //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
-                                    "<a href='https://ogglebooble.com/album.html?folder=" + dbPbmonth.Id + "'>" +
+                                    "<a href='https://img.ogglebooble.com/album.html?folder=" + dbPbmonth.Id + "'>" +
                                     "<div class='pbItemCntr'><img class='pbImg' src='" + httpLocation + imgSrc + "'>" +
                                     "<div class='pbLabel01'>" + dbPbmonth.FolderName + "</div></div></a></div>\n");
                             }
