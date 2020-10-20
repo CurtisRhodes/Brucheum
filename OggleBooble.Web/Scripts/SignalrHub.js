@@ -14,7 +14,6 @@ signalr.on("ReceiveMessage", function (user, message) {
 });
 
 signalr.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
     alert("signalR start");
     console.log("signalR start");
 }).catch(function (err) {

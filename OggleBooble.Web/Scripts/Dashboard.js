@@ -702,10 +702,18 @@ function updateSortOrder() {
                 $('#dataifyInfo').html("reloading");
                 loadSortImages();
             }
-            else { logError("AJX", mmSourceFolderId, success, "moveCheckedImages"); }
+            else {
+                $('#dashBoardLoadingGif').hide();
+                alert(success);
+                logError("AJX", mmSourceFolderId, success, "moveCheckedImages");
+            }
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumImages")) { logError("XHR", success, getXHRErrorDetails(jqXHR), "moveCheckedImages"); }
+            $('#dashBoardLoadingGif').hide();
+            if (!checkFor404("getAlbumImages")) {
+                alert(getXHRErrorDetails(jqXHR));
+                logError("XHR", success, getXHRErrorDetails(jqXHR), "moveCheckedImages");
+            }
         }
     });
 }
@@ -724,6 +732,7 @@ function loadSortImages() {
                         settingsImgRepo + obj.FileName + "'/>" +
                         "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></div>");
                 });
+                $('#dashBoardLoadingGif').hide();
                 $('#dataifyInfo').hide();
             }
             else { logError("AJX", pSelectedTreeId, imgLinks.Success, "loadSortImages"); }

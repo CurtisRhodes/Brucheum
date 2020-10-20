@@ -44,6 +44,7 @@ function tryHitStats() {
 }
 
 function verifyConnectionFunction() {
+    verifyConnectionCount++;
     if (connectionVerified) {
         clearInterval(verifyConnectionLoop);
         verifyConnectionCount = 0;
@@ -51,9 +52,8 @@ function verifyConnectionFunction() {
         return;
     }
 
-    console.log("SERVICE DOWN " + verifyConnectionCount);
-
     if (++verifyConnectionCount === 3) {
+        console.log("SERVICE DOWN " + verifyConnectionCount);
         $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
         $('#customMessageContainer').css("top", 200);
 
