@@ -100,10 +100,20 @@ namespace OggleBooble.Api.Controllers
                                 using (var fileStream = new FileStream(appDataPath + "tempImage.tmp", FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
                                     fSize = fileStream.Length;
-                                    using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                                    try
                                     {
-                                        fWidth = image.Width;
-                                        fHeight = image.Height;
+                                        using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                                        {
+                                            fWidth = image.Width;
+                                            fHeight = image.Height;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (Helpers.ErrorDetails(ex).ToString() == "{Parameter is not valid.}")
+                                            repairReport.Errors.Add("unable to get width and height of " + physcialFileName);
+                                        else
+                                            repairReport.Errors.Add(Helpers.ErrorDetails(ex));
                                     }
                                 }
                                 db.ImageFiles.Add(new ImageFile()
@@ -126,14 +136,14 @@ namespace OggleBooble.Api.Controllers
                             }
                         }
                     }
-                    else {
-                        if (dbFolderImageFile.FileName != physcialFileName)
-                        {
-                            dbFolderImageFile.FileName = physcialFileName;
-                            db.SaveChanges();
-                            repairReport.ImagesRenamed++;
-                        }
-                    }
+                    //else {
+                    //    if (dbFolderImageFile.FileName != physcialFileName)
+                    //    {
+                    //        dbFolderImageFile.FileName = physcialFileName;
+                    //        //db.SaveChanges();
+                    //        //repairReport.ImagesRenamed++;
+                    //    }
+                    //}
                     // 2. check for physicalFiles with no link
                     if (dbFolderCatLinks.Where(il => il.ImageLinkId == physcialFileLinkId && il.ImageCategoryId == folderId).FirstOrDefault() == null)
                     {

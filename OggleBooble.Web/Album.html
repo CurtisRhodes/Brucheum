@@ -95,61 +95,61 @@
     <div class="footer"></div>
     <script>
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
-        $(document).ready(function () {
-            $('#deepSlideshow').hide();
-            $('#imageContainer').hide();
-            params = getParams();
-            if (isNullorUndefined(params.folder)) {
-                window.location.href = "Index.html";
+        //$(document).ready(function () {
+        $('#deepSlideshow').hide();
+        $('#imageContainer').hide();
+        params = getParams();
+        if (isNullorUndefined(params.folder)) {
+            window.location.href = "Index.html";
+        }
+        resizeAlbumPage();
+        setOggleHeader(params.folder, "loading");
+        var dots = "";
+        loadOggleSettings();
+        var waiter = setInterval(function () {
+            if (settingsArray.ApiServer === undefined) {
+                dots += "~ ";
+                $('#dots').html(dots);
             }
-            resizeAlbumPage();
-            setOggleHeader(params.folder, "loading");
-            var dots = "";
-            loadOggleSettings();
-            var waiter = setInterval(function () {
-                if (settingsArray.ApiServer === undefined) {
-                    dots += "~ ";
-                    $('#dots').html(dots);
-                }
-                else {
-                    clearInterval(waiter);
-                    checkFor404("Album.html");
-                    var waiter2 = setInterval(function () {
-                        if (!connectionVerified) {
-                            dots += "~ ";
-                            $('#dots').html(dots);
+            else {
+                clearInterval(waiter);
+                checkFor404("Album.html");
+                var waiter2 = setInterval(function () {
+                    if (!connectionVerified) {
+                        dots += "~ ";
+                        $('#dots').html(dots);
+                    }
+                    else {
+                        clearInterval(waiter2);
+                        $('#dots').html('');
+                        changeFavoriteIcon("redBallon");
+                        localhostBypass();
+
+                        if (!isNullorUndefined(params.tic)) {
+                            logStaticPageHit(params.folder, "album");
+                            window.location.href = "album.html?folder=" + params.folder;
                         }
                         else {
-                            clearInterval(waiter2);
-                            $('#dots').html('');
-                            changeFavoriteIcon("redBallon");
-                            localhostBypass();
-
-                            if (!isNullorUndefined(params.tic)) {
-                                logStaticPageHit(params.folder, "album");
-                                window.location.href = "album.html?folder=" + params.folder;
-                            }
-                            else {
-                                let visitorId = getCookieValue("VisitorId");
-                                if (isNullorUndefined(visitorId))
-                                    getIpInfo(params.folder, "album");
-                            }
-
-                            loadAlbum(params.folder);
-                            //if (isInRole("NewUser")) {
+                            let visitorId = getCookieValue("VisitorId");
+                            if (isNullorUndefined(visitorId))
+                                getIpInfo(params.folder, "album");
                         }
-                    }, 300);
-                }
-            }, 300);
 
-            window.addEventListener("resize", resizeAlbumPage);
-            resizeAlbumPage();
+                        loadAlbum(params.folder);
+                        //if (isInRole("NewUser")) {
+                    }
+                }, 300);
+            }
+        }, 300);
 
-            $('#feedbackButton').on("click", function () {
-                showFeedbackDialog(params.folder);
-            });
+        window.addEventListener("resize", resizeAlbumPage);
+        resizeAlbumPage();
 
+        $('#feedbackButton').on("click", function () {
+            showFeedbackDialog(params.folder);
         });
+
+        //});
 
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
         function resizeAlbumPage() {

@@ -251,7 +251,7 @@ namespace OggleBooble.Api.Controllers
                             PageId = item.PageId,
                             FolderName = item.FolderName, // ?? "?",item.FolderName.Replace("OGGLEBOOBLE.COM", ""),
                             //PageHits = item.PageHits,
-                            FolderType = item.FolderType,
+                            //FolderType = item.FolderType,
                             ImageHits = item.ImageHits,
                             HitDate = item.HitDate,
                             HitTime = item.HitTime

@@ -85,81 +85,63 @@
         let spaPageId, dots = "", promoIdx, promoMessagesArray = new Array(),
             promoMessageRotator, promoMessageRotationSpeed = 15000, updatedGalleriesCount = 25;
 
-        $(document).ready(function () {
-            console.log("Index $(document).ready");
+        //$(document).ready(function () {
+        console.log("Index $(document).ready");
 
-            //$('#footerLastBuild').html("last build: " + lastBuild + "3");
-            //$('#footerMessage').html("loading settings");
+        //$('#footerLastBuild').html("last build: " + lastBuild + "3");
+        //$('#footerMessage').html("loading settings");
 
-            setOggleHeader(3908, "loading");
-            document.title = "loading settings : OggleBooble";
-            loadOggleSettings();
+        setOggleHeader(3908, "loading");
+        document.title = "loading settings : OggleBooble";
+        loadOggleSettings();
 
-            params = getParams();
-            if (params.subdomain === undefined)
-                subdomain = "index";
+        params = getParams();
+        if (params.subdomain === undefined)
+            subdomain = "index";
 
-            if (isNullorUndefined(params.spa))
-                spaPageId = 3908;
-            else
-                spaPageId = params.spa;
+        if (isNullorUndefined(params.spa))
+            spaPageId = 3908;
+        else
+            spaPageId = params.spa;
 
-            let getXMLsettingsWaiter = setInterval(function () {
-                if (settingsArray.ApiServer === undefined) {
-                    dots += "~ ";
-                    $('#dots').html(dots);
-                    //console.log("loadSettings: " + settingsArray.ApiServer);
+        checkFor404("start");
+        let connectionVerifiedLoop = setInterval(function () {
+            if (connectionVerified) {
+                clearInterval(connectionVerifiedLoop);
+
+                console.log("connection verified: " + verifyConnectionCount + " calling tryHitStats");
+                tryHitStats();
+                changeFavoriteIcon("redBallon");
+                document.title = "OggleBooble";
+
+                localhostBypass();
+
+                //verifiyVisitor("index", spaPageId);
+
+                if (spaPageId == 3908) // boobs archive
+                    indexStartup();
+
+                if (spaPageId == 3909)// porn
+                    pornStartup();
+
+                if (spaPageId == 3912)
+                    playboyStartup();
+
+                if (spaPageId == 3907) { // ranker
+                    rankerStartup(params.bp);
                 }
-                else {
-                    clearInterval(getXMLsettingsWaiter);
-                    checkFor404("start");
-                    let verifyConnectionWaiter = setInterval(function () {
-                        if (connectionVerified) {
-                            clearInterval(verifyConnectionWaiter);
-                            $('#dots').html('');
-
-                            localhostBypass();
-
-                            //verifiyVisitor("index", spaPageId);
-
-                            // ranker     homePageId = 3907;
-                            // boobs      homePageId = 3908;
-                            // porn       homePageId = 3909;
-                            // dashboard  homePageId = 3910;
-                            // blog       homePageId = 3911;
-
-                            if (spaPageId == 3908)
-                                indexStartup();
-
-                            if (spaPageId == 3909)
-                                pornStartup();
-
-                            if (spaPageId == 3912)
-                                playboyStartup();
-
-                            if (spaPageId == 3907) { // ranker
-                                rankerStartup(params.bp);
-                            }
-                            if (spaPageId == 3910) {  // dashboard
-                                dashboardStartup();
-                            }
-                            if (spaPageId == 3911) { // "blog"
-                                $('#indexMiddleColumn').html(blogBodyHtml());
-                                blogStartup();
-                            }
-                        }
-                        else {
-                            dots += ". ";
-                            $('#dots').html(dots);
-                        }
-                    }, 600);
+                if (spaPageId == 3910) {  // dashboard
+                    dashboardStartup();
                 }
-            }, 300);
+                if (spaPageId == 3911) { // "blog"
+                    $('#indexMiddleColumn').html(blogBodyHtml());
+                    blogStartup();
+                }
+            }
+        }, 300);
 
-            window.addEventListener("resize", resizeIndexPage);
-            resizeIndexPage();
-        });
-
+        window.addEventListener("resize", resizeIndexPage);
+        resizeIndexPage();
     </script>
 </body>
 </html>

@@ -352,8 +352,8 @@ namespace OggleBooble.Api.Controllers
                 //using (var db = new OggleBoobleMySqlContext())
                 using (var db = new OggleBoobleMSSqlContext())
                 {
-                    var test = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
-                    successModel.ConnectionVerified = true;
+                    var dbTest = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
+                    successModel.ConnectionVerified = (dbTest != null);
                 }
                 timer.Stop();
                 //successModel.ReturnValue = timer.Elapsed.ToString();

@@ -1,32 +1,112 @@
-﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0,
+﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0, launchingServiceGifShowing = false,
     verifyConnectionCountLimit = 17, verifyConnectionLoop = null, persistConnectionInterval = null;
 
 function checkFor404(calledFrom) {
     connectionVerified = false;
-    let xmlSettingsLoop = setInterval(function () {
+    verifyConnectionCount = 0;
+    let getXMLsettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
+            dots += "~ ";
+            $('#dots').html(dots);
         }
         else {
-            clearInterval(xmlSettingsLoop);
+            clearInterval(getXMLsettingsWaiter);
             verifyConnectionFunction();
             setTimeout(function () {
                 if (connectionVerified) {
-                    console.log("connection verified right off");
+                    $('#dots').html('');
                     tryHitStats();
-                    return true;
+                    console.log("connection verified right off");
                 }
                 else {
-                    if (verifyConnectionCount === 0) {
-                        verifyConnectionLoop = setInterval(verifyConnectionFunction, 1600);
-                        document.title = "loading : OggleBooble";
-                        changeFavoriteIcon("loading");
-                        console.log("calling verifyConnection");
-                        return false;
-                    }
+                    let verifyConnectionWaiter = setInterval(function () {
+                        if (connectionVerified) {
+                            clearInterval(verifyConnectionWaiter);
+                            $('#dots').html('');
+                        }
+                        else {
+                            dots += ". ";
+                            $('#dots').html(dots);
+                            verifyConnectionCount++;
+                            //alert("verifyConnectionCount: " + verifyConnectionCount);
+                            verifyConnectionFunction();
+                        }
+                    }, 850);
                 }
-            }, 2500);
+            }, 500);
         }
     }, 300);
+}
+
+function verifyConnectionFunction() {
+    let requestedPage = settingsArray.ApiServer + "api/Common/VerifyConnection";
+    if (connectionVerified)
+        return;
+    $.ajax({
+        type: "GET",
+        url: requestedPage,
+        success: function (successModel) {
+
+            console.log("GET VerifyConnection: " + verifyConnectionCount + "  successModel.Success: " + successModel.Success);
+
+            if (successModel.Success == "ok") {
+                if (successModel.ConnectionVerified) {
+                    connectionVerified = true;
+                    $('#customMessage').hide();
+                    canIgetaConnectionMessageShowing = false;
+                    launchingServiceGifShowing = false;
+                }
+                else {
+                    console.log("success but no verify: " + successModel.Success);
+                    if (document.domain === "local host") alert("proper error in verifyConnectionFunction: " + successModel.Success);
+                    connectionVerified = false;
+                }
+
+                if (!connectionVerified) {
+                    if (verifyConnectionCount > 2) {
+                        if (!launchingServiceGifShowing) {
+                            launchingServiceGifShowing = true;
+                            console.log("SERVICE DOWN " + verifyConnectionCount);
+                            $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
+                            $('#customMessageContainer').css("top", 200);
+                            document.title = "loading : OggleBooble";
+                            changeFavoriteIcon("loading");
+                        }
+                    }
+                    else {
+                        $('#headerMessage').html(verifyConnectionCount);
+                    }
+                    if (!canIgetaConnectionMessageShowing) {
+                        if (verifyConnectionCount > verifyConnectionCountLimit) {
+                            canIgetaConnectionMessageShowing = true;
+                            $('#customMessage').html(
+                                "<div class='shaddowBorder'>" +
+                                "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
+                                "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
+                                "</div>").show();
+
+                            console.log("canIgetaConnection message showing");
+                            if (document.domain !== 'localhost') {
+                                logError("404", 3910, "SERVICE DOWN", "checkFor404");
+                                // send an Email
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                console.log("proper error in verifyConnectionFunction: " + successModel.Success);
+                if (document.domain === "local host") alert("proper error in verifyConnectionFunction: " + successModel.Success);
+                connectionVerified = false;
+            }
+        },
+        error: function (jqXHR) {
+            var errorMessage = getXHRErrorDetails(jqXHR);
+            console.log("verifyConnection XHR: " + errorMessage + " requestedPage: " + requestedPage);
+            if (document.domain === "local host") alert("verifyConnection XHR: " + errorMessage);
+            connectionVerified = false;
+        }
+    });
 }
 
 function tryHitStats() {
@@ -40,75 +120,6 @@ function tryHitStats() {
         //hs.src = ('https://10.histats.com/js15_as.js');
         //(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
     })();
-    console.log("calling tryHitStats");
-}
-
-function verifyConnectionFunction() {
-    verifyConnectionCount++;
-    if (connectionVerified) {
-        clearInterval(verifyConnectionLoop);
-        verifyConnectionCount = 0;
-        tryHitStats();
-        return;
-    }
-
-    if (++verifyConnectionCount === 3) {
-        console.log("SERVICE DOWN " + verifyConnectionCount);
-        $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
-        $('#customMessageContainer').css("top", 200);
-
-    }
-    if (!canIgetaConnectionMessageShowing) {
-        if (verifyConnectionCount > verifyConnectionCountLimit) {
-            canIgetaConnectionMessageShowing = true;
-            $('#customMessage').html(
-                "<div class='shaddowBorder'>" +
-                "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
-                "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-                "</div>").show();
-
-            console.log("canIgetaConnection message showing");
-            var visitorId = getCookieValue("VisiorId");
-            if (isNullorUndefined(visitorId))
-                visitorId = "--";
-            if (document.domain !== 'localhost')
-                logError("404", 3910, "SERVICE DOWN", "checkFor404");
-        }
-    }
-    let vUrl = settingsArray.ApiServer + "api/Common/VerifyConnection";
-    $.ajax({
-        type: "GET",
-        url: vUrl,
-        success: function (successModel) {
-            if (successModel.Success === "ok") {
-                if (successModel.ConnectionVerified) {
-                    clearInterval(verifyConnectionLoop);
-                    connectionVerified = true;
-                    changeFavoriteIcon("redBallon");
-                    $('#customMessage').hide();
-                    canIgetaConnectionMessageShowing = false;
-                    //if (persistConnectionInterval == null)
-                    //    persistConnection();
-                }
-                else {
-                    console.log("verifyConnection: " + successModel.Success);
-                    connectionVerified = false;
-                }
-            }
-            else {
-                //if (document.domain === "local host") alert("verifyConnection JQA: " + successModel.Success);
-                //console.log("verifyConnection: " + successModel.Success);
-                //console.log("ERR:" + successModel.Success);
-                console.log("vUrl:" + vUrl + "\nERR:" + successModel.Success);
-                connectionVerified = false;
-            }
-        },
-        error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (document.domain === "local host") alert("verifyConnection XHR: " + errorMessage)
-            connectionVerified = false;
-        }
-    });
 }
 
 function persistConnection() {
