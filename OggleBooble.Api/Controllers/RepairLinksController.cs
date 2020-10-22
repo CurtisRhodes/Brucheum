@@ -47,6 +47,7 @@ namespace OggleBooble.Api.Controllers
                 VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                 string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
                 string folderName = dbCategoryFolder.FolderName;
+                string ext;
                 if (dbCategoryFolder.FolderType == "singleChild") {
                     VirtualFolder dbParentFolder = db.VirtualFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
                     folderName = dbParentFolder.FolderName;
@@ -70,7 +71,7 @@ namespace OggleBooble.Api.Controllers
 
                     // 1. check for physicalFile in folder with no ImageFile row
                     var dbFolderImageFile = dbFolderImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault();
-                    if (dbFolderImageFile== null)
+                    if (dbFolderImageFile == null)
                     {
                         var dbOtherFoldeImageLink = db.ImageFiles.Where(il => il.Id == physcialFileLinkId).FirstOrDefault();
                         if (dbOtherFoldeImageLink != null)
@@ -180,9 +181,9 @@ namespace OggleBooble.Api.Controllers
                         {
                             // orphan image file 
                             repairReport.Errors.Add("orphan image file");
-                            db.ImageFiles.Remove(existingImageFile);
-                            db.SaveChanges();
-                            repairReport.ImageFilesRemoved++;
+                            //db.ImageFiles.Remove(existingImageFile);
+                            //db.SaveChanges();
+                            //repairReport.ImageFilesRemoved++;
                         }
                         else 
                         {
@@ -200,6 +201,13 @@ namespace OggleBooble.Api.Controllers
 
                             }
                         }
+                    }
+                    ext = existingImageFile.FileName.Substring(existingImageFile.FileName.LastIndexOf("."));
+                    if (existingImageFile.FileName != (folderName + "_" + existingImageFile.Id + ext)) 
+                    {
+                        existingImageFile.FileName = folderName + "_" + existingImageFile.Id + ext;
+                        db.SaveChanges();
+                        repairReport.ImageFileNamesRenamed++;
                     }
                     repairReport.ImageFilesProcessed++;
                 }

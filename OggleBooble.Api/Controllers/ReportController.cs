@@ -21,6 +21,7 @@ namespace OggleBooble.Api.Controllers
     public class ReportController : ApiController
     {
         private readonly string httpLocation = "https://ogglebooble.com/";
+        private readonly string imagesLocation = "https://api.ogglebooble.com/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
@@ -358,13 +359,15 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     string imgSrc;
+                    ImageFile dbImageFile;
                     var dbPlayboyDecades = db.VirtualFolders.Where(f => f.Parent == rootFolder).OrderBy(f => f.SortOrder).ToList();
                     stringBuilder.Append("\n<style>\n" +
-                        ".pbDecade { margin - left: 20px; font - family: 'Segoe UI', Tahoma; font - size: 35px; }\n" +
+                        ".pbDecade { margin - left: 20px; font-family: 'Segoe UI', Tahoma; font-size: 35px; }\n" +
                         ".pbYear { margin - left: 80px; color:#000; font-size: 30px;}\n" +
-                        ".pbMonth { margin - left: 40px; font - size: 20px; }\n" +
-                        ".pbRow { display: inline - block; margin - left: 60px; }\n" +
-                        ".pbItemCntr { display: inline - block; }\n" +
+                        ".pbMonth { margin - left: 40px; font-size: 20px; }\n" +
+                        ".pbRow { display: flex; }\n" +
+                        ".pbCol { display: inline - block; margin-left: 60px; }\n" +
+                        ".pbItemCntr { display: inline-block; }\n" +
                         ".pbImg { height: 45px; }\n</style>\n");
                     stringBuilder.Append("</head>\n<body>\n");
                     foreach (var dbPlayboyDecade in dbPlayboyDecades)
@@ -374,26 +377,30 @@ namespace OggleBooble.Api.Controllers
                         foreach (var dbPlayboyYear in dbPlayboyYears)
                         {
                             //hub.SendMessage("xx", dbPlayboyYear.FolderName);
-                            stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "</div>\n<div>\n");
+                            stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "</div>\n");
                             var dbPlayboyMonths = db.VirtualFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
+
+                            stringBuilder.Append("<div class='pbRow'>");
                             foreach (VirtualFolder dbPbmonth in dbPlayboyMonths)
                             {
                                 imgSrc = "Images/redballon.png";
                                 if (dbPbmonth.FolderImage != null)
                                 {
-                                    var dbImageFile = db.ImageFiles.Where(i => i.Id == dbPbmonth.FolderImage).FirstOrDefault();
-                                    imgSrc = dbPbmonth.FolderPath + "/" + dbImageFile.FileName;
+                                    dbImageFile = db.ImageFiles.Where(i => i.Id == dbPbmonth.FolderImage).FirstOrDefault();
+                                    if (dbImageFile != null)
+                                        imgSrc = dbPbmonth.FolderPath + "/" + dbImageFile.FileName;
                                 }
-                                stringBuilder.Append("<div class='pbRow' style='width:66px;'>" +
+                                stringBuilder.Append("<div class='pbCol' style='width:66px;'>" +
                                     //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
                                     //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
-                                    "<a href='https://img.ogglebooble.com/album.html?folder=" + dbPbmonth.Id + "'>" +
-                                    "<div class='pbItemCntr'><img class='pbImg' src='" + httpLocation + imgSrc + "'>" +
-                                    "<div class='pbLabel01'>" + dbPbmonth.FolderName + "</div></div></a></div>\n");
+                                    "<a href='" + httpLocation + "/album.html?folder=" + dbPbmonth.Id + "'>" +
+                                    "   <img class='pbImg' src='" + imagesLocation + imgSrc + "'>" +
+                                    "   <div class='pbLabel01'>" + dbPbmonth.FolderName + "</div>\n" +
+                                    "</a>\n");
                             }
                             stringBuilder.Append("</div>\n");
                         }
-                        stringBuilder.Append("</div>\n");
+                        //stringBuilder.Append("</div>\n");
                     }
                 }
                 //stringBuilder.Append("<script>\nfunction showCenterfoldImage(link)\n {" +
@@ -404,7 +411,7 @@ namespace OggleBooble.Api.Controllers
 
                 //$('#footerMessage').html(link);
                 stringBuilder.Append("\n</body>\n</html>");
-                success = WriteFileToDisk(stringBuilder.ToString(), "CenterfoldList");
+                 success = WriteFileToDisk(stringBuilder.ToString(), "CenterfoldList");
             }
             catch (Exception ex)
             {

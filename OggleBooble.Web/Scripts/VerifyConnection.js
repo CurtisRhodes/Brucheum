@@ -3,7 +3,7 @@
 
 function checkFor404(calledFrom) {
     connectionVerified = false;
-    verifyConnectionCount = 0;
+    //verifyConnectionCount = 0;
     let getXMLsettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
             dots += "~ ";
