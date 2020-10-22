@@ -4,6 +4,8 @@ function blogStartup() {
     setOggleHeader(3911, "blog");
     setOggleFooter(3911, "blog");
     document.title = "blog : OggleBooble";
+    selectedCommentType = "BLG";
+    $('#indexMiddleColumn').html(blogBodyHtml());
 
     $('#summernoteContainer').summernote({
         toolbar: [['codeview']],
@@ -12,15 +14,15 @@ function blogStartup() {
     });
     $(".note-editable").css('font-size', '19px');
 
-    if (isNullorUndefined(selectedBlogId)) {
-        loadArticleJogs("BLG");
-        setBlogView("showBlogDisplay");
-    }
-    else {
-        alert("Calling Blog for blogId: " + selectedBlogId);
-        showBlogPage(selectedBlogId);
-        setBlogView("showBlogPage");
-    }
+    //if (isNullorUndefined(selectedBlogId)) {
+    //    loadArticleJogs("BLG");
+    //    setBlogView("showBlogDisplay");
+    //}
+    //else {
+    //    alert("Calling Blog for blogId: " + selectedBlogId);
+    //    showBlogPage(selectedBlogId);
+    //    setBlogView("showBlogPage");
+    //}
     loadBlogDropDowns();
 
     if (isInRole("BLG")) {
@@ -43,7 +45,8 @@ function loadBlogDropDowns() {
                     $('#blogDisplayCommentTypeSelect').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
                     $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
                 });
-                //alert("Select; " + $('#blogDisplayCommentTypeSelect').html());
+                $('#blogDisplayCommentTypeSelect option[value="BLG"]').attr('selected', 'selected');
+                $('#blogDisplayCommentTypeSelect').change(loadArticleJogs($('#blogDisplayCommentTypeSelect').val()));
             }
             else
                 logError("AJX", 3911, refs.Success, "loadBlogDropDowns");
@@ -83,7 +86,6 @@ function loadBlogArticles(commentType) {
                         if (isNullorUndefined(blogComment.Link)) {
                             blogComment.Link = "Images/redballon.png";
                         }
-
                         $('#blogArticleJogContainer').append(`
                             <div class="blogArticleJog"> 
                                 <div class="flexContainer">
@@ -109,13 +111,13 @@ function loadBlogArticles(commentType) {
             error: function (jqXHR) {
                 $('#blogLoadingGif').hide();
                 var errorMessage = getXHRErrorDetails(jqXHR);
-                if (!checkFor404("loadBlogArticles")) 
-                    logError("XHR", 3911, getXHRErrorDetails(jqXHR), "loadBlogArticles");
+                if (!checkFor404("load BlogArticles")) 
+                    logError("XHR", 3911, getXHRErrorDetails(jqXHR), "load BlogArticles");
             }
         });
     } catch (e) {
         $('#blogLoadingGif').hide();
-        logError("CAT", 3911, e, "loadBlogArticles");
+        logError("CAT", 3911, e, "load BlogArticles");
     }
 }
 
@@ -148,11 +150,11 @@ function loadFolderComments() {
                 resizeBlogPage();
             }
             else
-                logError("AJX", 3911, categoryCommentContainer.Success, "loadFolderComments");
+                logError("AJX", 3911, categoryCommentContainer.Success, "load FolderComments");
         },
         error: function (jqXHR) {
-            if (!checkFor404("loadBlogArticles"))
-                logError("XHR", 3911, getXHRErrorDetails(jqXHR), "loadFolderComments");
+            if (!checkFor404("load FolderComments"))
+                logError("XHR", 3911, getXHRErrorDetails(jqXHR), "load FolderComments");
         }
     });
 }
@@ -448,28 +450,25 @@ function resizeBlogPage() {
 
     $('#blogEditor').height($('#middleColumn').height() - 100);
     $('#blogEditor').width($('#blogEditArea').width() - 300);    
+
+
     $('.note-editor').width($('#blogEditor').width());
     $('.note-editor').height($('#blogEditArea').height() * .75);
     $('.note-editable').height($('.note-editor').height() - 50);
 }
 
 function blogBodyHtml() {
-    return "<div>\n" +
-        "<div class='blogLeftColumn'>\n" +
-        "   <div id='blogControls' class='leftColumnList'>\n" +
-        "       <div id='leftColumnShowBlog' onclick='setBlogView(\"showBlogDisplay\")'>Show Blog</div>\n" +
-        "       <div id='leftColumnEditorNew' onclick='setBlogView(\"showBlogEditor\")'>New Entry</div>\n" +
-        "       <div id='leftColumnEditor'>Edit</div>\n" +
-        "       <div id='leftColumnShowPage'>Show Page</div>\n" +
-        "   </div>\n" +
-        "</div>\n" +
-        "<div class='blogMiddleColumn'>\n" +
-        "    <div id='dots'></div>\n" +
+
+    $('#leftColumnArea').append("<div id='leftColumnShowBlog' onclick='setBlogView(\"showBlogDisplay\")'>Show Blog</div>\n");
+    $('#leftColumnArea').append("<div id='leftColumnEditorNew' onclick='setBlogView(\"showBlogEditor\")'>New Entry</div>\n");
+    $('#leftColumnArea').append("<div id='leftColumnEditor'>Edit</div>\n");
+    $('#leftColumnArea').append("<div id='leftColumnShowPage'>Show Page</div>\n");
+
+    return " <div id='dots'></div>\n" +
         "    <div id='divStatusMessage'></div>\n" +
         "    <img id='blogLoadingGif' class='loadingGif' src='Images/loader.gif' />\n" +
         "    <div id='blogListArea' class='blogDisplayArea'>\n" +
-        "        <select id='blogDisplayCommentTypeSelect' class='roundedInput' onchange='loadBlogArticles("+$(this).val()+")'>\n" +
-        "        </select>\n" +
+        "        <select id='blogDisplayCommentTypeSelect' class='roundedInput blogDropdown'></select>\n"+
         "        <div id='blogArticleJogContainer' class='blogArticleJogContainer'></div>\n" +
         "    </div>\n" +
         "    <div id='blogEditArea' class='twoColumnFrame flexContainer'>\n" +
@@ -517,6 +516,5 @@ function blogBodyHtml() {
         "        <div id='blogPageTitle' class='blogPageSubHeader'></div>\n" +
         "        <div class='blogPageImageContainer'><img id='blogPageImage' class='largeCenteredImage' /></div>\n" +
         "        <div id='blogPageBody' class='blogPageBodyText'></div>\n" +
-        "    </div>\n" +
-        "</div>\n";
+        "   </div>\n";
 }

@@ -14,6 +14,9 @@
         background-color: aliceblue !important;
     }
 
+.blogDropdown {
+    width: 333px;
+}
 
 .blogEditArea {
     display: flex;
@@ -24,6 +27,7 @@
 }
 
 .blogDisplayArea {
+    vertical-align: top;
     margin-top: 10px;
     display: none;
 }
@@ -66,12 +70,13 @@
     }
 
 .blogArticleJogContainer {
+    display: flex;
     border: solid .05px var(--oggleBorderColor);
     overflow-y: auto;
 }
 
 .blogArticleJogBody {
-    display: inline-block;
+    /*display: inline-block;*/
     /*background-color: var(--oggleContainerBackgroundColor);*/
     width: 100%;
 }

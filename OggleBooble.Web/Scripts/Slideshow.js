@@ -207,8 +207,13 @@ function slide(direction) {
                     setTimeout(function () {
                         $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
                     }, 600);
-                    if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
-                        $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
+
+                    if (spIncludeSubFolders)
+                        $('#imageViewerHeaderTitle').html(imageViewerFolderName + "/" + imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
+                    else {
+                        if (albumFolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
+                            $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
+                        }
                     }
                 }, 400);
             }, 300);
