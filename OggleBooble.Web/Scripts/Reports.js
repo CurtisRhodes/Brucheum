@@ -432,13 +432,30 @@ function int2Month(nMonth) {
     }
 }
 
-function buildCenterfoldList() {
+function pollBuildCenterfoldHtmlPage() {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Report/Poll",
+        success: function (processStatus) {
+            $('#dataifyInfo').html("building centerfold page: " + processStatus);
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("poll")) {
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "poll");
+            }
+        }
+    });
+}
+
+function BuildCenterfoldHtmlPage() {
     let start = Date.now();
+    let pollingLoop = setInterval(function () { pollBuildCenterfoldHtmlPage() }, 5000);
+
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("building Centerfold List");
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Report/BuildCenterfoldList?rootFolder=1132",
+        url: settingsArray.ApiServer + "api/Report/BuildCenterfoldHtmlPage?rootFolder=1132",
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (success == "ok") {
@@ -446,6 +463,7 @@ function buildCenterfoldList() {
                 let minutes = Math.floor(delta / 60000);
                 let seconds = (delta % 60000 / 1000).toFixed(0);
                 console.log("build Centerfold List took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                clearInterval(pollingLoop);
                 $('#dataifyInfo').html("centerfold List took: " + minutes + ":" + seconds);
             }
             else {

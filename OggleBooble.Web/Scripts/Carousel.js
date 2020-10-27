@@ -98,6 +98,7 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                                 FolderParentName: obj.FolderParentName,
                                 FolderParentId: obj.FolderParentId,
                                 FolderGPName: obj.FolderGPName,
+                                FolderType: obj.FolderType,
                                 FolderGPId: obj.FolderGPId,
                                 ImageFolderId: obj.ImageFolderId,
                                 ImageFolderName: obj.ImageFolderName,
@@ -280,48 +281,77 @@ function setLabelLinks() {
     $('#knownModelLabel').html("").hide();
     $('#carouselFooterLabel').html("").hide();
     $('#imageTopLabel').html("").hide();
+
+    //singleParent	228
+    //multiFolder	220
+    //multiModel	565
+
+    //singleModel	1221
+    //singleChild	2736
+    //unused	1
+
     if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
-        if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolderName)) {
-            // noraml
-            mainImageClickId = carouselItemArray[imageIndex].FolderId;
+        if (carouselItemArray[imageIndex].FolderType == "singleParent") { 
+        }
+        if (carouselItemArray[imageIndex].FolderType == "singleChild") { // containsRomanNumerals
 
             $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
-            knownModelLabelClickId = carouselItemArray[imageIndex].FolderParentId;
-
             $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderName)
-            imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
-
             $('#carouselFooterLabel').html(carouselItemArray[imageIndex].FolderGPName);
+
+            mainImageClickId = carouselItemArray[imageIndex].FolderId;
+            knownModelLabelClickId = carouselItemArray[imageIndex].FolderParentId;
+            imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
             footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
 
-            if (debugMode) $('#headerMessage').html("1");
-
             if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
+                mainImageClickId = carouselItemArray[imageIndex].FolderId;
 
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderName);
-                knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;
 
-                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].FirstChild);
-                if (debugMode) $('#headerMessage').append("P");
+
             }
         }
-        else { // roman shift
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGPName)
-            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
-            footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
-            mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-            knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;  //  the roman
-            imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
-            if (debugMode) $('#headerMessage').html("RNS");
 
-            if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                $('#imageTopLabel').html("Playboy Playmate2: " + carouselItemArray[imageIndex].FirstChild);
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].Folder);
-                if (debugMode) $('#headerMessage').append("P");
-                imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-                //pause();
-                //setTimeout(function () { alert("roman shift.  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
+        if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
+            if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolderName)) {
+                // noraml
+                $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
+                $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderName)
+                $('#carouselFooterLabel').html(carouselItemArray[imageIndex].FolderGPName);
+                mainImageClickId = carouselItemArray[imageIndex].FolderId;
+                knownModelLabelClickId = carouselItemArray[imageIndex].FolderParentId;
+                imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
+                footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
+
+                if (debugMode) $('#headerMessage').html("1");
+
+                if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
+
+                    $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderName);
+                    knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;
+
+                    $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].FirstChild);
+                    if (debugMode) $('#headerMessage').append("P");
+                }
+            }
+            else { // roman shift
+                $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
+                $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGPName)
+                $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
+                footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
+                mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
+                knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;  //  the roman
+                imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
+                if (debugMode) $('#headerMessage').html("RNS");
+
+                if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
+                    $('#imageTopLabel').html("Playboy Playmate2: " + carouselItemArray[imageIndex].FirstChild);
+                    $('#knownModelLabel').html(carouselItemArray[imageIndex].Folder);
+                    if (debugMode) $('#headerMessage').append("P");
+                    imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
+                    //pause();
+                    //setTimeout(function () { alert("roman shift.  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
+                }
             }
         }
     }
@@ -376,6 +406,8 @@ function setLabelLinks() {
             //setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
         }
     }
+
+
     $('#carouselFooterLabel').fadeIn();
     $('#imageTopLabel').fadeIn();
     $('#knownModelLabel').fadeIn();

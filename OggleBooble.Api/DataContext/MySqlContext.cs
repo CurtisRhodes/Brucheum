@@ -572,6 +572,20 @@ namespace OggleBooble.Api.MySqlDataContext
     }
 
     // select * from OggleBooble.ImageFile;
+/*
+    update OggleBooble.CategoryImageLink set SortOrder = 1 where imageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 2 where imageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 3 where ImageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 4 where ImageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 5 where ImageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 6 where ImageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 7 where ImageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 8 where ImageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 9 where ImageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 10 where ImageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 11 where ImageCategoryId = 2001 and ImageLinkId = '';
+    update OggleBooble.CategoryImageLink set SortOrder = 12 where ImageCategoryId = 2001 and ImageLinkId = '';
+*/
 
     [Table("OggleBooble.VwCarouselImages")]
     public class VwCarouselItem
@@ -579,6 +593,7 @@ namespace OggleBooble.Api.MySqlDataContext
         [Key]
         public int FolderId { get; set; }
         public string RootFolder { get; set; }
+        public string FolderType { get; set; }
         public string FolderName { get; set; }
         public string FolderParentName { get; set; }
         public int FolderParentId { get; set; }

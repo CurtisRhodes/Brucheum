@@ -171,44 +171,27 @@ namespace OggleBooble.Api.Controllers
                 }
 
                 // loop 2A loop through image files
-                foreach (ImageFile existingImageFile in dbFolderImageFiles)
+                foreach (ImageFile imageFile in dbFolderImageFiles)
                 {
                     // check if there is a physcial file in the folder for every ImageFile with a FolderId equaling the folderId.
-                    if (!physcialFileLinkIds.Contains(existingImageFile.Id))
+                    if (!physcialFileLinkIds.Contains(imageFile.Id))
                     {
-                        var otherFolderImageFile = db.ImageFiles.Where(l => l.Id == existingImageFile.Id).FirstOrDefault();
+                        var otherFolderImageFile = db.ImageFiles.Where(l => l.Id == imageFile.Id).FirstOrDefault();
                         if (otherFolderImageFile == null)
                         {
-                            // orphan image file 
-                            repairReport.Errors.Add("orphan image file");
                             //db.ImageFiles.Remove(existingImageFile);
                             //db.SaveChanges();
                             //repairReport.ImageFilesRemoved++;
-                        }
-                        else 
-                        {
-                            // image file 
-                            if (otherFolderImageFile.FolderId == folderId)
-                            {
-                                repairReport.Errors.Add("just said this not here");
-
-                                //var of2 = db.ImageFiles.Where(i=>i.ExternalLink)
-
-                            }
-                            else
-                            { 
-                            // move file
-
-                            }
+                            //var badLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList();
                         }
                     }
-                    ext = existingImageFile.FileName.Substring(existingImageFile.FileName.LastIndexOf("."));
-                    if (existingImageFile.FileName != (folderName + "_" + existingImageFile.Id + ext)) 
-                    {
-                        existingImageFile.FileName = folderName + "_" + existingImageFile.Id + ext;
-                        db.SaveChanges();
-                        repairReport.ImageFileNamesRenamed++;
-                    }
+                    //ext = existingImageFile.FileName.Substring(existingImageFile.FileName.LastIndexOf("."));
+                    //if (existingImageFile.FileName != (folderName + "_" + existingImageFile.Id + ext)) 
+                    //{
+                    //    existingImageFile.FileName = folderName + "_" + existingImageFile.Id + ext;
+                    //    db.SaveChanges();
+                    //    repairReport.ImageFileNamesRenamed++;
+                    //}
                     repairReport.ImageFilesProcessed++;
                 }
 

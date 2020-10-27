@@ -1,4 +1,4 @@
-﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0, launchingServiceGifShowing = false,
+﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0, connectingToServerGifShowing = false,
     verifyConnectionCountLimit = 17, verifyConnectionLoop = null, persistConnectionInterval = null;
 
 function checkFor404(calledFrom) {
@@ -27,7 +27,11 @@ function checkFor404(calledFrom) {
                         else {
                             dots += ". ";
                             $('#dots').html(dots);
-                            verifyConnectionCount++;
+                            if ((verifyConnectionCount > 4) && (!connectingToServerGifShowing)) showConnectingToServerGif();
+                            if ((verifyConnectionCount > verifyConnectionCountLimit) && (!canIgetaConnectionMessageShowing)) {
+                                showCanIgetaConnectionMessage();
+                                $('#dots').html('');
+                            }
                             //alert("verifyConnectionCount: " + verifyConnectionCount);
                             verifyConnectionFunction();
                         }
@@ -36,6 +40,37 @@ function checkFor404(calledFrom) {
             }, 500);
         }
     }, 300);
+}
+
+function showConnectingToServerGif() {
+    $('#headerMessage').html(verifyConnectionCount);
+    if (!connectingToServerGifShowing) {
+        connectingToServerGifShowing = true;
+        console.log("SERVICE DOWN " + verifyConnectionCount);
+        $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
+        $('#customMessageContainer').css("top", 200);
+        document.title = "loading : OggleBooble";
+        changeFavoriteIcon("loading");
+    }
+}
+
+function showCanIgetaConnectionMessage() {
+    if (!canIgetaConnectionMessageShowing) {
+        canIgetaConnectionMessageShowing = true;
+        $('#customMessage').html(
+            "<div class='shaddowBorder'>" +
+            "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
+            "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
+            "</div>").show();
+        console.log("canIgetaConnection message showing");
+        if (document.domain == 'localhost') {
+            alert("SERVICE DOWN");
+        }
+        else {
+            logError("404", 3910, "SERVICE DOWN", "checkFor404");
+            // send an Email
+        }
+    }
 }
 
 function verifyConnectionFunction() {
@@ -60,38 +95,6 @@ function verifyConnectionFunction() {
                     console.log("success but no verify: " + successModel.Success);
                     if (document.domain === "local host") alert("proper error in verifyConnectionFunction: " + successModel.Success);
                     connectionVerified = false;
-                }
-
-                if (!connectionVerified) {
-                    if (verifyConnectionCount > 2) {
-                        if (!launchingServiceGifShowing) {
-                            launchingServiceGifShowing = true;
-                            console.log("SERVICE DOWN " + verifyConnectionCount);
-                            $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
-                            $('#customMessageContainer').css("top", 200);
-                            document.title = "loading : OggleBooble";
-                            changeFavoriteIcon("loading");
-                        }
-                    }
-                    else {
-                        $('#headerMessage').html(verifyConnectionCount);
-                    }
-                    if (!canIgetaConnectionMessageShowing) {
-                        if (verifyConnectionCount > verifyConnectionCountLimit) {
-                            canIgetaConnectionMessageShowing = true;
-                            $('#customMessage').html(
-                                "<div class='shaddowBorder'>" +
-                                "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
-                                "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-                                "</div>").show();
-
-                            console.log("canIgetaConnection message showing");
-                            if (document.domain !== 'localhost') {
-                                logError("404", 3910, "SERVICE DOWN", "checkFor404");
-                                // send an Email
-                            }
-                        }
-                    }
                 }
             }
             else {

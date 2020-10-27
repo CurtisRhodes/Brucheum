@@ -335,7 +335,6 @@ namespace OggleBooble.Api.Controllers
             public List<PlayboyReportItemModel> PlayboyReportItems { get; set; }
             public string Success { get; set; }
         }
-
         public class PlayboyReportItemModel
         {
             public string FolderDecade { get; set; }
@@ -347,13 +346,22 @@ namespace OggleBooble.Api.Controllers
             public string StaticFile { get; set; }
         }
 
+        public string ProcessStatus { get; set; }
+        [HttpGet]
+        [Route("api/Report/Poll")]
+        public string Poll()
+        {
+            return ProcessStatus;
+        }
+
         [HttpPost]
-        [Route("api/Report/BuildCenterfoldList")]
-        public string BuildCenterfoldList(int rootFolder)
+        [Route("api/Report/BuildCenterfoldHtmlPage")]
+        public string BuildCenterfoldHtmlPage(int rootFolder)
         {
             string success;
             try
             {
+                int monthIncimentor;
                 var stringBuilder = new StringBuilder("<html><head>");
                 //MessageHub hub = new MessageHub();
                 using (var db = new OggleBoobleMySqlContext())
@@ -372,6 +380,7 @@ namespace OggleBooble.Api.Controllers
                     stringBuilder.Append("</head>\n<body>\n");
                     foreach (var dbPlayboyDecade in dbPlayboyDecades)
                     {
+                        monthIncimentor = 0;
                         stringBuilder.Append("<div class='pbDecade'>" + dbPlayboyDecade.FolderName + "</div>\n");
                         var dbPlayboyYears = db.VirtualFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
                         foreach (var dbPlayboyYear in dbPlayboyYears)
@@ -383,6 +392,7 @@ namespace OggleBooble.Api.Controllers
                             stringBuilder.Append("<div class='pbRow'>");
                             foreach (VirtualFolder dbPbmonth in dbPlayboyMonths)
                             {
+                                ProcessStatus = dbPlayboyYear.FolderName + " " + ++monthIncimentor + " " + dbPbmonth.FolderName;
                                 imgSrc = "Images/redballon.png";
                                 if (dbPbmonth.FolderImage != null)
                                 {
@@ -390,19 +400,22 @@ namespace OggleBooble.Api.Controllers
                                     if (dbImageFile != null)
                                         imgSrc = dbPbmonth.FolderPath + "/" + dbImageFile.FileName;
                                 }
-                                stringBuilder.Append("<div class='pbCol' style='width:66px;'>" +
+                                stringBuilder.Append(
+                                    "<div class='pbCol' style='width:66px;'>" +
                                     //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
                                     //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
-                                    "<a href='" + httpLocation + "/album.html?folder=" + dbPbmonth.Id + "'>" +
-                                    "   <img class='pbImg' src='" + imagesLocation + imgSrc + "'>" +
-                                    "   <div class='pbLabel01'>" + dbPbmonth.FolderName + "</div>\n" +
-                                    "</a>\n");
+                                    "   <a href='" + httpLocation + "/album.html?folder=" + dbPbmonth.Id + "'>" +
+                                    "       <img class='pbImg' src='" + imagesLocation + imgSrc + "'>" +
+                                    "       <div class='pbLabel01'>" + dbPbmonth.FolderName + "</div>\n" +
+                                    "   </a>" +
+                                    "</div>\n");
                             }
                             stringBuilder.Append("</div>\n");
                         }
                         //stringBuilder.Append("</div>\n");
                     }
                 }
+
                 //stringBuilder.Append("<script>\nfunction showCenterfoldImage(link)\n {" +
                 //    "$('.dirTreeImageContainer').css('top', event.clientY - 100);\n" +
                 //    "$('.dirTreeImageContainer').css('left', event.clientX + 10);\n" +
@@ -562,8 +575,7 @@ namespace OggleBooble.Api.Controllers
                 if (!dirInfo.Exists)
                     dirInfo.Create();
 
-                RipSegment(sourceFile, destinationPath, Enumerable.Range(startPage, endPage));
-                success = "ok";
+                success = RipSegment(sourceFile, destinationPath, Enumerable.Range(startPage, endPage));
             }
             catch (Exception ex)
             {
