@@ -25,7 +25,9 @@ function checkFor404(calledFrom) {
                             $('#dots').html('');
                         }
                         else {
+                            verifyConnectionCount++;
                             dots += ". ";
+                            //dots += ". " + ;
                             $('#dots').html(dots);
                             if ((verifyConnectionCount > 4) && (!connectingToServerGifShowing)) showConnectingToServerGif();
                             if ((verifyConnectionCount > verifyConnectionCountLimit) && (!canIgetaConnectionMessageShowing)) {
@@ -44,6 +46,7 @@ function checkFor404(calledFrom) {
 
 function showConnectingToServerGif() {
     $('#headerMessage').html(verifyConnectionCount);
+    // alert("showConnectingToServerGif() " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
     if (!connectingToServerGifShowing) {
         connectingToServerGifShowing = true;
         console.log("SERVICE DOWN " + verifyConnectionCount);

@@ -66,11 +66,13 @@ function getCookieValue(itemName) {
 }
 
 function loadOggleSettings() {
+    document.title = "loading settings : OggleBooble";
     $.ajax({
         type: "GET",
         url: "/Data/Settings.xml",
         dataType: "xml",
         success: function (settingsXml) {
+            document.title = "loading : OggleBooble";
             $(settingsXml).find('setting').each(function () {
                 settingsArray[$(this).attr('name')] = $(this).attr('value');
             });

@@ -47,12 +47,11 @@ namespace OggleBooble.Api.Controllers
                 VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
                 string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
                 string folderName = dbCategoryFolder.FolderName;
-                string ext;
                 if (dbCategoryFolder.FolderType == "singleChild") {
                     VirtualFolder dbParentFolder = db.VirtualFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
                     folderName = dbParentFolder.FolderName;
                 }
-                RenameFiles(ftpPath, folderName,  repairReport);
+                RenameFiles(ftpPath, folderName, repairReport);
 
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
                 if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR"))
@@ -63,6 +62,7 @@ namespace OggleBooble.Api.Controllers
                 var dbFolderCatLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
                 var dbFolderImageFiles = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
 
+
                 // loop1A through physcial files
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
@@ -71,6 +71,15 @@ namespace OggleBooble.Api.Controllers
 
                     // 1. check for physicalFile in folder with no ImageFile row
                     var dbFolderImageFile = dbFolderImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault();
+                    if (dbFolderImageFile != null)
+                    {
+                        if (dbFolderImageFile.FileName != physcialFileName)
+                        {
+                            dbFolderImageFile.FileName = physcialFileName;
+                            db.SaveChanges();
+                            repairReport.ImageFileNamesRenamed++;
+                        }
+                    }
                     if (dbFolderImageFile == null)
                     {
                         var dbOtherFoldeImageLink = db.ImageFiles.Where(il => il.Id == physcialFileLinkId).FirstOrDefault();
@@ -137,14 +146,7 @@ namespace OggleBooble.Api.Controllers
                             }
                         }
                     }
-                    //else {
-                    //    if (dbFolderImageFile.FileName != physcialFileName)
-                    //    {
-                    //        dbFolderImageFile.FileName = physcialFileName;
-                    //        //db.SaveChanges();
-                    //        //repairReport.ImagesRenamed++;
-                    //    }
-                    //}
+
                     // 2. check for physicalFiles with no link
                     if (dbFolderCatLinks.Where(il => il.ImageLinkId == physcialFileLinkId && il.ImageCategoryId == folderId).FirstOrDefault() == null)
                     {
