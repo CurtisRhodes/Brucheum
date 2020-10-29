@@ -97,53 +97,46 @@ namespace OggleBooble.Api.Controllers
                         else
                         {
                             // create new ImageFile record
-                            try
+                            // USE WEBCLIENT TO CREATE THE FILE
+                            string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+                            string imgFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
+                            using (WebClient wc = new WebClient())
                             {
-                                // USE WEBCLIENT TO CREATE THE FILE
-                                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
-                                string imgFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
-                                using (WebClient wc = new WebClient())
+                                wc.DownloadFile(new Uri(imgFileName), appDataPath + "tempImage.tmp");
+                            }
+                            int fWidth = 0; int fHeight = 0; long fSize = 0;
+                            using (var fileStream = new FileStream(appDataPath + "tempImage.tmp", FileMode.Open, FileAccess.Read, FileShare.Read))
+                            {
+                                fSize = fileStream.Length;
+                                try
                                 {
-                                    wc.DownloadFile(new Uri(imgFileName), appDataPath + "tempImage.tmp");
-                                }
-                                int fWidth = 0; int fHeight = 0; long fSize = 0;
-                                using (var fileStream = new FileStream(appDataPath + "tempImage.tmp", FileMode.Open, FileAccess.Read, FileShare.Read))
-                                {
-                                    fSize = fileStream.Length;
-                                    try
+                                    using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
                                     {
-                                        using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
-                                        {
-                                            fWidth = image.Width;
-                                            fHeight = image.Height;
-                                        }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        if (Helpers.ErrorDetails(ex).ToString() == "{Parameter is not valid.}")
-                                            repairReport.Errors.Add("unable to get width and height of " + physcialFileName);
-                                        else
-                                            repairReport.Errors.Add(Helpers.ErrorDetails(ex));
+                                        fWidth = image.Width;
+                                        fHeight = image.Height;
                                     }
                                 }
-                                db.ImageFiles.Add(new ImageFile()
+                                catch (Exception ex)
                                 {
-                                    Id = physcialFileLinkId,
-                                    Acquired = DateTime.Today,
-                                    ExternalLink = "?",
-                                    FileName = physcialFileName,
-                                    FolderId = folderId,
-                                    Height = fHeight,
-                                    Size = fSize,
-                                    Width = fWidth
-                                });
-                                db.SaveChanges();
-                                repairReport.ImageFilesAdded++;
+                                    if (Helpers.ErrorDetails(ex).ToString() == "{Parameter is not valid.}")
+                                        repairReport.Errors.Add("unable to get width and height of " + physcialFileName);
+                                    else
+                                        repairReport.Errors.Add(Helpers.ErrorDetails(ex));
+                                }
                             }
-                            catch (Exception ex)
+                            db.ImageFiles.Add(new ImageFile()
                             {
-                                repairReport.Errors.Add(Helpers.ErrorDetails(ex));
-                            }
+                                Id = physcialFileLinkId,
+                                Acquired = DateTime.Today,
+                                ExternalLink = "?",
+                                FileName = physcialFileName,
+                                FolderId = folderId,
+                                Height = fHeight,
+                                Size = fSize,
+                                Width = fWidth
+                            });
+                            db.SaveChanges();
+                            repairReport.ImageFilesAdded++;
                         }
                     }
 

@@ -147,8 +147,8 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpDelete]
-        [Route("api/Links/RemoveLink")]
-        public string RemoveLink(string linkId, int folderId)
+        [Route("api/Links/AttemptRemoveLink")]
+        public string AttemptRemoveLink(string linkId, int folderId)
         {
             string success;
             try
@@ -171,6 +171,25 @@ namespace OggleBooble.Api.Controllers
                     }
                     else
                         success = "single link";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        [HttpDelete]
+        [Route("api/Links/RemoveHomeFolderLink")]
+        public string RemoveHomeFolderLink(string linkId, int folderId)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var linkToRemove = db.CategoryImageLinks.Where(l => l.ImageLinkId == linkId && l.ImageCategoryId == folderId).First();
+                    db.CategoryImageLinks.Remove(linkToRemove);
+                    db.SaveChanges();
+                    success = "ok";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }

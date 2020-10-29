@@ -114,10 +114,14 @@ function moveFile(request, linkId, folderId) {
 
 function attemptRemoveLink(linkId, folderId, imgSrc) {
     // 1. if just a link delete it and you're done.
+
+    alert("attemptRemoveLink(linkId: " + linkId + ", folderId: " + folderId + ", imgSrc: " + imgSrc);
+
     $('#imagePageLoadingGif').show();
+
     $.ajax({
         type: "DELETE",
-        url: settingsArray.ApiServer + "api/Links/RemoveLink?linkId=" + linkId + "&folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/Links/AttemptRemoveLink?linkId=" + linkId + "&folderId=" + folderId,
         success: function (success) {
             //alert("attemptRemoveLink   success: " + success);
             if ((success == "single link") || (success == "home folder Link")) {
@@ -163,7 +167,8 @@ function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
             "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked' />  duplicate</div>\n" +
             "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons' />  bad link</div>\n" +
             "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons' />  low quality</div>\n" +
-            "    <div class='roundendButton' onclick='performDeleteImage(\"" + linkId + "\")'>ok</div>\n");
+            "    <div class='roundendButton' onclick='performMoveImageToRejects(\"" + linkId + "\,\""
+            + $('input[name=\"rdoRejectImageReasons\"]:checked').val() +")'>ok</div>\n");
     }
     if (errMsg === "home folder Link") {
         $('#centeredDialogTitle').html("Remove Home Folder Link");
@@ -176,10 +181,11 @@ function showConfirmDeteteImageDialog(linkId, imgSrc, errMsg) {
     $('#centeredDialogContainer').fadeIn();
 }
 
-function performDeleteImage(linkId) {
+function performMoveImageToRejects(linkId, rejectReason) {
+    alert("rejectReason: " + rejectReason);
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/Links/MoveLinkToRejects?linkId=" + linkId,
+        url: settingsArray.ApiServer + "api/Links/MoveImageToRejects?linkId=" + linkId,
         success: function (success) {
             if (success === "single link" || success === "home folder Link") {
                 showConfirmDeteteImageDialog(linkId, imgSrc, success);
@@ -207,7 +213,38 @@ function performDeleteImage(linkId) {
         }
     });
 }
-function performRemoveHomeFolderLink() {
+function performRemoveHomeFolderLink(linkId) {
+    $.ajax({
+        type: "DELETE",
+        url: settingsArray.ApiServer + "api/Links/RemoveHomeFolderLink?linkId=" + linkId,
+        success: function (success) {
+            if (success === "single link" || success === "home folder Link") {
+                showConfirmDeteteImageDialog(linkId, imgSrc, success);
+            }
+            else {
+                if (success === "ok") {
+                    if (viewerShowing)
+                        slide("next");
+                    getAlbumImages(folderid);
+                    logDataActivity({
+                        PageId: albumFolderId,
+                        PageName: currentAlbumJSfolderName,
+                        Activity: "link removed " + selectedImageLinkId
+                    });
+                }
+                else {
+                    logError("AJX", 3908, success, "performDeleteImage");
+                }
+            }
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("RemoveHomeFolderLink")) {
+                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "RemoveHomeFolderLink");
+            }
+        }
+    });
+
+
     alert("todo: performRemoveHomeFolderLink");
 }
 

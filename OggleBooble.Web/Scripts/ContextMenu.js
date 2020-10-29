@@ -70,8 +70,7 @@ function getLimitedImageDetails() {
                 $('#ctxModelName').html(imageInfo.FolderType);
                 switch (pMenuType) {
                     case "Slideshow":
-
-                        $('#ctxMenuType').html(pMenuType).show();
+                        //$('#ctxMenuType').html(pMenuType).show();
                         $('#ctxCloseSlideShow').show();
                         break;
                     case "Carousel":
@@ -301,6 +300,10 @@ function contextMenuAction(action) {
             attemptRemoveLink(pLinkId, pFolderId, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
+        case "reject":
+            showConfirmDeteteImageDialog(pLinkId, pImgSrc, "single link");
+            $("#imageContextMenu").fadeOut();
+            break;
         case "setF":
             setFolderImage(pLinkId, pFolderId, "folder");
             break;
@@ -348,6 +351,7 @@ function contextMenuHtml() {
         "   <div onclick='contextMenuAction(\"copy\")'>Copy Link</div>\n" +
         "   <div onclick='contextMenuAction(\"move\")'>Move Image</div>\n" +
         "   <div onclick='contextMenuAction(\"remove\")'>Remove Link</div>\n" +
+        "   <div onclick='contextMenuAction(\"reject\")'>Move to Rejects</div>\n" +
         "   <div onclick='contextMenuAction(\"setF\")'>Set as Folder Image</div>\n" +
         "   <div onclick='contextMenuAction(\"setC\")'>Set as Category Image</div>" +
         " </div>\n";
