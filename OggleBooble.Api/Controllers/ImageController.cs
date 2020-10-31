@@ -250,28 +250,34 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/OggleFile/AddImageLink")]
-        public SuccessModel AddImageLink(AddLinkModel newLink)
+        public SuccessModel AddImageLink(AddLinkModel addLinkModel)
         {
             SuccessModel successModel = new SuccessModel();
             try
             {
                 string mySqlDestPath;
+                string newLink = addLinkModel.Link;
                 using (var mdb = new OggleBoobleMySqlContext())
                 {
-                    var existingLink = mdb.ImageFiles.Where(l => l.ExternalLink == newLink.Link).FirstOrDefault();
+                    if (newLink.IndexOf("?") > 0)
+                    {
+                        newLink = newLink.Substring(0, newLink.IndexOf("?"));
+                    }
+
+                    var existingLink = mdb.ImageFiles.Where(l => l.ExternalLink == newLink).FirstOrDefault();
                     if (existingLink != null)
                     {
                         successModel.Success = "Link Already Added";
                         return successModel;
                     }
-                    mySqlDestPath = mdb.VirtualFolders.Where(f => f.Id == newLink.FolderId).FirstOrDefault().FolderPath;
+                    mySqlDestPath = mdb.VirtualFolders.Where(f => f.Id == addLinkModel.FolderId).FirstOrDefault().FolderPath;
                 }
 
                 string imageLinkId = Guid.NewGuid().ToString();
-                string extension = newLink.Link.Substring(newLink.Link.LastIndexOf("."));
-                string newFileName = newLink.Path.Substring(newLink.Path.LastIndexOf("/") + 1) + "_" + imageLinkId + extension;
+                string extension = newLink.Substring(newLink.LastIndexOf("."));
+                string newFileName = addLinkModel.Path.Substring(addLinkModel.Path.LastIndexOf("/") + 1) + "_" + imageLinkId + extension;
                 string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
-                string trimPath = newLink.Path.Replace("/Root/", "").Replace("%20", " ");
+                string trimPath = addLinkModel.Path.Replace("/Root/", "").Replace("%20", " ");
 
                 // COPY FILE TO LOCAL ?
                 //try
@@ -298,7 +304,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     try
                     {
-                        wc.DownloadFile(new Uri(newLink.Link), appDataPath + "tempImage" + extension);
+                        wc.DownloadFile(new Uri(newLink), appDataPath + "tempImage" + extension);
                     }
                     catch (Exception ex)
                     {
@@ -394,8 +400,8 @@ namespace OggleBooble.Api.Controllers
                     mdb.ImageFiles.Add(new ImageFile()
                     {
                         Id = imageLinkId,
-                        FolderId = newLink.FolderId,
-                        ExternalLink = newLink.Link,
+                        FolderId = addLinkModel.FolderId,
+                        ExternalLink = newLink,
                         Width = fWidth,
                         Height = fHeight,
                         Size = fSize,
@@ -404,7 +410,7 @@ namespace OggleBooble.Api.Controllers
                     });
                     mdb.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
                     {
-                        ImageCategoryId = newLink.FolderId,
+                        ImageCategoryId = addLinkModel.FolderId,
                         ImageLinkId = imageLinkId,
                         SortOrder = 996
                     });

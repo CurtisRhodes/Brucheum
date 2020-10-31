@@ -167,7 +167,7 @@
         $('#footerCol5').html(
             //"       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>dashboard</div>\n" +
             //"       <div class='clickable' onclick='window.open(\"index.html?spa=3910\")'>dashboard</div>\n" +
-            "       <div class='clickable' onclick='window.location.href = '/index.html?spa=3910\")'>dashboard</div>\n" +
+            "       <div class='clickable' onclick='window.location.href=\"/index.html?spa=3910\"'>dashboard</div>\n" +
             "       <div>page type: " + rootFolder + "</div>\n" +
             "       <div id='footerFolderType'></div>\n" +
             "       <div id='footerStaticPage'></div>\n");

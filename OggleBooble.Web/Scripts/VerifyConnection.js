@@ -1,5 +1,5 @@
 ﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0, connectingToServerGifShowing = false,
-    verifyConnectionCountLimit = 17, verifyConnectionLoop = null, persistConnectionInterval = null;
+    verifyConnectionCountLimit = 25, verifyConnectionLoop = null, persistConnectionInterval = null;
 
 function checkFor404(calledFrom) {
     connectionVerified = false;

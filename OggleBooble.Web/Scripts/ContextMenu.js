@@ -294,15 +294,16 @@ function contextMenuAction(action) {
             $("#imageContextMenu").fadeOut();
             break;
         case "rename":
+            $("#imageContextMenu").fadeOut();
             showRenameFolderDialog(pFolderId, pFolderName)
             break;
         case "remove":
-            attemptRemoveLink(pLinkId, pFolderId, pImgSrc);
             $("#imageContextMenu").fadeOut();
+            attemptRemoveLink(pLinkId, pFolderId, pImgSrc);
             break;
         case "reject":
-            showConfirmDeteteImageDialog(pLinkId, pImgSrc, "single link");
             $("#imageContextMenu").fadeOut();
+            showConfirmDeteteImageDialog(pLinkId, pFolderId, pImgSrc, "single link");
             break;
         case "setF":
             setFolderImage(pLinkId, pFolderId, "folder");

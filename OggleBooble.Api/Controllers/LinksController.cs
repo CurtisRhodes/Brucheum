@@ -197,14 +197,21 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPut]
-        [Route("api/Links/MoveLinkToRejects")]
-        public string MoveLinkToRejects(string linkId)
+        [Route("api/Links/MoveImageToRejects")]
+        public string MoveImageToRejects(string linkId)
         {
             string success;
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    string dbRejectFolder = "https://img.OggleBooble.com/rejects";
+                    var dbSourceImage = db.ImageFiles.Where(f => f.Id == linkId).First();
+                    var dbSourceFolder = db.VirtualFolders.Where(f => f.Id == dbSourceImage.FolderId).First();
+                    string ftpRepo = imgRepo.Substring(7);
+                    string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath + "/" + dbSourceImage.FileName;
+                    success = FtpUtilies.MoveFile(sourceFtpPath, dbRejectFolder);
+
                     var linksToRemove = db.CategoryImageLinks.Where(l => l.ImageLinkId == linkId).ToList();
                     db.CategoryImageLinks.RemoveRange(linksToRemove);
                     ImageFile reject = db.ImageFiles.Where(i => i.Id == linkId).First();
