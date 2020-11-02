@@ -163,6 +163,7 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"magazine covers\",1986)'>magazine covers</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"pictorials\",4015)'>pictorials</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"extras\",2601)'>extras</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"extras\",6368)'>plus</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"special\",6076)'>special editions</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"cybergirls\",3796)'>cybergirls</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"cybergirls\",6095)'>muses</a>,\n" +
