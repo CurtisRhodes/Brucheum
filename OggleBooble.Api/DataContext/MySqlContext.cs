@@ -54,7 +54,19 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<UserCredit> UserCredits { get; set; }
         public virtual DbSet<Centerfold> Centerfolds { get; set; }
         public virtual DbSet<Performance> Performances { get; set; }
-        public virtual DbSet<FolderComment> FolderComments { get; set; }        
+        public virtual DbSet<FolderComment> FolderComments { get; set; }
+        public virtual DbSet<VwImpact> VwImpacts { get; set; }
+    }
+
+    [Table("OggleBooble.VwImpact")]
+    public class VwImpact
+    {
+        [Key]
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public DateTime DateUpdated { get; set; }
+        public int Hits { get; set; }
+        public int ImpactHits { get; set; }
     }
 
     [Table("OggleBooble.FolderComment")]
@@ -438,7 +450,7 @@ namespace OggleBooble.Api.MySqlDataContext
         [Column(Order = 2)]
         public string HitTime { get; set; }
         public string FolderType { get; set; }
-        //public int PageHits { get; set; }
+        public string RootFolder { get; set; }
         public int ImageHits { get; set; }
     }
 

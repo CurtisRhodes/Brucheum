@@ -252,7 +252,8 @@ namespace OggleBooble.Api.Controllers
                             PageId = item.PageId,
                             FolderName = item.FolderName, // ?? "?",item.FolderName.Replace("OGGLEBOOBLE.COM", ""),
                             //PageHits = item.PageHits,
-                            //FolderType = item.FolderType,
+                            RootFolder = item.RootFolder,
+                            FolderType = item.FolderType,
                             ImageHits = item.ImageHits,
                             HitDate = item.HitDate,
                             HitTime = item.HitTime
@@ -324,26 +325,6 @@ namespace OggleBooble.Api.Controllers
                 errorLog.Success = Helpers.ErrorDetails(ex);
             }
             return errorLog;
-        }
-
-        public class PlayboyReportModel
-        {
-            public PlayboyReportModel()
-            {
-                PlayboyReportItems = new List<PlayboyReportItemModel>();
-            }
-            public List<PlayboyReportItemModel> PlayboyReportItems { get; set; }
-            public string Success { get; set; }
-        }
-        public class PlayboyReportItemModel
-        {
-            public string FolderDecade { get; set; }
-            public string FolderYear { get; set; }
-            public int FolderMonth { get; set; }
-            public int FolderId { get; set; }
-            public string FolderName { get; set; }
-            public string ImageSrc { get; set; }
-            public string StaticFile { get; set; }
         }
 
         public string ProcessStatus { get; set; }
@@ -473,6 +454,22 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
+        [Route("api/Report/ImpactReport")]
+        public ImpactReportModel ImpactReport()
+        {
+            ImpactReportModel impactReportModel = new ImpactReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    impactReportModel.ImpactRows = db.VwImpacts.ToList();
+                }
+                impactReportModel.Success = "ok";
+            }
+            catch (Exception ex) { impactReportModel.Success = Helpers.ErrorDetails(ex); }
+            return impactReportModel;
+        }
+
         [Route("api/Report/PlayboyList")]
         public PlayboyReportModel PlayboyList()
         {
@@ -602,5 +599,9 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
     }
+
+
+
+
 }
 

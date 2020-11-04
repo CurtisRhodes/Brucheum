@@ -162,18 +162,21 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showAddRolesDialog()'>Edit Roles</div>");
             break;
         case "reports":
+            document.title = "reports : OggleBooble";
             $('#reportsLeftMenu').html("<div class='clickable' onclick='runMetricsMatrixReport()'>Performance Metrics</div>\n" +
                 "<div class='clickable' onclick='runPageHitReport()'>Page Hit Report</div>\n" +
                 "<div class='clickable' onclick='showEventActivityReport()'>Event Activity</div>\n" +
                 "<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>\n" +
                 "<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>\n" +
                 "<div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
-                "<div class='clickable' onclick='runPlayboyListReport()'>Playboy List Report</div>\n" +
+                "<div class='clickable' onclick='runImpactReport()'>Impact</div>\n" +
+                "<div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
                 "<div class='clickable' onclick='BuildCenterfoldHtmlPage()'>Build Centerfold Html Page</div>\n" +
                 "<div class='clickable' onclick='errorLogReport()'>Error Log</div>");
-            //  <div class='clickable' onclick='buildCenterfoldList()'>Build Centerfold List</div>\n" +
+            //  <div class='clickable' onclick='buildCenterfoldLsist()'>Build Centerfold List</div>\n" +
             break;
         case "admin":
+            document.title = "dashboard : OggleBooble";
             $('#dashboardLeftMenu').html("<div class='clickable' onclick='loadDashboardDirTree(true)'>ReBuild Dir Tree</div>\n" +
                 "<div class='clickable' onclick='showDefaultWorkArea()'>Add Image Link</div>\n" +
                 "<div class='clickable' onclick='showCreateStaticPagesDialog()'>Create Static Pages</div>\n" +

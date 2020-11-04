@@ -63,6 +63,13 @@ namespace OggleBooble.Api.Models
         public int? ImageHits { get; set; }
     }
 
+    public class ImpactReportModel
+    {
+        public ImpactReportModel() { ImpactRows = new List<MySqlDataContext.VwImpact>(); }
+        public List<MySqlDataContext.VwImpact> ImpactRows { get; set; }
+        public string Success { get; set; }
+    }
+
     public class ErrorLogReportModel
     {
         public ErrorLogReportModel()
@@ -72,6 +79,28 @@ namespace OggleBooble.Api.Models
         public List<MySqlDataContext.VwErrorReport> ErrorRows { get; set; }
         public string Success { get; set; }
     }
+
+    public class PlayboyReportModel
+    {
+        public PlayboyReportModel()
+        {
+            PlayboyReportItems = new List<PlayboyReportItemModel>();
+        }
+        public List<PlayboyReportItemModel> PlayboyReportItems { get; set; }
+        public string Success { get; set; }
+    }
+    public class PlayboyReportItemModel
+    {
+        public string FolderDecade { get; set; }
+        public string FolderYear { get; set; }
+        public int FolderMonth { get; set; }
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public string ImageSrc { get; set; }
+        public string StaticFile { get; set; }
+    }
+
+
 
     public class FeedbackReportModel
     {
@@ -113,6 +142,7 @@ namespace OggleBooble.Api.Models
         public string Country { get; set; }
         public int PageId { get; set; }
         public string FolderName { get; set; }
+        public string RootFolder { get; set; }
         public string FolderType { get; set; }
         public int ImageHits { get; set; }
         public string HitDate { get; set; }

@@ -158,8 +158,6 @@ function slideClick(direction) {
         }
         else {
             slide(direction);
-            spSessionCount++;
-            logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
         }
     }
 }
@@ -231,6 +229,8 @@ function slide(direction) {
         tempImgSrc.src = settingsImgRepo + imageViewerArray[imageViewerIndex].FileName;
         spSessionCount++;
         $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
+        logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+
     } catch (e) {
         logError("CAT", 3910, e, "slide");
     }

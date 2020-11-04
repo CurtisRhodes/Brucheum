@@ -282,7 +282,7 @@ function runPageHitReport() {
 
                     kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
                     kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
-                    kludge += "<td>" + obj.FolderType + "</td>";
+                    kludge += "<td>" + obj.RootFolder + "</td>";
                     kludge += "<td>" + obj.ImageHits + "</td>";
                     kludge += "<td>" + obj.HitTime + "</td></tr>";
                 });
@@ -409,6 +409,43 @@ function FeedbackReport() {
         error: function (jqXHR) {
             if (!checkFor404("FeedbackReport")) {
                 logError("XHR", 3910, getXHRErrorDetails(jqXHR), "FeedbackReport");
+            }
+        }
+    });
+}
+
+function runImpactReport() {
+    activeReport = "ImpactReport";
+    activeReport = "PageHitReport";
+    $('#reportsHeaderTitle').html("Impact Report for : " + todayString());
+    $("#reportsContentArea").html("");
+    $("#reportsFooter").html("");
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Report/ImpactReport",
+        success: function (impactReportModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (impactReportModel.Success === "ok") {
+                var kludge = "<table class='mostAvtiveUsersTable'>";
+                kludge += "<tr><th>Updated</th><th>Page</th><th>Total Hits</th><th>Impact Hits</th></tr>";
+                $.each(impactReportModel.ImpactRows, function (idx, obj) {
+                    kludge += "<td>" + obj.DateUpdated + "</td>";
+                    kludge += "<td><a href='/album.html?folder=" + obj.FolderId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    kludge += "<td>" + obj.Hits + "</td>";
+                    kludge += "<td>" + obj.ImpactHits + "</td></tr>";
+                });
+                kludge += "</table>";
+                $("#reportsContentArea").html(kludge);
+                //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+            }
+            else {
+                logError("XHR", 3910, impactReportModel.Success, "impact report");
+            }
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("impact report")) {
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "impact report");
             }
         }
     });
