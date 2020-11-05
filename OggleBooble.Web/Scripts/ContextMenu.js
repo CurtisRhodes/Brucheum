@@ -10,8 +10,6 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     pFolderId = folderId;
     pFolderName = folderName;
     pMenuType = menuType;
-
-
     if (pMenuType === "Slideshow") {
         $('#slideshowCtxMenuContainer').css("top", pos.y);
         $('#slideshowCtxMenuContainer').css("left", pos.x);
@@ -20,8 +18,6 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     }
     else {
         let y = pos.y - $(window).scrollTop();
-        //alert("scrollTop: " + $(window).scrollTop() + " x: " + x + "  pMenuType: " + pMenuType);
-
         $('#contextMenuContainer').css("top", y);
         $('#contextMenuContainer').css("left", pos.x);
         $('#contextMenuContainer').fadeIn();
@@ -37,14 +33,6 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     if (typeof pause === 'function') pause();
     if (isInRole("admin")) $('.adminLink').show();
 }
-
-$('.contextMenuContent').mouseover(function (e) {
-    e.stopPropagation();
-    alert("mouseover: ");
-    //$(this).addClass('ogItemHover');
-}).mouseout(function () {
-    $(this).removeClass('ogItemHover');
-});
 
 function getLimitedImageDetails() {
     $('#ctxMenuType').hide();
@@ -65,30 +53,12 @@ function getLimitedImageDetails() {
             //console.log("getLimitedImageDetails: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
 
             if (imageInfo.Success === "ok") {
-
-                //$('#ctxMenuType').html(pMenuType).show();
-                $('#ctxModelName').html(imageInfo.FolderType);
-                switch (pMenuType) {
-                    case "Slideshow":
-                        //$('#ctxMenuType').html(pMenuType).show();
-                        $('#ctxCloseSlideShow').show();
-                        break;
-                    case "Carousel":
-                        $('#ctxNewTab').show();
-                        break;
-                    case "Image":
-                        break;
-                    default:
-                        logError("SWT", apFolderId, "unhandled menu type: " + pMenuType, "getAlbumImages");
-                }
-
                 let folderType = imageInfo.FolderType;
                 switch (folderType) {
                     case "singleModel":
                     case "singleChild":
                     case "singleParent":
                         $('#ctxModelName').html(imageInfo.FolderName);
-                        //$('#ctxModelName').html(imageInfo.ModelFolderName);
                         $('#ctxSeeMore').hide();
                         break;
                     case "multiModel":
@@ -101,17 +71,27 @@ function getLimitedImageDetails() {
                         }
                         break;
                     default:
-                        $('#ctxModelName').html("folder tpe: " + albumImageInfo.FolderType);
                         logError("SWT", apFolderId, "folder type: " + albumImageInfo.FolderType, "getAlbumImages");
                 }
+
+                //$('#ctxMenuType').html(pMenuType).show();
+                $('#ctxModelName').html(imageInfo.FolderType);
                 switch (pMenuType) {
                     case "Slideshow":
+                        //$('#ctxMenuType').html(pMenuType).show();
+                        $('#ctxCloseSlideShow').show();
+                        break;
                     case "Carousel":
+                        $('#ctxNewTab').show();
+                        break;
                     case "Image":
-                    case "Folder":
+                        $('#ctxModelName').html(imageInfo.FolderName);
+                        break;
+                    case "Video":
+                        break;
                     default:
+                        logError("SWT", apFolderId, "unhandled menu type: " + pMenuType, "getAlbumImages");
                 }
-
                 getFullImageDetails();
             }
             else {
@@ -135,20 +115,10 @@ function getFullImageDetails() {
                 pModelFolderId = imageInfo.ModelFolderId;
                 if (imageInfo.ModelFolderId === 0) {
                     pModelFolderId = pFolderId;
-                    //alert("pModelFolderId: " + imageInfo.ModelFolderId + "  changed to: " + pModelFolderId);
                 }
 
                 //pFolderType = imageInfo.FolderType;
                 // $('#aboveImageContainerMessageArea').html("pFolderType: " + pFolderType + "  IsOutsideFolderLink: " + imageInfo.IsOutsideFolderLink);
-                //switch (imageInfo.FolderType) {
-                //    case "singleModelGallery":
-                //    case "singleModelFolderCollection":
-                //    case "singleModelCollection":
-                //    case "assorterdFolderCollection":
-                //    case "assorterdImagesCollection":
-                //    case "assorterdImagesGallery":
-                //        break;
-                //}
 
                 $('#imageInfoFileName').html(imageInfo.FileName);
                 $('#imageInfoFolderPath').html(imageInfo.FolderPath);

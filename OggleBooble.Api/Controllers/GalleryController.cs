@@ -72,7 +72,7 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/GalleryPage/GetAlbumPageInfo")]
-        public AlbumInfoModel GetAlbumPageInfo(string visitorId, int folderId)
+        public AlbumInfoModel GetAlbumPageInfo(int folderId)
         {
             var albumInfo = new AlbumInfoModel();
             try
@@ -141,8 +141,8 @@ namespace OggleBooble.Api.Controllers
                     }
                     VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     //if (categoryFolder != null) albumInfo.RootFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).First().RootFolder;
-                    albumInfo.UserPageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
-                    albumInfo.UserImageHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
+                    //albumInfo.UserPageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
+                    //albumInfo.UserImageHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
                 }
                 albumInfo.Success = "ok";
             }

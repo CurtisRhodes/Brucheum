@@ -2,7 +2,9 @@
 function isInRole(roleName) {
     try {
         //console.log("calling getUserInfo from isInRole")
-        if (document.domain === 'localhost') return true;
+        if (document.domain === 'localhost')
+            return true;
+
         if (getCookieValue("IsLoggedIn") == "false") {
             console.log("isInRole not logged in");
             roleName = "not registered";

@@ -55,8 +55,8 @@ namespace OggleBooble.Api.Models
         public int FileCount { get; set; }
         public int FolderCount { get; set; }
         public int PageHits { get; set; }
-        public int UserImageHits { get; set; }
-        public int UserPageHits { get; set; }
+        //public int UserImageHits { get; set; }
+        //public int UserPageHits { get; set; }
         public string LastModified { get; set; }
         public string FolderType { get; set; }
         public string StaticFile { get; set; }

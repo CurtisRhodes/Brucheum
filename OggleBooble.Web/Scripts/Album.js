@@ -20,6 +20,7 @@ function loadAlbum(folderId) {
 
 function getAlbumImages(folderId) {
     var getImagesStart = Date.now();
+    const posterFolder = 'http://archive.OGGLEBOOBLE.COM/posters/';
     $('#indexPageLoadingGif').show();
     $('#galleryBottomfileCount').html("?");
     try {
@@ -37,13 +38,13 @@ function getAlbumImages(folderId) {
                     $('#imageContainer').html('');
                     $.each(albumImageInfo.ImageLinks, function (idx, obj) {
                         let imgSrc = settingsImgRepo + "/" + obj.FileName;
-
                         if (obj.FileName.endsWith("mpg") || obj.FileName.endsWith("mp4")) {
                             $('#imageContainer').append(
+                                "<div oncontextmenu='albumContextMenu(\"Video\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + posterFolder + obj.Poster + "\")'>" +
                                 "<video id='" + obj.LinkId + "' controls='controls' class='thumbImage' " +
-                                " poster='" + obj.Poster + "' >" +
+                                " poster='" + posterFolder + obj.Poster + "' >" +
                                 "   <source src='" + imgSrc + "' type='video/mp4' label='label'>" +
-                                "</video>");
+                                "</video></div>");
                         }
                         else {
 
@@ -128,7 +129,7 @@ function getAlbumPageInfo(folderId) {
     var infoStart = Date.now();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?visitorId=" + apVisitorId + "&folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?folderId=" + folderId,
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
                 apFolderName = albumInfo.FolderName;
