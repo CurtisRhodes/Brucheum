@@ -138,18 +138,32 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
-               {
-                    searchResultsModel.SearchResults.AddRange(
-                    (from f in db.VirtualFolders
-                     where (f.FolderName.StartsWith(searchString) && ((f.FolderType == "singleModel") || (f.FolderType == "singleParent")))
-                     select new SearchResult() { FolderId = f.Id, FolderPath = f.FolderPath }).ToList());
-
+                {
                     searchResultsModel.SearchResults.AddRange(
                         (from f in db.VirtualFolders
-                         where ((f.FolderName.Contains(searchString)) && (!f.FolderName.StartsWith(searchString))
-                         && ((f.FolderType == "singleModel") || (f.FolderType == "singleParent")))
-                         select new SearchResult() { FolderId = f.Id, FolderPath = f.FolderPath }).ToList());
+                         join p in db.VirtualFolders on f.Parent equals p.Id
+                         where f.FolderName.StartsWith(searchString) && f.FolderType != "singleChild"
+                         select new SearchResult()
+                         {
+                             FolderId = f.Id,
+                             FolderPath = p.FolderName + " - " + f.FolderName
+                         }).ToList());
 
+                    List<SearchResult> containsSearchResults =
+                        (from f in db.VirtualFolders
+                         join p in db.VirtualFolders on f.Parent equals p.Id
+                         where f.FolderName.StartsWith(searchString) && f.FolderType != "singleChild"
+                         select new SearchResult()
+                         {
+                             FolderId = f.Id,
+                             FolderPath = p.FolderName + " - " + f.FolderName
+                         }).ToList();
+
+                    foreach (SearchResult searchResult in containsSearchResults)
+                    {
+                        if (searchResultsModel.SearchResults.Find(r => r.FolderPath == searchResult.FolderPath) == null)
+                            searchResultsModel.SearchResults.Add(searchResult);
+                    }
                 }
                 searchResultsModel.Success = "ok";
             }
