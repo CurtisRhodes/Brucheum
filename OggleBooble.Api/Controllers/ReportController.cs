@@ -587,10 +587,19 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 PdfDocument pdf = PdfDocument.FromFile(sourceFile);
-                pdf.RasterizeToImageFiles(destinationPath, pageNumbers, 450, 800, ImageType.Jpeg);
-                pdf.Dispose();
-                pdf = null;
-                success = "ok";
+                try
+                {
+                    pdf.RasterizeToImageFiles(destinationPath, pageNumbers, 450, 800, ImageType.Jpeg);
+                    pdf.Dispose();
+                    pdf = null;
+                    success = "ok";
+                }
+                catch (Exception ex)
+                {
+                    success = Helpers.ErrorDetails(ex);
+                    pdf.Dispose();
+                    pdf = null;
+                }
             }
             catch (Exception ex)
             {

@@ -36,6 +36,19 @@ namespace OggleBooble.Api.Controllers
             return imgLinks;
         }
 
+        [HttpGet]
+        [Route("api/Links/GetMoveableImageLinks")]
+        public ImageLinksModel GetMoveableImageLinks(int folderId)
+        {
+            var imgLinks = new ImageLinksModel();
+            using (var db = new OggleBoobleMySqlContext())
+            {
+                imgLinks.Links = db.VwLinks.Where(l => (l.FolderId == folderId) && (l.FolderId == l.SrcId)).OrderBy(l => l.SortOrder).ToList();
+            }
+            imgLinks.Success = "ok";
+            return imgLinks;
+        }
+
         [HttpPut]
         [Route("api/Links/UpdateSortOrder")]
         public string UpdateSortOrder(List<SortOrderItem> SortOrderItems)

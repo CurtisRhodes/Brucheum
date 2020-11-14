@@ -187,7 +187,8 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>\n" +
                 "<div class='clickable' onclick='showAddStepChildFolderDialog()'>Copy Folder</div>\n" +
                 "<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>\n" +
-                "<div class='clickable' onclick='showMoveManyTool();'>Move Many</div>\n" +
+                "<div class='clickable' onclick='showMoveManyTool(1);'>Move Many</div>\n" +
+                "<div class='clickable' onclick='showMoveManyTool(2);'>Copy Many</div>\n" +
                 "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf()</div>\n" +
                 "<div class='clickable' onclick='showAddVideoLink();\">Add Video Link</div>");
 
@@ -593,7 +594,7 @@ function showAddEditRoles() {
 
 // MOVE MANY
 let mmSourceFolderId, mmSelectedTreeFolderPath;
-function showMoveManyTool() {
+function showMoveManyTool(cx) {
     if (isNullorUndefined(pSelectedTreeFolderPath)) {
         alert("select a folder");
         return;
@@ -613,7 +614,7 @@ function loadMMcheckboxes() {
     let imgRepo = settingsArray.ImageRepo;
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Links/GetImageLinks?folderId=" + mmSourceFolderId,
+        url: settingsArray.ApiServer + "api/Links/GetMoveableImageLinks?folderId=" + mmSourceFolderId,
         success: function (imgLinks) {
             $('#dashBoardLoadingGif').hide();
             if (imgLinks.Success === "ok") {
