@@ -22,7 +22,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
                 IsInitialHit: isInitialHit
             },
             success: function (imageHitSuccessModel) {
-                if (imageHitSuccessModel.Success === "ok") {
+                if (imageHitSuccessModel.Success == "ok") {
                     userPageHits = imageHitSuccessModel.UserPageHits;
                     userImageHits = imageHitSuccessModel.UserImageHits;
                     //checkForHitLimit("images", folderId, userPageHits, userImageHits);
@@ -31,19 +31,33 @@ function logImageHit(linkId, folderId, isInitialHit) {
                     if (imageHitSuccessModel.Success.indexOf("Duplicate entry") > 0) {
                         //logError("AJX", folderId, imageHitSuccessModel.Success, "logImageHit");
                     }
-                    else
-                        logError("AJX", folderId, imageHitSuccessModel.Success, "logImageHit");
+                    else {
+                        if (document.domain == 'localhost') {
+                            //alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+                            alert(imageHitSuccessModel.Success);
+                        } else
+                            logError("AJX", folderId, imageHitSuccessModel.Success, "logImageHit");
+                    }
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("logImageHit")) {
-                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logImageHit");
-                }
+                if (document.domain == 'localhost') {
+                    //alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+                    alert(getXHRErrorDetails(jqXHR));
+                } else
+
+                    if (!checkFor404("logImageHit")) {
+                        logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logImageHit");
+                    }
             }
         });
     } catch (e) {
-        logError("CAT", folderId, e, "logImageHit");
-     }
+        if (document.domain === 'localhost') {
+            //alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+            alert(e);
+        } else
+            logError("CAT", folderId, e, "logImageHit");
+    }
 }
 
 function logPageHit(folderId) {

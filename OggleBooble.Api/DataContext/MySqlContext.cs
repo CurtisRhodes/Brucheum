@@ -31,8 +31,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<Ref> Refs { get; set; }
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
-
-
         public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
         public virtual DbSet<PageHitTotals> PageHitTotal { get; set; }
@@ -56,6 +54,20 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<Performance> Performances { get; set; }
         public virtual DbSet<FolderComment> FolderComments { get; set; }
         public virtual DbSet<VwImpact> VwImpacts { get; set; }
+        public virtual DbSet<VwFeedbackReport> FeedbackReport { get; set; }
+    }
+
+   [Table("OggleBooble.VwFeedbackReport")]
+    public class VwFeedbackReport
+    {
+        [Key]
+        public int FolderId { get; set; }
+        public string FeedbackType { get; set; }
+        public string FolderName { get; set; }
+        public string Location { get; set; }
+        public string IpAddress { get; set; }
+        public string FeedBackComment { get; set; }
+        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.VwImpact")]

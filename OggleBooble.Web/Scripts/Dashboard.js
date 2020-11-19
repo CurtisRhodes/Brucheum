@@ -170,7 +170,6 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>\n" +
                 "<div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
                 "<div class='clickable' onclick='runImpactReport()'>Impact</div>\n" +
-                "<div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
                 "<div class='clickable' onclick='BuildCenterfoldHtmlPage()'>Build Centerfold Html Page</div>\n" +
                 "<div class='clickable' onclick='errorLogReport()'>Error Log</div>");
             //  <div class='clickable' onclick='buildCenterfoldLsist()'>Build Centerfold List</div>\n" +

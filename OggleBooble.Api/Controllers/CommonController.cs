@@ -460,6 +460,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.FeedBacks.Add(new FeedBack()
                     {
+                        PageId = feedBackModel.FolderId,
                         FeedBackComment = feedBackModel.FeedBackComment,
                         FeedBackType = feedBackModel.FeedBackType,
                         FeedBackEmail = feedBackModel.FeedBackEmail,
@@ -467,9 +468,6 @@ namespace OggleBooble.Api.Controllers
                         Occured = DateTime.Now
                     });
                     db.SaveChanges();
-
-
-
                     success = "ok";
                 }
             }

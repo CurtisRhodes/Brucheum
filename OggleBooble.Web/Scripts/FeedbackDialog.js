@@ -6,14 +6,21 @@
         $('#centeredDialogTitle').html("feedback");
         $('#smnFeedback').summernote({
             height: 200,
-            toolbar: [['codeview']]
+            focus: true
+            // toolbar: [['codeview']]
         });
-        $("#smnFeedback").summernote('codeview.toggle');
-        setTimeout(function () { $("#smnFeedback").summernote('codeview.toggle'); }, 800);
+        $('.note-editable').trigger('focus');
+        $('.note-editable').trigger('focus');
+        $('.note-editable').click(function () { $(this).focus(); });
+
+
+        //$("#smnFeedback").summernote('codeview.toggle');
+        //setTimeout(function () { $("#smnFeedback").summernote('codeview.toggle'); }, 800);
 
         $('#centeredDialogContainer').css("top", $('.oggleHeader').height() + 120);
         $('#centeredDialogContainer').draggable().fadeIn();
         getUserEmail();
+        $('.note-editable').focus();
     }
     function validateFeedback() {
         $('.validationError').hide();
@@ -49,8 +56,8 @@
                         VisitorId: getCookieValue("VisitorId"),
                         FolderId: folderId,
                         FeedBackComment: feedbackMessage,
-                        FeedBackType: feedbackType,
-                        FeedBackEmail: $('#txtFeedbackEmail').val()
+                        FeedBackType: feedbackType, // $('input[name="feedbackRadio"]:checked').val()
+                        FeedBackEmail: $('#txtFeedbackEmail').val()  
                     },
                     success: function (success) {
                         if (success === "ok") {
@@ -60,16 +67,18 @@
                             //sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Wow!! FolderComment", "message:" + folderCommentMessage);
                             if (document.domain !== "localhost")
                                 sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "Feedback !!!", +
+                                    "feedbackBackType: " + feedbackType + "<br/>" +
                                     "feedbackMessage: " + feedbackMessage + "<br/>" +
                                     "visitor: " + getCookieValue("VisitorId") + "<br/>" +
                                     "folderId: " + folderId);
                             else
-                                alert("sendEmail(CurtishRhodes@hotmail.com, Feedback@Ogglebooble.com, Feedback !!!\n" +
-                                    "feedbackMessage: " + feedbackMessage + "\nfolderId: " + folderId);
+                                alert("sendEmail(CurtishRhodes@hotmail.com, Feedback@Ogglebooble.com, Feedback !!!" +
+                                    "\nfeedBackType: " + feedbackType +
+                                    "\nfeedbackMessage: " + feedbackMessage + "\nfolderId: " + folderId);
 
                             //console.log("is email working?");
                             $("#centeredDialogContainer").fadeOut();
-                            showMyAlert("Thank you for your feedback");
+                            showMyAlert("Thank you for your " + feedbackType);
                         }
                         else {
                             logError("AJX", folderId, success, "saveFeedback");
@@ -86,13 +95,15 @@
             logError("CAT", folderId, e, "saveFeedback");
         }
     }
+
     function feedbackDialogHtml(folderId) {
         return "<div id='feedbackDialog' class='roundedDialog' >\n" +
             "   <div id='errFeedbackRadioButtons' class='validationError'></div>\n" +
             "    <div class='feedbackRadioButtons'>\n" +
-            "       <input type='radio' name='feedbackRadio'  value='complement'><span> complement</span>\n" +
+            "       <input type='radio' name='feedbackRadio' checked value='complement'><span> complement</span>\n" +
             "       <input type='radio' name='feedbackRadio' value='suggestion'><span> suggestion</span>\n" +
             "       <input type='radio' name='feedbackRadio' value='report error'><span> report error</span>\n" +
+            "<div>folderId: " + folderId + "</div>\n" +
             "   </div>\n" +
             "   <div id='errFeedbackText' class='validationError'></div>\n" +
             "    <div class='modelInfoCommentArea'>\n" +
@@ -132,6 +143,24 @@
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /////////////     Folder Comment Dialog  //////////////////////////////////////
 
 function showFolderCommentDialog(folderId,folderName) {
@@ -175,7 +204,6 @@ function saveFolderComment(folderId) {
             data: {
                 VisitorId: getCookieValue("VisitorId"),
                 FolderId: folderId,
-                CommentText: folderCommentMessage
             },
             success: function (success) {
                 if (success === "ok") {

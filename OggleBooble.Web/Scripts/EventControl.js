@@ -120,7 +120,7 @@ function performEvent(eventCode, eventDetail, folderId) {
                 case "archive": window.location.href = "/album.html?folder=3"; break;
                 case "videos": window.location.href = 'video.html'; break;
                 case "mailme": window.location.href = 'mailto:curtishrhodes@hotmail.com'; break;
-                case "freedback": showFeedbackDialog(); break;
+                case "freedback": showFeedbackDialog(folderId); break;
                 case "slut archive": window.location.href = "/album.html?folder=440"; break;
                 default:
                     logError("SWT", folderId, "Uncaught Case: " + eventDetail, "performEvent/footer link click");

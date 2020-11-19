@@ -278,25 +278,9 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    feedbackReport.FeedbackRows =
-                        (from f in db.FeedBacks
-                         join v in db.Visitors on f.VisitorId equals v.VisitorId
-                         join c in db.VirtualFolders on f.PageId equals c.Id
-                         join p in db.VirtualFolders on c.Parent equals p.Id
-                         join r in db.RegisteredUsers on f.VisitorId equals r.VisitorId into sr
-                         from u in sr.DefaultIfEmpty()
-                         where (v.IpAddress != "68.203.90.183")
-                         select new FeedbackModel()
-                         {
-                             IpAddress = v.IpAddress,
-                             Parent = p.FolderName,
-                             Folder = c.FolderName,
-                             FeedBackType = f.FeedBackType,
-                             Occured = f.Occured,
-                             FeedBackComment = f.FeedBackComment,
-                             UserName = u.UserName == null ? "unregistered" : u.UserName,
-                             Email = u.Email == null ? "" : u.Email
-                         }).OrderByDescending(f => f.Occured).ToList();
+                    feedbackReport.FeedbackRows = db.FeedbackReport.ToList();
+                    feedbackReport.Total = db.FeedbackReport.Count();
+
                     feedbackReport.Success = "ok";
                 }
             }

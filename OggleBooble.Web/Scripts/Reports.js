@@ -204,16 +204,10 @@ function runLatestImageHitsReport() {
 
 function showMostActiveUsersReport() {
     activeReport = "MostActiveUsers";
-    $('.workAreaContainer').hide();
     $('#divStandardReport').show();
-    $('#reportLabel').html("Most Active Users " + todayString());
-    runMostActiveUsersReport();
-}
-function runMostActiveUsersReport() {
-    $("#divStandardReportCount").html("");
-    $("#divStandardReportArea").removeClass("tightReport");
+    $('#reportsHeaderTitle').html("Most Active Users " + todayString());
+    $("#reportsFooter").html("");
     $('#dashBoardLoadingGif').show();
-    $("#divStandardReportArea").html("");
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Report/MostActiveUsersReport",
@@ -242,9 +236,8 @@ function runMostActiveUsersReport() {
                     kludge += "<td>" + obj.UserName + "</td></tr>";
                 });
                 kludge += "</table>";
-
-                $("#divStandardReportArea").html(kludge);
-                $("#divStandardReportCount").html(" Total: " + mostActiveUsersReport.HitCount.toLocaleString());
+                $("#reportsContentArea").html(kludge);
+                //$("#reportsFooter").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
                 logError("AJX", 3910, mostActiveUsersReport.Success, "mostActiveUsersReport");
@@ -292,7 +285,7 @@ function runPageHitReport() {
                 $("#reportsFooter").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
-                logError("AJX", 3910, success, "pageHitsReport");
+                logError("AJX", 3910, pageHitReportModel.Success, "pageHitsReport");
             }
         },
         error: function (jqXHR) {
@@ -373,12 +366,9 @@ function errorLogReport() {
 
 function FeedbackReport() {
     activeReport = "Feedback";
-    $('.workAreaContainer').hide();
-    $('#divStandardReport').show();
-    $('#reportLabel').html("Feedback Report");
-    $('#dashBoardLoadingGif').show();
-    $("#divStandardReportArea").html("");
-    $("#divStandardReportCount").html("");
+    $('#reportsHeaderTitle').html("Feedback Report");
+    $("#reportsContentArea").html("");
+    $("#reportsFooter").html("");
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
@@ -387,20 +377,20 @@ function FeedbackReport() {
             $('#dashBoardLoadingGif').hide();
             if (feedbackReport.Success === "ok") {
                 var kludge = "<table class='mostAvtiveUsersTable'>";
-                kludge += "<tr><th>ip</th><th>Page</th><th>Type</th><th>Occured</th><th>User</th><th>Email</th><th>Comment</th></tr>";
+                kludge += "<tr><th>Type</th><th>Page</th><th>Ip</th><th>Occured</th><th>Location</th></tr>";
                 $.each(feedbackReport.FeedbackRows, function (idx, obj) {
-                    kludge += "<tr><td>" + obj.IpAddress + "</td>";
-                    kludge += "<td>" + obj.Parent + "/" + obj.Folder + "</td>";
+                    kludge += "<tr><td>" + obj.FeedbackType + "</td>";
+                    kludge += "<td>" + obj.FolderName + "</td>";
+                    kludge += "<td>" + obj.IpAddress + "</td>";
                     //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
-                    kludge += "<td>" + obj.FeedBackType  + "</td>";
                     kludge += "<td>" + obj.Occured+ "</td>";
-                    kludge += "<td>" + obj.UserName + "</td>";
-                    kludge += "<td>" + obj.Email + "</td></tr>";
-                    kludge += "<tr><td colspan=6>" + obj.FeedBackComment + "</td></tr>";
+                    kludge += "<td>" + obj.Location + "</td></tr>";
+                    // kludge += "<td>" + obj.Email + "</td></tr>";
+                    kludge += "<tr><td colspan=5>" + obj.FeedBackComment + "</td></tr>";
                 });
                 kludge += "</table>";
-                $("#divStandardReportArea").html(kludge);
-                //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+                $("#reportsContentArea").html(kludge);
+                $("#reportsFooter").html(" Total: " + feedbackReport.Total.toLocaleString());
             }
             else {
                 logError("XHR", 3910, feedbackReport.Success, "FeedbackReport");

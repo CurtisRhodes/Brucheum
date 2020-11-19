@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OggleBooble.Api.MySqlDataContext;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -106,22 +107,11 @@ namespace OggleBooble.Api.Models
     {
         public FeedbackReportModel()
         {
-            FeedbackRows = new List<FeedbackModel>();
+            FeedbackRows = new List<VwFeedbackReport>();
         }
-        public List<FeedbackModel> FeedbackRows{ get; set; }
+        public List<VwFeedbackReport> FeedbackRows{ get; set; }
         public string Success { get; set; }
-    }
-    
-    public class FeedbackModel
-    {
-        public string IpAddress { get; set; }
-        public string Parent { get; set; }
-        public string Folder { get; set; }
-        public string FeedBackType { get; set; }
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string FeedBackComment { get; set; }
-        public DateTime Occured { get; set; }
+        public int Total { get; set; }
     }
 
     public class PageHitReportModel
