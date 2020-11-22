@@ -5,6 +5,7 @@ function loadAlbum(folderId) {
         logError("BUG", 999, "folderId not found", "loadAlbum");
         return;
     }
+    qucikHeader(folderId);
     logPageHit(folderId);
 
     apFolderId = folderId;
@@ -15,7 +16,35 @@ function loadAlbum(folderId) {
     }
     settingsImgRepo = settingsArray.ImageRepo;
     getAlbumImages(folderId);
-    getAlbumPageInfo(folderId)
+    getAlbumPageInfo(folderId);
+}
+
+function qucikHeader(folderId) {
+    var infoStart = Date.now();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/GalleryPage/GetQucikHeader?folderId=" + folderId,
+        success: function (albumInfo) {
+            if (albumInfo.Success === "ok") {
+                if (albumInfo.RootFolder == "porn")
+                    document.title = albumInfo.FolderName + " : OgglePorn";
+                else
+                    document.title = albumInfo.FolderName + " : OggleBooble";
+
+                setOggleHeader(folderId, albumInfo.RootFolder);
+                setOggleFooter(folderId, albumInfo.RootFolder);
+
+                var delta = (Date.now() - infoStart) / 1000;
+                console.log("QucikHeader took: " + delta.toFixed(3));
+            }
+            else {
+                logError("AJX", folderId, albumInfo.Success, "qucikHeader");
+            }
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("qucikHeader")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "qucikHeader");
+        }
+    });
 }
 
 function getAlbumImages(folderId) {
@@ -117,14 +146,6 @@ function getAlbumImages(folderId) {
     }
 }
 
-function folderClick(folderId, isStepChild) {
-    if (isStepChild == 1)
-        window.open("/album.html?folder=" + folderId, "_blank");  // open in new tab
-    else
-        window.location.href = "/album.html?folder=" + folderId;  //  open page in same window
-    //" onclick='rtpe(\"SUB\",\"called from: " + folderId + "\",\"" + folder.DirectoryName + "\"," + folder.FolderId + ")'>\n" +
-}
-
 function getAlbumPageInfo(folderId) {
     var infoStart = Date.now();
     $.ajax({
@@ -136,17 +157,13 @@ function getAlbumPageInfo(folderId) {
                 $('#folderCommentButton').on("click", function () {
                     showFolderCommentDialog(folderId, albumInfo.FolderName);
                 });
-                apFolderType = albumInfo.FolderType;
-                if (albumInfo.RootFolder == "porn")
-                    document.title = albumInfo.FolderName + " : OgglePorn";
-                else
-                    document.title = albumInfo.FolderName + " : OggleBooble";
 
                 //function addMetaTags() {
                 //jQuery("head").append('<meta property="og:url" content="' + url + '">');
                 jQuery("head").append("<meta property='og:title' content='" + albumInfo.FolderName + ">");
                 let aKeywords = "big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold, ";
                 jQuery("head").append("<meta property='keywords' content='" + aKeywords + albumInfo.FolderName + ">");
+                $('#seoPageName').html(albumInfo.FolderName);
 
                 //<meta name="description" content="Ogglebooble is a large collection of natural big breasted girls" />
                 //    <meta name="keywords" content="big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold" />
@@ -167,7 +184,6 @@ function getAlbumPageInfo(folderId) {
 
                 if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + albumInfo.FolderType);
 
-                $('#seoPageName').html(albumInfo.FolderName);
 
                 if ((albumInfo.TrackBackItems.length > 0)) {
                     $('#trackbackContainer').css("display", "inline-block");
@@ -190,9 +206,7 @@ function getAlbumPageInfo(folderId) {
 
                 $('#folderCommentButton').fadeIn();
 
-                setOggleHeader(folderId, albumInfo.RootFolder);
                 setBadges(albumInfo.FolderComments);
-                setOggleFooter(folderId, albumInfo.RootFolder);
 
                 //$('#headerMessage').html("page hits: " + albumInfo.PageHits.toLocaleString());
                 $('#footerPageHits').html("page hits: " + albumInfo.PageHits.toLocaleString());
@@ -225,7 +239,6 @@ function getAlbumPageInfo(folderId) {
                         }
                     });
                 }
-
 
                 //if (document.domain !== "localhost") {
                 //    sendEmail("CurtishRhodes@hotmail.com", "Album.Visited@Ogglebooble.com", albumInfo.FolderName + " page visited", "all I want is to see an email");
@@ -419,3 +432,12 @@ function slowlyShowFolderInfoDialog(folderId) {
         }
     }, 1800);
 }
+
+function folderClick(folderId, isStepChild) {
+    if (isStepChild == 1)
+        window.open("/album.html?folder=" + folderId, "_blank");  // open in new tab
+    else
+        window.location.href = "/album.html?folder=" + folderId;  //  open page in same window
+    //" onclick='rtpe(\"SUB\",\"called from: " + folderId + "\",\"" + folder.DirectoryName + "\"," + folder.FolderId + ")'>\n" +
+}
+

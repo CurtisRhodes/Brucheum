@@ -160,40 +160,6 @@ function ctxGetFolderDetails() {
     $('#ctxNewTab').hide();
     $('#ctxImageShowLinks').hide();
     $('#ctxExplode').hide();
-
-    //$.ajax({
-    //    type: "GET",
-    //    url: settingsArray.ApiServer + "api/CatFolder/GetFolderInfo?folderId=" + pFolderId,
-    //    success: function (folderDetails) {
-    //        $('#imagePageLoadingGif').hide();
-    //        if (folderDetails.Success === "ok") {
-    //            folderInfo = folderDetails;
-    //            $('#ctxModelName').html(pFolderName);
-    //            //pModelFolderId = imageInfo.ModelFolderId;
-    //            pFolderType = folderDetails.FolderType;
-    //            //$('#headerMessage').html("menu type: " + pMenuType);
-
-    //            $('#contextMenuContent').fadeIn();
-
-    //            if (jQuery.isEmptyObject(folderDetails.InternalLinks)) {
-    //                $('#ctxShowImageLinks').hide();
-    //            }
-    //            else {
-    //                $.each(folderDetails.InternalLinks, function (idx, obj) {
-    //                    $('#otherLinksContainer').append("<div><a href='/album.html?folder=" + idx + "' target='_blank'>" + obj + "</a></div>");
-    //                });
-    //            }
-    //        }
-    //        else {
-    //            logError("BUG", pFolderId, folderDetails.Success, "ctxGetFolderDetails");
-    //        }
-    //    },
-    //    error: function (xhr) {
-    //        if (!checkFor404("ctxGetFolderDetails")) {
-    //            logError("XHR", pFolderId, getXHRErrorDetails(jqXHR), "ctxGetFolderDetails");
-    //        }
-    //    }
-    //});
 }
 
 function contextMenuAction(action) {
@@ -233,6 +199,9 @@ function contextMenuAction(action) {
             break;
         }
         case "explode": {
+
+            //logEvent(eventCode, folderId, calledFrom, eventDetails)
+            logEvent("EXP", pFolderId, pFolderName, pLinkId);
             //rtpe(eventCode, calledFrom, eventDetail, pageId)
             //rtpe("EXP", pFolderName, pImgSrc, pFolderId);
             window.open(pImgSrc, "_blank");

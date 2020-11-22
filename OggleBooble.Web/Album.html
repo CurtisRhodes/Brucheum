@@ -103,13 +103,14 @@
             window.location.href = "Index.html";
         }
         resizeAlbumPage();
-        setOggleHeader(params.folder, "loading");
         var dots = "";
         loadOggleSettings();
         var waiter = setInterval(function () {
             if (settingsArray.ApiServer === undefined) {
                 dots += "~ ";
                 $('#dots').html(dots);
+                //setOggleHeader(params.folder, "loading");
+
             }
             else {
                 clearInterval(waiter);

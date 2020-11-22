@@ -72,7 +72,7 @@ function loadOggleSettings() {
         url: "/Data/Settings.xml",
         dataType: "xml",
         success: function (settingsXml) {
-            document.title = "loading : OggleBooble";
+            document.title = "welcome : OggleBooble";
             $(settingsXml).find('setting').each(function () {
                 settingsArray[$(this).attr('name')] = $(this).attr('value');
             });

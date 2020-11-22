@@ -154,6 +154,31 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
+        [Route("api/GalleryPage/GetQucikHeader")]
+        public AlbumInfoModel GetQucikHeader(int folderId)
+        {
+            var albumInfo = new AlbumInfoModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                    albumInfo.RootFolder = dbCategoryFolder.RootFolder;
+                    albumInfo.FolderName = dbCategoryFolder.FolderName;
+                    albumInfo.FolderType = dbCategoryFolder.FolderType;
+
+                }
+                albumInfo.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                albumInfo.Success = Helpers.ErrorDetails(ex);
+            }
+            return albumInfo;
+        }
+
+
+        [HttpGet]
         [Route("api/GalleryPage/GetSubFolderCounts")]
         public SubFolderCountModel GetSubFolderCounts(int folderId)
         {

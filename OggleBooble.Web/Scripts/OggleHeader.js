@@ -35,6 +35,12 @@ function setOggleHeader(folderId, subdomain) {
 
 function setHeaderMenu(folderId, subdomain) {
     switch (subdomain) {
+        case "Index": {
+            $('#oggleHeader').addClass('boobsHeader');
+            $('#mainMenuContainer').html("Home of Big Naturals");
+            $("#divLoginArea").hide();
+            break;
+        }
         case "loading": {
             $('#oggleHeader').addClass('boobsHeader');
             $('#mainMenuContainer').html("loading");

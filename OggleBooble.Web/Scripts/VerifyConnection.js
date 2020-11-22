@@ -29,6 +29,10 @@ function checkFor404(calledFrom) {
                             dots += ". ";
                             //dots += ". " + ;
                             $('#dots').html(dots);
+                            if (verifyConnectionCount == 6)
+                                setOggleHeader(3908, "Index");
+                                //setOggleHeader(params.folder, "loading");
+
                             $('#headerMessage').html(verifyConnectionCount);
                             if ((verifyConnectionCount > 4) && (!connectingToServerGifShowing)) showConnectingToServerGif();
                             if ((verifyConnectionCount > verifyConnectionCountLimit) && (!canIgetaConnectionMessageShowing)) {
