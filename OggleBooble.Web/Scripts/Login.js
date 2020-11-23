@@ -40,14 +40,27 @@ function attemptLogin() {
                     window.location.href = ".";
                 }
                 else {
-                    if (successModel.ReturnValue == "valid")
-                        $('#loginValidationSummary').html(successModel.Success).show();
-                    else
+                    //successModel.ReturnValue = "valid";
+                    //successModel.Success = "user name not found";
+                    //alert("successModel.ReturnValue: " + successModel.ReturnValue + "\nsuccessModel.Success: " + successModel.Success);
+
+                    if (successModel.ReturnValue == "valid") {
+                        if (successModel.Success == "user name not found") {
+                            showMyAlert("user name not found", "<div>you need to <a href='#'>register</a> username before you can login<div>");
+                        } else
+                            if (successModel.Success == "password fail") {
+                                alert("password fail");
+                            } else {
+                                logError("AJX", loginFromPageId, successModel.Success, "attemptLogin");
+                            }
+                    }
+                    else {
                         logError("AJX", loginFromPageId, successModel.Success, "attemptLogin");
+                    }
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("attemptLogin")) 
+                if (!checkFor404("attemptLogin"))
                     logError("XHR", loginFromPageId, getXHRErrorDetails(jqXHR), "attemptLogin");
             }
         });

@@ -586,7 +586,11 @@ function closeDragElement() {
     document.onmousemove = null;
 }
 
-function showMyAlert(message) {
-    alert(message);
+function showMyAlert(title, message) {
+    $('#centeredDialogContents').html("<div>\n<div id='myAlert'>" + message + "</div>\n</div>");
+    $('#centeredDialogTitle').html(title);
+    $('#centeredDialogContainer').css("top", 33 + $(window).scrollTop());
+    $('#centeredDialogContainer').draggable().fadeIn();
+    //alert(message);
 }
 

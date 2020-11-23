@@ -92,7 +92,6 @@
         //$('#footerMessage').html("loading settings");
 
         setOggleHeader(3908, "Index");
-        loadOggleSettings();
 
         params = getParams();
         if (params.subdomain === undefined)
@@ -103,41 +102,53 @@
         else
             spaPageId = params.spa;
 
-        checkFor404("start");
-        let connectionVerifiedLoop = setInterval(function () {
-            if (connectionVerified) {
-                clearInterval(connectionVerifiedLoop);
-
-                console.log("connection verified: " + verifyConnectionCount + " calling tryHitStats");
-                tryHitStats();
-                changeFavoriteIcon("redBallon");
-                document.title = "OggleBooble";
-
-                localhostBypass();
-
-                //verifiyVisitor("index", spaPageId);
-
-                if (spaPageId == 3908) // boobs archive
-                    indexStartup();
-
-                if (spaPageId == 3909)// porn
-                    pornStartup();
-
-                if (spaPageId == 3912)
-                    playboyStartup();
-
-                if (spaPageId == 3907) { // ranker
-                    rankerStartup(params.bp);
-                }
-                if (spaPageId == 3910) {  // dashboard
-                    dashboardStartup();
-                }
-                if (spaPageId == 3911) { // "blog"
-                    blogStartup();
-                }
+        loadOggleSettings();
+        var waiter = setInterval(function () {
+            if (settingsArray.ApiServer === undefined) {
+                dots += "~ ";
+                $('#dots').html(dots);
+                //setOggleHeader(params.folder, "loading");
             }
-        }, 300);
+            else {
+                clearInterval(waiter);
+                //$('#dots').html("*");
+                checkFor404("start");
+                let connectionVerifiedLoop = setInterval(function () {
+                    if (connectionVerified) {
+                        clearInterval(connectionVerifiedLoop);
 
+                        console.log("connection verified: " + verifyConnectionCount + " calling tryHitStats");
+                        tryHitStats();
+                        changeFavoriteIcon("redBallon");
+                        document.title = "OggleBooble";
+
+                        localhostBypass();
+
+                        //verifiyVisitor("index", spaPageId);
+
+                        if (spaPageId == 3908) // boobs archive
+                            indexStartup();
+
+                        if (spaPageId == 3909)// porn
+                            pornStartup();
+
+                        if (spaPageId == 3912)
+                            playboyStartup();
+
+                        if (spaPageId == 3907) { // ranker
+                            rankerStartup(params.bp);
+                        }
+                        if (spaPageId == 3910) {  // dashboard
+                            dashboardStartup();
+                        }
+                        if (spaPageId == 3911) { // "blog"
+                            blogStartup();
+                        }
+                    }
+                }, 300);
+
+            }
+        });
         window.addEventListener("resize", resizeIndexPage);
         resizeIndexPage();
     </script>

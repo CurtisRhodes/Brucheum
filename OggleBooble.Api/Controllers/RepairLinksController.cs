@@ -143,8 +143,8 @@ namespace OggleBooble.Api.Controllers
                     // 2. check for physicalFiles with no link
                     if (dbFolderCatLinks.Where(il => il.ImageLinkId == physcialFileLinkId && il.ImageCategoryId == folderId).FirstOrDefault() == null)
                     {
-                        //var otherFolderCatLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == physcialFileLinkId).FirstOrDefault();
-                        ///if (otherFolderCatLinks == null)
+                        var otherFolderCatLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == physcialFileLinkId).FirstOrDefault();
+                        if (otherFolderCatLinks == null)
                         {
                             db.CategoryImageLinks.Add(new CategoryImageLink()
                             {
@@ -156,6 +156,7 @@ namespace OggleBooble.Api.Controllers
                             repairReport.CatLinksAdded++;
                         }
                     }
+
                     repairReport.PhyscialFilesProcessed++;
                 }
 
@@ -197,19 +198,36 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (!physcialFileLinkIds.Contains(folderCatLink.ImageLinkId))
                     {
-                        //var nonLocallink = db.ImageFiles.Where(i => i.Id == folderCatLink.ImageLinkId && i.FolderId != folderId).FirstOrDefault();
-                        var nonLocallinks = db.CategoryImageLinks.Where(i => (i.ImageLinkId == folderCatLink.ImageLinkId) && (i.ImageCategoryId != folderId)).ToList();
-                        if (nonLocallinks == null)
+                        var dbMisplacedImageFile = db.ImageFiles.Where(i => i.Id == folderCatLink.ImageLinkId).FirstOrDefault();
+                        if (dbMisplacedImageFile == null)
                         {
-                            // physcial file with no catlink
-                            db.CategoryImageLinks.Add(new CategoryImageLink()
-                            {
-                                ImageCategoryId = folderId,
-                                ImageLinkId = folderCatLink.ImageLinkId,
-                                SortOrder = 1010
-                            });
+                            var badLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == folderCatLink.ImageLinkId).ToList();
+                            db.CategoryImageLinks.RemoveRange(badLinks);
                             db.SaveChanges();
-                            repairReport.CatLinksAdded++;
+                            repairReport.CatLinksRemoved += badLinks.Count();
+                        }
+                        else
+                        {
+                            var nonLocallinks = db.CategoryImageLinks.Where(i => (i.ImageLinkId == folderCatLink.ImageLinkId) && (i.ImageCategoryId != folderId)).ToList();
+                            if (nonLocallinks.Count() == 0)
+                            {
+                                repairReport.Errors.Add("Orphan image?: " + dbMisplacedImageFile.Id);
+                                db.CategoryImageLinks.Remove(folderCatLink);
+                                db.SaveChanges();
+                                repairReport.CatLinksRemoved++;
+                            }
+                            else
+                            {
+                                if (nonLocallinks.Count() == 1)
+                                {
+                                    //var nonLocallink = db.ImageFiles.Where(i => i.Id == folderCatLink.ImageLinkId && i.FolderId != folderId).FirstOrDefault();
+                                    var firstNonLocallink = db.CategoryImageLinks.Where(i => (i.ImageLinkId == folderCatLink.ImageLinkId) && (i.ImageCategoryId != folderId)).FirstOrDefault();
+                                    repairReport.Errors.Add("Missplaced image?: " + folderCatLink.ImageLinkId);
+
+                                    //var misplacededImage = db.ImageFiles.Where(f => f.Id == folderCatLink.ImageLinkId).First();
+                                    //misplacededImage
+                                }
+                            }
                         }
                     }
                     repairReport.LinkRecordsProcessed++;
@@ -247,15 +265,24 @@ namespace OggleBooble.Api.Controllers
                     {
                         if (fileName.Length > 40)
                         {
-                            possibleGuid = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
-                            if (Guid.TryParse(possibleGuid, out Guid outGuid))
+                            try
                             {
-                                if (fileName != (folderName + "_" + possibleGuid + ext))
+                                possibleGuid = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                                if (Guid.TryParse(possibleGuid, out Guid outGuid))
                                 {
-                                    newFileName = folderName + "_" + possibleGuid + ext;
-                                    FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                                    repairReport.ImagesRenamed++;
+                                    if (fileName != (folderName + "_" + possibleGuid + ext))
+                                    {
+                                        newFileName = folderName + "_" + possibleGuid + ext;
+                                        FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                                        repairReport.ImagesRenamed++;
+                                    }
                                 }
+                            }
+                            catch (Exception)
+                            {
+                                newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
+                                FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                                repairReport.ImagesRenamed++;
                             }
                         }
                         else
@@ -265,10 +292,20 @@ namespace OggleBooble.Api.Controllers
                             repairReport.ImagesRenamed++;
                         }
                     } //newFileName = fileName.Substring(0, fileName.LastIndexOf(".")) + "_" + Guid.NewGuid().ToString() + ext;
+                    else
+                    {
+                        newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
+                        FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                        repairReport.ImagesRenamed++;
+                    }
                 }
+
                 success = "ok";
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex)
+            { 
+                success = Helpers.ErrorDetails(ex); 
+            }
             return success;
         }
     }

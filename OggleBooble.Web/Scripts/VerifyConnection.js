@@ -27,11 +27,7 @@ function checkFor404(calledFrom) {
                         else {
                             verifyConnectionCount++;
                             dots += ". ";
-                            //dots += ". " + ;
                             $('#dots').html(dots);
-                            if (verifyConnectionCount == 6)
-                                setOggleHeader(3908, "Index");
-                                //setOggleHeader(params.folder, "loading");
 
                             $('#headerMessage').html(verifyConnectionCount);
                             if ((verifyConnectionCount > 4) && (!connectingToServerGifShowing)) showConnectingToServerGif();
@@ -52,18 +48,21 @@ function checkFor404(calledFrom) {
 function showConnectingToServerGif() {
     // alert("showConnectingToServerGif() " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
     if (!connectingToServerGifShowing) {
+        
         connectingToServerGifShowing = true;
-        console.log("SERVICE DOWN " + verifyConnectionCount);
         $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
         $('#customMessageContainer').css("top", 200);
-        document.title = "loading : OggleBooble";
-        changeFavoriteIcon("loading");
+
+        //document.title = "loading : OggleBooble";
+        //changeFavoriteIcon("loading");
+        setOggleHeader(3908, "loading");
     }
 }
 
 function showCanIgetaConnectionMessage() {
     if (!canIgetaConnectionMessageShowing) {
         canIgetaConnectionMessageShowing = true;
+        console.log("SERVICE DOWN " + verifyConnectionCount);
         $('#customMessage').html(
             "<div class='shaddowBorder'>" +
             "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
@@ -89,7 +88,7 @@ function verifyConnectionFunction() {
         url: requestedPage,
         success: function (successModel) {
 
-            console.log("GET VerifyConnection: " + verifyConnectionCount + "  successModel.Success: " + successModel.Success);
+            console.log("GET VerifyConnection: " + verifyConnectionCount);
 
             if (successModel.Success == "ok") {
                 if (successModel.ConnectionVerified) {
@@ -105,9 +104,14 @@ function verifyConnectionFunction() {
                 }
             }
             else {
-                console.log("proper error in verifyConnectionFunction: " + successModel.Success);
-                if (document.domain === "local host") alert("proper error in verifyConnectionFunction: " + successModel.Success);
-                connectionVerified = false;
+                if (successModel.Success.indexOf("Parameter name: app") > 0) {
+                    connectionVerified = false;
+                    //console.log("TRAPPED: " + successModel.Success);
+                }
+                else {
+                    console.log("proper error in verifyConnectionFunction: " + successModel.Success);
+                    if (document.domain === "local host") alert("proper error in verifyConnectionFunction: " + successModel.Success);
+                }
             }
         },
         error: function (jqXHR) {
