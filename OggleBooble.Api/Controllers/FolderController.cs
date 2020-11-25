@@ -31,7 +31,7 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     string ftpRepo = imgRepo.Substring(7);
-                    var dbDestParent = db.VirtualFolders.Where(i => i.Id == parentId).First();
+                    var dbDestParent = db.CategoryFolders.Where(i => i.Id == parentId).First();
                     string newFtpPath = ftpHost + ftpRepo + "/" + dbDestParent.FolderPath + "/" + newFolderName;
                     if (FtpUtilies.DirectoryExists(newFtpPath))
                     {
@@ -42,7 +42,7 @@ namespace OggleBooble.Api.Controllers
                     successModel.Success = FtpUtilies.CreateDirectory(newFtpPath);
                     if (successModel.Success == "ok")
                     {
-                        VirtualFolder newFolder = new VirtualFolder();
+                        CategoryFolder newFolder = new CategoryFolder();
                         //newFolder.Id = newFolderId;
                         newFolder.Parent = parentId;
                         newFolder.FolderName = newFolderName.Trim();
@@ -50,7 +50,7 @@ namespace OggleBooble.Api.Controllers
                         newFolder.RootFolder = dbDestParent.RootFolder;
                         newFolder.SortOrder = 934;
                         newFolder.FolderPath = dbDestParent.FolderPath + "/" + newFolderName;
-                        db.VirtualFolders.Add(newFolder);
+                        db.CategoryFolders.Add(newFolder);
                         db.SaveChanges();
                         int newFolderId = newFolder.Id;
                         successModel.ReturnValue = newFolderId.ToString();
@@ -70,9 +70,9 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 string oldName;
-                using (var db = new OggleBoobleMSSqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    MSSqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    var dbSourceFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     oldName = dbSourceFolder.FolderName;
                     string parentPath = Helpers.GetParentPath(folderId);
                     string ftpPath = ftpHost + dbSourceFolder.RootFolder + hostingPath + parentPath + oldName;
@@ -93,15 +93,15 @@ namespace OggleBooble.Api.Controllers
                         db.SaveChanges();
                     }
                 }
-                if (success == "ok")
-                {
-                    using (var mdb = new OggleBoobleMySqlContext())
-                    { 
-                        var mySqlCategoryFolder = mdb.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                        mySqlCategoryFolder.FolderName = newFolderName;
-                        mdb.SaveChanges();
-                    }
-                }
+                //if (success == "ok")
+                //{
+                //    using (var mdb = new OggleBoobleMySqlContext())
+                //    { 
+                //        var mySqlCategoryFolder = mdb.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                //        mySqlCategoryFolders.FolderName = newFolderName;
+                //        mdb.SaveChanges();
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -119,7 +119,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    var dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     dbFolder.Parent = newParent;
                     db.SaveChanges();
                     success = "ok";
@@ -140,8 +140,8 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     searchResultsModel.SearchResults.AddRange(
-                        (from f in db.VirtualFolders
-                         join p in db.VirtualFolders on f.Parent equals p.Id
+                        (from f in db.CategoryFolders
+                         join p in db.CategoryFolders on f.Parent equals p.Id
                          where f.FolderName.StartsWith(searchString) && f.FolderType != "singleChild"
                          select new SearchResult()
                          {
@@ -150,8 +150,8 @@ namespace OggleBooble.Api.Controllers
                          }).ToList());
 
                     List<SearchResult> containsSearchResults =
-                        (from f in db.VirtualFolders
-                         join p in db.VirtualFolders on f.Parent equals p.Id
+                        (from f in db.CategoryFolders
+                         join p in db.CategoryFolders on f.Parent equals p.Id
                          where f.FolderName.StartsWith(searchString) && f.FolderType != "singleChild"
                          select new SearchResult()
                          {
@@ -183,7 +183,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var folderToMove = db.VirtualFolders.Where(f => f.Id == stepchildModel.SourceFileId).First();
+                    var folderToMove = db.CategoryFolders.Where(f => f.Id == stepchildModel.SourceFileId).First();
                     db.StepChildren.Add(new MySqlDataContext.StepChild()
                     {
                         Parent = stepchildModel.DestinationId,
@@ -216,7 +216,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    var dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     if (dbFolder == null)
                     {
                         folderInfo.Success = "folder not found";
@@ -246,14 +246,14 @@ namespace OggleBooble.Api.Controllers
                 string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                    var dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     string fullPathName = "";
                     if (dbFolder.FolderImage != null)
                     {
                         var dbImageFile = db.ImageFiles.Where(i => i.Id == dbFolder.FolderImage).FirstOrDefault();
                         if (dbImageFile != null)
                         {
-                            var imgFolderPath = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath;
+                            var imgFolderPath = db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath;
                             //string fileName = dbImageFile.FileName;
                             bool nw = (imgFolderPath == dbFolder.FolderPath);
                             fullPathName = repoDomain + "/" + imgFolderPath + "/" + dbImageFile.FileName;
@@ -266,7 +266,7 @@ namespace OggleBooble.Api.Controllers
                     folderDetailModel.RootFolder = dbFolder.RootFolder;
                     folderDetailModel.FolderImage = fullPathName;
                     folderDetailModel.InternalLinks = (from l in db.CategoryImageLinks
-                                                       join f in db.VirtualFolders on l.ImageCategoryId equals f.Id
+                                                       join f in db.CategoryFolders on l.ImageCategoryId equals f.Id
                                                        where l.ImageCategoryId == folderId && l.ImageCategoryId != folderId
                                                        select new { folderId = f.Id, folderName = f.FolderName })
                                                        .ToDictionary(i => i.folderId, i => i.folderName);

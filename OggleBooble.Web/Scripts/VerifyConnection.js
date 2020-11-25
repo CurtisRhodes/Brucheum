@@ -12,6 +12,8 @@ function checkFor404(calledFrom) {
         else {
             clearInterval(getXMLsettingsWaiter);
             verifyConnectionFunction();
+            connectingToServerGifShowing = false;
+
             setTimeout(function () {
                 if (connectionVerified) {
                     $('#dots').html('');
@@ -46,16 +48,19 @@ function checkFor404(calledFrom) {
 }
 
 function showConnectingToServerGif() {
-    // alert("showConnectingToServerGif() " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
+    //alert("showConnectingToServerGif() " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
     if (!connectingToServerGifShowing) {
         
         connectingToServerGifShowing = true;
         $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
         $('#customMessageContainer').css("top", 200);
 
+        console.log("showing connectingToServerGif");
+        //alert("showConnectingToServerGif() " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
+
         //document.title = "loading : OggleBooble";
         //changeFavoriteIcon("loading");
-        setOggleHeader(3908, "loading");
+        //setOggleHeader(3908, "loading s");
     }
 }
 

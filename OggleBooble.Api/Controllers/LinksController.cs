@@ -149,7 +149,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    VirtualFolder rowToRename = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                    CategoryFolder rowToRename = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     rowToRename.FolderName = newFolderName;
                     db.SaveChanges();
                 }
@@ -220,7 +220,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     string dbRejectFolder = "https://img.OggleBooble.com/rejects";
                     var dbSourceImage = db.ImageFiles.Where(f => f.Id == linkId).First();
-                    var dbSourceFolder = db.VirtualFolders.Where(f => f.Id == dbSourceImage.FolderId).First();
+                    var dbSourceFolder = db.CategoryFolders.Where(f => f.Id == dbSourceImage.FolderId).First();
                     string ftpRepo = imgRepo.Substring(7);
                     string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath + "/" + dbSourceImage.FileName;
                     success = FtpUtilies.MoveFile(sourceFtpPath, dbRejectFolder);
@@ -248,10 +248,10 @@ namespace OggleBooble.Api.Controllers
                 string ftpRepo = imgRepo.Substring(7);
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbDestFolder = db.VirtualFolders.Where(i => i.Id == moveManyModel.DestinationFolderId).First();
+                    var dbDestFolder = db.CategoryFolders.Where(i => i.Id == moveManyModel.DestinationFolderId).First();
                     string destFtpPath = ftpHost + ftpRepo + "/" + dbDestFolder.FolderPath;
                     
-                    var dbSourceFolder = db.VirtualFolders.Where(f => f.Id == moveManyModel.SourceFolderId).First();
+                    var dbSourceFolder = db.CategoryFolders.Where(f => f.Id == moveManyModel.SourceFolderId).First();
                     string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath;
 
                     ImageFile dbImageFile = null;
@@ -310,12 +310,12 @@ namespace OggleBooble.Api.Controllers
                     ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).First();
                     string ext = dbImageFile.FileName.Substring(dbImageFile.FileName.LastIndexOf("."));
 
-                    VirtualFolder dbSourceFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).First();
+                    CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).First();
                     string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath;
                     string fileName = dbImageFile.FileName;
                     //string assumedFileName = dbSourceFolder.FolderName + "_" + linkId + ext;
 
-                    VirtualFolder dbDestFolder = db.VirtualFolders.Where(i => i.Id == destinationFolderId).First();
+                    CategoryFolder dbDestFolder = db.CategoryFolders.Where(i => i.Id == destinationFolderId).First();
                     string destFtpPath = ftpHost + ftpRepo + "/" + dbDestFolder.FolderPath;
 
                     string newFileName = dbDestFolder.FolderName + "_" + linkId + ext;

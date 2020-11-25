@@ -234,7 +234,7 @@ namespace OggleBooble.Api.Controllers
                     pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
                     pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
 
-                    VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     if (categoryFolder != null)
                     {
                         pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
@@ -246,7 +246,7 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
-                            VirtualFolder parentFolder = db.VirtualFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
+                            CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
                             if (parentFolder != null)
                                 pageHitSuccessModel.ParentName = parentFolder.FolderName;
                         }
@@ -349,8 +349,8 @@ namespace OggleBooble.Api.Controllers
             VerifyConnectionSuccessModel successModel = new VerifyConnectionSuccessModel() { ConnectionVerified = false };
             try
             {
-                //using (var db = new OggleBoobleMySqlContext())
-                using (var db = new OggleBoobleMSSqlContext())
+                //using (var db = new OggleBoobleMSSqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     var dbTest = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
                     successModel.ConnectionVerified = (dbTest != null);

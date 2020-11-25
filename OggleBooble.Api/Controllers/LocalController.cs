@@ -80,10 +80,10 @@ namespace OggleBooble.Api.Controllers
             var testResults = new TestResults();
             using (var db = new MSSqlDataContext.OggleBoobleMSSqlContext())
             {
-                var categoryFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
-                foreach (var categoryFolder in categoryFolders)
+                var dbTestFolders = db.TestFolders.Where(f => f.Parent == parent).ToList();
+                foreach (var testFolder in dbTestFolders)
                 {
-                    testResults.Items.Add(new TestResultsItem() { Id = categoryFolder.Id, FolderName = categoryFolder.FolderName });
+                    testResults.Items.Add(new TestResultsItem() { Id = testFolder.Id, FolderName = testFolder.FolderName });
                 }
                 testResults.Success = "ok";
             }
@@ -96,7 +96,7 @@ namespace OggleBooble.Api.Controllers
             var testResults = new TestResults();
             using (var db = new MySqlDataContext.OggleBoobleMySqlContext())
             {
-                List<VirtualFolder> categoryFolders = db.VirtualFolders.Where(f => f.Parent == parent).ToList();
+                List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
                 foreach (var categoryFolder in categoryFolders)
                 {
                     testResults.Items.Add(new TestResultsItem() { Id = categoryFolder.Id, FolderName = categoryFolder.FolderName });

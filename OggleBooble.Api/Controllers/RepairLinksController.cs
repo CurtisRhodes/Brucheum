@@ -44,11 +44,11 @@ namespace OggleBooble.Api.Controllers
         {
             try
             {
-                VirtualFolder dbCategoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                 string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
                 string folderName = dbCategoryFolder.FolderName;
                 if (dbCategoryFolder.FolderType == "singleChild") {
-                    VirtualFolder dbParentFolder = db.VirtualFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
+                    CategoryFolder dbParentFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
                     folderName = dbParentFolder.FolderName;
                 }
                 RenameFiles(ftpPath, folderName, repairReport);
@@ -235,8 +235,8 @@ namespace OggleBooble.Api.Controllers
 
                 if (recurr)
                 {
-                    var childFolders = db.VirtualFolders.Where(c => c.Parent == folderId).ToList();
-                    foreach (VirtualFolder childFolder in childFolders)
+                    var childFolders = db.CategoryFolders.Where(c => c.Parent == folderId).ToList();
+                    foreach (CategoryFolder childFolder in childFolders)
                     {
                         PerformFolderChecks(childFolder.Id, repairReport, db, recurr);
                     }

@@ -36,7 +36,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbPageFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    var dbPageFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     imageInfo.FolderName = dbPageFolder.FolderName;
                     imageInfo.FolderType = dbPageFolder.FolderType;
 
@@ -44,7 +44,7 @@ namespace OggleBooble.Api.Controllers
                     if (dbImageFile == null) { imageInfo.Success = "no image link found"; return imageInfo; }
                     if (dbImageFile.FolderId != folderId)
                     {
-                        var dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
+                        var dbModelFolder = db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
                         if (dbModelFolder == null) { imageInfo.Success = "no image link folderId file found"; return imageInfo; }
                         imageInfo.ModelFolderId = dbModelFolder.Id;
                         imageInfo.ModelFolderName = dbModelFolder.FolderName;
@@ -71,7 +71,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     //CategoryImageLink dbCategoryImageLink= db.CategoryImageLinks.Where(l=>l.ImageLinkId)
                     
-                    VirtualFolder dbPageFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    CategoryFolder dbPageFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     imageInfo.RootFolder = dbPageFolder.RootFolder;
                     imageInfo.FolderPath = dbPageFolder.FolderPath;
 
@@ -80,7 +80,7 @@ namespace OggleBooble.Api.Controllers
 
                     if (dbImageFile.FolderId != folderId)
                     {
-                        var dbModelFolder = db.VirtualFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
+                        var dbModelFolder = db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).FirstOrDefault();
                         if (dbModelFolder == null) { imageInfo.Success = "no image link folderId file found"; return imageInfo; }
                         imageInfo.ModelFolderId = dbModelFolder.Id;
                         imageInfo.ModelFolderName = dbModelFolder.FolderName;
@@ -94,7 +94,7 @@ namespace OggleBooble.Api.Controllers
                     imageInfo.LastModified = dbImageFile.Acquired.ToShortDateString();
                     imageInfo.ExternalLink = dbImageFile.ExternalLink;
                     imageInfo.InternalLinks = (from l in db.CategoryImageLinks
-                                               join f in db.VirtualFolders on l.ImageCategoryId equals f.Id
+                                               join f in db.CategoryFolders on l.ImageCategoryId equals f.Id
                                                where l.ImageLinkId == linkId && l.ImageCategoryId != folderId
                                                select new { folderId = f.Id, folderName = f.FolderName })
                                                .ToDictionary(i => i.folderId, i => i.folderName);
@@ -121,7 +121,7 @@ namespace OggleBooble.Api.Controllers
             }
             try
             {
-                string imageLinkId, newInternalLink = "";
+                string imageLinkId;
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == model.LinkId).FirstOrDefault();
@@ -152,25 +152,6 @@ namespace OggleBooble.Api.Controllers
                     }
                     else  // Archive / Move
                     {
-                        //// ? physcially more and rename .jpg 
-                        //MySqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
-                        //MySqlDataContext.CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
-                        //string currentFileName = dbImageFile.FileName;
-                        //newFileName = dbSourceFolder.FolderName + "_" + model.LinkId;
-                        //string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;
-                        //string sourceFtpPath = ftpHost + dbSourceFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.SourceFolderId) + newFileName;
-
-                        //if (!FtpUtilies.DirectoryExists(destinationFtpPath))
-                        //    FtpUtilies.CreateDirectory(destinationFtpPath);
-
-                        //string  Success = FtpUtilies.MoveFile(sourceFtpPath + "/" + dbImageFile.FileName, destinationFtpPath + "/" + newFileName);
-                        //if (ftpMoveSuccess == "ok")
-                        //{
-
-                        //2. update ImageFile
-                        //string linkPrefix = "http://" + dbDestinationFolder.RootFolder + ".ogglebooble.com/";
-                        //newInternalLink = linkPrefix + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName + "/" + newFileName;
-                        //var goDaddyrow = db.ImageLinks.Where(g => g.Id == dbImageLink.Id).FirstOrDefault();
                         var oldCatImageLink = db.CategoryImageLinks
                              .Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == dbImageFile.Id).First();
                         db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
@@ -185,60 +166,10 @@ namespace OggleBooble.Api.Controllers
                             db.CategoryImageLinks.Remove(oldCatImageLink);
                         }
                         db.SaveChanges();
-                        //}
-                        //else
-                        //{
-                        //    successModel.Success = ftpMoveSuccess;
-                        //    return successModel;
-                        //}
                     }
                     // determine if this is the first image added to folder 
                     successModel.ReturnValue = db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.DestinationFolderId).Count().ToString();
                 } 
-                using (var db = new OggleBoobleMSSqlContext())
-                {
-                    if (model.Mode == "Copy")
-                    {
-                        MSSqlDataContext.CategoryImageLink existingLink = db.CategoryImageLinks.Where(l => l.ImageLinkId == imageLinkId).FirstOrDefault();
-                        if (existingLink != null)
-                            successModel.Success = "Link already exists";
-                        else
-                        {
-                            db.CategoryImageLinks.Add(new MSSqlDataContext.CategoryImageLink()
-                            {
-                                ImageCategoryId = model.DestinationFolderId,
-                                ImageLinkId = imageLinkId,
-                                SortOrder = 997
-                            });
-                            db.SaveChanges();
-                            successModel.Success = "ok";
-                        }
-                    }
-                    else  // Archive / Move
-                    {
-                        MSSqlDataContext.CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
-
-                        string linkId = model.Link.Substring(model.Link.LastIndexOf("_") + 1, 36);
-                        var imageFile = db.ImageLinks.Where(i => i.Id == linkId).First();
-
-                        MSSqlDataContext.ImageLink goDaddyrow = db.ImageLinks.Where(g => g.Id == imageLinkId).First();
-
-                        goDaddyrow.Link = newInternalLink;
-                        goDaddyrow.FolderLocation = model.DestinationFolderId;
-                        db.SaveChanges();
-
-                        MSSqlDataContext.CategoryImageLink oldCatImageLink = db.CategoryImageLinks.Where(c => c.ImageCategoryId == model.SourceFolderId && c.ImageLinkId == imageLinkId).First();
-                        db.CategoryImageLinks.Add(new MSSqlDataContext.CategoryImageLink()
-                        {
-                            ImageCategoryId = model.DestinationFolderId,
-                            ImageLinkId = imageLinkId,
-                            SortOrder = oldCatImageLink.SortOrder
-                        });
-                        if (model.Mode == "Move")
-                            db.CategoryImageLinks.Remove(oldCatImageLink);
-                        db.SaveChanges();
-                    }
-                }
                 successModel.Success = "ok";
             }
             catch (Exception ex)
@@ -270,7 +201,7 @@ namespace OggleBooble.Api.Controllers
                         successModel.Success = "Link Already Added";
                         return successModel;
                     }
-                    mySqlDestPath = mdb.VirtualFolders.Where(f => f.Id == addLinkModel.FolderId).FirstOrDefault().FolderPath;
+                    mySqlDestPath = mdb.CategoryFolders.Where(f => f.Id == addLinkModel.FolderId).FirstOrDefault().FolderPath;
                 }
 
                 string imageLinkId = Guid.NewGuid().ToString();
@@ -278,26 +209,6 @@ namespace OggleBooble.Api.Controllers
                 string newFileName = addLinkModel.Path.Substring(addLinkModel.Path.LastIndexOf("/") + 1) + "_" + imageLinkId + extension;
                 string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
                 string trimPath = addLinkModel.Path.Replace("/Root/", "").Replace("%20", " ");
-
-                // COPY FILE TO LOCAL ?
-                //try
-                //{
-                //    string localRoot = dbCategory.RootFolder;
-                //    if (localRoot == "centerfold")
-                //        localRoot = "playboy";
-
-                //    var test = newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                //    var localPath = localRepoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
-                //    DirectoryInfo dirInfo = new DirectoryInfo(localPath);
-                //    if (!dirInfo.Exists)
-                //        dirInfo.Create();
-                //    wc.DownloadFile(new Uri(newLink.Link), localPath + "/" + newFileName);
-                //}
-                //catch (Exception ex)
-                //{
-                //    var err = Helpers.ErrorDetails(ex);
-                //    System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
-                //}
 
                 // USE WEBCLIENT TO CREATE THE FILE
                 using (WebClient wc = new WebClient())
@@ -377,24 +288,6 @@ namespace OggleBooble.Api.Controllers
                 {
                     System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
                 }
-
-
-                // see if this is the first image in the folder. If so make it the folder image
-                //try
-                //{
-                //    int lnkCount = db.CategoryImageLinks.Where(c => c.ImageCategoryId == newLink.FolderId).Count();
-                //    if (lnkCount == 0)
-                //        successModel.ReturnValue = imageLinkId;
-                //    else
-                //        successModel.ReturnValue = "0";
-                //}
-                //catch (Exception ex)
-                //{
-                //    successModel.Success = Helpers.ErrorDetails(ex);
-                //    if (successModel.Success.StartsWith("ERROR: Cannot insert duplicate key row in object"))
-                //        successModel.Success = "Alredy Added";
-                //}
-
                 using (var mdb = new OggleBoobleMySqlContext())
                 {
                     mdb.ImageFiles.Add(new ImageFile()
@@ -420,6 +313,41 @@ namespace OggleBooble.Api.Controllers
             }
             catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
             return successModel;
+            // COPY FILE TO LOCAL ?
+            //try
+            //{
+            //    string localRoot = dbCategory.RootFolder;
+            //    if (localRoot == "centerfold")
+            //        localRoot = "playboy";
+
+            //    var test = newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+            //    var localPath = localRepoPath + localRoot + ".OGGLEBOOBLE.COM" + newLink.Path.Remove(0, newLink.Path.IndexOf("/", newLink.Path.IndexOf("/") + 1));
+            //    DirectoryInfo dirInfo = new DirectoryInfo(localPath);
+            //    if (!dirInfo.Exists)
+            //        dirInfo.Create();
+            //    wc.DownloadFile(new Uri(newLink.Link), localPath + "/" + newFileName);
+            //}
+            //catch (Exception ex)
+            //{
+            //    var err = Helpers.ErrorDetails(ex);
+            //    System.Diagnostics.Debug.WriteLine("wc. download didnt work " + err);
+            //}
+
+            // see if this is the first image in the folder. If so make it the folder image
+            //try
+            //{
+            //    int lnkCount = db.CategoryImageLinks.Where(c => c.ImageCategoryId == newLink.FolderId).Count();
+            //    if (lnkCount == 0)
+            //        successModel.ReturnValue = imageLinkId;
+            //    else
+            //        successModel.ReturnValue = "0";
+            //}
+            //catch (Exception ex)
+            //{
+            //    successModel.Success = Helpers.ErrorDetails(ex);
+            //    if (successModel.Success.StartsWith("ERROR: Cannot insert duplicate key row in object"))
+            //        successModel.Success = "Alredy Added";
+            //}
         }
 
         [HttpGet]
@@ -433,7 +361,7 @@ namespace OggleBooble.Api.Controllers
             {
                 imageComment = (from c in db.ImageComments
                                 join i in db.ImageFiles on c.ImageLinkId equals i.Id
-                                join f in db.VirtualFolders on i.FolderId equals f.Id
+                                join f in db.CategoryFolders on i.FolderId equals f.Id
                                 select new ImageCommentModel()
                                 {
                                     CommentId = c.Id,
@@ -518,8 +446,8 @@ namespace OggleBooble.Api.Controllers
                 //imageLinkId = dbImageFile.Id;
 
                 // ? physcially more and rename .jpg 
-                VirtualFolder dbSourceFolder = db.VirtualFolders.Where(f => f.Id == model.SourceFolderId).First();
-                VirtualFolder dbDestinationFolder = db.VirtualFolders.Where(f => f.Id == model.DestinationFolderId).First();
+                CategoryFolder dbSourceFolder = db.CategoryFolders.Where(f => f.Id == model.SourceFolderId).First();
+                CategoryFolder dbDestinationFolder = db.CategoryFolders.Where(f => f.Id == model.DestinationFolderId).First();
                 //string currentFileName = dbImageFile.FileName;
                 string newFileName = dbSourceFolder.FolderName + "_" + linkId;
                 string destinationFtpPath = ftpHost + dbDestinationFolder.RootFolder + ".ogglebooble.com/" + Helpers.GetParentPath(model.DestinationFolderId) + dbDestinationFolder.FolderName;

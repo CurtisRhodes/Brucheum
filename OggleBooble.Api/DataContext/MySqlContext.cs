@@ -13,7 +13,8 @@ namespace OggleBooble.Api.MySqlDataContext
     {
         public OggleBoobleMySqlContext() : base("name=GoDaddyMySql") { }
 
-        public virtual DbSet<VirtualFolder> VirtualFolders { get; set; }
+        //public virtual DbSet<CategoryFolder> CategoryFolder { get; set; }
+        public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
         public virtual DbSet<StaticPageHit> StaticPageHits { get; set; }       
         public virtual DbSet<ImageFile> ImageFiles { get; set; }
         public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
@@ -55,9 +56,24 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<FolderComment> FolderComments { get; set; }
         public virtual DbSet<VwImpact> VwImpacts { get; set; }
         public virtual DbSet<VwFeedbackReport> FeedbackReport { get; set; }
+        public virtual DbSet<BlogComment> BlogComments { get; set; }
     }
 
-   [Table("OggleBooble.VwFeedbackReport")]
+    [Table("OggleBooble.BlogComment")]
+    public partial class BlogComment
+    {
+        [Key]
+        public string Id { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentType { get; set; }
+        public string ImageLink { get; set; }
+        public int FolderId { get; set; }
+        public string VisitorId { get; set; }
+        public string CommentText { get; set; }
+        public DateTime Posted { get; set; }
+    }
+
+    [Table("OggleBooble.VwFeedbackReport")]
     public class VwFeedbackReport
     {
         [Key]
@@ -164,7 +180,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public DateTime Posted { get; set; }
     }
     [Table("OggleBooble.CategoryFolder")]
-    public partial class VirtualFolder
+    public partial class CategoryFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

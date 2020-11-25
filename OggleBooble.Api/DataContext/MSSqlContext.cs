@@ -13,23 +13,23 @@ namespace OggleBooble.Api.MSSqlDataContext
         public OggleBoobleMSSqlContext()
             : base("GoDaddy") { }
 
-        public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
-        public virtual DbSet<ImageLink> ImageLinks { get; set; }
-        public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
+        public virtual DbSet<TestFolder> TestFolders { get; set; }
+        //public virtual DbSet<ImageLink> ImageLinks { get; set; }
+        //public virtual DbSet<CategoryImageLink> CategoryImageLinks { get; set; }
 
-        public virtual DbSet<vwDirTree> vwDirTrees { get; set; }
-        public virtual DbSet<VideoLink> VideoLinks { get; set; }
-        public virtual DbSet<VwLink> VwLinks { get; set; }
-        public virtual DbSet<BlogComment> BlogComments { get; set; }
-        public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
-        public virtual DbSet<MetaTag> MetaTags { get; set; }
-        public virtual DbSet<RejectLink> RejectLinks { get; set; }
-        public virtual DbSet<RankerVote> RankerVotes { get; set; }
-        public virtual DbSet<StepChild> StepChildren { get; set; }
+        //public virtual DbSet<vwDirTree> vwDirTrees { get; set; }
+        //public virtual DbSet<VideoLink> VideoLinks { get; set; }
+        //public virtual DbSet<VwLink> VwLinks { get; set; }
+        //public virtual DbSet<BlogComment> BlogComments { get; set; }
+        //public virtual DbSet<CategoryFolderDetail> CategoryFolderDetails { get; set; }
+        //public virtual DbSet<MetaTag> MetaTags { get; set; }
+        //public virtual DbSet<RejectLink> RejectLinks { get; set; }
+        //public virtual DbSet<RankerVote> RankerVotes { get; set; }
+        //public virtual DbSet<StepChild> StepChildren { get; set; }
         //public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
-        public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
-        public virtual DbSet<vwCarouselItem> vwCarouselImages { get; set; }
-        public virtual DbSet<vwSlideshowItem> vwSlideshowItems { get; set; }
+        //public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
+        //public virtual DbSet<vwCarouselItem> vwCarouselImages { get; set; }
+        //public virtual DbSet<vwSlideshowItem> vwSlideshowItems { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -122,7 +122,7 @@ namespace OggleBooble.Api.MSSqlDataContext
     }
 
     [Table("Oggle.CategoryFolder")]
-    public partial class CategoryFolder
+    public partial class TestFolder
     {
         [Key]
         public int Id { get; set; }
@@ -200,20 +200,20 @@ namespace OggleBooble.Api.MSSqlDataContext
         public int FolderId { get; set; }
     }
 
-    [Table("Oggle.BlogComment")]
-    public partial class BlogComment
-    {
-        [Key]
-        public int Id { get; set; }
-        public string CommentTitle { get; set; }
-        public string CommentType { get; set; }
-        public string Link { get; set; }
-        public string LinkId { get; set; }
-        public int FolderId { get; set; }
-        public string UserId { get; set; }
-        public string CommentText { get; set; }
-        public DateTime Posted { get; set; }
-    }
+    //[Table("Oggle.BlogComment")]
+    //public partial class BlogComment
+    //{
+    //    [Key]
+    //    public int Id { get; set; }
+    //    public string CommentTitle { get; set; }
+    //    public string CommentType { get; set; }
+    //    public string Link { get; set; }
+    //    public string LinkId { get; set; }
+    //    public int FolderId { get; set; }
+    //    public string UserId { get; set; }
+    //    public string CommentText { get; set; }
+    //    public DateTime Posted { get; set; }
+    //}
 
     [Table("Oggle.MetaTag")]
     public partial class MetaTag

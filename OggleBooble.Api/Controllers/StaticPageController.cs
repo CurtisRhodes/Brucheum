@@ -30,7 +30,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    VirtualFolder categoryFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
+                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     CreatePage(folderId, resultsModel, db, recurr);
                 }
             }
@@ -43,7 +43,7 @@ namespace OggleBooble.Api.Controllers
                 return;
             try
             {                
-                var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                var dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                 if ((dbFolder.FolderType == "singleModel") || (dbFolder.FolderType == "singleParent"))
                 {
                     string folderImage = "";
@@ -112,8 +112,8 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (resultsModel.Success == "ok")
                     {
-                        List<VirtualFolder> categoryFolders = db.VirtualFolders.Where(f => f.Parent == folderId).ToList();
-                        foreach (VirtualFolder dbCategoryFolder in categoryFolders)
+                        List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                        foreach (CategoryFolder dbCategoryFolder in categoryFolders)
                         {
                             CreatePage(dbCategoryFolder.Id, resultsModel, db, true);
                         }
@@ -164,7 +164,7 @@ namespace OggleBooble.Api.Controllers
             "           <div class='headerTitle' style='color: rgb(0, 0, 0); height: 28px;'>OggleBooble</div>\n" +
             "           <div class='hdrTopRowMenu' style='font-size: 25px;margin-left:14px;margin-top:4px;'>\n");
             //                "handpicked images organized by category
-            var dbFolder = db.VirtualFolders.Where(f => f.Id == folderId).First();
+            var dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
             var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
             foreach (TrackbackLink trackbackLink in trackbackLinks)
             {
@@ -184,7 +184,7 @@ namespace OggleBooble.Api.Controllers
             "       <div class='headerBottomRow'>\n" +
             "           <div style='display:inline-block' >" + dbFolder.RootFolder + "</div>\n" +
             "           <div style='display:inline-block; text-align:center; font-size:18px' onclick='goHome()'>");
-            var dbParent = db.VirtualFolders.Where(p => p.Id == dbFolder.Parent).First();
+            var dbParent = db.CategoryFolders.Where(p => p.Id == dbFolder.Parent).First();
             staticHeaderHtml.Append(dbParent.FolderName + " / " + dbFolder.FolderName + "</div>\n</div>\n</div>\n</div>\n");
             return staticHeaderHtml.ToString();
         }

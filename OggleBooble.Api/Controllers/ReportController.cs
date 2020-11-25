@@ -278,9 +278,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    feedbackReport.FeedbackRows = db.FeedbackReport.ToList();
-                    feedbackReport.Total = db.FeedbackReport.Count();
-
+                    //feedbackReport.FeedbackRows = db.FeedbackReport.ToList();
+                    //feedbackReport.Total = db.FeedbackReport.Count();
                     feedbackReport.Success = "ok";
                 }
             }
@@ -333,7 +332,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     string imgSrc;
                     ImageFile dbImageFile;
-                    var dbPlayboyDecades = db.VirtualFolders.Where(f => f.Parent == rootFolder).OrderBy(f => f.SortOrder).ToList();
+                    var dbPlayboyDecades = db.CategoryFolders.Where(f => f.Parent == rootFolder).OrderBy(f => f.SortOrder).ToList();
                     stringBuilder.Append("\n<style>\n" +
                         ".pbDecade { margin - left: 20px; font-family: 'Segoe UI', Tahoma; font-size: 35px; }\n" +
                         ".pbYear { margin - left: 80px; color:#000; font-size: 30px;}\n" +
@@ -347,15 +346,15 @@ namespace OggleBooble.Api.Controllers
                     {
                         monthIncimentor = 0;
                         stringBuilder.Append("<div class='pbDecade'>" + dbPlayboyDecade.FolderName + "</div>\n");
-                        var dbPlayboyYears = db.VirtualFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
+                        var dbPlayboyYears = db.CategoryFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
                         foreach (var dbPlayboyYear in dbPlayboyYears)
                         {
                             //hub.SendMessage("xx", dbPlayboyYear.FolderName);
                             stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "</div>\n");
-                            var dbPlayboyMonths = db.VirtualFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
+                            var dbPlayboyMonths = db.CategoryFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
 
                             stringBuilder.Append("<div class='pbRow'>");
-                            foreach (VirtualFolder dbPbmonth in dbPlayboyMonths)
+                            foreach (CategoryFolder dbPbmonth in dbPlayboyMonths)
                             {
                                 ProcessStatus = dbPlayboyYear.FolderName + " " + ++monthIncimentor + " " + dbPbmonth.FolderName;
                                 imgSrc = "Images/redballon.png";
