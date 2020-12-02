@@ -152,7 +152,7 @@ namespace OggleBooble.Api.Controllers
                     List<SearchResult> containsSearchResults =
                         (from f in db.CategoryFolders
                          join p in db.CategoryFolders on f.Parent equals p.Id
-                         where f.FolderName.StartsWith(searchString) && f.FolderType != "singleChild"
+                         where f.FolderName.Contains(searchString) && f.FolderType != "singleChild"
                          select new SearchResult()
                          {
                              FolderId = f.Id,

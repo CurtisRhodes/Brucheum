@@ -135,7 +135,8 @@ namespace OggleBooble.Api.Controllers
                 for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36)); }
                 if (physcialFileLinkIds.Count() != dbFolderImageFiles.Count())
                 {
-                    repairReport.Errors.Add("physcialFiles: " + physcialFileLinkIds.Count() + " ImageFiles: " + dbFolderImageFiles.Count());
+                    repairReport.Errors.Add("physcialFiles: " + physcialFileLinkIds.Count() + " ImageFiles: " + dbFolderImageFiles.Count() +
+                        " " + folderName);
                 }
                 foreach (string physcialFileLinkId in physcialFileLinkIds)
                 {
@@ -144,9 +145,13 @@ namespace OggleBooble.Api.Controllers
                         var dbMisplacedImageFile = db.ImageFiles.Where(i => i.Id == physcialFileLinkId).FirstOrDefault();
                         if (dbMisplacedImageFile != null)
                         {
-                            dbMisplacedImageFile.FolderId = folderId;
-                            db.SaveChanges();
-                            repairReport.ImageFilesMoved++;
+                            if (dbMisplacedImageFile.FolderId != folderId)
+                            {
+                                dbMisplacedImageFile.FolderId = folderId;
+                                db.SaveChanges();
+                                repairReport.ImageFilesMoved++;
+                            }
+                            repairReport.Errors.Add("tried to move but already there: " + physcialFileLinkId);
                         }
                         else
                         {
@@ -159,9 +164,10 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (!physcialFileLinkIds.Contains(imageFile.Id))
                     {
-                        repairReport.Errors.Add("ImageFile with no physcial file ");
-                        //repairReport.ImageFilesRemoved++;
-                        //dbFolderImageFiles.Remove(imageFile);
+                        //repairReport.Errors.Add("ImageFile with no physcial file "+ imageFile.Id);
+                        db.ImageFiles.Remove(imageFile);
+                        db.SaveChanges();
+                        repairReport.ImageFilesRemoved++;
                     }
                     repairReport.ImageFilesProcessed++;
                 }

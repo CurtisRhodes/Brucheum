@@ -41,7 +41,6 @@ function dashboardHtml() {
         "          <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
         "      </div>\n" +
         "      <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
-        "          <div id='repairErrorReport' class='errorInfobox'></div>\n"+
         "          <div id='workAreaContainer' class='workAreaContainer'>" +
         "               <div id='addImageLinkDialog'>\n" +
         "                   <div id='addLinkCrudArea' class='addLinkCrudArea'>\n" +
@@ -56,6 +55,7 @@ function dashboardHtml() {
         "                   <img id='imgLinkPreview' class='linkImage' />\n" +
         "               </div>\n" +
         "          </div>\n" +
+        "          <div id='repairErrorReport' class='errorInfobox'></div>\n" +
         "      </div>\n" +
         "      <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
         "   </div>\n" +
