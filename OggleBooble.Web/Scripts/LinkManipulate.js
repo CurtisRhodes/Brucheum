@@ -122,7 +122,7 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
             //alert("attemptRemoveLink   success: " + success);
             if ((success == "single link") || (success == "home folder Link")) {
                 $('#imagePageLoadingGif').hide();
-                showConfirmDeteteImageDialog(linkId, folderId, imgSrc, succes);
+                showConfirmDeteteImageDialog(linkId, folderId, imgSrc, success);
             }
             else {
                 if (success === "ok") {

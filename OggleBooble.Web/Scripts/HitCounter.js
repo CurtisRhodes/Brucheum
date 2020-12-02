@@ -154,13 +154,14 @@ function getIpInfo(folderId, calledFrom) {
     try {
         let visitorId = getCookieValue("VisitorId");
         if (!isNullorUndefined(visitorId)) {
-            if (navigator.cookieEnabled)
-                logError("UNC", folderId, "visitorId: " + visitorId, "getIpInfo/" + calledFrom);
-            else {
-                logError("BUG", folderId, "attempt to getIpInfo for visitorId: " + visitorId, "getIpInfo/" + calledFrom);
-                return;
-            }
+            logError("BUG", folderId, "attempt to getIpInfo for visitorId: " + visitorId, "getIpInfo/" + calledFrom);
+            return;
         }
+
+        //if (!navigator.cookieEnabled) {
+        //    logError("UNC", folderId, "visitorId: " + visitorId, "getIpInfo/" + calledFrom);
+        //}
+
         visitorId = create_UUID();
         $.ajax({
             type: "GET",
@@ -204,7 +205,13 @@ function getIpInfo(folderId, calledFrom) {
                             }
                             else {
                                 if (addVisitorSuccess.Success == "existing Ip") {
-                                    logError("BAD", folderId, "wasted Ip call", "getIpInfo");
+                                    setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
+
+                                    if (!navigator.cookieEnabled) {
+                                        logError("UNC", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
+                                    }
+                                    else
+                                        logError("BAD", folderId, "wasted Ip call", "getIpInfo/" + calledFrom);
                                 }
                                 else
                                     logError("AJX", folderId, success, "addVisitor");
