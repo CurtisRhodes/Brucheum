@@ -54,45 +54,24 @@ namespace OggleBooble.Api.Controllers
                 RenameFiles(ftpPath, folderName, repairReport);
 
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
-                if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR"))
-                {
-                    repairReport.Success = physcialFiles[0];
-                    return;
-                }
-                var dbFolderCatLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
-                var dbFolderImageFiles = db.ImageFiles.Where(i => i.FolderId == folderId).ToList();
+                if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR")) { repairReport.Success = physcialFiles[0]; return; }
 
-
-                // loop1A through physcial files
+                var dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
+                #region 1. make sure every physicalFile has an ImageFile row
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
                     var physcialFileName = physcialFiles[i];
                     var physcialFileLinkId = physcialFileName.Substring(physcialFileName.IndexOf("_") + 1, 36);
 
-                    // 1. check for physicalFile in folder with no ImageFile row
                     var dbFolderImageFile = dbFolderImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault();
-                    if (dbFolderImageFile != null)
-                    {
-                        if (dbFolderImageFile.FileName != physcialFileName)
-                        {
-                            dbFolderImageFile.FileName = physcialFileName;
-                            db.SaveChanges();
-                            repairReport.ImageFileNamesRenamed++;
-                        }
-                    }
                     if (dbFolderImageFile == null)
                     {
-                        var dbOtherFoldeImageLink = db.ImageFiles.Where(il => il.Id == physcialFileLinkId).FirstOrDefault();
-                        if (dbOtherFoldeImageLink != null)
+                        var dbMisplacedImageFile = db.ImageFiles.Where(m => m.Id == physcialFileLinkId).FirstOrDefault();
+                        if (dbMisplacedImageFile != null)
                         {
-                            if (dbOtherFoldeImageLink.FolderId != folderId)
-                            {
-                                dbOtherFoldeImageLink.FolderId = folderId;
-                                db.SaveChanges();
-                                repairReport.ImageFilesMoved++;
-                            }
-                            else
-                                repairReport.Errors.Add("how did this happen");
+                            dbMisplacedImageFile.FolderId = folderId;
+                            db.SaveChanges();
+                            repairReport.ImageFilesMoved++;
                         }
                         else
                         {
@@ -121,10 +100,10 @@ namespace OggleBooble.Api.Controllers
                                     if (Helpers.ErrorDetails(ex).ToString() == "{Parameter is not valid.}")
                                         repairReport.Errors.Add("unable to get width and height of " + physcialFileName);
                                     else
-                                        repairReport.Errors.Add(Helpers.ErrorDetails(ex));
+                                        repairReport.Errors.Add("problem getting filesize" + Helpers.ErrorDetails(ex));
                                 }
                             }
-                            db.ImageFiles.Add(new ImageFile()
+                            ImageFile imageFile = new ImageFile()
                             {
                                 Id = physcialFileLinkId,
                                 Acquired = DateTime.Today,
@@ -134,104 +113,79 @@ namespace OggleBooble.Api.Controllers
                                 Height = fHeight,
                                 Size = fSize,
                                 Width = fWidth
-                            });
-                            db.SaveChanges();
-                            repairReport.ImageFilesAdded++;
-                        }
-                    }
-
-                    // 2. check for physicalFiles with no link
-                    if (dbFolderCatLinks.Where(il => il.ImageLinkId == physcialFileLinkId && il.ImageCategoryId == folderId).FirstOrDefault() == null)
-                    {
-                        var otherFolderCatLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == physcialFileLinkId).FirstOrDefault();
-                        if (otherFolderCatLinks == null)
-                        {
+                            };
+                            db.ImageFiles.Add(imageFile);
+                            dbFolderImageFiles.Add(imageFile);
                             db.CategoryImageLinks.Add(new CategoryImageLink()
                             {
                                 ImageCategoryId = folderId,
                                 ImageLinkId = physcialFileLinkId,
-                                SortOrder = 7313
+                                SortOrder = 0
                             });
                             db.SaveChanges();
                             repairReport.CatLinksAdded++;
+                            repairReport.ImageFilesAdded++;
                         }
                     }
-
-                    repairReport.PhyscialFilesProcessed++;
                 }
+                #endregion
 
+                #region 2. Make sure every ImageFile row has a physcial file
                 var physcialFileLinkIds = new List<string>();
-                for (int i = 0; i < physcialFiles.Length; i++)
+                for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36)); }
+                if (physcialFileLinkIds.Count() != dbFolderImageFiles.Count())
                 {
-                    physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36));
+                    repairReport.Errors.Add("physcialFiles: " + physcialFileLinkIds.Count() + " ImageFiles: " + dbFolderImageFiles.Count());
                 }
-
-                // loop 2A loop through image files
-                foreach (ImageFile imageFile in dbFolderImageFiles)
+                foreach (string physcialFileLinkId in physcialFileLinkIds)
                 {
-                    // check if there is a physcial file in the folder for every ImageFile with a FolderId equaling the folderId.
-                    if (!physcialFileLinkIds.Contains(imageFile.Id))
+                    if (dbFolderImageFiles.Where(i => i.Id == physcialFileLinkId).FirstOrDefault() == null)
                     {
-                        var otherFolderImageFile = db.ImageFiles.Where(l => l.Id == imageFile.Id).FirstOrDefault();
-                        if (otherFolderImageFile == null)
+                        var dbMisplacedImageFile = db.ImageFiles.Where(i => i.Id == physcialFileLinkId).FirstOrDefault();
+                        if (dbMisplacedImageFile != null)
                         {
-                            //db.ImageFiles.Remove(existingImageFile);
-                            //db.SaveChanges();
-                            //repairReport.ImageFilesRemoved++;
-                            //var badLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList();
-                        }
-                    }
-                    //ext = existingImageFile.FileName.Substring(existingImageFile.FileName.LastIndexOf("."));
-                    //if (existingImageFile.FileName != (folderName + "_" + existingImageFile.Id + ext)) 
-                    //{
-                    //    existingImageFile.FileName = folderName + "_" + existingImageFile.Id + ext;
-                    //    db.SaveChanges();
-                    //    repairReport.ImageFileNamesRenamed++;
-                    //}
-                    repairReport.ImageFilesProcessed++;
-                }
-
-                // loop 2B
-                // check if there is a physcial file in the folder for every link in the table.
-                // there can be more links than files. That's the point. 
-                foreach (CategoryImageLink folderCatLink in dbFolderCatLinks)
-                {
-                    if (!physcialFileLinkIds.Contains(folderCatLink.ImageLinkId))
-                    {
-                        var dbMisplacedImageFile = db.ImageFiles.Where(i => i.Id == folderCatLink.ImageLinkId).FirstOrDefault();
-                        if (dbMisplacedImageFile == null)
-                        {
-                            var badLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == folderCatLink.ImageLinkId).ToList();
-                            db.CategoryImageLinks.RemoveRange(badLinks);
+                            dbMisplacedImageFile.FolderId = folderId;
                             db.SaveChanges();
-                            repairReport.CatLinksRemoved += badLinks.Count();
+                            repairReport.ImageFilesMoved++;
                         }
                         else
                         {
-                            var nonLocallinks = db.CategoryImageLinks.Where(i => (i.ImageLinkId == folderCatLink.ImageLinkId) && (i.ImageCategoryId != folderId)).ToList();
-                            if (nonLocallinks.Count() == 0)
-                            {
-                                repairReport.Errors.Add("Orphan image?: " + dbMisplacedImageFile.Id);
-                                db.CategoryImageLinks.Remove(folderCatLink);
-                                db.SaveChanges();
-                                repairReport.CatLinksRemoved++;
-                            }
-                            else
-                            {
-                                if (nonLocallinks.Count() == 1)
-                                {
-                                    //var nonLocallink = db.ImageFiles.Where(i => i.Id == folderCatLink.ImageLinkId && i.FolderId != folderId).FirstOrDefault();
-                                    var firstNonLocallink = db.CategoryImageLinks.Where(i => (i.ImageLinkId == folderCatLink.ImageLinkId) && (i.ImageCategoryId != folderId)).FirstOrDefault();
-                                    repairReport.Errors.Add("Missplaced image?: " + folderCatLink.ImageLinkId);
-
-                                    //var misplacededImage = db.ImageFiles.Where(f => f.Id == folderCatLink.ImageLinkId).First();
-                                    //misplacededImage
-                                }
-                            }
+                            repairReport.Errors.Add("physcial file with no ImageFile: " + physcialFileLinkId);
                         }
+                    }
+                    repairReport.PhyscialFilesProcessed++;
+                }
+                foreach (ImageFile imageFile in dbFolderImageFiles)
+                {
+                    if (!physcialFileLinkIds.Contains(imageFile.Id))
+                    {
+                        repairReport.Errors.Add("ImageFile with no physcial file ");
+                        //repairReport.ImageFilesRemoved++;
+                        //dbFolderImageFiles.Remove(imageFile);
+                    }
+                    repairReport.ImageFilesProcessed++;
+                }
+                
+                #endregion
+
+                #region 3. check if there is a catlink for every physcial file 
+                var dbCatLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
+                foreach (string physcialFileLinkId in physcialFileLinkIds)
+                {
+                    if (dbCatLinks.Where(il => il.ImageLinkId == physcialFileLinkId).FirstOrDefault() == null)
+                    {
+                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                        {
+                            ImageCategoryId = folderId,
+                            ImageLinkId = physcialFileLinkId,
+                            SortOrder = 0
+                        });
+                        db.SaveChanges();
+                        repairReport.CatLinksAdded++;
                     }
                     repairReport.LinkRecordsProcessed++;
                 }
+                #endregion
 
                 if (recurr)
                 {
@@ -274,7 +228,7 @@ namespace OggleBooble.Api.Controllers
                                     {
                                         newFileName = folderName + "_" + possibleGuid + ext;
                                         FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                                        repairReport.ImagesRenamed++;
+                                        repairReport.ImageFilesRenamed++;
                                     }
                                 }
                             }
@@ -282,21 +236,21 @@ namespace OggleBooble.Api.Controllers
                             {
                                 newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
                                 FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                                repairReport.ImagesRenamed++;
+                                repairReport.ImageFilesRenamed++;
                             }
                         }
                         else
                         {
                             newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
                             FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                            repairReport.ImagesRenamed++;
+                            repairReport.ImageFilesRenamed++;
                         }
-                    } //newFileName = fileName.Substring(0, fileName.LastIndexOf(".")) + "_" + Guid.NewGuid().ToString() + ext;
+                    } 
                     else
                     {
                         newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
                         FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                        repairReport.ImagesRenamed++;
+                        repairReport.ImageFilesRenamed++;
                     }
                 }
 

@@ -5,6 +5,7 @@
 }
 
 .errorInfobox {
+    display: none;
     max-height: 300px;
     border: solid 2px #000;
     overflow-y: auto;

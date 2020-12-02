@@ -41,6 +41,7 @@ function dashboardHtml() {
         "          <div id='dashboardLeftMenu' class='oggleVerticalMenu' ></div>\n" +
         "      </div>\n" +
         "      <div id='dashboardMiddleColumn' class='dashboardContainerColumn'>\n" +
+        "          <div id='repairErrorReport' class='errorInfobox'></div>\n"+
         "          <div id='workAreaContainer' class='workAreaContainer'>" +
         "               <div id='addImageLinkDialog'>\n" +
         "                   <div id='addLinkCrudArea' class='addLinkCrudArea'>\n" +
@@ -246,7 +247,7 @@ function performRepairLinks(justOne) {
     var start = Date.now();
     $('#dataifyInfo').show().html("checking and repairing links");
     $('#dashBoardLoadingGif').fadeIn();
-    //alert("settingsArray.LocalImgRepo: " + settingsArray.LocalImgRepo);
+    $('#repairErrorReport').hide();
     try {
         $.ajax({
             type: "GET",
@@ -265,7 +266,7 @@ function performRepairLinks(justOne) {
                         $('#dataifyInfo').append(", Links: " + repairReport.LinkRecordsProcessed);
                         $('#dataifyInfo').append(", Image rows: " + repairReport.ImageFilesProcessed);
                         if (repairReport.Errors.length > 0) {
-                            $('#dashboardMiddleColumn').append("<div id='repairErrorReport' class='errorInfobox'></div>");
+                            $('#repairErrorReport').show().html("");
                             $.each(repairReport.Errors, function (idx, obj) {
                                 $('#repairErrorReport').append("<div>" + obj + "</div>");
                             })
@@ -278,8 +279,8 @@ function performRepairLinks(justOne) {
                         //    $('#dataifyInfo').append(", ImageFilesAdded: " + repairReport.ImagesRenamed);
                         
 
-                        if (repairReport.ImageFileNamesRenamed > 0)
-                            $('#dataifyInfo').append(", Image File Names Renamed: " + repairReport.ImageFileNamesRenamed);
+                        if (repairReport.ImageFilesRenamed > 0)
+                            $('#dataifyInfo').append(", Image File Names Renamed: " + repairReport.ImageFilesRenamed);
                         if (repairReport.ImagesRenamed > 0)
                             $('#dataifyInfo').append(", Image Files Renamed: " + repairReport.ImagesRenamed);
                         if (repairReport.ZeroLenFileRemoved > 0)

@@ -31,7 +31,7 @@ function checkFor404(calledFrom) {
                             dots += ". ";
                             $('#dots').html(dots);
 
-                            $('#headerMessage').html(verifyConnectionCount);
+                            //$('#headerMessage').html(verifyConnectionCount);
                             if ((verifyConnectionCount > 4) && (!connectingToServerGifShowing)) showConnectingToServerGif();
                             if ((verifyConnectionCount > verifyConnectionCountLimit) && (!canIgetaConnectionMessageShowing)) {
                                 showCanIgetaConnectionMessage();
