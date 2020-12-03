@@ -277,8 +277,8 @@ function performRepairLinks(justOne) {
                         //    $('#dataifyInfo').append(", links Edited: " + repairReport.LinksEdited);
                         //if (repairReport.ImageFilesAdded > 0)
                         //    $('#dataifyInfo').append(", ImageFilesAdded: " + repairReport.ImagesRenamed);
-                        
-
+                        if (repairReport.PhyscialFileRenamed > 0)
+                            $('#dataifyInfo').append(", Physcial File Names Renamed: " + repairReport.PhyscialFileRenamed);
                         if (repairReport.ImageFilesRenamed > 0)
                             $('#dataifyInfo').append(", Image File Names Renamed: " + repairReport.ImageFilesRenamed);
                         if (repairReport.ImagesRenamed > 0)

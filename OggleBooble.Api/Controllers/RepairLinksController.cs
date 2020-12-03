@@ -51,12 +51,27 @@ namespace OggleBooble.Api.Controllers
                     CategoryFolder dbParentFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
                     folderName = dbParentFolder.FolderName;
                 }
-                RenameFiles(ftpPath, folderName, repairReport);
+                RenamePhyscialFiles(ftpPath, folderName, repairReport);
 
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
                 if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR")) { repairReport.Success = physcialFiles[0]; return; }
 
+                // rename ImageFiles
                 var dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
+                string expectedFileName;
+                foreach (ImageFile imageFile in dbFolderImageFiles)
+                {
+                    expectedFileName = folderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
+                    if (imageFile.FileName != expectedFileName)
+                    {
+                        imageFile.FileName = expectedFileName;
+                        ImageFile realImageFile= db.ImageFiles.Where(i => i.Id == imageFile.Id).First();
+                        realImageFile.FileName = expectedFileName;
+                        db.SaveChanges();
+                        repairReport.ImageFilesRenamed++;
+                    }
+                }
+
                 #region 1. make sure every physicalFile has an ImageFile row
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
@@ -151,11 +166,11 @@ namespace OggleBooble.Api.Controllers
                                 db.SaveChanges();
                                 repairReport.ImageFilesMoved++;
                             }
-                            repairReport.Errors.Add("tried to move but already there: " + physcialFileLinkId);
-                        }
-                        else
-                        {
-                            repairReport.Errors.Add("physcial file with no ImageFile: " + physcialFileLinkId);
+                            //repairReport.Errors.Add("tried to move but already there: " + physcialFileLinkId);
+                            else
+                            {
+                                repairReport.Errors.Add("physcial file with no ImageFile: " + physcialFileLinkId);
+                            }
                         }
                     }
                     repairReport.PhyscialFilesProcessed++;
@@ -210,7 +225,7 @@ namespace OggleBooble.Api.Controllers
             }
         }
 
-        private string RenameFiles(string ftpPath, string folderName, RepairReportModel repairReport)
+        private string RenamePhyscialFiles(string ftpPath, string folderName, RepairReportModel repairReport)
         {
             string success;
             try
@@ -234,7 +249,7 @@ namespace OggleBooble.Api.Controllers
                                     {
                                         newFileName = folderName + "_" + possibleGuid + ext;
                                         FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                                        repairReport.ImageFilesRenamed++;
+                                        repairReport.PhyscialFileRenamed++;
                                     }
                                 }
                             }
@@ -242,21 +257,21 @@ namespace OggleBooble.Api.Controllers
                             {
                                 newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
                                 FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                                repairReport.ImageFilesRenamed++;
+                                repairReport.PhyscialFileRenamed++;
                             }
                         }
                         else
                         {
                             newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
                             FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                            repairReport.ImageFilesRenamed++;
+                            repairReport.PhyscialFileRenamed++;
                         }
                     } 
                     else
                     {
                         newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
                         FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                        repairReport.ImageFilesRenamed++;
+                        repairReport.PhyscialFileRenamed++;
                     }
                 }
 

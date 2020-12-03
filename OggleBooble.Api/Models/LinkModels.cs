@@ -75,7 +75,8 @@ namespace OggleBooble.Api.Models
         public int CatLinksAdded { get; set; }
         public int ZeroLenFileRemoved { get; set; }
         public int ImageFilesRemoved { get; set; }
-        //public int NewLinksAdded { get; set; }
+        public int PhyscialFileRenamed { get; set; }
+        //ImageFilesRenamed
         //public int ImagesDownLoaded { get; set; }
         //public int ImagesMoved { get; set; }
         public int NoLinkImageFiles { get; set; }
