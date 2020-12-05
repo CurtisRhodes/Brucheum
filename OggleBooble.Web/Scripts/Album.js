@@ -334,7 +334,7 @@ function setBadges(folderComments) {
         if (folderComments.toUpperCase().indexOf("BIGGEST BREASTED CENTERFOLDS") > -1) {
             $('#badgesContainer').append("<a href='/album.html?folder=3900'><img src='/Images/biggestBreasts.png' title='biggest breasted centerfolds' class='badgeImage'></a>");
         }
-        if (folderComments.toUpperCase().indexOf("BLACK CENTERFOLDS") > -1) {
+        if (folderComments.toUpperCase().indexOf("BLACK CENTERFOLD") > -1) {
             $('#badgesContainer').append("<div class='badgeImage blackCenterfoldsBanner'>\n<a href='/album.html?folder=3822'>black centerfolds</a></div>");
         }
         if (folderComments.toUpperCase().indexOf("HEF LIKES TWINS") > -1) {

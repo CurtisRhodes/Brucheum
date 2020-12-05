@@ -151,8 +151,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
-                    db.SaveChanges();
+                    //db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    //db.SaveChanges();
                     List<DailyActivityReport> activityItems = db.DailyActivity.ToList();
                     foreach (var activityItem in activityItems)
                     {

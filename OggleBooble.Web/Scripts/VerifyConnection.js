@@ -104,7 +104,7 @@ function verifyConnectionFunction() {
                 }
                 else {
                     console.log("success but no verify: " + successModel.Success);
-                    if (document.domain === "local host") alert("proper error in verifyConnectionFunction: " + successModel.Success);
+                    if (document.domain === "localhost") alert("proper error in verifyConnectionFunction: " + successModel.Success);
                     connectionVerified = false;
                 }
             }
@@ -115,30 +115,34 @@ function verifyConnectionFunction() {
                 }
                 else {
                     console.log("proper error in verifyConnectionFunction: " + successModel.Success);
-                    if (document.domain === "local host") alert("proper error in verifyConnectionFunction: " + successModel.Success);
+                    if (document.domain === "localhost") alert("proper error in verifyConnectionFunction: " + successModel.Success);
                 }
             }
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             console.log("verifyConnection XHR: " + errorMessage + " requestedPage: " + requestedPage);
-            if (document.domain === "local host") alert("verifyConnection XHR: " + errorMessage);
+            if (document.domain === "localhost") alert("verifyConnection XHR: " + errorMessage);
             connectionVerified = false;
         }
     });
 }
 
 function tryHitStats() {
-    var _Hasync = _Hasync || [];
-    _Hasync.push(['Histats.start', '1,4458214,4,0,0,0,00010000']);
-    _Hasync.push(['Histats.fasi', '1']);
-    _Hasync.push(['Histats.track_hits', '']);
-    (function () {
-        var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
-        hs.src = ('//s10.histats.com/js15_as.js');
-        //hs.src = ('https://10.histats.com/js15_as.js');
-        //(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
-    })();
+    if (document.domain == "localhost")
+        console.log("hitstats bypass")
+    else {
+        var _Hasync = _Hasync || [];
+        _Hasync.push(['Histats.start', '1,4458214,4,0,0,0,00010000']);
+        _Hasync.push(['Histats.fasi', '1']);
+        _Hasync.push(['Histats.track_hits', '']);
+        (function () {
+            var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+            hs.src = ('//s10.histats.com/js15_as.js');
+            //hs.src = ('https://10.histats.com/js15_as.js');
+            //(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+        })();
+    }
 }
 
 function persistConnection() {

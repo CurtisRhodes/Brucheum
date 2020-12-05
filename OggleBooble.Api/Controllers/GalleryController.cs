@@ -83,9 +83,10 @@ namespace OggleBooble.Api.Controllers
                     albumInfo.RootFolder = dbCategoryFolder.RootFolder;
                     albumInfo.FolderName = dbCategoryFolder.FolderName;
                     albumInfo.FolderType = dbCategoryFolder.FolderType;
-
                     albumInfo.FileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
                     albumInfo.FolderCount = db.CategoryFolders.Where(f => f.Parent == folderId).Count();
+
+                    #region 1. trackbackLinks
                     var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
                     foreach (TrackbackLink trackbackLink in trackbackLinks)
                     {
@@ -106,7 +107,9 @@ namespace OggleBooble.Api.Controllers
                             albumInfo.StaticFileUpdate = dbFolderDetails.StaticFileUpdate.Value.ToShortDateString();
                         }
                     }
-                    #region BreadCrumbs
+                    #endregion
+
+                    #region 2. BreadCrumbs
                     CategoryFolder thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     albumInfo.BreadCrumbs.Add(new BreadCrumbItemModel()
                     {
@@ -133,7 +136,6 @@ namespace OggleBooble.Api.Controllers
                     db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
 
                     albumInfo.PageHits = db.PageHits.Where(h => h.PageId == folderId).Count();
-
                     var dbPageHitTotals = db.PageHitTotal.Where(h => h.PageId == folderId).FirstOrDefault();
                     if (dbPageHitTotals != null)
                     {
@@ -176,7 +178,6 @@ namespace OggleBooble.Api.Controllers
             }
             return albumInfo;
         }
-
 
         [HttpGet]
         [Route("api/GalleryPage/GetSubFolderCounts")]

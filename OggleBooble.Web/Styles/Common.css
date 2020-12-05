@@ -439,6 +439,11 @@ body {
     background-color: #dcd7be; /* #b2e5eb; */
 }
 
+.redTreeLabelDiv {
+    display: inline;
+    color: red;
+}
+
 .treeLabelDiv {
     display: inline;
 }

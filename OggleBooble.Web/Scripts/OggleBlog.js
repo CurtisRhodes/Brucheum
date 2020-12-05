@@ -79,14 +79,17 @@ function loadBlogArticles(commentType) {
                 $('#blogLoadingGif').hide();
                 if (blogCommentsContainer.Success === "ok") {
                     $('#blogArticleJogContainer').html("");
-                    $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
+                    if (blogCommentsContainer.blogComments == null)
+                        alert("no entries found");
+                    else {
+                        $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
 
-                        //if (commentType == "PRO")
-                        //    alert("categoryComment.Link: " + categoryComment.Link);
-                        if (isNullorUndefined(blogComment.Link)) {
-                            blogComment.Link = "Images/redballon.png";
-                        }
-                        $('#blogArticleJogContainer').append(`
+                            //if (commentType == "PRO")
+                            //    alert("categoryComment.Link: " + categoryComment.Link);
+                            if (isNullorUndefined(blogComment.Link)) {
+                                blogComment.Link = "Images/redballon.png";
+                            }
+                            $('#blogArticleJogContainer').append(`
                             <div class="blogArticleJog"> 
                                 <div class="flexContainer">
                                     <div class="floatLeft">
@@ -102,7 +105,8 @@ function loadBlogArticles(commentType) {
                                     </div>
                                 </div>
                             </div>`);
-                    });
+                        });
+                    }
                     resizeBlogPage();
                 }
                 else 
@@ -342,7 +346,7 @@ function loadBlogList(commentType) {
                 success: function (blogCommentModelContainer) {
                     $('#blogList').html("");
                     if (blogCommentModelContainer.Success === "ok") {
-                        if (blogCommentModelContainer.blogComments.length === 0) {
+                        if (blogCommentModelContainer.blogComments == null) {
                             $('#blogList').html("<div class='blogListItem'>--- ---</div>");
                         }
                         else {

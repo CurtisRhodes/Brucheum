@@ -127,7 +127,7 @@ function showEventActivityReport() {
 }
 function runEventActivityReport() {
     //$('#dashBoardLoadingGif').show();
-    alert("runEventActivityReport");
+    //alert("runEventActivityReport");
     $("#divStandardReportArea").html("");
     $("#divStandardReportCount").html("");
     $.ajax({

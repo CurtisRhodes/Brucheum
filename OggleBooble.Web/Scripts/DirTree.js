@@ -92,14 +92,19 @@ function buildDirTreeRecurr(parentNode) {
                 txtFileCount = "(" + vwDir.FileCount + ")";
 
             let randomId = create_UUID();
+
+            let treeNodeClass = "treeLabelDiv";
+            if (vwDir.IsStepChild == 1) {
+                treeNodeClass = "redTreeLabelDiv";
+            }
+
             strdirTree +=
                 "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
                 + "<span id='S" + randomId + "' onclick='toggleDirTree(\"" + randomId + "\")' >[" + expandMode + "] </span>"
-                + "<div id='" + randomId + "aq' class='treeLabelDiv' "
+                + "<div id='" + randomId + "aq' class='" + treeNodeClass + "' "
                 + "onclick=commonDirTreeClick('" + thisNode.DanniPath + "'," + vwDir.Id + ") "
                 + "oncontextmenu=showDirTreeContextMenu(" + vwDir.Id + ") "
                 + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') onmouseout=$('.dirTreeImageContainer').hide()>"
-                //+ "onmouseover=showFolderImage('" + encodeURI(folderImage) + "')>"
                 + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
                 + txtFileCount + "</span></div>" +
                 "<div class='" + expandClass + "' id=" + randomId + ">";
