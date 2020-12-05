@@ -16,7 +16,7 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class StaticPageController : ApiController
     {
-        private readonly int staticPageImageCount = 25;
+        private readonly int staticPageImageCount = 40;
         private readonly string httpLocation = "https://ogglebooble.com/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
@@ -174,7 +174,8 @@ namespace OggleBooble.Api.Controllers
                         staticHeaderHtml.Append("<div class=\"trackBackLink\"><a href='" + trackbackLink.Href + "' target=\"_blank\">Babepedia</a></div>\n");
                         break;
                     case "FRE":
-                        staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">" + dbFolder.FolderName + " Free Porn</a></div>\n");
+                        if(trackbackLink.LinkStatus== "ok")
+                            staticHeaderHtml.Append("<div class='trackBackLink'><a href='" + trackbackLink.Href + "' target=\"_blank\">" + dbFolder.FolderName + " Free Porn</a></div>\n");
                         break;
                 }
             }
