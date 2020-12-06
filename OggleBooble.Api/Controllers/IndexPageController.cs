@@ -46,7 +46,6 @@ namespace OggleBooble.Api.Controllers
             }
             return carouselInfo;
         }
-
     }
 
     [EnableCors("*", "*", "*")]

@@ -631,6 +631,9 @@ namespace OggleBooble.Api.MySqlDataContext
     public class VwCarouselItem
     {
         [Key]
+        public string Id { get; set; }
+        public string LinkId { get; set; }
+        public string ImageFile { get; set; }
         public int FolderId { get; set; }
         public string RootFolder { get; set; }
         public string FolderType { get; set; }
@@ -638,7 +641,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string FolderParentName { get; set; }
         public int FolderParentId { get; set; }
         public string FolderGPName { get; set; }
-        public string FirstChild { get; set; }
+        public string PlayboyYear { get; set; }
         public int FolderGPId { get; set; }        
         public int ImageFolderId { get; set; }
         public string ImageFolderName { get; set; }
@@ -648,9 +651,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public int ImageFolderGPId { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public string FileName { get; set; }
-        public string LinkId { get; set; }
-        public string Id { get; set; }
     }
 }
 

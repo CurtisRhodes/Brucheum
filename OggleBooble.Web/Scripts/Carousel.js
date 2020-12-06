@@ -1,95 +1,94 @@
-﻿const rotationSpeed = 7000, intervalSpeed = 600, specialLaunchCode = 103;
+﻿const rotationSpeed = 7000, intervalSpeed = 600, carouselDebugMode = true;
 let imageIndex = 0, numImages = 0, numFolders = 0, 
-    carouselItemArray = [], imageHistory = [], absolueStart,
+    carouselItemArray = [], imageHistory = [], absolueStartTime,
     carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
     imgSrc, jsCarouselSettings, nextRoot = 1, arryItemsShownCount = 0;
 
 function launchCarousel(startRoot) {
-    absolueStart = Date.now();
+    absolueStartTime = Date.now();
+    $('#carouselContainer').html(carouselHtml());
     loadCarouselSettingsIntoLocalStorage();
     if (startRoot === "porn") nextRoot = 4;
     if (startRoot === "centerfold") nextRoot = 6;
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
 
-    $('#footerMessage2').html("initial call to loadimages");
-    console.log("initial call to loadimages");
-    loadImages(startRoot, absolueStart, 0, specialLaunchCode, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    carouselTake = 1111;
+    let carouselSkip = 0;
+    imageIndex = 0;
+    if (startRoot === "centerfold") {
+        if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
+            console.log("loading centerfold from centerfold cache");
+            let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
+            $.each(carouselCacheArray, function (idx, obj) {
+                carouselItemArray.push(obj);
+            });
+            intervalBody();
+            resizeCarousel();
+            startCarousel("centefold cache");
+            console.log("loaded " + carouselItemArray.length + " from centerfold cache");
+        }
+    }
+    if (startRoot === "boobs") {
+        if (!isNullorUndefined(window.localStorage["carouselCache"])) {
+            let carouselCacheArray = JSON.parse(window.localStorage["carouselCache"]);
+            $.each(carouselCacheArray, function (idx, obj) {
+                carouselItemArray.push(obj);
+            });
+            carouselSkip = carouselItemArray.length;
+            intervalBody();
+            resizeCarousel();
+            startCarousel("big naturals cache");
+            //if (carouselDebugMode) alert("loaded " + carouselItemArray.length + " boobs from cache");
+            console.log("loaded " + carouselItemArray.length + " from boobs cache");
+        }
+    }
+    if (startRoot === "porn") {
+        if (!isNullorUndefined(window.localStorage["pornCache"])) {
+            console.log("loading porn from centerfold cache");
+            let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
+            $.each(carouselCacheArray, function (idx, obj) {
+                carouselItemArray.push(obj);
+            });
+            intervalBody();
+            resizeCarousel();
+            startCarousel("porn cache");
+            console.log("loaded " + carouselItemArray.length + " from porn cache");
+        }
+    }
+    try {
+        loadImages(startRoot, carouselSkip, carouselTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    } catch (e) {
+        logError("CAT", 3908, e, "launchCarousel");
+    }
+
+    //$('#footerMessage2').html("initial call to loadimages");
+    //console.log("initial call to loadimages");
     window.addEventListener("resize", resizeCarousel);
 }
 
-function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includeLandscape, includePortrait) {
+function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait) {
     settingsImgRepo = settingsArray.ImageRepo;
+    let startTime = Date.now();
     try {
-        if (carouselTake == specialLaunchCode) {
-            $('#carouselContainer').html(carouselHtml());
-            if (rootFolder === "boobs") {
-                if (!isNullorUndefined(window.localStorage["carouselCache"])) {
-                    console.log("loading boobs from cache");
-                    let carouselCacheArray = JSON.parse(window.localStorage["carouselCache"]);
-                    $.each(carouselCacheArray, function (idx, obj) {
-                        carouselItemArray.push(obj);
-                    });
-                    $('#thisCarouselImage').show();
-                    carouselSkip += 100;
-                }
-            }
-            if (rootFolder === "centerfold") {
-                if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
-                    console.log("loading centerfold from centerfold cache");
-                    let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
-                    $.each(carouselCacheArray, function (idx, obj) {
-                        carouselItemArray.push(obj);
-                    });
-                    $('#thisCarouselImage').show();
-                    carouselSkip += 100;
-                }
-            }
-            if (rootFolder === "porn") {
-                if (!isNullorUndefined(window.localStorage["pornCache"])) {
-                    console.log("loading porn from centerfold cache");
-                    let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
-                    $.each(carouselCacheArray, function (idx, obj) {
-                        carouselItemArray.push(obj);
-                    });
-                    $('#thisCarouselImage').show();
-                    carouselSkip += 100;
-                }
-            }
-            if (carouselItemArray.length > 10) {
-                if (!vCarouselInterval) {
-                    imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-                    imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
-                    mainImageClickId = carouselItemArray[imageIndex].FolderId;
-                    $('#thisCarouselImage').attr('src', imgSrc).load(function () {
-                        $('#carouselImageContainer').fadeIn();
-                        $('.carouselFooter').width($('#thisCarouselImage').width());
-                        $('.carouselFooter').css("visibility", "visible");
-                        $('#carouselFooter').fadeIn();
-                        resizeIndexPage();
-                        resizeCarousel();
-                        //$('#thisCarouselImage').height($('#topIndexPageSection').height() - 40);
-                    });
-                    setLabelLinks();
-                    //$('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-
-                    startCarousel("specialLaunchCode");
-                    let delta = (Date.now() - absolueStart) / 1000;
-                    if (debugMode) $('#badgesContainer').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
-                    console.log("startCarousel from load carouselCache launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                    $('#footerMessage2').html("initial " + rootFolder + " launch from cache took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                }
-            }
-            loadImages(rootFolder, absolueStart, carouselSkip, 987, includeLandscape, includePortrait);
-        }
-        else {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
-                    "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
-                success: function (carouselInfo) {
-                    if (carouselInfo.Success === "ok") {
-                        $.each(carouselInfo.Links, function (idx, obj) {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
+                "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
+            success: function (carouselInfo) {
+                if (carouselInfo.Success === "ok") {
+                    let isAlreadyInArray = false;
+                    $.each(carouselInfo.Links, function (idx, obj) {
+                        isAlreadyInArray = false;
+                        for (i = 0; i < carouselInfo.length; i++) {
+                            if (obj.Id === carouselInfo[i].Id) {
+                                if (carouselDebugMode) alert(obj.Id + " already in carouselItemArray: " + carouselItemArray.find(item => { item.Id == obj.Id }));
+                                console.log(obj.Id + " already in carouselItemArray");
+                                isAlreadyInArray = true;
+                            }
+                        }
+                        if (!isAlreadyInArray) {
+                            //if (carouselItemArray.find(item => { item.Id == obj.Id }) != undefined) {
                             carouselItemArray.push({
                                 Id: obj.Id,
                                 FolderId: obj.FolderId,
@@ -102,58 +101,51 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
                                 FolderGPId: obj.FolderGPId,
                                 ImageFolderId: obj.ImageFolderId,
                                 ImageFolderName: obj.ImageFolderName,
-                                FirstChild: obj.FirstChild,
+                                PlayboyYear: obj.PlayboyYear,
                                 ImageFolderRoot: obj.ImageFolderRoot,
                                 ImageFolderParentName: obj.ImageFolderParentName,
                                 ImageFolderParentId: obj.ImageFolderParentId,
                                 ImageFolderGPName: obj.ImageFolderGPName,
                                 ImageFolderGPId: obj.ImageFolderGPId,
                                 LinkId: obj.LinkId,
-                                FileName: obj.FileName
+                                ImageFile: obj.ImageFile
                             });
-
-                            if (carouselItemArray.length === 127) {
-                                refreshCache(rootFolder);
-                            }
-                            
-                        });
-
-                        if (!vCarouselInterval) {
-                            console.log("starting carousel from after ajax");
-                            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-                            imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
-                            $('#thisCarouselImage').attr('src', imgSrc);
-                            $('#carouselImageContainer').show();
-                            $('#thisCarouselImage').show();
-                            resizeIndexPage();
-                            resizeCarousel();
-                            startCarousel("ajax");
-                            let delta = (Date.now() - absolueStart) / 1000;
-                            if (debugMode) $('#badgesContainer').html("initial launch from cache took: " + delta.toFixed(3) + " total initial items: " + carouselItemArray.length.toLocaleString());
-                            console.log("startCarousel without cache launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                            $('#footerMessage2').html("startCarousel without cache launch took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                         }
+                    });
 
-                        if (carouselInfo.Links.length === carouselTake) {
-                            console.log("loadImages. " + rootFolder + " take: " + carouselTake);
-                            $('#footerMessage2').html("loadImages. " + rootFolder + " take: " + carouselTake);
-                            carouselSkip += carouselTake;
-                            loadImages(rootFolder, absolueStart, carouselSkip, 1005, includeLandscape, includePortrait);
-                        }
-                        else {
-                            addMoreRootsToCarousel(rootFolder);
-                        }
+                    if (!vCarouselInterval) {
+                        console.log("starting carousel from after ajax");
+                        startCarousel("ajax");
+                    }
+
+                    if ((carouselItemArray.length > (carouselSkip * 2)) && (carouselItemArray.length < (carouselSkip * 3))) refreshCache(rootFolder);
+
+                    if (carouselInfo.Links.length === carouselTake) {
+                        console.log("loadImages. " + rootFolder + " take: " + carouselTake);
+                        $('#footerMessage2').html("loadImages. " + rootFolder + " take: " + carouselTake);
+                        carouselSkip += carouselTake;
+                        //alert("carouselSkip: " + carouselSkip);
+                        loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
                     }
                     else {
-                        logError("AJX", 3908, carouselInfo.Success, "carousel.loadImages");
+                        addMoreRootsToCarousel(rootFolder);
                     }
-                },
-                error: function (jqXHR) {
-                    if (!checkFor404("carousel.loadImages"))
-                        logError("XHR", 3908, getXHRErrorDetails(jqXHR), "carousel.loadImages");
+
+                    //function loadImages(rootFolder, , , includeLandscape, includePortrait) {
+                    let delta = (Date.now() - startTime) / 1000;
+                    //if (carouselDebugMode) $('#badgesContainer').html(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                    console.log(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                    $('#footerMessage2').html(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                 }
-            });
-        }
+                else {
+                    logError("AJX", 3908, carouselInfo.Success, "carousel.loadImages");
+                }
+            },
+            error: function (jqXHR) {
+                if (!checkFor404("carousel.loadImages"))
+                    logError("XHR", 3908, getXHRErrorDetails(jqXHR), "carousel.loadImages");
+            }
+        });
     } catch (e) {
         logError("CAT", 3908, e, "carousel.loadImages");
     }
@@ -161,15 +153,17 @@ function loadImages(rootFolder, absolueStart, carouselSkip, carouselTake, includ
 
 function addMoreRootsToCarousel(rootFolder) {
     if (nextRoot === 1) {
-        nextRoot = 2;
+        nextRoot = 3;
         //if (jsCarouselSettings.includeArchive) {
-            $('#footerMessage2').html("loading archive");
-            console.log("loading archive");
-            loadImages("archive", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-            return;
+        $('#footerMessage2').html("loading archive");
+        refreshCache(rootFolder);
+        console.log("loading archive");
+        loadImages("archive", 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+        return;
         //}
     }
     if (nextRoot === 2) {
+        refreshCache(rootFolder);
         nextRoot = 3;
         //if (jsCarouselSettings.includeCenterfolds) {
         //    $('#footerMessage2').html("loading centerfolds");
@@ -180,11 +174,12 @@ function addMoreRootsToCarousel(rootFolder) {
         //}
     }
     if (nextRoot === 3) {
+        refreshCache(rootFolder);
         nextRoot = 6;
         //if (jsCarouselSettings.includeSoftcore) {
             $('#footerMessage2').html("loading soft core");
             carouselSkip = 0;
-            loadImages("soft", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+        loadImages("soft", 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
             return;
         //}
     }
@@ -194,7 +189,7 @@ function addMoreRootsToCarousel(rootFolder) {
             if (jsCarouselSettings.includePorn) {
                 $('#footerMessage2').html("loading sluts");
                 carouselSkip = 0;
-                loadImages("sluts", Date.now(), 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+                loadImages("sluts", 0, 1500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
                 return;
             }
         //}
@@ -210,7 +205,7 @@ function addMoreRootsToCarousel(rootFolder) {
     //    }
     //}
     if (nextRoot === 6) {
-        let delta = (Date.now() - absolueStart) / 1000;
+        let delta = (Date.now() - absolueStartTime) / 1000;
         console.log("loadImages DONE!! took: " + delta.toFixed(3) + " total: " + carouselItemArray.length.toLocaleString());
         $('#footerMessage2').html("loadImages DONE!! took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
         refreshCache(rootFolder);
@@ -233,9 +228,9 @@ function refreshCache(rootFolder) {
         default:
             window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
     }
-    $('#footerMessage2').html("refreshed " + rootFolder + " cache");
     console.log("refreshed " + rootFolder + " cache");
-    setTimeout(function () { $('#footerMessage2').html("") }, 12000);
+    $('#footerMessage2').html("refreshed " + rootFolder + " cache");
+    //if (carouselDebugMode) alert("refreshed " + rootFolder + " cache");
 }
 
 function startCarousel(calledFrom) {
@@ -250,179 +245,86 @@ function startCarousel(calledFrom) {
 }
 
 function intervalBody() {
-    imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-    if (carouselItemArray.length > 1000) {
-        if (alreadyInLast100()) {
-            if (debugMode) $('#badgesContainer').html("already in last 100 flagged");
-            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+    if ($('#pauseButton').html() == "||") {
+        imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+        if (carouselItemArray.length > 100) {
+            while (alreadyInLast100()) {
+                if (carouselDebugMode) {
+                    //$('#badgesContainer').html("already in last 100 " + carouselItemArray[imageIndex].Id);
+                    alert("already in last 100 " + carouselItemArray[imageIndex].Id);
+                }
+            }
         }
-    }
-    imageHistory.push(imageIndex);
-    $('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
-    //if (debugMode) $('#badgesContainer').html("images: " + ++arryItemsShownCount);
-
-    $('.carouselFooter').css("visibility", "hidden");
-    $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-        imgSrc = settingsImgRepo + carouselItemArray[imageIndex].FileName;
-        $('#thisCarouselImage').attr('src', imgSrc).load(function () {
-            $('#carouselFooter').fadeIn();
-            setLabelLinks();
-            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });            
-            //if (window.localStorage["IpAddress"] === "68.203.90.183")
-            //    $('#badgesContainer').html("imageIndex: " + imageIndex + "  imageHistory.length: " + imageHistory.length);
-            //if (debugMode) $('#hdrBtmRowSec3').append(".len: " + imageHistory.length);
-            //if (debugMode) $('#hdrBtmRowSec3').html("  Count: " + imageHistoryArrayCount);
-            //if (debugMode) $('#hdrBtmRowSec3').append("  a[" + (imageHistory.length - 1) + "]: " + imageHistory[imageHistory.length - 1]);
+        $('.carouselFooter').css("visibility", "hidden");
+        $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+            imgSrc = settingsImgRepo + carouselItemArray[imageIndex].ImageFile;
+            $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+                $('#carouselFooter').fadeIn();
+                setLabelLinks(imageIndex);
+                $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+            });
         });
-    });
+    }
+    else {
+        $('#pauseButton').html("|");
+        setTimeout(function () { $('#pauseButton').html(">") }, 700);
+    }
 }
 
-function setLabelLinks() {
+function setLabelLinks(llIdx) {
     $('#knownModelLabel').html("").hide();
     $('#carouselFooterLabel').html("").hide();
     $('#imageTopLabel').html("").hide();
+    if (carouselItemArray[llIdx].RootFolder === "centerfold") {
 
-    //singleParent	228
-    //multiFolder	220
-    //multiModel	565
+        $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[llIdx].PlayboyYear);
+        if (carouselItemArray[llIdx].FolderType == 'singleChild') {
+            $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[llIdx].PlayboyYear);
+            $('#knownModelLabel').html(carouselItemArray[llIdx].FolderParentName);
+            $('#carouselFooterLabel').html(carouselItemArray[llIdx].FolderGPName);
+            mainImageClickId = carouselItemArray[llIdx].FolderParentId;
+            imageTopLabelClickId = carouselItemArray[llIdx].FolderGPId;
+            knownModelLabelClickId = carouselItemArray[llIdx].FolderId;
+            footerLabelClickId = carouselItemArray[llIdx].FolderGPId;
 
-    //singleModel	1221
-    //singleChild	2736
-    //unused	1
+            pause();
 
-    if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
-        if (carouselItemArray[imageIndex].FolderType == "singleParent") { 
         }
-        if (carouselItemArray[imageIndex].FolderType == "singleChild") { // containsRomanNumerals
-
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderName)
-            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].FolderGPName);
-
-            mainImageClickId = carouselItemArray[imageIndex].FolderId;
-            knownModelLabelClickId = carouselItemArray[imageIndex].FolderParentId;
-            imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
-            footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
-
-            if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                mainImageClickId = carouselItemArray[imageIndex].FolderId;
-
-
-
-            }
-        }
-
-        if (carouselItemArray[imageIndex].FolderId === carouselItemArray[imageIndex].ImageFolderId) {
-            if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolderName)) {
-                // noraml
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
-                $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderName)
-                $('#carouselFooterLabel').html(carouselItemArray[imageIndex].FolderGPName);
-                mainImageClickId = carouselItemArray[imageIndex].FolderId;
-                knownModelLabelClickId = carouselItemArray[imageIndex].FolderParentId;
-                imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
-                footerLabelClickId = carouselItemArray[imageIndex].FolderGPId;
-
-                if (debugMode) $('#headerMessage').html("1");
-
-                if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-
-                    $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderName);
-                    knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;
-
-                    $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].FirstChild);
-                    if (debugMode) $('#headerMessage').append("P");
-                }
-            }
-            else { // roman shift
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].FolderParentName);
-                $('#imageTopLabel').html(carouselItemArray[imageIndex].ImageFolderGPName)
-                $('#carouselFooterLabel').html(carouselItemArray[imageIndex].RootFolder);
-                footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].RootFolder);
-                mainImageClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-                knownModelLabelClickId = carouselItemArray[imageIndex].FolderId;  //  the roman
-                imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;
-                if (debugMode) $('#headerMessage').html("RNS");
-
-                if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                    $('#imageTopLabel').html("Playboy Playmate2: " + carouselItemArray[imageIndex].FirstChild);
-                    $('#knownModelLabel').html(carouselItemArray[imageIndex].Folder);
-                    if (debugMode) $('#headerMessage').append("P");
-                    imageTopLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-                    //pause();
-                    //setTimeout(function () { alert("roman shift.  imageTopLabelClickId: " + imageTopLabelClickId); }, 600);
-                }
-            }
+        else {
+            $('#knownModelLabel').html(carouselItemArray[llIdx].FolderName);
+            $('#carouselFooterLabel').html(carouselItemArray[llIdx].FolderGPName);
+            mainImageClickId = carouselItemArray[llIdx].FolderId;
+            imageTopLabelClickId = carouselItemArray[llIdx].FolderParentId;
+            knownModelLabelClickId = carouselItemArray[llIdx].FolderId;
+            footerLabelClickId = carouselItemArray[llIdx].FolderGPId;
         }
     }
-    else { // we have a link
-        if (!containsRomanNumerals(carouselItemArray[imageIndex].ImageFolderName)) {
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderName)
-            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].ImageFolderParentName);
-            mainImageClickId = carouselItemArray[imageIndex].ImageFolderId;
-            knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderId;
-            imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
-            footerLabelClickId = getRootFolderId(carouselItemArray[imageIndex].ImageFolderParentId);
-            if (debugMode) $('#headerMessage').html("LN3");
-            if (carouselItemArray[imageIndex].RootFolder === "centerfold") {
-                $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
-                $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[imageIndex].ImageFolderParentName);
-                if (debugMode) $('#headerMessage').append("P");
-
-                //$('#carouselFooterLabel').html("Playboy");
-                //footerLabelClickId = 472;
-
-                //$('#headerMessage').html(" 3P non folder member");
-                //pause();
-                //setTimeout(function () { alert("non folder member 3. centerfold\nroot: " + carouselItemArray[imageIndex].RootFolder) }, 600);
-            }
+    else {
+        //if (carouselItemArray[llIdx].FolderName == carouselItemArray[llIdx].ImageFolderName) {
+        if (carouselItemArray[llIdx].FolderType != 'singleChild') {
+            $('#imageTopLabel').html(carouselItemArray[llIdx].FolderParentName);
+            $('#knownModelLabel').html(carouselItemArray[llIdx].FolderName);
+            $('#carouselFooterLabel').html(carouselItemArray[llIdx].FolderGPName);
+            mainImageClickId = carouselItemArray[llIdx].FolderId;
+            imageTopLabelClickId = carouselItemArray[llIdx].FolderParentId;
+            knownModelLabelClickId = carouselItemArray[llIdx].FolderId;
+            footerLabelClickId = carouselItemArray[llIdx].FolderGPId;
         }
-        else {  // roman numeral shift
-            mainImageClickId = carouselItemArray[imageIndex].FolderId;
+        else {
+            $('#imageTopLabel').html("2 " + carouselItemArray[llIdx].FolderParentName);
+            $('#knownModelLabel').html(carouselItemArray[llIdx].ImageFolderName);
+            $('#carouselFooterLabel').html(carouselItemArray[llIdx].FolderGPId);
 
-            $('#imageTopLabel').html(carouselItemArray[imageIndex].FolderName);
-            imageTopLabelClickId = carouselItemArray[imageIndex].FolderId;
-            //$('#imageTopLabel').html(carouselItemArray[imageIndex].FolderGPName);
-            //imageTopLabelClickId = carouselItemArray[imageIndex].FolderGPId;
-            
-            $('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderName);
-            knownModelLabelClickId = carouselItemArray[imageIndex].ImageId;
-            //$('#knownModelLabel').html(carouselItemArray[imageIndex].ImageFolderParentName);
-            //knownModelLabelClickId = carouselItemArray[imageIndex].ImageFolderParentId;
-
-            $('#carouselFooterLabel').html(carouselItemArray[imageIndex].ImageFolderGPName);
-            footerLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;;
-            //$('#carouselFooterLabel').html(carouselItemArray[imageIndex].ImageFolderGPName);
-            //footerLabelClickId = carouselItemArray[imageIndex].ImageFolderGPId;;
-
-            //ImageFolderGPName
-            //ImageFolderGPId
-            //FolderGPName
-            //FolderGPId
-
-            if (debugMode) $('#headerMessage').html("RNS4");
-            //pause();
-            //setTimeout(function () { alert("4 Non Roman Numeral Non folder member") }, 600);
+            mainImageClickId = carouselItemArray[llIdx].FolderId;
+            imageTopLabelClickId = carouselItemArray[llIdx].FolderId;
+            knownModelLabelClickId = carouselItemArray[llIdx].ImageFolderId;
+            footerLabelClickId = carouselItemArray[llIdx].FolderParentId;;
+            //alert("singleChild");
         }
     }
-
-
     $('#carouselFooterLabel').fadeIn();
     $('#imageTopLabel').fadeIn();
     $('#knownModelLabel').fadeIn();
-}
-
-function getRootFolderId(rootFolder) {
-    var rootFolderId = 2;
-    switch (rootFolder) {
-        case "archive": rootFolderId = 3; break;
-        case "boobs": rootFolderId = 2; break;
-        case "playboy": rootFolderId = 472; break;
-        case "porn": rootFolderId = 242; break;
-        case "sluts": rootFolderId = 440; break;
-    }
-    return rootFolderId;
 }
 
 function resizeCarousel() {
@@ -436,17 +338,13 @@ function alreadyInLast100() {
     let idxStart = Math.max(0, carouselItemArray.length - 300);
     for (i = idxStart; i < imageHistory.length; i++) {
         if (imageIndex === imageHistory[i]) {
-            if (window.localStorage["IpAddress"] === "68.203.90.183") {
-                $('#badgesContainer').html("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
-                //alert("Already shown try again: ");
-                beep();
-                console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
-            }
+            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+            console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
             logEvent("REJ", carouselItemArray[imageIndex].FolderId, "alreadyInLast100", carouselItemArray[imageIndex].LinkId);
             return true;
         }
     }
-    $('#badgesContainer').html("");
+    imageHistory.push(imageIndex);
     return false;
 }
 
@@ -523,7 +421,7 @@ function addItemsToArray(ckId) {
     let remDom = ckId.substring(2);
     //$('#ckPorn').prop('checked', true);
     alert("addItemsToArray: " + remDom);
-    loadImages(remDom, Date.now(), 0, 500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+    loadImages(remDom, 0, 500, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
 }
 
 function assuranceArrowClick(direction) {
@@ -533,28 +431,19 @@ function assuranceArrowClick(direction) {
     }
     else {
         pause();
-        let len1 = imageHistory.length;
-        //let idx1 = imageIndex;
-        //let linkId1 = carouselItemArray[imageIndex].LinkId;
-        imageHistory.pop();
-        let len2 = imageHistory.length;
-
         let popimageIndex = imageHistory[imageHistory.length - 1];
-
+        setLabelLinks(imageHistory.pop());
         //alert("imageIndex: " + imageIndex + " popimageIndex: " + popimageIndex);
 
-        let popimage = settingsImgRepo + carouselItemArray[popimageIndex].FileName;
+        let popimage = settingsImgRepo + carouselItemArray[popimageIndex].ImageFile;
         $('#thisCarouselImage').attr('src', popimage);
 
-        $('#badgesContainer').html("len1: " + len1 + " imageIndex: " + imageIndex + "  len2: " + len2 + "  new index: " + popimageIndex);
-
-
-        //if (debugMode) $('#hdrBtmRowSec3').html("indx: " + indx);
+        //$('#badgesContainer').html("len1: " + len1 + " imageIndex: " + imageIndex + "  len2: " + len2 + "  new index: " + popimageIndex);
+        //if (carouselDebugMode) $('#hdrBtmRowSec3').html("indx: " + indx);
         //alert("indx[" + imageHistory.length + "]: " + indx);
 
         //$('#thisCarouselImage').attr('src', popimage).load(function () {
         //    $('#carouselFooter').fadeIn();
-        //    setLabelLinks();
         //    //$('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
         //    //$('#footerMessage').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
         //    //alert("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());

@@ -190,7 +190,7 @@ function getAlbumPageInfo(folderId) {
                     $.each(albumInfo.TrackBackItems, function (idx, obj) {
                         switch (obj.SiteCode) {
                             case "FRE":
-                                alert("ss for " + obj.LinkStatus);
+                                //alert("ss for " + obj.LinkStatus);
                                 if (obj.LinkStatus == "ok")
                                     $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">" + albumInfo.FolderName + " Free Porn</a></div>");
                                 break;

@@ -74,11 +74,11 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",241)'>sizes</a>\n");
-            $('#hdrBtmRowSec3').html(addBannerButton("centerfold"));
-            $('#hdrBtmRowSec3').append(addBannerButton("archive"));
-            $('#hdrBtmRowSec3').append(addBannerButton("softcore", "softcore"));
-            $('#hdrBtmRowSec3').append(addBannerButton("porn", "OgglePorn"));
-            $('#hdrBtmRowSec3').append(addBannerButton("ranker", "poses"));
+            $('#breadcrumbContainer').html(addBannerButton("centerfold"));
+            $('#breadcrumbContainer').append(addBannerButton("archive"));
+            $('#breadcrumbContainer').append(addBannerButton("softcore", "softcore"));
+            $('#breadcrumbContainer').append(addBannerButton("porn", "OgglePorn"));
+            $('#breadcrumbContainer').append(addBannerButton("ranker", "poses"));
             changeFavoriteIcon("redBallon");
             break;
         }
