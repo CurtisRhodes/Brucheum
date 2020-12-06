@@ -421,7 +421,7 @@ function runImpactReport() {
                 kludge += "<tr><th>Updated</th><th>Page</th><th>Total Hits</th><th>Impact Hits</th></tr>";
                 $.each(impactReportModel.ImpactRows, function (idx, obj) {
                     kludge += "<td>" + obj.DateUpdated + "</td>";
-                    kludge += "<td><a href='/album.html?folder=" + obj.FolderId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    kludge += "<td>" + obj.Parent + " " + "<a href='/album.html?folder=" + obj.FolderId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
                     kludge += "<td>" + obj.Hits + "</td>";
                     kludge += "<td>" + obj.ImpactHits + "</td></tr>";
                 });

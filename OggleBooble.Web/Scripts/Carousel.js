@@ -1,5 +1,5 @@
 ﻿const rotationSpeed = 7000, intervalSpeed = 600, carouselDebugMode = true;
-let imageIndex = 0, numImages = 0, numFolders = 0, 
+let imageIndex = 0, numImages = 0, numFolders = 0, backArrowClicks = 0,
     carouselItemArray = [], imageHistory = [], absolueStartTime,
     carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
@@ -12,8 +12,8 @@ function launchCarousel(startRoot) {
     if (startRoot === "porn") nextRoot = 4;
     if (startRoot === "centerfold") nextRoot = 6;
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-
-    carouselTake = 1111;
+    $('#pauseButton').html("||");
+    carouselTake = 777;
     let carouselSkip = 0;
     imageIndex = 0;
     if (startRoot === "centerfold") {
@@ -35,11 +35,9 @@ function launchCarousel(startRoot) {
             $.each(carouselCacheArray, function (idx, obj) {
                 carouselItemArray.push(obj);
             });
-            carouselSkip = carouselItemArray.length;
             intervalBody();
             resizeCarousel();
             startCarousel("big naturals cache");
-            //if (carouselDebugMode) alert("loaded " + carouselItemArray.length + " boobs from cache");
             console.log("loaded " + carouselItemArray.length + " from boobs cache");
         }
     }
@@ -275,51 +273,49 @@ function setLabelLinks(llIdx) {
     $('#knownModelLabel').html("").hide();
     $('#carouselFooterLabel').html("").hide();
     $('#imageTopLabel').html("").hide();
-    if (carouselItemArray[llIdx].RootFolder === "centerfold") {
+    let carouselItem = carouselItemArray[llIdx];
+    if (carouselItem.RootFolder === "centerfold") {
 
-        $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[llIdx].PlayboyYear);
-        if (carouselItemArray[llIdx].FolderType == 'singleChild') {
-            $('#imageTopLabel').html("Playboy Playmate: " + carouselItemArray[llIdx].PlayboyYear);
-            $('#knownModelLabel').html(carouselItemArray[llIdx].FolderParentName);
-            $('#carouselFooterLabel').html(carouselItemArray[llIdx].FolderGPName);
-            mainImageClickId = carouselItemArray[llIdx].FolderParentId;
-            imageTopLabelClickId = carouselItemArray[llIdx].FolderGPId;
-            knownModelLabelClickId = carouselItemArray[llIdx].FolderId;
-            footerLabelClickId = carouselItemArray[llIdx].FolderGPId;
-
-            pause();
-
+        $('#imageTopLabel').html("Playboy Playmate: " + carouselItem.PlayboyYear);
+        if (carouselItem.FolderType == 'singleChild') {
+            $('#imageTopLabel').html("Playboy Playmate: " + carouselItem.PlayboyYear);
+            $('#knownModelLabel').html(carouselItem.FolderParentName);
+            $('#carouselFooterLabel').html(carouselItem.FolderGPName);
+            mainImageClickId = carouselItem.FolderParentId;
+            imageTopLabelClickId = carouselItem.FolderGPId;
+            knownModelLabelClickId = carouselItem.FolderId;
+            footerLabelClickId = carouselItem.FolderGPId;
+            //pause();
         }
         else {
-            $('#knownModelLabel').html(carouselItemArray[llIdx].FolderName);
-            $('#carouselFooterLabel').html(carouselItemArray[llIdx].FolderGPName);
-            mainImageClickId = carouselItemArray[llIdx].FolderId;
-            imageTopLabelClickId = carouselItemArray[llIdx].FolderParentId;
-            knownModelLabelClickId = carouselItemArray[llIdx].FolderId;
-            footerLabelClickId = carouselItemArray[llIdx].FolderGPId;
+            $('#knownModelLabel').html(carouselItem.FolderName);
+            $('#carouselFooterLabel').html(carouselItem.FolderGPName);
+            mainImageClickId = carouselItem.FolderId;
+            imageTopLabelClickId = carouselItem.FolderParentId;
+            knownModelLabelClickId = carouselItem.FolderId;
+            footerLabelClickId = carouselItem.FolderGPId;
         }
     }
     else {
-        //if (carouselItemArray[llIdx].FolderName == carouselItemArray[llIdx].ImageFolderName) {
-        if (carouselItemArray[llIdx].FolderType != 'singleChild') {
-            $('#imageTopLabel').html(carouselItemArray[llIdx].FolderParentName);
-            $('#knownModelLabel').html(carouselItemArray[llIdx].FolderName);
-            $('#carouselFooterLabel').html(carouselItemArray[llIdx].FolderGPName);
-            mainImageClickId = carouselItemArray[llIdx].FolderId;
-            imageTopLabelClickId = carouselItemArray[llIdx].FolderParentId;
-            knownModelLabelClickId = carouselItemArray[llIdx].FolderId;
-            footerLabelClickId = carouselItemArray[llIdx].FolderGPId;
+        if (carouselItem.FolderType == 'singleChild') {
+            $('#imageTopLabel').html(carouselItem.FolderParentName);
+            $('#knownModelLabel').html(carouselItem.FolderName);
+            $('#carouselFooterLabel').html(carouselItem.FolderGPName);
+
+            mainImageClickId = carouselItem.FolderParentId;
+            imageTopLabelClickId = carouselItem.FolderParentId;
+            knownModelLabelClickId = carouselItem.FolderId;
+            footerLabelClickId = carouselItem.FolderGPId;
         }
         else {
-            $('#imageTopLabel').html("2 " + carouselItemArray[llIdx].FolderParentName);
-            $('#knownModelLabel').html(carouselItemArray[llIdx].ImageFolderName);
-            $('#carouselFooterLabel').html(carouselItemArray[llIdx].FolderGPId);
+            $('#imageTopLabel').html(carouselItem.FolderName);
+            $('#knownModelLabel').html(carouselItem.FolderParentName);
+            $('#carouselFooterLabel').html(carouselItem.FolderGPName);
 
-            mainImageClickId = carouselItemArray[llIdx].FolderId;
-            imageTopLabelClickId = carouselItemArray[llIdx].FolderId;
-            knownModelLabelClickId = carouselItemArray[llIdx].ImageFolderId;
-            footerLabelClickId = carouselItemArray[llIdx].FolderParentId;;
-            //alert("singleChild");
+            mainImageClickId = carouselItem.FolderId;
+            imageTopLabelClickId = carouselItem.FolderId;
+            knownModelLabelClickId = carouselItem.FolderParentId;
+            footerLabelClickId = carouselItem.FolderGPId;;
         }
     }
     $('#carouselFooterLabel').fadeIn();
@@ -358,7 +354,7 @@ function clickSpeed(speed) {
     startCarousel("speed");
 }
 function togglePause() {
-    if ($('#pauseButton').html() === "||")
+    if ($('#pauseButton').html() == "||")
         pause();
     else {
         resume();
@@ -370,11 +366,12 @@ function pause() {
     $('#pauseButton').html(">");
 }
 function resume() {
+    $('#pauseButton').html("||");
+    backArrowClicks = 0;
     intervalBody();
     clearInterval(vCarouselInterval);
     vCarouselInterval = null;
     startCarousel("resume");
-    $('#pauseButton').html("||");
 }
 
 function showCarouelSettingsDialog() {
@@ -431,12 +428,13 @@ function assuranceArrowClick(direction) {
     }
     else {
         pause();
-        let popimageIndex = imageHistory[imageHistory.length - 1];
-        setLabelLinks(imageHistory.pop());
+        let popimageIndex = imageHistory[imageHistory.length - ++backArrowClicks];
+        //imageHistory.pop());
         //alert("imageIndex: " + imageIndex + " popimageIndex: " + popimageIndex);
 
         let popimage = settingsImgRepo + carouselItemArray[popimageIndex].ImageFile;
         $('#thisCarouselImage').attr('src', popimage);
+        setLabelLinks(popimageIndex);
 
         //$('#badgesContainer').html("len1: " + len1 + " imageIndex: " + imageIndex + "  len2: " + len2 + "  new index: " + popimageIndex);
         //if (carouselDebugMode) $('#hdrBtmRowSec3').html("indx: " + indx);

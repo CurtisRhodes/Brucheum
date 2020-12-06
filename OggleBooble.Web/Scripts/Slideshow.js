@@ -339,7 +339,7 @@ function closeViewer(calledFrom) {
         else {
             logEvent("SVC", albumFolderId, "calledFrom", "Images Viewed: " + spSessionCount + " closed: " + closeMethod);
         }
-        resizeImageContainer();
+        // resizeImageContainer();
     }
     spSessionCount = 0;
 }

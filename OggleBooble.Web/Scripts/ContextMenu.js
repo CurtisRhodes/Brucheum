@@ -3,7 +3,9 @@
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     event.preventDefault();
     window.event.returnValue = false;
-    logEvent("CXM", folderId, menuType, folderName);
+    //logEvent(eventCode, folderId, calledFrom, eventDetails) {
+
+    logEvent("CXM", folderId, menuType, getCookieValue("VisitorId"));
     console.log("context menu opened: " + menuType);
     pLinkId = linkId;
     pImgSrc = imgSrc;
@@ -75,7 +77,7 @@ function getLimitedImageDetails() {
                 }
 
                 //$('#ctxMenuType').html(pMenuType).show();
-                $('#ctxModelName').html(imageInfo.FolderType);
+                //$('#ctxModelName').html(imageInfo.FolderType);
                 switch (pMenuType) {
                     case "Slideshow":
                         //$('#ctxMenuType').html(pMenuType).show();
@@ -85,7 +87,7 @@ function getLimitedImageDetails() {
                         $('#ctxNewTab').show();
                         break;
                     case "Image":
-                        $('#ctxModelName').html(imageInfo.FolderName);
+                        //$('#ctxModelName').html(imageInfo.FolderName);
                         break;
                     case "Video":
                         break;
