@@ -430,14 +430,15 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dataAction = new MySqlDataContext.ChangeLog();
-                    dataAction.PkId = Guid.NewGuid().ToString();
-                    dataAction.VisitorId = changeLog.VisitorId;
-                    dataAction.PageId = changeLog.FolderId;
-                    dataAction.ActivityCode = changeLog.ActivityCode;
-                    dataAction.Activity = changeLog.Activity;
-                    dataAction.Occured = DateTime.Now;
-                    db.ChangeLogs.Add(dataAction);
+                    db.ChangeLogs.Add(new MySqlDataContext.ChangeLog()
+                    {
+                        PkId = Guid.NewGuid().ToString(),
+                        VisitorId = changeLog.VisitorId,
+                        PageId = changeLog.FolderId,
+                        ActivityCode = changeLog.ActivityCode,
+                        Activity = changeLog.Activity,
+                        Occured = DateTime.Now
+                    });
                     db.SaveChanges();
                 }
                 success = "ok";

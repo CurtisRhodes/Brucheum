@@ -241,6 +241,10 @@ function contextMenuAction(action) {
         case "remove":
             $("#imageContextMenu").fadeOut();
             attemptRemoveLink(pLinkId, pFolderId, pImgSrc);
+            break;            
+        case "delete":
+            $("#imageContextMenu").fadeOut();
+            deleteLink(pLinkId, pFolderId, pImgSrc);
             break;
         case "reject":
             $("#imageContextMenu").fadeOut();
@@ -294,6 +298,7 @@ function contextMenuHtml() {
         "   <div onclick='contextMenuAction(\"move\")'>Move Image</div>\n" +
         "   <div onclick='contextMenuAction(\"remove\")'>Remove Link</div>\n" +
         "   <div onclick='contextMenuAction(\"reject\")'>Move to Rejects</div>\n" +
+        //"   <div onclick='contextMenuAction(\"delete\")'>Delete Image</div>\n" +
         "   <div onclick='contextMenuAction(\"setF\")'>Set as Folder Image</div>\n" +
         "   <div onclick='contextMenuAction(\"setC\")'>Set as Category Image</div>" +
         " </div>\n";

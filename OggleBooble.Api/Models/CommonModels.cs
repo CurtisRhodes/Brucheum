@@ -88,7 +88,6 @@ namespace OggleBooble.Api.Models
     }
     public class DataActivityModel
     {
-        public string PkId { get; set; }
         public int FolderId { get; set; }
         public string ActivityCode { get; set; }
         public string Activity { get; set; }

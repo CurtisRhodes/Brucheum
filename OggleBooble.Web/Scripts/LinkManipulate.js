@@ -79,6 +79,9 @@ function showArchiveLinkDialog(linkId, folderId, imgSrc, pMenuType) {
 }
 
 function moveFile(request, linkId, folderId) {
+
+    alert("pSelectedTreeId: " + pSelectedTreeId);
+
     $('#imagePageLoadingGif').show();
     $.ajax({
         type: "PUT",
@@ -93,11 +96,13 @@ function moveFile(request, linkId, folderId) {
                 getAlbumImages(folderId);
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
                 $('#centeredDialogContainer').fadeOut();
+
+                alert()
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: request,
-                    PageId: folderId,
-                    Activity: linkId
+                    FolderId: pSelectedTreeId,
+                    Activity: linkId + " " + request + " from " + folderId
                 });
             }
             else {
@@ -162,7 +167,7 @@ function showConfirmDeteteImageDialog(linkId, folderId, imgSrc, errMsg) {
             "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked' />  duplicate</div>\n" +
             "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons' />  bad link</div>\n" +
             "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons' />  low quality</div>\n" +
-            "    <div class='roundendButton' onclick='performMoveImageToRejects(\"" + linkId + "\," + folderId + "\")'>ok</div>\n");
+            "    <div class='roundendButton' onclick='performMoveImageToRejects(\"" + linkId + "\"," + folderId + ")'>ok</div>\n");
     }
 
     if (errMsg === "home folder Link") {
@@ -189,13 +194,18 @@ function performMoveImageToRejects(linkId, folderId) {
             }
             else {
                 if (success === "ok") {
-                    if (viewerShowing)
+                    if (viewerShowing) {
+                        // TODO: remove image from slideshow array
                         slide("next");
+                    }
                     getAlbumImages(folderId);
+
+                    displayStatusMessage("ok", "link moved to rejects" + linkId);
                     logDataActivity({
+                        VisitorId: getCookieValue("VisitorId"),
+                        ActivityCode: "REJ",
                         PageId: folderId,
-                        PageName: currentAlbumJSfolderName,
-                        Activity: "link removed " + selectedImageLinkId
+                        Activity: "link moved to rejects" + linkId
                     });
                 }
                 else {
@@ -284,6 +294,14 @@ function performRenameFolder(folderId, newFolderName) {
         }
     });
 }
+
+function deleteLink(pLinkId, pFolderId, pImgSrc) {
+    // ftp delete image file
+    // remove ImageFile row
+    // remove CatLink row(s)
+    // delete local file
+}
+
 
 ///////////////////////////////////////////////////////////////
 

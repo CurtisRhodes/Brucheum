@@ -297,25 +297,41 @@ function setLabelLinks(llIdx) {
         }
     }
     else {
-        if (carouselItem.FolderType == 'singleChild') {
-            $('#imageTopLabel').html(carouselItem.FolderParentName);
-            $('#knownModelLabel').html(carouselItem.FolderName);
-            $('#carouselFooterLabel').html(carouselItem.FolderGPName);
-
-            mainImageClickId = carouselItem.FolderParentId;
-            imageTopLabelClickId = carouselItem.FolderParentId;
-            knownModelLabelClickId = carouselItem.FolderId;
-            footerLabelClickId = carouselItem.FolderGPId;
-        }
-        else {
+        if (carouselItem.FolderId != carouselItem.ImageFolderId) {
+            //if (carouselItem.FolderType == 'singleChild')
+            //    $('#knownModelLabel').html("sc " + carouselItem.ImageFolderParentName);
+            //else
+            $('#knownModelLabel').html(carouselItem.ImageFolderName);
             $('#imageTopLabel').html(carouselItem.FolderName);
-            $('#knownModelLabel').html(carouselItem.FolderParentName);
-            $('#carouselFooterLabel').html(carouselItem.FolderGPName);
-
+            $('#carouselFooterLabel').html(carouselItem.FolderParentName);
+            knownModelLabelClickId = carouselItem.ImageFolderId;
+            footerLabelClickId = carouselItem.FolderParentId;
             mainImageClickId = carouselItem.FolderId;
             imageTopLabelClickId = carouselItem.FolderId;
-            knownModelLabelClickId = carouselItem.FolderParentId;
-            footerLabelClickId = carouselItem.FolderGPId;;
+            //pause();
+        }
+        else {
+
+            if (carouselItem.FolderType == 'singleChild') {
+                $('#imageTopLabel').html(carouselItem.FolderParentName);
+                $('#knownModelLabel').html(carouselItem.FolderName);
+                $('#carouselFooterLabel').html(carouselItem.FolderGPName);
+
+                mainImageClickId = carouselItem.FolderParentId;
+                imageTopLabelClickId = carouselItem.FolderParentId;
+                knownModelLabelClickId = carouselItem.FolderId;
+                footerLabelClickId = carouselItem.FolderGPId;
+            }
+            else {
+                $('#imageTopLabel').html(carouselItem.FolderName);
+                $('#knownModelLabel').html(carouselItem.FolderParentName);
+                $('#carouselFooterLabel').html(carouselItem.FolderGPName);
+
+                mainImageClickId = carouselItem.FolderId;
+                imageTopLabelClickId = carouselItem.FolderId;
+                knownModelLabelClickId = carouselItem.FolderParentId;
+                footerLabelClickId = carouselItem.FolderGPId;;
+            }
         }
     }
     $('#carouselFooterLabel').fadeIn();

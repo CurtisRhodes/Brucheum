@@ -218,8 +218,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    string dbRejectFolder = "https://img.OggleBooble.com/rejects";
                     var dbSourceImage = db.ImageFiles.Where(f => f.Id == linkId).First();
+                    string dbRejectFolder = ftpHost + "/archive.OggleBooble.com/rejects/" + dbSourceImage.FileName;
                     var dbSourceFolder = db.CategoryFolders.Where(f => f.Id == dbSourceImage.FolderId).First();
                     string ftpRepo = imgRepo.Substring(7);
                     string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath + "/" + dbSourceImage.FileName;
