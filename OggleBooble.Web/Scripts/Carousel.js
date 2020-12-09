@@ -1,4 +1,4 @@
-﻿const rotationSpeed = 7000, intervalSpeed = 600, carouselDebugMode = true;
+﻿const rotationSpeed = 7000, intervalSpeed = 600, carouselDebugMode = false;
 let imageIndex = 0, numImages = 0, numFolders = 0, backArrowClicks = 0,
     carouselItemArray = [], imageHistory = [], absolueStartTime,
     carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,

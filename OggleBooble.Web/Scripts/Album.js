@@ -81,8 +81,8 @@ function getAlbumImages(folderId) {
                             //let imgSrc = settingsImgRepo + "/" + obj.FileName;
                             let imageHtml = "<div class='" + imageFrameClass + "'>\n" +
                                 "<img id='" + obj.LinkId + "' class='thumbImage'\n" +
-                                " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\")'\n" +
-                                " alt='" + obj.LinkId + "'\n" +
+                                " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\)'\n" +
+                                " alt='" + obj.LinkId + "' titile='" + obj.DirectoryName + "' \n" +
                                 " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + imgSrc + "\")'\n" +
                                 " onclick='launchViewer(" + obj.FolderId + ",\"" + obj.LinkId + "\",false)' src='" + imgSrc + "'/>\n";
 
