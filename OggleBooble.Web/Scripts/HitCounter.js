@@ -174,8 +174,6 @@ function getIpInfo(folderId, calledFrom) {
                     logError("BUG", folderId, "ipInfo came back with no ip. VisitorId: " + visitorId, "getIpInfo/" + calledFrom);
                 }
                 else {
-                    //let calledFrom = history.length
-
                     setCookieValue("VisitorId", visitorId);
                     $.ajax({
                         type: "POST",
@@ -211,6 +209,7 @@ function getIpInfo(folderId, calledFrom) {
                                         logError("UNC", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
                                     }
                                     else {
+
                                         logError("WIP", folderId, "wasted Ip call", "getIpInfo/" + calledFrom);
                                     }
                                 }
@@ -260,7 +259,7 @@ function logIpHit(visitorId, ipAddress, folderId) {
 
 function logStaticPageHit(folderId, calledFrom) {
     let visitorId = getCookieValue("VisitorId");
-    if (isNullorUndefined(visitorId)) {
+    if (isNullorUndefined(getCookieValue("VisitorId"))) {
         if (calledFrom == "album") {
             getIpInfo(params.folder, "logStatic PageHit");
         }
@@ -269,7 +268,6 @@ function logStaticPageHit(folderId, calledFrom) {
         }
         return;
     }
-
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogStatic PageHit?visitorId=" + visitorId + "&folderId=" + folderId + "&calledFrom=" + calledFrom,

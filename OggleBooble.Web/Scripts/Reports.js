@@ -338,14 +338,14 @@ function errorLogReport() {
             if (errorLogReport.Success === "ok")
             {
                 let kludge = "<div><table class='errorLogTable'>";
-                kludge += "<tr><th>error</th><th>called from</th><th>occured</th><th>page</th></tr>";
+                kludge += "<tr><th>error</th><th>called from</th><th>occured</th><th>page</th><th>user</th></tr>";
                 $.each(errorLogReport.ErrorRows, function (idx, obj) {
                     kludge += "<tr><td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
                     kludge += "<td>" + obj.CalledFrom + "</td>";
                     kludge += "<td>" + obj.Occured + "</td>";
                     kludge += "<td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
                     //kludge += "<td>" + obj.City + " " + obj.Region + " " + obj.Country + "</td>";
-                    //kludge += "<td>" + obj.ErrorMessage + "</td>";
+                    kludge += "<td>" + obj.IpAddress + "</td>";
                     kludge += "</tr>";
 
                     //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
