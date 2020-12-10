@@ -412,7 +412,7 @@ function authenticateEmail(usersEmail) {
     });
     logEvent("", loginFromPageId, "authenticateEmail");
 
-    sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!", "OH MY GOD");
+    sendEmail("CurtishRhodes@hotmail.com", "SomeoneAuthenticated@Ogglebooble.com", "Someone Authenticated !!!", "OH MY GOD");
 
     alert("Thank you for registering " + getCookieValue("UserName") + "\n please reply to the two factor authentitifcation email sent to you" +
         "\nYou will then be granted the access you requested." + "\nThe menu item 'Dashboard' will appear next to your 'Hello' message");

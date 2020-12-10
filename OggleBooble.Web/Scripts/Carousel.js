@@ -352,7 +352,15 @@ function alreadyInLast100() {
         if (imageIndex === imageHistory[i]) {
             imageIndex = Math.floor(Math.random() * carouselItemArray.length);
             console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
-            logEvent("REJ", carouselItemArray[imageIndex].FolderId, "alreadyInLast100", carouselItemArray[imageIndex].LinkId);
+
+            // logEvent("REJ", carouselItemArray[imageIndex].FolderId, "alreadyInLast100", carouselItemArray[imageIndex].LinkId);
+
+            logDataActivity({
+                VisitorId: getCookieValue("VisitorId"),
+                ActivityCode: "REJ",
+                PageId: carouselItemArray[imageIndex].FolderId,
+                Activity: "Already shown try again: " + carouselItemArray[imageIndex].LinkId
+            });
             return true;
         }
     }

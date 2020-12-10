@@ -311,6 +311,8 @@ workAreaHeaderDetailRow {
 }
 
 
+/*//////// REPORTS ///////////////////////////////////////////*/
+
 .mostPopularPagesReport {
     padding: 5px;
 }
@@ -336,10 +338,13 @@ workAreaHeaderDetailRow {
     padding-left: 33px;
 }
 
- table td {
+.errorLogTable td {
     border: solid thin #000;
-    padding: 4px;
-    min-width: 95px;
+    font-size: 14px;
+    padding: 2px;
+    padding-left: 8px;
+}
+.errorLogTable th {
     text-align: center;
 }
 

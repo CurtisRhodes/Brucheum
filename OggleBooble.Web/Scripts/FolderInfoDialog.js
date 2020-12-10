@@ -15,7 +15,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
     if (typeof pause === 'function') pause();
     //alert("showFolderInfoDialog(folderId: " + folderId + ", calledFrom: " + calledFrom + ")");
     showBasicFolderInfoDialog();
-
+    logEvent("FID", folderId, calledFrom, getCookieValue("VisitorId"));
     try {  // GetQuickFolderInfo
         $.ajax({
             type: "GET",

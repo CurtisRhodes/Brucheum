@@ -120,16 +120,12 @@ function runMostImageHits() {
 function showEventActivityReport() {
     //$("#divStandardReportArea").addClass("tightReport");
     activeReport = "EventActivity";
-    $('.workAreaContainer').hide();
     $('#divStandardReport').show();
     $("#reportLabel").html("Event Activity Report for " + todayString());
-    runEventActivityReport();
-}
-function runEventActivityReport() {
-    //$('#dashBoardLoadingGif').show();
-    //alert("runEventActivityReport");
-    $("#divStandardReportArea").html("");
-    $("#divStandardReportCount").html("");
+    $('#reportsHeaderTitle').html("Event Activity Report for : " + todayString());
+    $("#reportsContentArea").html("");
+    $("#reportsFooter").html("");
+    $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "/api/Report/ActivityReport",
@@ -137,22 +133,35 @@ function runEventActivityReport() {
             $('#dashBoardLoadingGif').hide();
             if (activityReport.Success === "ok") {
                 var kludge = "<table class='noWrap' >";
-                //kludge += "<tr><th>Ip Address</th><th>City</th><th>State</th><th>Country</th><th>Event</th><th>Called From</th><th>Details</th><th>hitdate</th><th>hit time</th></tr>";
+                //var kludge = "<table class='mostAvtiveUsersTable'>";
+                //kludge += "</table>";
                 kludge += "<tr><th>Ip Address</th><th>City</th><th>Country</th><th>hit time </th><th>Event</th><th>Called From</th><th>Details</th></tr>";
                 $.each(activityReport.Items, function (idx, obj) {
                     kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
                     //kludge += "<td>" + obj.Region + "</td>;
                     kludge += "<td>" + obj.Country + "</td>";
                     kludge += "<td>" + obj.HitTime + "  </td>";
-                    kludge += "<td>  " + obj.Event + "</td><td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td></tr>";
+                    kludge += "<td>  " + obj.Event + "</td>";
+                    kludge += "<td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td></tr > ";
                     //kludge += "<td>" + obj.HitDate + "</td><td>" + obj.HitTime + "</td></tr>";
                 });
                 kludge += "</table>";
-                $("#divStandardReportArea").html(kludge);
+                $("#reportsContentArea").html(kludge);
                 $("#divStandardReportCount").html(" Total: " + activityReport.HitCount.toLocaleString());
+
+                //IpAddress = activityItem.IpAddress,
+                //City = activityItem.City,
+                //Region = activityItem.Region,
+                //Country = activityItem.Country,
+                //Event = activityItem.Event,
+                //CalledFrom = activityItem.CalledFrom,
+                //Detail = activityItem.Detail,
+                //HitDate = activityItem.HitDate,
+                //HitTime = activityItem.HitTime
+                //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
-                logError("AJX", 3910, activityReport.Success, "eventActivityReport");
+                logError("AJX", 3910, impactReportModel.Success, "eventActivityReport");
             }
         },
         error: function (jqXHR) {
@@ -165,15 +174,8 @@ function runEventActivityReport() {
 
 function showLatestImageHitsReport() {
     activeReport = "LatestImageHits";
-    $('.workAreaContainer').hide();
-    $('#divStandardReport').show();
     $('#reportLabel').html("Images Viewed " + todayString());
-    runLatestImageHitsReport();
-}
-function runLatestImageHitsReport() {
     $('#dashBoardLoadingGif').show();
-    $("#divStandardReportArea").html("");
-    $("#divStandardReportCount").html("");
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Report/LatestImageHits",
@@ -204,7 +206,6 @@ function runLatestImageHitsReport() {
 
 function showMostActiveUsersReport() {
     activeReport = "MostActiveUsers";
-    $('#divStandardReport').show();
     $('#reportsHeaderTitle').html("Most Active Users " + todayString());
     $("#reportsFooter").html("");
     $('#dashBoardLoadingGif').show();
@@ -214,7 +215,7 @@ function showMostActiveUsersReport() {
         success: function (mostActiveUsersReport) {
             $('#dashBoardLoadingGif').hide();
             if (mostActiveUsersReport.Success === "ok") {
-                var kludge = "<table class='mostAvtiveUsersTable'>";
+                let kludge = "<table class='mostAvtiveUsersTable'>";
                 kludge += "<tr><th>ip</th><th>City</th><th>image hits today</th><th>total image hits</th><th>page hits today</th>" +
                     "<th>total page hits</th><th>last hit</th><th>initial visit</th><th>user name</th></tr>";
                 var lastIp = "";
@@ -308,19 +309,27 @@ function stdReportHeader(title) {
         "</div>";
 }
 
+
+    //public int FolderId { get; set; }
+    //public string FolderName { get; set; }
+    //public string Error { get; set; }
+    //public string CalledFrom { get; set; }
+    //public string ErrorMessage { get; set; }
+    //public DateTime OccuredDate { get; set; }
+    //public DateTime OccuredTime { get; set; }
+    //public string VisitorId { get; set; }
+    //public string ErrorCode { get; set; }
+    //public string IpAddress { get; set; }
+    //public string City { get; set; }
+    //public string Region { get; set; }
+    //public string Country { get; set; }
+
 function errorLogReport() {
-    //    [Route("api/Reports/")]
     activeReport = "ErrorLog";
-
-    $('.workAreaContainer').hide();
-    $('#divStandardReport').show();
-    $('#reportLabel').html("Error Log");
-    $("#divStandardReportArea").html("");
-    $("#divStandardReportCount").html("");
+    $('#reportsHeaderTitle').html("Errors for " + todayString());
+    $("#reportsFooter").html("");
     $('#dashBoardLoadingGif').show();
-    
     var html = stdReportHeader("Error Report for " + todayString());
-
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Report/ErrorLogReport",
@@ -328,29 +337,25 @@ function errorLogReport() {
             $('#dashBoardLoadingGif').hide();
             if (errorLogReport.Success === "ok")
             {
-                html += "<div class='overflowContainer'>";
-
-                html += "<table class='mostAvtiveUsersTable'>";
-                html += "<tr><th>ip</th><th>Location</th><th>Called From</th><th>Actity</th><th>Severity</th><th>Occured</th></tr>";
-
+                let kludge = "<div><table class='errorLogTable'>";
+                kludge += "<tr><th>error</th><th>called from</th><th>occured</th><th>page</th></tr>";
                 $.each(errorLogReport.ErrorRows, function (idx, obj) {
-                    html += "<tr><td>" + obj.IpAddress + "</td>";
-                    html += "<td>" + obj.City + "," + obj.Country + "</td>";
+                    kludge += "<tr><td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
+                    kludge += "<td>" + obj.CalledFrom + "</td>";
+                    kludge += "<td>" + obj.Occured + "</td>";
+                    kludge += "<td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
+                    //kludge += "<td>" + obj.City + " " + obj.Region + " " + obj.Country + "</td>";
+                    //kludge += "<td>" + obj.ErrorMessage + "</td>";
+                    kludge += "</tr>";
+
                     //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
-                    html += "<td class='smallColumn'>" + obj.CalledFrom + "</td>";
-                    html += "<td>" + obj.ActivityCode + "</td>";
-                    html += "<td>" + obj.Severity + "</td>";
-                    //html += "<td>" + obj.At + ":" + obj.On + "</td>";
-                    html += "<td>" + obj.At + "</td>";
                     //html += "<td colspan='6'>" + obj.ErrorMessage + "</td></tr>";
-                    html += "</tr><tr><td colspan='6'>" + obj.ErrorMessage + "</td></tr></tr>";
+                    //html += "<td>" + obj.City + "," + obj.Country + "</td>";
+                    //html += "</tr><tr><td colspan='6'>" + obj.ErrorMessage + "</td></tr></tr>";
                 });
-                html += "</table>";
-                html += "</div>";
-                //$("#divStandardReportArea").html(kludge);
-                //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
-                $('#dashboardMiddleColumn').html(html);
-            }
+                kludge += "</table></div>";
+                $("#reportsContentArea").html(kludge);
+          }
             else {
                 logError("AJX", 3910, errorLogReport.Success, "errorLogReport");
                 alert("PageHitsReport: " + errorLogReport.Success);

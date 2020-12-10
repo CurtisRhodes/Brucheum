@@ -122,7 +122,7 @@ function verifyConnectionFunction() {
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
             console.log("verifyConnection XHR: " + errorMessage + " requestedPage: " + requestedPage);
-            if (document.domain === "localhost") alert("verifyConnection XHR: " + errorMessage);
+            // if (document.domain === "localhost") alert("verifyConnection XHR: " + errorMessage);
             connectionVerified = false;
         }
     });

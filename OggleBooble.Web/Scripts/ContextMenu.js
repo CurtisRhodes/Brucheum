@@ -5,7 +5,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     window.event.returnValue = false;
     //logEvent(eventCode, folderId, calledFrom, eventDetails) {
 
-    logEvent("CXM", folderId, menuType, getCookieValue("VisitorId"));
+    // logEvent("CXM", folderId, menuType, getCookieValue("VisitorId"));
     console.log("context menu opened: " + menuType);
     pLinkId = linkId;
     pImgSrc = imgSrc;
@@ -173,8 +173,10 @@ function contextMenuAction(action) {
                 alert("You must be logged in to download an album");
             break;
         case "showDialog": {
-            if ($('#ctxModelName').html() === "unknown model")
+            if ($('#ctxModelName').html() === "unknown model") {
+                logEvent("UKM", folderId, menuType, getCookieValue("VisitorId"));
                 showUnknownModelDialog(pImgSrc, pLinkId, pFolderId);
+            }
             else
                 if (isNullorUndefined(pModelFolderId))
                     showFolderInfoDialog(pFolderId, "img ctx");

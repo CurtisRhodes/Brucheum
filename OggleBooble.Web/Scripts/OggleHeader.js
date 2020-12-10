@@ -33,6 +33,7 @@ function setOggleHeader(folderId, subdomain) {
     window.addEventListener("resize", mediaSavyHdrResize);
 }
 
+
 function setHeaderMenu(folderId, subdomain) {
     switch (subdomain) {
         case "Index": {
@@ -68,7 +69,7 @@ function setHeaderMenu(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#bannerTitle').html("OggleBooble");
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",2)'><span class='bigTits'>BIG </span>tits</a> organized by\n" +
+                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a> organized by\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",3616)'> positions,</a>\n" +
                 "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",159)'> topics,</a>\n" +

@@ -552,21 +552,26 @@ namespace OggleBooble.Api.MySqlDataContext
         public string UserName { get; set; }
     }
 
-    [Table("OggleBooble.vwErrorReport")]
+
+    [Table("OggleBooble.VwErrorReport")]
     public class VwErrorReport
     {
-        [Key]
-        public string PkId { get; set; }
-        public string VisitorId { get; set; }
-        public string City { get; set; }
-        public string Country { get; set; }
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public string Error { get; set; }
         public string CalledFrom { get; set; }
-        public string ActivityCode { get; set; }
-        public int Severity { get; set; }
         public string ErrorMessage { get; set; }
-        public DateTime Occured { get; set; }
-        public string On { get; set; }
-        public string At { get; set; }
+        [Key]
+        [Column(Order = 0)]
+        public string VisitorId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string Occured { get; set; }
+        public string ErrorCode { get; set; }
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
     }
 
     [Table("OggleBooble.vwImageHits")]
