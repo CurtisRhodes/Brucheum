@@ -254,6 +254,9 @@ function showMostActiveUsersReport() {
 
 function showUserDetail(ipAddress) {
     alert("showUserDetail: " + ipAddress);
+
+
+
 }
 
 function runPageHitReport() {
@@ -308,21 +311,6 @@ function stdReportHeader(title) {
         "    <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='closeReport()'></div>\n" +
         "</div>";
 }
-
-
-    //public int FolderId { get; set; }
-    //public string FolderName { get; set; }
-    //public string Error { get; set; }
-    //public string CalledFrom { get; set; }
-    //public string ErrorMessage { get; set; }
-    //public DateTime OccuredDate { get; set; }
-    //public DateTime OccuredTime { get; set; }
-    //public string VisitorId { get; set; }
-    //public string ErrorCode { get; set; }
-    //public string IpAddress { get; set; }
-    //public string City { get; set; }
-    //public string Region { get; set; }
-    //public string Country { get; set; }
 
 function errorLogReport() {
     activeReport = "ErrorLog";

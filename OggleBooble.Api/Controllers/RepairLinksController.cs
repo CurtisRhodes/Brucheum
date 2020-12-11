@@ -133,12 +133,16 @@ namespace OggleBooble.Api.Controllers
                             };
                             db.ImageFiles.Add(imageFile);
                             dbFolderImageFiles.Add(imageFile);
-                            db.CategoryImageLinks.Add(new CategoryImageLink()
+                            CategoryImageLink ktest = db.CategoryImageLinks.Where(l => (l.ImageCategoryId == folderId) && (l.ImageLinkId == physcialFileLinkId)).FirstOrDefault();
+                            if (ktest == null)
                             {
-                                ImageCategoryId = folderId,
-                                ImageLinkId = physcialFileLinkId,
-                                SortOrder = 0
-                            });
+                                db.CategoryImageLinks.Add(new CategoryImageLink()
+                                {
+                                    ImageCategoryId = folderId,
+                                    ImageLinkId = physcialFileLinkId,
+                                    SortOrder = 0
+                                });
+                            }
                             db.SaveChanges();
                             repairReport.CatLinksAdded++;
                             repairReport.ImageFilesAdded++;

@@ -159,6 +159,7 @@ function getIpInfo(folderId, calledFrom) {
                 }
             }
             else {
+
                 logError("XIP", folderId, "visitorId: " + visitorId, "getIpInfo/" + calledFrom);
                 return;
             }
@@ -209,8 +210,7 @@ function getIpInfo(folderId, calledFrom) {
                                         logError("UNC", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
                                     }
                                     else {
-
-                                        logError("WIP", folderId, "wasted Ip call", "getIpInfo/" + calledFrom);
+                                        logError("WIP", folderId, "existing visitorId assigned ", "getIpInfo/" + calledFrom);
                                     }
                                 }
                                 else

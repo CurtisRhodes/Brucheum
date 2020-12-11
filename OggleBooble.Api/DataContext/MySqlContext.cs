@@ -330,11 +330,11 @@ namespace OggleBooble.Api.MySqlDataContext
     [Table("OggleBooble.ActivityLog")]
     public class ActivityLog
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PkId { get; set; }
+        //[Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //public int PkId { get; set; }
         public string ActivtyCode { get; set; }
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
         public string VisitorId { get; set; }
         public DateTime Occured { get; set; }
     }

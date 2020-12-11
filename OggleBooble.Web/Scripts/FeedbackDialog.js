@@ -81,7 +81,7 @@
                             showMyAlert("Thank you for your " + feedbackType);
                         }
                         else {
-                            logError("AJX", folderId, success, "saveFeedback");
+                            logError("AJX", folderId, success, "log feedback");
                         }
                     },
                     error: function (jqXHR) {

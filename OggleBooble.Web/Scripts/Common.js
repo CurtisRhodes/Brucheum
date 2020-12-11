@@ -152,6 +152,26 @@ function todayString() {
     return mm + '/' + dd + '/' + yyyy;
 }
 
+function verifyVisitorId(folderId, calledFrom) {
+    let cokieTest = getCookieValue("VisitorId")
+    let lclStrTest = window.localStorage["VisitorId"];
+    if (lclStrTest != null) {
+        if (cokieTest == null) {
+            setCookieValue("VisitorId", lclStrTest);
+            logEvent("VL1", folderId, calledFrom, "cookie loaded from local storage");
+        }
+    }
+    if (cokieTest != null) {
+        if (lclStrTest == null) {
+            window.localStorage["VisitorId"] = cokieTest;
+            logEvent("VL2", folderId, calledFrom, "local storage loaded from cookie");
+        }
+    }
+    if ((lclStrTest == null) && (cokieTest == null)) {
+        logError("VVF", folderId, "could be a new user", calledFrom);
+    }
+}
+
 function letemPorn(response, pornType, folderId) {
     if (response === "ok") {
         if (isNullorUndefined(pornType)) {
@@ -327,6 +347,31 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     }
 }
 
+function logActivity(activityCode, folderId) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Common/LogActivity",
+        data: {
+            ActivtyCode: activityCode,
+            FolderId: folderId,
+            VisitorId =getCookieValue("VisitorId")
+        },
+        success: function (success) {
+            if (success === "ok") {
+                //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
+            }
+            else
+                logError("AJX", folderId, success, "log activity");
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            if (!checkFor404("log activity"))
+                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "log activity");
+        }
+    });
+}
+
+
 function logDataActivity(activityModel) {
     //activityModel{
     //    VisitorId: getCookieValue("VisitorId"),
@@ -341,10 +386,6 @@ function logDataActivity(activityModel) {
         success: function (success) {
             if (success === "ok") {
                 //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
-                if (typeof doneLoggingDataActivity === 'function') {
-                    //alert("doneLoggingDataActivity()");
-                    doneLoggingDataActivity();
-                }
             }
             else
                 logError("AJX", activityModel.PageId, success, "logDataActivity");

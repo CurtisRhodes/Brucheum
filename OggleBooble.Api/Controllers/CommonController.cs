@@ -422,6 +422,33 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPost]
+        public string LogActivity(ActivityLogModel activityLogModel)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.ActivityLogs.Add(new ActivityLog()
+                    {
+                        ActivtyCode= activityLogModel.ActivtyCode,
+                        FolderId=activityLogModel.FolderId,
+                        VisitorId = activityLogModel.VisitorId,
+                        Occured = DateTime.Now
+                    });
+                    db.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+
+        [HttpPost]
         [Route("api/Common/LogDataActivity")]
         public string LogDataActivity(DataActivityModel changeLog)
         {
