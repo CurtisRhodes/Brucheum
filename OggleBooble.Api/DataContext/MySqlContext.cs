@@ -335,7 +335,11 @@ namespace OggleBooble.Api.MySqlDataContext
         //public int PkId { get; set; }
         public string ActivtyCode { get; set; }
         public int FolderId { get; set; }
+        [Key]
+        [Column(Order = 0)]
         public string VisitorId { get; set; }
+        [Key]
+        [Column(Order = 1)]
         public DateTime Occured { get; set; }
     }
 

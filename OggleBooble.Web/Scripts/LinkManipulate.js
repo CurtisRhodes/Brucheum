@@ -79,9 +79,6 @@ function showArchiveLinkDialog(linkId, folderId, imgSrc, pMenuType) {
 }
 
 function moveFile(request, linkId, folderId) {
-
-    alert("pSelectedTreeId: " + pSelectedTreeId);
-
     $('#imagePageLoadingGif').show();
     $.ajax({
         type: "PUT",
@@ -97,7 +94,6 @@ function moveFile(request, linkId, folderId) {
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
                 $('#centeredDialogContainer').fadeOut();
 
-                alert()
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: request,
@@ -183,7 +179,7 @@ function showConfirmDeteteImageDialog(linkId, folderId, imgSrc, errMsg) {
 
 function performMoveImageToRejects(linkId, folderId) {
     let rejectReason = $('input[name="rdoRejectImageReasons"]:checked').val();
-    alert("rejectReason: " + rejectReason + " link: " + linkId);
+    //alert("rejectReason: " + rejectReason + " link: " + linkId);
 
     $.ajax({
         type: "PUT",
@@ -199,7 +195,8 @@ function performMoveImageToRejects(linkId, folderId) {
                         slide("next");
                     }
                     getAlbumImages(folderId);
-
+                    dragableDialogClose();
+                    slideShowDialogClose();
                     displayStatusMessage("ok", "link moved to rejects" + linkId);
                     logDataActivity({
                         VisitorId: getCookieValue("VisitorId"),

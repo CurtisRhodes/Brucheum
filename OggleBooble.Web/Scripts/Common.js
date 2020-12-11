@@ -354,7 +354,7 @@ function logActivity(activityCode, folderId) {
         data: {
             ActivtyCode: activityCode,
             FolderId: folderId,
-            VisitorId =getCookieValue("VisitorId")
+            VisitorId: getCookieValue("VisitorId")
         },
         success: function (success) {
             if (success === "ok") {
