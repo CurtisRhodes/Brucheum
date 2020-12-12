@@ -64,6 +64,45 @@ function runMetricsMatrixReport() {
         alert("unable to run report");
 }
 
+function runPageHitReport() {
+    activeReport = "PageHitReport";
+    $('#reportsHeaderTitle').html("Page Hit Report for : " + todayString());
+    $("#reportsContentArea").html("");
+    $("#reportsFooter").html("");
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Report/PageHitReport",
+        success: function (pageHitReportModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (pageHitReportModel.Success === "ok") {
+                let kludge = "<table class='mostAvtiveUsersTable'>";
+                kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>&nbsp;images hit</th><th>hit time</th></tr>";
+                $.each(pageHitReportModel.Items, function (idx, obj) {
+                    kludge += "<tr><td class='clickable' onclick='showUserDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
+                    kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
+                    kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    kludge += "<td>" + obj.RootFolder + "</td>";
+                    kludge += "<td>" + obj.ImageHits + "</td>";
+                    kludge += "<td>" + obj.HitTime + "</td></tr>";
+                });
+                kludge += "</table>";
+                $("#reportsContentArea").html(kludge);
+
+                $("#reportsFooter").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+            }
+            else {
+                logError("AJX", 3910, pageHitReportModel.Success, "pageHitsReport");
+            }
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("pageHitsReport")) {
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "pageHitsReport");
+            }
+        }
+    });
+}
+
 function runMostVisitedPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -135,30 +174,21 @@ function showEventActivityReport() {
                 var kludge = "<table class='noWrap' >";
                 //var kludge = "<table class='mostAvtiveUsersTable'>";
                 //kludge += "</table>";
-                kludge += "<tr><th>Ip Address</th><th>City</th><th>Country</th><th>hit time </th><th>Event</th><th>Called From</th><th>Details</th></tr>";
+                kludge += "<tr><th>Event</th><th>Ip Address</th><th>City,Country</th><th>hit time </th><th>Called From</th><th>Details</th></tr>";
                 $.each(activityReport.Items, function (idx, obj) {
-                    kludge += "<tr><td>" + obj.IpAddress + "</td><td>" + obj.City + "</td>";
-                    //kludge += "<td>" + obj.Region + "</td>;
-                    kludge += "<td>" + obj.Country + "</td>";
+                    kludge += "<tr><td>" + obj.Event + "</td>";
+                    kludge += "<td>" + obj.IpAddress + "</td>";
+                    kludge += "<td>" + obj.City + " " + obj.Region + ", " + obj.Country + "</td>";
                     kludge += "<td>" + obj.HitTime + "  </td>";
-                    kludge += "<td>  " + obj.Event + "</td>";
-                    kludge += "<td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td></tr > ";
+                    // kludge += "<td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td></tr > ";
+                    kludge += "<td>" + obj.CalledFrom + "</td>";
+                    kludge += "<td>" + obj.Detail + "</td></tr>";
+                    //kludge += "<td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td></tr > ";
                     //kludge += "<td>" + obj.HitDate + "</td><td>" + obj.HitTime + "</td></tr>";
                 });
                 kludge += "</table>";
                 $("#reportsContentArea").html(kludge);
                 $("#divStandardReportCount").html(" Total: " + activityReport.HitCount.toLocaleString());
-
-                //IpAddress = activityItem.IpAddress,
-                //City = activityItem.City,
-                //Region = activityItem.Region,
-                //Country = activityItem.Country,
-                //Event = activityItem.Event,
-                //CalledFrom = activityItem.CalledFrom,
-                //Detail = activityItem.Detail,
-                //HitDate = activityItem.HitDate,
-                //HitTime = activityItem.HitTime
-                //$("#divStandardReportCount").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
             }
             else {
                 logError("AJX", 3910, impactReportModel.Success, "eventActivityReport");
@@ -253,40 +283,25 @@ function showMostActiveUsersReport() {
 }
 
 function showUserDetail(ipAddress) {
-    alert("showUserDetail: " + ipAddress);
-
-
-
-}
-
-function runPageHitReport() {
-    activeReport = "PageHitReport";
-    $('#reportsHeaderTitle').html("Page Hit Report for : " + todayString());
-    $("#reportsContentArea").html("");
-    $("#reportsFooter").html("");
-    $('#dashBoardLoadingGif').show();
+    // alert("showUserDetail: " + ipAddress);
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Report/PageHitReport",
-        success: function (pageHitReportModel) {
+        url: settingsArray.ApiServer + "api/Report/UserDetails?ipAddress=" + ipAddress,
+        success: function (userReportSuccessModel) {
             $('#dashBoardLoadingGif').hide();
-            if (pageHitReportModel.Success === "ok") {
-                let kludge = "<table class='mostAvtiveUsersTable'>";
-                kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>&nbsp;images hit</th><th>hit time</th></tr>";
-                $.each(pageHitReportModel.Items, function (idx, obj) {
-
-                    kludge += "<tr><td onclick='showUserDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
-
-                    kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
-                    kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
-                    kludge += "<td>" + obj.RootFolder + "</td>";
-                    kludge += "<td>" + obj.ImageHits + "</td>";
-                    kludge += "<td>" + obj.HitTime + "</td></tr>";
-                });
-                kludge += "</table>";
-                $("#reportsContentArea").html(kludge);
-
-                $("#reportsFooter").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+            if (userReportSuccessModel.Success === "ok") {
+                let obj = userReportSuccessModel.UserReport;
+                $('#dashboardDialogTitle').html("user details for: " + ipAddress);
+                let kludge = "<div>";
+                kludge += "<div>from: " + obj.City + ", " + obj.Region + ", " + obj.Country + "</div>";
+                kludge += "<div>initial visit: " + obj.InitialVisit + "</div>";
+                kludge += "<div>visits: " + obj.Visits + "</div>";
+                kludge += "<div>page hits:  " + obj.PageHits + "</div>";
+                kludge += "<div>image hits: " + obj.ImageHits + "</div>";
+                kludge += "<div>user name:  " + obj.UserName + "</div>";
+                kludge += "</div>";
+                $('#dashboardDialogContents').html(kludge);
+                $('#dashboardDialog').fadeIn();
             }
             else {
                 logError("AJX", 3910, pageHitReportModel.Success, "pageHitsReport");
@@ -300,24 +315,11 @@ function runPageHitReport() {
     });
 }
 
-function playmateChecklist() {
-    
-
-}
-
-function stdReportHeader(title) {
-    return "<div class='workAreaHeader'>\n" +
-        "    <div class='workAreaHeaderLabel'><h3>" + title + "</h3></div>\n" +
-        "    <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='closeReport()'></div>\n" +
-        "</div>";
-}
-
 function errorLogReport() {
     activeReport = "ErrorLog";
     $('#reportsHeaderTitle').html("Errors for " + todayString());
     $("#reportsFooter").html("");
     $('#dashBoardLoadingGif').show();
-    var html = stdReportHeader("Error Report for " + todayString());
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Report/ErrorLogReport",
@@ -326,14 +328,15 @@ function errorLogReport() {
             if (errorLogReport.Success === "ok")
             {
                 let kludge = "<div><table class='errorLogTable'>";
-                kludge += "<tr><th>error</th><th>called from</th><th>occured</th><th>page</th><th>user</th></tr>";
+                kludge += "<tr><th>error</th><th>called from</th><th colspan=2>occured</th><th>page</th><th>user</th></tr>";
                 $.each(errorLogReport.ErrorRows, function (idx, obj) {
                     kludge += "<tr><td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
                     kludge += "<td>" + obj.CalledFrom + "</td>";
                     kludge += "<td>" + obj.Occured + "</td>";
+                    kludge += "<td>" + obj.Time + "</td>";
                     kludge += "<td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
                     //kludge += "<td>" + obj.City + " " + obj.Region + " " + obj.Country + "</td>";
-                    kludge += "<td>" + obj.IpAddress + "</td>";
+                    kludge += "<td class='clickable' onclick='showUserDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
                     kludge += "</tr>";
 
                     //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
@@ -452,7 +455,7 @@ function int2Month(nMonth) {
     }
 }
 
-function pollBuildCenterfoldHtmlPage() {
+function poll() {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Report/Poll",
@@ -467,15 +470,14 @@ function pollBuildCenterfoldHtmlPage() {
     });
 }
 
-function BuildCenterfoldHtmlPage() {
+function buildListPage(startFolder) {
     let start = Date.now();
-    let pollingLoop = setInterval(function () { pollBuildCenterfoldHtmlPage() }, 5000);
-
+    //let pollingLoop = setInterval(function () { pollBuildCenterfoldHtmlPage() }, 5000);
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("building Centerfold List");
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Report/BuildCenterfoldHtmlPage?rootFolder=1132",
+        url: settingsArray.ApiServer + "api/Report/BuildListPage?rootFolder=" + startFolder,
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (success == "ok") {
@@ -483,21 +485,20 @@ function BuildCenterfoldHtmlPage() {
                 let minutes = Math.floor(delta / 60000);
                 let seconds = (delta % 60000 / 1000).toFixed(0);
                 console.log("build Centerfold List took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                clearInterval(pollingLoop);
-                $('#dataifyInfo').html("centerfold List took: " + minutes + ":" + seconds);
+                //clearInterval(pollingLoop);
+                $('#dataifyInfo').html("html List took: " + minutes + ":" + seconds);
             }
             else {
-                logError("AJX", 3910, success, "buildCenterfoldList");
+                logError("AJX", 3910, success, "build List Page");
             }
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("buildCenterfoldList")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "buildCenterfoldList");
+            if (!checkFor404("build List Page")) {
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "build List Page");
             }
         }
     });
-
 }
 
 function runPlayboyListReport() {

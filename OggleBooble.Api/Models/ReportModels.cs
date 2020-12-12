@@ -71,13 +71,31 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
+    public class UserReportSuccessModel
+    {
+        public UserReportModel UserReport { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class UserReportModel{
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string InitialVisit { get; set; }
+        public int Visits { get; set; }
+        public int PageHits { get; set; }
+        public int ImageHits { get; set; }
+        public string UserName { get; set; }
+    }
+
     public class ErrorLogReportModel
     {
         public ErrorLogReportModel()
         {
-            ErrorRows = new List<MySqlDataContext.VwErrorReport>();
+            ErrorRows = new List<VwErrorReport>();
         }
-        public List<MySqlDataContext.VwErrorReport> ErrorRows { get; set; }
+        public List<VwErrorReport> ErrorRows { get; set; }
         public string Success { get; set; }
     }
 

@@ -88,7 +88,6 @@
         //$(document).ready(function () {
         console.log("Index $(document).ready");
 
-        verifyVisitorId(3908, "Index.html");
 
         //$('#footerLastBuild').html("last build: " + lastBuild + "3");
         //$('#footerMessage').html("loading settings");
@@ -118,6 +117,9 @@
                 let connectionVerifiedLoop = setInterval(function () {
                     if (connectionVerified) {
                         clearInterval(connectionVerifiedLoop);
+
+                        verifyVisitorId(3908, "Index.html");
+
 
                         console.log("connection verified: " + verifyConnectionCount + " calling tryHitStats");
                         tryHitStats();

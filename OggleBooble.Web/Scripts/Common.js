@@ -155,20 +155,26 @@ function todayString() {
 function verifyVisitorId(folderId, calledFrom) {
     let cokieTest = getCookieValue("VisitorId")
     let lclStrTest = window.localStorage["VisitorId"];
-    if (lclStrTest != null) {
-        if (cokieTest == null) {
-            setCookieValue("VisitorId", lclStrTest);
-            logEvent("VL1", folderId, calledFrom, "cookie loaded from local storage");
-        }
+    if ((lclStrTest != null) && (lclStrTest != null)) {
+        console.log("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
+        // alert("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
     }
-    if (cokieTest != null) {
-        if (lclStrTest == null) {
-            window.localStorage["VisitorId"] = cokieTest;
-            logEvent("VL2", folderId, calledFrom, "local storage loaded from cookie");
+    else {
+        if (lclStrTest != null) {
+            if (cokieTest == null) {
+                setCookieValue("VisitorId", lclStrTest);
+                logEvent("VL1", folderId, calledFrom, "cookie loaded from local storage");
+            }
         }
-    }
-    if ((lclStrTest == null) && (cokieTest == null)) {
-        logError("VVF", folderId, "could be a new user", calledFrom);
+        if (cokieTest != null) {
+            if (lclStrTest == null) {
+                window.localStorage["VisitorId"] = cokieTest;
+                logEvent("VL2", folderId, calledFrom, "local storage loaded from cookie");
+            }
+        }
+        if ((lclStrTest == null) && (cokieTest == null)) {
+            logError("VVF", folderId, "could be a new user", calledFrom);
+        }
     }
 }
 
@@ -370,7 +376,6 @@ function logActivity(activityCode, folderId) {
         }
     });
 }
-
 
 function logDataActivity(activityModel) {
     //activityModel{

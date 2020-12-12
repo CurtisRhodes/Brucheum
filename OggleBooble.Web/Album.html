@@ -138,6 +138,7 @@
                         $('#dots').html('');
                         changeFavoriteIcon("redBallon");
                         localhostBypass();
+                        verifyVisitorId(params.folder, "album.html");
 
                         if (!isNullorUndefined(params.tic)) {
                             logStaticPageHit(params.folder, "album");

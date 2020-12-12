@@ -4,16 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using IronPdf;
-using System.Drawing;
 using System.IO;
 using System.Text;
-using Microsoft.SqlServer.Server;
 using System.Configuration;
-using System.Threading.Tasks;
 
 namespace OggleBooble.Api.Controllers
 {
@@ -278,8 +274,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    //feedbackReport.FeedbackRows = db.FeedbackReport.ToList();
-                    //feedbackReport.Total = db.FeedbackReport.Count();
+                    feedbackReport.FeedbackRows = db.FeedbackReport.ToList();
+                    feedbackReport.Total = db.FeedbackReport.Count();
                     feedbackReport.Success = "ok";
                 }
             }
@@ -318,9 +314,30 @@ namespace OggleBooble.Api.Controllers
             return ProcessStatus;
         }
 
+        [HttpGet]
+        [Route("api/Report/UserDetails")]
+        public UserReportSuccessModel UserDetails(string ipAddress)
+        {
+            var userReportSuccessModel = new UserReportSuccessModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    userReportSuccessModel.UserReport = db.Database.SqlQuery<UserReportModel>("select IpAddress, City, Region, Country, convert(date(InitialVisit), char) 'InitialVisit'," +
+                    "(select count(*) from OggleBooble.Visit where VisitorId = v.VisitorId) 'Visits'," +
+                    "(select count(*) from OggleBooble.PageHit where VisitorId = v.VisitorId) 'PageHits'," +
+                    "(select count(*) from OggleBooble.ImageHit where VisitorId = v.VisitorId) 'ImageHits', r.UserName " +
+                    "from OggleBooble.Visitor v left join OggleBooble.RegisteredUser r on v.VisitorId = r.VisitorId " +
+                    " where IpAddress = @ipAddress;", new MySql.Data.MySqlClient.MySqlParameter("@ipAddress", ipAddress)).First<UserReportModel>();
+                    userReportSuccessModel.Success = "ok";
+                }
+            }
+            catch (Exception ex) { userReportSuccessModel.Success = Helpers.ErrorDetails(ex); }
+            return userReportSuccessModel;
+        }
+
         [HttpPost]
-        [Route("api/Report/BuildCenterfoldHtmlPage")]
-        public string BuildCenterfoldHtmlPage(int rootFolder)
+        public string BuildListPage(int rootFolder)
         {
             string success;
             try
@@ -591,9 +608,5 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
     }
-
-
-
-
 }
 

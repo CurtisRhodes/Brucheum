@@ -571,6 +571,7 @@ namespace OggleBooble.Api.MySqlDataContext
         [Key]
         [Column(Order = 1)]
         public string Occured { get; set; }
+        public string Time { get; set; }
         public string ErrorCode { get; set; }
         public string IpAddress { get; set; }
         public string City { get; set; }
