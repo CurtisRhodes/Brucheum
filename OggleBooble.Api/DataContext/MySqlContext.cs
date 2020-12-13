@@ -350,8 +350,9 @@ namespace OggleBooble.Api.MySqlDataContext
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PkId { get; set; }
         public string EventCode { get; set; }
-        public string EventDetail { get; set; }
         public int PageId { get; set; }
+        public string CalledFrom { get; set; }
+        public string EventDetail { get; set; }
         public string VisitorId { get; set; }
         public DateTime Occured { get; set; }
     }

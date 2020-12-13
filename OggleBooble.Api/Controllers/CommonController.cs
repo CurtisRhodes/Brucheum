@@ -404,9 +404,10 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.EventLogs.Add(new EventLog()
                     {
+                        PageId = eventModel.FolderId,
                         EventCode = eventModel.EventCode,
                         EventDetail = eventModel.EventDetail,
-                        PageId = eventModel.FolderId,
+                        CalledFrom = eventModel.CalledFrom,
                         VisitorId = eventModel.VisitorId,
                         Occured = DateTime.Now
                     });

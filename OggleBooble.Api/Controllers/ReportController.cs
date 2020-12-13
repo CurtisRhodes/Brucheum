@@ -336,6 +336,23 @@ namespace OggleBooble.Api.Controllers
             return userReportSuccessModel;
         }
 
+        [HttpGet]
+        [Route("api/Report/UserErrorDetails")]
+        public UserErrorReportSuccess UserErrorDetails(string ipAddress)
+        {
+            var userErrors = new UserErrorReportSuccess();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    userErrors.ErrorRows = db.VwErrorReportRows.Where(e => e.IpAddress == ipAddress).ToList();
+                }
+                userErrors.Success = "ok";
+            }
+            catch (Exception ex) { userErrors.Success = Helpers.ErrorDetails(ex); }
+            return userErrors;
+        }
+
         [HttpPost]
         public string BuildListPage(int rootFolder)
         {

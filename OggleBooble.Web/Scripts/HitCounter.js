@@ -123,11 +123,13 @@ function logVisit(visitorId, folderId) {
                 if (logVisitSuccessModel.VisitAdded) {
                     if (logVisitSuccessModel.IsNewVisitor) {
                         $('#headerMessage').html("Wecome new visitor!");
+                        logActivity("NVA", folderId);
+                        //logEvent("VAD", folderId, "logVisit", "is new visitor: " + logVisitSuccessModel.IsNewVisitor);
                     }
                     else {
                         $('#headerMessage').html("Wecome back" + logVisitSuccessModel.UserName);
+                        logActivity("RVR", folderId);
                     }
-                    logEvent("VIS", folderId, "is new visitor: " + logVisitSuccessModel.IsNewVisitor, "logVisit")
                 }
             }
             else {
@@ -194,7 +196,7 @@ function getIpInfo(folderId, calledFrom) {
                                 setCookieValue("VisitorId", visitorId);
                                 let cookieTest = getCookieValue("VisitorId");
                                 if (cookieTest === visitorId) {
-                                    logEvent("NEW", folderId, calledFrom, cookieTest);
+                                    //logEvent("NEW", folderId, calledFrom, cookieTest);
                                     logIpHit(visitorId, ipResponse.ip, folderId);
                                     //if (calledFrom == "logStaticPageHit")
                                     //    logStaticPageHit(folderId, "getIpInfo");

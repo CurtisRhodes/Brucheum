@@ -97,7 +97,7 @@ function loadUpdatedGalleriesBoxes(numItmes) {
                             "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
                             "<img id='lt" + LatestUpdate.FolderId + "' class='newsContentBoxImage' " +
                             "onerror='latestGalleryImageError(" + LatestUpdate.FolderId + ",\"" + thisItemSrc + "\")' src='" + thisItemSrc + "'" +
-                            "onclick='rtpe(\"LUP\",\"Index page\",\"" + thisItemSrc + "\"," + LatestUpdate.FolderId + ")' />" +
+                            "onclick='rtpe(\"LUP\",\"Index page\",\"" + latestGallerySubdomain + "\"," + LatestUpdate.FolderId + ")' />" +
                             "<div class='newsContentBoxDateLabel'>updated: " + dateString2(LatestUpdate.Acquired) + "</span></div>" +
                             "</div>");
                     }

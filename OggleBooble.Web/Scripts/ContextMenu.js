@@ -3,8 +3,6 @@
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     event.preventDefault();
     window.event.returnValue = false;
-    //logEvent(eventCode, folderId, calledFrom, eventDetails) {
-
     // logEvent("CXM", folderId, menuType, getCookieValue("VisitorId"));
     console.log("context menu opened: " + menuType);
     pLinkId = linkId;
@@ -174,7 +172,7 @@ function contextMenuAction(action) {
             break;
         case "showDialog": {
             if ($('#ctxModelName').html() === "unknown model") {
-                logEvent("UKM", folderId, menuType, getCookieValue("VisitorId"));
+                logEvent("UKM", pFolderId, pMenuType, "details");
                 showUnknownModelDialog(pImgSrc, pLinkId, pFolderId);
             }
             else
@@ -203,11 +201,7 @@ function contextMenuAction(action) {
             break;
         }
         case "explode": {
-
-            //logEvent(eventCode, folderId, calledFrom, eventDetails)
             logEvent("EXP", pFolderId, pFolderName, pLinkId);
-            //rtpe(eventCode, calledFrom, eventDetail, pageId)
-            //rtpe("EXP", pFolderName, pImgSrc, pFolderId);
             window.open(pImgSrc, "_blank");
             break;
         }

@@ -33,7 +33,6 @@ function setOggleHeader(folderId, subdomain) {
     window.addEventListener("resize", mediaSavyHdrResize);
 }
 
-
 function setHeaderMenu(folderId, subdomain) {
     switch (subdomain) {
         case "Index": {
@@ -69,12 +68,12 @@ function setHeaderMenu(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#bannerTitle').html("OggleBooble");
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a> organized by\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",3616)'> positions,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",241)'>sizes</a>\n");
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a> organized by\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3616)'> positions,</a>\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",241)'>sizes</a>\n");
             $('#breadcrumbContainer').html(addBannerButton("centerfold"));
             $('#breadcrumbContainer').append(addBannerButton("archive"));
             $('#breadcrumbContainer').append(addBannerButton("softcore", "softcore"));
@@ -88,12 +87,12 @@ function setHeaderMenu(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#bannerTitle').html("OggleBooble");
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a> organized by\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",3916)'> positions,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",241)'>sizes</a>\n");
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a> organized by\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3916)'> positions,</a>\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",241)'>sizes</a>\n");
             $('#topRowRightContainer').html(addBannerButton("ranker", "poses"));
             $('#hdrBtmRowSec3').html(addBannerButton("centerfold"));
             $('#hdrBtmRowSec3').append(addBannerButton("archive"));
@@ -102,10 +101,10 @@ function setHeaderMenu(folderId, subdomain) {
         }
         case "archive": {
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a>\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1103)'>russian spys,</a> \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",1107)'>sweater meat,</a> \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"archive\",123)'>ultra juggs</a> \n");
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a>\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"archive\",1103)'>russian spys,</a> \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"archive\",1107)'>sweater meat,</a> \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"archive\",123)'>ultra juggs</a> \n");
             $('#topRowRightContainer').html(addBannerButton("centerfold"));
             $('#topRowRightContainer').append(addBannerButton("poses"));
             $('#topRowRightContainer').append(addBannerButton("ranker", "boobs"));
@@ -119,12 +118,12 @@ function setHeaderMenu(folderId, subdomain) {
             $('#bannerTitle').html("OggleSoftcore");
             changeFavoriteIcon("soft");
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",243)'>pussy</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",420)'>boob suckers</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",498)'>big tit lezies</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",357)'>fondle</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",397)'>kinky</a> and \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"soft\",411)'>naughty behaviour</a>\n");
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",243)'>pussy</a>, \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",420)'>boob suckers</a>, \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",498)'>big tit lezies</a>, \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",357)'>fondle</a>, \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",397)'>kinky</a> and \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",411)'>naughty behaviour</a>\n");
             $('#hdrBtmRowSec3').html(addBannerButton("backToOggle"));
             $('#hdrBtmRowSec3').append(addBannerButton("porn", "OgglePorn"));
             $('#hdrBtmRowSec3').append(addBannerButton("ranker", "softcore"));
@@ -193,11 +192,11 @@ function setHeaderMenu(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
             $('#bannerTitle').html("OgglePorn");
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",243)'>cock suckers</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",420)'>boob suckers</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",357)'>cum shots</a>, \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",397)'>kinky</a> and \n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"porn\",411)'>naughty behaviour</a>\n");
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",243)'>cock suckers</a>, \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",420)'>boob suckers</a>,\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",357)'>cum shots</a>, \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",397)'>kinky</a> and \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",411)'>naughty behaviour</a>\n");
             $('#hdrBtmRowSec3').html(addBannerButton("backToOggle"));
             $('#hdrBtmRowSec3').append(addBannerButton("sluts"));
             $('#hdrBtmRowSec3').append(addBannerButton("ranker", "porn"));
@@ -210,15 +209,15 @@ function setHeaderMenu(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
             $('#bannerTitle').html("OgglePorn");
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",1174)'>big titters gone bad</a>,\n" +
-                //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",2677)'>cocksucker lipps</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",3728)'>blonde cocksuckers</a>,\n" +
-                //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",3730)'>amatures</a>,\n" +
-                //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",3731)'>sweet nasty girls</a>,\n" +
-                //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4022)'>big girls</a>,\n" +
-                //"<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4198)'>milf cocksuckers</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",4271)'>retro porn stars</a>,\n" +
-                "<a href='javascript:rtpe(\"BLC\"," + folderId + ",\"sluts\",3739)'>exploited teens</a>\n");
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",1174)'>big titters gone bad</a>,\n" +
+                //"<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",2677)'>cocksucker lipps</a>,\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",3728)'>blonde cocksuckers</a>,\n" +
+                //"<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",3730)'>amatures</a>,\n" +
+                //"<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",3731)'>sweet nasty girls</a>,\n" +
+                //"<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",4022)'>big girls</a>,\n" +
+                //"<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",4198)'>milf cocksuckers</a>,\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",4271)'>retro porn stars</a>,\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",3739)'>exploited teens</a>\n");
             $('#hdrBtmRowSec3').html(addBannerButton("porn", "back to porn"));
             $('#hdrBtmRowSec3').append(addBannerButton("ranker", "porn"));
             break;
@@ -413,11 +412,24 @@ function dragableDialogClose() {
     $('#centeredDialogContainer').fadeOut();
     if (typeof resume === 'function') resume();
 }
+
+function openBannerButton(bannerType, rankerType) {
+    logEvent("BLC", hdrFolderId, bannerType, rankerType);
+    switch (bannerType) {
+        case "ranker":
+            loc.href = "index.html?spa=3907&bp=" + rankerType;
+        case "porn":
+            loc.href = "index.html?spa=3909";
+            break;
+        default:
+    }
+}
+
 function addBannerButton(bannerType, rankerType) {
     switch (bannerType) {
         case "ranker":
             return "<div class='headerBannerButton'>\n" +
-                "<div class='clickable' onclick='window.open(\"/index.html?spa=3907&bp=" + rankerType + "\", \"_blank\")' " +
+                "<div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType +"\")' " +
                 "title='Spin through the links to land on random portrait images.'>" + rankerType + " ranker</div>" +
                 "</div>\n";
         case "porn":
@@ -461,10 +473,14 @@ function addBannerButton(bannerType, rankerType) {
 }
 
 function topLogoClick(subdomain) {
+    logEvent("TLC", hdrFolderId, subdomain, hdrSubdomain);
     switch (subdomain) {
         case "centerfold":
         case "playboy":
             window.open("index.html?spa=3912");
+            break;
+        case "soft":
+            window.open("album.html?folder=5233");
             break;
         case "porn":
         case "sluts":

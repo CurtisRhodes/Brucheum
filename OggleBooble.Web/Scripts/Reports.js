@@ -282,8 +282,52 @@ function showMostActiveUsersReport() {
     });
 }
 
+function errorLogReport() {
+    activeReport = "ErrorLog";
+    $('#reportsHeaderTitle').html("Errors for " + todayString());
+    $("#reportsFooter").html("");
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Report/ErrorLogReport",
+        success: function (errorLogReport) {
+            $('#dashBoardLoadingGif').hide();
+            if (errorLogReport.Success === "ok")
+            {
+                let kludge = "<div><table class='errorLogTable'>";
+                kludge += "<tr><th>error</th><th>called from</th><th colspan=2>occured</th><th>page</th><th>user</th></tr>";
+                $.each(errorLogReport.ErrorRows, function (idx, obj) {
+                    kludge += "<tr><td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
+                    kludge += "<td>" + obj.CalledFrom + "</td>";
+                    kludge += "<td>" + obj.Occured + "</td>";
+                    kludge += "<td>" + obj.Time + "</td>";
+                    kludge += "<td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
+                    //kludge += "<td>" + obj.City + " " + obj.Region + " " + obj.Country + "</td>";
+                    kludge += "<td class='clickable' onclick='showUserErrorDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
+                    kludge += "</tr>";
+
+                    //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    //html += "<td colspan='6'>" + obj.ErrorMessage + "</td></tr>";
+                    //html += "<td>" + obj.City + "," + obj.Country + "</td>";
+                    //html += "</tr><tr><td colspan='6'>" + obj.ErrorMessage + "</td></tr></tr>";
+                });
+                kludge += "</table></div>";
+                $("#reportsContentArea").html(kludge);
+          }
+            else {
+                logError("AJX", 3910, errorLogReport.Success, "errorLogReport");
+                alert("PageHitsReport: " + errorLogReport.Success);
+            }
+        },
+        error: function (jqXHR) {
+            if (!checkFor404("errorLogReport")) {
+                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "errorLogReport");
+            }
+        }
+    });
+}
+
 function showUserDetail(ipAddress) {
-    // alert("showUserDetail: " + ipAddress);
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Report/UserDetails?ipAddress=" + ipAddress,
@@ -315,42 +359,50 @@ function showUserDetail(ipAddress) {
     });
 }
 
-function errorLogReport() {
-    activeReport = "ErrorLog";
-    $('#reportsHeaderTitle').html("Errors for " + todayString());
-    $("#reportsFooter").html("");
-    $('#dashBoardLoadingGif').show();
+function showUserErrorDetail(ipAddress) {
+    // alert("showUserDetail: " + ipAddress);
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Report/ErrorLogReport",
-        success: function (errorLogReport) {
+        url: settingsArray.ApiServer + "api/Report/UserErrorDetails?ipAddress=" + ipAddress,
+        success: function (userErrors) {
             $('#dashBoardLoadingGif').hide();
-            if (errorLogReport.Success === "ok")
-            {
-                let kludge = "<div><table class='errorLogTable'>";
-                kludge += "<tr><th>error</th><th>called from</th><th colspan=2>occured</th><th>page</th><th>user</th></tr>";
-                $.each(errorLogReport.ErrorRows, function (idx, obj) {
-                    kludge += "<tr><td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
+            if (userErrors.Success === "ok") {
+                $('#dashboardDialogTitle').html("user error details for: " + ipAddress);
+                let kludge = "<div>";
+                $.each(userErrors.ErrorRows, function (idx, obj) {
+                    if (idx == 0) {
+                        kludge += "<div>from: " + obj.City + ", " + obj.Region + ", " + obj.Country + "</div>";
+                        kludge += "<table>";
+                        kludge += "<tr><th>folder</th><th>error</th><th>called from</th><th>occured</th></tr>";
+                    }
+                    kludge += "<tr><td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
+                    kludge += "<td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
                     kludge += "<td>" + obj.CalledFrom + "</td>";
-                    kludge += "<td>" + obj.Occured + "</td>";
-                    kludge += "<td>" + obj.Time + "</td>";
-                    kludge += "<td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
-                    //kludge += "<td>" + obj.City + " " + obj.Region + " " + obj.Country + "</td>";
-                    kludge += "<td class='clickable' onclick='showUserDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
-                    kludge += "</tr>";
-
-                    //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
-                    //html += "<td colspan='6'>" + obj.ErrorMessage + "</td></tr>";
-                    //html += "<td>" + obj.City + "," + obj.Country + "</td>";
-                    //html += "</tr><tr><td colspan='6'>" + obj.ErrorMessage + "</td></tr></tr>";
+                    kludge += "<td>" + obj.Occured + ":" + obj.Time + "</td><tr>";
                 });
-                kludge += "</table></div>";
-                $("#reportsContentArea").html(kludge);
-          }
-            else {
-                logError("AJX", 3910, errorLogReport.Success, "errorLogReport");
-                alert("PageHitsReport: " + errorLogReport.Success);
+                kludge += "</table>";
+                $('#dashboardDialogContents').html(kludge);
+                $('#dashboardDialog').fadeIn();
             }
+            else {
+                logError("AJX", 3910, userErrors.Success, "pageHitsReport");
+            }
+
+            //    public class VwErrorReport {
+            //    public int FolderId { get; set; }
+            //    public string FolderName { get; set; }
+            //    public string Error { get; set; }
+            //    public string CalledFrom { get; set; }
+            //    public string ErrorMessage { get; set; }
+            //    public string VisitorId { get; set; }
+            //    public string Occured { get; set; }
+            //    public string Time { get; set; }
+            //    public string ErrorCode { get; set; }
+            //    public string IpAddress { get; set; }
+            //    public string City { get; set; }
+            //    public string Region { get; set; }
+            //    public string Country { get; set; }
+            //}
         },
         error: function (jqXHR) {
             if (!checkFor404("errorLogReport")) {

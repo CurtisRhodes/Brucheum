@@ -55,6 +55,7 @@ function performEvent(eventCode, eventDetail, folderId) {
         case "CPC":  // carousel ParentGallery clicked
         case "BCC":  // Breadcrumb Clicked
         case "BLC":  // banner link clicked
+        case "TLM":  // top menu link clicked
         case "EPC":  // every playmate clicked
         case "PYC":  // playboy year clicked
         case "PBB":  // playboy breadcrumb click

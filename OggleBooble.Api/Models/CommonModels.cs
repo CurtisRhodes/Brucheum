@@ -103,10 +103,11 @@ namespace OggleBooble.Api.Models
 
     public class EventLogModel
     {
-        public string VisitorId { get; set; }
         public string EventCode { get; set; }
-        public string EventDetail { get; set; }
         public int FolderId { get; set; }
+        public string CalledFrom { get; set; }
+        public string EventDetail { get; set; }
+        public string VisitorId { get; set; }
     }
 
     public class IpHitModel

@@ -334,7 +334,7 @@ function closeViewer(calledFrom) {
             closeMethod = calledFrom;
         }
         if (spSessionCount < 2) {
-            logEvent("SVC", albumFolderId, "calledFrom", "Single Image Viewed. closeMethod: " + closeMethod);
+            logEvent("SIV", albumFolderId, "calledFrom", "closeMethod: " + closeMethod);
         }
         else {
             logEvent("SVC", albumFolderId, "calledFrom", "Images Viewed: " + spSessionCount + " closed: " + closeMethod);

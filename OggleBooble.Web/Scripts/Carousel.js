@@ -3,9 +3,10 @@ let imageIndex = 0, numImages = 0, numFolders = 0, backArrowClicks = 0,
     carouselItemArray = [], imageHistory = [], absolueStartTime,
     carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
-    imgSrc, jsCarouselSettings, nextRoot = 1, arryItemsShownCount = 0;
+    imgSrc, jsCarouselSettings, nextRoot = 1, arryItemsShownCount = 0, carouselRoot;
 
 function launchCarousel(startRoot) {
+    carouselRoot = startRoot;
     absolueStartTime = Date.now();
     $('#carouselContainer').html(carouselHtml());
     loadCarouselSettingsIntoLocalStorage();
@@ -18,6 +19,7 @@ function launchCarousel(startRoot) {
     imageIndex = 0;
     if (startRoot === "centerfold") {
         if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
+            //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
             console.log("loading centerfold from centerfold cache");
             let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
             $.each(carouselCacheArray, function (idx, obj) {
@@ -28,6 +30,9 @@ function launchCarousel(startRoot) {
             startCarousel("centefold cache");
             console.log("loaded " + carouselItemArray.length + " from centerfold cache");
         }
+        else
+            if (document.domain == "localhost")
+                alert("starting carousel from after ajax");
     }
     if (startRoot === "boobs") {
         if (!isNullorUndefined(window.localStorage["carouselCache"])) {
@@ -112,6 +117,9 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                     });
 
                     if (!vCarouselInterval) {
+                        if (document.domain == "localhost")
+                            alert("starting carousel from after ajax");
+
                         console.log("starting carousel from after ajax");
                         startCarousel("ajax");
                     }
@@ -353,14 +361,9 @@ function alreadyInLast100() {
             imageIndex = Math.floor(Math.random() * carouselItemArray.length);
             console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
 
-            // logEvent("REJ", carouselItemArray[imageIndex].FolderId, "alreadyInLast100", carouselItemArray[imageIndex].LinkId);
+            logEvent("REJ", carouselItemArray[imageIndex].FolderId, carouselRoot, carouselItemArray[imageIndex].LinkId);
 
-            logDataActivity({
-                VisitorId: getCookieValue("VisitorId"),
-                ActivityCode: "REJ",
-                PageId: carouselItemArray[imageIndex].FolderId,
-                Activity: "Already shown try again: " + carouselItemArray[imageIndex].LinkId
-            });
+            //logActivity("", carouselItemArray[imageIndex].FolderId;
             return true;
         }
     }
@@ -446,7 +449,7 @@ function addItemsToArray(ckId) {
 }
 
 function assuranceArrowClick(direction) {
-    //logEvent("CAA", 3908, "calledFrom", "LinkId: " + carouselItemArray[imageIndex].LinkId+ "direction: " + direction)
+    logEvent("CAA", 3908, carouselRoot, "LinkId: " + carouselItemArray[imageIndex].LinkId + "direction: " + direction);
     if (direction === "foward") {
         resume();
     }
@@ -479,7 +482,7 @@ function clickViewGallery(labelClick) {
     vCarouselInterval = null;
     switch (labelClick) {
         case 1:  // carousel main image
-            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "main image", mainImageClickId);
+            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, carouselRoot, mainImageClickId);
             break;
         case 2: // top imageTopLabel
             rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "image top label", imageTopLabelClickId);
