@@ -54,18 +54,19 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { addVisitorSuccess.Success = Helpers.ErrorDetails(ex); }
             return addVisitorSuccess;
         }
-        
+
         [HttpPost]
         [Route("api/Common/LogVisit")]
         public LogVisitSuccessModel LogVisit(string visitorId)
         {
-            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel();
+            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false, IsNewVisitor = false };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     var dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                    if (dbVisitor == null) {
+                    if (dbVisitor == null)
+                    {
                         visitSuccessModel.Success = "VisitorId not found";
                         return visitSuccessModel;
                     }
@@ -74,36 +75,42 @@ namespace OggleBooble.Api.Controllers
                     DateTime lastVisitDate = DateTime.MinValue;
                     List<Visit> visitorVisits = db.Visits.Where(v => v.VisitorId == visitorId).ToList();
                     if (visitorVisits.Count() > 0)
+                    {
+                        visitSuccessModel.IsNewVisitor = false;
                         lastVisitDate = db.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+                    }
+                    else
+                        visitSuccessModel.IsNewVisitor = true;
 
                     if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
                     {
-                        Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                        if (visitor == null)
+                        db.Visits.Add(new Visit()
                         {
-                            db.Visits.Add(new Visit()
-                            {
-                                VisitorId = visitorId,
-                                VisitDate = DateTime.Now
-                            });
-                            db.SaveChanges();
-                            visitSuccessModel.IsNewVisitor = true;
-                        }
-
-                        db.Visits.Add(new Visit() { VisitorId = visitorId, VisitDate = DateTime.Now });
+                            VisitorId = visitorId,
+                            VisitDate = DateTime.Now
+                        });
                         db.SaveChanges();
                         visitSuccessModel.VisitAdded = true;
-                        if (!visitSuccessModel.IsNewVisitor)
+                    }
+
+                    if (visitSuccessModel.VisitAdded)
+                    {
+                        var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+                        if (registeredUser == null)
                         {
-                            var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-                            if (registeredUser != null)
-                                visitSuccessModel.UserName = " " + registeredUser.UserName;
+                            visitSuccessModel.WelcomeMessage = "Welcome back" + registeredUser.UserName;
+                        }
+                        else
+                        {
+                            if (visitSuccessModel.IsNewVisitor)
+                                visitSuccessModel.WelcomeMessage = "Welcome new visitor. Please log in";
                             else
-                                visitSuccessModel.UserName = ". Please log in";
+                                visitSuccessModel.WelcomeMessage = "Welcome back. Please log in";
                         }
                     }
-                    visitSuccessModel.Success = "ok";
                 }
+                visitSuccessModel.Success = "ok";
+
             }
             catch (Exception ex)
             {
@@ -432,7 +439,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.ActivityLogs.Add(new ActivityLog()
                     {
-                        ActivtyCode= activityLogModel.ActivtyCode,
+                        ActivtyCode = activityLogModel.ActivtyCode,
                         FolderId=activityLogModel.FolderId,
                         VisitorId = activityLogModel.VisitorId,
                         Occured = DateTime.Now
@@ -449,34 +456,34 @@ namespace OggleBooble.Api.Controllers
         }
 
 
-        [HttpPost]
-        [Route("api/Common/LogDataActivity")]
-        public string LogDataActivity(DataActivityModel changeLog)
-        {
-            string success;
-            try            
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    db.ChangeLogs.Add(new MySqlDataContext.ChangeLog()
-                    {
-                        PkId = Guid.NewGuid().ToString(),
-                        VisitorId = changeLog.VisitorId,
-                        PageId = changeLog.FolderId,
-                        ActivityCode = changeLog.ActivityCode,
-                        Activity = changeLog.Activity,
-                        Occured = DateTime.Now
-                    });
-                    db.SaveChanges();
-                }
-                success = "ok";
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
+        //[HttpPost]
+        //[Route("api/Common/LogDataActivity")]
+        //public string LogDataActivity(DataActivityModel changeLog)
+        //{
+        //    string success;
+        //    try            
+        //    {
+        //        using (var db = new OggleBoobleMySqlContext())
+        //        {
+        //            db.ChangeLogs.Add(new MySqlDataContext.ChangeLog()
+        //            {
+        //                PkId = Guid.NewGuid().ToString(),
+        //                VisitorId = changeLog.VisitorId,
+        //                PageId = changeLog.FolderId,
+        //                ActivityCode = changeLog.ActivityCode,
+        //                Activity = changeLog.Activity,
+        //                Occured = DateTime.Now
+        //            });
+        //            db.SaveChanges();
+        //        }
+        //        success = "ok";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        success = Helpers.ErrorDetails(ex);
+        //    }
+        //    return success;
+        //}
 
         [HttpPost]
         [Route("api/Common/LogFeedback")]

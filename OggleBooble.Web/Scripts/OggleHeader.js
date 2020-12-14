@@ -414,14 +414,30 @@ function dragableDialogClose() {
 }
 
 function openBannerButton(bannerType, rankerType) {
-    logEvent("BLC", hdrFolderId, bannerType, rankerType);
+    logEvent("BLC", hdrFolderId, hdrSubdomain, bannerType);
     switch (bannerType) {
         case "ranker":
-            loc.href = "index.html?spa=3907&bp=" + rankerType;
+            location.href = "index.html?spa=3907&bp=" + rankerType;
         case "porn":
-            loc.href = "index.html?spa=3909";
+            location.href = "index.html?spa=3909";
+            break;
+        case "softcore":
+            location.href = "index.html?folder=5233";
+            break;
+        case "poses":
+            location.href = "index.html?folder=2";
+            break;
+        case "archive":
+            location.href = "index.html?folder=3";
+            break;
+        case "sluts":
+            location.href = "index.html?folder=440";
+            break;
+        case "backToOggle":
+            location.href = "index.html";
             break;
         default:
+            logError("SWT", hdrFolderId, "bannerType: " + bannerType, "openBannerButton");
     }
 }
 
@@ -434,38 +450,44 @@ function addBannerButton(bannerType, rankerType) {
                 "</div>\n";
         case "porn":
             return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='window.open(\"index.html?spa=3909\", \"_blank\")'>" + rankerType + "</div>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType +"\")'>" + rankerType + "</div>" +
+                //"   <div class='clickable' onclick='window.open(\"index.html?spa=3909\", \"_blank\")'>" + rankerType + "</div>" +
                 "</div>\n";
             break;  // https//ogglebooble.com/index.html?spa=3909
         case "softcore":
             return "<div class='headerBannerButton'>" +
-                //"   <div class='clickable' onclick='window.open(\"album.html?folder=5233\", \"_blank\")'>" + rankerType + "</div>" +
-                "   <div class='clickable' onclick='window.open(\"album.html?folder=5233\")'>" + rankerType + "</div>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>" + rankerType + "</div>" +
+                //"   <div class='clickable' onclick='window.open(\"album.html?folder=5233\")'>" + rankerType + "</div>" +
                 "</div>\n";
             break;
         case "backToOggle":
             return "<div class='headerBannerButton'>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>back to OggleBooble</div>" +
                 //"   <div class='clickable' onclick='window.open(\"index.html\", \"_blank\")'>back to OggleBooble</div>" +
-                "   <div class='clickable' onclick='window.open(\"index.html\")'>back to OggleBooble</div>" +
+                //"   <div class='clickable' onclick='window.open(\"index.html\")'>back to OggleBooble</div>" +
                 "</div>\n";
             break;
         case "sluts":
             return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='window.open(\"album.html?folder=440\", \"_blank\")'>porn star archive</div>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>porn star archive</div>" +
+                //"   <div class='clickable' onclick='window.open(\"album.html?folder=440\", \"_blank\")'>porn star archive</div>" +
                 "</div>\n";
         case "archive":
             return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='window.open(\"album.html?folder=3\", \"_blank\")'>big naturals archive</div>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>big naturals archive</div>" +
+                //"   <div class='clickable' onclick='window.open(\"album.html?folder=3\", \"_blank\")'>big naturals archive</div>" +
                 "</div>\n";
         case "centerfold":
             return "<div class='headerBannerButton'>\n" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>every Playboy Centefold</div>" +
                 //"   <div class='clickable' onclick='window.open(\"index.html?spa=3912\", \"_blank\")'>every Playboy Centefold</div>" +
-                "   <div class='clickable' onclick='window.open(\"index.html?spa=3912\")'>every Playboy Centefold</div>" +
+                //"   <div class='clickable' onclick='window.open(\"index.html?spa=3912\")'>every Playboy Centefold</div>" +
                 "</div>\n";
         case "poses":
             return "<div class='headerBannerButton'>\n" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>poses</div>" +
                 //"   <div class='clickable' onclick='window.open(\"album.html?folder=2\", \"_blank\")'>poses</div>" +
-                "   <div class='clickable' onclick='window.open(\"album.html?folder=2\")'>poses</div>" +
+                //"   <div class='clickable' onclick='window.open(\"album.html?folder=2\")'>poses</div>" +
                 "</div>\n";
         default:
             logError("SWT", hdrFolderId, "bannerType: " + bannerType, "addBannerButton");

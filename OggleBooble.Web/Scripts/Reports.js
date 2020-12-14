@@ -156,18 +156,18 @@ function runMostImageHits() {
     });
 }
 
-function showEventActivityReport() {
+function eventReport() {
     //$("#divStandardReportArea").addClass("tightReport");
     activeReport = "EventActivity";
     $('#divStandardReport').show();
-    $("#reportLabel").html("Event Activity Report for " + todayString());
-    $('#reportsHeaderTitle').html("Event Activity Report for : " + todayString());
+    //$("#reportLabel").html("Event Activity Report for " + todayString());
+    $('#reportsHeaderTitle').html("Event Report for : " + todayString());
     $("#reportsContentArea").html("");
     $("#reportsFooter").html("");
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/Report/ActivityReport",
+        url: settingsArray.ApiServer + "/api/Report/EventLog",
         success: function (activityReport) {
             $('#dashBoardLoadingGif').hide();
             if (activityReport.Success === "ok") {

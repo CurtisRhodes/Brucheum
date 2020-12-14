@@ -121,14 +121,12 @@ function logVisit(visitorId, folderId) {
         success: function (logVisitSuccessModel) {
             if (logVisitSuccessModel.Success === "ok") {
                 if (logVisitSuccessModel.VisitAdded) {
+                    $('#headerMessage').html(logVisitSuccessModel.WelcomeMessage);
                     if (logVisitSuccessModel.IsNewVisitor) {
-                        $('#headerMessage').html("Wecome new visitor!");
                         logActivity("NVA", folderId);
-                        //logEvent("VAD", folderId, "logVisit", "is new visitor: " + logVisitSuccessModel.IsNewVisitor);
                     }
                     else {
-                        $('#headerMessage').html("Wecome back" + logVisitSuccessModel.UserName);
-                        logActivity("RVR", folderId);
+                        logActivity("RVR", folderId);  // return visitor
                     }
                 }
             }
@@ -247,7 +245,7 @@ function logIpHit(visitorId, ipAddress, folderId) {
         },
         success: function (success) {
             if (success == "ok")
-                logEvent("IPC", folderId, "logIpHit", visitorId);
+                logActivity("IPA", folderId);
             else
                 logError("AJX", folderId, success, "logIpHit");
         },

@@ -193,17 +193,17 @@ namespace OggleBooble.Api.Models
         public string UserName { get; set; }
     }
 
-    public class ActivityReportModel
+    public class EventReportModel
     {
-        public ActivityReportModel()
+        public EventReportModel()
         {
-            Items = new List<ActiviyItem>();
+            Items = new List<EventItem>();
         }
-        public List<ActiviyItem> Items { get; set; }
+        public List<EventItem> Items { get; set; }
         public int HitCount { get; set; }
         public string Success { get; set; }
     }
-    public class ActiviyItem
+    public class EventItem
     {
         public string IpAddress { get; set; }
         public string City { get; set; }
@@ -214,5 +214,16 @@ namespace OggleBooble.Api.Models
         public string Detail { get; set; }
         public string HitDate { get; set; }
         public string HitTime { get; set; }
+    }
+
+    public class ActivityReportModel
+    {
+        public ActivityReportModel()
+        {
+            Items = new List<VwActivityLog>();
+        }
+        public List<VwActivityLog> Items { get; set; }
+        public int HitCount { get; set; }
+        public string Success { get; set; }
     }
 }

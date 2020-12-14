@@ -157,6 +157,7 @@ function verifyVisitorId(folderId, calledFrom) {
     let lclStrTest = window.localStorage["VisitorId"];
     if ((lclStrTest != null) && (lclStrTest != null)) {
         console.log("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
+        //logEvent("VL0", folderId, calledFrom, "visitorId cookie and local storage verified");
         // alert("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
     }
     else {
@@ -346,7 +347,6 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             error: function (jqXHR) {
                 if (!checkFor404("logEvent")) {
                     logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logEvent");
-
                 }
             }
         });

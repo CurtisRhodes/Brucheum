@@ -334,10 +334,10 @@ function closeViewer(calledFrom) {
             closeMethod = calledFrom;
         }
         if (spSessionCount < 2) {
-            logEvent("SIV", albumFolderId, "calledFrom", "closeMethod: " + closeMethod);
+            logEvent("SIV", albumFolderId, closeMethod, "send a warning");
         }
         else {
-            logEvent("SVC", albumFolderId, "calledFrom", "Images Viewed: " + spSessionCount + " closed: " + closeMethod);
+            logEvent("SVC", albumFolderId, closeMethod, "Images Viewed: " + spSessionCount);
         }
         // resizeImageContainer();
     }

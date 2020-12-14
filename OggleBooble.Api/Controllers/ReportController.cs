@@ -138,6 +138,42 @@ namespace OggleBooble.Api.Controllers
             return imageHitsReportModel;
         }
 
+        
+        [HttpGet]
+        [Route("api/Report/EventLog")]
+        public EventReportModel EventLog()
+        {
+            var eventReport = new EventReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    db.SaveChanges();
+                    List<VwEventLog> eventLog = db.VwEventLogs.ToList();
+                    foreach (var item in eventLog)
+                    {
+                        eventReport.Items.Add(new EventItem()
+                        {
+                            IpAddress = item.IpAddress,
+                            City = item.City,
+                            Region = item.Region,
+                            Country = item.Country,
+                            Event = item.Event,
+                            CalledFrom = item.CalledFrom,
+                            Detail = item.Detail,
+                            HitDate = item.HitDate,
+                            HitTime = item.HitTime
+                        });
+                    }
+                    eventReport.HitCount = db.EventLogs.Where(h => h.Occured > DateTime.Today).Count();
+                }
+                eventReport.Success = "ok";
+            }
+            catch (Exception ex) { eventReport.Success = Helpers.ErrorDetails(ex); }
+            return eventReport;
+        }
+
         [HttpGet]
         [Route("api/Report/ActivityReport")]
         public ActivityReportModel ActivityReport()
@@ -147,22 +183,22 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    //db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
-                    //db.SaveChanges();
-                    List<DailyActivityReport> activityItems = db.DailyActivity.ToList();
+                    db.ActivityLogs.RemoveRange(db.ActivityLogs.Where(a => a.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    db.SaveChanges();
+                    
+                    List<VwActivityLog> activityItems = db.VwActivityLogs.ToList();
                     foreach (var activityItem in activityItems)
                     {
-                        activityReport.Items.Add(new ActiviyItem()
+                        activityReport.Items.Add(new VwActivityLog()
                         {
-                            IpAddress = activityItem.IpAddress,
+                            ActivityCode = activityItem.ActivityCode,
+                            Activity = activityItem.Activity,
                             City = activityItem.City,
                             Region = activityItem.Region,
                             Country = activityItem.Country,
-                            Event = activityItem.Event,
-                            CalledFrom = activityItem.CalledFrom,
-                            Detail = activityItem.Detail,
-                            HitDate = activityItem.HitDate,
-                            HitTime = activityItem.HitTime
+                            FolderId = activityItem.FolderId,
+                            FolderName = activityItem.FolderName,
+                            Occured = activityItem.Occured
                         });
                     }
                     activityReport.HitCount = db.EventLogs.Where(h => h.Occured > DateTime.Today).Count();

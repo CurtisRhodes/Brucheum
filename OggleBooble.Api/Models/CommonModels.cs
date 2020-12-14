@@ -86,14 +86,6 @@ namespace OggleBooble.Api.Models
         public string ErrorMessage { get; set; }
         public string CalledFrom { get; set; }
     }
-    public class DataActivityModel
-    {
-        public int FolderId { get; set; }
-        public string ActivityCode { get; set; }
-        public string Activity { get; set; }
-        public string VisitorId { get; set; }
-    }
-
     public class ActivityLogModel
     {
         public string ActivtyCode { get; set; }
@@ -122,9 +114,10 @@ namespace OggleBooble.Api.Models
         public string VisitorId { get; set; }
         public bool IsNewVisitor { get; set; }
         public bool VisitAdded { get; set; }
-        public string UserName { get; set; }
+        public string WelcomeMessage { get; set; }
         public string Success { get; set; }
     }
+
     public class AddVisitorModel
     {
         public int FolderId { get; set; }

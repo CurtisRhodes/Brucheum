@@ -118,17 +118,13 @@
                     if (connectionVerified) {
                         clearInterval(connectionVerifiedLoop);
 
-                        verifyVisitorId(3908, "Index.html");
-
-
                         console.log("connection verified: " + verifyConnectionCount + " calling tryHitStats");
                         tryHitStats();
                         changeFavoriteIcon("redBallon");
                         document.title = "OggleBooble";
 
+                        verifyVisitorId(3908, "Index.html");
                         localhostBypass();
-
-                        //verifiyVisitor("index", spaPageId);
 
                         if (spaPageId == 3908) // boobs archive
                             indexStartup();
@@ -142,12 +138,11 @@
                         if (spaPageId == 3907) { // ranker
                             rankerStartup(params.bp);
                         }
-                        if (spaPageId == 3910) {  // dashboard
+                        if (spaPageId == 3910)   // dashboard
                             dashboardStartup();
-                        }
-                        if (spaPageId == 3911) { // "blog"
+                        
+                        if (spaPageId == 3911)  // "blog"
                             blogStartup();
-                        }
                     }
                 }, 300);
 

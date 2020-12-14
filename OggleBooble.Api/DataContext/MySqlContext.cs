@@ -28,16 +28,19 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<FolderDetail> FolderDetails { get; set; }
         public virtual DbSet<RankerVote> RankerVotes { get; set; }
         public virtual DbSet<EventLog> EventLogs { get; set; }
-        public virtual DbSet<ActivityLog> ActivityLogs { get; set; }
         public virtual DbSet<Ref> Refs { get; set; }
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
-        public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
+        //public virtual DbSet<VwErrorReport> ErrorRepors { get; set; }
+        public virtual DbSet<VwActivityLog> VwActivityLogs { get; set; }
+
+        public virtual DbSet<ActivityLog> ActivityLogs { get; set; }
+        //public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
         public virtual DbSet<PageHitTotals> PageHitTotal { get; set; }
         public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
         public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
-        public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
+        public virtual DbSet<VwEventLog> VwEventLogs { get; set; }
 
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
@@ -156,16 +159,16 @@ namespace OggleBooble.Api.MySqlDataContext
         public DateTime Occured { get; set; }
     }
 
-
-    [Table("OggleBooble.ChangeLog")]
-    public class ChangeLog
+    [Table("OggleBooble.ActivityLog")]
+    public class ActivityLog
     {
+        public string ActivtyCode { get; set; }
+        public int FolderId { get; set; }
         [Key]
-        public string PkId { get; set; }
-        public int PageId { get; set; }
-        public string ActivityCode { get; set; }
-        public string Activity { get; set; }
+        [Column(Order = 0)]
         public string VisitorId { get; set; }
+        [Key]
+        [Column(Order = 1)]
         public DateTime Occured { get; set; }
     }
 
@@ -180,6 +183,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string VisitorId { get; set; }
         public DateTime Posted { get; set; }
     }
+
     [Table("OggleBooble.CategoryFolder")]
     public partial class CategoryFolder
     {
@@ -325,22 +329,6 @@ namespace OggleBooble.Api.MySqlDataContext
         [Column(Order = 1)]
         public string RefCode { get; set; }
         public string RefDescription { get; set; }
-    }
-
-    [Table("OggleBooble.ActivityLog")]
-    public class ActivityLog
-    {
-        //[Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        //public int PkId { get; set; }
-        public string ActivtyCode { get; set; }
-        public int FolderId { get; set; }
-        [Key]
-        [Column(Order = 0)]
-        public string VisitorId { get; set; }
-        [Key]
-        [Column(Order = 1)]
-        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.EventLog")]
@@ -597,8 +585,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Link { get; set; }
     }
 
-    [Table("OggleBooble.vwDailyActivity")]
-    public class DailyActivityReport
+    [Table("OggleBooble.VwEventLog")]
+    public class VwEventLog
     {
         [Key]
         public string PkId { get; set; }
@@ -612,6 +600,22 @@ namespace OggleBooble.Api.MySqlDataContext
         public string HitDate { get; set; }
         public string HitTime { get; set; }
     }
+
+
+    [Table("OggleBooble.VwActivityLog")]
+    public partial class VwActivityLog
+    {
+        [Key]
+        public string ActivityCode { get; set; }
+        public string Activity { get; set; }
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string Occured { get; set; }
+    }
+
     [Table("OggleBooble.LatestTouchedGalleries")]
     public class LatestTouchedGalleries
     {
