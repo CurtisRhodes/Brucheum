@@ -12,6 +12,7 @@ function indexStartup() {
     loadUpdatedGalleriesBoxes(updatedGalleriesCount, "boobs");
 }
 
+
 function pornStartup() {
     $('#indexMiddleColumn').html(indexPageHTML());
     setOggleHeader(spaPageId, "porn");
@@ -111,9 +112,8 @@ function loadUpdatedGalleriesBoxes(numItmes) {
             else logError("AJX", 3908, latestUpdates.Success, "loadUpdatedGalleriesBoxes");
         },
         error: function (jqXHR) {
-            if (!checkFor404("loadUpdatedGalleriesBoxes")) {
-                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "loadUpdatedGalleriesBoxes");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -145,9 +145,8 @@ function launchPromoMessages() {
         },
         error: function (jqXHR) {
             $('#indexPageLoadingGif').hide();
-            if (!checkFor404("launchPromoMessages")) {
-                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "launchPromoMessages");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }

@@ -1,18 +1,31 @@
-﻿var imageComment = {};
+﻿let imageComment = {}, ssFolderId;
 
 function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
     logEvent("SID", folderId, calledFrom, "LinkId: " + linkId);
+    ssFolderId = folderId;
 
-    $('#centeredDialogContents').html(imageCommentDialogHtml());
-
+    //alert("ImageCommentDialog called from: " + calledFrom);
+    if (calledFrom == "Slideshow") {
+        if (typeof pause === 'function')
+            pause();
+        //alert("show SLIDESHOW ImageCommentDialog");
+        console.log("show SLIDESHOW ImageCommentDialog");
+        $('#slideShowDialogContainer').show();
+        $('#slideShowDialogContents').html(imageCommentDialogHtml());
+        $('#slideShowDialogTitle').html("Write a fantasy about this image");
+        $('#slideShowDialogContainer').css("top", 33 + $(window).scrollTop());
+        $('#slideShowDialogContainer').draggable().fadeIn();
+    }
+    else {
+        $('#centeredDialogContents').html(imageCommentDialogHtml());
+        $("#centeredDialogContainer").fadeIn();
+        $('#centeredDialogContainer').css("top", $('.oggleHeader').height() + 50);
+        $('#centeredDialogTitle').html("Write a fantasy about this image");
+    }
     imageComment.VisitorId = getCookieValue("VisitorId");
     imageComment.ImageLinkId = linkId;
     imageComment.FolderId = folderId;
-
     $('#commentDialogImage').attr("src", imgSrc);
-    $('#centeredDialogContainer').css("top", $('.oggleHeader').height() - 50);
-    //if(calledFrom==="")
-    $('#centeredDialogTitle').html("Write a fantasy about this image");
 
     $('#imageCommentEditor').summernote({
         height: 200,
@@ -23,17 +36,15 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
             ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
         ]
     });
-    $("#imageCommentEditor").summernote('codeview.toggle');
-    setTimeout(function () { $("#imageCommentEditor").summernote('codeview.toggle'); }, 800);
+    $('#imageCommentEditor').summernote('focus');
+    $('txtCommentTitle').blur(function () { console.log("txtCommentTitle blurr"); $('#imageCommentEditor').summernote('focus'); });
+
+    //$('#imageCommentEditor').focus();
+    //$("#imageCommentEditor").summernote('codeview.toggle');
+    //setTimeout(function () { $("#imageCommentEditor").summernote('codeview.toggle'); }, 800);
 
     $(".note-editable").css('font-size', '15px');
-    $(".modelDialogInput").prop('readonly', true);;
-
-    if (typeof pause === 'function')
-        pause();
-
-    $("#centeredDialogContainer").fadeIn();
-
+    $(".modelDialogInput").prop('readonly', true);
     //innocent young girl with an enormous set of knockers.She doesn't mind showing them, but it's like she's doing you a favor.
 }
 
@@ -65,21 +76,27 @@ function loadComment() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("loadComment")) {
-                logError("XHR", imageComment.FolderId, getXHRErrorDetails(jqXHR), "loadComment");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", imageComment.FolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
 
 function saveComment() {
-    imageComment.CommentTitle = $('#txtCommentTitle').val();
-    imageComment.CommentText = $('#imageCommentEditor').summernote('code');
-
-    if ($('#divSaveFantasy').html() === "save")
-        addImageComment();
+    if ($('#txtCommentTitle').val() == "")
+        imageComment.CommentTitle = "no comment";
     else
-        editImageComment();
+        imageComment.CommentTitle = $('#txtCommentTitle').val();
+
+    imageComment.CommentText = $('#imageCommentEditor').summernote('code');
+    if (imageComment.CommentText == "")
+        alert("empty comment");
+    else {
+        if ($('#divSaveFantasy').html() === "save")
+            addImageComment();
+        else
+            editImageComment();
+    }
 }
 
 function addImageComment() {
@@ -90,9 +107,11 @@ function addImageComment() {
         success: function (success) {
             if (success === "ok") {
                 displayStatusMessage("ok", "Entry Added");
+                console.log("image comment Added");
                 $('#divSaveFantasy').html("edit");
-                $('#divCloseantasy').html("done");
+                $('#divCloseFantasy').html("done");
                 awardCredits("IMC", imageComment.FolderId);
+                sendEmail("CurtishRhodes@hotmail.com", "SomeoneCommented@Ogglebooble.com", "Someone Entered an Image comment !!!", "comment: " + imageComment.CommentText);
 
                 //FCC	Fantasy comment
                 //SID	show Image Comment Dialog
@@ -103,14 +122,13 @@ function addImageComment() {
                 if (success.includes("title"))
                     alert("Please add a title");
                 else {
-                    logError("AJX", FolderId, success, "addImageComment");                    
+                    logError("AJX", ssFolderId, success, "addImageComment");                    
                 }
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("addImageComment")) {
-                logError("XHR", imageComment.FolderId, getXHRErrorDetails(jqXHR), "addImageComment");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", ssFolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -123,18 +141,26 @@ function editImageComment() {
         success: function (success) {
             if (success === "ok") {
                 displayStatusMessage("ok", "Entry Updated");
+                console.log("image comment Updated");
+                $('#imageCommentEditor').summernote('focus');
             }
             else {
                 logError("AJX", imageComment.FolderId, success, "addImageComment");
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("editImageComment")) {
-                logError("XHR", imageComment.FolderId, getXHRErrorDetails(jqXHR), "editImageComment");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", imageComment.FolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
+
+function closeImageCommentDialog() {
+    dragableDialogClose();
+    $('#slideShowDialogContainer').hide();
+}
+
+
 
 function imageCommentDialogHtml() {
     return "<div class='imageCommentDialogContainer'>\n" +
@@ -144,7 +170,7 @@ function imageCommentDialogHtml() {
         "    <div id='imageCommentEditor' tabindex='2'></div>\n" +
         "   <div class='folderDialogFooter'>\n" +
         "    <div id='divSaveFantasy' class='roundendButton clickable commentDialogButton inline' onclick='saveComment()'>save</div>\n" +
-        "    <div id='divCloseantasy'  class='roundendButton clickable commentDialogButton inline' onclick='dragableDialogClose()'>cancel</div>\n" +
+        "    <div id='divCloseFantasy'  class='roundendButton clickable commentDialogButton inline' onclick='closeImageCommentDialog()'>cancel</div>\n" +
         //"    <div id='commentInstructions' class='commentDialogInstructions inline'>log in to view comments</div>\n" +
         "   </div>\n" +
         "</div>\n";

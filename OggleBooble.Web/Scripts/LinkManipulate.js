@@ -61,9 +61,8 @@ function perfomCopyLink(linkId) {
             }
         },
         error: function (xhr) {
-            if (!checkFor404("perfomCopyLink")) {
-                logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "perfomCopyLink");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", pSelectedTreeId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -106,9 +105,8 @@ function moveFile(request, linkId, folderId) {
             }
         },
         error: function (xhr) {
-            if (!checkFor404("moveFile")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "moveFile");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -148,9 +146,8 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
-            if (!checkFor404("attemptRemoveLink")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "attemptRemoveLink");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -211,9 +208,8 @@ function performMoveImageToRejects(linkId, folderId) {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("perFormDeleteImage")) {
-                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "perFormDeleteImage");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -246,9 +242,8 @@ function removeHomeFolderLink(linkId, folderId) {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("RemoveHomeFolderLink")) {
-                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "RemoveHomeFolderLink");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -285,9 +280,8 @@ function performRenameFolder(folderId, newFolderName) {
             }
         },
         error: function (xhr) {
-            if (!checkFor404("performRenameFolder")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "performRenameFolder");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -317,9 +311,8 @@ function setFolderImage(linkId, folderId, level) {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("setFolderImage")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "setFolderImage");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -359,9 +352,8 @@ function nonFtpMoveCopy() {
         },
         error: function (xhr) {
             $('#imagePageLoadingGif').hide();
-            if (!checkFor404("setFolderImage")) {
-                logError("XHR", MoveCopyImageModel.SourceFolderId, getXHRErrorDetails(jqXHR), "nonFtpMoveCopy");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", MoveCopyImageModel.SourceFolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }

@@ -309,9 +309,8 @@ function performRepairLinks(justOne) {
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
-                if (!checkFor404("performRepairLinks")) {
-                    logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "performRepairLinks");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -519,10 +518,10 @@ function performMoveFolder() {
             else
                 logError("AJX", pSelectedTreeId, success, "dashboard.js movefolder");
         },
-        error: function (xhr) {
+        error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            if (!checkFor404(""))
-                logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", pSelectedTreeId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -635,7 +634,8 @@ function loadMMcheckboxes() {
             else { logError("AJX", mmSourceFolderId, imgLinks.Success, "getDeepFolderCounts"); }
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumImages")) { logError("XHR", mmSourceFolderId, getXHRErrorDetails(jqXHR), "loadMMcheckboxes"); }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -676,7 +676,8 @@ function moveCheckedImages() {
                 else { logError("AJX", mmSourceFolderId, success, "moveCheckedImages"); }
             },
             error: function (jqXHR) {
-                if (!checkFor404("getAlbumImages")) { logError("XHR", success, getXHRErrorDetails(jqXHR), "moveCheckedImages"); }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -724,10 +725,8 @@ function updateSortOrder() {
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("getAlbumImages")) {
-                alert(getXHRErrorDetails(jqXHR));
-                logError("XHR", success, getXHRErrorDetails(jqXHR), "moveCheckedImages");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -752,7 +751,8 @@ function loadSortImages() {
             else { logError("AJX", pSelectedTreeId, imgLinks.Success, "loadSortImages"); }
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumImages")) { logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "loadSortImages"); }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -807,10 +807,8 @@ function emergencyFolderLocationFix() {
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("emergencyFolderLocationFix")) {
-                alert("XHR ERROR in Dashboard.js renameFolder" + errorMessage);
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -835,10 +833,8 @@ function MoveManyCleanup() {
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            if (!checkFor404("emergencyFolderLocationFix")) {
-                alert("XHR ERROR in Dashboard.js renameFolder" + errorMessage);
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -939,9 +935,8 @@ function prepareXhamsterPage() {
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
-                if (!checkFor404("prepareXhamsterPage")) {
-                    logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "prepareXhamsterPage");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -998,7 +993,8 @@ function XXloadProperties() {
             else { logError("AJX", pSelectedTreeId, success, "XXloadProperties"); }
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumImages")) { logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "XXloadProperties"); }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -1020,7 +1016,8 @@ function XXmergeFolders() {
                 else { logError("AJX", pSelectedTreeId, success, "XXloadProperties"); }
             },
             error: function (jqXHR) {
-                if (!checkFor404("getAlbumImages")) { logError("XHR", pSelectedTreeId, getXHRErrorDetails(jqXHR), "XXloadProperties"); }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -1076,7 +1073,8 @@ function performRipPdf() {
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
-                if (!checkFor404("getAlbumImages")) { logError("XHR", 2020, getXHRErrorDetails(jqXHR), "RipPdf"); }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -1093,7 +1091,8 @@ function performRipPdf() {
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
-                if (!checkFor404("getAlbumImages")) { logError("XHR", 2020, getXHRErrorDetails(jqXHR), "RipPdf"); }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }

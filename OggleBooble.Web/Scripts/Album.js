@@ -42,8 +42,7 @@ function qucikHeader(folderId) {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("qucikHeader")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "qucikHeader");
-        }
+            errMsg        }
     });
 }
 
@@ -129,16 +128,15 @@ function getAlbumImages(folderId) {
                 }
                 else {
                     if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
-                        checkFor404("getAlbumImages");
+                        verifyConnection();
                     else
                         logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
                 }
             },
             error: function (jqXHR) {
                 $('#indexPageLoadingGif').hide();
-                if (!checkFor404("getAlbumImages")) {
-                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumImages");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -231,7 +229,7 @@ function getAlbumPageInfo(folderId) {
                             }
                             else {
                                 if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
-                                    checkFor404("getAlbumImages");
+                                    verifyConnection();
                                 else
                                     logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
                             }
@@ -258,7 +256,8 @@ function getAlbumPageInfo(folderId) {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumPageInfo")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumPageInfo");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -288,7 +287,8 @@ function getDeepFolderCounts(folderId, folderFileCount, folderCount) {
             else { logError("AJX", folderId, countsModel.Success, "getDeepFolderCounts"); }
         },
         error: function (jqXHR) {
-            if (!checkFor404("getAlbumImages")) { logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getDeepFolderCounts"); }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -345,35 +345,19 @@ function setBadges(folderComments) {
     }
 }
 
-function directToStaticPage() {
-    $.ajax({
-        type: "GET",
-        async: true,
-        url: settingsArray.ApiServer + "api/AlbumPage/GetStaticPage?folderId=" + apFolderId,
-        success: function (successModel) {
-            if (successModel.Success === "ok") {
-                window.location.href = successModel.ReturnValue + "?q=35";
-            }
-            else
-                if (!checkFor404("directToStaticPage"))
-                    logError("AJX", apFolderId, successModel.Success, "directToStaticPage");
-        },
-        error: function (jqXHR) {
-            if (!checkFor404("directToStaticPage"))
-                logError("XHR", apFolderId, getXHRErrorDetails(jqXHR), "directToStaticPage");
-        }
-    });
-} 
-
 function galleryImageError(linkId, imgSrc) {
     $('#' + linkId).attr('src', "Images/redballon.png");
-    if (!checkFor404("Album.js"))
-        logError("ILF", apFolderId, "imgSrc: " + imgSrc, "galleryImage");
+    //if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+    logError("ILF", apFolderId, "imgSrc: " + imgSrc, "galleryImage");
     //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
 
 function subFolderImgError(imgSrc, linkId) {
-    logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "subFolderImg");
+    setTimeout(function () {
+        if ($('#' + link).attr('src') == null) {
+            logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "subFolderImg");
+        }
+    }, 600);
     //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
 
@@ -419,7 +403,8 @@ function chargeCredits(folderId, rootFolder) {
             else logError("AJX", folderId, success, "awardCredits");
         },
         error: function (jqXHR) {
-            if (!checkFor404("awardCredits")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "awardCredits");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }

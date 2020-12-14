@@ -78,9 +78,8 @@ function getMetaTags(folderId, linkId) {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("getMetaTags")) {
-                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getMetaTags");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -103,9 +102,8 @@ function loadMetaTagForEditing(tagId) {
                 logError("AJX", 3908, model.Tag, "loadMetaTagForEditing");
         },
         error: function (jqXHR) {
-            if (!checkFor404("loadMetaTagForEditing")) {
-                logError("XHR", 3908, getXHRErrorDetails(jqXHR), "loadMetaTagForEditing");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -137,9 +135,8 @@ function editMetaTag() {
                     logError("AJX", 3908, success, "editMetaTag");
             },
             error: function (jqXHR) {
-                if (!checkFor404("editMetaTag")) {
-                    logError("XHR", 3908, getXHRErrorDetails(jqXHR), "editMetaTag");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -161,9 +158,8 @@ function addMetaTag() {
                     logError("AJX", 3908, success, "addMetaTag");
             },
             error: function (jqXHR) {
-                if (!checkFor404("addMetaTag")) {
-                    logError("XHR", 3908, getXHRErrorDetails(jqXHR), "addMetaTag");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }

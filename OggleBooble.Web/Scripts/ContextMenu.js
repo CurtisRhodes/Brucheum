@@ -98,8 +98,9 @@ function getLimitedImageDetails() {
                 logError("AJX", pFolderId, imageInfo.Success, "getLimitedImageDetails");
             }
         },
-        error: function (xhr) {
-            if (!checkFor404("getLimitedImageDetails")) logError("XHR", pFolderId, getXHRErrorDetails(jqXHR), "getLimitedImageDetails");
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -145,10 +146,7 @@ function getFullImageDetails() {
             }
         },
         error: function (xhr) {
-            if (!checkFor404("getFullImageDetails")) {
-                logError("XHR", pFolderId, getXHRErrorDetails(jqXHR), "getFullImageDetails");
-            }
-        }
+            jqXHR        }
     });
 }
 
@@ -196,7 +194,7 @@ function contextMenuAction(action) {
             break;
         }
         case "comment": {
-            showImageCommentDialog(pLinkId, pImgSrc, pFolderId, "ImageContextMenu");
+            showImageCommentDialog(pLinkId, pImgSrc, pFolderId, pMenuType);
             $("#contextMenuContainer").fadeOut();
             break;
         }

@@ -118,19 +118,18 @@
         resizeAlbumPage();
         var dots = "";
         loadOggleSettings();
-        var waiter = setInterval(function () {
+        var settingsWaiter = setInterval(function () {
             if (settingsArray.ApiServer === undefined) {
                 dots += "~ ";
                 $('#dots').html(dots);
                 //setOggleHeader(params.folder, "loading");
-
             }
             else {
-                clearInterval(waiter);
-                checkFor404("Album.html");
+                clearInterval(settingsWaiter);
+                checkConnection();
                 var waiter2 = setInterval(function () {
                     if (!connectionVerified) {
-                        dots += "~ ";
+                        dots += "< ";
                         $('#dots').html(dots);
                     }
                     else {

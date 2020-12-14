@@ -104,16 +104,16 @@
             spaPageId = params.spa;
 
         loadOggleSettings();
-        var waiter = setInterval(function () {
+        var settingsWaiter = setInterval(function () {
             if (settingsArray.ApiServer === undefined) {
                 dots += "~ ";
                 $('#dots').html(dots);
                 //setOggleHeader(params.folder, "loading");
             }
             else {
-                clearInterval(waiter);
+                clearInterval(settingsWaiter);
                 //$('#dots').html("*");
-                checkFor404("start");
+                checkConnection();
                 let connectionVerifiedLoop = setInterval(function () {
                     if (connectionVerified) {
                         clearInterval(connectionVerifiedLoop);

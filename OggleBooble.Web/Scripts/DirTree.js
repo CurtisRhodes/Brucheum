@@ -47,8 +47,8 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
-                if (!checkFor404("BuildCatTree"))
-                    logError("XHR", startNode, getXHRErrorDetails(jqXHR), "BuildCatTree");
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", startNode, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -196,8 +196,8 @@ function xxrefreshDirTree(startNode) {
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("BuildCatTree"))
-                logError("XHR", startNode, getXHRErrorDetails(jqXHR), "BuildCatTree");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }

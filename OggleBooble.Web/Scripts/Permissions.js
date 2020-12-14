@@ -96,8 +96,8 @@ function getUserInfo(valueRequested, details) {
                     }
                 },
                 error: function (jqXHR) {
-                    if (!checkFor404("getUserInfo"))
-                        logError("XHR", 1, getXHRErrorDetails(jqXHR), "getUserInfo");
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
                 }
             });
         }
@@ -127,8 +127,8 @@ function updateUserSettings(visitorId, settingName, settingJson) {
                     logError("AJX", 3908, successModel.Success, "updateUserSettings");
             },
             error: function (jqXHR) {
-                if (!checkFor404("updateUserSettings"))
-                    logError("XHR", 3908, getXHRErrorDetails(jqXHR), "updateUserSettings");
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {

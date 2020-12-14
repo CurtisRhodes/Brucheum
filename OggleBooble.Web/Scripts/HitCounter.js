@@ -41,14 +41,8 @@ function logImageHit(linkId, folderId, isInitialHit) {
                 }
             },
             error: function (jqXHR) {
-                if (document.domain == 'localhost') {
-                    //alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
-                    alert(getXHRErrorDetails(jqXHR));
-                } else
-
-                    if (!checkFor404("logImageHit")) {
-                        logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logImageHit");
-                    }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -91,9 +85,8 @@ function logPageHit(folderId) {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("logPageHit")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logPageHit");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -141,9 +134,8 @@ function logVisit(visitorId, folderId) {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("logVisit")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logVisit");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -218,15 +210,15 @@ function getIpInfo(folderId, calledFrom) {
                             }
                         },
                         error: function (jqXHR) {
-                            if (!checkFor404("addVisitor")) logError("XHR", folderId, getXHRErrorDetails(jqXHR), "addVisitor");
+                            let errMsg = getXHRErrorDetails(jqXHR);
+                            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
                         }
                     });
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("getIpInfo")) {
-                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getIpInfo/" + calledFrom);
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -250,9 +242,8 @@ function logIpHit(visitorId, ipAddress, folderId) {
                 logError("AJX", folderId, success, "logIpHit");
         },
         error: function (jqXHR) {
-            if (!checkFor404("logIpHit")) {
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logIpHit");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -278,11 +269,8 @@ function logStaticPageHit(folderId, calledFrom) {
                 logError("AJX", folderId, success, "logStatic PageHit");
         },
         error: function (jqXHR) {
-            let jqError = getXHRErrorDetails(jqXHR);
-            if (jqError.indexOf("Verify Network") > 0)
-                checkFor404("logStatic PageHit")
-            else
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logStatic PageHit");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }

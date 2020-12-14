@@ -67,9 +67,8 @@ function getSlideshowItems(folderId, startItem) {
             },
             error: function (jqXHR) {
                 $('#imagePageLoadingGif').hide();
-                if (!checkFor404("getAlbumImages")) {
-                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getSlideshowItems");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -314,7 +313,8 @@ function blowupImage() {
 function showImageViewerCommentDialog() {
     //closeViewer("CommentDialog");
     //showImageCommentDialog(linkId, imgSrc, folderId, calledFrom)
-    showImageCommentDialog(imageViewerArray[imageViewerIndex].LinkId, imageViewerArray[imageViewerIndex].FileName, imageViewerFolderId, "slideshow icon");
+    showImageCommentDialog(
+        imageViewerArray[imageViewerIndex].LinkId, settingsImgRepo + imageViewerArray[imageViewerIndex].FileName, imageViewerFolderId, "Slideshow");
 }
 
 function closeViewer(calledFrom) {
@@ -350,11 +350,10 @@ function slideshowImageLabelClick() {
 }
 
 function slideshowContextMenu() {
-
     runSlideShow("pause");
     pos.x = event.clientX;
     pos.y = event.clientY;
-    showContextMenu("Slideshow", pos,
+    showContextMenu("Slideshow", pos,        
         settingsImgRepo + imageViewerArray[imageViewerIndex].FileName,
         imageViewerArray[imageViewerIndex].LinkId,
         imageViewerArray[imageViewerIndex].ImageFolderId,

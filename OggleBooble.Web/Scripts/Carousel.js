@@ -148,8 +148,8 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("carousel.loadImages"))
-                    logError("XHR", 3908, getXHRErrorDetails(jqXHR), "carousel.loadImages");
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", rootFolder, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -509,20 +509,25 @@ function carouselContextMenu() {
 }
 
 function imgErrorThrown() {
-    $('#thisCarouselImage').attr('src', "Images/redballon.png");
-    carouselImageViews -= 1;
-    carouselImageErrors++;
-    logError("ILF", carouselItemArray[imageIndex].FolderId, "linkId: " + carouselItemArray[imageIndex].LinkId + " imgSrc: " + imgSrc, "Carousel");
+    setTimeout(function () {
+        if ($('#thisCarouselImage').attr('src') == null) {
+            $('#thisCarouselImage').attr('src', "Images/redballon.png");
+            carouselImageViews -= 1;
+            carouselImageErrors++;
+            logError("ILF", carouselItemArray[imageIndex].FolderId, "linkId: " + carouselItemArray[imageIndex].LinkId + " imgSrc: " + imgSrc, "Carousel");
 
-    if (document.domain === 'localhost') {
-        pause();
-        alert("image error\npage: " + carouselItemArray[imageIndex].FolderId +
-            ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
-            ",\nActivity: " + carouselItemArray[imageIndex].LinkId);
-        console.log("image error\npage: " + carouselItemArray[imageIndex].FolderId +
-            ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
-            ",\nActivity: " + carouselItemArray[imageIndex].LinkId);
-    }
+            if (document.domain === 'localhost') {
+                pause();
+                alert("image error\npage: " + carouselItemArray[imageIndex].FolderId +
+                    ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
+                    ",\nLink: " + carouselItemArray[imageIndex].LinkId);
+
+                console.log("image error\npage: " + carouselItemArray[imageIndex].FolderId +
+                    ",\nPageName: " + carouselItemArray[imageIndex].FolderName +
+                    ",\nActivity: " + carouselItemArray[imageIndex].LinkId);
+            }
+        }
+    }, 600);
 }
 
 function carouselHtml() {

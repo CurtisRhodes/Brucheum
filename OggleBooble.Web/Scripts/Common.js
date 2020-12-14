@@ -78,9 +78,7 @@ function loadOggleSettings() {
             });
         },
         error: function (jqXHR) {
-            if (!checkFor404("loadOggleSettings")) {
-                logError("XHR", 3998, getXHRErrorDetails(jqXHR), "loadOggleSettings");
-            }
+            logError("XHR", 3998, getXHRErrorDetails(jqXHR), "loadOggleSettings");
         }
     });
 }
@@ -230,7 +228,7 @@ function displayStatusMessage(msgCode, message) {
 
 function refreshPage() {
     if (document.domain === 'localhost')
-        alert("checkFor404() refreshPage");
+        alert("refreshPage");
     window.location.href = ".";
 }
 
@@ -307,8 +305,11 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("logError"))
-                    if (document.domain === 'localhost') alert("XHR error in logError!!: " + getXHRErrorDetails(jqXHR));
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) {
+                    logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                    if (document.domain === 'localhost') alert("XHR error in logError!!: " + errMsg);
+                }
             }
         });
     }
@@ -345,9 +346,8 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("logEvent")) {
-                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "logEvent");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -371,8 +371,8 @@ function logActivity(activityCode, folderId) {
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("log activity"))
-                logError("XHR", folderId, getXHRErrorDetails(jqXHR), "log activity");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -393,12 +393,12 @@ function logDataActivity(activityModel) {
                 //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
             }
             else
-                logError("AJX", activityModel.PageId, success, "logDataActivity");
+                logError("AJX", activityModel.FolderId, success, "logDataActivity");
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("logDataActivity"))
-                logError("XHR", activityModel.PageId, getXHRErrorDetails(jqXHR), "logDataActivity");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", activityModel.FolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -521,7 +521,7 @@ function showCustomMessage(blogId, allowClickAnywhere) {
     }
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/OggleBlog/GetBlogComment?blogId=" + blogId +"&userId=kluge",
+        url: settingsArray.ApiServer + "api/OggleBlog/GetBlogComment?blogId=" + blogId + "&userId=kluge",
         success: function (entry) {
             if (entry.Success === "ok") {
 
@@ -541,13 +541,12 @@ function showCustomMessage(blogId, allowClickAnywhere) {
                 }
             }
             else {
-                //if (entry.Success.indexOf("Option not supported") > -1) {
-                if (!checkFor404("showCustomMessage"))
-                    logError("AJX", 3111, "error: " + entry.Success, "showCustomMessage");
+                logError("AJX", 3111, "error: " + entry.Success, "showCustomMessage");
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("showCustomMessage")) logError("XHR", 3911, "XHR error: " + getXHRErrorDetails(jqXHR), "showCustomMessage");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", 3111, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -579,8 +578,8 @@ function sendEmail(to, from, subject, message) {
                     logError("BUG", 3992, success, "sendEmail");
             },
             error: function (jqXHR) {
-                if (!checkFor404("sendEmail"))
-                    logError("XHR", 3992, getXHRErrorDetails(jqXHR), "sendEmail");
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3086, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {

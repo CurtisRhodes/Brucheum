@@ -85,9 +85,8 @@
                         }
                     },
                     error: function (jqXHR) {
-                        if (!checkFor404("saveFeedback")) {
-                            logError("XHR", folderId, getXHRErrorDetails(jqXHR), "saveFeedback");
-                        }
+                        let errMsg = getXHRErrorDetails(jqXHR);
+                        if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
                     }
                 });
             }
@@ -133,9 +132,8 @@
                         logError("AJX", folderId, registeredUser.Success, "feedback/getUserEmail");
                 },
                 error: function (jqXHR) {
-                    if (!checkFor404("getUserEmail")) {
-                        logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getUserEmail");
-                    }
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
                 }
             });
         } catch (e) {
@@ -227,9 +225,8 @@ function saveFolderComment(folderId) {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("saveFolderComment")) {
-                    logError("XHR", folderId, getXHRErrorDetails(jqXHR), "saveFolderComment");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {

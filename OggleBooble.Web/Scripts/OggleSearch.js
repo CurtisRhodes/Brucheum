@@ -98,9 +98,8 @@ function performSearch(searchString) {
                     busy = false;
                 },
                 error: function (jqXHR) {
-                    if (!checkFor404("performSearch")) {
-                        logError("XHR", 3907, getXHRErrorDetails(jqXHR), "oggleSearchKeyDown");
-                    }
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
                 }
             });
         }

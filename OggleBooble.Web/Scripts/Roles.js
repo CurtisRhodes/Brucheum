@@ -25,9 +25,8 @@ function loadCooseBox(column,option) {
                         logError("AJX", 3910, usersModel.Success, "roles/loadCooseBox");
                 },
                 error: function (jqXHR) {
-                    if (!checkFor404("roles/loadCooseBox")) {
-                        logError("XHR", 3910, getXHRErrorDetails(jqXHR), "roles/loadCooseBox");
-                    }
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
                 }
             });
         }
@@ -74,9 +73,8 @@ function loadCooseBox(column,option) {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("loadAllUserRoles")) {
-                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "roles/loadCooseBox");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -143,9 +141,8 @@ function loadUserRoles(whichType) {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("loadUserRoles")) {
-                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "api/Roles/loadUserRoles");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -223,9 +220,8 @@ function RemoveUserRole(selectedUserName, selectedRoleId) {
                     logError("AJX", 3910, success, "RemoveUserRole");                
             },
             error: function (jqXHR) {
-                if (!checkFor404("RemoveUserRole")) {
-                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "RemoveUserRole");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         }); 
     }
@@ -256,9 +252,8 @@ function loadAaddEditRoles() {
                     logError("AJX", 3910, roleModel.Success, "loadAaddEditRoles");
             },
             error: function (jqXHR) {
-                if (!checkFor404("loadAaddEditRoles")) {
-                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "loadAaddEditRoles");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -296,8 +291,8 @@ function addRole() {
                     logError("AJX", 3910, success, "addRole");
             },
             error: function (jqXHR) {
-                if (!checkFor404("addRole")) 
-                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "addRole");
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -324,8 +319,8 @@ function updateRole(newName) {
                     logError("AJX", 3910, success, "updateRole");
             },
             error: function (jqXHR) {
-                if (!checkFor404("updateRole")) 
-                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "updateRole");
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }

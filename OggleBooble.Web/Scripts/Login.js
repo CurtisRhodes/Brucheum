@@ -60,8 +60,8 @@ function attemptLogin() {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("attemptLogin"))
-                    logError("XHR", loginFromPageId, getXHRErrorDetails(jqXHR), "attemptLogin");
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", loginFromPageId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -208,9 +208,8 @@ function loadUserProfile() {
                     logError("AJX", showUserProfilePageId, registeredUser.Success, "loadUserProfile");
             },
             error: function (jqXHR) {
-                if (!checkFor404("loadUserProfile")) {
-                    logError("XHR", showUserProfilePageId, getXHRErrorDetails(jqXHR), "loadUserProfile");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", showUserProfilePageId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -239,9 +238,8 @@ function updateUserProfile() {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("updateUserProfile")) {
-                    logError("XHR", showUserProfilePageId, getXHRErrorDetails(jqXHR), "updateUserProfile");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", showUserProfilePageId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } catch (e) {
@@ -309,9 +307,8 @@ function attemptRegister() {
                     }
                 },
                 error: function (jqXHR) {
-                    if (!checkFor404("attemptRegister")) {
-                        logError("XHR", loginFromPageId, getXHRErrorDetails(jqXHR), "attemptRegister");
-                    }
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg)) logError("XHR", loginFromPageId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
                 }
             });
         } catch (e) {
@@ -422,7 +419,7 @@ function authenticateEmail(usersEmail) {
 //DAC	IME	Image Error
 //DAC	LKM	Link Moved
 //DAC	ARK	Archive Image
-function awardCredits(activityCode, pageId) {
+function awardCredits(activityCode, folderId) {
     let credits;
     switch (activityCode) {
         case "PBV": credits = -20; break; // Playboy Page View
@@ -433,7 +430,7 @@ function awardCredits(activityCode, pageId) {
         case "NIA": credits = 200; break; // New Image Added
         case "FIE": credits = 100; break; // Folder Info Edited
         default:
-            logError("SWT", pageId, "activityCode: " + activityCode, "awardCredits");
+            logError("SWT", folderId, "activityCode: " + activityCode, "awardCredits");
             credits = -10;
             //alert("unhandled awardCredits activityCode: " + activityCode);
     }
@@ -443,7 +440,7 @@ function awardCredits(activityCode, pageId) {
         data: {
             VisitorId: getCookieValue("VisitorId"),
             ActivityCode: activityCode,
-            PageId: pageId,
+            PageId: folderId,
             Credits: credits
         },
         success: function (success) {
@@ -451,13 +448,12 @@ function awardCredits(activityCode, pageId) {
                 //displayStatusMessage("ok", "credits charged");
             }
             else {
-                logError("AJX", pageId, success, "awardCredits");
+                logError("AJX", folderId, success, "awardCredits");
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("awardCredits")) {
-                logError("XHR", pageId, getXHRErrorDetails(jqXHR), "awardCredits");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }

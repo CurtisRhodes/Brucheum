@@ -74,9 +74,8 @@ function loadBoobsRanker(rankPref) {
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
-            if (!checkFor404("loadBoobsRanker")) {
-                logError("XHR", 3907, getXHRErrorDetails(jqXHR), "loadBoobsRanker");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", 3907, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -202,9 +201,8 @@ function unloadBoobsRanker(rankPref) {
         },
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
-            if (!checkFor404("unloadBoobsRanker")) {
-                logError("XHR", 3907, getXHRErrorDetails(jqXHR), "unloadBoobsRanker");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", 3907, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -391,9 +389,8 @@ function imageClick(selectedSide) {
             error: function (jqXHR) {
                 $('#blogLoadingGif').hide();
                 $('#imagePageLoadingGif').hide();
-                if (!checkFor404("Ranker/imageClick")) {
-                    logError("XHR", 3907, getXHRErrorDetails(jqXHR), "imageClick");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", 3907, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }

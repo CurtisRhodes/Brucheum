@@ -54,9 +54,8 @@ function runMetricsMatrixReport() {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("metricsMatrixReport")) {
-                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "metricsMatrixReport");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     }
@@ -96,9 +95,8 @@ function runPageHitReport() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("pageHitsReport")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "pageHitsReport");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -123,9 +121,8 @@ function runMostVisitedPages() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("mostVisitedPages")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "mostVisitedPages");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -150,8 +147,8 @@ function runMostImageHits() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("runMostImageHits")) 
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "runMostImageHits");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -195,9 +192,8 @@ function eventReport() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("eventActivityReport")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "eventActivityReport");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -228,8 +224,8 @@ function showLatestImageHitsReport() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("LatestImageHitsReport"))
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "showLatestImageHitsReport");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -275,9 +271,8 @@ function showMostActiveUsersReport() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("mostActiveUsersReport")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "mostActiveUsersReport");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -320,9 +315,8 @@ function errorLogReport() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("errorLogReport")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "errorLogReport");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -352,9 +346,8 @@ function showUserDetail(ipAddress) {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("pageHitsReport")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "pageHitsReport");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -405,9 +398,8 @@ function showUserErrorDetail(ipAddress) {
             //}
         },
         error: function (jqXHR) {
-            if (!checkFor404("errorLogReport")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "errorLogReport");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -445,9 +437,8 @@ function FeedbackReport() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("FeedbackReport")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "FeedbackReport");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -482,9 +473,8 @@ function runImpactReport() {
             }
         },
         error: function (jqXHR) {
-            if (!checkFor404("impact report")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "impact report");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -515,9 +505,8 @@ function poll() {
             $('#dataifyInfo').html("building centerfold page: " + processStatus);
         },
         error: function (jqXHR) {
-            if (!checkFor404("poll")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "poll");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -546,9 +535,8 @@ function buildListPage(startFolder) {
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
-            if (!checkFor404("build List Page")) {
-                logError("XHR", 3910, getXHRErrorDetails(jqXHR), "build List Page");
-            }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
         }
     });
 }
@@ -596,9 +584,8 @@ function runPlayboyListReport() {
                 }
             },
             error: function (jqXHR) {
-                if (!checkFor404("runPlayboyListReport")) {
-                    logError("XHR", 3910, getXHRErrorDetails(jqXHR), "runPlayboyListReport");
-                }
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
             }
         });
     } 

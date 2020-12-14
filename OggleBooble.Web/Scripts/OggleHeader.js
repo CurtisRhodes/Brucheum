@@ -416,6 +416,12 @@ function dragableDialogClose() {
 function openBannerButton(bannerType, rankerType) {
     logEvent("BLC", hdrFolderId, hdrSubdomain, bannerType);
     switch (bannerType) {
+        case "archive":
+            location.href = "index.html?folder=3";
+            break;
+        case "centerfold":
+            location.href = "index.html?spa=3912";
+            break;
         case "ranker":
             location.href = "index.html?spa=3907&bp=" + rankerType;
         case "porn":
@@ -426,9 +432,6 @@ function openBannerButton(bannerType, rankerType) {
             break;
         case "poses":
             location.href = "index.html?folder=2";
-            break;
-        case "archive":
-            location.href = "index.html?folder=3";
             break;
         case "sluts":
             location.href = "index.html?folder=440";

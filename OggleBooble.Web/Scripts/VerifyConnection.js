@@ -1,7 +1,18 @@
 ﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0, connectingToServerGifShowing = false,
     verifyConnectionCountLimit = 25, verifyConnectionLoop = null, persistConnectionInterval = null;
 
-function checkFor404(calledFrom) {
+function checkFor404(errMsg) {
+    if (document.domain == "localhost")
+        alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
+    if (errMsg.indexOf("Verify Network") > 0) {
+        checkConnection();
+        return true;
+    }
+    else
+        return false;
+}
+
+function checkConnection() {
     connectionVerified = false;
     //verifyConnectionCount = 0;
     let getXMLsettingsWaiter = setInterval(function () {
@@ -74,13 +85,7 @@ function showCanIgetaConnectionMessage() {
             "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
             "</div>").show();
         console.log("canIgetaConnection message showing");
-        if (document.domain == 'localhost') {
-            // alert("SERVICE DOWN");
-        }
-        else {
-            logError("404", 3910, "SERVICE DOWN", "checkFor404");
-            // send an Email
-        }
+        logError("404", 3910, "SERVICE DOWN", "checkFor404");
     }
 }
 
