@@ -78,7 +78,10 @@
 
                             //console.log("is email working?");
                             $("#centeredDialogContainer").fadeOut();
-                            showMyAlert("Thank you for your " + feedbackType);
+                            
+                            if (isLoggedIn)
+
+                                showMyAlert("feedback received", "Thank you for your " + feedbackType);
                         }
                         else {
                             logError("AJX", folderId, success, "log feedback");
@@ -86,7 +89,8 @@
                     },
                     error: function (jqXHR) {
                         let errMsg = getXHRErrorDetails(jqXHR);
-                        if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                        let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                        if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
                     }
                 });
             }
@@ -133,7 +137,8 @@
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
                 }
             });
         } catch (e) {
@@ -226,7 +231,8 @@ function saveFolderComment(folderId) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
     } catch (e) {

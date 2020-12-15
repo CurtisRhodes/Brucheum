@@ -99,7 +99,8 @@ function performSearch(searchString) {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", currentFolderId, errMsg, functionName);
                 }
             });
         }

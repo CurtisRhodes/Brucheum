@@ -68,7 +68,8 @@ function getSlideshowItems(folderId, startItem) {
             error: function (jqXHR) {
                 $('#imagePageLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
     } catch (e) {

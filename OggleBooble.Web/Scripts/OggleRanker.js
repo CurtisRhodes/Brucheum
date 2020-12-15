@@ -75,7 +75,8 @@ function loadBoobsRanker(rankPref) {
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", 3907, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
         }
     });
 }
@@ -202,7 +203,8 @@ function unloadBoobsRanker(rankPref) {
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", 3907, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
         }
     });
 }
@@ -390,7 +392,8 @@ function imageClick(selectedSide) {
                 $('#blogLoadingGif').hide();
                 $('#imagePageLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", 3907, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
             }
         });
     }

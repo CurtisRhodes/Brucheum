@@ -26,7 +26,8 @@ function loadCooseBox(column,option) {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
                 }
             });
         }
@@ -74,7 +75,8 @@ function loadCooseBox(column,option) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
             }
         });
     } catch (e) {
@@ -142,7 +144,8 @@ function loadUserRoles(whichType) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
             }
         });
     } catch (e) {
@@ -221,7 +224,8 @@ function RemoveUserRole(selectedUserName, selectedRoleId) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
             }
         }); 
     }
@@ -253,7 +257,8 @@ function loadAaddEditRoles() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
             }
         });
     } catch (e) {
@@ -292,7 +297,8 @@ function addRole() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
             }
         });
     }
@@ -320,7 +326,8 @@ function updateRole(newName) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
             }
         });
     }

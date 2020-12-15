@@ -96,7 +96,7 @@ namespace OggleBooble.Api.Controllers
                     if (visitSuccessModel.VisitAdded)
                     {
                         var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-                        if (registeredUser == null)
+                        if (registeredUser != null)
                         {
                             visitSuccessModel.WelcomeMessage = "Welcome back" + registeredUser.UserName;
                         }
@@ -337,7 +337,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (SmtpClient smtpClient = new SmtpClient("relay-hosting.secureserver.net", 25))
                 {
-                    MailMessage mailMessage = new MailMessage("info@api.Ogglebooble.com", "CurtishRhodes@hotmail.com", message.Subject, message.Message);
+                    MailMessage mailMessage = new MailMessage(message.From, "CurtishRhodes@hotmail.com", message.Subject, message.Message);
+                    //MailMessage mailMessage = new MailMessage("info@api.Ogglebooble.com", "CurtishRhodes@hotmail.com", message.Subject, message.Message);
                     mailMessage.IsBodyHtml = true;
                     smtpClient.Send(mailMessage);
                     success = "ok";

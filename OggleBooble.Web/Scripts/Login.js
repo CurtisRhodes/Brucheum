@@ -61,7 +61,8 @@ function attemptLogin() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", loginFromPageId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", loginFromPageId, errMsg, functionName);
             }
         });
     }
@@ -209,7 +210,8 @@ function loadUserProfile() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", showUserProfilePageId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", loginFromPageId, errMsg, functionName);
             }
         });
     } catch (e) {
@@ -239,7 +241,8 @@ function updateUserProfile() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", showUserProfilePageId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", loginFromPageId, errMsg, functionName);
             }
         });
     } catch (e) {
@@ -308,7 +311,8 @@ function attemptRegister() {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg)) logError("XHR", loginFromPageId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", loginFromPageId, errMsg, functionName);
                 }
             });
         } catch (e) {
@@ -453,7 +457,8 @@ function awardCredits(activityCode, folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
 }

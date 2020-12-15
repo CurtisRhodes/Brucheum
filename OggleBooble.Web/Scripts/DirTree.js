@@ -48,7 +48,8 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", startNode, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
     }
@@ -197,7 +198,8 @@ function xxrefreshDirTree(startNode) {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
 }

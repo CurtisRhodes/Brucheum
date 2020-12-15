@@ -1,20 +1,20 @@
 ﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0, connectingToServerGifShowing = false,
     verifyConnectionCountLimit = 25, verifyConnectionLoop = null, persistConnectionInterval = null;
 
-function checkFor404(errMsg) {
+function checkFor404(errMsg, folderId, calledFrom) {
     if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
     if (errMsg.indexOf("Verify Network") > 0) {
-        checkConnection();
-        logError("CKE", 3910, "Verify Network xhr caught", "xxx");
+        logError("CKE", folderId, "Verify Network xhr caught", calledFrom);
+        checkConnection(folderId, calledFrom);
         return true;
     }
     else {
-        logError("CK2", 3910, "msg", "called from");
+        logError("CK2", folderId, "actual XHR error", calledFrom);
         return false;
     }
 }
 
-function checkConnection() {
+function checkConnection(folderId, calledFrom) {
     connectionVerified = false;
     //verifyConnectionCount = 0;
     let getXMLsettingsWaiter = setInterval(function () {
@@ -24,7 +24,7 @@ function checkConnection() {
         }
         else {
             clearInterval(getXMLsettingsWaiter);
-            verifyConnectionFunction();
+            verifyConnectionFunction(calledFrom);
             connectingToServerGifShowing = false;
 
             setTimeout(function () {
@@ -122,14 +122,16 @@ function verifyConnectionFunction() {
                 }
                 else {
                     console.log("proper error in verifyConnectionFunction: " + successModel.Success);
+                    logError("AJX","proper error in verifyConnectionFunction",)
                     if (document.domain === "localhost") alert("proper error in verifyConnectionFunction: " + successModel.Success);
                 }
             }
         },
         error: function (jqXHR) {
-            var errorMessage = getXHRErrorDetails(jqXHR);
-            console.log("verifyConnection XHR: " + errorMessage + " requestedPage: " + requestedPage);
-            // if (document.domain === "localhost") alert("verifyConnection XHR: " + errorMessage);
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (document.domain === "localhost") alert("verifyConnection XHR: " + errMsg);
             connectionVerified = false;
         }
     });
@@ -177,7 +179,6 @@ function persistConnection() {
                     }
                 },
                 error: function (jqXHR) {
-                    //logError("XHR", 3980, getXHRErrorDetails(jqXHR), "persistConnection");
                     connectionVerified = false;
                 }
             });

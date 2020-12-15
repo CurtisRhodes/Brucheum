@@ -77,7 +77,8 @@ function loadComment() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", imageComment.FolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", imageComment.FolderId, errMsg, functionName);
         }
     });
 }
@@ -128,7 +129,8 @@ function addImageComment() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", ssFolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", ssFolderId, errMsg, functionName);
         }
     });
 }
@@ -150,7 +152,8 @@ function editImageComment() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", imageComment.FolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", ssFolderId, errMsg, functionName);
         }
     });
 }

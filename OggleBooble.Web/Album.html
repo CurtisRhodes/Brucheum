@@ -126,7 +126,7 @@
             }
             else {
                 clearInterval(settingsWaiter);
-                checkConnection();
+                checkConnection(params.folder, "album.html");
                 var waiter2 = setInterval(function () {
                     if (!connectionVerified) {
                         dots += "< ";

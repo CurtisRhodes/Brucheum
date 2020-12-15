@@ -306,16 +306,16 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) {
-                    logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) {
+                    logError("XHR", folderId, errMsg, functionName);
                     if (document.domain === 'localhost') alert("XHR error in logError!!: " + errMsg);
                 }
             }
         });
     }
     catch (e) {
-        if (document.domain === 'localhost')
-            alert("Catch error in logError!!: " + e);
+        if (document.domain === 'localhost') alert("Catch error in logError!!: " + e);
         console.error("Catch error in logError!!: " + e);
     }
 
@@ -347,7 +347,8 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
     }
@@ -372,7 +373,8 @@ function logActivity(activityCode, folderId) {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
 }
@@ -398,7 +400,8 @@ function logDataActivity(activityModel) {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", activityModel.FolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
 }
@@ -546,7 +549,8 @@ function showCustomMessage(blogId, allowClickAnywhere) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", 3111, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 311, errMsg, functionName);
         }
     });
 }
@@ -579,7 +583,8 @@ function sendEmail(to, from, subject, message) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", 3086, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3992, errMsg, functionName);
             }
         });
     } catch (e) {

@@ -135,27 +135,27 @@ function setHeaderMenu(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
             $('#bannerTitle').html("<span style='color:#fff;'>every playboy centerfold</span>");  // 1132
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"PBB\",3912,\"magazine covers\",1986)'>magazine covers</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",3912,\"pictorials\",4015)'>pictorials</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",3912,\"extras\",2601)'>extras</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",3912,\"extras\",6368)'>plus</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",3912,\"special\",6076)'>special editions</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",3912,\"cybergirls\",3796)'>cybergirls</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",3912,\"Pmoy\",4013)'>Pmoy</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",3912,\"Pmoy\",4932)'>just centerfolds</a>\n");
+                "<a href='javascript:rtpe(\"PBB\",72,\"magazine covers\",1986)'>magazine covers</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",72,\"pictorials\",4015)'>pictorials</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",72,\"extras\",2601)'>extras</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",72,\"extras\",6368)'>plus</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",72,\"special\",6076)'>special editions</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",72,\"cybergirls\",3796)'>cybergirls</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4013)'>Pmoy</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4932)'>just centerfolds</a>\n");
             // <div id='topRowRightContainer'></div>" +
             $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
             // bottom row
             // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
             $('#breadcrumbContainer').html(
-                "<a href='javascript:rtpe(\"PYC\",3912,\"1950\",621)'>1950's</a>,\n" +
-                "<a href='javascript:rtpe(\"PYC\",3912,\"1960\",638)'>1960's</a>,\n" +
-                "<a href='javascript:rtpe(\"PYC\",3912,\"1970\",639)'>1970's</a>,\n" +
-                "<a href='javascript:rtpe(\"PYC\",3912,\"1980\",640)'>1980's</a>,\n" +
-                "<a href='javascript:rtpe(\"PYC\",3912,\"1990\",628)'>1990's</a>,\n" +
-                "<a href='javascript:rtpe(\"PYC\",3912,\"2000\",641)'>2000's</a>,\n" +
-                "<a href='javascript:rtpe(\"PYC\",3912,\"2010\",513)'>2010's</a>,\n" +
-                "<a href='javascript:rtpe(\"PYC\",3912,\"2020\",4128)'>2020's</a>\n");
+                "<a href='javascript:rtpe(\"PYC\",72,\"1950\",621)'>1950's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",72,\"1960\",638)'>1960's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",72,\"1970\",639)'>1970's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",72,\"1980\",640)'>1980's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",72,\"1990\",628)'>1990's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",72,\"2000\",641)'>2000's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",72,\"2010\",513)'>2010's</a>,\n" +
+                "<a href='javascript:rtpe(\"PYC\",72,\"2020\",4128)'>2020's</a>\n");
             // <div id='badgesContainer' class='badgesSection'></div>\n" +
             // <div id='hdrBtmRowSec3' class='hdrBtmRowOverflow'></div>\n" +
             $('#hdrBtmRowSec3').append(addBannerButton("archive"));
@@ -420,7 +420,7 @@ function openBannerButton(bannerType, rankerType) {
             location.href = "index.html?folder=3";
             break;
         case "centerfold":
-            location.href = "index.html?spa=3912";
+            location.href = "index.html?spa=72";
             break;
         case "ranker":
             location.href = "index.html?spa=3907&bp=" + rankerType;
@@ -454,43 +454,33 @@ function addBannerButton(bannerType, rankerType) {
         case "porn":
             return "<div class='headerBannerButton'>" +
                 "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType +"\")'>" + rankerType + "</div>" +
-                //"   <div class='clickable' onclick='window.open(\"index.html?spa=3909\", \"_blank\")'>" + rankerType + "</div>" +
                 "</div>\n";
-            break;  // https//ogglebooble.com/index.html?spa=3909
+            break;
         case "softcore":
             return "<div class='headerBannerButton'>" +
                 "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>" + rankerType + "</div>" +
-                //"   <div class='clickable' onclick='window.open(\"album.html?folder=5233\")'>" + rankerType + "</div>" +
                 "</div>\n";
             break;
         case "backToOggle":
             return "<div class='headerBannerButton'>" +
                 "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>back to OggleBooble</div>" +
-                //"   <div class='clickable' onclick='window.open(\"index.html\", \"_blank\")'>back to OggleBooble</div>" +
-                //"   <div class='clickable' onclick='window.open(\"index.html\")'>back to OggleBooble</div>" +
                 "</div>\n";
             break;
         case "sluts":
             return "<div class='headerBannerButton'>" +
                 "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>porn star archive</div>" +
-                //"   <div class='clickable' onclick='window.open(\"album.html?folder=440\", \"_blank\")'>porn star archive</div>" +
                 "</div>\n";
         case "archive":
             return "<div class='headerBannerButton'>" +
                 "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>big naturals archive</div>" +
-                //"   <div class='clickable' onclick='window.open(\"album.html?folder=3\", \"_blank\")'>big naturals archive</div>" +
                 "</div>\n";
         case "centerfold":
             return "<div class='headerBannerButton'>\n" +
                 "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>every Playboy Centefold</div>" +
-                //"   <div class='clickable' onclick='window.open(\"index.html?spa=3912\", \"_blank\")'>every Playboy Centefold</div>" +
-                //"   <div class='clickable' onclick='window.open(\"index.html?spa=3912\")'>every Playboy Centefold</div>" +
                 "</div>\n";
         case "poses":
             return "<div class='headerBannerButton'>\n" +
                 "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>poses</div>" +
-                //"   <div class='clickable' onclick='window.open(\"album.html?folder=2\", \"_blank\")'>poses</div>" +
-                //"   <div class='clickable' onclick='window.open(\"album.html?folder=2\")'>poses</div>" +
                 "</div>\n";
         default:
             logError("SWT", hdrFolderId, "bannerType: " + bannerType, "addBannerButton");

@@ -113,7 +113,7 @@
             else {
                 clearInterval(settingsWaiter);
                 //$('#dots').html("*");
-                checkConnection();
+                checkConnection(spaPageId, "Index.html");
                 let connectionVerifiedLoop = setInterval(function () {
                     if (connectionVerified) {
                         clearInterval(connectionVerifiedLoop);
@@ -132,7 +132,7 @@
                         if (spaPageId == 3909)// porn
                             pornStartup();
 
-                        if (spaPageId == 3912)
+                        if (spaPageId == 72) // every playboy centerfold
                             playboyStartup();
 
                         if (spaPageId == 3907) { // ranker

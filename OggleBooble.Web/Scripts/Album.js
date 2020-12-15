@@ -42,7 +42,10 @@ function qucikHeader(folderId) {
             }
         },
         error: function (jqXHR) {
-            errMsg        }
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+        }
     });
 }
 
@@ -136,7 +139,8 @@ function getAlbumImages(folderId) {
             error: function (jqXHR) {
                 $('#indexPageLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
     } catch (e) {
@@ -235,7 +239,9 @@ function getAlbumPageInfo(folderId) {
                             }
                         },
                         error: function (jqXHR) {
-                            logError("XHR", folderId, getXHRErrorDetails(jqXHR), "getAlbumImages");
+                            let errMsg = getXHRErrorDetails(jqXHR);
+                            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
                         }
                     });
                 }
@@ -257,7 +263,8 @@ function getAlbumPageInfo(folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
 }
@@ -288,7 +295,8 @@ function getDeepFolderCounts(folderId, folderFileCount, folderCount) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
 }
@@ -347,7 +355,6 @@ function setBadges(folderComments) {
 
 function galleryImageError(linkId, imgSrc) {
     $('#' + linkId).attr('src', "Images/redballon.png");
-    //if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
     logError("ILF", apFolderId, "imgSrc: " + imgSrc, "galleryImage");
     //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
@@ -404,7 +411,8 @@ function chargeCredits(folderId, rootFolder) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
 }

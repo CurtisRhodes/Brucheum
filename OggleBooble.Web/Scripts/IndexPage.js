@@ -113,7 +113,8 @@ function loadUpdatedGalleriesBoxes(numItmes) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", latestGallerySubdomain, errMsg, functionName);
         }
     });
 }
@@ -146,7 +147,8 @@ function launchPromoMessages() {
         error: function (jqXHR) {
             $('#indexPageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", 3908, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", latestGallerySubdomain, errMsg, functionName);
         }
     });
 }

@@ -46,7 +46,8 @@ function showFolderInfoDialog(folderId, calledFrom) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
     }
@@ -135,7 +136,8 @@ function showFullModelDetails(folderId) {
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", folderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
 }
@@ -246,7 +248,8 @@ function saveFolderDialog() {
         error: function (jqXHR) {
             $('#imagePageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", objFolderInfo.Id, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", objFolderInfo.Id, errMsg, functionName);
         }
     });
 }
@@ -302,7 +305,8 @@ function updateFolderDetail() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", objFolderInfo.Id, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", objFolderInfo.Id, errMsg, functionName);
         }
     });
 }
@@ -361,7 +365,8 @@ function loadTrackBackItems() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg)) logError("XHR", objFolderInfo.FolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", objFolderInfo.Id, errMsg, functionName);
         }
     })
 }
@@ -427,7 +432,8 @@ function tbAddEdit() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", objFolderInfo.FolderId, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", objFolderInfo.Id, errMsg, functionName);
             }
         });
     }
@@ -469,7 +475,8 @@ function xxcreatePosersIdentifiedFolder() {
                         },
                         error: function (jqXHR) {
                             let errMsg = getXHRErrorDetails(jqXHR);
-                            if (!checkFor404(errMsg)) logError("XHR", defaultParentFolder, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", defaultParentFolder, errMsg, functionName);
                         }
                     });
                 }
@@ -478,7 +485,8 @@ function xxcreatePosersIdentifiedFolder() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg)) logError("XHR", defaultParentFolder, errMsg, arguments.callee.toString().match(/function ([^\(]+)/)[1]);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", defaultParentFolder, errMsg, functionName);
             }
         });
     }
