@@ -306,15 +306,24 @@ function runSlideShow(action) {
     //$('#slowerSlideShow').attr("Title", "slideshow " + 10 - (slideShowSpeed / 1000) + "x");
 }
 
+let entirePage;
 function blowupImage() {
-    window.open(imageViewerArray[imageViewerIndex].Link, "_blank");
+    //alert("blowupImage()");
+    //<img id='viewerImage' class='slideshowImage' />\n" +
+    //$('#viewerImage').removeClass('.slideshowImage').addClass('blowupImage');
+    entirePage = $('body').html();
+    $('body').html("<img id='explodedImage' style='cursor: zoom-out' onclick='restoreFromBlowup()' src='" + settingsImgRepo + imageViewerArray[imageViewerIndex].FileName + "'/>");
+
+    //window.open(settingsImgRepo + imageViewerArray[imageViewerIndex].FileName, "_blank");
+
+}
+
+function restoreFromBlowup() {
+    $('body').html(entirePage);
 }
 
 function showImageViewerCommentDialog() {
-    //closeViewer("CommentDialog");
-    //showImageCommentDialog(linkId, imgSrc, folderId, calledFrom)
-    showImageCommentDialog(
-        imageViewerArray[imageViewerIndex].LinkId, settingsImgRepo + imageViewerArray[imageViewerIndex].FileName, imageViewerFolderId, "Slideshow");
+    showImageCommentDialog(imageViewerArray[imageViewerIndex].LinkId, settingsImgRepo + imageViewerArray[imageViewerIndex].FileName, imageViewerFolderId, "Slideshow");
 }
 
 function closeViewer(calledFrom) {
@@ -398,7 +407,9 @@ function slideshowHtml() {
         "  <div id='txtStartSlideShow' class='floatRight clickable'style='padding-top:4px' " +
         "       onclick='runSlideShow(\"start\");'>start slideshow</div>\n" +
         "  <div class='floatRight clickable' onclick='runSlideShow(\"slower\");'><img id='slowerSlideShow' title='slower' src='/Images/speedDialSlower.png'/></div>\n" +
+
         "  <div class='floatRight clickable' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png'/> </div>\n" +
+
         "  <div class='floatRight clickable' onclick='closeViewer(\"click\");' > <img title='you may use the {esc} key' src='/Images/close.png'/> </div>\n" +
         "</div>\n" +
         "<div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"prev\")'></div>\n" +
@@ -419,6 +430,7 @@ function slideshowHtml() {
         "   </div>\n" +
         "</div>\n" +
         "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")'></div>\n" +
+        "<div id='slideShowInstructions' class='slideShowVail'></div>\n" +
         "<div class='centeringOuterShell'>\n" +
         "    <div class='centeringInnerShell'>\n" +
         "        <div id='viewerImageContainer' class='flexContainer'>\n" +
@@ -436,5 +448,7 @@ function slideShowDialogClose() {
     $('#slideShowDialogContainer').fadeOut();
 }
 
+function slideShowInstructions() {
 
+}
 

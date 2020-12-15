@@ -2,14 +2,16 @@
     verifyConnectionCountLimit = 25, verifyConnectionLoop = null, persistConnectionInterval = null;
 
 function checkFor404(errMsg) {
-    if (document.domain == "localhost")
-        alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
+    if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
     if (errMsg.indexOf("Verify Network") > 0) {
         checkConnection();
+        logError("CKE", 3910, "Verify Network xhr caught", "xxx");
         return true;
     }
-    else
+    else {
+        logError("CK2", 3910, "msg", "called from");
         return false;
+    }
 }
 
 function checkConnection() {

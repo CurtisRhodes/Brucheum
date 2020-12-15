@@ -162,6 +162,15 @@ function ctxGetFolderDetails() {
 
 function contextMenuAction(action) {
     switch (action) {
+        case "saveAs":
+
+           // alert("window.open(" + pImgSrc + ")");
+
+            window.open(pImgSrc);
+
+            //document.execCommand("SaveAs", null, "file.csv");
+            // <a href="data:application/xml;charset=utf-8,your code here" download="filename.html">Save</a>
+            break;
         case "download":
             if (isLoggedIn())
                 alert("still working on this feature. Send site developer an email to request folder");
@@ -263,6 +272,7 @@ function contextMenuHtml() {
         "<div id='ctxNewTab' onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
         "<div id='ctxComment' onclick='contextMenuAction(\"comment\")'>Comment</div>\n" +
         "<div id='ctxExplode' onclick='contextMenuAction(\"explode\")'>explode</div>\n" +
+        "<div id='ctxSaveAs' onclick='contextMenuAction(\"saveAs\")'>save as</div>\n" +
         "<div id='ctxCloseSlideShow' onclick='contextMenuAction(\"closeSlideShow\")'>close slideshow</div>\n" +
         "<div id='ctxImageShowLinks' onclick='contextMenuAction(\"showLinks\")'>Show Links</div>\n" +
         "<div id='linkInfoContainer' class='contextMenuInnerContainer'></div>\n" +        

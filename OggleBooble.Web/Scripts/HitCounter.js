@@ -186,7 +186,7 @@ function getIpInfo(folderId, calledFrom) {
                                 setCookieValue("VisitorId", visitorId);
                                 let cookieTest = getCookieValue("VisitorId");
                                 if (cookieTest === visitorId) {
-                                    //logEvent("NEW", folderId, calledFrom, cookieTest);
+                                    logEvent("NEW", folderId, calledFrom, cookieTest);
                                     logIpHit(visitorId, ipResponse.ip, folderId);
                                     //if (calledFrom == "logStaticPageHit")
                                     //    logStaticPageHit(folderId, "getIpInfo");
@@ -204,6 +204,7 @@ function getIpInfo(folderId, calledFrom) {
                                     else {
                                         logError("WIP", folderId, "existing visitorId assigned ", "getIpInfo/" + calledFrom);
                                     }
+                                    //logEvent()
                                 }
                                 else
                                     logError("AJX", folderId, success, "addVisitor");

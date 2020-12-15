@@ -1,4 +1,16 @@
-﻿.imageViewerHeaderRow {
+﻿.slideShowVail {
+    display: none; /*Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 19; /* Sit on top */
+    top: 200px;
+    width: 80%; /* Full width */
+    height: 80%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    border: dashed thin red;
+}
+
+.imageViewerHeaderRow {
     background-color: var(--ogglgeHeaderBarColor);
     display: flex;
     width: 100%;
@@ -36,6 +48,10 @@
     width: 50px;
 }
 
+.blowupImage {
+    width: 100%;
+    height: 100%;
+}
 .slideshowImage {
     object-fit: contain;
     transition: all .75s ease-in-out;
