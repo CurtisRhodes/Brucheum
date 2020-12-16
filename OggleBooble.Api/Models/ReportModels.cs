@@ -29,6 +29,17 @@ namespace OggleBooble.Api.Models
         public string HitTime { get; set; }
     }
 
+    public class DailyVisitorsReportModel
+    {
+        public DailyVisitorsReportModel()
+        {
+            Visitors = new List<VwVisitor>();
+        }
+        public List<VwVisitor> Visitors { get; set; }
+        public string Success { get; set; }
+    }
+
+
     public class MostPopularPagesReportModel
     {
         public MostPopularPagesReportModel()
@@ -49,13 +60,14 @@ namespace OggleBooble.Api.Models
     {
         public MatrixResultsModel()
         {
-            matrixModelRows = new List<MatrixModel>();
+            mRows = new List<MatrixModel>();
         }
-        public List<MatrixModel> matrixModelRows { get; set; }
+        public List<MatrixModel> mRows { get; set; }
         public string Success { get; set; }
     }
     public class MatrixModel
     {
+        public DateTime ReportDay { get; set; }
         public string DayofWeek { get; set; }
         public string DateString { get; set; }
         public int? NewVisitors { get; set; }
@@ -66,8 +78,8 @@ namespace OggleBooble.Api.Models
 
     public class ImpactReportModel
     {
-        public ImpactReportModel() { ImpactRows = new List<MySqlDataContext.VwImpact>(); }
-        public List<MySqlDataContext.VwImpact> ImpactRows { get; set; }
+        public ImpactReportModel() { ImpactRows = new List<VwImpact>(); }
+        public List<VwImpact> ImpactRows { get; set; }
         public string Success { get; set; }
     }
 

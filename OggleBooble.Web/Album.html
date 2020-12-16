@@ -140,15 +140,9 @@
                         verifyVisitorId(params.folder, "album.html");
 
                         if (!isNullorUndefined(params.tic)) {
-                            logStaticPageHit(params.folder, "album");
+                            logStaticPageHit(params.folder);
                             window.location.href = "album.html?folder=" + params.folder;
                         }
-                        else {
-                            let visitorId = getCookieValue("VisitorId");
-                            if (isNullorUndefined(visitorId))
-                                getIpInfo(params.folder, "album");
-                        }
-
                         loadAlbum(params.folder);
                         //if (isInRole("NewUser")) {
                     }

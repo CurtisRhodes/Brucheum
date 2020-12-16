@@ -154,7 +154,6 @@ function getIpInfo(folderId, calledFrom) {
                 }
             }
             else {
-
                 logError("XIP", folderId, "visitorId: " + visitorId, "getIpInfo/" + calledFrom);
                 return;
             }
@@ -205,9 +204,8 @@ function getIpInfo(folderId, calledFrom) {
                                         logError("UNC", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
                                     }
                                     else {
-                                        logError("WIP", folderId, "existing visitorId assigned ", "getIpInfo/" + calledFrom);
+                                        logError("WIP", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
                                     }
-                                    //logEvent()
                                 }
                                 else
                                     logError("AJX", folderId, success, "addVisitor");
@@ -255,16 +253,10 @@ function logIpHit(visitorId, ipAddress, folderId) {
     });
 }
 
-function logStaticPageHit(folderId, calledFrom) {
-    let visitorId = getCookieValue("VisitorId");
+function logStaticPageHit(folderId) {
     if (isNullorUndefined(getCookieValue("VisitorId"))) {
-        if (calledFrom == "album") {
-            getIpInfo(params.folder, "logStatic PageHit");
-        }
-        else {
-            logError("BUG", folderId, "failed to catch vis", "logStatic PageHit");
-        }
-        return;
+        getIpInfo(folderId, "logStatic PageHit");
+        //logError("SPH", folderId, "visitorId: " + getCookieValue("VisitorId"), "logStatic PageHit");
     }
     $.ajax({
         type: "POST",

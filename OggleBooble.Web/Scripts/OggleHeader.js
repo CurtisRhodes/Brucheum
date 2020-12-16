@@ -62,54 +62,41 @@ function setHeaderMenu(folderId, subdomain) {
             break;
         }
         case "index":
-        case "root": {
-            $('#oggleHeader').switchClass('oggleSoft', 'boobsHeader');
-            //$('#oggleHeader').addClass('boobsHeader');
-            $('#divSiteLogo').attr("src", "/Images/redballon.png");
-            $('#bannerTitle').html("OggleBooble");
-            $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a> organized by\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3616)'> positions,</a>\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",241)'>sizes</a>\n");
-            $('#breadcrumbContainer').html(addBannerButton("centerfold"));
-            $('#breadcrumbContainer').append(addBannerButton("archive"));
-            $('#breadcrumbContainer').append(addBannerButton("softcore", "softcore"));
-            $('#breadcrumbContainer').append(addBannerButton("porn", "OgglePorn"));
-            $('#breadcrumbContainer').append(addBannerButton("ranker", "poses"));
+        case "root": 
+        case "archive":
+        case "boobs": {
             changeFavoriteIcon("redBallon");
-            break;
-        }
-        case "boobs": {// poses        
             $('#oggleHeader').addClass('boobsHeader');
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#bannerTitle').html("OggleBooble");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a> organized by\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",136)'> poses,</a>\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3916)'> positions,</a>\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3916)'> poses,</a>\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",136)'> positions,</a>\n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",241)'>sizes</a>\n");
-            $('#topRowRightContainer').html(addBannerButton("ranker", "poses"));
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",241)'>sizes</a>\n"
+            );
             $('#hdrBtmRowSec3').html(addBannerButton("centerfold"));
-            $('#hdrBtmRowSec3').append(addBannerButton("archive"));
-            changeFavoriteIcon("redBallon");
-            break;
-        }
-        case "archive": {
-            $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a>\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"archive\",1103)'>russian spys,</a> \n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"archive\",1107)'>sweater meat,</a> \n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"archive\",123)'>ultra juggs</a> \n");
-            $('#topRowRightContainer').html(addBannerButton("centerfold"));
-            $('#topRowRightContainer').append(addBannerButton("poses"));
-            $('#topRowRightContainer').append(addBannerButton("ranker", "boobs"));
-            //$('#breadcrumbContainer').append(addBannerButton("ranker", "big naturals"));
-            changeFavoriteIcon("redBallon");
+
+            //$('#breadcrumbContainer').append(addBannerButton("softcore", "softcore"));
+            //$('#breadcrumbContainer').append(addBannerButton("porn", "OgglePorn"));
+            //$('#breadcrumbContainer').append(addBannerButton("ranker", "poses"));
+
+            // boobs
+            // playboy
+            // archive
+            // porn
+            // sluts
+
+            if (subdomain == "archive") {
+                $('#topRowRightContainer').html(addBannerButton("ranker", "archive"));
+            }
+            if (subdomain == "boobs") {
+                $('#topRowRightContainer').html(addBannerButton("ranker", "poses"));
+                // alert("addBannerButton('archive')");
+                $('#hdrBtmRowSec3').append(addBannerButton("archive"));
+            }
             break;
         }
         case "soft": {
@@ -225,6 +212,81 @@ function setHeaderMenu(folderId, subdomain) {
         default: {
             logError("SWT", folderId, "subdomain: " + subdomain, "setHdrBottomRow");
         }
+    }
+}
+
+function openBannerButton(bannerType, rankerType) {
+    logEvent("BLC", hdrFolderId, hdrSubdomain, bannerType);
+    switch (bannerType) {
+        case "archive":
+            location.href = "album.html?folder=3";
+            break;
+        case "centerfold": bannerType
+            location.href = "index.html?spa=72";
+            break;
+        case "ranker":
+            location.href = "index.html?spa=3907&bp=" + rankerType;
+            break;
+        case "porn":
+            location.href = "index.html?spa=3909";
+            break;
+        case "softcore":
+            location.href = "album.html?folder=5233";
+            break;
+        case "poses":
+            location.href = "album.html?folder=2";
+            break;
+        case "sluts":
+            location.href = "album.html?folder=440";
+            break;
+        case "backToOggle":
+            location.href = "index.html";
+            break;
+        default:
+            logError("SWT", hdrFolderId, "bannerType: " + bannerType, "openBannerButton");
+    }
+}
+function addBannerButton(bannerType, rankerType) {
+    switch (bannerType) {
+        case "ranker":
+            return "<div class='headerBannerButton'>\n" +
+                "<div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")' " +
+                "title='Spin through the links to land on random portrait images.'>" + rankerType + " ranker</div>" +
+                "</div>\n";
+        case "porn":
+            return "<div class='headerBannerButton'>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>" + rankerType + "</div>" +
+                "</div>\n";
+            break;
+        case "softcore":
+            return "<div class='headerBannerButton'>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>" + rankerType + "</div>" +
+                "</div>\n";
+            break;
+        case "backToOggle":
+            return "<div class='headerBannerButton'>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>back to OggleBooble</div>" +
+                "</div>\n";
+            break;
+        case "sluts":
+            return "<div class='headerBannerButton'>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>porn star archive</div>" +
+                "</div>\n";
+        case "archive":
+            // alert("addBannerButton('archive')");
+           return "<div class='headerBannerButton'>" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>big naturals archive</div>" +
+                "</div>\n";
+        case "centerfold":
+            return "<div class='headerBannerButton'>\n" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>every Playboy Centefold</div>" +
+                "</div>\n";
+        case "poses":
+            return "<div class='headerBannerButton'>\n" +
+                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>poses</div>" +
+                "</div>\n";
+        default:
+            logError("SWT", hdrFolderId, "bannerType: " + bannerType, "addBannerButton");
     }
 }
 
@@ -373,13 +435,6 @@ function mediaSavyHdrResize() {
     showResizeMessage(lasttopRowOption, lastBottomRowOption);
 }
 
-function showHamburger() {
-    var picpos = $('#breadcrumbContainer').offset();
-    var picLeft = Math.max(0, picpos.left + $('#hamburgerCtx').width());
-    $('#hamburgerCtx').css("top", picpos.top + 5);
-    $('#hamburgerCtx').css("left", picLeft);
-    $('#hamburgerCtx').show();
-}
 function hdrBottRowSectionsW() {
     let calcIssue = 47;
     return $('#headerMessage').width() + $('#breadcrumbContainer').width() + $('#badgesContainer').width() + $('#divLoginArea').width() + calcIssue;
@@ -388,6 +443,15 @@ function hdrTopRowSectionsW() {
     let topRowFudgeFactor = 16;
     return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#topRowRightContainer').width() + $('#searchBox').width() + topRowFudgeFactor;
 }
+
+function showHamburger() {
+    var picpos = $('#breadcrumbContainer').offset();
+    var picLeft = Math.max(0, picpos.left + $('#hamburgerCtx').width());
+    $('#hamburgerCtx').css("top", picpos.top + 5);
+    $('#hamburgerCtx').css("left", picLeft);
+    $('#hamburgerCtx').show();
+}
+
 function showResizeMessage(lasttopRowOption, lastBottomRowOption) {
     if (mediaDebug) {
         //if (!secMsg.includes("RESET"))
@@ -411,80 +475,6 @@ function dragableDialogClose() {
     $("#vailShell").fadeOut();
     $('#centeredDialogContainer').fadeOut();
     if (typeof resume === 'function') resume();
-}
-
-function openBannerButton(bannerType, rankerType) {
-    logEvent("BLC", hdrFolderId, hdrSubdomain, bannerType);
-    switch (bannerType) {
-        case "archive":
-            location.href = "index.html?folder=3";
-            break;
-        case "centerfold":
-            location.href = "index.html?spa=72";
-            break;
-        case "ranker":
-            location.href = "index.html?spa=3907&bp=" + rankerType;
-        case "porn":
-            location.href = "index.html?spa=3909";
-            break;
-        case "softcore":
-            location.href = "index.html?folder=5233";
-            break;
-        case "poses":
-            location.href = "index.html?folder=2";
-            break;
-        case "sluts":
-            location.href = "index.html?folder=440";
-            break;
-        case "backToOggle":
-            location.href = "index.html";
-            break;
-        default:
-            logError("SWT", hdrFolderId, "bannerType: " + bannerType, "openBannerButton");
-    }
-}
-
-function addBannerButton(bannerType, rankerType) {
-    switch (bannerType) {
-        case "ranker":
-            return "<div class='headerBannerButton'>\n" +
-                "<div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType +"\")' " +
-                "title='Spin through the links to land on random portrait images.'>" + rankerType + " ranker</div>" +
-                "</div>\n";
-        case "porn":
-            return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType +"\")'>" + rankerType + "</div>" +
-                "</div>\n";
-            break;
-        case "softcore":
-            return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>" + rankerType + "</div>" +
-                "</div>\n";
-            break;
-        case "backToOggle":
-            return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>back to OggleBooble</div>" +
-                "</div>\n";
-            break;
-        case "sluts":
-            return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>porn star archive</div>" +
-                "</div>\n";
-        case "archive":
-            return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>big naturals archive</div>" +
-                "</div>\n";
-        case "centerfold":
-            return "<div class='headerBannerButton'>\n" +
-                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>every Playboy Centefold</div>" +
-                "</div>\n";
-        case "poses":
-            return "<div class='headerBannerButton'>\n" +
-                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>poses</div>" +
-                "</div>\n";
-        default:
-            logError("SWT", hdrFolderId, "bannerType: " + bannerType, "addBannerButton");
-    }
 }
 
 function topLogoClick(subdomain) {

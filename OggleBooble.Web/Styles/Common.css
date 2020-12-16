@@ -489,3 +489,8 @@ body {
     cursor: pointer;
     margin-left: 1px;
 }
+
+.underline {
+    text-decoration: underline;
+}
+

@@ -27,34 +27,52 @@ namespace OggleBooble.Api.Controllers
         [Route("api/Report/MetricMatrixReport")]
         public MatrixResultsModel MetricsMatrixReport()
         {
-            var metricsMatrixResults = new MatrixResultsModel();
+            var rslts = new MatrixResultsModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    //db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
-                    //db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
-                    //db.SaveChanges();
+                    db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    db.SaveChanges();
                     db.Database.ExecuteSqlCommand("call OggleBooble.spDailyVisits()");
                     var performanceRows = db.Performances.ToList();
-                    foreach (Performance performanceRow in performanceRows)
+                    foreach (Performance pRow in performanceRows)
                     {
-                        metricsMatrixResults.matrixModelRows.Add(new MatrixModel()
+                        rslts.mRows.Add(new MatrixModel()
                         {
-                            DayofWeek = performanceRow.ReportDay.DayOfWeek.ToString(),
-                            DateString = performanceRow.DayString,
-                            NewVisitors = performanceRow.NewVisitors,
-                            Visits = performanceRow.Visits,
-                            PageHits = performanceRow.PageHits,
-                            ImageHits = performanceRow.ImageHits
+                            ReportDay = pRow.ReportDay,
+                            DayofWeek = pRow.ReportDay.DayOfWeek.ToString(),
+                            DateString = pRow.DayString,
+                            NewVisitors = pRow.NewVisitors,
+                            Visits = pRow.Visits,
+                            PageHits = pRow.PageHits,
+                            ImageHits = pRow.ImageHits
                         });
                     }
-
-                    metricsMatrixResults.Success = "ok";
+                    rslts.Success = "ok";
                 }
             }
-            catch (Exception ex) { metricsMatrixResults.Success = Helpers.ErrorDetails(ex); }
-            return metricsMatrixResults;
+            catch (Exception ex) { rslts.Success = Helpers.ErrorDetails(ex); }
+            return rslts;
+        }
+
+        //select* from OggleBooble.VwVisitor where date(InitialVisit) = '2020-12-12';
+        [HttpGet]
+        [Route("api/Report/DailyVisitors")]
+        public DailyVisitorsReportModel DailyVisitors(DateTime visitDate)
+        {
+            var dailyVisitors = new DailyVisitorsReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    dailyVisitors.Visitors = db.VwVisitors.Where(v => v.InitialVisit == visitDate).ToList();
+                }
+                dailyVisitors.Success = "ok";
+            }
+            catch (Exception ex) { dailyVisitors.Success = Helpers.ErrorDetails(ex); }
+            return dailyVisitors;
         }
 
         [HttpGet]

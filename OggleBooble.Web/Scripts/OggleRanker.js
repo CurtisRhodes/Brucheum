@@ -83,8 +83,11 @@ function loadBoobsRanker(rankPref) {
 
 function setRankerBreadcrumbMessage() {
     var breadcrumbMessage = "";
-    if ($('#ckBoxBoobs').is(':checked'))
+    if ($('#ckBoxBoobs').is(':checked')) {
+        if (breadcrumbMessage !== "")
+            breadcrumbMessage += ", ";
         breadcrumbMessage = "poses and shapes";
+    }
     if ($('#ckBoxPlayboy').is(':checked')) {
         if (breadcrumbMessage !== "")
             breadcrumbMessage += ", ";
@@ -404,7 +407,8 @@ function jumpToFolder(selectedSide) {
     if (selectedSide === "right") {
         folderId = rankerLinksArray[rightimageIndex].FolderId;
     }
-    window.open("/album.html?folder=" + folderId, "_blank");
+    location.href = "/album.html?folder=" + folderId;
+    //window.open("/album.html?folder=" + folderId, "_blank");
 }
 
 function rankerHTML() {
@@ -429,7 +433,6 @@ function rankerHTML() {
         "            <div class='domCkBox'><input id='ckBoxBoobs' onchange='checkDomain(\"boobs\", $(this).is(\":checked\"))' type='checkbox' />poses and shapes</div>\n" +
         "            <div class='domCkBox'><input id='ckBoxPlayboy' onchange='checkDomain(\"playboy\", $(this).is(\":checked\"))' type='checkbox' />Playboy playmates</div>\n" +
         "            <div class='domCkBox'><input id='ckBoxArchive' onchange='checkDomain(\"archive\", $(this).is(\":checked\"))' type='checkbox' />big naturals</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxSoft' onchange='checkDomain(\"boobs\", $(this).is(\":checked\"))' type='checkbox' />poses and shapes</div>\n" +
         "            <div class='domCkBox'><input id='ckBoxPorn' onchange='checkDomain(\"porn\", $(this).is(\":checked\"))' type='checkbox' />porn</div>\n" +
         "            <div class='domCkBox'><input id='ckBoxSluts' onchange='checkDomain(\"sluts\", $(this).is(\":checked\"))' type='checkbox' />sluts</div>\n" +
         "        </div>\n" +

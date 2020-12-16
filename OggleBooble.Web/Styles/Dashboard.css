@@ -237,7 +237,6 @@ workAreaHeaderDetailRow {
 .workAreaDisplayContainer {
     padding: 4px;
     margin-left: 5px;
-    min-height: 400px;
     overflow-y: auto;
 }
 
@@ -400,7 +399,10 @@ workAreaHeaderDetailRow {
 .pbSrc {
     height: 45px;
 }
-
+.visitorsReport {
+    max-height: 300px;
+    overflow-y: auto;
+}
 
 
 

@@ -9,11 +9,11 @@ function runMetricsMatrixReport() {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Report/MetricMatrixReport",
-            success: function (metricsMatrixResults) {
+            success: function (rslts) {
                 $('#dashBoardLoadingGif').hide();
-                if (metricsMatrixResults.Success === "ok") {
-                    //alert("metricsMatrixResults.Success: " + metricsMatrixResults.Success);
-                    //alert("metricsMatrixResults.matrixModelRows: " + metricsMatrixResults.matrixModelRows.length);
+                if (rslts.Success === "ok") {
+                    //alert("rslts.Success: " + rslts.Success);
+                    //alert("rslts.mRows: " + rslts.mRows.length);
                     $('#reportsContentArea').html(
                         "<div id='doubleRowReport'>" +
                         "   <div id='mmTopRow'>" +
@@ -24,33 +24,36 @@ function runMetricsMatrixReport() {
                         "       <div id='mostImageHitsContainer' class='subreportContainer'></div>" +
                         "   </div>" +
                         "</div>");
-
                     $("#dailyActivityReportContainer").html("<div id='fxShell' class='flexbox'>");
                     $("#fxShell").html("<div><div>&nbsp;</div><div>&nbsp;</div>" +
                         "<div>NewVisitors</div>" +
                         "<div>Visits</div>" +
                         "<div>PageHits</div>" +
-                        "<div>ImageHits</div></div>");
+                        "<div>ImageHits</div></div>"
+                    );
 
-                    let i, mLen = 8;
-                    for (i = 0; i < 10; i++) { //for (i = mLen; i > -1; i--) {
-                        $("#fxShell").append("<div><div class='center'>" + metricsMatrixResults.matrixModelRows[i].DayofWeek + "</div>" +
-                            "<div><div class='center'>&nbsp;" + metricsMatrixResults.matrixModelRows[i].DateString + "&nbsp;</div>" +
-                            "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].NewVisitors.toLocaleString() + "</div>" +
-                            "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].Visits.toLocaleString() + "</div>" +
-                            "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].PageHits.toLocaleString() + "</div>" +
-                            "<div class='center'>" + metricsMatrixResults.matrixModelRows[i].ImageHits.toLocaleString() + "</div></div>");
+                    for (let i = 0; i < 10; i++) {
+                        $("#fxShell").append("<div><div class='center'>" + rslts.mRows[i].DayofWeek + "</div>" +
+                            "<div><div class='center'>&nbsp;" + rslts.mRows[i].DateString + "&nbsp;</div>" +
+                            "<div class='center clickable underline' onclick='metrixSubReport(1,\"" + rslts.mRows[i].ReportDay +"\")'>" +
+                            rslts.mRows[i].NewVisitors.toLocaleString() + "</div>" +
+                            "<div class='center clickable underline' onclick='metrixSubReport(2)'>" +
+                            rslts.mRows[i].Visits.toLocaleString() + "</div>" +
+                            "<div class='center clickable underline' onclick='metrixSubReport(3)'>" +
+                            rslts.mRows[i].PageHits.toLocaleString() + "</div>" +
+                            "<div class='center'>" +
+                            rslts.mRows[i].ImageHits.toLocaleString() + "</div></div>"
+                        );
                     }
                     $("#fxShell").append("</div>")
-                    $("#reportsFooter").html("<button onclick='rerun()'>reload</button>\n");
-
-                    //$("#btnPopPages").show();
-                    //$("#btnMostImageHits").show();
                     runMostVisitedPages();
                     runMostImageHits();
+                    //runMostActiveUsers();
+
+                    $("#reportsFooter").html("<button onclick='rerun()'>reload</button>\n");
                 }
                 else {
-                    logError("AJX", 3910, metricsMatrixResults.Success, "metricsMatrixReport");
+                    logError("AJX", 3910, rslts.Success, "metricsMatrixReport");
                 }
             },
             error: function (jqXHR) {
@@ -62,6 +65,59 @@ function runMetricsMatrixReport() {
     }
     else
         alert("unable to run report");
+}
+
+function metrixSubReport(reportId,reportDay) {
+    switch (reportId) {
+        case 1: // NewVisitors
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Report/DailyVisitors?visitDate=" + reportDay,
+                success: function (rslts) {
+                    if (rslts.Success == "ok") {
+                        $('#dashboardDialogTitle').html("New Visitors details for: " + dateString(reportDay));
+                        let kludge = "<div class='visitorsReport'>";
+                        kludge += "<table>";
+                        kludge += "<tr><th>IpAddress</th><th>location</th><th>InitialPage</th></tr>";
+                        $.each(rslts.Visitors, function (idx, obj) {
+                            kludge += "<td>" + obj.IpAddress + "</td>";
+                            kludge += "<td>" + obj.Location + "</td>";
+                            //kludge += "<td>" + obj.InitialVisit + "</td>";
+                            kludge += "<td>" + obj.InitialPage + ":" + obj.FolderName + "</td><tr>";
+                        });
+                        kludge += "</table>";
+                        $('#dashboardDialogContents').html(kludge);
+                        $('#dashboardDialog').fadeIn();
+                    }
+                    else {
+                        logError("AJX", 3910, rslts.Success, "NewVisitors");
+                    }
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+                }
+            });
+            break;
+        case 2: // Visits
+            $('#dashboardDialogTitle').html("Visits: " + dateString(reportDay));
+            kludge = "<div>";
+            kludge += "</div>";
+            $('#dashboardDialogContents').html(kludge);
+            $('#dashboardDialog').fadeIn();
+            break;
+        case 3: // PageHits
+            $('#dashboardDialogTitle').html("page hits duplicate: " + dateString(reportDay));
+            kludge = "<div>";
+            kludge += "</div>";
+            $('#dashboardDialogContents').html(kludge);
+            $('#dashboardDialog').fadeIn();
+            break;
+        case 4: // ImageHits
+            break;
+        default:
+    }
 }
 
 function runPageHitReport() {

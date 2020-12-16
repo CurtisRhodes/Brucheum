@@ -13,7 +13,6 @@ namespace OggleBooble.Api.MySqlDataContext
     {
         public OggleBoobleMySqlContext() : base("name=GoDaddyMySql") { }
 
-        //public virtual DbSet<CategoryFolder> CategoryFolder { get; set; }
         public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }
         public virtual DbSet<StaticPageHit> StaticPageHits { get; set; }       
         public virtual DbSet<ImageFile> ImageFiles { get; set; }
@@ -42,6 +41,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
         public virtual DbSet<VwEventLog> VwEventLogs { get; set; }
 
+        public virtual DbSet<VwVisitor> VwVisitors { get; set; }
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<VwPageHit> VwPageHits { get; set; }
@@ -87,6 +87,17 @@ namespace OggleBooble.Api.MySqlDataContext
         public string IpAddress { get; set; }
         public string FeedBackComment { get; set; }
         public DateTime Occured { get; set; }
+    }
+
+    [Table("OggleBooble.VwVisitor")]
+    public class VwVisitor
+    {
+        [Key]
+        public string IpAddress { get; set; }
+        public string Location { get; set; }
+        public DateTime InitialVisit { get; set; }
+        public int InitialPage { get; set; }
+        public string FolderName { get; set; }
     }
 
     [Table("OggleBooble.VwImpact")]
@@ -626,22 +637,6 @@ namespace OggleBooble.Api.MySqlDataContext
         public string ImageFile { get; set; }
         public DateTime Acquired { get; set; }
     }
-
-    // select * from OggleBooble.ImageFile;
-/*
-    update OggleBooble.CategoryImageLink set SortOrder = 1 where imageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 2 where imageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 3 where ImageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 4 where ImageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 5 where ImageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 6 where ImageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 7 where ImageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 8 where ImageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 9 where ImageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 10 where ImageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 11 where ImageCategoryId = 2001 and ImageLinkId = '';
-    update OggleBooble.CategoryImageLink set SortOrder = 12 where ImageCategoryId = 2001 and ImageLinkId = '';
-*/
 
     [Table("OggleBooble.VwCarouselImages")]
     public class VwCarouselItem
