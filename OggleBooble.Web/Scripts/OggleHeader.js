@@ -77,11 +77,6 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",241)'>sizes</a>\n"
             );
-            $('#hdrBtmRowSec3').html(addBannerButton("centerfold"));
-
-            //$('#breadcrumbContainer').append(addBannerButton("softcore", "softcore"));
-            //$('#breadcrumbContainer').append(addBannerButton("porn", "OgglePorn"));
-            //$('#breadcrumbContainer').append(addBannerButton("ranker", "poses"));
 
             // boobs
             // playboy
@@ -89,6 +84,11 @@ function setHeaderMenu(folderId, subdomain) {
             // porn
             // sluts
 
+            $('#hdrBtmRowSec3').html(addBannerButton("centerfold"));
+            if (subdomain == "root") {
+            }
+            if (subdomain == "index") {
+            }
             if (subdomain == "archive") {
                 $('#topRowRightContainer').html(addBannerButton("ranker", "archive"));
             }
@@ -97,6 +97,8 @@ function setHeaderMenu(folderId, subdomain) {
                 // alert("addBannerButton('archive')");
                 $('#hdrBtmRowSec3').append(addBannerButton("archive"));
             }
+            $('#hdrBtmRowSec3').append(addBannerButton("soft","softcore"));
+            $('#hdrBtmRowSec3').append(addBannerButton("porn","OgglePorn"));
             break;
         }
         case "soft": {
@@ -113,7 +115,6 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",411)'>naughty behaviour</a>\n");
             $('#hdrBtmRowSec3').html(addBannerButton("backToOggle"));
             $('#hdrBtmRowSec3').append(addBannerButton("porn", "OgglePorn"));
-            $('#hdrBtmRowSec3').append(addBannerButton("ranker", "softcore"));
             break;
         }
         case "playboyIndex":
@@ -187,7 +188,7 @@ function setHeaderMenu(folderId, subdomain) {
             $('#hdrBtmRowSec3').html(addBannerButton("backToOggle"));
             $('#hdrBtmRowSec3').append(addBannerButton("sluts"));
             $('#hdrBtmRowSec3').append(addBannerButton("ranker", "porn"));
-            $('#hdrBtmRowSec3').append(addBannerButton("softcore", "softcore"));
+            $('#hdrBtmRowSec3').append(addBannerButton("soft","softcore"));
             break;
         }
         case "sluts": {
@@ -230,7 +231,7 @@ function openBannerButton(bannerType, rankerType) {
         case "porn":
             location.href = "index.html?spa=3909";
             break;
-        case "softcore":
+        case "soft":
             location.href = "album.html?folder=5233";
             break;
         case "poses":
@@ -258,7 +259,7 @@ function addBannerButton(bannerType, rankerType) {
                 "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>" + rankerType + "</div>" +
                 "</div>\n";
             break;
-        case "softcore":
+        case "soft":
             return "<div class='headerBannerButton'>" +
                 "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>" + rankerType + "</div>" +
                 "</div>\n";

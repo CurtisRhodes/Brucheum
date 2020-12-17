@@ -401,45 +401,48 @@ $(document).keydown(function (event) {
 });
 
 function slideshowHtml() {
-    return "<div id='viewerButtonsRow' class='imageViewerHeaderRow' > \n" +
-        "  <div><img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png'/></div>\n" +
-        "  <div id='imageViewerHeaderTitle' class='imageViewerTitle'></div> \n" +
-        "  <div class='floatRight clickable' onclick='runSlideShow(\"faster\");'><img id='fasterSlideshow' title='faster' src='/Images/speedDialFaster.png'/></div>\n" +
-        "  <div id='txtStartSlideShow' class='floatRight clickable'style='padding-top:4px' " +
-        "       onclick='runSlideShow(\"start\");'>start slideshow</div>\n" +
-        "  <div class='floatRight clickable' onclick='runSlideShow(\"slower\");'><img id='slowerSlideShow' title='slower' src='/Images/speedDialSlower.png'/></div>\n" +
+    return "<div id='divStatusMessage'></div>\n" +
+        "   <div id='viewerButtonsRow' class='imageViewerHeaderRow' > \n" +
+        "       <div><img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png'/></div>\n" +
+        "       <div id='imageViewerHeaderTitle' class='imageViewerTitle'></div> \n" +
+        "       <div class='floatRight clickable' onclick='runSlideShow(\"faster\");'><img id='fasterSlideshow' title='faster' src='/Images/speedDialFaster.png'/></div>\n" +
+        "       <div id='txtStartSlideShow' class='floatRight clickable'style='padding-top:4px' onclick='runSlideShow(\"start\");'>start slideshow</div>\n" +
+        "       <div class='floatRight clickable' onclick='runSlideShow(\"slower\");'><img id='slowerSlideShow' title='slower' src='/Images/speedDialSlower.png'/></div>\n" +
+        "       <div class='floatRight clickable' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png'/> </div>\n" +
+        "       <div class='floatRight clickable' onclick='closeViewer(\"click\");' > <img title='you may use the {esc} key' src='/Images/close.png'/> </div>\n" +
+        "   </div>\n" +
 
-        "  <div class='floatRight clickable' onclick='blowupImage()'><img class='popoutBox' title='open image in a new window' src='/Images/expand02.png'/> </div>\n" +
+        "   <div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"prev\")'></div>\n" +
+        "   <div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")'></div>\n" +
 
-        "  <div class='floatRight clickable' onclick='closeViewer(\"click\");' > <img title='you may use the {esc} key' src='/Images/close.png'/> </div>\n" +
-        "</div>\n" +
-        "<div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"prev\")'></div>\n" +
+        "   <img id='who1' class='slideshowLeftWingArrow' src='/Images/next_right_arrow.png'/> \n" +
+
+
+        //"<div class='centeringOuterShell'>\n" +
+        //"   <div class='centeringInnerShell'>\n" +
+        //"      <div id='slideShowDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
+        //"           <div class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
+        //"               <div id='slideShowDialogTitle' class='oggleDialogTitle'></div>" +
+        //"               <div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
+        //"                    <img src='/images/poweroffRed01.png' onclick='slideShowDialogClose()'/></div>\n" +
+        //"               </div>\n" +
+        //"           </div>\n" +
+        //"           <div id='slideShowDialogContents' class='oggleDialogContents'></div>\n" +
+        //"      </div>\n" +
+        //"   </div>\n" +
+
+        "   <div class='centeringOuterShell'>\n" +
+        "       <div class='centeringInnerShell'>\n" +
+        "           <div id='viewerImageContainer' class='flexContainer'>\n" +
+        "               <div class='slideshowNavgArrows'><img src='/Images/leftArrowOpaque02.png' /></div>\n" +
+        "               <img id='viewerImage' class='slideshowImage' />\n" +
+        "               <div class='slideshowNavgArrows'><img src='/Images/rightArrowOpaque02.png' /></div>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "   </div>\n" +
+        "<div id='slideShowInstructions' class='slideShowVail'></div>\n" +
         "<div id='slideshowCtxMenuContainer' class='ogContextMenu' style='z-index: 35;'  onmouseleave='$(this).fadeOut()'>" +
         "   <div id='slideshowContextMenuContent'></div>\n" +
-        "</div>\n" +
-        "<div id='divStatusMessage'></div>\n" +
-        "<div class='centeringOuterShell'>\n" +
-        "   <div class='centeringInnerShell'>\n" +
-        "      <div id='slideShowDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
-        "           <div class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
-        "               <div id='slideShowDialogTitle' class='oggleDialogTitle'></div>" +
-        "               <div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
-        "               <img src='/images/poweroffRed01.png' onclick='slideShowDialogClose()'/></div>\n" +
-        "           </div>\n" +
-        "           <div id='slideShowDialogContents' class='oggleDialogContents'></div>\n" +
-        "      </div>\n" +
-        "   </div>\n" +
-        "</div>\n" +
-        "<div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")'></div>\n" +
-        "<div id='slideShowInstructions' class='slideShowVail'></div>\n" +
-        "<div class='centeringOuterShell'>\n" +
-        "    <div class='centeringInnerShell'>\n" +
-        "        <div id='viewerImageContainer' class='flexContainer'>\n" +
-        "            <div class='slideshowNavgArrows'><img src='/Images/leftArrowOpaque02.png' /></div>\n" +
-        "            <img id='viewerImage' class='slideshowImage' />\n" +
-        "            <div class='slideshowNavgArrows'><img src='/Images/rightArrowOpaque02.png' /></div>\n" +
-        "        </div>\n" +
-        "    </div>\n" +
         "</div>\n" +
         "<div id='slideshowImageLabel' class='slideshowImageLabel displayHidden' onclick='slideshowImageLabelClick()'></div>\n";
 }

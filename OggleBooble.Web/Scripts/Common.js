@@ -10,36 +10,36 @@ let pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
 function setCookieValue(elementName, elementValue) {
     //alert("setCookieValue(" + elementName + "," + elementValue + ")");
     try {
-    window.localStorage[elementName] = elementValue;
-    let visitorId = null, isLoggedIn = "true", decodedCookie = "";
-    if (document.cookie) {
-        decodedCookie = decodeURIComponent(document.cookie);
-        //       let cookieObj = JSON.parse(decodeURIComponent(document.cookie));
-        // cookieObj.elementName = elementValue;
-        // $.each(cookieObj, function (idx, obj) {
-        let cookieItem, cookieItemName, cookieItemValue;
-        let cookieElements = decodedCookie.split(",");
-        for (var i = 0; i < cookieElements.length; i++) {
-            cookieItem = cookieElements[i];
-            cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
-            cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
-            if (cookieItemName === "UserName") userName = cookieItemValue;
-            if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
-            if (cookieItemName === "IsLoggedIn") isLoggedIn = cookieItemValue;
+        window.localStorage[elementName] = elementValue;
+        let visitorId = null, isLoggedIn = "true", userName = "", decodedCookie = "";
+        if (document.cookie) {
+            decodedCookie = decodeURIComponent(document.cookie);
+            //       let cookieObj = JSON.parse(decodeURIComponent(document.cookie));
+            // cookieObj.elementName = elementValue;
+            // $.each(cookieObj, function (idx, obj) {
+            let cookieItem, cookieItemName, cookieItemValue;
+            let cookieElements = decodedCookie.split(",");
+            for (var i = 0; i < cookieElements.length; i++) {
+                cookieItem = cookieElements[i];
+                cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
+                cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
+                if (cookieItemName === "UserName") userName = cookieItemValue;
+                if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
+                if (cookieItemName === "IsLoggedIn") isLoggedIn = cookieItemValue;
+            }
         }
-    }
-    if (elementName === "IsLoggedIn") isLoggedIn = elementValue;
-    if (elementName === "UserName") userName = elementValue;
-    if (elementName === "VisitorId") visitorId = elementValue;
-    //deleteCookie();
-    expiryDate = new Date();
-    expiryDate.setMonth(expiryDate.getMonth() + 9);
-    let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
-    //let cookieString = "VisitorId:" + visitorId + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
-    document.cookie = cookieString;
-    //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
+        if (elementName === "IsLoggedIn") isLoggedIn = elementValue;
+        //if (elementName === "UserName") userName = elementValue;
+        if (elementName === "VisitorId") visitorId = elementValue;
+        //deleteCookie();
+        expiryDate = new Date();
+        expiryDate.setMonth(expiryDate.getMonth() + 9);
+        let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+        //let cookieString = "VisitorId:" + visitorId + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+        document.cookie = cookieString;
+        //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
     } catch (e) {
-        
+        logError("CAT", 111, e, "setCookieValue");
     }
 }
 
