@@ -50,8 +50,8 @@ function perfomCopyLink(linkId) {
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKC",
-                    PageId: pSelectedTreeId,
-                    Activity: "copy: " + linkId + " to: " + pSelectedTreeFolderPath
+                    FolderId: pSelectedTreeId,
+                    Details: "copy: " + linkId + " to: " + pSelectedTreeFolderPath
                 });
                 //awardCredits("LKC", pSelectedTreeId);
             }
@@ -98,7 +98,7 @@ function moveFile(request, linkId, folderId) {
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: request,
                     FolderId: pSelectedTreeId,
-                    Activity: linkId + " " + request + " from " + folderId
+                    Details: linkId + " " + request + " from " + folderId
                 });
             }
             else {
@@ -136,7 +136,7 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "REM",
                         PageId: folderId,
-                        Activity: linkId
+                        Details: "link: " + linkId
                     });
                     $('#imagePageLoadingGif').hide();
                 }
@@ -201,8 +201,8 @@ function performMoveImageToRejects(linkId, folderId) {
                     logDataActivity({
                         VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "REJ",
-                        PageId: folderId,
-                        Activity: "link moved to rejects" + linkId
+                        FolderId: folderId,
+                        Details: "link moved to rejects" + linkId
                     });
                 }
                 else {
@@ -235,9 +235,10 @@ function removeHomeFolderLink(linkId, folderId) {
                         slide("next");
                     getAlbumImages(folderId);
                     logDataActivity({
-                        PageId: folderId,
-                        PageName: currentAlbumJSfolderName,
-                        Activity: "link removed " + selectedImageLinkId
+                        VisitorId: getCookieValue("VisitorId"),
+                        FolderId: folderId,
+                        ActivityCode: "RHL",
+                        Details: "link: " + selectedImageLinkId + " removed from " + currentAlbumJSfolderName
                     });
                 }
                 else {
@@ -246,45 +247,6 @@ function removeHomeFolderLink(linkId, folderId) {
             }
         },
         error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", pSelectedTreeId, errMsg, functionName);
-        }
-    });
-}
-
-function showRenameFolderDialog(folderId, folderName) {
-    showLinkDialog();
-    $('#centeredDialogTitle').html("Rename Folder: " + folderName);
-    //$('#centeredDialogContents').html(
-    //    "<div><span>folder to rename</span>" + folderName + "</div>\n" +
-    //    "<div><span>new name</span><input id='txtReName' class='roundedInput' /></div>\n" +
-    //    "<div class='roundendButton' onclick='performRenameFolder()'>Rename Folder</div>\n" +
-    //    "<div id='renameFolderReport' class='repairReport'></div>\n");
-    $("#centeredDialog").fadeIn();
-
-
-}
-function performRenameFolder(folderId, newFolderName) {
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Links/RenameFolder?folderId=" + folderId + "&newFolderName=" + newFolderName,
-        success: function (success) {
-            if (success === "ok") {
-                $('#centeredDialog').fadeOut();
-
-                logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
-                    ActivityCode: "LKM",
-                    PageId: pSelectedTreeId,
-                    Activity: linkId + ' renamed to ' + newFolderName
-                });
-            }
-            else {
-                logError("AJX", folderId, success, "performRenameFolder");
-            }
-        },
-        error: function (xhr) {
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", pSelectedTreeId, errMsg, functionName);

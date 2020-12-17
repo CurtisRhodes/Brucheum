@@ -2,8 +2,7 @@
 function isInRole(roleName) {
     try {
         //console.log("calling getUserInfo from isInRole")
-        if (document.domain === 'localhost')
-            return true;
+        //if (document.domain === 'localhost') return true;
 
         if (getCookieValue("IsLoggedIn") == "false") {
             console.log("isInRole not logged in");
@@ -48,7 +47,6 @@ function getUserRole() {
     getUserInfo("getUserRole", details);
 }
 
-
 function resetUserSettings() {
     let jstring1 = "{";
     const dfarray = ["BLG", "IME", "ADD", "ADM", "ROL", "VLV"];
@@ -60,10 +58,8 @@ function resetUserSettings() {
 }
 
 function isLoggedIn() {
-    if (document.domain === 'localhost')
-        return true;
-    var isLoggedIn = getCookieValue("IsLoggedIn");
-    return isLoggedIn == "true";
+    //if (document.domain === 'localhost') return true;
+    return getCookieValue("IsLoggedIn") == "true";
 }
 
 function getUserInfo(valueRequested, details) {

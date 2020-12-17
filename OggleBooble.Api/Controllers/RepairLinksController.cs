@@ -144,9 +144,9 @@ namespace OggleBooble.Api.Controllers
                                     ImageLinkId = physcialFileLinkId,
                                     SortOrder = 0
                                 });
+                                repairReport.CatLinksAdded++;
                             }
                             db.SaveChanges();
-                            repairReport.CatLinksAdded++;
                             repairReport.ImageFilesAdded++;
                         }
                     }

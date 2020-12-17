@@ -483,7 +483,7 @@ function topLogoClick(subdomain) {
     switch (subdomain) {
         case "centerfold":
         case "playboy":
-            window.open("index.html?spa=3912");
+            window.open("index.html?spa=72");
             break;
         case "soft":
             window.open("album.html?folder=5233");

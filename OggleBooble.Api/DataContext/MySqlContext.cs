@@ -60,6 +60,23 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<VwImpact> VwImpacts { get; set; }
         public virtual DbSet<VwFeedbackReport> FeedbackReport { get; set; }
         public virtual DbSet<BlogComment> BlogComments { get; set; }
+        public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
+    }
+    [Table("OggleBooble.ChangeLog")]
+    public partial class ChangeLog
+    {
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int FolderId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public string ActivityCode { get; set; }
+        public string VisitorId { get; set; }
+        public string Details { get; set; }
+        [Key]
+        [Column(Order = 2)]
+        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.BlogComment")]

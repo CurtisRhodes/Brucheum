@@ -1,4 +1,6 @@
-﻿.slideShowVail {
+﻿
+
+.slideShowVail {
     display: none; /*Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 19; /* Sit on top */
@@ -28,6 +30,11 @@
             height: 31px;
             padding: 5px;
         }
+
+.explodedImage {
+    cursor: zoom-out;
+    text-align: center;
+}
 
 .popoutBox {
     margin-right: 22px;
@@ -71,13 +78,18 @@
     background-color: var(--oggleBackgroundColor);
     z-index: 20;
 }
-
 .slideshowLeftWingArrow {
     position: absolute;
     top: 300px;
-    left: 850px;
-    /*    left: 850px; */
-    height: 340px;
+    left: 20px;
+    height: 140px;
+}
+
+.slideshowRightWingArrow {
+    position: absolute;
+    top: 300px;
+    right: 20px;
+    height: 140px;
 }
 
 .hiddenClickArea {

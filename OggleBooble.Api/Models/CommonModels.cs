@@ -142,4 +142,12 @@ namespace OggleBooble.Api.Models
         public string FeedBackEmail { get; set; }
         public DateTime Occured { get; set; }
     }
+    public class ChangeLogModel
+    {
+        public int FolderId { get; set; }
+        public string ActivityCode { get; set; }
+        public string Details { get; set; }
+        public string VisitorId { get; set; }
+        public DateTime Occured { get; set; }
+    }
 }

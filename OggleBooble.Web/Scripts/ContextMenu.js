@@ -31,7 +31,12 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
 
     $('.ogContextMenu').draggable();
     if (typeof pause === 'function') pause();
-    if (isInRole("admin")) $('.adminLink').show();
+    if (isInRole("admin")) 
+        $('.adminLink').show();
+    else
+        $('.adminLink').hide();
+
+    //alert("isLoggedIn(): " + isLoggedIn());
 }
 
 function getLimitedImageDetails() {
@@ -164,11 +169,8 @@ function ctxGetFolderDetails() {
 function contextMenuAction(action) {
     switch (action) {
         case "saveAs":
-
            // alert("window.open(" + pImgSrc + ")");
-
             window.open(pImgSrc);
-
             //document.execCommand("SaveAs", null, "file.csv");
             // <a href="data:application/xml;charset=utf-8,your code here" download="filename.html">Save</a>
             break;
@@ -238,10 +240,6 @@ function contextMenuAction(action) {
             showMoveLinkDialog(pLinkId, pFolderId, pMenuType, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
-        case "rename":
-            $("#imageContextMenu").fadeOut();
-            showRenameFolderDialog(pFolderId, pFolderName)
-            break;
         case "remove":
             $("#imageContextMenu").fadeOut();
             attemptRemoveLink(pLinkId, pFolderId, pImgSrc);
@@ -273,11 +271,11 @@ function contextMenuHtml() {
         "<div id='ctxNewTab' onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
         "<div id='ctxComment' onclick='contextMenuAction(\"comment\")'>Comment</div>\n" +
         "<div id='ctxExplode' onclick='contextMenuAction(\"explode\")'>explode</div>\n" +
-        "<div id='ctxSaveAs' onclick='contextMenuAction(\"saveAs\")'>save as</div>\n" +
+        //"<div id='ctxSaveAs' onclick='contextMenuAction(\"saveAs\")'>save as</div>\n" +
         "<div id='ctxCloseSlideShow' onclick='contextMenuAction(\"closeSlideShow\")'>close slideshow</div>\n" +
         "<div id='ctxImageShowLinks' onclick='contextMenuAction(\"showLinks\")'>Show Links</div>\n" +
         "<div id='linkInfoContainer' class='contextMenuInnerContainer'></div>\n" +        
-        "<div id='ctxInfo' onclick='contextMenuAction(\"info\")'>Show Image info</div>\n" +
+        "<div id='ctxInfo' class='adminLink'  onclick='contextMenuAction(\"info\")'>Show Image info</div>\n" +
         " <div id='imageInfoContainer' class='contextMenuInnerContainer'>\n" +
         "   <div><span class='ctxInfolabel'>file name</span><span id='imageInfoFileName' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxInfolabel'>folder path</span><span id='imageInfoFolderPath' class='ctxInfoValue'></span></div>\n" +
@@ -295,7 +293,7 @@ function contextMenuHtml() {
         "   <div><span class='ctxInfolabel'>subfolders</span><span id='folderInfoSubDirsCount' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxInfolabel'>last modified</span><span id='folderInfoLastModified' class='ctxInfoValue'></span></div>\n" +
         " </div>\n" +
-        "<div id='ctxDownLoad' onclick='contextMenuAction(\"download\")'>download folder</div>\n" +
+        //"<div id='ctxDownLoad' onclick='contextMenuAction(\"download\")'>download folder</div>\n" +
         "<div id='ctxShowAdmin' class='adminLink' onclick='$(\"#linkAdminContainer\").toggle()'>Admin</div>\n" +
         " <div id='linkAdminContainer' class='contextMenuInnerContainer'>\n" +
         "   <div onclick='contextMenuAction(\"archive\")'>Archive</div>\n" +

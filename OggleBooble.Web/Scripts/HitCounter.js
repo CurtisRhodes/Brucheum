@@ -200,11 +200,24 @@ function getIpInfo(folderId, calledFrom) {
                             else {
                                 if (addVisitorSuccess.Success == "existing Ip") {
                                     setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
+
                                     if (!navigator.cookieEnabled) {
                                         logError("UNC", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
                                     }
                                     else {
-                                        logError("WIP", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
+                                        setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
+                                        let cookieTest = getCookieValue("VisitorId");
+                                        if ((cookieTest == addVisitorSuccess.VisitorId) && (window.localStorage[VisitorId] = cookieTest)) {
+                                            logError("WIP", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
+                                        }
+                                        else {
+                                            if (!navigator.cookieEnabled) {
+                                                logError("UNC", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
+                                            }
+                                            else {
+                                                logError("DVF", folderId, "visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
+                                            }
+                                        }
                                     }
                                 }
                                 else

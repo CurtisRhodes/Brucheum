@@ -456,35 +456,33 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-
-        //[HttpPost]
+        [HttpPost]
         //[Route("api/Common/LogDataActivity")]
-        //public string LogDataActivity(DataActivityModel changeLog)
-        //{
-        //    string success;
-        //    try            
-        //    {
-        //        using (var db = new OggleBoobleMySqlContext())
-        //        {
-        //            db.ChangeLogs.Add(new MySqlDataContext.ChangeLog()
-        //            {
-        //                PkId = Guid.NewGuid().ToString(),
-        //                VisitorId = changeLog.VisitorId,
-        //                PageId = changeLog.FolderId,
-        //                ActivityCode = changeLog.ActivityCode,
-        //                Activity = changeLog.Activity,
-        //                Occured = DateTime.Now
-        //            });
-        //            db.SaveChanges();
-        //        }
-        //        success = "ok";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        success = Helpers.ErrorDetails(ex);
-        //    }
-        //    return success;
-        //}
+        public string LogDataActivity(ChangeLogModel changeLog)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.ChangeLogs.Add(new MySqlDataContext.ChangeLog()
+                    {
+                        VisitorId = changeLog.VisitorId,
+                        FolderId = changeLog.FolderId,
+                        ActivityCode = changeLog.ActivityCode,
+                        Details = changeLog.Details,
+                        Occured = DateTime.Now
+                    });
+                    db.SaveChanges();
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
 
         [HttpPost]
         [Route("api/Common/LogFeedback")]

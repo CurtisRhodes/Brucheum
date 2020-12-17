@@ -294,10 +294,6 @@ function performRepairLinks(justOne) {
                             $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
                         if (repairReport.ImageFilesAdded > 0)
                             $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImageFilesAdded);
-
-                        repairReport.Errors.forEach(function (element) {
-                            $('#repairLinksReport').append("<div> errors: " + element + "</div>");
-                        });
                     }
                     catch (e) {
                         alert("problem displaying repair report: " + e);
@@ -319,7 +315,6 @@ function performRepairLinks(justOne) {
         logError("CAT", apFolderId, e, "performRepairLinks");
     }
 }
-
 function removeDupeIps() {
     let start = Date.now();
     $('#dataifyInfo').show().html("performing one time fix");
@@ -383,8 +378,6 @@ function removeDupeIps() {
         logError("CAT", apFolderId, e, "performRepairLinks");
     }
 }
-
-
 
 // CREATE STATIC PAGES
 function showCreateStaticPagesDialog() {
@@ -455,17 +448,11 @@ function addImageLink() {
                 displayStatusMessage("ok", "image link added");
                 $('#txtImageLink').val("");
 
-                //dataAction.PkId = Guid.NewGuid().ToString();
-                //dataAction.VisitorId = changeLog.VisitorId;
-                //dataAction.PageId = changeLog.FolderId;
-                //dataAction.ActivityCode = changeLog.ActivityCode;
-                //dataAction.Activity = changeLog.Activity;
-                //dataAction.Occured = DateTime.Now;
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "NIA",
                     FolderId: pSelectedTreeId,
-                    Activity: pSelectedTreeFolderPath
+                    Details: pSelectedTreeFolderPath
                 });
             }
             else {
@@ -531,7 +518,7 @@ function performCreateNewFolder() {
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "NFC",
                     PageId: successModel.ReturnValue,
-                    Activity: $('#txtNewFolderTitle').val()
+                    Details: $('#txtNewFolderTitle').val()
                 });
                 $('#txtNewFolderTitle').val('');
                 //$('#createNewFolderDialog').dialog('close');
@@ -578,9 +565,9 @@ function performMoveFolder() {
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKM",
-                    PageId: pSelectedTreeId,
-                    PageName: $('.txtPartialDirTreePath').val(),
-                    Activity: "folder moved from:" + $('#txtNewFolderParent').val() + " to: " + $('#txtMoveFolderDest').val()
+                    FolderId: pSelectedTreeId,
+                    //PageName: $('.txtPartialDirTreePath').val(),
+                    Details: "folder moved from:" + $('#txtNewFolderParent').val() + " to: " + $('#txtMoveFolderDest').val()
                 });
             }
             else
@@ -633,8 +620,8 @@ function perfomAddStepChildFolder(cfSsorceFolderId) {
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "CSF",  // Create Folder Stepchild
-                    PageId: pSelectedTreeId,
-                    Activity: "linkId: " + $('#txtCustomFolderLink').val() + " DestinationId: " + pSelectedTreeId
+                    FolderId: pSelectedTreeId,
+                    Details: "linkId: " + $('#txtCustomFolderLink').val() + " DestinationId: " + pSelectedTreeId
                 });
 
                 $('#txtNewFolderParent').val('');
@@ -1021,6 +1008,44 @@ function prepareXhamsterPage() {
 }
 
 // UNUSED
+function showRenameFolderDialog(folderId, folderName) {
+    showLinkDialog();
+    $('#centeredDialogTitle').html("Rename Folder: " + folderName);
+    //$('#centeredDialogContents').html(
+    //    "<div><span>folder to rename</span>" + folderName + "</div>\n" +
+    //    "<div><span>new name</span><input id='txtReName' class='roundedInput' /></div>\n" +
+    //    "<div class='roundendButton' onclick='performRenameFolder()'>Rename Folder</div>\n" +
+    //    "<div id='renameFolderReport' class='repairReport'></div>\n");
+    $("#centeredDialog").fadeIn();
+
+
+}
+function performRenameFolder(folderId, newFolderName) {
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Links/RenameFolder?folderId=" + folderId + "&newFolderName=" + newFolderName,
+        success: function (success) {
+            if (success === "ok") {
+                $('#centeredDialog').fadeOut();
+                logDataActivity({
+                    VisitorId: getCookieValue("VisitorId"),
+                    ActivityCode: "RNF",
+                    FolderId: pSelectedTreeId,
+                    Details: linkId + ' renamed to ' + newFolderName
+                });
+            }
+            else {
+                logError("AJX", folderId, success, "performRenameFolder");
+            }
+        },
+        error: function (xhr) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", pSelectedTreeId, errMsg, functionName);
+        }
+    });
+}
+
 function addVideoLink() {
     try {
         $('#dashBoardLoadingGif').show();

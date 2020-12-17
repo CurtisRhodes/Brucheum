@@ -238,7 +238,7 @@ function slide(direction) {
 
 function resizeViewer() {
     //alert("$('#viewerImageContainer').css('left'): " + $('#viewerImageContainer').css('left'));
-   
+
     $('#viewerImage').css('left', ($(window).width() - $('#viewerImage').width()) / 2);
     $('#leftClickArea').css('left', 0);
     $('#rightClickArea').css('left', $(window).width() / 2);
@@ -246,6 +246,10 @@ function resizeViewer() {
     $('.slideshowNavgArrows img').height($(window).height() - 30);
     $('#slideShowContainer').css('width', "100%");
     $(window).scrollTop(0);
+
+    //"   <img id='ssLeftwa'  class='slideshowLeftWingArrow' src='/Images/next_left_arrow.png'/> \n" +
+    //"   <img id='ssRightwa' class='slideshowRightWingArrow' src='/Images/next_right_arrow.png'/> \n" +
+
     //if ($('#viewerButtonsRow').width() >  $(window).width())
     //alert("$('#viewerButtonsRow').width(): " + $('#viewerButtonsRow').width() + "  window.width: " + $(window).width());
 }
@@ -313,10 +317,9 @@ function blowupImage() {
     //<img id='viewerImage' class='slideshowImage' />\n" +
     //$('#viewerImage').removeClass('.slideshowImage').addClass('blowupImage');
     entirePage = $('body').html();
-    $('body').html("<img id='explodedImage' style='cursor: zoom-out' onclick='restoreFromBlowup()' src='" + settingsImgRepo + imageViewerArray[imageViewerIndex].FileName + "'/>");
-
+    $('body').html("<img id='explodedImage' class='explodedImage' onclick='restoreFromBlowup()' src='" + settingsImgRepo + imageViewerArray[imageViewerIndex].FileName + "'/>");
     //window.open(settingsImgRepo + imageViewerArray[imageViewerIndex].FileName, "_blank");
-
+    //style = 'text-align:center'; cursor: zoom - out'
 }
 
 function restoreFromBlowup() {
@@ -415,21 +418,22 @@ function slideshowHtml() {
         "   <div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"prev\")'></div>\n" +
         "   <div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")'></div>\n" +
 
-        "   <img id='who1' class='slideshowLeftWingArrow' src='/Images/next_right_arrow.png'/> \n" +
+        "   <img id='ssLeftwa' class='slideshowLeftWingArrow' src='/Images/next_left_arrow.png'/> \n" +
+        "   <img id='ssRightwa' class='slideshowRightWingArrow' src='/Images/next_right_arrow.png'/> \n" +
 
-
-        //"<div class='centeringOuterShell'>\n" +
-        //"   <div class='centeringInnerShell'>\n" +
-        //"      <div id='slideShowDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
-        //"           <div class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
-        //"               <div id='slideShowDialogTitle' class='oggleDialogTitle'></div>" +
-        //"               <div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
-        //"                    <img src='/images/poweroffRed01.png' onclick='slideShowDialogClose()'/></div>\n" +
-        //"               </div>\n" +
-        //"           </div>\n" +
-        //"           <div id='slideShowDialogContents' class='oggleDialogContents'></div>\n" +
-        //"      </div>\n" +
-        //"   </div>\n" +
+        "<div class='centeringOuterShell'>\n" +
+        "   <div class='centeringInnerShell'>\n" +
+        "      <div id='slideShowDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
+        "           <div class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
+        "               <div id='slideShowDialogTitle' class='oggleDialogTitle'></div>" +
+        "               <div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
+        "                    <img src='/images/poweroffRed01.png' onclick='slideShowDialogClose()'/>\n" +
+        "               </div>\n" +
+        "           </div>\n" +
+        "           <div id='slideShowDialogContents' class='oggleDialogContents'></div>\n" +
+        "      </div>\n" +
+        "   </div>\n" +
+        "</div>\n" +
 
         "   <div class='centeringOuterShell'>\n" +
         "       <div class='centeringInnerShell'>\n" +
