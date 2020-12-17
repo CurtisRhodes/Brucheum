@@ -49,7 +49,8 @@ namespace OggleBooble.Api.Controllers
                 //string folderName = dbCategoryFolder.FolderName;
 
                 string imageFileName = ftpPath.Substring(ftpPath.LastIndexOf("/") + 1);
-                if (dbCategoryFolder.FolderType == "singleChild") {
+                if (dbCategoryFolder.FolderType == "singleChild")
+                {
                     CategoryFolder dbParentFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
                     imageFileName = dbParentFolder.FolderName;
                 }
@@ -193,7 +194,7 @@ namespace OggleBooble.Api.Controllers
                     }
                     repairReport.ImageFilesProcessed++;
                 }
-                
+
                 #endregion
 
                 #region 3. check if there is a catlink for every physcial file 
@@ -274,7 +275,7 @@ namespace OggleBooble.Api.Controllers
                             FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
                             repairReport.PhyscialFileRenamed++;
                         }
-                    } 
+                    }
                     else
                     {
                         newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
@@ -286,10 +287,72 @@ namespace OggleBooble.Api.Controllers
                 success = "ok";
             }
             catch (Exception ex)
-            { 
-                success = Helpers.ErrorDetails(ex); 
+            {
+                success = Helpers.ErrorDetails(ex);
             }
             return success;
+        }
+
+
+        [HttpGet]
+        [Route("api/RepairLinks/RemoveDuplicateIps")]
+        public DupeIpRepairReportModel RemoveDuplicateIps()
+        {
+            DupeIpRepairReportModel repairReport = new DupeIpRepairReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    int imageHitsChanged, pageHitsChanged, activityLogsChanged;
+                    string defaultVisitorId = "";
+                    List<Visitor> badIps = db.Database.SqlQuery<Visitor>(
+                        "select * from OggleBooble.Visitor group by IpAddress having count(*) > 1;").ToList();
+
+                    for (int i = 0; i < badIps.Count; i++)
+                    {
+                        try
+                        {
+                            if (i == 0)
+                            {
+                                defaultVisitorId = badIps[0].VisitorId;
+                            }
+                            else
+                            {
+                                imageHitsChanged = db.Database.ExecuteSqlCommand(
+                                    "Update OggleBooble.ImageHit set VisitorId = '" + defaultVisitorId + "' where VisitorId='" + badIps[i].VisitorId + "';");
+                                pageHitsChanged = db.Database.ExecuteSqlCommand(
+                                    "Update OggleBooble.PageHit set VisitorId = '" + defaultVisitorId + "' where VisitorId='" + badIps[i].VisitorId + "';");
+                                activityLogsChanged = db.Database.ExecuteSqlCommand(
+                                    "Update OggleBooble.ActivityLog set VisitorId = '" + defaultVisitorId + "' where VisitorId='" + badIps[i].VisitorId + "';");
+
+                                if (imageHitsChanged > 0)
+                                    repairReport.ImageHitsUpdated += imageHitsChanged;
+
+                                repairReport.PageHitsUpdated += pageHitsChanged;
+                                repairReport.ActivityLogsUpdated += activityLogsChanged;
+
+                                string visIdtoRemove = badIps[i].VisitorId;
+                                Visitor rowToRemove = db.Visitors.Where(v => v.VisitorId == visIdtoRemove).First();
+                                db.Visitors.Remove(rowToRemove);
+                                db.SaveChanges();
+                                repairReport.VisitorRowsRemoved++;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            repairReport.Errors.Add(Helpers.ErrorDetails(ex));
+                        }
+                    }
+
+                    repairReport.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                repairReport.Success = Helpers.ErrorDetails(ex);
+            }
+            return repairReport;
         }
     }
 }

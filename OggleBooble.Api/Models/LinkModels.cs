@@ -52,7 +52,6 @@ namespace OggleBooble.Api.Models
         public string DanniPath { get; set; }
     }
 
-
     public class RepairReportModel
     {
         public RepairReportModel()
@@ -86,6 +85,20 @@ namespace OggleBooble.Api.Models
         //public List<string> MissingLinks { get; set; }
         //public List<string> OrphanCatLinkRecs { get; set; }
         //public List<string> OrphanImageFileRecs { get; set; }
+        public List<string> Errors { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class DupeIpRepairReportModel
+    {
+        public DupeIpRepairReportModel()
+        {
+            Errors = new List<string>();
+        }
+        public int VisitorRowsRemoved { get; set; }
+        public int PageHitsUpdated { get; set; }
+        public int ImageHitsUpdated { get; set; }
+        public int ActivityLogsUpdated { get; set; }
         public List<string> Errors { get; set; }
         public string Success { get; set; }
     }

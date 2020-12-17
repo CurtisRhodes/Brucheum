@@ -189,7 +189,8 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(1);'>Move Many</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(2);'>Copy Many</div>\n" +
-                "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf()</div>\n" +
+                "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf</div>\n" +
+                "<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" +
                 "<div class='clickable' onclick='showAddVideoLink();\">Add Video Link</div>");
 
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
@@ -318,6 +319,72 @@ function performRepairLinks(justOne) {
         logError("CAT", apFolderId, e, "performRepairLinks");
     }
 }
+
+function removeDupeIps() {
+    let start = Date.now();
+    $('#dataifyInfo').show().html("performing one time fix");
+    //$('#dashBoardLoadingGif').fadeIn();
+    $('#repairErrorReport').hide();
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/RepairLinks/RemoveDuplicateIps",
+            success: function (repairReport) {
+                $('#dashBoardLoadingGif').hide();
+                $("#centeredDialogContents").fadeOut();
+                if (repairReport.Success === "ok") {
+                    try {
+                        var delta = Date.now() - start;
+                        var minutes = Math.floor(delta / 60000);
+                        var seconds = (delta % 60000 / 1000).toFixed(0);
+                        //console.log("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                        $('#dataifyInfo').html("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                        
+                        $('#dataifyInfo').append(", VisitorRowsRemoved: " + repairReport.VisitorRowsRemoved);
+
+                        $('#dataifyInfo').append(", ImageHitsUpdated: " + repairReport.ImageHitsUpdated);
+                        $('#dataifyInfo').append(", PageHitsUpdated: " + repairReport.PageHitsUpdated);
+                        $('#dataifyInfo').append(", ActivityLogsUpdated: " + repairReport.ActivityLogsUpdated);
+
+                        if (repairReport.Errors.length > 0) {
+                            $('#repairErrorReport').show().html("");
+                            $.each(repairReport.Errors, function (idx, obj) {
+                                $('#repairErrorReport').append("<div>" + obj + "</div>");
+                            })
+                        }
+
+                        //if (repairReport.CatLinksAdded > 0)
+                        //    $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
+
+                        //if (repairReport.ImageFilesAdded > 0)
+                        //    $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImageFilesAdded);
+
+                        //repairReport.Errors.forEach(function (element) {
+                        //    $('#repairLinksReport').append("<div> errors: " + element + "</div>");
+                        //});
+                    }
+                    catch (e) {
+                        alert("problem displaying repair report: " + e);
+                    }
+                }
+                else {
+                    //logError("AJX", apFolderId, repairReport.Success, "performRepairLinks");
+                    alert(repairReport.Success);
+                }
+            },
+            error: function (jqXHR) {
+                $('#dashBoardLoadingGif').hide();
+                let errMsg = getXHRErrorDetails(jqXHR);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            }
+        });
+    } catch (e) {
+        logError("CAT", apFolderId, e, "performRepairLinks");
+    }
+}
+
+
 
 // CREATE STATIC PAGES
 function showCreateStaticPagesDialog() {
