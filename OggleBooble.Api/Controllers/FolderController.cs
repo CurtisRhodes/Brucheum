@@ -23,7 +23,7 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/CatFolder/Create")]
-        public SuccessModel Create(int parentId, string newFolderName)
+        public SuccessModel Create(int parentId, string newFolderName,string folderType)
         {
             SuccessModel successModel = new SuccessModel();
             try
@@ -46,9 +46,9 @@ namespace OggleBooble.Api.Controllers
                         //newFolder.Id = newFolderId;
                         newFolder.Parent = parentId;
                         newFolder.FolderName = newFolderName.Trim();
-                        newFolder.FolderType = "singleChild";
+                        newFolder.FolderType = folderType;
                         newFolder.RootFolder = dbDestParent.RootFolder;
-                        newFolder.SortOrder = 934;
+                        newFolder.SortOrder = 0;
                         newFolder.FolderPath = dbDestParent.FolderPath + "/" + newFolderName;
                         db.CategoryFolders.Add(newFolder);
                         db.SaveChanges();

@@ -60,7 +60,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     var link = db.CategoryImageLinks.Where(l => l.ImageCategoryId == item.PageId && l.ImageLinkId == item.ItemId).FirstOrDefault();
                     if (link != null)
-                        link.SortOrder = item.InputValue;
+                        link.SortOrder = item.SortOrder;
                 }
                 db.SaveChanges();
                 success = "ok";
