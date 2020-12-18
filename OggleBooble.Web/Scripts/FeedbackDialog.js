@@ -61,7 +61,7 @@
                     },
                     success: function (success) {
                         if (success === "ok") {
-                            logEvent("FBS", folderId, "Hooraaaayyy !!");
+                            logEvent("FBS", folderId, "saveFeedback", "Hooraaaayyy !!");
 
                             //sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "Wow!! FeedBack", "feedbackType: " + feedbackType + "message:" + feedbackMessage);
                             //sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Wow!! FolderComment", "message:" + folderCommentMessage);
@@ -210,7 +210,7 @@ function saveFolderComment(folderId) {
             },
             success: function (success) {
                 if (success === "ok") {
-                    logEvent("FBS", folderId, "folderCommentMessage !!");
+                    logEvent("FBS", folderId, "saveFolderComment", "folderCommentMessage !!");
 
                     //sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Wow!! FolderComment", "message:" + folderCommentMessage);
                     if (document.domain !== "localhost")

@@ -152,27 +152,28 @@ function todayString() {
 
 function verifyVisitorId(folderId, calledFrom) {
     let cokieTest = getCookieValue("VisitorId")
-    let lclStrTest = window.localStorage["VisitorId"];
-    if ((lclStrTest != null) && (lclStrTest != null)) {
+    let lclStorTest = window.localStorage["VisitorId"];
+    if (!isNullorUndefined(cokieTest) && !isNullorUndefined(lclStorTest)) {
         console.log("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
         //logEvent("VL0", folderId, calledFrom, "visitorId cookie and local storage verified");
         // alert("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
     }
     else {
-        if (lclStrTest != null) {
-            if (cokieTest == null) {
+        if (!isNullorUndefined(lclStorTest)) {
+            if (isNullorUndefined(cokieTest) {
                 setCookieValue("VisitorId", lclStrTest);
                 logEvent("VL1", folderId, calledFrom, "cookie loaded from local storage");
             }
         }
-        if (cokieTest != null) {
-            if (lclStrTest == null) {
+        if (!isNullorUndefined(cokieTest)) {
+            if (isNullorUndefined(lclStorTest)) {
                 window.localStorage["VisitorId"] = cokieTest;
                 logEvent("VL2", folderId, calledFrom, "local storage loaded from cookie");
             }
         }
-        if ((lclStrTest == null) && (cokieTest == null)) {
+        if (isNullorUndefined(cokieTest) && isNullorUndefined(lclStorTest)) {
             logError("VVF", folderId, "could be a new user", calledFrom);
+            getIpInfo(folderId, "verifyVisitorId");
         }
     }
 }
@@ -342,7 +343,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             },
             success: function (success) {
                 if (success !== "ok") {
-                    logError("AJX", folderId, success, "logEvent");
+                    logError("AJX", folderId, eventCode + ": " + success, calledFrom + "/logEvent");
                 }
             },
             error: function (jqXHR) {

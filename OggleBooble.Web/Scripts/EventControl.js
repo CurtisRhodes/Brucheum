@@ -77,30 +77,6 @@ function performEvent(eventCode, eventDetail, folderId) {
         case "RNK":  // Ranker Banner Clicked
             window.location.href = "/Ranker.html?subdomain=" + eventDetail;
             break;
-        //case "LMC":  // Left Menu Clicked
-        //    switch (eventDetail) {
-        //        case "boobTransitions": window.location.href = 'transitions.html'; break;
-        //        case "pornTransitions": window.location.href = "transitions.html?subdomain=porn"; break;
-        //        case "boobsRanker": window.location.href = 'ranker.html'; break;
-        //        case "pornRanker": window.location.href = 'ranker.html?subdomain=porn'; break;
-        //        case "dirTreeBoobs": showCatListDialog(2); break;
-        //        case "dirTreePorn": showCatListDialog(242); break;
-        //        case "explainBoobs": showCustomMessage(38, true); break;
-        //        case "explainPorn": showCustomMessage(94, true); break;
-        //        case "back": window.location.href = "/"; break;
-        //        case "centerfolds": window.location.href = '/album.html?folder=1132'; break;
-        //        case "video": window.location.href = 'video.html'; break;
-        //        case "blog": window.location.href = '/Blog.html'; break;
-        //        case "porn":
-        //            if (isLoggedIn())
-        //                window.location.href = '/index.html?subdomain=porn';
-        //            else
-        //                showCustomMessage(35, false);
-        //            break;
-        //        default:
-        //            logError("BUG", folderId, "Uncaught Case: " + eventDetail, "performEvent/Left Menu Click EventDetail");
-        //    }
-        //    break;
         case "FLC":  //  footer link clicked
             switch (eventDetail) {
                 case "about us": showCustomMessage(38); break;
@@ -115,6 +91,7 @@ function performEvent(eventCode, eventDetail, folderId) {
                 case "cybergirls": window.location.href = "/album.html?folder=3796"; break;
                 case "softcore": window.location.href = "/album.html?folder=5233"; break;
                 case "extras": window.location.href = "/album.html?folder=2601"; break;
+                case "sluts": window.location.href = "/album.html?folder=440"; break;
                 case "magazine covers": window.location.href = "/album.html?folder=1986"; break;
                 case "archive": window.location.href = "/album.html?folder=3"; break;
                 case "videos": window.location.href = 'video.html'; break;
@@ -127,7 +104,7 @@ function performEvent(eventCode, eventDetail, folderId) {
             }
             break;
         default:
-            logError("SWT", folderId, "Uncaught Case: " + eventDetail, "performEvent");
+            logError("SWT", folderId, "Uncaught Case. eventCode: " + eventCode, "performEvent");
     }
 }
 

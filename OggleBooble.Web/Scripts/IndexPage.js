@@ -120,8 +120,18 @@ function loadUpdatedGalleriesBoxes(numItmes) {
 }
 
 function latestGalleryImageError(folderId, thisItemSrc) {    
-    $('#lt' + folderId).attr('src', "Images/redballon.png");
-    logError("ILF", folderId, "Src: " + thisItemSrc, "get latest Galleries");
+    setTimeout(function () {
+        if ($('#lt' + folderId).attr('src') == null) {
+            $('#lt' + folderId).attr('src', "Images/redballon.png");
+            logError("ILF", folderId, "Src: " + thisItemSrc, "latest Galleries");
+
+            if (document.domain === 'localhost') {
+                pause();
+                alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+                console.log("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+            }
+        }
+    }, 600);
 }
 
 function launchPromoMessages() {
@@ -214,7 +224,7 @@ function localhostBypass() {
         let visitorId = getCookieValue("VisitorId");
         console.log("localhostBypass visitorId: " + visitorId);
         setCookieValue("UserName", "developer");
-        //window.localStorage["IsLoggedIn"] = "true";
+        window.localStorage["IsLoggedIn"] = "true";
     }
 }
 

@@ -67,7 +67,7 @@ function runMetricsMatrixReport() {
         alert("unable to run report");
 }
 
-function metrixSubReport(reportId,reportDay) {
+function metrixSubReport(reportId, reportDay) {
     switch (reportId) {
         case 1: // NewVisitors
             $.ajax({
@@ -101,11 +101,36 @@ function metrixSubReport(reportId,reportDay) {
             });
             break;
         case 2: // Visits
-            $('#dashboardDialogTitle').html("Visits: " + dateString(reportDay));
-            kludge = "<div>";
-            kludge += "</div>";
-            $('#dashboardDialogContents').html(kludge);
-            $('#dashboardDialog').fadeIn();
+            // $('#dashboardDialogTitle').html("Visits: " + dateString(reportDay));
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Report/DailyVisits?visitDate=" + reportDay,
+                success: function (rslts) {
+                    if (rslts.Success == "ok") {
+                        $('#dashboardDialogTitle').html("Visits: " + dateString(reportDay));
+                        let kludge = "<div class='visitorsReport'>";
+                        kludge += "<table>";
+                        kludge += "<tr><th>IpAddress</th><th>location</th><th>InitialPage</th></tr>";
+                        $.each(rslts.Visitors, function (idx, obj) {
+                            kludge += "<td>" + obj.IpAddress + "</td>";
+                            kludge += "<td>" + obj.Location + "</td>";
+                            //kludge += "<td>" + obj.InitialVisit + "</td>";
+                            kludge += "<td>" + obj.InitialPage + ":" + obj.FolderName + "</td><tr>";
+                        });
+                        kludge += "</table>";
+                        $('#dashboardDialogContents').html(kludge);
+                        $('#dashboardDialog').fadeIn();
+                    }
+                    else {
+                        logError("AJX", 3910, rslts.Success, "NewVisitors");
+                    }
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+                }
+            });
             break;
         case 3: // PageHits
             $('#dashboardDialogTitle').html("page hits duplicate: " + dateString(reportDay));
@@ -146,6 +171,38 @@ function runPageHitReport() {
                 $("#reportsContentArea").html(kludge);
 
                 $("#reportsFooter").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+            }
+            else {
+                logError("AJX", 3910, pageHitReportModel.Success, "pageHitsReport");
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+        }
+    });
+}
+
+function showUserDetail(ipAddress) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Report/UserDetails?ipAddress=" + ipAddress,
+        success: function (userReportSuccessModel) {
+            $('#dashBoardLoadingGif').hide();
+            if (userReportSuccessModel.Success === "ok") {
+                let obj = userReportSuccessModel.UserReport;
+                $('#dashboardDialogTitle').html("user details for: " + ipAddress);
+                let kludge = "<div>";
+                kludge += "<div>from: " + obj.City + ", " + obj.Region + ", " + obj.Country + "</div>";
+                kludge += "<div>initial visit: " + obj.InitialVisit + "</div>";
+                kludge += "<div>visits: " + obj.Visits + "</div>";
+                kludge += "<div>page hits:  " + obj.PageHits + "</div>";
+                kludge += "<div>image hits: " + obj.ImageHits + "</div>";
+                kludge += "<div>user name:  " + obj.UserName + "</div>";
+                kludge += "</div>";
+                $('#dashboardDialogContents').html(kludge);
+                $('#dashboardDialog').fadeIn();
             }
             else {
                 logError("AJX", 3910, pageHitReportModel.Success, "pageHitsReport");
@@ -353,15 +410,15 @@ function errorLogReport() {
             if (errorLogReport.Success === "ok")
             {
                 let kludge = "<div><table class='errorLogTable'>";
-                kludge += "<tr><th>error</th><th>called from</th><th colspan=2>occured</th><th>page</th><th>user</th></tr>";
+                kludge += "<tr><th>error</th><th>called from</th><th>occured</th><th>page</th><th>IpAddress</th><th>ErrorMessage</th></tr>";
                 $.each(errorLogReport.ErrorRows, function (idx, obj) {
                     kludge += "<tr><td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
-                    kludge += "<td>" + obj.CalledFrom + "</td>";
-                    kludge += "<td>" + obj.Occured + "</td>";
+                    kludge += "<td>" + obj.CalledFrom.substring(0,15) + "</td>";
                     kludge += "<td>" + obj.Time + "</td>";
                     kludge += "<td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
                     //kludge += "<td>" + obj.City + " " + obj.Region + " " + obj.Country + "</td>";
-                    kludge += "<td class='clickable' onclick='showUserErrorDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
+                    kludge += "<td class='clickable underline' onclick='showUserErrorDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
+                    kludge += "<td>" + obj.ErrorMessage.substring(0,40) + "</td>";
                     kludge += "</tr>";
 
                     //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
@@ -375,38 +432,6 @@ function errorLogReport() {
             else {
                 logError("AJX", 3910, errorLogReport.Success, "errorLogReport");
                 alert("PageHitsReport: " + errorLogReport.Success);
-            }
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
-        }
-    });
-}
-
-function showUserDetail(ipAddress) {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Report/UserDetails?ipAddress=" + ipAddress,
-        success: function (userReportSuccessModel) {
-            $('#dashBoardLoadingGif').hide();
-            if (userReportSuccessModel.Success === "ok") {
-                let obj = userReportSuccessModel.UserReport;
-                $('#dashboardDialogTitle').html("user details for: " + ipAddress);
-                let kludge = "<div>";
-                kludge += "<div>from: " + obj.City + ", " + obj.Region + ", " + obj.Country + "</div>";
-                kludge += "<div>initial visit: " + obj.InitialVisit + "</div>";
-                kludge += "<div>visits: " + obj.Visits + "</div>";
-                kludge += "<div>page hits:  " + obj.PageHits + "</div>";
-                kludge += "<div>image hits: " + obj.ImageHits + "</div>";
-                kludge += "<div>user name:  " + obj.UserName + "</div>";
-                kludge += "</div>";
-                $('#dashboardDialogContents').html(kludge);
-                $('#dashboardDialog').fadeIn();
-            }
-            else {
-                logError("AJX", 3910, pageHitReportModel.Success, "pageHitsReport");
             }
         },
         error: function (jqXHR) {

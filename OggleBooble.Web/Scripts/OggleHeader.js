@@ -222,7 +222,7 @@ function openBannerButton(bannerType, rankerType) {
         case "archive":
             location.href = "album.html?folder=3";
             break;
-        case "centerfold": bannerType
+        case "centerfold":
             location.href = "index.html?spa=72";
             break;
         case "ranker":
@@ -247,6 +247,7 @@ function openBannerButton(bannerType, rankerType) {
             logError("SWT", hdrFolderId, "bannerType: " + bannerType, "openBannerButton");
     }
 }
+
 function addBannerButton(bannerType, rankerType) {
     switch (bannerType) {
         case "ranker":

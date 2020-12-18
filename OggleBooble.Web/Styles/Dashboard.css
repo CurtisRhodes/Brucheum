@@ -338,7 +338,8 @@ workAreaHeaderDetailRow {
 }
 
 .errorLogTable td {
-    border: solid thin #000;
+    border-top: solid thin #000;
+    white-space: nowrap;
     font-size: 14px;
     padding: 2px;
     padding-left: 8px;

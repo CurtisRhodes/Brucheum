@@ -57,10 +57,28 @@ namespace OggleBooble.Api.Controllers
             return rslts;
         }
 
-        //select* from OggleBooble.VwVisitor where date(InitialVisit) = '2020-12-12';
+        
         [HttpGet]
         [Route("api/Report/DailyVisitors")]
         public DailyVisitorsReportModel DailyVisitors(DateTime visitDate)
+        {
+            var dailyVisitors = new DailyVisitorsReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    // "where Occured between date_add(current_date(), interval -1 day) and current_date()" +
+                    dailyVisitors.Visitors = db.VwVisitors.Where(v => v.InitialVisit == visitDate).ToList();
+                }
+                dailyVisitors.Success = "ok";
+            }
+            catch (Exception ex) { dailyVisitors.Success = Helpers.ErrorDetails(ex); }
+            return dailyVisitors;
+        }
+
+        [HttpGet]
+        [Route("api/Report/DailyVisits")]
+        public DailyVisitorsReportModel DailyVisits(DateTime visitDate)
         {
             var dailyVisitors = new DailyVisitorsReportModel();
             try
