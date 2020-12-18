@@ -160,7 +160,7 @@ function verifyVisitorId(folderId, calledFrom) {
     }
     else {
         if (!isNullorUndefined(lclStorTest)) {
-            if (isNullorUndefined(cokieTest) {
+            if (isNullorUndefined(cokieTest)) {
                 setCookieValue("VisitorId", lclStrTest);
                 logEvent("VL1", folderId, calledFrom, "cookie loaded from local storage");
             }
