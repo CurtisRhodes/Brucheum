@@ -26,7 +26,7 @@ namespace OggleBooble.Api.Models
     {
         public int PageId { get; set; }
         public string ItemId { get; set; }
-        public int InputValue { get; set; }
+        public int SortOrder { get; set; }
     }
 
 

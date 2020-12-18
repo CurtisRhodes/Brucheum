@@ -90,6 +90,7 @@ function dashboardHtml() {
         "           <div id='sortToolImageArea'  class='workAreaDisplayContainer'></div>\n" +
         "           <div id='sortToolFooter' class='workareaFooter'>\n" +
         "               <button onclick='updateSortOrder()'>ReSort</button>\n" +
+        "               <button onclick='autoIncrimentSortOrder()'>AutoIncriment</button>\n" +        
         "           </div>\n" +
         "       </div>\n" +
         "   </div>\n" +
@@ -487,12 +488,12 @@ function showCreateNewFolderDialog() {
         "       <div><span>parent</span><input id='txtCreateFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
         "       <div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput' /></div>\n" +
         "       <div><span>type</span><select id='ddNewFolderType' class='inlineInput roundedInput'>\n" +
-        "              <option value=0>singleChild</option>\n"+
-        "              <option value=1>singleModel</option>\n" +
-        "              <option value=2>singleParent</option>\n" +
-        "              <option value=3>multiModel</option>\n" +
-        "              <option value=4>multiFolder</option>\n" +
-        "          </select></div>\n"+
+        "              <option value='singleChild'>singleChild</option>\n" +
+        "              <option value='singleModel'>singleModel</option>\n" +
+        "              <option value='singleParent'>singleParent</option>\n" +
+        "              <option value='multiModel'>multiModel</option>\n" +
+        "              <option value='multiFolder'>multiFolder</option>\n" +
+        "          </select></div>\n" +
         "       <div class='roundendButton' onclick='performCreateNewFolder()'>Create Folder</div>\n");
     $('#txtNewFolderTitle').keydown(function (event) {
         if (event.keyCode === 13) {
@@ -509,7 +510,8 @@ function performCreateNewFolder() {
     newFolder.FolderName = $('#txtNewFolderTitle').val();
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "/api/CatFolder/Create?parentId=" + pSelectedTreeId + "&newFolderName=" + $('#txtNewFolderTitle').val(),
+        url: settingsArray.ApiServer + "/api/CatFolder/Create?parentId=" + pSelectedTreeId +
+            "&newFolderName=" + $('#txtNewFolderTitle').val() + "&folderType=" + $('#ddNewFolderType').val(),
         success: function (successModel) {
             $('#dashBoardLoadingGif').hide();
             if (successModel.Success === "ok") {
@@ -758,11 +760,30 @@ function updateSortOrder() {
     var sortOrderArray = [];
     $('#sortToolImageArea').children().each(function () {
         sortOrderArray.push({
-            pageId: pSelectedTreeId,
-            itemId: $(this).find("input").attr("id"),
-            inputValue: $(this).find("input").val()
+            PageId: pSelectedTreeId,
+            ItemId: $(this).find("input").attr("id"),
+            SortOrder: $(this).find("input").val()
         });
     });
+    saveSortChanges(sortOrderArray);
+}
+function autoIncrimentSortOrder() {
+    if (confirm("reset all sort orders")) {
+        $('#dashBoardLoadingGif').show();
+        $('#dataifyInfo').show().html("sorting array");
+        var sortOrderArray = [];
+        let autoI = 5;
+        $('#sortToolImageArea').children().each(function () {
+            sortOrderArray.push({
+                pageId: pSelectedTreeId,
+                itemId: $(this).find("input").attr("id"),
+                SortOrder: autoI++
+            });
+        });
+        saveSortChanges(sortOrderArray);
+    }
+}
+function saveSortChanges(sortOrderArray) {
     $('#dataifyInfo').html("saving changes");
     $.ajax({
         type: "PUT",
