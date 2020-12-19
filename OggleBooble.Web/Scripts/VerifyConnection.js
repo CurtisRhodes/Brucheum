@@ -9,7 +9,7 @@ function checkFor404(errMsg, folderId, calledFrom) {
         return true;
     }
     else {
-        logError("CK2", folderId, "actual XHR error", calledFrom);
+        logError("CK2", folderId, errMsg, calledFrom);
         return false;
     }
 }
@@ -47,7 +47,7 @@ function checkConnection(folderId, calledFrom) {
                             //$('#headerMessage').html(verifyConnectionCount);
                             if ((verifyConnectionCount > 4) && (!connectingToServerGifShowing)) showConnectingToServerGif();
                             if ((verifyConnectionCount > verifyConnectionCountLimit) && (!canIgetaConnectionMessageShowing)) {
-                                showCanIgetaConnectionMessage();
+                                showCanIgetaConnectionMessage(calledFrom);
                                 $('#dots').html('');
                             }
                             //alert("verifyConnectionCount: " + verifyConnectionCount);
@@ -77,7 +77,7 @@ function showConnectingToServerGif() {
     }
 }
 
-function showCanIgetaConnectionMessage() {
+function showCanIgetaConnectionMessage(calledFrom) {
     if (!canIgetaConnectionMessageShowing) {
         canIgetaConnectionMessageShowing = true;
         console.log("SERVICE DOWN " + verifyConnectionCount);
@@ -87,7 +87,7 @@ function showCanIgetaConnectionMessage() {
             "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
             "</div>").show();
         console.log("canIgetaConnection message showing");
-        logError("404", 3910, "SERVICE DOWN", "checkFor404");
+        logError("404", 3910, "SERVICE DOWN", calledFrom);
     }
 }
 

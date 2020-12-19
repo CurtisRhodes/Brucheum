@@ -151,30 +151,57 @@ function todayString() {
 }
 
 function verifyVisitorId(folderId, calledFrom) {
-    let cokieTest = getCookieValue("VisitorId")
-    let lclStorTest = window.localStorage["VisitorId"];
-    if (!isNullorUndefined(cokieTest) && !isNullorUndefined(lclStorTest)) {
-        console.log("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
-        //logEvent("VL0", folderId, calledFrom, "visitorId cookie and local storage verified");
-        // alert("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
+    try {
+
+        let cokieTest = getCookieValue("VisitorId")
+        let lclStorTest = window.localStorage["VisitorId"];
+        if (!isNullorUndefined(cokieTest) && !isNullorUndefined(lclStorTest)) {
+            console.log("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
+            //logEvent("VL0", folderId, calledFrom, "visitorId cookie and local storage verified");
+            // alert("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Common/GetVisitor",
+                success: function (successModel) {
+                    if (successModel.Success == "ok") {
+                        // visitor id verified
+                        logActivity("VVI", folderId); 
+                    }
+                    else {
+                        // visitorId seems to exist, but not found in table
+                        logError("LGV", folderId, success, "verifyVisitorId");
+                    }
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                }
+            });
+        }
+        else {
+            if (!isNullorUndefined(lclStorTest)) {
+                if (isNullorUndefined(cokieTest)) {
+                    setCookieValue("VisitorId", lclStrTest);
+                    logEvent("VL1", folderId, calledFrom, "cookie loaded from local storage");
+                }
+            }
+            if (!isNullorUndefined(cokieTest)) {
+                if (isNullorUndefined(lclStorTest)) {
+                    window.localStorage["VisitorId"] = cokieTest;
+                    logEvent("VL2", folderId, calledFrom, "local storage loaded from cookie");
+                }
+            }
+            if (isNullorUndefined(cokieTest) && isNullorUndefined(lclStorTest)) {
+                logError("VVF", folderId, "could be a new user", calledFrom);
+                getIpInfo(folderId, "verifyVisitorId");
+            }
+        }
     }
-    else {
-        if (!isNullorUndefined(lclStorTest)) {
-            if (isNullorUndefined(cokieTest)) {
-                setCookieValue("VisitorId", lclStrTest);
-                logEvent("VL1", folderId, calledFrom, "cookie loaded from local storage");
-            }
-        }
-        if (!isNullorUndefined(cokieTest)) {
-            if (isNullorUndefined(lclStorTest)) {
-                window.localStorage["VisitorId"] = cokieTest;
-                logEvent("VL2", folderId, calledFrom, "local storage loaded from cookie");
-            }
-        }
-        if (isNullorUndefined(cokieTest) && isNullorUndefined(lclStorTest)) {
-            logError("VVF", folderId, "could be a new user", calledFrom);
-            getIpInfo(folderId, "verifyVisitorId");
-        }
+    catch (e) {
+        logError("CAT", folderId, "hmwiwd", calledFrom);
+        if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
+        console.error("Catch error in verifyVisitorId!!: " + e);
     }
 }
 
@@ -319,7 +346,6 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
         if (document.domain === 'localhost') alert("Catch error in logError!!: " + e);
         console.error("Catch error in logError!!: " + e);
     }
-
 }
 
 function logEvent(eventCode, folderId, calledFrom, eventDetails) {

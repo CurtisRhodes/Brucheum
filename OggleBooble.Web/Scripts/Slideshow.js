@@ -164,73 +164,76 @@ function slideClick(direction) {
 
 function slide(direction) {
     try {
-        let showLoadingGif = true;
-        setTimeout(function () {
-            if (showLoadingGif)
-                $('#imagePageLoadingGif').show()
-        }, 500);
-        let tempImgSrc = new Image();
-        tempImgSrc.onload = function () {
-            showLoadingGif = false;
-            $('#imagePageLoadingGif').hide();
-            //setTimeout(function () { $('#imagePageLoadingGif').hide() }, 502);
-            //let startLoadTime = Date.now();
-            //imgSrc.onload = function () {
-
-            $('#viewerImage').css("transform", "translateX(0)");
-            // SLIDE OUT OF VIEW
-            if (direction === 'next') {  // LEFT TO RIGHT OUT THE RIGHT SIDE
-                $('#viewerImage').css("transform", "translateX(1500px)", slideShowSpeed);
-            }
-            else { // 'prev'        
-                $('#viewerImage').css("transform", "translateX(-1500px)", slideShowSpeed);
-            }
-            $('.slideshowNavgArrows').css('visibility', 'hidden');
-            $('#slideshowImageLabel').fadeOut();
-            $('#thumbImageContextMenu').fadeOut();
-
-            setTimeout(function () {
-                $('#viewerImage').hide();
-                if (direction === 'next') {
-                    $('#viewerImage').css("transform", "translateX(-3200px)");
-                }
-                else {
-                    $('#viewerImage').css("transform", "translateX(3200px)");
-                }
-                setTimeout(function () {
-                    imgSrc.src = tempImgSrc.src;
-                    $('#viewerImage').attr("src", imgSrc.src);
-                    $('#viewerImage').show();
-                    $('#viewerImage').css("transform", "translateX(0)", slideShowSpeed);
-                    setTimeout(function () {
-                        $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
-                    }, 600);
-
-                    if (spIncludeSubFolders)
-                        $('#imageViewerHeaderTitle').html(imageViewerFolderName + "/" + imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
-                    else {
-                        if (albumFolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
-                            $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
-                        }
-                    }
-                }, 400);
-            }, 300);
-            //resizeViewer();
-        };
-
-        if (direction === 'next') { 
-            if (++imageViewerIndex >= imageViewerArray.length)
-                imageViewerIndex = 0;
-        }
+        if (isNullorUndefined(imageViewerArray))
+            logError("SLA", albumFolderId, direction, "slideshow.slide");
         else {
-            if (--imageViewerIndex < 0)
-                imageViewerIndex = imageViewerArray.length - 1;
-        }
-        tempImgSrc.src = settingsImgRepo + imageViewerArray[imageViewerIndex].FileName;
-        spSessionCount++;
-        $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
-        logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+            let showLoadingGif = true;
+            setTimeout(function () {
+                if (showLoadingGif)
+                    $('#imagePageLoadingGif').show()
+            }, 500);
+            let tempImgSrc = new Image();
+            tempImgSrc.onload = function () {
+                showLoadingGif = false;
+                $('#imagePageLoadingGif').hide();
+                //setTimeout(function () { $('#imagePageLoadingGif').hide() }, 502);
+                //let startLoadTime = Date.now();
+                //imgSrc.onload = function () {
 
+                $('#viewerImage').css("transform", "translateX(0)");
+                // SLIDE OUT OF VIEW
+                if (direction === 'next') {  // LEFT TO RIGHT OUT THE RIGHT SIDE
+                    $('#viewerImage').css("transform", "translateX(1500px)", slideShowSpeed);
+                }
+                else { // 'prev'        
+                    $('#viewerImage').css("transform", "translateX(-1500px)", slideShowSpeed);
+                }
+                $('.slideshowNavgArrows').css('visibility', 'hidden');
+                $('#slideshowImageLabel').fadeOut();
+                $('#thumbImageContextMenu').fadeOut();
+
+                setTimeout(function () {
+                    $('#viewerImage').hide();
+                    if (direction === 'next') {
+                        $('#viewerImage').css("transform", "translateX(-3200px)");
+                    }
+                    else {
+                        $('#viewerImage').css("transform", "translateX(3200px)");
+                    }
+                    setTimeout(function () {
+                        imgSrc.src = tempImgSrc.src;
+                        $('#viewerImage').attr("src", imgSrc.src);
+                        $('#viewerImage').show();
+                        $('#viewerImage').css("transform", "translateX(0)", slideShowSpeed);
+                        setTimeout(function () {
+                            $('.slideshowNavgArrows').css('visibility', 'visible').fadeIn();
+                        }, 600);
+
+                        if (spIncludeSubFolders)
+                            $('#imageViewerHeaderTitle').html(imageViewerFolderName + "/" + imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
+                        else {
+                            if (albumFolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
+                                $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
+                            }
+                        }
+                    }, 400);
+                }, 300);
+                //resizeViewer();
+            };
+
+            if (direction === 'next') {
+                if (++imageViewerIndex >= imageViewerArray.length)
+                    imageViewerIndex = 0;
+            }
+            else {
+                if (--imageViewerIndex < 0)
+                    imageViewerIndex = imageViewerArray.length - 1;
+            }
+            tempImgSrc.src = settingsImgRepo + imageViewerArray[imageViewerIndex].FileName;
+            spSessionCount++;
+            $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
+            logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+        }
     } catch (e) {
         logError("CAT", 3910, e, "slide");
     }
