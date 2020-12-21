@@ -190,7 +190,7 @@ namespace OggleBooble.Api.MySqlDataContext
     [Table("OggleBooble.ActivityLog")]
     public class ActivityLog
     {
-        public string ActivtyCode { get; set; }
+        public string ActivityCode { get; set; }
         public int FolderId { get; set; }
         [Key]
         [Column(Order = 0)]

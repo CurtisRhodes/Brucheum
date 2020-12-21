@@ -494,3 +494,8 @@ body {
     text-decoration: underline;
 }
 
+.robotWarning {
+    padding: 4px;
+    background-color: #ff3333;
+    color: #000;
+}

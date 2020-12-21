@@ -149,8 +149,7 @@ function getIpInfo(folderId, calledFrom) {
                 logError("XIP", folderId, "visitorId: " + getCookieValue("VisitorId"), "getIpInfo/" + calledFrom);
                 return;
             }
-        }
-    
+        }    
         let visitorId = create_UUID();
         $.ajax({
             type: "GET",
@@ -178,7 +177,6 @@ function getIpInfo(folderId, calledFrom) {
                         },
                         success: function (addVisitorSuccess) {
                             if (addVisitorSuccess.Success == "ok") {
-
                                 setCookieValue("VisitorId", visitorId);
                                 let cookieTest = getCookieValue("VisitorId");
                                 if (cookieTest === visitorId) {
@@ -186,36 +184,16 @@ function getIpInfo(folderId, calledFrom) {
                                     logIpHit(visitorId, ipResponse.ip, folderId);
                                 }
                                 else {
-                                    logError("CTF", folderId, "getIpInfo", calledFrom);
-                                    if (!navigator.cookieEnabled) {
-                                        logError("UNC", folderId, "new visitorId: " + getCookieValue("VisitorId"), "getIpInfo/CTF&" + calledFrom);
-                                    }
+                                    logError("CTF", folderId, "getIpInfo", calledFrom); // cookie fail on new visitor
+                                    cureWIPproblem(folderId, addVisitorSuccess.VisitorId, "NEW");
                                 }
                             }
                             else {
                                 if (addVisitorSuccess.Success == "existing Ip") {
-
-                                    setCookieValue("VisitorId", addVisitorSuccess.VisitorId);
-                                    let cookieTest = getCookieValue("VisitorId");
-                                    if (cookieTest === addVisitorSuccess.VisitorId) {
-                                        if (!navigator.cookieEnabled) {
-                                            logError("WBS", folderId, "visitorId: " + getCookieValue("VisitorId"), "getIpInfo/CTF&" + calledFrom);
-                                        }
-                                        else {
-                                            logError("WIP", folderId, "set cookie to existing visitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/" + calledFrom);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        logError("CTF", folderId, "unable to load an existing VisitorId", calledFrom);
-                                        if (!navigator.cookieEnabled) {
-                                            logError("UNC", folderId, "visitorId: " + getCookieValue("VisitorId"), "getIpInfo/CTF&" + calledFrom);
-                                        }
-                                    }
-                                    //if ((cookieTest == addVisitorSuccess.VisitorId) && (window.localStorage[VisitorId] = cookieTest)) {
+                                    cureWIPproblem(folderId, addVisitorSuccess.VisitAdded, "WIP");
                                 }
                                 else
-                                    logError("AJX", folderId, success, "addVisitor");
+                                    logError("AJX", folderId, success, "getIpInfo");
                             }
                         },
                         error: function (jqXHR) {
@@ -235,6 +213,60 @@ function getIpInfo(folderId, calledFrom) {
     } catch (e) {
         logError("CAT", folderId, e, "getIpInfo/" + calledFrom);
     }
+}
+
+function myMsgTest() {
+    let wipTitle = "data tracking error";
+    let wipMessage = "problem storing your IpAddress";
+    wipMessage += "<br/>Unable to store a cookie";
+    wipMessage += "<br/>This site requires cookies enabled";
+    wipMessage += "<br/>You may be asked to login on every page until you leave.";
+    wipMessage += "<br/>you must <a href=''>Register</a> or <a href=''>login</a> to continue";
+    wipMessage += "<div class='robotWarning'><input type='checkbox'/> I am not a robot.</div>";
+
+    showMyAlert(wipTitle, wipMessage);
+}
+
+function cureWIPproblem(folderId, visitorId, calledFrom) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Common/GetErrorDetails?errorCode=WIP&visitorId=" + visitorId,
+        success: function (errorDetails) {
+            if (errorDetails.Success == "ok") {
+                if (errorDetails.Results.Count == 0) {
+                    logError("WIP", folderId, "could be one I deleted", "cureWIPproblem/" + calledFrom);
+                }
+                else {
+                    //if ((cookieTest == addVisitorSuccess.VisitorId) && (window.localStorage[VisitorId] = cookieTest)) {
+
+                    let wipTitle = "data tracking error";
+                    let wipMessage = "problem storing your IpAddress";
+                    if (getCookieValue("VisitorId") != visitorId) {
+                        logError("CTF", folderId, getCookieValue("VisitorId") + " != " + visitorId, "cureWIPproblem/" + calledFrom);
+                        //logError("CTF", folderId, "unable to load an existing VisitorId", calledFrom);
+                        wipMessage += "<br/>Unable to store a cookie";
+                    }
+                    if (!navigator.cookieEnabled) {
+                        wipMessage += "<br/>This site requires cookies enabled";
+                        wipMessage += "<br/>You may be asked to login on every page until you leave.";
+
+                    }
+                    wipMessage += "<br/>you must <a href=''>Register</a> or <a href=''>login</a> to continue";
+                    wipMessage += "<div class='robotWarning'><input type='checkbox'/> I am not a robot.</div>";
+
+                    logError("DFV", folderId, "Ip calls: " + errorDetails.Results.Count, "cureWIPproblem/" + calledFrom);
+                    showMyAlert(wipTitle, wipMessage);
+                }
+            }
+            else
+                logError("AJX", folderId, errorDetails.Success, "cureWIPproblem");
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+        }
+    });
 }
 
 function logIpHit(visitorId, ipAddress, folderId) {

@@ -86,11 +86,15 @@ namespace OggleBooble.Api.Models
         public string ErrorMessage { get; set; }
         public string CalledFrom { get; set; }
     }
-    public class ActivityLogModel
+
+    public class ErrorDetailSuccessModel
     {
-        public string ActivtyCode { get; set; }
-        public int FolderId { get; set; }
-        public string VisitorId { get; set; }
+        public ErrorDetailSuccessModel()
+        {
+            Results = new List<MySqlDataContext.ErrorLog>();
+        }
+        public List<MySqlDataContext.ErrorLog> Results { get; set; }
+        public string Success { get; set; }
     }
 
     public class EventLogModel
@@ -142,11 +146,26 @@ namespace OggleBooble.Api.Models
         public string FeedBackEmail { get; set; }
         public DateTime Occured { get; set; }
     }
-    public class ChangeLogModel
+    public class DataActivityModel
     {
         public int FolderId { get; set; }
         public string ActivityCode { get; set; }
         public string Details { get; set; }
+        public string VisitorId { get; set; }
+        public DateTime Occured { get; set; }
+    }
+    public class ChangeLogModel
+    {
+        public int FolderId { get; set; }
+        public string ChangeLogCode { get; set; }
+        public string Details { get; set; }
+        public string VisitorId { get; set; }
+        public DateTime Occured { get; set; }
+    }
+    public class ActivityLogModel
+    {
+        public int FolderId { get; set; }
+        public string ActivityCode { get; set; }
         public string VisitorId { get; set; }
         public DateTime Occured { get; set; }
     }

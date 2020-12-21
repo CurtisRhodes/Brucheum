@@ -440,8 +440,8 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.ActivityLogs.Add(new ActivityLog()
                     {
-                        ActivtyCode = activityLogModel.ActivtyCode,
-                        FolderId=activityLogModel.FolderId,
+                        ActivityCode = activityLogModel.ActivityCode,
+                        FolderId = activityLogModel.FolderId,
                         VisitorId = activityLogModel.VisitorId,
                         Occured = DateTime.Now
                     });
@@ -456,9 +456,29 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
+        [HttpGet]
+        [Route("api/Common/GetErrorDetails")]
+        public ErrorDetailSuccessModel GetErrorDetails(string errorCode, string visitorId)
+        {
+            var errorDetails = new ErrorDetailSuccessModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    errorDetails.Results = db.ErrorLogs.Where(e => e.ErrorCode == errorCode && e.VisitorId == visitorId).ToList();
+                }
+                errorDetails.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                errorDetails.Success = Helpers.ErrorDetails(ex);
+            }
+            return errorDetails;
+        }
+
         [HttpPost]
         //[Route("api/Common/LogDataActivity")]
-        public string LogDataActivity(ChangeLogModel changeLog)
+        public string LogDataActivity(DataActivityModel dataActivity)
         {
             string success;
             try
@@ -467,10 +487,10 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.ChangeLogs.Add(new MySqlDataContext.ChangeLog()
                     {
-                        VisitorId = changeLog.VisitorId,
-                        FolderId = changeLog.FolderId,
-                        ActivityCode = changeLog.ActivityCode,
-                        Details = changeLog.Details,
+                        VisitorId = dataActivity.VisitorId,
+                        FolderId = dataActivity.FolderId,
+                        ActivityCode = dataActivity.ActivityCode,
+                        Details = dataActivity.Details,
                         Occured = DateTime.Now
                     });
                     db.SaveChanges();

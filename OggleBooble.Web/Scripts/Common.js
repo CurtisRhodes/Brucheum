@@ -152,7 +152,6 @@ function todayString() {
 
 function verifyVisitorId(folderId, calledFrom) {
     try {
-
         let cokieTest = getCookieValue("VisitorId")
         let lclStorTest = window.localStorage["VisitorId"];
         if (!isNullorUndefined(cokieTest) && !isNullorUndefined(lclStorTest)) {
@@ -161,11 +160,11 @@ function verifyVisitorId(folderId, calledFrom) {
             // alert("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/Common/GetVisitor",
+                url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + cokieTest,
                 success: function (successModel) {
                     if (successModel.Success == "ok") {
                         // visitor id verified
-                        logActivity("VVI", folderId); 
+                        logActivity("VVI", folderId);
                     }
                     else {
                         // visitorId seems to exist, but not found in table
@@ -382,11 +381,12 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
 }
 
 function logActivity(activityCode, folderId) {
+    //alert("logActivity(" + activityCode + "," + folderId + ")");
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogActivity",
         data: {
-            ActivtyCode: activityCode,
+            ActivityCode: activityCode,
             FolderId: folderId,
             VisitorId: getCookieValue("VisitorId")
         },
@@ -666,8 +666,8 @@ function closeDragElement() {
 function showMyAlert(title, message) {
     $('#centeredDialogContents').html("<div>\n<div id='myAlert'>" + message + "</div>\n</div>");
     $('#centeredDialogTitle').html(title);
-    $('#centeredDialogContainer').css("top", 33 + $(window).scrollTop());
+    //$('#centeredDialogContainer').css("top", 33 + $(window).scrollTop());
+    $('#centeredDialog').css("top", $('#oggleHeader').height() + 120);
     $('#centeredDialogContainer').draggable().fadeIn();
-    //alert(message);
 }
 
