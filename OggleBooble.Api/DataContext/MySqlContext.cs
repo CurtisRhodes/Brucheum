@@ -363,14 +363,19 @@ namespace OggleBooble.Api.MySqlDataContext
     public class EventLog
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PkId { get; set; }
+        [Column(Order = 0)]
+        public string VisitorId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public DateTime Occured { get; set; }
+        [Key]
+        [Column(Order = 2)]
         public string EventCode { get; set; }
-        public int PageId { get; set; }
+        [Key]
+        [Column(Order = 3)]
+        public int FolderId { get; set; }
         public string CalledFrom { get; set; }
         public string EventDetail { get; set; }
-        public string VisitorId { get; set; }
-        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.RankerVote")]

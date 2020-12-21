@@ -196,6 +196,10 @@ namespace OggleBooble.Api.Controllers
                 userCredit.Occured = DateTime.Now;
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    //UserCredit existingVisitor = db.UserCredits.Where(cr => cr.VisitorId == userCredit.VisitorId).FirstOrDefault();
+                    //if (existingVisitor == null)
+                    //{}
+
                     db.UserCredits.Add(userCredit);
                     var dbUser = db.RegisteredUsers.Where(r => r.VisitorId == userCredit.VisitorId).FirstOrDefault();
                     if (dbUser != null) {

@@ -43,6 +43,7 @@ namespace OggleBooble.Api.Controllers
                         };
                         db.Visitors.Add(newVisitor);
                         db.SaveChanges();
+                        addVisitorSuccess.VisitorId = newVisitor.VisitorId;
                         addVisitorSuccess.Success = "ok";
                     }
                     else {
@@ -98,7 +99,7 @@ namespace OggleBooble.Api.Controllers
                         var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
                         if (registeredUser != null)
                         {
-                            visitSuccessModel.WelcomeMessage = "Welcome back" + registeredUser.UserName;
+                            visitSuccessModel.WelcomeMessage = "Welcome back " + registeredUser.UserName;
                         }
                         else
                         {
@@ -412,7 +413,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.EventLogs.Add(new EventLog()
                     {
-                        PageId = eventModel.FolderId,
+                        FolderId = eventModel.FolderId,
                         EventCode = eventModel.EventCode,
                         EventDetail = eventModel.EventDetail,
                         CalledFrom = eventModel.CalledFrom,
@@ -474,6 +475,26 @@ namespace OggleBooble.Api.Controllers
                 errorDetails.Success = Helpers.ErrorDetails(ex);
             }
             return errorDetails;
+        }
+
+        [HttpGet]
+        [Route("api/Common/GetEventDetails")]
+        public EventDetailSuccessModel GetEventDetails(string eventCode, string visitorId)
+        {
+            var eventDetails = new EventDetailSuccessModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    eventDetails.Results = db.EventLogs.Where(e => e.EventCode == eventCode && e.VisitorId == visitorId).ToList();
+                }
+                eventDetails.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                eventDetails.Success = Helpers.ErrorDetails(ex);
+            }
+            return eventDetails;
         }
 
         [HttpPost]

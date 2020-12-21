@@ -350,12 +350,50 @@ function closeViewer(calledFrom) {
             closeMethod = calledFrom;
         }
         if (spSessionCount < 2) {
-            logEvent("SIV", albumFolderId, closeMethod, "send a warning");
+            logEvent("SIV", albumFolderId, closeMethod, imageViewerArray[imageViewerIndex].LinkId);
+            //alert("check behaviour");
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "/api/Common/GetEventDetails?eventCode=SIV&visitorId=" + getCookieValue("VisitorId"),
+                success: function (eventDetails) {
+                    if (eventDetails.Success === "ok") {
+                        let singleImagesViewed = eventDetails.Results.length;
+                        $.ajax({
+                            type: "GET",
+                            url: settingsArray.ApiServer + "/api/Common/GetEventDetails?eventCode=SVC&visitorId=" + getCookieValue("VisitorId"),
+                            success: function (eventDetails) {
+                                if (eventDetails.Success === "ok") {
+                                    let mulitImageViews = eventDetails.Results.length;
+                                    if (mulitImageViews < singleImageViewed) {
+                                        if (singleImagesViewed > 1) {
+                                            alert("You show try clicking left or right in the slideshow");
+                                        }
+                                    }
+                                }
+                                else
+                                    logError("AJX", folderId, eventDetails.Success, "GetEventDetails");
+                            },
+                            error: function (jqXHR) {
+                                let errMsg = getXHRErrorDetails(jqXHR);
+                                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                            }
+                        });
+                    }
+                    else {
+                        logError("AJX", folderId, eventDetails.Success, "GetEventDetails");
+                    }
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                }
+            });
         }
         else {
             logEvent("SVC", albumFolderId, closeMethod, "Images Viewed: " + spSessionCount);
         }
-        // resizeImageContainer();
     }
     spSessionCount = 0;
 }

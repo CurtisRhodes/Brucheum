@@ -442,6 +442,12 @@ function awardCredits(activityCode, folderId) {
         type: "POST",
         url: settingsArray.ApiServer + "api/User/AwardCredits",
         data: {
+        //public string VisitorId { get; set; }
+        //public string ActivityCode { get; set; }
+        //public int Credits { get; set; }
+        //public int PageId { get; set; }
+        //public DateTime Occured { get; set; }
+
             VisitorId: getCookieValue("VisitorId"),
             ActivityCode: activityCode,
             PageId: folderId,
@@ -452,7 +458,7 @@ function awardCredits(activityCode, folderId) {
                 //displayStatusMessage("ok", "credits charged");
             }
             else {
-                logError("AJX", folderId, success, "awardCredits");
+                logError("AJX", folderId, success, "awardCredits/" + activityCode);
             }
         },
         error: function (jqXHR) {

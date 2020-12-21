@@ -97,6 +97,16 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
+    public class EventDetailSuccessModel
+    {
+        public EventDetailSuccessModel()
+        {
+            Results = new List<MySqlDataContext.EventLog>();
+        }
+        public List<MySqlDataContext.EventLog> Results { get; set; }
+        public string Success { get; set; }
+    }
+
     public class EventLogModel
     {
         public string EventCode { get; set; }
