@@ -80,10 +80,10 @@ function loadBlogArticles(commentType) {
                 $('#blogLoadingGif').hide();
                 if (blogCommentsContainer.Success === "ok") {
                     $('#blogArticleJogContainer').html("");
-                    if (blogCommentsContainer.blogComments == null)
+                    if (blogCommentsContainer.items.length == 0)
                         alert("no entries found");
                     else {
-                        $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
+                        $.each(blogCommentsContainer.items, function (idx, blogComment) {
 
                             //if (commentType == "PRO")
                             //    alert("categoryComment.Link: " + categoryComment.Link);
