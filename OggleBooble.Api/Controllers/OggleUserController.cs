@@ -47,9 +47,9 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/Login/RegisterUser")]
-        public SuccessModel AddUser(RegisteredUserModel registeredUserModel)
+        public string AddUser(RegisteredUserModel registeredUserModel)
         {
-            SuccessModel successModel = new SuccessModel();
+            string success;
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -57,20 +57,17 @@ namespace OggleBooble.Api.Controllers
                     RegisteredUser dbUserName = db.RegisteredUsers.Where(u => u.UserName == registeredUserModel.UserName).FirstOrDefault();
                     if (dbUserName != null)
                     {
-                        successModel.Success = "user name already exists";
-                        return successModel;
+                        return "user name already exists";
                     }
-                    string visitorId = registeredUserModel.VisitorId;
-
+                    //string visitorId = registeredUserModel.VisitorId;
                     RegisteredUser dbUserVisitorId = db.RegisteredUsers.Where(u => u.VisitorId == registeredUserModel.VisitorId).FirstOrDefault();
                     if (dbUserVisitorId != null)
                     {
-                        visitorId = successModel.ReturnValue = Guid.NewGuid().ToString();
+                        return "visitorId already registered";
                     }
-                    //return "user name already exists";
                     RegisteredUser dbNewUser = new RegisteredUser()
                     {
-                        VisitorId = visitorId,
+                        VisitorId = registeredUserModel.VisitorId,
                         Pswrd = HashSHA256(registeredUserModel.ClearPassword),
                         UserName = registeredUserModel.UserName,
                         FirstName = registeredUserModel.FirstName,
@@ -84,20 +81,11 @@ namespace OggleBooble.Api.Controllers
                     };
                     db.RegisteredUsers.Add(dbNewUser);
                     db.SaveChanges();
-                    if (visitorId == registeredUserModel.VisitorId)
-                        successModel.Success = "ok";
-                    else
-                    {
-                        successModel.ReturnValue = visitorId;
-                        successModel.Success = "visitorId already exists";
-                    }
+                    success = "ok";
                 }
             }
-            catch (Exception ex)
-            {
-                successModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return successModel;
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
         }
 
         [HttpGet]

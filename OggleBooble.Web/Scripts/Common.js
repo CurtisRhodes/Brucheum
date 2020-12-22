@@ -368,7 +368,11 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             },
             success: function (success) {
                 if (success !== "ok") {
-                    logError("AJX", folderId, eventCode + ": " + success, calledFrom + "/logEvent");
+                    if (success.indexOf("Duplicate entry") > 0) {
+                        logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/logEvent");
+                    }
+                    else
+                        logError("AJX", folderId, eventCode + ": " + success, calledFrom + "/logEvent");
                 }
             },
             error: function (jqXHR) {

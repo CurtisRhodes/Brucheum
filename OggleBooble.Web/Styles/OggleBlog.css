@@ -45,15 +45,27 @@
     margin-left: 10px;
 }
 
-.blogEditButton {
-    float: right;
-    cursor: pointer;
-    text-decoration: underline;
-    color: var(--brucheumBlue);
+.blogLeftColumnBlog {
+    margin-top: 100px;
 }
 
+.blogEditButton {
+    display: block;
+    margin-left: 5px;
+    margin-bottom: 22px;
+    padding: 4px;
+    background-color: var(--oggleContainerBackgroundColor);
+    cursor: pointer;
+    /*  
+        color: var(--brucheumBlue);
+        .blogEditButton
+    */
+}
+    .blogEditButton:hover {
+        text-decoration: underline;
+    }
 
-.blogItemContainer {    
+.blogItemContainer {
     overflow-y: auto;
     width: 100%;
 }

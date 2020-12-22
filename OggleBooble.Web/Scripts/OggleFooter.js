@@ -1,9 +1,9 @@
-﻿function setOggleFooter(pageId, rootFolder) {
-    //alert("setOggleFooter. pageId: " + pageId + "  rootFolder: " + rootFolder);
+﻿function setOggleFooter(folderId, rootFolder) {
+    //alert("setOggleFooter. folderId: " + folderId + "  rootFolder: " + rootFolder);
 
     $('.footer').html("<div class='flexContainer'>\n" +
         "    <div class='footerCol'>\n" +  // column 1
-        "       <div class='clickable' onclick='rtpe(\"FLC\",\"feedback\"," + rootFolder + "\"," + pageId + ")'>Feedback</div>\n" +
+        "       <div class='clickable' onclick='rtpe(\"FLC\",\"feedback\"," + rootFolder + "\"," + folderId + ")'>Feedback</div>\n" +
         "       <div id='footerCol1' class='footerColCustContainer'></div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" + // column 2
@@ -11,7 +11,7 @@
         "       <div id='footerCol2' class='footerColCustContainer'></div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" + // column 3
-        "       <div class='clickable' onclick='rtpe(\"FLC\",\"mailme\",\"mailme\"," + pageId + ")'>email site developer</div>\n" +
+        "       <div class='clickable' onclick='rtpe(\"FLC\",\"mailme\",\"mailme\"," + folderId + ")'>email site developer</div>\n" +
         "       <div id='footerCol3' class='footerColCustContainer'></div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" +  // column 4
@@ -33,7 +33,7 @@
     );
 
     switch (rootFolder) {
-        //rtpe(code,calledfrom,detail,pageId)
+        //rtpe(code,calledfrom,detail,folderId)
         case "playboyIndex":
             break;
         case "blog":
@@ -53,11 +53,11 @@
                 "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n" +
                 "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n");
             $('#footerCol2').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"archive\"," + pageId + ")'>Archive</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + folderId + ")'>Boobs Rater</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"archive\"," + folderId + ")'>Archive</div>\n");
             $('#footerCol3').html(
                 "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + folderId + ")'>Centerfolds</div>\n");
             //$('#footerCol5').html();
             break;
         }
@@ -66,34 +66,34 @@
                 "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n" +
                 "<div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n");
             $('#footerCol2').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
-                //"<div class='clickable' onclick='rtpe(\"FLC\",\"videos\",\"videos\"," + pageId + ")'>Videos</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + folderId + ")'>Boobs Rater</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + folderId + ")'>Centerfolds</div>\n");
+                //"<div class='clickable' onclick='rtpe(\"FLC\",\"videos\",\"videos\"," + folderId + ")'>Videos</div>\n" +
             $('#footerCol3').html(
                 "<div class='clickable' onclick='window.location.href=\"index.html?spa=5233\", \"_blank\"'>softcore</div>\n" +
                 "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n");
             $('#footerCol4').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Boobs Rater</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + folderId + ")'>Boobs Rater</div>\n");
             break;
         }
         case "soft": {
             $('#footerCol1').html(
                 "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n");
             $('#footerCol2').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + pageId + ")'>Porn Rater</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + folderId + ")'>Centerfolds</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"ranker\",\"ranker\"," + folderId + ")'>Porn Rater</div>\n");
             break;
         }
         case "playboy":
         case "cybergirl":
         case "centerfold": {
             $('#footerCol1').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"cybergirls\"," + pageId + ")'>cybergirls</div>\n" +
-                //"<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"magazine covers\"," + pageId + ")'>magazine covers</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"extras\"," + pageId + ")'>Playboy extras</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"cybergirls\"," + folderId + ")'>cybergirls</div>\n" +
+                //"<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"magazine covers\"," + folderId + ")'>magazine covers</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"extras\"," + folderId + ")'>Playboy extras</div>\n");
             $('#footerCol2').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"playmate dir tree\"," + pageId + ")'>Playmate List</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"ranker\"," + pageId + ")'; >Playmate Rater</a></div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"playmate dir tree\"," + folderId + ")'>Playmate List</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"ranker\"," + folderId + ")'; >Playmate Rater</a></div>\n");
             $('#footerCol3').html(
                 "<div class='clickable' onclick='window.location.href=\"album.html?spa=3909\", \"_blank\"'>Big Naturals</div>\n" +
                 "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n");
@@ -104,9 +104,9 @@
                 "<div class='clickable' onclick='showCatListDialog(440)'>Slut List</div>\n" +
                 "<div class='clickable' onclick='showCatListDialog(242)'>Porn Categories</div>\n");
             $('#footerCol2').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"slut archive\"," + pageId + ")'>porn stars</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"slut archive\"," + folderId + ")'>porn stars</div>\n" +
                 "<div class='clickable' onclick='window.location.href=\"album.html?folder=3909\", \"_blank\"'>Big Naturals</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + folderId + ")'>Centerfolds</div>\n");
             break;
         }
         case "sluts":  {
@@ -117,13 +117,13 @@
             $('#footerCol2').html(
                 //"<div class='clickable' onclick='window.location.href=\"index.html, \"_blank\"'>Oggle Booble</div>\n" +
                 "<div class='clickable' onclick='window.location.href=\"index.html'>Oggle Booble</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + pageId + ")'>Centerfolds</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"footer\",\"root\"" + rootFolder + "," + folderId + ")'>Centerfolds</div>\n");
             break;
         }
         case "dashboard": {
             $('#footerCol1').html(
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"rejects\",\"rejects\"," + pageId + ")'>Rejects</div>\n" +
-                "<div class='clickable' onclick='rtpe(\"FLC\",\"videos\",\"videos\"," + pageId + ")'>Videos</div>\n");
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"rejects\",\"rejects\"," + folderId + ")'>Rejects</div>\n" +
+                "<div class='clickable' onclick='rtpe(\"FLC\",\"videos\",\"videos\"," + folderId + ")'>Videos</div>\n");
 
             $('#footerCol6').html(`<!-- Histats.com  (div with counter) --><div id="histats_counter"></div>
                 <!-- Histats.com  START  (aync)-->
@@ -142,7 +142,7 @@
             break;
         }
         default: {
-            logError("SWT", pageId, "rootFolder: " + rootFolder, "setOggleFooter");
+            logError("SWT", folderId, "rootFolder: " + rootFolder, "setOggleFooter");
             $('#footerCol1').html("<div>unhandled domain: " + rootFolder + "</div>\n");
             break;
         }
@@ -159,5 +159,5 @@
     }
 }
 
-function defaultFooterHTML(pageId, rootFolder) {
+function defaultFooterHTML(folderId, rootFolder) {
 }

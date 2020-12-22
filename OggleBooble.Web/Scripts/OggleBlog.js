@@ -469,10 +469,12 @@ function resizeBlogPage() {
 
 function blogBodyHtml() {
 
-    $('#leftColumnArea').append("<div id='leftColumnShowBlog' onclick='setBlogView(\"showBlogDisplay\")'>Show Blog</div>\n");
-    $('#leftColumnArea').append("<div id='leftColumnEditorNew' onclick='setBlogView(\"showBlogEditor\")'>New Entry</div>\n");
-    $('#leftColumnArea').append("<div id='leftColumnEditor'>Edit</div>\n");
-    $('#leftColumnArea').append("<div id='leftColumnShowPage'>Show Page</div>\n");
+
+    $('#leftColumnArea').append("<div class='blogLeftColumnBlog'>\n" +
+        "<div class='blogEditButton' id='leftColumnShowBlog' onclick='setBlogView(\"showBlogDisplay\")'>Show Blog</div>\n" +
+        "<div class='blogEditButton' id='leftColumnEditorNew' onclick='setBlogView(\"showBlogEditor\")'>New Entry</div>\n" +
+        "<div class='blogEditButton' id='leftColumnEditor'>Edit</div>\n" +
+        "<div class='blogEditButton' id='leftColumnShowPage'>Show Page</div>\n</div>\n");
 
     return " <div id='dots'></div>\n" +
         "    <div id='divStatusMessage'></div>\n" +

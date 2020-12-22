@@ -288,24 +288,17 @@ function attemptRegister() {
                     Email: $('#txtRegisterEmail').val(),
                     Status: "NEW"
                 },
-                success: function (successModel) {
-                    if (successModel.Success === "ok") {
+                success: function (success) {
+                    if (success === "ok") {
                         registerHappyPath();
                     }
                     else {
-                        if (successModel.Success == "user name already exists") {
-                            $('#errRegisterUserName').text("user name already exists").show();
-                        }
+                        if ((success == "user name already exists") ||
+                            (success == "visitorId already registered"))
+                            $('#errRegisterUserName').text(successModel.Success).show();
                         else {
-                            if (successModel.Success == "visitorId already exists") {
-                                setCookieValue("VisitorId", successModel.ReturnValue);
-                                registerHappyPath(successModel.Success);
-
-                            }
-                            else {
-                                logError("AJX", loginFromPageId, success, "attemptRegister");
-                                $('#registerValidationSummary').html(response).show();
-                            }
+                            logError("AJX", loginFromPageId, success, "attemptRegister");
+                            $('#registerValidationSummary').html(response).show();
                         }
                     }
                 },
@@ -323,14 +316,11 @@ function attemptRegister() {
 
 function registerHappyPath(successMessage) {
 
-    sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!", "OH MY GOD");
+    displayStatusMessage("ok", "thanks for Registering " + $('#txtRegisterUserName').val());
 
-    if (successMessage == "visitorId already exists") 
-        displayStatusMessage("ok", "thanks for Registering " + $('#txtRegisterUserName').val());
-    else
-        displayStatusMessage("warning", "thanks for Registering " + $('#txtRegisterUserName').val() + " but " + successMessage);
+    sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
+        "UserName: " + $('#txtRegisterUserName').val() + "<br/>VisitorId: " + getCookieValue("VisitorId"));
 
-    setCookieValue("IsLoggedIn", "true");
     setCookieValue("IsLoggedIn", "true");
     setCookieValue("UserName", $('#txtRegisterUserName').val());
     $('#spnUserName').html(getCookieValue("UserName"));
@@ -340,10 +330,8 @@ function registerHappyPath(successMessage) {
     if (typeof resume === 'function')
         resume();
 
-
     //window.location.href = ".";
     showCustomMessage(96, false);
-
 }
 
 function validateRegister() {
