@@ -27,6 +27,12 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    success = "nan";
+                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    if (dbExistingIpVisitor != null)
+                    {
+                        success = "existing Ip";
+                    }
 
                     var newVisitor = new Visitor()
                     {
@@ -41,13 +47,8 @@ namespace OggleBooble.Api.Controllers
                     };
                     db.Visitors.Add(newVisitor);
                     db.SaveChanges();
-                    success= "ok";
-
-                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (dbExistingIpVisitor != null)
-                    {
-                        success = "existing Ip";
-                    }
+                    if (success == "nan")
+                        success = "ok";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }

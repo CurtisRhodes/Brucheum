@@ -135,6 +135,9 @@ function logVisit(visitorId, folderId) {
 
 function getIpInfo(folderId, calledFrom) {
     try {
+
+        //logActivity("QQQ", folderId);
+
         let newVisitorId = create_UUID();
         setCookieValue("VisitorId", newVisitorId);
         if (getCookieValue("VisitorId") != newVisitorId) {
@@ -149,6 +152,7 @@ function getIpInfo(folderId, calledFrom) {
             }
         }
         else {
+            logActivity("XIP", folderId);
             $.ajax({
                 type: "GET",
                 url: "https://ipinfo.io?token=ac5da086206dc4",
@@ -156,9 +160,11 @@ function getIpInfo(folderId, calledFrom) {
                 //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
                 success: function (ipResponse) {
                     if (isNullorUndefined(ipResponse.ip)) {
+                        logActivity("YYY", folderId);
                         logError("BUG", folderId, "ipInfo came back with no ip. VisitorId: " + visitorId, "getIpInfo/" + calledFrom);
                     }
                     else {
+                        //logActivity("ZZZ", folderId);
                         $.ajax({
                             type: "POST",
                             url: settingsArray.ApiServer + "api/Common/AddVisitor",
@@ -172,19 +178,19 @@ function getIpInfo(folderId, calledFrom) {
                                 Region: ipResponse.region,
                                 GeoCode: ipResponse.loc
                             },
-                            success: function (success) {
-                                if (success == "ok") {
-                                    if (calledFrom == "LGV") {
-                                        //logError("LG3", folderId, "lgvVisitorId: " + lgvVisitorId, "getIpInfo/" + calledFrom);
-                                    }
-                                    if (calledFrom == "IHE") {
-                                        //logError("IH1", folderId, "lgvVisitorId: " + lgvVisitorId, "getIpInfo/" + calledFrom);
-                                    }
+                            success: function (avSuccess)
+                            {
+                                //logActivity("AAA", folderId);
+                                if (avSuccess == "ok") {
                                     logActivity("NEW", folderId);
                                     logIpHit(visitorId, ipResponse.ip, folderId);
                                 }
-                                else {
-                                    if (addVisitorSuccess.Success == "existing Ip") {
+                                else
+                                {
+                                    //logActivity("BBB", folderId);
+                                    if (avSuccess == "existing Ip")
+                                    {
+                                        logActivity("CCC", folderId);
                                         if (getCookieValue("VisitorId") != newVisitorId) {
                                             if (navigator.cookieEnabled) {
                                                 logError("WI2", folderId, getCookieValue("VisitorId") + " != " + visitorId, "checkForLooping/" + calledFrom);
@@ -201,40 +207,11 @@ function getIpInfo(folderId, calledFrom) {
                                             logIpHit(visitorId, ipResponse.ip, folderId);
                                             logError("WI1", folderId, calledFrom, "getIpInfo/AddVisitor");
                                         }
-                                        //checkForLooping(folderId, getCookieValue(VisitorId), calledFrom, "WIP");
-                                        //checkForLooping(folderId, getCookieValue(VisitorId), calledFrom, "LGV");
-                                        //if (calledFrom == "LGV") {
-                                        //    if (getCookieValue("VisitorId") == addVisitorSuccess.VisitorId) {
-                                        //        //logError("LG6", folderId, "", "getIpInfo/AddVisitor/" + calledFrom);
-                                        //        checkForLooping(folderId, getCookieValue(VisitorId), calledFrom, "LG6");
-                                        //    }
-                                        //    else {
-                                        //        logError("LG4", folderId, getCookieValue(VisitorId) + " success.VisitorId: " + addVisitorSuccess.VisitorId, "getIpInfo/AddVisitor/" + calledFrom);
-                                        //        checkForLooping(folderId, getCookieValue(VisitorId), calledFrom, "LG4");
-                                        //    }
-                                        //}
-                                        //else {
-                                        //    if (calledFrom == "IHE") {
-                                        //        if (getCookieValue("VisitorId") == addVisitorSuccess.VisitorId)
-                                        //            logError("IH1", folderId, "", "getIpInfo/AddVisitor/" + calledFrom);
-                                        //        else {
-                                        //            logError("LG4", folderId,
-                                        //                getCookieValue(VisitorId) + " addVisitorSuccess.VisitorId: " + addVisitorSuccess.VisitorId + "calling cureWIPproblem()",
-                                        //                "getIpInfo/AddVisitor/" + calledFrom);
-                                        //            checkForLooping(folderId, getCookieValue(VisitorId), calledFrom, "IHE");
-                                        //        }
-                                        //    }
-                                        //    else {
-                                        //        checkForLooping(folderId, "getCookieValue(VisitorId): ", calledFrom, "WIP");
-                                        //        logError("WIP", folderId, "non LGV?", "getIpInfo/AddVisitor/" + calledFrom);
-                                        //    }
-                                        //}
                                     }
-                                    else {
-                                        //if (calledFrom == "LGV")
-                                        //    logError("LG5", folderId, addVisitorSuccess.Success, "getIpInfo/AddVisitor/" + calledFrom);
-                                        //else
-                                        logError("AJX", folderId, addVisitorSuccess.Success, "getIpInfo/AddVisitor/" + calledFrom);
+                                    else
+                                    {
+                                        logActivity("DDD", folderId);
+                                        logError("AJX", folderId, avSuccess, "getIpInfo/AddVisitor/" + calledFrom);
                                     }
                                 }
                             },
@@ -253,7 +230,9 @@ function getIpInfo(folderId, calledFrom) {
                 }
             });
         }
-    } catch (e) {
+    }
+    catch (e)
+    {
         logError("CAT", folderId, e, "getIpInfo/" + calledFrom);
     }
 }
