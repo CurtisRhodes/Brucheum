@@ -152,7 +152,7 @@ function getIpInfo(folderId, calledFrom) {
             }
         }
         else {
-            logActivity("XIP", folderId);
+            logActivity("AAA", folderId);
             $.ajax({
                 type: "GET",
                 url: "https://ipinfo.io?token=ac5da086206dc4",
@@ -164,7 +164,7 @@ function getIpInfo(folderId, calledFrom) {
                         logError("BUG", folderId, "ipInfo came back with no ip. VisitorId: " + visitorId, "getIpInfo/" + calledFrom);
                     }
                     else {
-                        //logActivity("ZZZ", folderId);
+                        logActivity("BBB", folderId);
                         $.ajax({
                             type: "POST",
                             url: settingsArray.ApiServer + "api/Common/AddVisitor",
@@ -180,17 +180,14 @@ function getIpInfo(folderId, calledFrom) {
                             },
                             success: function (avSuccess)
                             {
-                                //logActivity("AAA", folderId);
                                 if (avSuccess == "ok") {
                                     logActivity("NEW", folderId);
                                     logIpHit(visitorId, ipResponse.ip, folderId);
                                 }
                                 else
                                 {
-                                    //logActivity("BBB", folderId);
                                     if (avSuccess == "existing Ip")
                                     {
-                                        logActivity("CCC", folderId);
                                         if (getCookieValue("VisitorId") != newVisitorId) {
                                             if (navigator.cookieEnabled) {
                                                 logError("WI2", folderId, getCookieValue("VisitorId") + " != " + visitorId, "checkForLooping/" + calledFrom);
@@ -203,9 +200,9 @@ function getIpInfo(folderId, calledFrom) {
                                             }
                                         }
                                         else {
-                                            logActivity("WIP", folderId);
+                                            logActivity("NWI", folderId);
                                             logIpHit(visitorId, ipResponse.ip, folderId);
-                                            logError("WI1", folderId, calledFrom, "getIpInfo/AddVisitor");
+                                            //logError("WI1", folderId, calledFrom, "getIpInfo/AddVisitor");
                                         }
                                     }
                                     else
