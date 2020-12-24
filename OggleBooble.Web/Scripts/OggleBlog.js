@@ -1,40 +1,88 @@
-﻿let blogObject = {}, selectedCommentType = "BLG", selectedBlogId;
+﻿let blogObject = {},
+    selectedCommentType,
+    selectedBlogId;
 
 function blogStartup() {
     setOggleHeader(3911, "blog");
     setOggleFooter(3911, "blog");
     document.title = "blog : OggleBooble";
+
+    loadBlogHtmlBody();
+
     selectedCommentType = "BLG";
-    $('#indexMiddleColumn').html(blogBodyHtml());
-
-    $('#summernoteContainer').summernote({
-        toolbar: [['codeview']],
-        height: "300",
-        dialogsInBody: true
-    });
-    $(".note-editable").css('font-size', '19px');
-
-    //if (isNullorUndefined(selectedBlogId)) {
-    //    loadArticleJogs("BLG");
-    //    setBlogView("showBlogDisplay");
-    //}
-    //else {
-    //    alert("Calling Blog for blogId: " + selectedBlogId);
-    //    showBlogPage(selectedBlogId);
-    //    setBlogView("showBlogPage");
-    //}
-    loadBlogDropDowns();
-
+    console.log("CALL setBlogView(showArticleJogs)");
+    setBlogView("showArticleJogs");
+    
     if (isInRole("BLG")) {
         //if (document.domain === 'localhost') alert("is in role blog editor");
         $('.adminOnly').show();
         $('.blogEditButton').show();
         $('#footerMessage').html("blog Editor");
     }
-    $('#blogControls').show();
 }
 
-function loadBlogDropDowns() {
+function setBlogView(view) {
+
+    console.log("setBlogView(" + view + ")");
+
+    switch (view) {
+        case "showBlogEditor": {
+            $('#leftColumnEditor').hide();
+            $('#leftColumnEditorNew').hide();
+            $('#leftColumnShowBlog').show();
+            $('#leftColumnShowPage').show();
+            $('#blogPageArea').hide();
+            $('#blogListArea').fadeOut();
+            $('#blogEditArea').fadeIn();
+            loadBlogList($('#blogDisplayCommentTypeSelect').val());
+            $('#btnAddEdit').html("Add");
+            $('#btnNewCancel').hide();
+            clearGets();
+            break;
+        }
+        case "editArticle": {
+            $('#leftColumnEditorNew').hide();
+            $('#leftColumnEditor').hide();
+            $('#leftColumnShowBlog').show();
+            $('#blogListArea').fadeOut();
+            $('#blogEditArea').fadeIn();
+            $('#leftColumnShowPage').show();
+            $('#blogPageArea').fadeOut();
+            loadBlogList(selectedCommentType);
+            if (selectedCommentType === "FLD")
+                loadFolderComment(selectedBlogId);
+            else
+                loadSingleBlogEntry(selectedBlogId);
+            break;
+        }
+        case "showArticleJogs": {
+            $('#leftColumnEditorNew').show();
+            $('#leftColumnEditor').hide();
+            $('#leftColumnShowBlog').hide();
+            $('#leftColumnShowPage').hide();
+            $('#blogPageArea').hide();
+            $('#blogListArea').fadeIn();
+            $('#blogEditArea').fadeOut();
+            loadBlogDropDowns(selectedCommentType);
+            loadBlogArticles(selectedCommentType);
+            //$('#blogDisplayCommentTypeSelect').change(loadArticleJogs($('#blogDisplayCommentTypeSelect').val()));
+            break;
+        }
+        case "showSingleArticle": {
+            $('#blogListArea').fadeOut();
+            $('#blogPageArea').fadeIn();
+            $('#blogEditArea').hide();
+            $('#leftColumnEditor').show();
+            $('#leftColumnEditorNew').hide();
+            $('#leftColumnShowBlog').show();
+            loadSingleBlogEntry(selectedBlogId);
+            break;
+        }
+        default:
+    }
+}
+
+function loadBlogDropDowns(commentType) {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/EntityAttribute/GetRefs?refType=BLG",
@@ -44,9 +92,10 @@ function loadBlogDropDowns() {
                 $.each(refs.RefItems, function (idx, obj) {
                     $('#blogDisplayCommentTypeSelect').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
                     $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                    if (obj.RefCode == commentType) {
+                    }
                 });
-                $('#blogDisplayCommentTypeSelect option[value="BLG"]').attr('selected', 'selected');
-                $('#blogDisplayCommentTypeSelect').change(loadArticleJogs($('#blogDisplayCommentTypeSelect').val()));
+                $('#blogDisplayCommentTypeSelect option[value=\"' + commentType + '\"]').attr('selected', 'selected');
             }
             else
                 logError("AJX", 3911, refs.Success, "loadBlogDropDowns");
@@ -61,9 +110,10 @@ function loadBlogDropDowns() {
 }
 
 function loadArticleJogs(commentType) {
-    $('#blogListArea').show();
-    $('#blogPageArea').hide();
-    $('#blogEditArea').hide();
+    //$('#blogListArea').show();
+    //$('#blogPageArea').hide();
+    //$('#blogEditArea').hide();
+    loadBlogDropDowns(commentType);
     if (commentType === "FLD")
         loadFolderComments();
     else
@@ -72,38 +122,35 @@ function loadArticleJogs(commentType) {
 
 function loadBlogArticles(commentType) {
     try {
+        selectedCommentType = commentType;
         $('#blogLoadingGif').show();
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/OggleJournal/GetBlogList?commentType=" + commentType,
-            success: function (blogCommentsContainer) {
+            success: function (blogCommentsModel) {
                 $('#blogLoadingGif').hide();
-                if (blogCommentsContainer.Success === "ok") {
+                if (blogCommentsModel.Success === "ok") {
                     $('#blogArticleJogContainer').html("");
-                    if (blogCommentsContainer.items.length == 0)
-                        alert("no entries found");
+                    if (blogCommentsModel.BlogComments.length == 0)
+                        alert("no entries found " + blogCommentsModel.BlogComments.length + " commentType: " + commentType);
                     else {
-                        $.each(blogCommentsContainer.items, function (idx, blogComment) {
-
-                            //if (commentType == "PRO")
-                            //    alert("categoryComment.Link: " + categoryComment.Link);
-                            if (isNullorUndefined(blogComment.Link)) {
-                                blogComment.Link = "Images/redballon.png";
-                            }
+                        settingsImgRepo = settingsArray.ImageRepo;
+                        $.each(blogCommentsModel.BlogComments, function (idx, blogComment) {
                             $('#blogArticleJogContainer').append(`
                             <div class="blogArticleJog"> 
                                 <div class="flexContainer">
-                                    <div class="floatLeft">
-                                        <img class="blogArticleJogImage" src="`+ blogComment.Link + `" onclick="showBlogPage('` + blogComment.Id + `','` + commentType + `')" />
+                                    <div class='floatleft'>
+                                        <img class="blogArticleJogImage" src="`+ settingsImgRepo + blogComment.ImgSrc + `" onclick="editArticle(` + blogComment.Id + `,'` + commentType + `');"/>
                                     </div>
-                                    <div class="blogArticleJogBody">
+                                    <div class='floatleft'>
                                         <div class="blogArticleTitle">`+ blogComment.CommentTitle + `</div>
                                         <div class="blogArticleText">`+ blogComment.CommentText + `</div>
-                                        <div class="blogArticleBottomRow">
-                                            <span class="clickable" onclick="createStaticBlogPage(`+ blogComment.Id + `)">...</span>
-                                            <div class="blogEditButton" onclick="editArticle('`+ blogComment.Id + `','` + commentType + `')">edit</div>  
-                                        </div>
+                                        <div class="clickable" onclick="setBlogView(showSingleArticle((`+ blogComment.Id + `)">...</div>
                                     </div>
+                                </div>
+                                <div class="blogArticleBottomRow flexContainer">
+                                    <div class="blogEditButton floatright" onclick="editArticle(` + blogComment.Id + `,'` + commentType + `');">edit</div>  
+                                    
                                 </div>
                             </div>`);
                         });
@@ -126,6 +173,12 @@ function loadBlogArticles(commentType) {
     }
 }
 
+function createStaticBlogPage() { }
+function showSingleArticle(blogCommentId) {
+    selectedBlogId = blogCommentId;
+    setBlogView("showSingleArticle");
+}
+
 function loadFolderComments() {
     $.ajax({
         type: "GET",
@@ -146,7 +199,8 @@ function loadFolderComments() {
                                             <div class="blogArticleText">`+ categoryComment.CommentText + `</div>
                                             <div class="blogArticleBottomRow">
                                                 <span class="clickable" onclick="createStaticBlogPage(`+ categoryComment.FolderId + `)">...</span>
-                                                <div class="floatRight clickable" onclick="editArticle('`+ categoryComment.FolderId + `','FLD')">edit</div>  
+                                                <div class="blogEditButton" onclick="editArticle('` + categoryComment.FolderId + `','FLD')">edit</div>  
+                                                <div class="floatRight clickable" onclick="editArticle('` + categoryComment.FolderId + `,'FLD')">edit</div>  
                                             </div>
                                         </div>
                                     </div>
@@ -165,16 +219,7 @@ function loadFolderComments() {
     });
 }
 
-function editArticle(itemId, commentType) {
-    loadBlogList(commentType);
-    if (commentType === "FLD")
-        loadFolderComment(itemId);
-    else
-        loadBlogEntry(itemId);
-    setBlogView("editArticle");
-}
-
-function loadBlogEntry(blogId) {
+function loadSingleBlogEntry(blogId) {
     try {
         $.ajax({
             type: "GET",
@@ -195,7 +240,7 @@ function loadBlogEntry(blogId) {
                     $('#btnNewCancel').show();
                 }
                 else {
-                    logError("AJX", folderId, model.Success, "loadBlogEntry");
+                    logError("AJX", folderId, model.Success, "load SingleBlogEntry");
                 }
             },
             error: function (jqXHR) {
@@ -206,7 +251,7 @@ function loadBlogEntry(blogId) {
             }
         });
     } catch (e) {
-        logError("CAT", 3911, e, "loadBlogEntry");
+        logError("CAT", 3911, e, "load SingleBlogEntry");
     }
 }
 
@@ -246,66 +291,10 @@ function loadFolderComment(folderId) {
     });
 }
 
-function setBlogView(option) {
-    switch (option) {
-        case "showBlogEditor":
-            $('#leftColumnEditor').hide();
-            $('#leftColumnEditorNew').hide();
-            $('#leftColumnShowBlog').show();
-            $('#leftColumnShowPage').show();
-            $('#blogPageArea').hide();
-            $('#blogListArea').fadeOut();
-            $('#blogEditArea').fadeIn();
-            loadBlogList($('#blogDisplayCommentTypeSelect').val());
-            $('#btnAddEdit').html("Add");
-            $('#btnNewCancel').hide();
-            clearGets();
-            break;
-        case "editArticle":
-            $('#leftColumnEditorNew').hide();
-            $('#leftColumnEditor').hide();
-            $('#leftColumnShowBlog').show();
-            $('#blogListArea').fadeOut();
-            $('#blogEditArea').fadeIn();
-            $('#leftColumnShowPage').show();
-            $('#blogPageArea').fadeOut();
-            break;
-        case "showBlogDisplay":
-            $('#leftColumnEditorNew').show();
-            $('#leftColumnEditor').hide();
-            $('#leftColumnShowBlog').hide();
-            $('#leftColumnShowPage').hide();
-            $('#blogPageArea').hide();
-            $('#blogListArea').fadeIn();
-            $('#blogEditArea').fadeOut();
-            break;
-        case "showBlogPage":
-            $('#blogListArea').fadeOut();
-            $('#blogPageArea').fadeIn();
-            $('#blogEditArea').hide();
-            $('#leftColumnEditor').show();
-            $('#leftColumnEditorNew').hide();
-            $('#leftColumnShowBlog').show();
-            break;
-        default:
-    }
-}
-
-function showBlogPage(itemId, commentType) {
-    try {
-        if (commentType === "FLD")
-            loadFolderComment(itemId);
-        else
-            loadBlogEntry(itemId);
-
-        $('#leftColumnEditor').click(function () {
-            editArticle(itemId, commentType);
-        });
-        setBlogView("showBlogPage");
-
-    } catch (e) {
-        alert("display BlogEntry catch: " + e);
-    }
+function editArticle(blogId, commentType) {
+    selectedBlogId = blogId;
+    selectedCommentType = commentType;
+    setBlogView("editArticle");
 }
 
 function loadBlogList(commentType) {
@@ -324,7 +313,7 @@ function loadBlogList(commentType) {
                         else {
                             $.each(categoryCommentContainer.CategoryComments, function (idx, categoryComment) {
                                 $('#blogList').append("<div class='blogListItem' " +
-                                    "onclick=loadBlogEntry('" + categoryComment.FolderId + "','" + commentType + "') >" +
+                                    "onclick=loadSingleBlogEntry('" + categoryComment.FolderId + "','" + commentType + "') >" +
                                     categoryComment.FolderName + "</div>");
                             });
                         }
@@ -357,7 +346,7 @@ function loadBlogList(commentType) {
                         else {
                             $.each(blogCommentModelContainer.blogComments, function (idx, blogComment) {
                                 $('#blogList').append("<div class='blogListItem' " +
-                                    "onclick=loadBlogEntry('" + blogComment.Id + "','" + commentType + "') >" +
+                                    "onclick=loadSingleBlogEntry('" + blogComment.Id + "','" + commentType + "') >" +
                                     blogComment.CommentTitle + "</div>");
                             });
                         }
@@ -467,20 +456,24 @@ function resizeBlogPage() {
     $('.note-editable').height($('.note-editor').height() - 50);
 }
 
-function blogBodyHtml() {
-
+function loadBlogHtmlBody() {
+    //function $('#indexMiddleColumn').html(blogBodyHtml());
 
     $('#leftColumnArea').append("<div class='blogLeftColumnBlog'>\n" +
-        "<div class='blogEditButton' id='leftColumnShowBlog' onclick='setBlogView(\"showBlogDisplay\")'>Show Blog</div>\n" +
+        "<div class='blogEditButton' id='leftColumnShowBlog' onclick='setBlogView(\"showArticleJogs\")'>Show Blog</div>\n" +
         "<div class='blogEditButton' id='leftColumnEditorNew' onclick='setBlogView(\"showBlogEditor\")'>New Entry</div>\n" +
         "<div class='blogEditButton' id='leftColumnEditor'>Edit</div>\n" +
-        "<div class='blogEditButton' id='leftColumnShowPage'>Show Page</div>\n</div>\n");
+        "<div class='blogEditButton' id='leftColumnShowPage'>Show Page</div>\n</div>\n"
+    );
+    //$('#leftColumnEditor').click(function () {
+    //    editArticle(itemId, commentType);
+    //});
 
-    return " <div id='dots'></div>\n" +
+    $('#indexMiddleColumn').html("<div id='dots'></div>\n" +
         "    <div id='divStatusMessage'></div>\n" +
         "    <img id='blogLoadingGif' class='loadingGif' src='Images/loader.gif' />\n" +
         "    <div id='blogListArea' class='blogDisplayArea'>\n" +
-        "        <select id='blogDisplayCommentTypeSelect' class='roundedInput blogDropdown'></select>\n"+
+        "        <select id='blogDisplayCommentTypeSelect' class='roundedInput blogDropdown'></select>\n" +
         "        <div id='blogArticleJogContainer' class='blogArticleJogContainer'></div>\n" +
         "    </div>\n" +
         "    <div id='blogEditArea' class='twoColumnFrame flexContainer'>\n" +
@@ -528,5 +521,12 @@ function blogBodyHtml() {
         "        <div id='blogPageTitle' class='blogPageSubHeader'></div>\n" +
         "        <div class='blogPageImageContainer'><img id='blogPageImage' class='largeCenteredImage' /></div>\n" +
         "        <div id='blogPageBody' class='blogPageBodyText'></div>\n" +
-        "   </div>\n";
+        "   </div>\n");
+
+    $('#summernoteContainer').summernote({
+        toolbar: [['codeview']],
+        height: "300",
+        dialogsInBody: true
+    });
+    $(".note-editable").css('font-size', '19px');
 }

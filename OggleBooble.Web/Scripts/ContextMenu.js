@@ -196,8 +196,7 @@ function contextMenuAction(action) {
         case "closeSlideShow":
             closeViewer("context menu");
             break;
-        case "openInNewTab": {
-            // rtpe(eventCode, calledFrom, eventDetail, pageId)
+        case "openInNewTab": {            
             rtpe("ONT", "context menu", pFolderName, pFolderId);
             break;
         }

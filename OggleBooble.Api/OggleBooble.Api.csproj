@@ -260,7 +260,6 @@
     </Compile>
     <Compile Include="Hubs\MessageHub.cs" />
     <Compile Include="Models\AlbumPageModels.cs" />
-    <Compile Include="Models\BlogModels.cs" />
     <Compile Include="Models\CommonModels.cs" />
     <Compile Include="Models\FileModels.cs" />
     <Compile Include="Models\FolderModels.cs" />

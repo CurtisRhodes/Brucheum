@@ -777,7 +777,7 @@ function autoIncrimentSortOrder() {
             sortOrderArray.push({
                 pageId: pSelectedTreeId,
                 itemId: $(this).find("input").attr("id"),
-                SortOrder: autoI++
+                SortOrder: autoI += 5
             });
         });
         saveSortChanges(sortOrderArray);

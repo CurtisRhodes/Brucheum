@@ -164,7 +164,7 @@ function verifyVisitorId(folderId, calledFrom) {
                 success: function (successModel) {
                     if (successModel.Success == "ok") {
                         // visitor id verified
-                        logActivity("VVI", folderId);
+                        // logActivity("VVI", folderId);
                     }
                     else {
                         // visitorId seems to exist, but not found in table
@@ -192,7 +192,7 @@ function verifyVisitorId(folderId, calledFrom) {
                 }
             }
             if (isNullorUndefined(cokieTest) && isNullorUndefined(lclStorTest)) {
-                logError("VVF", folderId, "could be a new user", calledFrom);
+                //logError("VVF", folderId, "could be a new user", calledFrom);
                 getIpInfo(folderId, "verifyVisitorId");
             }
         }
@@ -369,7 +369,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             success: function (success) {
                 if (success !== "ok") {
                     if (success.indexOf("Duplicate entry") > 0) {
-                        logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/logEvent");
+                       // logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/logEvent");
                     }
                     else
                         logError("AJX", folderId, eventCode + ": " + success, calledFrom + "/logEvent");
@@ -399,7 +399,7 @@ function logActivity(activityCode, folderId) {
                 //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
             }
             else
-                logError("AJX", folderId, success, "log activity");
+                logError("AJX", folderId, activityCode + ": " + success, "log activity");
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();

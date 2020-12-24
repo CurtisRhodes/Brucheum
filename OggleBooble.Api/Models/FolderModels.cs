@@ -129,4 +129,14 @@ namespace OggleBooble.Api.Models
         public string FolderName { get; set; }
         public int SortOrder { get; set; }
     }
+
+    public class BlogCommentSuccessModel
+    {
+        public BlogCommentSuccessModel()
+        {
+            BlogComments = new List<VwBlogComment>();
+        }
+        public List<VwBlogComment> BlogComments { get; set; }
+        public string Success { get; set; }
+    }
 }

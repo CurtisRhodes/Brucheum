@@ -16,85 +16,52 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpGet]
         [Route("api/OggleJournal/GetBlogItem")]
-        public BlogCommentModelContainer GetBlogItem(string blogId)
+        public BlogCommentSuccessModel GetBlogItem(string blogId)
         {
-            BlogCommentModelContainer blogCommentsContainer = new BlogCommentModelContainer();
+            var blogCommentModel = new BlogCommentSuccessModel();
             try
             {
                 //using (var db = new OggleBoobleMSSqlContext())
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    BlogComment dbBlogComment = db.BlogComments.Where(b => b.Id == blogId).FirstOrDefault();
-                    if (dbBlogComment != null)
+                    VwBlogComment vwBlogComment = db.VwBlogComments.Where(b => b.PkId == blogId).FirstOrDefault();
+                    if (vwBlogComment != null)
                     {
-                        blogCommentsContainer.items.Add(new BlogComment()
-                        {
-                            Id = dbBlogComment.Id,
-                            CommentTitle = dbBlogComment.CommentTitle,
-                            CommentText = dbBlogComment.CommentText,
-                            CommentType = dbBlogComment.CommentType,
-                            ImageLink = dbBlogComment.ImageLink
-                        });
-                        blogCommentsContainer.Success = "ok";
+                        blogCommentModel.BlogComments.Add(vwBlogComment);
+                        blogCommentModel.Success = "ok";
                     }
                     else
-                        blogCommentsContainer.Success = "blogId " + blogId + " not found";
+                        blogCommentModel.Success = "blog entry not found";
                 }
             }
             catch (Exception ex)
             {
-                blogCommentsContainer.Success = Helpers.ErrorDetails(ex);
+                blogCommentModel.Success = Helpers.ErrorDetails(ex);
             }
-            return blogCommentsContainer;
+            return blogCommentModel;
         }
 
         [HttpGet]
         [Route("api/OggleJournal/GetBlogList")]
-        public BlogCommentModelContainer GetBlogList(string commentType)
+        public BlogCommentSuccessModel GetBlogList(string commentType)
         {
-            BlogCommentModelContainer blogCommentsContainer = new BlogCommentModelContainer();
+            var blogCommentsModel = new BlogCommentSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    List<BlogComment> dbBlogComments = db.BlogComments.Where(b => b.CommentType == commentType).ToList();
-                    foreach (BlogComment dbBlogComment in dbBlogComments)
-                    {
-                        blogCommentsContainer.items.Add(dbBlogComment);
-                    }
-                    blogCommentsContainer.Success = "ok";
+                    blogCommentsModel.BlogComments = db.VwBlogComments.Where(b => b.CommentType == commentType).ToList();
+                    blogCommentsModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                blogCommentsContainer.Success = Helpers.ErrorDetails(ex);
+                blogCommentsModel.Success = Helpers.ErrorDetails(ex);
             }
-            return blogCommentsContainer;
+            return blogCommentsModel;
         }
 
-        [HttpGet]
-        [Route("api/OggleBlog/GetBlogComment")]
-        public BlogCommentModelContainer GetBlogComment(string linkId, string visitorId)
-        {
-            var blogCommentModelContainer = new BlogCommentModelContainer();
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    BlogComment dbBlogComment = db.BlogComments.Where(b => b.Id == linkId).FirstOrDefault();
-                    if (dbBlogComment == null)
-                        blogCommentModelContainer.Success = "Id not found";
-                    else
-                    blogCommentModelContainer.items.Add(dbBlogComment);
-                }
-                blogCommentModelContainer.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                blogCommentModelContainer.Success = Helpers.ErrorDetails(ex);
-            }
-            return blogCommentModelContainer;
-        }
+        // [Route("api/OggleBlog/GetBlogComment")]
 
         [HttpPost]
         [Route("api/OggleJournal/Insert")]

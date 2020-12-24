@@ -56,8 +56,10 @@ function perfomCopyLink(linkId) {
                 //awardCredits("LKC", pSelectedTreeId);
             }
             else {
-                displayStatusMessage("warning", success);
-                logError("AJX", pSelectedTreeId, success, "perfomCopyLink");
+                if (success.IndexOf("Duplicate entry") > 0)
+                    displayStatusMessage("warning", "Image already in folder");
+                else
+                    logError("AJX", pSelectedTreeId, success, "performCopyLink");
             }
         },
         error: function (xhr) {
@@ -85,14 +87,14 @@ function moveFile(request, linkId, folderId) {
         url: settingsArray.ApiServer + "api/Links/MoveLink?linkId=" + linkId + "&destinationFolderId=" + pSelectedTreeId + "&request=" + request,
         success: function (success) {
             $('#imagePageLoadingGif').hide();
+            $('#centeredDialogContainer').fadeOut();
+            dragableDialogClose();
+            slideShowDialogClose();
             if (success === "ok") {
                 if (viewerShowing)
                     slide("next");
-                dragableDialogClose();
-                slideShowDialogClose();
                 getAlbumImages(folderId);
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
-                $('#centeredDialogContainer').fadeOut();
 
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
@@ -102,7 +104,10 @@ function moveFile(request, linkId, folderId) {
                 });
             }
             else {
-                logError("AJX", folderId, success, "moveFile");
+                if (success.IndexOf("Duplicate entry") > 0)
+                    displayStatusMessage("warning", "Image already in folder");
+                else
+                    logError("AJX", folderId, success, "moveFile");
             }
         },
         error: function (xhr) {

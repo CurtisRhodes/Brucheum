@@ -33,7 +33,8 @@ namespace OggleBooble.Api.Models
     }
     public class RefSuccessModel
     {
-        public RefSuccessModel() {
+        public RefSuccessModel()
+        {
             RefItems = new List<RefItemModel>();
         }
         public List<RefItemModel> RefItems { get; set; }
@@ -142,11 +143,11 @@ namespace OggleBooble.Api.Models
         public string Country { get; set; }
         public string GeoCode { get; set; }
     }
-    public class AddVisitorSuccessModel
-    {
-        public string VisitorId { get; set; }
-        public string Success { get; set; }
-    }
+    //public class AddVisitorSuccessModel
+    //{
+    //    public string VisitorId { get; set; }
+    //    public string Success { get; set; }
+    //}
     public class FeedBackModel
     {
         public string VisitorId { get; set; }

@@ -20,40 +20,38 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpPost]
         [Route("api/Common/AddVisitor")]
-        public AddVisitorSuccessModel AddVisitor(AddVisitorModel visitorData)
+        public string AddVisitor(AddVisitorModel visitorData)
         {
-            var addVisitorSuccess = new AddVisitorSuccessModel();
+            string success;
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (dbExistingIpVisitor == null)
+
+                    var newVisitor = new Visitor()
                     {
-                        var newVisitor = new Visitor()
-                        {
-                            VisitorId = visitorData.VisitorId,
-                            InitialPage = visitorData.FolderId,
-                            City = visitorData.City,
-                            Country = visitorData.Country,
-                            GeoCode = visitorData.GeoCode,
-                            Region = visitorData.Region,
-                            InitialVisit = DateTime.Now,
-                            IpAddress = visitorData.IpAddress
-                        };
-                        db.Visitors.Add(newVisitor);
-                        db.SaveChanges();
-                        addVisitorSuccess.VisitorId = newVisitor.VisitorId;
-                        addVisitorSuccess.Success = "ok";
-                    }
-                    else {
-                        addVisitorSuccess.VisitorId = dbExistingIpVisitor.VisitorId;
-                        addVisitorSuccess.Success = "existing Ip";
+                        VisitorId = visitorData.VisitorId,
+                        InitialPage = visitorData.FolderId,
+                        City = visitorData.City,
+                        Country = visitorData.Country,
+                        GeoCode = visitorData.GeoCode,
+                        Region = visitorData.Region,
+                        InitialVisit = DateTime.Now,
+                        IpAddress = visitorData.IpAddress
+                    };
+                    db.Visitors.Add(newVisitor);
+                    db.SaveChanges();
+                    success= "ok";
+
+                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    if (dbExistingIpVisitor != null)
+                    {
+                        success = "existing Ip";
                     }
                 }
             }
-            catch (Exception ex) { addVisitorSuccess.Success = Helpers.ErrorDetails(ex); }
-            return addVisitorSuccess;
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
         }
 
         [HttpPost]

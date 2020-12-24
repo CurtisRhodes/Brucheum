@@ -24,7 +24,7 @@ function checkConnection(folderId, calledFrom) {
         }
         else {
             clearInterval(getXMLsettingsWaiter);
-            verifyConnectionFunction(calledFrom);
+            verifyConnectionFunction(calledFrom, folderId);
             connectingToServerGifShowing = false;
 
             setTimeout(function () {
@@ -51,7 +51,7 @@ function checkConnection(folderId, calledFrom) {
                                 $('#dots').html('');
                             }
                             //alert("verifyConnectionCount: " + verifyConnectionCount);
-                            verifyConnectionFunction();
+                            verifyConnectionFunction("settimeout", folderId);
                         }
                     }, 850);
                 }
@@ -91,7 +91,7 @@ function showCanIgetaConnectionMessage(calledFrom) {
     }
 }
 
-function verifyConnectionFunction() {
+function verifyConnectionFunction(calledFrom, folderId) {
     let requestedPage = settingsArray.ApiServer + "api/Common/VerifyConnection";
     if (connectionVerified)
         return;
@@ -111,7 +111,7 @@ function verifyConnectionFunction() {
                 }
                 else {
                     console.log("success but no verify: " + successModel.Success);
-                    if (document.domain === "localhost") alert("proper error in verifyConnectionFunction: " + successModel.Success);
+                    if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
                     connectionVerified = false;
                 }
             }
@@ -121,9 +121,9 @@ function verifyConnectionFunction() {
                     //console.log("TRAPPED: " + successModel.Success);
                 }
                 else {
-                    console.log("proper error in verifyConnectionFunction: " + successModel.Success);
-                    logError("AJX","proper error in verifyConnectionFunction",)
-                    if (document.domain === "localhost") alert("proper error in verifyConnectionFunction: " + successModel.Success);
+                    console.log("proper error in verify ConnectionFunction: " + successModel.Success);
+                    logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
+                    if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
                 }
             }
         },

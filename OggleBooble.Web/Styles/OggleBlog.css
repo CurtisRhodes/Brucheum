@@ -3,10 +3,9 @@
     border: solid thin var(--oggleBorderColor);
 }
 
-
 .oggleBlogEditor {
-    display: block;
-    padding:8px;
+    display: none;
+    padding: 8px;
     border: solid thin var(--oggleBorderColor);
     width: 60%;
 }
@@ -82,7 +81,7 @@
     }
 
 .blogArticleJogContainer {
-    display: flex;
+    display: block;
     border: solid .05px var(--oggleBorderColor);
     overflow-y: auto;
 }
@@ -104,6 +103,7 @@
 }
 
 .blogArticleTitle {
+    display: block;
     font-size: 24px;
     text-align: center;
 }
@@ -130,10 +130,9 @@
 }
 
 .singleBlogEntryContainer {
+    display: none;
     background-color: var(--oggleContainerBackgroundColor);
-    display: block;
     border: solid thin black;
-    
     padding: 6px;
     overflow-y: auto;
 }
