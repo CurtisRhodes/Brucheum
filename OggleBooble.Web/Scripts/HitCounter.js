@@ -135,69 +135,86 @@ function logVisit(visitorId, folderId) {
 
 function getIpForExistingVisitorId(folderId) {
     try {
-        //logActivity("GV1", folderId);
-
+        logActivity("EX0", folderId);
+        logEvent("EIP", folderId, "getIpInfo", getCookieValue("VisitorId"))
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + getCookieValue("VisitorId"),
             success: function (successModel) {
-                //logActivity("GV3", folderId);
                 if (successModel.Success == "not found") {
-                    //logActivity("GV4", folderId);
+                    logEvent("EIQ", folderId, "getIpInfo", successModel.Success)
+                    logActivity("EX1", folderId);
                     try {
-                        //logActivity("AA2", folderId);
-                        $.get("https://ipinfo.io?token=ac5da086206dc4", function (ipResponse) {
-                            logActivity("BB2", folderId);
-                            $.ajax({
-                                type: "POST",
-                                url: settingsArray.ApiServer + "api/Common/AddVisitor",
-                                data: {
-                                    VisitorId: getCookieValue("VisitorId"),
-                                    IpAddress: ipResponse.ip,
-                                    FolderId: folderId,
-                                    CalledFrom: calledFrom,
-                                    City: ipResponse.city,
-                                    Country: ipResponse.country,
-                                    Region: ipResponse.region,
-                                    GeoCode: ipResponse.loc
-                                },
-                                success: function (avSuccess) {
-                                    //logActivity("AVS", folderId);
-                                    switch (avSuccess) {
-                                        case "ok":
-                                            logIpHit(newVisitorId, ipResponse.ip, folderId);
-                                            logActivity("NW2", folderId);
-                                            break;
-                                        case "existing Ip":
-                                            logIpHit(newVisitorId, ipResponse.ip, folderId);
-                                            logActivity("WI2", folderId);
-                                            break;
-                                        case "nan":
-                                            logActivity("NAX", folderId);
-                                            //logIpHit(visitorId, ipResponse.ip, folderId);
-                                            break;
-                                        default:
-                                            logActivity("DDD", folderId);
-                                            logError("AJX", folderId, avSuccess, "getIpForExistingVisitorId");
+                        $.ajax({
+                            type: "GET",
+                            url: "https://ipinfo.io?token=ac5da086206dc4",
+                            success: function (ipResponse) {
+                                logActivity("EX2", folderId);
+                                $.ajax({
+                                    type: "POST",
+                                    url: settingsArray.ApiServer + "api/Common/AddVisitor",
+                                    data: {
+                                        VisitorId: getCookieValue("VisitorId"),
+                                        IpAddress: ipResponse.ip,
+                                        FolderId: folderId,
+                                        CalledFrom: calledFrom,
+                                        City: ipResponse.city,
+                                        Country: ipResponse.country,
+                                        Region: ipResponse.region,
+                                        GeoCode: ipResponse.loc
+                                    },
+                                    success: function (avSuccess) {
+                                        //logActivity("AVS", folderId);
+                                        switch (avSuccess) {
+                                            case "ok":
+                                                logIpHit(newVisitorId, ipResponse.ip, folderId);
+                                                logActivity("EX4", folderId);
+                                                break;
+                                            case "existing Ip":
+                                                logIpHit(newVisitorId, ipResponse.ip, folderId);
+                                                logActivity("EX5", folderId);
+                                                break;
+                                            default:
+                                                logActivity("EX6", folderId);
+                                                logError("AJX", folderId, avSuccess, "getIpForExistingVisitorId");
+                                        }
+                                    },
+                                    error: function (jqXHR) {
+                                        logActivity("EX7", folderId);
+                                        let errMsg = getXHRErrorDetails(jqXHR);
+                                        let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                                        if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
                                     }
-                                },
-                                error: function (jqXHR) {
-                                    logActivity("AVF", folderId);
-                                    let errMsg = getXHRErrorDetails(jqXHR);
-                                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-                                }
-                            });
-                        }, "jsonp")
+                                });
+                            },
+                            error: function (jqXHR) {
+                                logActivity("EX3", folderId);
+                                let errMsg = getXHRErrorDetails(jqXHR);
+                                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                            }
+                        });
+
+                        //$.get("https://ipinfo.io?token=ac5da086206dc4", function (ipResponse) {
+                        //}, "jsonp",
+                        //    function (jqXHR) {
+                        //        logActivity("EX3", folderId);
+                        //        logError("XHR", folderId, getXHRErrorDetails(jqXHR), "ipInfo");
+                        //    }
+                        //);
                     } catch (e) {
                         logActivity("CCC", folderId);
                         logError("CAT", folderId, e, "AgetIpInfo/" + calledFrom);
                     }
                 }
                 else {
-                    logActivity("GV5", folderId);
-                    if (successModel.Success != "ok") {
+                    if (successModel.Success == "ok") {
+                        logActivity("EX8", folderId);
                         logError("LGV", folderId, successModel.Success, "getIpForExistingVisitorId");
+                    }
+                    else {
+                        logActivity("EX9", folderId);
+                        logError("EIF", folderId, successModel.Success, "getIpForExistingVisitorId");
                     }
                 }
             },
@@ -216,8 +233,6 @@ function getIpInfo(folderId, calledFrom) {
     try {
 
         if (!isNullorUndefined(getCookieValue("VisitorId"))) {
-            logEvent("AA3", folderId, "getIpInfo", getCookieValue("VisitorId"))
-            //logActivity("AA3", folderId);
             getIpForExistingVisitorId(folderId);
             return;
         }
@@ -245,18 +260,18 @@ function getIpInfo(folderId, calledFrom) {
         }
 
         try {
-            logActivity("AAA", folderId);
+            logActivity("AA1", folderId);
             $.ajax({
                 type: "GET",
                 url: "https://ipinfo.io?token=ac5da086206dc4",
                 dataType: "JSON",
                 //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
                 success: function (ipResponse) {
+                    logActivity("AA2", folderId);
                     if (isNullorUndefined(ipResponse.ip)) {
-                        logActivity("YYY", folderId);
+                        logActivity("AA3", folderId);
                         logError("BUG", folderId, "ipInfo came back with no ip. VisitorId: " + visitorId, "getIpInfo/" + calledFrom);
                     }
-                    logActivity("BBB", folderId);
                     $.ajax({
                         type: "POST",
                         url: settingsArray.ApiServer + "api/Common/AddVisitor",
@@ -271,23 +286,23 @@ function getIpInfo(folderId, calledFrom) {
                             GeoCode: ipResponse.loc
                         },
                         success: function (avSuccess) {
-                            //logActivity("AVS", folderId);
+                            //logActivity("AA4", folderId);
                             switch (avSuccess) {
                                 case "ok":
                                     logIpHit(newVisitorId, ipResponse.ip, folderId);
-                                    logActivity("NE2", folderId);
+                                    logActivity("AA6", folderId);
                                     break;
                                 case "existing Ip":
                                     logIpHit(newVisitorId, ipResponse.ip, folderId);
-                                    logActivity("NWI", folderId);
+                                    logActivity("AA5", folderId);
                                     break;
                                 default:
-                                    logActivity("DDD", folderId);
+                                    logActivity("AA7", folderId);
                                     logError("AJX", folderId, avSuccess, "getIpInfo/AddVisitor/" + calledFrom);
                             }
                         },
                         error: function (jqXHR) {
-                            logActivity("AVF", folderId);
+                            logActivity("AA8", folderId);
                             let errMsg = getXHRErrorDetails(jqXHR);
                             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
                             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
