@@ -288,9 +288,9 @@ namespace OggleBooble.Api.Controllers
                 {
                     System.Diagnostics.Debug.WriteLine("delete didn't work " + ex.Message);
                 }
-                using (var mdb = new OggleBoobleMySqlContext())
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    mdb.ImageFiles.Add(new ImageFile()
+                    db.ImageFiles.Add(new ImageFile()
                     {
                         Id = imageLinkId,
                         FolderId = addLinkModel.FolderId,
@@ -301,13 +301,16 @@ namespace OggleBooble.Api.Controllers
                         Acquired = DateTime.Now,
                         FileName = newFileName
                     });
-                    mdb.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
+
+                    //int nextSortOrder = db.CategoryImageLinks.Where(l=>l.ImageCategoryId==addLinkModel.FolderId).Select(Math.Max(sort))
+
+                    db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
                     {
                         ImageCategoryId = addLinkModel.FolderId,
                         ImageLinkId = imageLinkId,
-                        SortOrder = 996
+                        SortOrder = 9996
                     });
-                    mdb.SaveChanges();
+                    db.SaveChanges();
                 }
                 successModel.Success = "ok";
             }

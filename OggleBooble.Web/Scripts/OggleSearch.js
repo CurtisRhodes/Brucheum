@@ -117,8 +117,12 @@ function clearSearch() {
 }
 
 function jumpToSelected(selectedFolderId) {
-    rtpe('SRC', currentFolderId, "", selectedFolderId);
+    //logEvent("SRC",currentFolderId,
+
+    //rtpe(eventCode, calledFrom, eventDetail, folderId)
+    rtpe('SRC', hdrFolderId, searchString, selectedFolderId);
     //window.open("/album.html?folder=" + selectedFolderId, "_blank");
+
     clearSearch();
 }
 
