@@ -24,6 +24,10 @@ function showFolderInfoDialog(folderId, calledFrom) {
                 $('#imagePageLoadingGif').hide();
                 if (folderInfo.Success === "ok") {
                     objFolderInfo.FolderId = folderId;
+                    objFolderInfo.FolderName = folderInfo.FolderName;
+                    objFolderInfo.FolderType = folderInfo.FolderType;
+
+                    $('#txtEdtFolderName').val(folderInfo.FolderName);
                     $("#centeredDialogTitle").html(folderInfo.FolderName);
                     $("#summernoteContainer").summernote("code", folderInfo.FolderComments);
 
@@ -35,9 +39,9 @@ function showFolderInfoDialog(folderId, calledFrom) {
                         case "singleParent":
                             showFullModelDetails(folderId);
                             break;
-                        case "singleChild":
-                            showFullModelDetails(folderInfo.Parent);
-                            break;
+                        //case "singleChild":
+                        //    showFullModelDetails(folderInfo.Parent);
+                        //    break;
                     }
 
                     logEvent("SMD", folderId, calledFrom, "folder type: " + folderInfo.FolderType);
@@ -64,6 +68,7 @@ function showBasicFolderInfoDialog() {
         "    <div id='modelInfoDetails' class='flexContainer'>\n" +
         "    </div>\n" +
         "    <div class='modelInfoCommentArea'>\n" +
+        "       <div id='divEdtFolderName' class='displayHidden'>folder name: <input id='txtEdtFolderName' /></div>\n" +
         "       <textarea id='summernoteContainer'></textarea>\n" +
         "    </div>\n" +
         "    <div id='folderInfoDialogFooter' class='folderDialogFooter'>\n" +
@@ -130,7 +135,7 @@ function showFullModelDetails(folderId) {
             }
             else {
                 $('#imagePageLoadingGif').hide();
-                logError("AJX", folderId, folderInfo.Success, "showFullModelDetails");
+                logError("AJX", folderId, folderInfo.Success, "show FullModelDetails");
             }
         },
         error: function (jqXHR) {
@@ -199,6 +204,10 @@ function editFolderDialog() {
         return;
     }
     allowDialogClose = false;
+
+    //objFolderInfo.FolderType = folderInfo.FolderType;
+    $('#divEdtFolderName').show();
+
     $('#editablePoserDetails').show();
     $('#readonlyPoserDetails').hide();
     $('#btnCatDlgEdit').html("Save");
@@ -219,6 +228,7 @@ function saveFolderDialog() {
     $('#imagePageLoadingGif').show();
     // LOAD GETS
     // alternamtive folderName $('#txtFolderName').val(rtnFolderInfo.FolderName);
+    objFolderInfo.FolderName = $('#txtEdtFolderName ').val(); 
     objFolderInfo.Birthday = $('#txtBorn').val();
     objFolderInfo.HomeCountry = $('#txtHomeCountry').val();
     objFolderInfo.HomeTown = $('#txtHometown').val();

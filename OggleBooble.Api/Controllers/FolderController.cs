@@ -299,6 +299,12 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == model.FolderId).First();
+                    if (categoryFolder.FolderName != model.FolderName)
+                    {
+                        categoryFolder.FolderName = model.FolderName;                    
+                    }
+
                     FolderDetail dbFolderDetail = db.FolderDetails.Where(d => d.FolderId == model.FolderId).FirstOrDefault();
                     if (dbFolderDetail == null)
                     {

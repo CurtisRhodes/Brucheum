@@ -226,6 +226,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string CommentTitle { get; set; }
         public string CommentText { get; set; }
         public string ImageLinkId { get; set; }
+        public string CalledFrom { get; set; }
         public string VisitorId { get; set; }
         public DateTime Posted { get; set; }
     }

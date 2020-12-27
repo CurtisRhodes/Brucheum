@@ -397,6 +397,7 @@ namespace OggleBooble.Api.Controllers
                 imageComment.ImageLinkId = imageCommentModel.ImageLinkId;
                 imageComment.CommentText = imageCommentModel.CommentText;
                 imageComment.CommentTitle = imageCommentModel.CommentTitle;
+                imageComment.CalledFrom = imageCommentModel.CalledFrom;
                 imageComment.VisitorId = imageCommentModel.VisitorId;
                 using (var db = new OggleBoobleMySqlContext())
                 {

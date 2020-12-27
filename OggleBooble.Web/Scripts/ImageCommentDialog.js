@@ -24,6 +24,7 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
     }
     imageComment.VisitorId = getCookieValue("VisitorId");
     imageComment.ImageLinkId = linkId;
+    imageComment.CalledFrom = calledFrom;
     imageComment.FolderId = folderId;
     $('#commentDialogImage').attr("src", imgSrc);
 
@@ -111,13 +112,20 @@ function addImageComment() {
                 console.log("image comment Added");
                 $('#divSaveFantasy').html("edit");
                 $('#divCloseFantasy').html("done");
+
                 awardCredits("IMC", imageComment.FolderId);
-                sendEmail("CurtishRhodes@hotmail.com", "SomeoneCommented@Ogglebooble.com", "Someone Entered an Image comment !!!", "comment: " + imageComment.CommentText);
+
+                sendEmail("CurtishRhodes@hotmail.com", "SomeoneCommented@Ogglebooble.com", "Someone Entered an Image comment !!!",
+                    "<br/>VisitorId: " + imageComment.VisitorId +
+                    "<br/>ImageId: " + imageComment.linkId +
+                    "<br/>FolderId: " + imageComment.FolderId +
+                    "<br/>comment: " + imageComment.CommentText);
+
+                logEvent("FCC", imageComment.FolderId, imageComment.CalledFrom, imageComment.CommentText);
 
                 //FCC	Fantasy comment
                 //SID	show Image Comment Dialog
                 //CMX	Show Model Info Dialog
-                //reportEvent("FCC", calledFrom, "LinkId: " + blogComment.LinkId, blogComment.FolderId);
             }
             else {
                 if (success.includes("title"))

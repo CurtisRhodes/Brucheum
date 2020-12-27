@@ -67,6 +67,8 @@ function indexPageHTML() {
         "    </div>\n" +
         //"    <div class='clickable sectionLabel' onclick='cureWIPproblem(211,\"018d1162-61a6-4987-bd90-add6fac518c6\",\"WIP\")'>cure WIP problem</div>\n" +
         //"    <div class='clickable sectionLabel' onclick='myMsgTest()'>showMyAlert test</div>\n" +
+        //"    <div class='clickable sectionLabel' onclick='testgetIp()'>get Ip For Existing VisitorId test</div>\n" +
+        "    <div class='clickable sectionLabel' onclick='testgetIp()'>addNonIpVisitor</div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +
         "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
