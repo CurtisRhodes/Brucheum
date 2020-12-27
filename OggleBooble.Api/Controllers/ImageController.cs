@@ -187,26 +187,35 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 string mySqlDestPath;
+                string newFileName;
                 string newLink = addLinkModel.Link;
-                using (var mdb = new OggleBoobleMySqlContext())
+                string imageLinkId = Guid.NewGuid().ToString();
+                string extension = newLink.Substring(newLink.LastIndexOf("."));
+                using (var db = new OggleBoobleMySqlContext())
                 {
                     if (newLink.IndexOf("?") > 0)
                     {
                         newLink = newLink.Substring(0, newLink.IndexOf("?"));
                     }
 
-                    var existingLink = mdb.ImageFiles.Where(l => l.ExternalLink == newLink).FirstOrDefault();
+                    var existingLink = db.ImageFiles.Where(l => l.ExternalLink == newLink).FirstOrDefault();
                     if (existingLink != null)
                     {
                         successModel.Success = "Link Already Added";
                         return successModel;
                     }
-                    mySqlDestPath = mdb.CategoryFolders.Where(f => f.Id == addLinkModel.FolderId).FirstOrDefault().FolderPath;
-                }
+                    var destinationFolder = db.CategoryFolders.Where(f => f.Id == addLinkModel.FolderId).First();
+                    //mySqlDestPath = db.CategoryFolders.Where(f => f.Id == addLinkModel.FolderId).FirstOrDefault().FolderPath;
+                    mySqlDestPath = destinationFolder.FolderPath;
 
-                string imageLinkId = Guid.NewGuid().ToString();
-                string extension = newLink.Substring(newLink.LastIndexOf("."));
-                string newFileName = addLinkModel.Path.Substring(addLinkModel.Path.LastIndexOf("/") + 1) + "_" + imageLinkId + extension;
+                    if (destinationFolder.FolderType == "singleChild")
+                    {
+                        var destinationParent = db.CategoryFolders.Where(f => f.Id == destinationFolder.Parent).First();
+                        newFileName = destinationParent.FolderName + "_" + imageLinkId + extension;
+                    }
+                    else
+                    newFileName = destinationFolder.FolderName + "_" + imageLinkId + extension;
+                }
                 string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
                 string trimPath = addLinkModel.Path.Replace("/Root/", "").Replace("%20", " ");
 
