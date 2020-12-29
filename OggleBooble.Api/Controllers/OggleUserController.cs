@@ -189,10 +189,11 @@ namespace OggleBooble.Api.Controllers
                     //{}
 
                     db.UserCredits.Add(userCredit);
-                    var dbUser = db.RegisteredUsers.Where(r => r.VisitorId == userCredit.VisitorId).FirstOrDefault();
-                    if (dbUser != null) {
-                        dbUser.UserCredits = db.UserCredits.Where(c => c.VisitorId == userCredit.VisitorId).Sum(c => c.Credits);
-                    }
+
+                    //var dbUser = db.RegisteredUsers.Where(r => r.VisitorId == userCredit.VisitorId).FirstOrDefault();
+                    //if (dbUser != null) {
+                    //    dbUser.UserCredits = db.UserCredits.Where(c => c.VisitorId == userCredit.VisitorId).Sum(c => c.Credits);
+                    //}
                     db.SaveChanges();
                     success = "ok";
                 }
