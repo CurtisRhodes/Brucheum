@@ -371,7 +371,9 @@ function subFolderImgError(imgSrc, linkId) {
 function launchDeepSlideShow()
 {
     $('#indexPageLoadingGif').show();
+    logEvent("DSC", apFolderId, "", "");
     launchViewer(apFolderId, 1, true);
+    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com", "deep slideshow clicked", "Visior Id: " + apVisitorId + "<br/>Folder: " + apFolderName);
 }
 
 function checkAlbumCost() {

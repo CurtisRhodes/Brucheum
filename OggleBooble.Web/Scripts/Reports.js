@@ -273,8 +273,6 @@ function runMostImageHits() {
 function eventReport() {
     //$("#divStandardReportArea").addClass("tightReport");
     activeReport = "EventActivity";
-    $('#divStandardReport').show();
-    //$("#reportLabel").html("Event Activity Report for " + todayString());
     $('#reportsHeaderTitle').html("Event Report for : " + todayString());
     $("#reportsContentArea").html("");
     $("#reportsFooter").html("");
@@ -305,7 +303,7 @@ function eventReport() {
                 $("#divStandardReportCount").html(" Total: " + activityReport.HitCount.toLocaleString());
             }
             else {
-                logError("AJX", 3910, impactReportModel.Success, "eventActivityReport");
+                logError("AJX", 3910, activityReport.Success, "eventActivityReport");
             }
         },
         error: function (jqXHR) {
@@ -397,9 +395,10 @@ function showMostActiveUsersReport() {
     });
 }
 
-function errorLogReport() {
-    activeReport = "ErrorLog";
+function errorReport() {
+    activeReport = "PageHitReport";
     $('#reportsHeaderTitle').html("Errors for " + todayString());
+    $("#reportsContentArea").html("");
     $("#reportsFooter").html("");
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -412,15 +411,16 @@ function errorLogReport() {
                 let kludge = "<div><table class='errorLogTable'>";
                 kludge += "<tr><th>error</th><th>called from</th><th>occured</th><th>page</th><th>IpAddress</th><th>ErrorMessage</th></tr>";
                 $.each(errorLogReport.ErrorRows, function (idx, obj) {
-                    kludge += "<tr><td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
-                    kludge += "<td>" + obj.CalledFrom.substring(0,15) + "</td>";
-                    kludge += "<td>" + obj.Time + "</td>";
-                    kludge += "<td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
-                    //kludge += "<td>" + obj.City + " " + obj.Region + " " + obj.Country + "</td>";
-                    kludge += "<td class='clickable underline' onclick='showUserErrorDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
-                    kludge += "<td>" + obj.ErrorMessage.substring(0,40) + "</td>";
-                    kludge += "</tr>";
-
+                    if (obj != null) {
+                        kludge += "<tr><td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
+                        kludge += "<td>" + obj.CalledFrom.substring(0, 15) + "</td>";
+                        kludge += "<td>" + obj.Time + "</td>";
+                        kludge += "<td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
+                        //kludge += "<td>" + obj.City + " " + obj.Region + " " + obj.Country + "</td>";
+                        kludge += "<td class='clickable underline' onclick='showUserErrorDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
+                        kludge += "<td>" + obj.ErrorMessage.substring(0, 40) + "</td>";
+                        kludge += "</tr>";
+                    }
                     //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
                     //html += "<td colspan='6'>" + obj.ErrorMessage + "</td></tr>";
                     //html += "<td>" + obj.City + "," + obj.Country + "</td>";

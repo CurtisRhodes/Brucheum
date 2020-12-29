@@ -208,14 +208,15 @@ namespace OggleBooble.Api.MySqlDataContext
     [Table("OggleBooble.ActivityLog")]
     public class ActivityLog
     {
-        public string ActivityCode { get; set; }
-        public int FolderId { get; set; }
         [Key]
         [Column(Order = 0)]
         public string VisitorId { get; set; }
         [Key]
         [Column(Order = 1)]
         public DateTime Occured { get; set; }
+        public string ActivityCode { get; set; }
+        public int FolderId { get; set; }
+        public string CalledFrom { get; set; }
     }
 
     [Table("OggleBooble.ImageComment")]
@@ -597,8 +598,19 @@ namespace OggleBooble.Api.MySqlDataContext
         public string UserName { get; set; }
     }
 
+//FolderId int (4)	NO
+//FolderName  varchar(150)    YES
+//ErrorCode   varchar(3)  NO
+//Error   varchar(150)    YES
+//CalledFrom  varchar(50) NO
+//on  varchar(10) YES
+//at  varchar(8)  YES
+//ErrorMessage    varchar(2000)   YES
+//IpAddress   varchar(20) YES
+//City    varchar(50) YES
+//Country varchar(2)  YES
 
-    [Table("OggleBooble.VwErrorReport")]
+  [Table("OggleBooble.VwErrorReport")]
     public class VwErrorReport
     {
         public int FolderId { get; set; }
@@ -641,16 +653,23 @@ namespace OggleBooble.Api.MySqlDataContext
     public class VwEventLog
     {
         [Key]
-        public string PkId { get; set; }
+        [Column(Order = 0)]
+        public string EventCode { get; set; }
+        public string Event { get; set; }
+        public string FolderId { get; set; }
+        public string FolderName { get; set; }
+        public string VisitorId { get; set; }
+        public string HitDate { get; set; }
+        public string HitTime { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public DateTime Occured { get; set; }
         public string IpAddress { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
-        public string Event { get; set; }
         public string CalledFrom { get; set; }
         public string Detail { get; set; }
-        public string HitDate { get; set; }
-        public string HitTime { get; set; }
     }
 
 

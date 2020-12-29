@@ -443,6 +443,7 @@ namespace OggleBooble.Api.Controllers
                         ActivityCode = activityLogModel.ActivityCode,
                         FolderId = activityLogModel.FolderId,
                         VisitorId = activityLogModel.VisitorId,
+                        CalledFrom = activityLogModel.CalledFrom,
                         Occured = DateTime.Now
                     });
                     db.SaveChanges();

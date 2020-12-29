@@ -177,6 +177,7 @@ namespace OggleBooble.Api.Models
     {
         public int FolderId { get; set; }
         public string ActivityCode { get; set; }
+        public string CalledFrom { get; set; }
         public string VisitorId { get; set; }
         public DateTime Occured { get; set; }
     }

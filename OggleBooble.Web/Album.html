@@ -141,7 +141,7 @@
                         verifyVisitorId(params.folder, "album.html");
 
                         if (!isNullorUndefined(params.tic)) {
-                            logStaticPageHit(params.folder);
+                            logStaticPageHit(params.folder, "Album.html");
                             window.location.href = "album.html?folder=" + params.folder;
                         }
                         loadAlbum(params.folder);

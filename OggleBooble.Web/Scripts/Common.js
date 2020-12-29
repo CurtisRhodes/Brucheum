@@ -384,7 +384,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     }
 }
 
-function logActivity(activityCode, folderId) {
+function logActivity(activityCode, folderId, calledFrom) {
     //alert("logActivity(" + activityCode + "," + folderId + ")");
     $.ajax({
         type: "POST",
@@ -392,6 +392,7 @@ function logActivity(activityCode, folderId) {
         data: {
             ActivityCode: activityCode,
             FolderId: folderId,
+            CalledFrom: calledFrom,
             VisitorId: getCookieValue("VisitorId")
         },
         success: function (success) {

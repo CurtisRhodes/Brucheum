@@ -104,7 +104,7 @@ function moveFile(request, linkId, folderId) {
                 });
             }
             else {
-                if (success.IndexOf("Duplicate entry") > 0)
+                if (success.indexOf("Duplicate entry") > 0)
                     displayStatusMessage("warning", "Image already in folder");
                 else
                     logError("AJX", folderId, success, "moveFile");

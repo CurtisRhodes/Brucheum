@@ -360,10 +360,8 @@ function alreadyInLast100() {
     for (i = idxStart; i < imageHistory.length; i++) {
         if (imageIndex === imageHistory[i]) {
             imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-            console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
-
-            logEvent("REJ", carouselItemArray[imageIndex].FolderId, carouselRoot, carouselItemArray[imageIndex].LinkId);
-
+            //console.log("Already shown try again: " + carouselItemArray[imageIndex].LinkId);
+            //logEvent("REJ", carouselItemArray[imageIndex].FolderId, carouselRoot, carouselItemArray[imageIndex].LinkId);
             //logActivity("", carouselItemArray[imageIndex].FolderId;
             return true;
         }
@@ -479,24 +477,18 @@ function assuranceArrowClick(direction) {
 }
 
 function clickViewGallery(labelClick) {
+    let clickFolderId = 0;
+    switch (labelClick) {
+        case 1: clickFolderId = mainImageClickId; break;// carousel main image
+        case 2: clickFolderId = imageTopLabelClickId; break;// top imageTopLabel
+        case 3: clickFolderId = knownModelLabelClickId; break;// knownModelLabel
+        case 4: clickFolderId = footerLabelClickId; break;// footer 
+        default: logError("SWT", 3908, "labelClick: " + labelClick, "clickViewGallery");
+    }
+    // rtpe(eventCode, calledFrom, eventDetail, folderId)
+    rtpe("CIC", labelClick, carouselItemArray[imageIndex].ImageFolderName, clickFolderId);
     clearInterval(vCarouselInterval);
     vCarouselInterval = null;
-    switch (labelClick) {
-        case 1:  // carousel main image
-            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, carouselRoot, mainImageClickId);
-            break;
-        case 2: // top imageTopLabel
-            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "image top label", imageTopLabelClickId);
-            break;
-        case 3: // knownModelLabel
-            rtpe("CIC", carouselItemArray[imageIndex].ImageFolderName, "knownModelLabel", knownModelLabelClickId);
-            break;
-        case 4: // footer 
-            rtpe("CPC", carouselItemArray[imageIndex].ImageFolderName, "clickViewParentGallery", footerLabelClickId);
-            break;
-        default:
-            logError("SWT", 3908, "labelClick: " + labelClick, "clickViewGallery");
-    }
 } 
 
 function carouselContextMenu() {
