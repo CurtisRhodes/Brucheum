@@ -582,7 +582,7 @@ function showIdentifyPoserDialog() {
 function poserSave(linkId, folderId) {
 
     if (document.domain !== "localhost")
-        sendEmail("CurtishRhodes@hotmail.com", "PoserIdentified@Ogglebooble.com", "poser identified !!!<br/>" +
+        sendEmail("CurtishRhodes@hotmail.com", "PoserIdentified@Ogglebooble.com", "poser identified !!!," +
             "suggested name: " + $('#txtPoserIdentified').val() + "<br/>" +
             "visitor: " + getCookieValue("VisitorId") + "<br/>" +
             "folderId: " + folderId + "<br/>" +

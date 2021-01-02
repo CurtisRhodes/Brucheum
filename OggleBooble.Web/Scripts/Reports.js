@@ -418,7 +418,9 @@ function errorReport() {
                         kludge += "<td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
                         //kludge += "<td>" + obj.City + " " + obj.Region + " " + obj.Country + "</td>";
                         kludge += "<td class='clickable underline' onclick='showUserErrorDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
-                        kludge += "<td>" + obj.ErrorMessage.substring(0, 40) + "</td>";
+                        //if(isNullorUndefined())
+                        //kludge += "<td>" + obj.ErrorMessage.substring(0, 40) + "</td>";
+                        kludge += "<td>" + obj.ErrorMessage + "</td>";
                         kludge += "</tr>";
                     }
                     //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='\_blank\''>" + obj.FolderName.substring(0, 20) + "</a></td>";
@@ -436,7 +438,7 @@ function errorReport() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "PageHitReport";  // arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
         }
     });

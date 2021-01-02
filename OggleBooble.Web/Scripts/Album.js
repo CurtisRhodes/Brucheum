@@ -156,6 +156,8 @@ function getAlbumPageInfo(folderId) {
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
                 apFolderName = albumInfo.FolderName;
+                setBreadCrumbs(albumInfo.BreadCrumbs);
+
                 $('#folderCommentButton').on("click", function () {
                     showFolderCommentDialog(folderId, albumInfo.FolderName);
                 });
@@ -185,7 +187,6 @@ function getAlbumPageInfo(folderId) {
                 }
 
                 if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + albumInfo.FolderType);
-
 
                 if ((albumInfo.TrackBackItems.length > 0)) {
                     $('#trackbackContainer').css("display", "inline-block");
@@ -218,7 +219,6 @@ function getAlbumPageInfo(folderId) {
                 if (!isNullorUndefined(albumInfo.StaticFile)) {
                     $('#footerStaticPage').html("<a href='" + albumInfo.StaticFile + "'>static page created: " + albumInfo.StaticFileUpdate + "</a>\n");
                 }
-                setBreadCrumbs(albumInfo.BreadCrumbs);
 
                 if ((albumInfo.FolderType === "singleParent") || (albumInfo.FolderType === "multiFolder")) {
                     $.ajax({
@@ -245,10 +245,6 @@ function getAlbumPageInfo(folderId) {
                         }
                     });
                 }
-
-                //if (document.domain !== "localhost") {
-                //    sendEmail("CurtishRhodes@hotmail.com", "Album.Visited@Ogglebooble.com", albumInfo.FolderName + " page visited", "all I want is to see an email");
-                //}
 
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
@@ -311,8 +307,7 @@ function albumContextMenu(menuType, linkId, folderId, imgSrc) {
 function setBreadCrumbs(breadCrumbModel) {
     // a woman commited suicide when pictures of her "came out"
     // title: I do not remember having been Invited)
-    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"BCC\"," +
-        apFolderId + ",33,1)'>root  &#187</a>");
+    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"BCC\"," + apFolderId + "\,\"root\",1)'>root  &#187</a>");
     for (i = breadCrumbModel.length - 1; i >= 0; i--) {
         if (breadCrumbModel[i] === null) {
             breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
@@ -371,9 +366,9 @@ function subFolderImgError(imgSrc, linkId) {
 function launchDeepSlideShow()
 {
     $('#indexPageLoadingGif').show();
-    logEvent("DSC", apFolderId, "", "");
+    logEvent("DSC", apFolderId, apFolderName, "launchDeepSlideShow");
     launchViewer(apFolderId, 1, true);
-    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com", "deep slideshow clicked", "Visior Id: " + apVisitorId + "<br/>Folder: " + apFolderName);
+    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com", "deep slideshow clicked", "Visitor Id: " + apVisitorId + "<br/>Folder: " + apFolderName);
 }
 
 function checkAlbumCost() {

@@ -129,7 +129,7 @@ function verifyConnectionFunction(calledFrom, folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "verifyConnectionFunction"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             if (document.domain === "localhost") alert("verifyConnection XHR: " + errMsg);
             connectionVerified = false;

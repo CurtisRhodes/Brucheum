@@ -123,19 +123,20 @@ function setHeaderMenu(folderId, subdomain) {
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
             $('#bannerTitle').html("<span style='color:#fff;'>every playboy centerfold</span>");  // 1132
             $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"PBB\",72,\"magazine covers\",1986)'>magazine covers</a>,\n" +
+                //"<a href='javascript:rtpe(\"PBB\",72,\"magazine covers\",1986)'>magazine covers</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",72,\"pictorials\",4015)'>pictorials</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",72,\"extras\",2601)'>extras</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",72,\"extras\",6368)'>plus</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",72,\"special\",6076)'>special editions</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",72,\"cybergirls\",3796)'>cybergirls</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4013)'>Pmoy</a>,\n" +
-                "<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4932)'>just centerfolds</a>\n");
+                "<a href='javascript:rtpe(\"PBB\",72,\"cybergirls\",3796)'>cybergirls</a>,\n");
+                //"<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4013)'>Pmoy</a>,\n" +
+                //"<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4932)'>just centerfolds</a>\n");
             // <div id='topRowRightContainer'></div>" +
             $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
             // bottom row
             // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
             $('#breadcrumbContainer').html(
+                "<a href='javascript:rtpe(\"PYC\",72,\"Playboy\",472)'>Playboy</a>,\n" +
                 "<a href='javascript:rtpe(\"PYC\",72,\"1950\",621)'>1950's</a>,\n" +
                 "<a href='javascript:rtpe(\"PYC\",72,\"1960\",638)'>1960's</a>,\n" +
                 "<a href='javascript:rtpe(\"PYC\",72,\"1970\",639)'>1970's</a>,\n" +
@@ -181,9 +182,10 @@ function setHeaderMenu(folderId, subdomain) {
             $('#bannerTitle').html("OgglePorn");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",243)'>cock suckers</a>, \n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",420)'>boob suckers</a>,\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",460)'>titty fuck</a>,\n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",426)'>penetration</a>,\n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",357)'>cum shots</a>, \n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",397)'>kinky</a> and \n" +
+                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",694)'>kinky</a> and \n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",411)'>naughty behaviour</a>\n");
             $('#hdrBtmRowSec3').html(addBannerButton("backToOggle"));
             $('#hdrBtmRowSec3').append(addBannerButton("sluts"));

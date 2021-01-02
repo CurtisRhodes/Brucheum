@@ -188,7 +188,8 @@ function verifyVisitorId(folderId, calledFrom) {
             if (!isNullorUndefined(cokieTest)) {
                 if (isNullorUndefined(lclStorTest)) {
                     window.localStorage["VisitorId"] = cokieTest;
-                    logEvent("VL2", folderId, calledFrom, "local storage loaded from cookie");
+                    //logEvent("VL2", folderId, calledFrom, "local storage loaded from cookie");
+                    //logActivity("VL2", folderId, calledFrom);
                 }
             }
             if (isNullorUndefined(cokieTest) && isNullorUndefined(lclStorTest)) {
@@ -372,7 +373,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
                        // logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/logEvent");
                     }
                     else
-                        logError("AJX", folderId, eventCode + ": " + success, calledFrom + "/logEvent");
+                        logError("AJE", folderId, eventCode + ": " + success, calledFrom + "/logEvent");
                 }
             },
             error: function (jqXHR) {
@@ -399,8 +400,12 @@ function logActivity(activityCode, folderId, calledFrom) {
             if (success === "ok") {
                 //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
             }
-            else
-                logError("AJX", folderId, activityCode + ": " + success, "log activity");
+            else {
+                if (success.indexOf("Duplicate entry") > 0)
+                    logError("DUP", folderId, activityCode + ": " + success, "log activity/" + calledFrom);
+                else
+                    logError("AJX", folderId, activityCode + ": " + success, "log activity/");
+            }
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
@@ -611,7 +616,7 @@ function sendEmail(to, from, subject, message) {
                     //displayStatusMessage("ok", "email sent");
                 }
                 else
-                    logError("BUG", 3992, success, "sendEmail");
+                    logError("EME", 3992, success, subject);
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);

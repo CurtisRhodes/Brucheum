@@ -196,6 +196,7 @@ namespace OggleBooble.Api.Controllers
                     if (newLink.IndexOf("?") > 0)
                     {
                         newLink = newLink.Substring(0, newLink.IndexOf("?"));
+                        extension = newLink.Substring(newLink.LastIndexOf("."));
                     }
 
                     var existingLink = db.ImageFiles.Where(l => l.ExternalLink == newLink).FirstOrDefault();

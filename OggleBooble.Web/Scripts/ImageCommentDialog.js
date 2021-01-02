@@ -1,8 +1,12 @@
-﻿let imageComment = {}, ssFolderId;
+﻿let imageComment = {};
 
 function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
+    imageComment.VisitorId = getCookieValue("VisitorId");
+    imageComment.ImageLinkId = linkId;
+    imageComment.CalledFrom = calledFrom;
+    imageComment.FolderId = folderId;
+
     logEvent("SID", folderId, calledFrom, "LinkId: " + linkId);
-    ssFolderId = folderId;
 
     //alert("ImageCommentDialog called from: " + calledFrom);
     if (calledFrom == "Slideshow") {
@@ -22,10 +26,6 @@ function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
         $('#centeredDialogContainer').css("top", $('.oggleHeader').height() + 50);
         $('#centeredDialogTitle').html("Write a fantasy about this image");
     }
-    imageComment.VisitorId = getCookieValue("VisitorId");
-    imageComment.ImageLinkId = linkId;
-    imageComment.CalledFrom = calledFrom;
-    imageComment.FolderId = folderId;
     $('#commentDialogImage').attr("src", imgSrc);
 
     $('#imageCommentEditor').summernote({
@@ -131,14 +131,14 @@ function addImageComment() {
                 if (success.includes("title"))
                     alert("Please add a title");
                 else {
-                    logError("AJX", ssFolderId, success, "addImageComment");                    
+                    logError("AJX", imageComment.FolderId, success, "addImageComment");                    
                 }
             }
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", ssFolderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", imageComment.FolderId, errMsg, functionName);
         }
     });
 }
@@ -161,7 +161,7 @@ function editImageComment() {
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", ssFolderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", imageComment.FolderId, errMsg, functionName);
         }
     });
 }
@@ -170,8 +170,6 @@ function closeImageCommentDialog() {
     dragableDialogClose();
     $('#slideShowDialogContainer').hide();
 }
-
-
 
 function imageCommentDialogHtml() {
     return "<div class='imageCommentDialogContainer'>\n" +

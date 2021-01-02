@@ -477,18 +477,36 @@ function assuranceArrowClick(direction) {
 }
 
 function clickViewGallery(labelClick) {
-    let clickFolderId = 0;
+
+    event.preventDefault();
+    window.event.returnValue = false;
+
+    let clickFolderId = 0, carouselButtonClicked;
     switch (labelClick) {
-        case 1: clickFolderId = mainImageClickId; break;// carousel main image
-        case 2: clickFolderId = imageTopLabelClickId; break;// top imageTopLabel
-        case 3: clickFolderId = knownModelLabelClickId; break;// knownModelLabel
-        case 4: clickFolderId = footerLabelClickId; break;// footer 
+        case 1: clickFolderId = mainImageClickId; carouselButtonClicked = "main image"; break;// carousel main image
+        case 2: clickFolderId = imageTopLabelClickId; carouselButtonClicked = "top Label"; break;// top imageTopLabel
+        case 3: clickFolderId = knownModelLabelClickId; carouselButtonClicked = "knownModelLabel"; break;// knownModelLabel
+        case 4: clickFolderId = footerLabelClickId; carouselButtonClicked = "footerLabel"; break;// footer 
         default: logError("SWT", 3908, "labelClick: " + labelClick, "clickViewGallery");
     }
+
     // rtpe(eventCode, calledFrom, eventDetail, folderId)
-    rtpe("CIC", labelClick, carouselItemArray[imageIndex].ImageFolderName, clickFolderId);
+    // rtpe("CIC", labelClick, carouselItemArray[imageIndex].ImageFolderName, clickFolderId);
+    // logEvent(eventCode, folderId, calledFrom, eventDetails)
+    logEvent("CIC", clickFolderId, carouselButtonClicked, carouselItemArray[imageIndex].LinkId);
+
+    sendEmail("CurtishRhodes@hotmail.com", "SlideshowClick@Ogglebooble.com", "carousel image clicked",
+        "carousel: " + carouselRoot +
+        "<br/>button: " + carouselButtonClicked +
+        "<br/>folder: " + carouselItemArray[imageIndex].ImageFolderName + " : " + clickFolderId +
+        "<br/>image: " + carouselItemArray[imageIndex].LinkId +
+        "<br/>visitorId: " + getCookieValue("VisitorId")
+    );
+    console.log("clickViewGallery email sent");
+
     clearInterval(vCarouselInterval);
     vCarouselInterval = null;
+    window.location.href = "/album.html?folder=" + clickFolderId;  //  open page in same window
 } 
 
 function carouselContextMenu() {

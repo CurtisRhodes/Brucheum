@@ -164,7 +164,8 @@ function slideClick(direction) {
 
 function slide(direction) {
     try {
-        if (isNullorUndefined(imageViewerArray))
+        // TypeError: undefined is not an object(evaluating 'imageViewerArray[imageViewerIndex].FileName')
+        if (isNullorUndefined(imageViewerArray[imageViewerIndex].FileName))
             logError("SLA", albumFolderId, direction, "slideshow.slide");
         else {
             let showLoadingGif = true;
@@ -233,7 +234,7 @@ function slide(direction) {
             spSessionCount++;
             $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
             logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
-        }
+        }        
     } catch (e) {
         logError("CAT", 3910, e, "slide");
     }
@@ -268,7 +269,8 @@ function runSlideShow(action) {
             return;
         }
         if ($('#txtStartSlideShow').html() === "start slideshow") {
-            slide('next');
+            if (spSlideShowRunning)
+                slide('next');
             $('#txtStartSlideShow').html("stop slideshow");
             imageViewerIntervalTimer = setInterval(function () {
                 slide('next');
@@ -334,68 +336,31 @@ function showImageViewerCommentDialog() {
 }
 
 function closeViewer(calledFrom) {
-    event.preventDefault();
-    window.event.returnValue = false;
-    $('#imageContainer').fadeIn();
-    $('#slideShowContainer').effect('blind', { mode: 'hide', direction: 'vertical' }, 500);
-    viewerShowing = false;
-    spSlideShowRunning = false;
-    slideShowButtonsActive = false;
-    clearInterval(imageViewerIntervalTimer);
-    $('#txtStartSlideShow').html("start slideshow");
-
-    if (verbosity > 2) {
-        var closeMethod = "click";
-        if (calledFrom !== undefined) {
-            closeMethod = calledFrom;
-        }
-        if (spSessionCount < 2) {
-            logEvent("SIV", albumFolderId, closeMethod, imageViewerArray[imageViewerIndex].LinkId);
-            //alert("check behaviour");
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "/api/Common/GetEventDetails?eventCode=SIV&visitorId=" + getCookieValue("VisitorId"),
-                success: function (eventDetails) {
-                    if (eventDetails.Success === "ok") {
-                        let singleImagesViewed = eventDetails.Results.length;
-                        $.ajax({
-                            type: "GET",
-                            url: settingsArray.ApiServer + "/api/Common/GetEventDetails?eventCode=SVC&visitorId=" + getCookieValue("VisitorId"),
-                            success: function (eventDetails) {
-                                if (eventDetails.Success === "ok") {
-                                    let mulitImageViews = eventDetails.Results.length;
-                                    if (mulitImageViews < singleImageViewed) {
-                                        if (singleImagesViewed > 1) {
-                                            alert("You show try clicking left or right in the slideshow");
-                                        }
-                                    }
-                                }
-                                else
-                                    logError("AJX", folderId, eventDetails.Success, "GetEventDetails");
-                            },
-                            error: function (jqXHR) {
-                                let errMsg = getXHRErrorDetails(jqXHR);
-                                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-                            }
-                        });
-                    }
-                    else {
-                        logError("AJX", folderId, eventDetails.Success, "GetEventDetails");
-                    }
-                },
-                error: function (jqXHR) {
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-                }
-            });
-        }
-        else {
-            logEvent("SVC", albumFolderId, closeMethod, "Images Viewed: " + spSessionCount);
-        }
+    if (spSessionCount < 2) {
+        logEvent("SIV", albumFolderId, "closeMethod: " + calledFrom, imageViewerArray[imageViewerIndex].LinkId);
+        alert("You should try clicking left or right in the slideshow." +
+            "\n                 (to avoid this message)" +
+            "\n\nThe entire page is divided in half." +
+            "\nClick anywhere on the right side of screen to move next." +
+            "\nClick on the left half of the screen to move previous." +
+            "\nThe left and arrow keys also work." +
+            "\nDouble click on right half to start slide show." +
+            "\nWhile slide show is running click on left half of screen to stop lideshow.");
+        spSessionCount++;
     }
-    spSessionCount = 0;
+    else {
+        event.preventDefault();
+        window.event.returnValue = false;
+        $('#imageContainer').fadeIn();
+        $('#slideShowContainer').effect('blind', { mode: 'hide', direction: 'vertical' }, 500);
+        viewerShowing = false;
+        spSlideShowRunning = false;
+        slideShowButtonsActive = false;
+        clearInterval(imageViewerIntervalTimer);
+        $('#txtStartSlideShow').html("start slideshow");
+        logEvent("SVC", albumFolderId, "closeMethod: " + calledFrom, "Images Viewed: " + spSessionCount);
+        spSessionCount = 0;
+    }
 }
 
 function slideshowImageLabelClick() {
