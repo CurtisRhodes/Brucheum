@@ -199,7 +199,7 @@ namespace OggleBooble.Api.Controllers
                         extension = newLink.Substring(newLink.LastIndexOf("."));
                     }
 
-                    var existingLink = db.ImageFiles.Where(l => l.ExternalLink == newLink).FirstOrDefault();
+                    var existingLink = db.ImageFiles.Where(l => l.ExternalLink.Substring(l.ExternalLink.IndexOf(":")) == newLink.Substring(newLink.IndexOf(":"))).FirstOrDefault();
                     if (existingLink != null)
                     {
                         successModel.Success = "Link Already Added";
@@ -227,10 +227,20 @@ namespace OggleBooble.Api.Controllers
                     {
                         wc.DownloadFile(new Uri(newLink), appDataPath + "tempImage" + extension);
                     }
-                    catch (Exception ex)
+                    catch 
                     {
-                        successModel.Success = "wc. download didnt work " + ex.Message;
-                        return successModel;
+                        if (newLink.StartsWith("https")) {
+                            try
+                            {
+                                newLink = "http" + newLink.Substring(5);
+                                wc.DownloadFile(new Uri(newLink), appDataPath + "tempImage" + extension);
+                            }
+                            catch (Exception ex)
+                            {
+                                successModel.Success = "wc. download didnt work " + ex.Message;
+                                return successModel;
+                            }
+                        }
                     }
                 }
                 // USE WEBREQUEST TO UPLOAD THE FILE

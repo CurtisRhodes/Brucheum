@@ -252,7 +252,7 @@ function getIpForExistingVisitorId(folderId, visitorId) {
 
 function getIpInfo(folderId, calledFrom) {
     try {
-        logActivity("AA0", folderId, "getIpInfo/" + calledFrom);
+        //logActivity("AA0", folderId, "getIpInfo/" + calledFrom);
 
         if (!isNullorUndefined(getCookieValue("VisitorId"))) {
             getIpForExistingVisitorId(folderId, getCookieValue("VisitorId"), calledFrom);
