@@ -48,17 +48,12 @@
     margin-top: 100px;
 }
 
-.blogEditButton {
-    display: block;
+.blogEditButton {    
+    white-space:nowrap;
     margin-left: 5px;
     margin-bottom: 22px;
     padding: 4px;
-/*    background-color: var(--oggleContainerBackgroundColor);*/
     cursor: pointer;
-    /*  
-        color: var(--brucheumBlue);
-        .blogEditButton
-    */
 }
     .blogEditButton:hover {
         text-decoration: underline;
