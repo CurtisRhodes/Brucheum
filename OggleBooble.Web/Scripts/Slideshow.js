@@ -316,19 +316,8 @@ function runSlideShow(action) {
     //$('#slowerSlideShow').attr("Title", "slideshow " + 10 - (slideShowSpeed / 1000) + "x");
 }
 
-let entirePage;
 function blowupImage() {
-    //alert("blowupImage()");
-    //<img id='viewerImage' class='slideshowImage' />\n" +
-    //$('#viewerImage').removeClass('.slideshowImage').addClass('blowupImage');
-    entirePage = $('body').html();
-    $('body').html("<img id='explodedImage' class='explodedImage' onclick='restoreFromBlowup()' src='" + settingsImgRepo + imageViewerArray[imageViewerIndex].FileName + "'/>");
-    //window.open(settingsImgRepo + imageViewerArray[imageViewerIndex].FileName, "_blank");
-    //style = 'text-align:center'; cursor: zoom - out'
-}
-
-function restoreFromBlowup() {
-    $('body').html(entirePage);
+    replaceFullPage(settingsImgRepo + imageViewerArray[imageViewerIndex].FileName);
 }
 
 function showImageViewerCommentDialog() {

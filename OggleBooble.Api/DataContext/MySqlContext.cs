@@ -244,6 +244,10 @@ namespace OggleBooble.Api.MySqlDataContext
         public string FolderPath { get; set; }
         public string FolderType { get; set; }
         public string FolderImage { get; set; }
+        public int Files { get; set; }
+        public int SubFolders { get; set; }
+        public int TotalChildFiles { get; set; }
+        public int TotalSubFolders { get; set; }
         public int SortOrder { get; set; }
     }
     [Table("OggleBooble.ImageFile")]
