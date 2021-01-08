@@ -51,7 +51,7 @@ function qucikHeader(folderId) {
 
 function getAlbumImages(folderId) {
     var getImagesStart = Date.now();
-    const posterFolder = 'http://archive.OGGLEBOOBLE.COM/posters/';
+    const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
     $('#indexPageLoadingGif').show();
     $('#galleryBottomfileCount').html("?");
     try {
@@ -71,7 +71,9 @@ function getAlbumImages(folderId) {
                         let imgSrc = settingsImgRepo + "/" + obj.FileName;
                         if (obj.FileName.endsWith("mpg") || obj.FileName.endsWith("mp4")) {
                             $('#imageContainer').append(
-                                "<div oncontextmenu='albumContextMenu(\"Video\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + posterFolder + obj.Poster + "\")'>" +
+                                "<div class='" + imageFrameClass +
+                                "' oncontextmenu='albumContextMenu(\"Video\",\"" + obj.LinkId + "\"," +
+                                obj.FolderId + ",\"" + posterFolder + obj.Poster + "\")'>" +
                                 "<video id='" + obj.LinkId + "' controls='controls' class='thumbImage' " +
                                 " poster='" + posterFolder + obj.Poster + "' >" +
                                 "   <source src='" + imgSrc + "' type='video/mp4' label='label'>" +
