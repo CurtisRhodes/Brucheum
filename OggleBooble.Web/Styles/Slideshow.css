@@ -31,9 +31,15 @@
             padding: 5px;
         }
 
-.explodedImage {
-    cursor: zoom-out;
+.fullF11 {
     text-align: center;
+    background-color: #d317ef;
+}
+
+.explodedImage {
+    height: 100%;
+    width: 100%;
+    cursor: zoom-out;
 }
 
 .popoutBox {

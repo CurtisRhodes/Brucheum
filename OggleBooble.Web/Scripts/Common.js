@@ -7,6 +7,20 @@ let pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 //<div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
 
+let entirePage;
+function replaceFullPage(imgSrc) {
+    entirePage = $('body').html();
+    $('body').html(
+        "<div class='fullF11'>" +
+        "<img id='explodedImage' class='explodedImage' onclick='restoreFromBlowup()' src='" + imgSrc + "'/>" +
+        "</div"
+    );
+}
+
+function restoreFromBlowup() {
+    $('body').html(entirePage);
+}
+
 function setCookieValue(elementName, elementValue) {
     //alert("setCookieValue(" + elementName + "," + elementValue + ")");
     try {

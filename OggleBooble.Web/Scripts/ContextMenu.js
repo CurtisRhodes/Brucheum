@@ -170,8 +170,12 @@ function contextMenuAction(action) {
     switch (action) {
         case "saveAs":
            // alert("window.open(" + pImgSrc + ")");
-            window.open(pImgSrc);
-            //document.execCommand("SaveAs", null, "file.csv");
+            //window.open(pImgSrc);
+
+            // <a href="data:application/xml;charset=utf-8,your code here" download="filename.html">Save</a>
+
+            document.execCommand("SaveAs", null, "file.csv");
+
             // <a href="data:application/xml;charset=utf-8,your code here" download="filename.html">Save</a>
             break;
         case "download":
@@ -210,8 +214,16 @@ function contextMenuAction(action) {
             break;
         }
         case "explode": {
-            logEvent("EXP", pFolderId, pFolderName, pLinkId);
-            window.open(pImgSrc, "_blank");
+            // logEvent("EXP", pFolderId, pFolderName, pLinkId);
+
+            if (pMenuType === "Slideshow") {
+                $("#slideshowCtxMenuContainer").hide();
+                blowupImage();
+            }
+            else {
+                $("#imageContextMenu").hide();
+                replaceFullPage(pImgSrc);
+            }
             break;
         }
         case "Image tags":
@@ -270,7 +282,7 @@ function contextMenuHtml() {
         "<div id='ctxNewTab' onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
         "<div id='ctxComment' onclick='contextMenuAction(\"comment\")'>Comment</div>\n" +
         "<div id='ctxExplode' onclick='contextMenuAction(\"explode\")'>explode</div>\n" +
-        //"<div id='ctxSaveAs' onclick='contextMenuAction(\"saveAs\")'>save as</div>\n" +
+        "<div id='ctxSaveAs' onclick='contextMenuAction(\"saveAs\")'>save as</div>\n" +
         "<div id='ctxCloseSlideShow' onclick='contextMenuAction(\"closeSlideShow\")'>close slideshow</div>\n" +
         "<div id='ctxImageShowLinks' onclick='contextMenuAction(\"showLinks\")'>Show Links</div>\n" +
         "<div id='linkInfoContainer' class='contextMenuInnerContainer'></div>\n" +        

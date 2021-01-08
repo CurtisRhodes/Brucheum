@@ -393,6 +393,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     var dbUpdateFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).First();
                     {
+
                         updateFolderCountsModel.TtlFileCount += db.ImageFiles.Where(i => i.FolderId == folderId).Count();
                         var dbSubfolders = db.CategoryFolders.Where(f => f.Parent == folderId);
                         foreach (CategoryFolder subFolder in dbSubfolders)
@@ -434,6 +435,58 @@ namespace OggleBooble.Api.Controllers
                         UpdateFolderCountsRecurr(subFolderModel, subsubFolder);
                     }
                 }
+            }
+        }
+
+        [HttpGet]
+        [Route("api/GalleryPage/HardcoreFilecounts")]
+        public string HardcoreFilecounts()
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var allFolders = db.CategoryFolders.ToList();
+                    foreach (CategoryFolder catFolder in allFolders)
+                    {
+                        catFolder.Files = db.CategoryImageLinks.Where(l => l.ImageCategoryId == catFolder.Id).Count();
+                        catFolder.SubFolders = db.CategoryFolders.Where(f => f.Parent == catFolder.Id).Count();
+                        catFolder.SubFolders += db.StepChildren.Where(f => f.Parent == catFolder.Id).Count();
+                        db.SaveChanges();
+                    }
+                    Rundown(0, db);
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+        private void Rundown(int parentFolder, OggleBoobleMySqlContext db )
+        {
+            CategoryFolder dbParentFolder = db.CategoryFolders.Where(f => f.Id == parentFolder).First();
+            var childFolders = db.CategoryFolders.Where(f => f.Parent == parentFolder).ToList();
+            int totalChildFiles = 0;
+            int totalSubFolders = 0;
+            foreach (CategoryFolder childFolder in childFolders)
+            {
+                totalChildFiles += db.CategoryImageLinks.Where(l => l.ImageCategoryId == childFolder.Id).Count();
+                totalSubFolders += db.CategoryFolders.Where(f => f.Parent == childFolder.Id).Count();
+                totalSubFolders += db.StepChildren.Where(f => f.Parent == childFolder.Id).Count();
+                Rundown(childFolder.Id, db);
+            }
+            if (totalSubFolders > 0)
+            {
+                dbParentFolder.TotalSubFolders = totalSubFolders;
+                db.SaveChanges();
+            }
+            if (totalChildFiles > 0)
+            {
+                dbParentFolder.TotalChildFiles = totalChildFiles;
+                db.SaveChanges();
             }
         }
     }

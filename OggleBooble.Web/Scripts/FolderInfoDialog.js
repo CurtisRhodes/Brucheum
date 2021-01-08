@@ -580,9 +580,8 @@ function showIdentifyPoserDialog() {
 }
 
 function poserSave(linkId, folderId) {
-
     if (document.domain !== "localhost")
-        sendEmail("CurtishRhodes@hotmail.com", "PoserIdentified@Ogglebooble.com", "poser identified !!!," +
+        sendEmail("CurtishRhodes@hotmail.com", "PoserIdentified@Ogglebooble.com", "poser identified !!!", +
             "suggested name: " + $('#txtPoserIdentified').val() + "<br/>" +
             "visitor: " + getCookieValue("VisitorId") + "<br/>" +
             "folderId: " + folderId + "<br/>" +
@@ -590,9 +589,11 @@ function poserSave(linkId, folderId) {
     else
         alert("sendEmail(CurtishRhodes@hotmail.com, PoserIdentified@Ogglebooble.com,\nposer identified !!!\n" +
             "suggested name: " + $('#txtPoserIdentified').val() +
-            "\nvisitor: " + getCookieValue("VisitorId") + "\nfolderId: " + folderId + "\nlinkId: " + linkId);
+            "\nvisitor: " + getCookieValue("VisitorId") + "\nfolderId: " + folderId + "\nlinkId: " + linkId
+        );
 
     showMyAlert("Thank you for your input\nYou have earned 1000 credits.");
+    logEvent("FBS", folderId, "poser identified", "link: " + linkId);
     dragableDialogClose();
 }
 

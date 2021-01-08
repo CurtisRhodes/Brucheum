@@ -192,7 +192,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showMoveManyTool(2);'>Copy Many</div>\n" +
                 "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf</div>\n" +
                 "<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" +
-                "<div class='clickable' onclick='showAddVideoLink();\">Add Video Link</div>");
+                "<div class='clickable' onclick='HardcoreFilecounts();'>HardcoreFilecounts()</div>");
 
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
@@ -838,6 +838,26 @@ function loadSortImages() {
     });
 }
 
+function HardcoreFilecounts() {
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/GalleryPage/HardcoreFilecounts",
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            alert(errMsg);
+        }
+    })
+}
+
+
+
 // EMERGENCY TOOLS
 function addFileDates() {
     $('#dataifyInfo').show().html("adding file dates");
@@ -921,6 +941,9 @@ function MoveManyCleanup() {
         }
     });
 }
+
+
+
 
 function showAddVideoLink() {
     $('.workAreaContainer').hide();

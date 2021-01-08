@@ -250,7 +250,10 @@ namespace OggleBooble.Api.Controllers
                 {
                     var dbDestFolder = db.CategoryFolders.Where(i => i.Id == moveManyModel.DestinationFolderId).First();
                     string destFtpPath = ftpHost + ftpRepo + "/" + dbDestFolder.FolderPath;
-                    
+
+                    if (!FtpUtilies.DirectoryExists(destFtpPath))
+                        FtpUtilies.CreateDirectory(destFtpPath);
+
                     var dbSourceFolder = db.CategoryFolders.Where(f => f.Id == moveManyModel.SourceFolderId).First();
                     string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath;
 
