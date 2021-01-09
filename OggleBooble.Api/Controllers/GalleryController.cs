@@ -16,6 +16,41 @@ namespace OggleBooble.Api.Controllers
         private readonly string devlVisitorId = System.Configuration.ConfigurationManager.AppSettings["ImageRepository"];
 
         [HttpGet]
+        public BreadCrumbSuccessModel GetBreadcrumbs(int folderId)
+        {
+            var breadCrumbs = new BreadCrumbSuccessModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    CategoryFolder thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    breadCrumbs.BreadCrumbs.Add(new BreadCrumbItemModel()
+                    {
+                        FolderId = thisFolder.Id,
+                        FolderName = thisFolder.FolderName,
+                        ParentId = thisFolder.Parent,
+                        IsInitialFolder = true
+                    });
+                    var parent = thisFolder.Parent;
+                    while (parent > 1)
+                    {
+                        CategoryFolder parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
+                        breadCrumbs.BreadCrumbs.Add(new BreadCrumbItemModel()
+                        {
+                            FolderId = parentDb.Id,
+                            FolderName = parentDb.FolderName,
+                            IsInitialFolder = false
+                        });
+                        parent = parentDb.Parent;
+                    }
+                    breadCrumbs.Success = "ok";
+                }
+            }
+            catch (Exception ex) { breadCrumbs.Success = Helpers.ErrorDetails(ex); }
+            return breadCrumbs;
+        }
+
+    [HttpGet]
         [Route("api/GalleryPage/UpdateDirTree")]
         public string UpdateDirTree()
         {
@@ -110,26 +145,26 @@ namespace OggleBooble.Api.Controllers
                     #endregion
 
                     #region 2. BreadCrumbs
-                    CategoryFolder thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                    albumInfo.BreadCrumbs.Add(new BreadCrumbItemModel()
-                    {
-                        FolderId = thisFolder.Id,
-                        FolderName = thisFolder.FolderName,
-                        ParentId = thisFolder.Parent,
-                        IsInitialFolder = true
-                    });
-                    var parent = thisFolder.Parent;
-                    while (parent > 1)
-                    {
-                        CategoryFolder parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
-                        albumInfo.BreadCrumbs.Add(new BreadCrumbItemModel()
-                        {
-                            FolderId = parentDb.Id,
-                            FolderName = parentDb.FolderName,
-                            IsInitialFolder = false
-                        });
-                        parent = parentDb.Parent;
-                    }
+                    //CategoryFolder thisFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    //albumInfo.BreadCrumbs.Add(new BreadCrumbItemModel()
+                    //{
+                    //    FolderId = thisFolder.Id,
+                    //    FolderName = thisFolder.FolderName,
+                    //    ParentId = thisFolder.Parent,
+                    //    IsInitialFolder = true
+                    //});
+                    //var parent = thisFolder.Parent;
+                    //while (parent > 1)
+                    //{
+                    //    CategoryFolder parentDb = db.CategoryFolders.Where(f => f.Id == parent).First();
+                    //    albumInfo.BreadCrumbs.Add(new BreadCrumbItemModel()
+                    //    {
+                    //        FolderId = parentDb.Id,
+                    //        FolderName = parentDb.FolderName,
+                    //        IsInitialFolder = false
+                    //    });
+                    //    parent = parentDb.Parent;
+                    //}
                     #endregion
 
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));

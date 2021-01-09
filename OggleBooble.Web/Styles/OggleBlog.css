@@ -1,34 +1,31 @@
-﻿
+﻿.blogArea {
+    display: none;
+    box-sizing: unset;
+}
+
 .twoColumnFrame {
     border: solid thin var(--oggleBorderColor);
 }
-
-.oggleBlogEditor {
-    display: none;
-    padding: 8px;
-    border: solid thin var(--oggleBorderColor);
-    width: 60%;
-}
-    .oggleBlogEditor .note-editable {
-        background-color: aliceblue !important;
-    }
 
 .blogDropdown {
     width: 333px;
 }
 
 .blogEditArea {
+    display: none;
     display: flex;
-    display: inline-block;
     margin-top: 10px;
     padding: 4px;
-    display: none;
 }
 
 .blogDisplayArea {
     vertical-align: top;
     margin-top: 10px;
     display: none;
+}
+
+.rightBlogEditPane {
+    background-color: #f1e398;
 }
 
 .crudLabel {

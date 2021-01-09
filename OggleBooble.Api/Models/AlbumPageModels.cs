@@ -74,6 +74,16 @@ namespace OggleBooble.Api.Models
         public int SortOrder { get; set; }
     }
 
+    public class BreadCrumbSuccessModel 
+    {
+        public BreadCrumbSuccessModel() 
+        {
+            BreadCrumbs = new List<BreadCrumbItemModel>();        
+        }
+        public List<BreadCrumbItemModel> BreadCrumbs { get; set; }
+        public string Success { get; set; }
+    }
+
     public class BreadCrumbItemModel
     {
         public int FolderId { get; set; }

@@ -2,6 +2,11 @@
     selectedCommentType,
     selectedBlogId;
 
+    //    Show Blog   leftColumnShowBlog
+    //    New Entry   leftColumnNew
+    //    Edit        leftColumnEdit
+    //    Show Page   leftColumnShowPage
+
 function blogStartup() {
     setOggleHeader(3911, "blog");
     setOggleFooter(3911, "blog");
@@ -20,28 +25,26 @@ function blogStartup() {
     //}
 }
 
-    //    Show Blog   leftColumnShowBlog
-    //    New Entry   leftColumnNew
-    //    Edit        leftColumnEdit
-    //    Show Page   leftColumnShowPage
-
 function newEntry() {
-    $('.blogArea').fadeOut();
-    $('#blogEditArea').show();
+    //"    <div id='blogEditArea' class='blogArea twoColumnFrame flexContainer'>\n" +
 
+    $('.blogArea').hide();
+    $('#blogEditArea').show();
+    $('#blogCrudBox').css("width", window.width * .88);
     $('.blogEditButton').hide();
     $('#leftColumnShowBlog').show();
     $('#leftColumnShowPage').show();
 }
 
 function showArticleJogs() {
-    $('.blogArea').fadeOut();
+    $('.blogArea').hide();
     $('#blogListArea').show();
 
     $('.blogEditButton').hide();
     $('#leftColumnNew').show();
     loadBlogArticles(selectedCommentType);
 }
+
 function editArticle(blogId, commentType) {
     selectedBlogId = blogId;
     selectedCommentType = commentType;
@@ -58,9 +61,10 @@ function editBlogComment() {
     $('#leftColumnShowBlog').show();
     $('#leftColumnShowPage').show();
 
-    $('.blogArea').fadeOut();
+    //alert("$(window).width: " + $(window).width() * .88);
+    $('#blogCrudBox').css("width", $(window).width() * .66);
+    $('.blogArea').hide();
     $('#blogEditArea').fadeIn();
-
     $('#btnAddEdit').html("Add");
     $('#btnNewCancel').hide();
     clearGets();
@@ -79,9 +83,6 @@ function showReadOnlyView(blogId) {
     $('#blogPageArea').fadeIn();
 }
 
-
-
-////////////////////////////////////
 function loadSingleBlogEntry(blogId, editMode) {
     try {
         $.ajax({
@@ -130,6 +131,7 @@ function loadSingleBlogEntry(blogId, editMode) {
         logError("CAT", 3911, e, "load SingleBlogEntry");
     }
 }
+
 function loadBlogArticles(commentType) {
     try {
         selectedCommentType = commentType;
@@ -182,6 +184,7 @@ function loadBlogArticles(commentType) {
         logError("CAT", 3911, e, "load BlogArticles");
     }
 }
+
 function loadCommentTypesDD() {
     $.ajax({
         type: "GET",
@@ -190,12 +193,16 @@ function loadCommentTypesDD() {
             if (refs.Success === "ok") {
                 $('#ddCommentType').html("");
                 $.each(refs.RefItems, function (idx, obj) {
-                    $('#ddCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-                    //$('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                    if (obj.RefCode == "BLG")
+                        $('#ddCommentType').append("<option value='" + obj.RefCode + "' selected='selected'>" + obj.RefDescription + "</option>");
+                    else
+                        $('#ddCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
                 });
-                $('#ddCommentType option[value="BLG"]').attr('selected', 'selected');
 
-                $('#ddCommentType').change(ddCommentTypeChange());
+
+                $('#ddCommentType').change(function () {
+                    alert("ddCommentTypeChange(" + $('#ddCommentType option:selected').val() + ")");
+                });
             }
             else
                 logError("AJX", 3911, refs.Success, "loadCommentTypes");
@@ -208,45 +215,9 @@ function loadCommentTypesDD() {
         }
     });
 }
+
 function ddCommentTypeChange() {
-    alert("ddCommentTypeChange(" + $('#ddCommentType option:selected').val() + ")");
-}
-function createStaticBlogPage() { }
-
-
-function loadFolderComment(folderId) {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Folder/GetFolderInfo?folderId=" + folderId,
-        success: function (folderInfo) {
-            if (folderInfo.Success === "ok") {
-                blogObject.Id = folderInfo.FolderId;
-                $('#txtCommentTitle').val(folderInfo.FolderName);
-                $('#txtLink').val(folderInfo.Link);
-                $('#oggleBlogSummerNote').summernote('code', folderInfo.CommentText);
-                //$('#imgBlogLink').attr("src", folderInfo.Link);
-
-                $('#blogPageTitle').html(categoryCommentModel.FolderName);
-                $('#blogPageImage').attr("src", categoryCommentModel.Link);
-                $('#blogPageBody').html("fls");
-
-                if ($('#blogPageBody').height() > $('#middleColumn').height()) {
-                    $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
-                    resizeBlogPage();
-                }
-                $('#btnAddEdit').html("Save");
-                $('#btnNewCancel').show();
-            }
-            else 
-                logError("AJX", folderId, folderInfo.Success, "loadFolderComment");
-        },
-        error: function (jqXHR) {
-            $('#blogLoadingGif').hide();
-            let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3911, errMsg, functionName);
-        }
-    });
+    //alert("ddCommentTypeChange(" + $('#ddCommentType option:selected').val() + ")");
 }
 
 function loadBlogList(commentType) {
@@ -416,51 +387,50 @@ function loadBlogHtmlBody() {
     //});
 
     $('#indexMiddleColumn').html(
-        "    <div id='blogListArea' class='blogArea blogDisplayArea'>\n" +
-        "        <select id='ddCommentType' class='roundedInput blogDropdown'></select>\n" +
-        "        <div id='blogArticleJogContainer' class='blogArticleJogContainer'></div>\n" +
-        "    </div>\n" +
-        "    <div id='blogEditArea' class='blogArea twoColumnFrame flexContainer'>\n" +
-        "        <div id='blogEditor' class='oggleBlogEditor'>\n" +
-        "            <div class='floatLeft'>\n" +
-        "                <div class='oggleBlogCrudArea flexContainer'>\n" +
-        "                    <div class='floatLeft'>\n" +
-        "                        <div style='display:block'>\n" +
-        "                            <div class='crudRow'>\n" +
-        "                                <div class='crudLabel inline'>Title</div>\n" +
-        "                                <input id='txtCommentTitle' class='roundedInput' />\n" +
-        "                            </div>\n" +
-        "                            <div class='crudRow'>\n" +
-        "                                <div class='crudLabel inline'>Type</div>\n" +
-        //"                                <select id='selBlogEditCommentType' class='roundedInput' onchange='loadBlogList()'>\n" +
-        "                                </select>\n" +
-        "                            </div>\n" +
-        "                            <div class='crudRow'>\n" +
-        "                                <div class='crudLabel inline'>Link</div>\n" +
-        "                                <input id='txtLink' class='roundedInput' />\n" +
-        "                            </div>\n" +
+        "   <div id='blogListArea' class='blogArea blogDisplayArea'>\n" +
+        "       <select id='ddCommentType' class='roundedInput blogDropdown'></select>\n" +
+        "       <div id='blogArticleJogContainer' class='blogArticleJogContainer'></div>\n" +
+        "   </div>\n" + 
+        //"   <div id='blogEditArea' class='blogArea twoColumnFrame flexContainer'>\n" +
+        "   <div id='blogEditArea' class='blogArea'>\n" +
+        "       <div class='floatLeft'>\n" +
+        "            <div class='flexContainer'>\n" +
+        "                <div id='blogCrudBox' class='floatLeft'>\n" +
+        "                   <div class='rightBlogEditPane' >\n" +
+        "                        <div class='crudRow'>\n" +
+        "                            <div class='crudLabel inline'>Title</div>\n" +
+        "                            <input id='txtCommentTitle' class='roundedInput' />\n" +
         "                        </div>\n" +
-        "                    </div>\n" +
-        "                    <div class='floatLeft'>\n" +
-        "                        <img id='imgBlogLink' class='leftImage' />\n" +
-        "                    </div>\n" +
+        "                        <div class='crudRow'>\n" +
+        "                            <div class='crudLabel inline'>Type</div>\n" +
+        //"                            <select id='selBlogEditCommentType' class='roundedInput' onchange='loadBlogList()'>\n" +
+        "                            </select>\n" +
+        "                        </div>\n" +
+        "                        <div class='crudRow'>\n" +
+        "                            <div class='crudLabel inline'>Link</div>\n" +
+        "                            <input id='txtLink' class='roundedInput' />\n" +
+        "                        </div>\n" +
+        "                   </div>\n" +
+        "                </div>\n" +
+        "                <div class='floatRight'>\n" +
+        "                    <img id='imgBlogLink' class='leftImage' />\n" +
         "                </div>\n" +
         "            </div>\n" +
-        "            <div class='floatLeft'>\n" +
-        "               <div class='modelInfoCommentArea'>\n" +
-        "                   <textarea id='summernoteContainer'></textarea>\n" +
-        "               </div>\n" +
-        //        "                <div id='oggleBlogSummerNote' class='oggleBlogTextEditor'></div>\n" +
-        "                <div class='oggleBlogFooterArea'>\n" +
-        "                    <div id='btnAddEdit' class='roundendButton' onclick='saveBlogEntry()'>Add</div>\n" +
-        "                    <div id='btnNewCancel' class='roundendButton' onclick='NewCancel()'>New</div>\n" +
-        "                </div>\n" +
-        "            </div>\n" +
-        "        </div>\n" +
-        "        <div class='floatLeft'>\n" +
-        "            <div id='blogList' class='blogItemContainer'></div>\n" +
-        "        </div>\n" +
-        "    </div>\n" +
+        "           <textarea id='summernoteContainer'></textarea>\n" +
+        "           <div class='oggleBlogFooterArea'>\n" +
+        "               <div id='btnAddEdit' class='roundendButton' onclick='saveBlogEntry()'>Add</div>\n" +
+        "               <div id='btnNewCancel' class='roundendButton' onclick='NewCancel()'>New</div>\n" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "       <div class='floatLeft'>\n" +
+        "           <div class='modelInfoCommentArea'>\n" +
+        "               modelInfoCommentArea" +
+        "           </div>\n" +
+        "       </div>\n" +
+        "   </div>\n" +
+        "   <div class='floatLeft'>\n" +
+        "       <div id='blogList' class='blogItemContainer'></div>\n" +
+        "   </div>\n" +
         "    <div id='blogPageArea' class='blogArea singleBlogEntryContainer'>\n" +
         "        <div id='blogPageTitle' class='blogPageSubHeader'></div>\n" +
         "        <div class='blogPageImageContainer'>\n" +
@@ -517,3 +487,40 @@ function loadBlogHtmlBody() {
 //        }
 //    });
 //}
+
+function createStaticBlogPage() { }
+
+function loadFolderComment(folderId) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Folder/GetFolderInfo?folderId=" + folderId,
+        success: function (folderInfo) {
+            if (folderInfo.Success === "ok") {
+                blogObject.Id = folderInfo.FolderId;
+                $('#txtCommentTitle').val(folderInfo.FolderName);
+                $('#txtLink').val(folderInfo.Link);
+                $('#oggleBlogSummerNote').summernote('code', folderInfo.CommentText);
+                //$('#imgBlogLink').attr("src", folderInfo.Link);
+
+                $('#blogPageTitle').html(categoryCommentModel.FolderName);
+                $('#blogPageImage').attr("src", categoryCommentModel.Link);
+                $('#blogPageBody').html("fls");
+
+                if ($('#blogPageBody').height() > $('#middleColumn').height()) {
+                    $('#middleColumn').height($('#blogPageBody').height() + $('#bheader').height());
+                    resizeBlogPage();
+                }
+                $('#btnAddEdit').html("Save");
+                $('#btnNewCancel').show();
+            }
+            else
+                logError("AJX", folderId, folderInfo.Success, "loadFolderComment");
+        },
+        error: function (jqXHR) {
+            $('#blogLoadingGif').hide();
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3911, errMsg, functionName);
+        }
+    });
+}

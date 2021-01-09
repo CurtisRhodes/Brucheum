@@ -5,15 +5,15 @@ function loadAlbum(folderId) {
         logError("BUG", 999, "folderId not found", "loadAlbum");
         return;
     }
+    apFolderId = folderId;
+    apVisitorId = getCookieValue("VisitorId");
+
     qucikHeader(folderId);
     logPageHit(folderId);
-
-    apFolderId = folderId;
-
-    apVisitorId = getCookieValue("VisitorId");
-    if (isNullorUndefined(apVisitorId)) {
-        apVisitorId = "stillOkUnknown";
-    }
+    setBreadcrumbs(folderId);
+    //if (isNullorUndefined(apVisitorId)) {
+    //    apVisitorId = "stillOkUnknown";
+    //}
     settingsImgRepo = settingsArray.ImageRepo;
     getAlbumImages(folderId);
     getAlbumPageInfo(folderId);
@@ -158,7 +158,7 @@ function getAlbumPageInfo(folderId) {
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
                 apFolderName = albumInfo.FolderName;
-                setBreadCrumbs(albumInfo.BreadCrumbs);
+                //setBreadCrumbs(albumInfo.BreadCrumbs);
 
                 $('#folderCommentButton').on("click", function () {
                     showFolderCommentDialog(folderId, albumInfo.FolderName);
@@ -306,32 +306,77 @@ function albumContextMenu(menuType, linkId, folderId, imgSrc) {
     showContextMenu(menuType, pos, imgSrc, linkId, folderId, apFolderName);
 }
 
-function setBreadCrumbs(breadCrumbModel) {
-    // a woman commited suicide when pictures of her "came out"
-    // title: I do not remember having been Invited)
-    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"BCC\"," + apFolderId + "\,\"root\",1)'>root  &#187</a>");
-    for (i = breadCrumbModel.length - 1; i >= 0; i--) {
-        if (breadCrumbModel[i] === null) {
-            breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
-        }
-        else {
-            if (breadCrumbModel[i].IsInitialFolder) {
-                $('#breadcrumbContainer').append(
-                    "<a class='inactiveBreadCrumb' " +
-                    "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbModel[i].FolderId + ")' " +
-                    "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
-                    "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" +
-                    breadCrumbModel[i].FolderId + ",\"bc click\")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+function setBreadcrumbs(folderId) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/GalleryPage/GetBreadcrumbs?folderId=" + folderId,
+        success: function (breadCrumbSuccess) {
+            // a woman commited suicide when pictures of her "came out"
+            // title: I do not remember having been Invited)
+            if (breadCrumbSuccess.Success == "ok") {
+                $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"BCC\"," + apFolderId + "\,\"root\",1)'>root  &#187</a>");
+                for (i = breadCrumbSuccess.BreadCrumbs.length - 1; i >= 0; i--) {
+                    if (breadCrumbSuccess.BreadCrumbs[i] === null) {
+                        breadCrumbSuccess.Success = "BreadCrumbs[i] == null : " + i;
+                        $('#breadcrumbContainer').html("BreadCrumbs[i] == null : " + i);
+                    }
+                    else {
+                        if (breadCrumbSuccess.BreadCrumbs[i].IsInitialFolder) {
+                            $('#breadcrumbContainer').append(
+                                "<a class='inactiveBreadCrumb' " +
+                                "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")' " +
+                                "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
+                                "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" +
+                                breadCrumbSuccess.BreadCrumbs[i].FolderId + ",\"bc click\")'>" + breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                        }
+                        else {
+                            $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
+                                // rtpe(eventCode, calledFrom, eventDetail, pageId)
+                                "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" + breadCrumbSuccess.BreadCrumbs[i].FolderName + "\"," + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")'>" +
+                                breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
+                        }
+                    }
+                }
             }
             else {
-                $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
-                    // rtpe(eventCode, calledFrom, eventDetail, pageId)
-                    "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" + breadCrumbModel[i].FolderName + "\"," + breadCrumbModel[i].FolderId + ")'>" +
-                    breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
+                $('#breadcrumbContainer').html("setBreadcrumbs: " + breadCrumbSuccess.Success);
+                logError("AJX", folderId, albumInfo.Success, "setBreadcrumbs");
             }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
-    }
+    });
 }
+
+//function setBreadCrumbs(breadCrumbModel) {
+//    // a woman commited suicide when pictures of her "came out"
+//    // title: I do not remember having been Invited)
+//    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"BCC\"," + apFolderId + "\,\"root\",1)'>root  &#187</a>");
+//    for (i = breadCrumbModel.length - 1; i >= 0; i--) {
+//        if (breadCrumbModel[i] === null) {
+//            breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
+//        }
+//        else {
+//            if (breadCrumbModel[i].IsInitialFolder) {
+//                $('#breadcrumbContainer').append(
+//                    "<a class='inactiveBreadCrumb' " +
+//                    "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbModel[i].FolderId + ")' " +
+//                    "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
+//                    "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" +
+//                    breadCrumbModel[i].FolderId + ",\"bc click\")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+//            }
+//            else {
+//                $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
+//                    // rtpe(eventCode, calledFrom, eventDetail, pageId)
+//                    "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" + breadCrumbModel[i].FolderName + "\"," + breadCrumbModel[i].FolderId + ")'>" +
+//                    breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
+//            }
+//        }
+//    }
+//}
 
 function setBadges(folderComments) {
     if (!isNullorUndefined(folderComments)) {
