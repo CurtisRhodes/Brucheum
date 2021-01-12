@@ -31,8 +31,7 @@ function runMetricsMatrixReport() {
                         "<div>PageHits</div>" +
                         "<div>ImageHits</div></div>"
                     );
-
-                    for (let i = 0; i < 10; i++) {
+                    for (let i = 0; i < rslts.mRows.length; i++) {
                         $("#fxShell").append("<div><div class='center'>" + rslts.mRows[i].DayofWeek + "</div>" +
                             "<div><div class='center'>&nbsp;" + rslts.mRows[i].DateString + "&nbsp;</div>" +
                             "<div class='center clickable underline' onclick='metrixSubReport(1,\"" + rslts.mRows[i].ReportDay +"\")'>" +
@@ -607,14 +606,15 @@ function poll() {
     });
 }
 
-function buildListPage(startFolder) {
+function buildListPage() {
     let start = Date.now();
     //let pollingLoop = setInterval(function () { pollBuildCenterfoldHtmlPage() }, 5000);
+    let startFolder = 1;
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("building Centerfold List");
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Report/BuildListPage?rootFolder=" + startFolder,
+        url: settingsArray.ApiServer + "api/Report/BuildListPage?rootFolder=" + pSelectedTreeId,
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (success == "ok") {

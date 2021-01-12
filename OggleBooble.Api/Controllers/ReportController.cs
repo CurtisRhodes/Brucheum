@@ -378,13 +378,13 @@ namespace OggleBooble.Api.Controllers
             return errorLog;
         }
 
-        public string ProcessStatus { get; set; }
-        [HttpGet]
-        [Route("api/Report/Poll")]
-        public string Poll()
-        {
-            return ProcessStatus;
-        }
+        //public string ProcessStatus { get; set; }
+        //[HttpGet]
+        //[Route("api/Report/Poll")]
+        //public string Poll()
+        //{
+        //    return ProcessStatus;
+        //}
 
         [HttpGet]
         [Route("api/Report/UserDetails")]
@@ -431,57 +431,66 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                int monthIncimentor;
+                // int monthIncimentor;
                 var stringBuilder = new StringBuilder("<html><head>");
-                //MessageHub hub = new MessageHub();
+                stringBuilder.Append("</head>\n<body>\n");
+                string pageTitle;
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    string imgSrc;
-                    ImageFile dbImageFile;
-                    var dbPlayboyDecades = db.CategoryFolders.Where(f => f.Parent == rootFolder).OrderBy(f => f.SortOrder).ToList();
-                    stringBuilder.Append("\n<style>\n" +
-                        ".pbDecade { margin - left: 20px; font-family: 'Segoe UI', Tahoma; font-size: 35px; }\n" +
-                        ".pbYear { margin - left: 80px; color:#000; font-size: 30px;}\n" +
-                        ".pbMonth { margin - left: 40px; font-size: 20px; }\n" +
-                        ".pbRow { display: flex; }\n" +
-                        ".pbCol { display: inline - block; margin-left: 60px; }\n" +
-                        ".pbItemCntr { display: inline-block; }\n" +
-                        ".pbImg { height: 45px; }\n</style>\n");
-                    stringBuilder.Append("</head>\n<body>\n");
-                    foreach (var dbPlayboyDecade in dbPlayboyDecades)
-                    {
-                        monthIncimentor = 0;
-                        stringBuilder.Append("<div class='pbDecade'>" + dbPlayboyDecade.FolderName + "</div>\n");
-                        var dbPlayboyYears = db.CategoryFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
-                        foreach (var dbPlayboyYear in dbPlayboyYears)
-                        {
-                            //hub.SendMessage("xx", dbPlayboyYear.FolderName);
-                            stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "</div>\n");
-                            var dbPlayboyMonths = db.CategoryFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
+                    //string imgSrc;
+                    //ImageFile dbImageFile;
+                    var dbParentFolder = db.CategoryFolders.Where(f => f.Id == rootFolder).First();
+                    //var folderImage = dbParentFolder.FolderPath;
+                    stringBuilder.Append("\n<H2>" + dbParentFolder.FolderName + "</H2>\n");
+                    pageTitle = dbParentFolder.FolderName;
+                    var dbChildFolders = db.CategoryFolders.Where(f => f.Parent == rootFolder).OrderBy(f => f.SortOrder).ToList();
 
-                            stringBuilder.Append("<div class='pbRow'>");
-                            foreach (CategoryFolder dbPbmonth in dbPlayboyMonths)
-                            {
-                                ProcessStatus = dbPlayboyYear.FolderName + " " + ++monthIncimentor + " " + dbPbmonth.FolderName;
-                                imgSrc = "Images/redballon.png";
-                                if (dbPbmonth.FolderImage != null)
-                                {
-                                    dbImageFile = db.ImageFiles.Where(i => i.Id == dbPbmonth.FolderImage).FirstOrDefault();
-                                    if (dbImageFile != null)
-                                        imgSrc = dbPbmonth.FolderPath + "/" + dbImageFile.FileName;
-                                }
-                                stringBuilder.Append(
-                                    "<div class='pbCol' style='width:66px;'>" +
-                                    //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
-                                    //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
-                                    "   <a href='" + httpLocation + "/album.html?folder=" + dbPbmonth.Id + "'>" +
-                                    "       <img class='pbImg' src='" + imagesLocation + imgSrc + "'>" +
-                                    "       <div class='pbLabel01'>" + dbPbmonth.FolderName + "</div>\n" +
-                                    "   </a>" +
-                                    "</div>\n");
-                            }
-                            stringBuilder.Append("</div>\n");
-                        }
+                    foreach (var dbChildFolder in dbChildFolders) 
+                    {
+                        //stringBuilder.Append("\n<style = '' >\n");
+                        stringBuilder.Append("\n<H3>" + dbChildFolder.FolderName + "</H3>\n");
+                    }
+
+                    //stringBuilder.Append("\n<style>\n" +
+                    //    ".pbDecade { margin - left: 20px; font-family: 'Segoe UI', Tahoma; font-size: 35px; }\n" +
+                    //    ".pbYear { margin - left: 80px; color:#000; font-size: 30px;}\n" +
+                    //    ".pbMonth { margin - left: 40px; font-size: 20px; }\n" +
+                    //    ".pbRow { display: flex; }\n" +
+                    //    ".pbCol { display: inline - block; margin-left: 60px; }\n" +
+                    //    ".pbItemCntr { display: inline-block; }\n" +
+                    //    ".pbImg { height: 45px; }\n</style>\n");
+                    {
+                        //monthIncimentor = 0;
+                        //stringBuilder.Append("<div class='pbDecade'>" + dbPlayboyDecade.FolderName + "</div>\n");
+                        //var dbPlayboyYears = db.CategoryFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
+                        //foreach (var dbPlayboyYear in dbPlayboyYears)
+                        //{
+                        //    //hub.SendMessage("xx", dbPlayboyYear.FolderName);
+                        //    stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "</div>\n");
+                        //    var dbPlayboyMonths = db.CategoryFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
+                        //    stringBuilder.Append("<div class='pbRow'>");
+                        //    foreach (CategoryFolder dbPbmonth in dbPlayboyMonths)
+                        //    {
+                        //        //ProcessStatus = dbPlayboyYear.FolderName + " " + ++monthIncimentor + " " + dbPbmonth.FolderName;
+                        //        imgSrc = "Images/redballon.png";
+                        //        if (dbPbmonth.FolderImage != null)
+                        //        {
+                        //            dbImageFile = db.ImageFiles.Where(i => i.Id == dbPbmonth.FolderImage).FirstOrDefault();
+                        //            if (dbImageFile != null)
+                        //                imgSrc = dbPbmonth.FolderPath + "/" + dbImageFile.FileName;
+                        //        }
+                        //        stringBuilder.Append(
+                        //            "<div class='pbCol' style='width:66px;'>" +
+                        //            //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
+                        //            //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
+                        //            "   <a href='" + httpLocation + "/album.html?folder=" + dbPbmonth.Id + "'>" +
+                        //            "       <img class='pbImg' src='" + imagesLocation + imgSrc + "'>" +
+                        //            "       <div class='pbLabel01'>" + dbPbmonth.FolderName + "</div>\n" +
+                        //            "   </a>" +
+                        //            "</div>\n");
+                        //    }
+                        //    stringBuilder.Append("</div>\n");
+                        //}
                         //stringBuilder.Append("</div>\n");
                     }
                 }
@@ -494,12 +503,10 @@ namespace OggleBooble.Api.Controllers
 
                 //$('#footerMessage').html(link);
                 stringBuilder.Append("\n</body>\n</html>");
-                 success = WriteFileToDisk(stringBuilder.ToString(), "CenterfoldList");
+
+                success = WriteFileToDisk(stringBuilder.ToString(), pageTitle);
             }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
 

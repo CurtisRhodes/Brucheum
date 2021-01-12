@@ -76,7 +76,7 @@ function getLimitedImageDetails() {
                         }
                         break;
                     default:
-                        logError("SWT", apFolderId, "folder type: " + albumImageInfo.FolderType, "getAlbumImages");
+                        logError("SWT", apFolderId, "folder type: " + folderType, "getLimitedImageDetails");
                 }
 
                 //$('#ctxMenuType').html(pMenuType).show();
@@ -99,9 +99,7 @@ function getLimitedImageDetails() {
                 }
                 getFullImageDetails();
             }
-            else {
-                logError("AJX", pFolderId, imageInfo.Success, "getLimitedImageDetails");
-            }
+            else { logError("AJX", pFolderId, imageInfo.Success, "getLimitedImageDetails"); }
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
