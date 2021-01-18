@@ -12,13 +12,13 @@ using OggleBooble.Api.MySqlDataContext;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class OggleJournalController : ApiController
+    public class OggleBlogController : ApiController
     {
         [HttpGet]
-        [Route("api/OggleJournal/GetBlogItem")]
-        public BlogCommentSuccessModel GetBlogItem(string blogId)
+        [Route("api/OggleBlog/GetBlogItem")]
+        public SingleBlogCommentModel GetBlogItem(string blogId)
         {
-            var blogCommentModel = new BlogCommentSuccessModel();
+            var singleBlogComment = new SingleBlogCommentModel();
             try
             {
                 //using (var db = new OggleBoobleMSSqlContext())
@@ -27,22 +27,27 @@ namespace OggleBooble.Api.Controllers
                     VwBlogComment vwBlogComment = db.VwBlogComments.Where(b => b.PkId == blogId).FirstOrDefault();
                     if (vwBlogComment != null)
                     {
-                        blogCommentModel.BlogComments.Add(vwBlogComment);
-                        blogCommentModel.Success = "ok";
+                        singleBlogComment.CommentTitle = vwBlogComment.CommentTitle;
+                        singleBlogComment.CommentText = vwBlogComment.CommentText;
+                        singleBlogComment.ImageLink = vwBlogComment.ImageLink;
+                        singleBlogComment.ImgSrc = vwBlogComment.ImgSrc;
+                        singleBlogComment.CommentType = vwBlogComment.CommentType;
+                        singleBlogComment.Pdate = vwBlogComment.Pdate;
+                        singleBlogComment.Success = "ok";
                     }
                     else
-                        blogCommentModel.Success = "blog entry not found";
+                        singleBlogComment.Success = "blog entry not found";
                 }
             }
             catch (Exception ex)
             {
-                blogCommentModel.Success = Helpers.ErrorDetails(ex);
+                singleBlogComment.Success = Helpers.ErrorDetails(ex);
             }
-            return blogCommentModel;
+            return singleBlogComment;
         }
 
         [HttpGet]
-        [Route("api/OggleJournal/GetBlogList")]
+        [Route("api/OggleBlog/GetBlogList")]
         public BlogCommentSuccessModel GetBlogList(string commentType)
         {
             var blogCommentsModel = new BlogCommentSuccessModel();
@@ -61,10 +66,28 @@ namespace OggleBooble.Api.Controllers
             return blogCommentsModel;
         }
 
-        // [Route("api/OggleBlog/GetBlogComment")]
+        [HttpGet]
+        [Route("api/OggleBlog/GetImageLink")]
+        public string GetImageLink(string linkId)
+        {
+            string imageAddress;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == linkId).First();
+                    imageAddress = db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath + "/" + dbImageFile.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                imageAddress = Helpers.ErrorDetails(ex);
+            }
+            return imageAddress;
+        }
 
         [HttpPost]
-        [Route("api/OggleJournal/Insert")]
+        [Route("api/OggleBlog/Insert")]
         public SuccessModel Insert(BlogComment blogComment)
         {
             SuccessModel successModel = new SuccessModel();
@@ -88,7 +111,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPut]
-        [Route("api/OggleJournal/Update")]
+        [Route("api/OggleBlog/Update")]
         public string Update(BlogComment entry)
         {
             string success = "";

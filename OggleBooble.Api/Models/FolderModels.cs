@@ -139,4 +139,18 @@ namespace OggleBooble.Api.Models
         public List<VwBlogComment> BlogComments { get; set; }
         public string Success { get; set; }
     }
+
+    public class SingleBlogCommentModel
+    {
+        public string PkId { get; set; }
+        public string CommentType { get; set; }
+        public int FolderId { get; set; }
+        public string ImageLink { get; set; }
+        public string Pdate { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentText { get; set; }
+        public string ImgSrc { get; set; }
+        public DateTime Posted { get; set; }
+        public string Success { get; set; }
+    }
 }

@@ -72,6 +72,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string PkId { get; set; }
         public string CommentType { get; set; }
         public int FolderId { get; set; }
+        public string ImageLink { get; set; }
         public string Pdate { get; set; }
         public string CommentTitle { get; set; }
         public string CommentText { get; set; }

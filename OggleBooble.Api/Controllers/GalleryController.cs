@@ -50,7 +50,7 @@ namespace OggleBooble.Api.Controllers
             return breadCrumbs;
         }
 
-    [HttpGet]
+       [HttpGet]
         [Route("api/GalleryPage/UpdateDirTree")]
         public string UpdateDirTree()
         {
@@ -254,6 +254,7 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { subFolderModel.Success = Helpers.ErrorDetails(ex); }
             return subFolderModel;
         }
+
         private void GetSubFolderCountsRecurr(SubFolderCountModel subFolderModel, CategoryFolder vFolder)
         {
             subFolderModel.TtlFolderCount++;
@@ -441,10 +442,12 @@ namespace OggleBooble.Api.Controllers
                             var dbStepFolder = db.CategoryFolders.Where(v => v.Id == stepChild).FirstOrDefault();
                             UpdateFolderCountsRecurr(updateFolderCountsModel, dbStepFolder);
                         }
-
-                        var dbFolderDetail = db.FolderDetails.Where(d => d.FolderId == folderId).First();
-                        dbFolderDetail.TotalChildFiles = updateFolderCountsModel.TtlFileCount;
-                        dbFolderDetail.SubFolderCount = updateFolderCountsModel.TtlFolderCount;
+                        CategoryFolder dd = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                        dd.TotalChildFiles = updateFolderCountsModel.TtlFileCount;
+                        dd.TotalSubFolders = updateFolderCountsModel.TtlFolderCount;
+                        //var dbFolderDetail = db.FolderDetails.Where(d => d.FolderId == folderId).First();
+                        //dbFolderDetail.TotalChildFiles = updateFolderCountsModel.TtlFileCount;
+                        //dbFolderDetail.SubFolderCount = updateFolderCountsModel.TtlFolderCount;
                         db.SaveChanges();
                     }
                 }

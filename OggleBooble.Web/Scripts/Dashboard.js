@@ -240,7 +240,7 @@ function showRepairLinksDialog() {
     $('#dashboardDialogTitle').html("Repair Links");
     $('#dashboardDialogContents').html(
         "    <div><span>folder to repair</span><input id='txtFolderToRepair' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
-        "    <div><span>include all subfolders </span><input type='checkbox' id='ckRepairIncludeSubfolders' checked='checked' /></div>\n" +
+        "    <div><span>include all subfolders </span><input type='checkbox' id='ckRepairIncludeSubfolders' /></div>\n" +
         "    <div class='roundendButton' onclick='performRepairLinks($(\"#ckRepairIncludeSubfolders\").is(\":checked\"))'>Run</div>\n");
     $("#txtFolderToRepair").val(pSelectedTreeFolderPath);
     $('#dashboardDialog').fadeIn();
@@ -285,8 +285,8 @@ function performRepairLinks(justOne) {
                             $('#dataifyInfo').append(", Image File Names Renamed: " + repairReport.ImageFilesRenamed);
                         if (repairReport.ImagesRenamed > 0)
                             $('#dataifyInfo').append(", Image Files Renamed: " + repairReport.ImagesRenamed);
-                        if (repairReport.ZeroLenFileRemoved > 0)
-                            $('#dataifyInfo').append(", Image Files Zeroed: " + repairReport.ZeroLenFileRemoved);
+                        if (repairReport.ZeroLenFileResized > 0)
+                            $('#dataifyInfo').append(", ZeroLen File Resized: " + repairReport.ZeroLenFileResized);
                         if (repairReport.ImageFilesMoved > 0)
                             $('#dataifyInfo').append(", Images Moved: " + repairReport.ImageFilesMoved);
                         if (repairReport.CatLinksRemoved > 0)

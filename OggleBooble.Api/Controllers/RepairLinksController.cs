@@ -16,7 +16,7 @@ namespace OggleBooble.Api.Controllers
     {
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
-        private readonly string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
+        //private readonly string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
@@ -68,8 +68,6 @@ namespace OggleBooble.Api.Controllers
                     if (imageFile.FileName != expectedFileName)
                     {
                         imageFile.FileName = expectedFileName;
-                        //ImageFile realImageFile = db.ImageFiles.Where(i => i.Id == imageFile.Id).First();
-                        //realImageFile.FileName = expectedFileName;
                         db.SaveChanges();
                         repairReport.ImageFilesRenamed++;
                     }
@@ -80,8 +78,7 @@ namespace OggleBooble.Api.Controllers
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
                     var physcialFileName = physcialFiles[i];
-                    var physcialFileLinkId = physcialFileName.Substring(physcialFileName.IndexOf("_") + 1, 36);
-
+                    var physcialFileLinkId = physcialFileName.Substring(physcialFileName.LastIndexOf("_") + 1, 36);
                     var dbFolderImageFile = dbFolderImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault();
                     if (dbFolderImageFile == null)
                     {
@@ -150,47 +147,68 @@ namespace OggleBooble.Api.Controllers
                             repairReport.ImageFilesAdded++;
                         }
                     }
+                    else
+                    {
+                        if (dbFolderImageFile.Size == 0)
+                        {
+                            // create new ImageFile record
+                            // USE WEBCLIENT TO CREATE THE FILE
+                            string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+                            string imgFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
+                            using (WebClient wc = new WebClient())
+                            {
+                                wc.DownloadFile(new Uri(imgFileName), appDataPath + "tempImage.tmp");
+                            }
+                            int fWidth = 0; int fHeight = 0; long fSize = 0;
+                            using (var fileStream = new FileStream(appDataPath + "tempImage.tmp", FileMode.Open, FileAccess.Read, FileShare.Read))
+                            {
+                                fSize = fileStream.Length;
+                                try
+                                {
+                                    using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                                    {
+                                        fWidth = image.Width;
+                                        fHeight = image.Height;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (Helpers.ErrorDetails(ex).ToString() == "{Parameter is not valid.}")
+                                        repairReport.Errors.Add("unable to get width and height of " + physcialFileName);
+                                    else
+                                        repairReport.Errors.Add("problem getting filesize" + Helpers.ErrorDetails(ex));
+                                }
+                            }
+                            dbFolderImageFile.Height = fHeight;
+                            dbFolderImageFile.Size = fSize;
+                            dbFolderImageFile.Width = fWidth;
+                            db.SaveChanges();
+                            repairReport.ZeroLenFileResized++;
+                        }
+                    }
+                    repairReport.PhyscialFilesProcessed++;
                 }
                 #endregion
 
                 #region 2. Make sure every ImageFile row has a physcial file
+                // rebuild list 
+                dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
                 var physcialFileLinkIds = new List<string>();
-                for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].IndexOf("_") + 1, 36)); }
+                for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].LastIndexOf("_") + 1, 36)); }
                 if (physcialFileLinkIds.Count() != dbFolderImageFiles.Count())
                 {
                     repairReport.Errors.Add("physcialFiles: " + physcialFileLinkIds.Count() + " ImageFiles: " + dbFolderImageFiles.Count() +
                         " " + imageFileName);
                 }
-                foreach (string physcialFileLinkId in physcialFileLinkIds)
-                {
-                    if (dbFolderImageFiles.Where(i => i.Id == physcialFileLinkId).FirstOrDefault() == null)
-                    {
-                        var dbMisplacedImageFile = db.ImageFiles.Where(i => i.Id == physcialFileLinkId).FirstOrDefault();
-                        if (dbMisplacedImageFile != null)
-                        {
-                            if (dbMisplacedImageFile.FolderId != folderId)
-                            {
-                                dbMisplacedImageFile.FolderId = folderId;
-                                db.SaveChanges();
-                                repairReport.ImageFilesMoved++;
-                            }
-                            //repairReport.Errors.Add("tried to move but already there: " + physcialFileLinkId);
-                            else
-                            {
-                                repairReport.Errors.Add("physcial file with no ImageFile: " + physcialFileLinkId);
-                            }
-                        }
-                    }
-                    repairReport.PhyscialFilesProcessed++;
-                }
+
                 foreach (ImageFile imageFile in dbFolderImageFiles)
                 {
                     if (!physcialFileLinkIds.Contains(imageFile.Id))
                     {
-                        //repairReport.Errors.Add("ImageFile with no physcial file "+ imageFile.Id);
-                        db.ImageFiles.Remove(imageFile);
-                        db.SaveChanges();
-                        repairReport.ImageFilesRemoved++;
+                        repairReport.Errors.Add("ImageFile with no physcial file "+ imageFile.Id);
+                        //db.ImageFiles.Remove(imageFile);
+                        //db.SaveChanges();
+                        //repairReport.ImageFilesRemoved++;
                     }
                     repairReport.ImageFilesProcessed++;
                 }

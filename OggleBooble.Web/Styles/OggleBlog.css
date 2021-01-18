@@ -11,11 +11,35 @@
     width: 333px;
 }
 
-.blogEditArea {
-    display: none;
+.maxWidth {
+    float: left;
+    width: -webkit-fill-available;
+}
+
+.oggleInput {
+    padding: 2px;
+    color: #555;
+    margin-bottom: 2px;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: 88%;
+}
+
+
+.blogCrudArea {
     display: flex;
     margin-top: 10px;
     padding: 4px;
+}
+
+.blogEditAreaColumn1 {
+    float: left;
+    width: 89%;
+}
+.blogEditAreaColumn2 {
+    float: left;
+    border-left: solid thin #b748cc;
 }
 
 .blogDisplayArea {
