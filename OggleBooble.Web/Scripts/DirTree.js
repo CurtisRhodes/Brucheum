@@ -99,6 +99,10 @@ function buildDirTreeRecurr(parentNode) {
                 treeNodeClass = "redTreeLabelDiv";
             }
 
+            if (isNullorUndefined(vwDir.FolderName)) {
+                vwDir.FolderName = "unknown";
+            }
+
             strdirTree +=
                 "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
                 + "<span id='S" + randomId + "' onclick='toggleDirTree(\"" + randomId + "\")' >[" + expandMode + "] </span>"
