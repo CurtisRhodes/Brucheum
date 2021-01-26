@@ -11,14 +11,44 @@ let entirePage;
 function replaceFullPage(imgSrc) {
     entirePage = $('body').html();
     $('body').html(
-        "<div class='fullF11'>" +
-        "<img id='explodedImage' class='explodedImage' onclick='restoreFromBlowup()' src='" + imgSrc + "'/>" +
-        "</div"
+        "<div id='expImgpg' tabindex='0' class='fullF11'>" +
+        "   <div class='fullF11Header'>" +
+        "       <div id='fullF11Title' class='fullF11Title'></div>" +
+        "       <div class='fullF11HeaderCloseButton' onclick='closeExplodedImage()'><img src='/Images/close.png' title='you may use the {esc} key'/></div>\n" +
+        "   </div>" +
+        "   <img id='explodedImage' onclick='explodedImageClick()' src='" + imgSrc + "'/>" +
+        "</div>"
     );
+    let winW = $(window).width();
+    $('#explodedImage').css("width", winW * .7);
+    $('#explodedImage').css("cursor", "zoom-in");
+    $('#expImgpg').focus();
+
+    $('#expImgpg').on('keydown', function (event) {
+        //alert("entirePage.keydown");
+        if (event.which == 27) {
+            event.preventDefault();
+            window.event.returnValue = false;
+            closeExplodedImage();
+        }
+    });
 }
 
-function restoreFromBlowup() {
+function closeExplodedImage() {
     $('body').html(entirePage);
+    slideShowButtonsActive = true;
+}
+
+function explodedImageClick() {
+    if ($('#explodedImage').css("cursor") == "zoom-in") {
+        $('#explodedImage').css("cursor", "zoom-out");
+        $('#explodedImage').css("width", "100%");
+    }
+    else {
+        let winW = $(window).width();
+        $('#explodedImage').css("width", winW * .7);
+        $('#explodedImage').css("cursor", "zoom-in");
+    }
 }
 
 function setCookieValue(elementName, elementValue) {

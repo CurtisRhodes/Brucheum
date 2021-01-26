@@ -22,7 +22,7 @@
 }
     .imageViewerHeaderRow div {
         display: inline-block;
-        background: rgba(148, 133, 143, 0.2);
+        /*background: rgba(148, 133, 143, 0.2);
         /*border: solid thin black;*/
 
     }
@@ -33,12 +33,41 @@
 
 .fullF11 {
     text-align: center;
-    background-color: #d317ef;
+    background-color: #bfbfbf;
+}
+
+.fullF11Header {
+    background-color: var(--ogglgeHeaderBarColor);
+    /*    
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        width: 100%;
+    */
+}
+    .fullF11Header div {
+        display: inline-block;
+    }
+
+.fullF11HeaderCloseButton {
+    float: right;
+}
+.fullF11HeaderCloseButton img {
+    height: 34px;
+    padding-right: 12px;
+    cursor: pointer;
+}
+
+.fullF11Title {
+    text-align: center;
+    font-size: 25px;
 }
 
 .explodedImage {
-    height: 100%;
-    width: 100%;
+    /*
+        width: 100%;
+        height: 100%;
+    */
     cursor: zoom-out;
 }
 

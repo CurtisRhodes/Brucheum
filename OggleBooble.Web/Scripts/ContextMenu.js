@@ -213,13 +213,14 @@ function contextMenuAction(action) {
         }
         case "explode": {
             // logEvent("EXP", pFolderId, pFolderName, pLinkId);
-
             if (pMenuType === "Slideshow") {
+                slideShowButtonsActive = false;
                 $("#slideshowCtxMenuContainer").hide();
                 blowupImage();
             }
             else {
                 $("#imageContextMenu").hide();
+                $("#contextMenuContainer").hide();
                 replaceFullPage(pImgSrc);
             }
             break;

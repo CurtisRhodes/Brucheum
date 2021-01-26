@@ -2,6 +2,7 @@
 let activeReport = "";
 function runMetricsMatrixReport() {
     if (connectionVerified) {
+        $('.middleColumn').width($(window).width() - 100);
         $('#workAreaContainer').css("height", $('#dashboardContainer').height());
         $('#dashBoardLoadingGif').show();
         $('#reportsHeaderTitle').html("Performance Metrics  " + todayString());
@@ -32,13 +33,13 @@ function runMetricsMatrixReport() {
                         "<div>ImageHits</div></div>"
                     );
                     for (let i = 0; i < rslts.mRows.length; i++) {
-                        $("#fxShell").append("<div><div class='center'>" + rslts.mRows[i].DayofWeek + "</div>" +
+                        $("#fxShell").append("<div><div class='mmDate'>" + rslts.mRows[i].DayofWeek + "</div>" +
                             "<div><div class='center'>&nbsp;" + rslts.mRows[i].DateString + "&nbsp;</div>" +
                             "<div class='center clickable underline' onclick='metrixSubReport(1,\"" + rslts.mRows[i].ReportDay +"\")'>" +
                             rslts.mRows[i].NewVisitors.toLocaleString() + "</div>" +
-                            "<div class='center clickable underline' onclick='metrixSubReport(2)'>" +
+                            "<div class='center clickable underline' onclick='metrixSubReport(2,\"" + rslts.mRows[i].ReportDay +"\")'>" +
                             rslts.mRows[i].Visits.toLocaleString() + "</div>" +
-                            "<div class='center clickable underline' onclick='metrixSubReport(3)'>" +
+                            "<div class='center clickable underline' onclick='metrixSubReport(3,\"" + rslts.mRows[i].ReportDay +"\")'>" +
                             rslts.mRows[i].PageHits.toLocaleString() + "</div>" +
                             "<div class='center'>" +
                             rslts.mRows[i].ImageHits.toLocaleString() + "</div></div>"
@@ -94,13 +95,12 @@ function metrixSubReport(reportId, reportDay) {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+                    let functionName = "metrixSubReport/DailyVisitors";
+                    if (!checkFor404(errMsg, 3907, functionName)) logError("XHR", 3907, errMsg, functionName);
                 }
             });
             break;
         case 2: // Visits
-            // $('#dashboardDialogTitle').html("Visits: " + dateString(reportDay));
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/Report/DailyVisits?visitDate=" + reportDay,
@@ -126,8 +126,8 @@ function metrixSubReport(reportId, reportDay) {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+                    let functionName = "metrixSubReport/DailyVisits";
+                    if (!checkFor404(errMsg, 3907, functionName)) logError("XHR", 3907, errMsg, functionName);
                 }
             });
             break;
@@ -697,4 +697,11 @@ function showCenterfoldImage(link) {
     $('.dirTreeImage').attr("src", link);
     $('.dirTreeImageContainer').show();
     //$('#footerMessage').html(link);
+}
+
+function resizeReportsPage() {
+
+    // set page width
+    let winW = $(window).width(); //, lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
+    $('.middleColumn').width(winW - 100);
 }

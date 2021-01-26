@@ -12,8 +12,13 @@ function blogStartup() {
 
     loadBlogHtmlBody();
     loadCommentTypesDD();
+
+
     blogObject.CommentType = "BLG";
+    //blogObject.CommentType = $('#ddCommentType').val()
+
     showArticleJogs();
+
     
     //if (isInRole("BLG")) {
     //    //if (document.domain === 'localhost') alert("is in role blog editor");
@@ -28,7 +33,8 @@ function newEntry() {
 
     $('.blogArea').hide();
     $('#blogEditArea').show();
-    //$('#blogCrudBox').css("width", window.width * .88);
+    clearBlogGets();
+    $('#btnAddEdit').html("Add");
     $('.blogEditButton').hide();
     $('#leftColumnShowBlog').show();
     $('#leftColumnShowPage').show();
@@ -55,7 +61,7 @@ function editArticle(blogId) {
     $('#blogEditArea').fadeIn();
     $('#btnAddEdit').html("Update");
     //$('#btnNewCancel').hide();
-    clearGets();
+
     $('#blogCrudBox').css("width", $(window).width() * .66);
     loadSingleBlogEntry("edit");
 }
@@ -182,25 +188,25 @@ function loadCommentTypesDD() {
             if (refs.Success === "ok") {
                 $('#ddCommentType').html("");
                 $.each(refs.RefItems, function (idx, obj) {
-                    if (obj.RefCode == "BLG") {
-                        $('#ddCommentType').append("<option value='" + obj.RefCode + "' selected='selected'>" + obj.RefDescription + "</option>");
-                        $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "' selected='selected'>" + obj.RefDescription + "</option>");
+                    $('#ddCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                    $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+
+                    if (obj.RefCode == blogObject.CommentType) {
+
                     }
-                    else {
-                        $('#ddCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-                        $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-                    }
+
+
                 });
 
                 $('#ddCommentType').change(function () {
                     blogObject.CommentType = $('#ddCommentType').val()
                     loadArticleJogs();
-                    //alert("ddCommentTypeChange(" + $('#ddCommentType option:selected').val() + ")");                    
                 });
 
                 $('#selBlogEditCommentType').change(function () {
-                    alert("ddCommentTypeChange(" + $('#selBlogEditCommentType option:selected').val() + ")");
-                    blogObject.CommentType = $('#selBlogEditCommentType option:selected').val();
+                    //alert("ddCommentTypeChange(" + $('#selBlogEditCommentType option:selected').val() + ")");
+                    blogObject.CommentType = $('#ddCommentType').val()
+                    //blogObject.CommentType = $('#selBlogEditCommentType option:selected').val();
                     loadBlogList();
                 });
             }
@@ -221,14 +227,14 @@ function loadBlogList() {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/OggleBlog/GetBlogList?commentType=" + blogObject.CommentType,
-            success: function (blogCommentModelContainer) {
+            success: function (blogCommentsModel) {
                 $('#blogItemList').html("");
-                if (blogCommentModelContainer.Success === "ok") {
-                    if (blogCommentModelContainer.blogComments == null) {
+                if (blogCommentsModel.Success === "ok") {
+                    if (blogCommentsModel.BlogComments == null) {
                         $('#blogItemList').html("<div class='blogListItem'>--- ---</div>");
                     }
                     else {
-                        $.each(blogCommentModelContainer.blogComments, function (idx, blogComment) {
+                        $.each(blogCommentsModel.BlogComments, function (idx, blogComment) {
                             $('#blogItemList').append("<div class='blogListItem' " +
                                 "onclick=loadSingleBlogEntry('" + blogComment.Id + "') >" +
                                 blogComment.CommentTitle + "</div>");
@@ -236,7 +242,7 @@ function loadBlogList() {
                     }
                 }
                 else {
-                    logError("AJX", folderId, blogCommentModelContainer.Success, "load BlogList(");
+                    logError("AJX", 3910, blogCommentsModel.Success, "load BlogList(");
                 }
                 resizeBlogPage();
             },
@@ -253,11 +259,12 @@ function loadBlogList() {
     }
 }
 
-function clearGets() {
+function clearBlogGets() {
     $('#txtCommentTitle').val("");
     $('#txtLink').val("");
     $('#summernoteContainer').summernote('code', "");
-    $('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/images/redballon.png");
+    //$('#imgBlogLink').attr("src", "http://boobs.ogglebooble.com/images/redballon.png");
+    $('#imgBlogLink').attr("src", "");
     blogObject.Id = "";
 }
 
@@ -316,14 +323,12 @@ function saveBlogEntry() {
 
 function loadImage() {
     // get full html image name 
-    // alert("blogObject.ImageLink: " + $('#txtLink').val());
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/OggleBlog/GetImageLink?linkId=" + $('#txtLink').val(),
         success: function (imageAddress) {
             $('#imgBlogLink').attr("src", settingsImgRepo + imageAddress);
             blogObject.ImageLink = $('#txtLink').val();
-            alert("blogObject.ImageLink: " + blogObject.ImageLink);
         },
         error: function (jqXHR) {
             $('#blogLoadingGif').hide();

@@ -10,7 +10,8 @@ function logImageHit(linkId, folderId, isInitialHit) {
         if (isNullorUndefined(visitorId)) {
             //verifiyVisitor("logImageHit", folderId);
             setTimeout(function () { logError("IHE", folderId, "linkId: " + linkId, "logImageHit") }, 200);
-            getIpInfo(folderId, "IHE");            
+            getIpInfo(folderId, "IHE");          
+            return;
         }
         $.ajax({
             type: "POST",
@@ -32,6 +33,9 @@ function logImageHit(linkId, folderId, isInitialHit) {
                         //logError("AJX", folderId, imageHitSuccessModel.Success, "logImageHit");
                     }
                     else {
+                        // ERROR: Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.
+                        // Entity of type "ImageHit" in state "Added" has the following validation errors: - 
+                        // Property: "VisitorId", Error: "The VisitorId field is required."
                         if (document.domain == 'localhost') alert(imageHitSuccessModel.Success);
                         logError("AJX", folderId, imageHitSuccessModel.Success, "logImageHit");
                     }
@@ -89,6 +93,7 @@ function logPageHit(folderId) {
     });
 }
 
+let lastAddVisitorIdLookup;
 function logVisit(visitorId, folderId) {
     if (isNullorUndefined(visitorId)) {
         if (isNullorUndefined(getCookieValue("VisitorId"))) {
@@ -100,6 +105,11 @@ function logVisit(visitorId, folderId) {
             logError("BUG", folderId, "log visit visitorId param came in empty", "logVisit");
         }
     }
+
+    if (visitorId == lastAddVisitorIdLookup)
+        return;
+    lastAddVisitorIdLookup = visitorId;
+
     logActivity("LV0", folderId,"logVisit");
     $.ajax({
         type: "POST",
@@ -135,7 +145,11 @@ function logVisit(visitorId, folderId) {
     });
 }
 
+let lastAddNonIdVisitorIdLookup;
 function addNonIpVisitor(folderId, visitorId) {
+    if (visitorId == lastAddNonIdVisitorIdLookup)
+        return;
+    lastAddNonIdVisitorIdLookup = visitorId;
     logActivity("NV0", folderId, "add NonIp Visitor"); // calling add NonIp Visitor
     $.ajax({
         type: "GET",
@@ -335,7 +349,11 @@ function getIpInfo(folderId, calledFrom) {
     }
 }
 
+let lastTryaddVisitorIdLookup;
 function tryAddVisitor(visitorData, calledFrom) {
+    if (visitorData.VisitorId == lastTryaddVisitorIdLookup)
+        return;
+    lastTryaddVisitorIdLookup = visitorData.VisitorId;
     logActivity("AV0", visitorData.FolderId, calledFrom + "/" + visitorData.CalledFrom); // calling AddVisitor 
     $.ajax({
         type: "POST",
@@ -379,8 +397,11 @@ function tryAddVisitor(visitorData, calledFrom) {
         }
     });
 }
-
+let lastTryIfyVisitorIdLookup;
 function tryIfy(folderId, newVisitorId, calledFrom) {
+    if (newVisitorId == lastTryIfyVisitorIdLookup)
+        return;
+    lastTryIfyVisitorIdLookup = newVisitorId;
     logActivity("IF0", folderId, "tryIfy/" + calledFrom); // attempting ipfy lookup
     $.ajax({
         type: "GET",
@@ -473,9 +494,13 @@ function checkForLooping(folderId, visitorId, calledFrom, errorCode) {
         logError("CAT", folderId, e, "checkForLooping/" + calledFrom);
     }
 }
-
+let lastIpHitVisitorId;
 function logIpHit(visitorId, ipAddress, folderId) {
     try {
+        if (visitorId == lastIpHitVisitorId)
+            return;
+        lastIpHitVisitorId = visitorId;
+
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogIpHit",

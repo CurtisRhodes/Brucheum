@@ -10,7 +10,7 @@
         performEvent(eventCode, eventDetail, folderId);
     }
     catch (e) {
-        logError("CAT", folderId, e, "rtpe/" + calledFrom);
+        logError("CAT", folderId, e, eventCode + "  rtpe/" + calledFrom);
     }
 }
 // "<div class='clickable' onclick='rtpe(\"FLC\",\"dir tree\",\"dir tree\"," + pageId + ")'>Category List</div>\n" +

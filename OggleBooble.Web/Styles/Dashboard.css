@@ -405,5 +405,8 @@ workAreaHeaderDetailRow {
     overflow-y: auto;
 }
 
-
+.mmDate {
+    text-align: center;
+    padding-right: 11px;
+}
 

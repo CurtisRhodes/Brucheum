@@ -327,17 +327,18 @@ function showImageViewerCommentDialog() {
 function closeViewer(calledFrom) {
     if (spSessionCount < 2) {
         logEvent("SIV", albumFolderId, "closeMethod: " + calledFrom, imageViewerArray[imageViewerIndex].LinkId);
-        alert("You should try clicking left or right in the slideshow." +
-            "\n                 (to avoid this message)" +
-            "\n\nThe entire page is divided in half." +
-            "\nClick anywhere on the right side of screen to move next." +
-            "\nClick on the left half of the screen to move previous." +
-            "\nThe left and arrow keys also work." +
-            "\nDouble click on right half to start slide show." +
-            "\nWhile slide show is running click on left half of screen to stop lideshow.");
-        spSessionCount++;
+        //alert("You should try clicking left or right in the slideshow." +
+        //    "\n                 (to avoid this message)" +
+        //    "\n\nThe entire page is divided in half." +
+        //    "\nClick anywhere on the right side of screen to move next." +
+        //    "\nClick on the left half of the screen to move previous." +
+        //    "\nThe left and arrow keys also work." +
+        //    "\nDouble click on right half to start slide show." +
+        //    "\nWhile slide show is running click on left half of screen to stop lideshow.");
+        //spSessionCount++;
     }
-    else {
+    //else
+    {
         event.preventDefault();
         window.event.returnValue = false;
         $('#imageContainer').fadeIn();

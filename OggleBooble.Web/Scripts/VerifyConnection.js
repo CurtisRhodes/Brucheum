@@ -4,7 +4,7 @@
 function checkFor404(errMsg, folderId, calledFrom) {
     if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
     if (errMsg.indexOf("Verify Network") > 0) {
-        logError("CKE", folderId, "Verify Network xhr caught", calledFrom);
+        logError("CKE", folderId, errMsg, calledFrom);
         checkConnection(folderId, calledFrom);
         return true;
     }

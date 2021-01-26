@@ -205,6 +205,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (!physcialFileLinkIds.Contains(imageFile.Id))
                     {
+                        
                         repairReport.Errors.Add("ImageFile with no physcial file "+ imageFile.Id);
                         //db.ImageFiles.Remove(imageFile);
                         //db.SaveChanges();
