@@ -1,4 +1,4 @@
-﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId, ttlFiles, ttlFolders;
+﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId; //, ttlFiles, ttlFolders;
 
 function loadAlbum(folderId) {
     if (isNullorUndefined(folderId)) {
@@ -103,9 +103,13 @@ function getAlbumImages(folderId) {
                     if (albumImageInfo.Folders.length > 0) {
                         let imgSrc;
                         $.each(albumImageInfo.Folders, function (idx, folder) {
-                            if ((folder.FolderType === "singleParent") || (folder.FolderType === "multiFolder")) {
-                                getDeepFolderCounts(folder.FolderId, folder.FileCount, albumImageInfo.Folders.length);
-                            }
+                            //if ((folder.FolderType === "singleParent") || (folder.FolderType === "multiFolder")) {
+                                //getDeepFolderCounts(folder.FolderId, folder.FileCount, albumImageInfo.Folders.length);
+                                //$('#galleryBottomfileCount').html(folderCount + " / " + countsModel.TtlFileCount.toLocaleString());
+                            //}
+                            let folderCounts = "(" + folder.FileCount.toLocaleString() + ")";
+                            if (folder.FolderCount > 0)
+                                folderCounts = "(" + folder.FolderCount+"/"+ folder.FileCount.toLocaleString() + ")";
 
                             if (isNullorUndefined(folder.FolderImage)) {
                                 imgSrc = "/Images/binaryCodeRain.gif";
@@ -120,7 +124,7 @@ function getAlbumImages(folderId) {
                                 "<img id='" + folder.LinkId + "' class='folderImage'\n" +
                                 "onerror='subFolderImgError(\"" + imgSrc + "\",\"" + folder.LinkId + "\")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
                                 "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div>\n" +
-                                "<span Id='fc" + folder.FolderId + "'>{" + folder.FileCount + "}</span></div>");
+                                "<span Id='fc" + folder.FolderId + "'>" + folderCounts + "}</span></div>");
                         });
                     }
 
@@ -180,7 +184,7 @@ function getAlbumPageInfo(folderId) {
                 //    < meta property = "og:site_name" content = "OggleBooble" />
 
                 if ((albumInfo.FolderType === "singleParent") || (albumInfo.FolderType === "multiFolder")) {
-                    getDeepFolderCounts(folderId, albumInfo.FileCount, albumInfo.FolderCount);
+                    getDeepFolderCounts(folderId); //, albumInfo.FileCount, albumInfo.FolderCount);
                     $('#deepSlideshowButton').show();
                 }
                 else {
@@ -229,10 +233,11 @@ function getAlbumPageInfo(folderId) {
                         url: settingsArray.ApiServer + "api/GalleryPage/UpdateFolderCounts?folderId=" + folderId,
                         success: function (countsModel) {
                             if (countsModel.Success === "ok") {
-                                if ((albumInfo.FolderCount != countsModel.TtlFolderCount) && (albumInfo.FolderCount !== 0))
-                                    $('#galleryBottomfileCount').html("#(" + albumInfo.FolderCount + ") " + countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
+                                //if ((albumInfo.FolderCount != countsModel.TtlFolderCount) && (albumInfo.FolderCount !== 0))
+                                if (albumInfo.FolderCount == 0)
+                                    $('#galleryBottomfileCount').html("a " + countsModel.TtlFileCount.toLocaleString());
                                 else
-                                    $('#galleryBottomfileCount').html(countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
+                                    $('#galleryBottomfileCount').html("b " + countsModel.FolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
                             }
                             else {
                                 if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
@@ -268,29 +273,30 @@ function getAlbumPageInfo(folderId) {
     });
 }
 
-function getDeepFolderCounts(folderId, folderFileCount, folderCount) {
-    ttlFiles += folderFileCount;
+function getDeepFolderCounts(folderId) //, folderFileCount, folderCount) {
+    //ttlFiles += folderFileCount;
     $('#fc' + folderId).html("?");
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/GalleryPage/GetSubFolderCounts?folderId=" + folderId,
         success: function (countsModel) {
             if (countsModel.Success === "ok") {
-                if (countsModel.TtlFileCount > 0) {
-                    $('#fc' + countsModel.FolderId).html("[" + countsModel.TtlFileCount.toLocaleString() + "]");
-                }
-                if (countsModel.TtlFolderCount > 1) {
-                    $('#fc' + countsModel.FolderId).html("{" + countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString() + "}");
-                }
                 if (folderId == apFolderId) {
                     if ((folderCount != countsModel.TtlFolderCount) && (folderCount !== 0)) {
-                        $('#galleryBottomfileCount').html(folderCount + ") " + countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
+                        $('#galleryBottomfileCount').html(folderCount + " / " + countsModel.TtlFileCount.toLocaleString());
                     }
                     else
                         $('#galleryBottomfileCount').html(countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
+                } else {
+                    if (countsModel.TtlFileCount > 0) {
+                        $('#fc' + countsModel.FolderId).html("[" + countsModel.TtlFileCount.toLocaleString() + "]");
+                    }
+                    if (countsModel.TtlFolderCount > 1) {
+                        $('#fc' + countsModel.FolderId).html("{" + countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString() + "}");
+                    }
                 }
             }
-            else { logError("AJX", folderId, countsModel.Success, "getDeepFolderCounts"); }
+            else { logError("AJX", folderId, countsModel.Success, "get DeepFolderCounts"); }
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
@@ -351,33 +357,6 @@ function setBreadcrumbs(folderId) {
         }
     });
 }
-
-//function setBreadCrumbs(breadCrumbModel) {
-//    // a woman commited suicide when pictures of her "came out"
-//    // title: I do not remember having been Invited)
-//    $('#breadcrumbContainer').html("<a class='activeBreadCrumb' href='javascript:rtpe(\"BCC\"," + apFolderId + "\,\"root\",1)'>root  &#187</a>");
-//    for (i = breadCrumbModel.length - 1; i >= 0; i--) {
-//        if (breadCrumbModel[i] === null) {
-//            breadCrumbModel.Success = "BreadCrumbs[i] == null : " + i;
-//        }
-//        else {
-//            if (breadCrumbModel[i].IsInitialFolder) {
-//                $('#breadcrumbContainer').append(
-//                    "<a class='inactiveBreadCrumb' " +
-//                    "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbModel[i].FolderId + ")' " +
-//                    "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
-//                    "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" +
-//                    breadCrumbModel[i].FolderId + ",\"bc click\")'>" + breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
-//            }
-//            else {
-//                $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
-//                    // rtpe(eventCode, calledFrom, eventDetail, pageId)
-//                    "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" + breadCrumbModel[i].FolderName + "\"," + breadCrumbModel[i].FolderId + ")'>" +
-//                    breadCrumbModel[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
-//            }
-//        }
-//    }
-//}
 
 function setBadges(folderComments) {
     if (!isNullorUndefined(folderComments)) {

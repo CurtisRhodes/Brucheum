@@ -6,12 +6,29 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
-    public class SubFolderCountModel
+    public class SubFolderCountModels
     {
+        public SubFolderCountModels()
+        {
+            SubFolders = new List<SubFolderCountModel>();
+        }
         public int FolderId { get; set; }
+        public int FileCount { get; set; }
+        public int FolderCount { get; set; }
         public int TtlFileCount { get; set; }
         public int TtlFolderCount { get; set; }
+        public List<SubFolderCountModel> SubFolders { get; set; }
         public string Success { get; set; }
+    }
+
+    public class SubFolderCountModel
+    {
+        public int ParentId { get; set; }
+        public int FolderId { get; set; }
+        public int FileCount { get; set; }
+        public int FolderCount { get; set; }
+        public int TtlFileCount { get; set; }
+        public int TtlFolderCount { get; set; }
     }
 
     public class GalleryImagesAndFoldersModel
