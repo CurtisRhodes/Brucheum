@@ -273,7 +273,7 @@ function getAlbumPageInfo(folderId) {
     });
 }
 
-function getDeepFolderCounts(folderId) //, folderFileCount, folderCount) {
+function getDeepFolderCounts(folderId) { //, folderFileCount, folderCount) {
     //ttlFiles += folderFileCount;
     $('#fc' + folderId).html("?");
     $.ajax({

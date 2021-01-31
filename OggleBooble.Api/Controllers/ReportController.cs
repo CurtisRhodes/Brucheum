@@ -17,7 +17,7 @@ namespace OggleBooble.Api.Controllers
     public class ReportController : ApiController
     {
         private readonly string httpLocation = "https://ogglebooble.com/";
-        private readonly string imagesLocation = "https://api.ogglebooble.com/";
+        //private readonly string imagesLocation = "https://api.ogglebooble.com/";
         private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
         private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];

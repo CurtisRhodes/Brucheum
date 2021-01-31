@@ -216,9 +216,9 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/GalleryPage/GetSubFolderCounts")]
-        public SubFolderCountModels GetSubFolderCounts(int folderId)
+        public SubFolderCountModel GetSubFolderCounts(int folderId)
         {
-            var subFolderParent = new SubFolderCountModels() { FolderId = folderId };
+            var subFolderParent = new SubFolderCountModel() { FolderId = folderId };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -231,11 +231,11 @@ namespace OggleBooble.Api.Controllers
                         GetSubFolderCountsRecurr(subFolderParent, subFolder);
                     }
 
-                    foreach (SubFolderCountModel subFolder in subFolderParent.SubFolders)
-                    {
-                        subFolderParent.TtlFileCount += subFolder.FileCount;
-                        subFolderParent.TtlFolderCount += subFolder.FolderCount;
-                    }
+                    //foreach (SubFolderCountModel subFolder in subFolderParent.SubFolders)
+                    //{
+                    //    subFolderParent.TtlFileCount += subFolder.FileCount;
+                    //    subFolderParent.TtlFolderCount += subFolder.FolderCount;
+                    //}
                     CategoryFolder dbPa = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     dbPa.TotalChildFiles = subFolderParent.TtlFileCount;
                     dbPa.TotalSubFolders = subFolderParent.TtlFolderCount;
@@ -270,7 +270,7 @@ namespace OggleBooble.Api.Controllers
         //    public int TtlFolderCount { get; set; }
         //}
 
-        private void GetSubFolderCountsRecurr(SubFolderCountModels countsModel, CategoryFolder subFolder)
+        private void GetSubFolderCountsRecurr(SubFolderCountModel countsModel, CategoryFolder subFolder)
         {
             var subFolderModel= new SubFolderCountModel() { FolderId=subFolder.Id };
 
