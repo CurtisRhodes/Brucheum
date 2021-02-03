@@ -57,6 +57,8 @@ namespace OggleBooble.Api.Models
         public string FolderComments { get; set; }
         public int FileCount { get; set; }
         public int FolderCount { get; set; }
+        public int TotalSubFolders { get; set; }
+        public int TotalChildFiles { get; set; }
         public int PageHits { get; set; }
         //public int UserImageHits { get; set; }
         //public int UserPageHits { get; set; }
