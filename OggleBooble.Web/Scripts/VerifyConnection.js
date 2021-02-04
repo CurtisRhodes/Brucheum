@@ -103,6 +103,9 @@ function verifyConnectionFunction(calledFrom, folderId) {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Common/VerifyConnection",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
             success: function (successModel) {
                 console.log("GET VerifyConnection: " + verifyConnectionCount);
                 if (successModel.Success == "ok") {
