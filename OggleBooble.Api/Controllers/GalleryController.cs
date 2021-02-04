@@ -72,6 +72,7 @@ namespace OggleBooble.Api.Controllers
                             FileCount = row.FileCount,
                             FolderType = row.FolderType,
                             SubDirCount = row.SubFolderCount,
+                            TotalChildFiles = row.TotalChildFiles,
                             FolderImage = row.FolderImage,
                             RootFolder = row.RootFolder,
                             IsStepChild = row.IsStepChild
@@ -323,11 +324,12 @@ namespace OggleBooble.Api.Controllers
         {
             CategoryFolder dbThisCatFolder = db.CategoryFolders.Where(f => f.Id == parentNode).First();
             int fileLinkCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == parentNode).Count();
-            int[] childFolders = db.CategoryFolders.Where(f => f.Parent == parentNode).Select(f => f.Id).ToArray();
-            if ((dbThisCatFolder.Files != fileLinkCount) || (dbThisCatFolder.SubFolders != childFolders.Length))
+            List<int> childFolders = db.CategoryFolders.Where(f => f.Parent == parentNode).Select(f => f.Id).ToList();
+            childFolders.AddRange(db.StepChildren.Where(s => s.Parent == parentNode).Select(s => s.Child).ToList());
+            if ((dbThisCatFolder.Files != fileLinkCount) || (dbThisCatFolder.SubFolders != childFolders.Count()))
             {
                 dbThisCatFolder.Files = fileLinkCount;
-                dbThisCatFolder.SubFolders = childFolders.Length;
+                dbThisCatFolder.SubFolders = childFolders.Count();
                 db.SaveChanges();
             }
             int thisLevelTotalFiles = 0;
@@ -335,8 +337,14 @@ namespace OggleBooble.Api.Controllers
             foreach (int childFolder in childFolders)
             {
                 thisLevelTotalFiles += db.ImageFiles.Where(i => i.FolderId == childFolder).Count();
-                thisLevelTotalSubDirs += db.CategoryFolders.Where(f => f.Parent == childFolder).Count();
+                if (db.CategoryFolders.Where(i => i.Parent == childFolder).FirstOrDefault() != null)
+                    thisLevelTotalSubDirs += db.CategoryFolders.Where(f => f.Parent == childFolder).Count();
                 GoDeepRecurr(db, childFolder);
+            }
+            if (db.CategoryFolders.Where(i => i.Parent == parentNode).FirstOrDefault() != null)
+            {
+                thisLevelTotalFiles = db.CategoryFolders.Where(i => i.Parent == parentNode).Select(f => f.Files).Sum();
+                thisLevelTotalSubDirs = db.CategoryFolders.Where(f => f.Parent == parentNode).Select(f => f.SubFolders).Sum();
             }
 
             if ((dbThisCatFolder.TotalSubFolders != thisLevelTotalSubDirs) || (dbThisCatFolder.TotalChildFiles != thisLevelTotalFiles))

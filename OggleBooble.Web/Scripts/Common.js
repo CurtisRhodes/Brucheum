@@ -354,8 +354,8 @@ function create_UUID() {
 }
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
-    if (document.domain === 'localhost' && errorCode !== "ILF")
-        alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+    //if (document.domain === 'localhost' && errorCode !== "ILF")
+      //  alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
     try {
         $.ajax({
             type: "POST",
@@ -378,7 +378,7 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                let functionName = "loGerror"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) {
                     logError("XHR", folderId, errMsg, functionName);
                     if (document.domain === 'localhost') alert("XHR error in logError!!: " + errMsg);

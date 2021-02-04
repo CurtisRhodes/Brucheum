@@ -265,7 +265,10 @@ function intervalBody() {
         $('.carouselFooter').css("visibility", "hidden");
         $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
             imgSrc = settingsImgRepo + carouselItemArray[imageIndex].ImageFile;
-            $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+            $('#thisCarouselImage').attr('src', imgSrc).load(function (responseText, textStatus, req) {
+                if (textStatus == "error") {
+                    alert(responseText);
+                }
                 $('#carouselFooter').fadeIn();
                 setLabelLinks(imageIndex);
                 $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });

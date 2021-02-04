@@ -38,6 +38,7 @@ namespace OggleBooble.Api.Models
         public string FolderType { get; set; }
         public string FolderImage { get; set; }
         public int FileCount { get; set; }
+        public int TotalChildFiles { get; set; }
         public int SubDirCount { get; set; }
         public int IsStepChild { get; set; }
         public string RootFolder { get; set; }

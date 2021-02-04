@@ -2,10 +2,11 @@
     verifyConnectionCountLimit = 25, verifyConnectionLoop = null, persistConnectionInterval = null;
 
 function checkFor404(errMsg, folderId, calledFrom) {
-    if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
+    //if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
     if (errMsg.indexOf("Verify Network") > 0) {
         logError("CKE", folderId, errMsg, calledFrom);
-        checkConnection(folderId, calledFrom);
+        // connectionVerified = false;
+        // checkConnection(folderId, calledFrom);
         return true;
     }
     else {
@@ -15,7 +16,7 @@ function checkFor404(errMsg, folderId, calledFrom) {
 }
 
 function checkConnection(folderId, calledFrom) {
-    connectionVerified = false;
+    //connectionVerified = false;
     //verifyConnectionCount = 0;
     let getXMLsettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
@@ -55,7 +56,7 @@ function checkConnection(folderId, calledFrom) {
                         }
                     }, 850);
                 }
-            }, 500);
+            }, 2000);
         }
     }, 300);
 }
@@ -91,50 +92,54 @@ function showCanIgetaConnectionMessage(calledFrom) {
     }
 }
 
+
+let verifyConnectionAvailable = true;
 function verifyConnectionFunction(calledFrom, folderId) {
-    let requestedPage = settingsArray.ApiServer + "api/Common/VerifyConnection";
     if (connectionVerified)
         return;
-    $.ajax({
-        type: "GET",
-        url: requestedPage,
-        success: function (successModel) {
 
-            console.log("GET VerifyConnection: " + verifyConnectionCount);
-
-            if (successModel.Success == "ok") {
-                if (successModel.ConnectionVerified) {
-                    connectionVerified = true;
-                    $('#customMessage').hide();
-                    canIgetaConnectionMessageShowing = false;
-                    launchingServiceGifShowing = false;
+    if (verifyConnectionAvailable) {
+        verifyConnectionAvailable = false;
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Common/VerifyConnection",
+            success: function (successModel) {
+                console.log("GET VerifyConnection: " + verifyConnectionCount);
+                if (successModel.Success == "ok") {
+                    if (successModel.ConnectionVerified) {
+                        connectionVerified = true;
+                        $('#customMessage').hide();
+                        canIgetaConnectionMessageShowing = false;
+                        launchingServiceGifShowing = false;
+                    }
+                    else {
+                        console.log("success but no verify: " + successModel.Success);
+                        if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
+                        connectionVerified = false;
+                    }
                 }
                 else {
-                    console.log("success but no verify: " + successModel.Success);
-                    if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
-                    connectionVerified = false;
+                    if (successModel.Success.indexOf("Parameter name: app") > 0) {
+                        connectionVerified = false;
+                        //console.log("TRAPPED: " + successModel.Success);
+                    }
+                    else {
+                        console.log("proper error in verify ConnectionFunction: " + successModel.Success);
+                        logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
+                        if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
+                    }
                 }
+                verifyConnectionAvailable = true;
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                let functionName = "verifyConnectionFunction"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (document.domain === "localhost") alert("verifyConnection XHR: " + errMsg);
+                connectionVerified = false;
             }
-            else {
-                if (successModel.Success.indexOf("Parameter name: app") > 0) {
-                    connectionVerified = false;
-                    //console.log("TRAPPED: " + successModel.Success);
-                }
-                else {
-                    console.log("proper error in verify ConnectionFunction: " + successModel.Success);
-                    logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
-                    if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
-                }
-            }
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "verifyConnectionFunction"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-            if (document.domain === "localhost") alert("verifyConnection XHR: " + errMsg);
-            connectionVerified = false;
-        }
-    });
+        });
+    }
 }
 
 function tryHitStats() {
