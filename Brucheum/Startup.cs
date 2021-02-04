@@ -13,7 +13,7 @@ using Microsoft.Owin.Security;
 using Brucheum.Models;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
-using Microsoft.Owin.Security.Facebook;
+// using Microsoft.Owin.Security.Facebook;
 
 [assembly: OwinStartupAttribute(typeof(Brucheum.Startup))]
 namespace Brucheum

@@ -1,10 +1,5 @@
 ﻿let blogObject = {};
 
-    //    Show Blog   leftColumnShowBlog
-    //    New Entry   leftColumnNew
-    //    Edit        leftColumnEdit
-    //    Show Page   leftColumnShowPage
-
 function blogStartup() {
     setOggleHeader(3911, "blog");
     setOggleFooter(3911, "blog");
@@ -37,7 +32,6 @@ function newEntry() {
     $('#btnAddEdit').html("Add");
     $('.blogEditButton').hide();
     $('#leftColumnShowBlog').show();
-    $('#leftColumnShowPage').show();
     $("#txtPosted").datepicker();
 }
 
@@ -51,7 +45,8 @@ function showArticleJogs() {
 }
 
 function editArticle(blogId) {
-    blogObject.Id = blogId;
+    if (!isNullorUndefined(blogId))
+        blogObject.Id = blogId;
     $('.blogEditButton').hide();
     $('#leftColumnShowBlog').show();
     $('#leftColumnShowPage').show();
@@ -66,13 +61,10 @@ function editArticle(blogId) {
     loadSingleBlogEntry("edit");
 }
 
-function leftColumnShowPage() {
-    // can't occur at html loadtime
-    showReadOnlyView(blogObject.Id);
-}
-
 function showReadOnlyView(blogId) {
-    blogObject.Id = blogId;
+    if (!isNullorUndefined(blogId))
+        blogObject.Id = blogId;
+
     loadSingleBlogEntry("readOnly");
 
     $('.blogEditButton').hide();
@@ -147,12 +139,12 @@ function loadArticleJogs() {
                             <div class="blogArticleJog"> 
                                 <div class="flexContainer">
                                     <div class='floatleft'>
-                                        <img class="blogArticleJogImage" src="`+ settingsImgRepo + blogComment.ImgSrc + `" onclick="editArticle('` + blogComment.PkId + `');"/>
+                                        <img class="blogArticleJogImage" src="`+ settingsImgRepo + blogComment.ImgSrc + `" onclick="showReadOnlyView('` + blogComment.PkId + `');"/>
                                     </div>
                                     <div class='floatleft'>
                                         <div class="blogArticleTitle">`+ blogComment.CommentTitle + `</div>
                                         <div class="blogArticleText">`+ blogComment.CommentText + `</div>
-                                        <div class="clickable" onclick="showReadOnlyView('`+ blogComment.PkId + `');">...</div>
+                                        <div class="clickable" onclick="editArticle('`+ blogComment.PkId + `');"> ...</div>
                                     </div>
                                 </div>
                             </div>`);
@@ -236,7 +228,7 @@ function loadBlogList() {
                     else {
                         $.each(blogCommentsModel.BlogComments, function (idx, blogComment) {
                             $('#blogItemList').append("<div class='blogListItem' " +
-                                "onclick=loadSingleBlogEntry('" + blogComment.Id + "') >" +
+                                "onclick=showReadOnlyView('" + blogComment.PkId + "') >" +
                                 blogComment.CommentTitle + "</div>");
                         });
                     }
@@ -363,7 +355,7 @@ function loadBlogHtmlBody() {
         "<div class='blogEditButton displayHidden' id='leftColumnShowBlog' onclick='showArticleJogs()'>Show Blog</div>\n" +
         "<div class='blogEditButton displayHidden' id='leftColumnNew' onclick='newEntry()'>New Entry</div>\n" +
         "<div class='blogEditButton displayHidden' id='leftColumnEdit' onclick='editArticle()'>Edit</div>\n" +
-        "<div class='blogEditButton displayHidden' id='leftColumnShowPage' onclick='leftColumnShowPage()'>Show Page</div>\n</div>\n"
+        "<div class='blogEditButton displayHidden' id='leftColumnShowPage' onclick='showReadOnlyView()'>Show Page</div>\n</div>\n"
     );
 
     $('#indexMiddleColumn').html(

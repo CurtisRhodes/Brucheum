@@ -322,11 +322,11 @@ namespace OggleBooble.Api.Controllers
         }
         private void GoDeepRecurr(OggleBoobleMySqlContext db, int parentNode)
         {
-            CategoryFolder dbThicCatFolder = db.CategoryFolders.Where(f => f.Id == parentNode).First();
-            dbThicCatFolder.Files = db.ImageFiles.Where(i => i.FolderId == parentNode).Count();
+            CategoryFolder dbThisCatFolder = db.CategoryFolders.Where(f => f.Id == parentNode).First();
+            dbThisCatFolder.Files = db.CategoryImageLinks.Where(l => l.ImageCategoryId == parentNode).Count();
             int[] childFolders = db.CategoryFolders.Where(f => f.Parent == parentNode).Select(f => f.Id).ToArray();
-            dbThicCatFolder.SubFolders = childFolders.Length;
-            int thisLevelTotalFiles = dbThicCatFolder.Files;
+            dbThisCatFolder.SubFolders = childFolders.Length;
+            int thisLevelTotalFiles = dbThisCatFolder.Files;
             int thisLevelTotalSubDirs = childFolders.Length;
             foreach (int childFolder in childFolders)
             {
@@ -334,8 +334,8 @@ namespace OggleBooble.Api.Controllers
                 thisLevelTotalFiles += db.ImageFiles.Where(i => i.FolderId == childFolder).Count();
                 thisLevelTotalSubDirs += db.CategoryFolders.Where(f => f.Parent == childFolder).Count();
             }
-            dbThicCatFolder.TotalSubFolders = thisLevelTotalSubDirs;
-            dbThicCatFolder.TotalChildFiles = thisLevelTotalFiles;
+            dbThisCatFolder.TotalSubFolders = thisLevelTotalSubDirs;
+            dbThisCatFolder.TotalChildFiles = thisLevelTotalFiles;
             db.SaveChanges();
         }
     }

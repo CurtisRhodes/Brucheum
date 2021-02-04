@@ -93,8 +93,8 @@ namespace Brucheum
         }
 
         public static void ThrowError(string errMessage )
-        {
-            new LoginController().ShowCustomMessage(errMessage);
+        {            
+            //new LoginController().ShowCustomMessage(errMessage);
         }
 
         private static bool IsBeingLogged(string page)

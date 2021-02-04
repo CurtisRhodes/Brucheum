@@ -107,7 +107,7 @@ function getAlbumImages(folderId) {
                                 //getDeepFolderCounts(folder.FolderId, folder.FileCount, albumImageInfo.Folders.length);
                                 //$('#galleryBottomfileCount').html(folderCount + " / " + countsModel.TtlFileCount.toLocaleString());
                             //}
-                            let folderCounts = ".(" + folder.FileCount.toLocaleString() + ")";
+                            let folderCounts = "(" + folder.FileCount.toLocaleString() + ")";
                             if (folder.FolderCount > 0)
                                 folderCounts = "(" + folder.FolderCount + "/" + folder.FileCount.toLocaleString() + ")";
 
@@ -183,7 +183,8 @@ function getAlbumPageInfo(folderId) {
                 //< !--< meta property = "og:url" content = "https://www.Ogglebooble.com/" + dbFolder.FolderName + "'/>-->
                 //    < meta property = "og:site_name" content = "OggleBooble" />
 
-                if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel") || (albumInfo.FolderType === "multiModel")) {
+                //if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel") || (albumInfo.FolderType === "multiModel")) {
+                if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel")) {
                     $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
                     //chargeCredits(folderId, albumInfo.RootFolder, albumInfo.FolderType);
                     $('#deepSlideshowButton').hide();
@@ -250,24 +251,27 @@ function getAlbumPageInfo(folderId) {
 
 function getDeepFolderCounts(folderId) { //, folderFileCount, folderCount) {
     //ttlFiles += folderFileCount;
-    $('#fc' + folderId).html("?");
+    //$('#fc' + folderId).html("?");
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/PageCount/GetDeepFolderCounts?folderId=" + folderId,
         success: function (countsModel) {
             if (countsModel.Success === "ok") {
-                if (folderId == apFolderId) {
+                //if (folderId == apFolderId) {
+                if (countsModel.FolderCount > 0)
                     // $('#galleryBottomfileCount').html(countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
                     $('#galleryBottomfileCount').html(countsModel.FolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
-
-                } else {
-                    if (countsModel.TtlFileCount > 0) {
-                        $('#fc' + countsModel.FolderId).html("[" + countsModel.TtlFileCount.toLocaleString() + "]");
-                    }
-                    if (countsModel.TtlFolderCount > 1) {
-                        $('#fc' + countsModel.FolderId).html("{" + countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString() + "}");
-                    }
-                }
+                else
+                    $('#galleryBottomfileCount').html(countsModel.FileCount.toLocaleString());
+                //}
+                //else {
+                //    if (countsModel.TtlFileCount > 0) {
+                //        $('#fc' + countsModel.FolderId).html("[" + countsModel.TtlFileCount.toLocaleString() + "]");
+                //    }
+                //    if (countsModel.TtlFolderCount > 1) {
+                //        $('#fc' + countsModel.FolderId).html("{" + countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString() + "}");
+                //    }
+                //}
             }
             else { logError("AJX", folderId, countsModel.Success, "get DeepFolderCounts"); }
         },

@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 //using Oracle.ManagedDataAccess.EntityFramework;
 // using MySql.Data.Entity;
-using MySql.Data.EntityFramework;
+//using MySql.Data.EntityFramework;
 
 namespace WebApi.MySqDataContext
 {
-    [DbConfigurationType(typeof(MySqlEFConfiguration))]
+    //[DbConfigurationType(typeof(MySqlEFConfiguration))]
     public partial class OggleBoobleMySqContext : DbContext
     {
         public OggleBoobleMySqContext() : base("name=GoDaddyMySql") { }
