@@ -313,7 +313,6 @@ namespace OggleBooble.Api.Controllers
                     countModel.FolderCount = dbCategoryFolder.SubFolders;
                     countModel.TtlFileCount = dbCategoryFolder.TotalChildFiles;
                     countModel.TtlFolderCount = dbCategoryFolder.TotalSubFolders;
-
                 }
                 countModel.Success = "ok";
             }
@@ -323,20 +322,29 @@ namespace OggleBooble.Api.Controllers
         private void GoDeepRecurr(OggleBoobleMySqlContext db, int parentNode)
         {
             CategoryFolder dbThisCatFolder = db.CategoryFolders.Where(f => f.Id == parentNode).First();
-            dbThisCatFolder.Files = db.CategoryImageLinks.Where(l => l.ImageCategoryId == parentNode).Count();
+            int fileLinkCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == parentNode).Count();
             int[] childFolders = db.CategoryFolders.Where(f => f.Parent == parentNode).Select(f => f.Id).ToArray();
-            dbThisCatFolder.SubFolders = childFolders.Length;
-            int thisLevelTotalFiles = dbThisCatFolder.Files;
-            int thisLevelTotalSubDirs = childFolders.Length;
+            if ((dbThisCatFolder.Files != fileLinkCount) || (dbThisCatFolder.SubFolders != childFolders.Length))
+            {
+                dbThisCatFolder.Files = fileLinkCount;
+                dbThisCatFolder.SubFolders = childFolders.Length;
+                db.SaveChanges();
+            }
+            int thisLevelTotalFiles = 0;
+            int thisLevelTotalSubDirs = 0;
             foreach (int childFolder in childFolders)
             {
-                GoDeepRecurr(db, childFolder);
                 thisLevelTotalFiles += db.ImageFiles.Where(i => i.FolderId == childFolder).Count();
                 thisLevelTotalSubDirs += db.CategoryFolders.Where(f => f.Parent == childFolder).Count();
+                GoDeepRecurr(db, childFolder);
             }
-            dbThisCatFolder.TotalSubFolders = thisLevelTotalSubDirs;
-            dbThisCatFolder.TotalChildFiles = thisLevelTotalFiles;
-            db.SaveChanges();
+
+            if ((dbThisCatFolder.TotalSubFolders != thisLevelTotalSubDirs) || (dbThisCatFolder.TotalChildFiles != thisLevelTotalFiles))
+            {
+                dbThisCatFolder.TotalSubFolders = thisLevelTotalSubDirs;
+                dbThisCatFolder.TotalChildFiles = thisLevelTotalFiles;
+                db.SaveChanges();
+            }
         }
     }
 }

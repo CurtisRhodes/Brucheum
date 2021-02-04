@@ -108,8 +108,8 @@ function getAlbumImages(folderId) {
                                 //$('#galleryBottomfileCount').html(folderCount + " / " + countsModel.TtlFileCount.toLocaleString());
                             //}
                             let folderCounts = "(" + folder.FileCount.toLocaleString() + ")";
-                            if (folder.FolderCount > 0)
-                                folderCounts = "(" + folder.FolderCount + "/" + folder.FileCount.toLocaleString() + ")";
+                            if (folder.SubDirCount > 0)
+                                folderCounts = "(" + folder.SubDirCount + "/" + folder.TotalChildFiles.toLocaleString() + ")";
 
                             if (isNullorUndefined(folder.FolderImage)) {
                                 imgSrc = "/Images/binaryCodeRain.gif";
