@@ -10,7 +10,7 @@ using System.Data.Entity.Migrations.Model;
 
 namespace OggleBooble.Api.Controllers
 {
-    [EnableCors("*", "*", "*")]
+    // [EnableCors("*", "*", "*")]
     public class GalleryPageController : ApiController
     {
         private readonly string devlVisitorId = System.Configuration.ConfigurationManager.AppSettings["ImageRepository"];
@@ -297,7 +297,7 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
-    [EnableCors("*", "*", "*")]
+    // [EnableCors("*", "*", "*")]
     public class PageCountController : ApiController
     {
         [HttpGet]

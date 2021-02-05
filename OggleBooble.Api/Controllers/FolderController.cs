@@ -12,7 +12,7 @@ using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
-    [EnableCors("*", "*", "*")]
+    // [EnableCors("*", "*", "*")]
     public class CatFolderController : ApiController
     {
         private readonly string hostingPath = ".ogglebooble.com/";
@@ -204,7 +204,7 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
-    [EnableCors("*", "*", "*")]
+    // [EnableCors("*", "*", "*")]
     public class FolderDetailController : ApiController
     {
         [HttpGet]
@@ -403,7 +403,7 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
-    [EnableCors("*", "*", "*")]
+    // [EnableCors("*", "*", "*")]
     public class FolderCommentController : ApiController
     {
         [HttpPost]

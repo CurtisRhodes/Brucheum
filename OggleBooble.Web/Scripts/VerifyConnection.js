@@ -103,9 +103,7 @@ function verifyConnectionFunction(calledFrom, folderId) {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Common/VerifyConnection",
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
+            // headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             success: function (successModel) {
                 console.log("GET VerifyConnection: " + verifyConnectionCount);
                 if (successModel.Success == "ok") {
@@ -135,6 +133,7 @@ function verifyConnectionFunction(calledFrom, folderId) {
                 verifyConnectionAvailable = true;
             },
             error: function (jqXHR) {
+                verifyConnectionAvailable = false;
                 let errMsg = getXHRErrorDetails(jqXHR);
                 let functionName = "verifyConnectionFunction"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
