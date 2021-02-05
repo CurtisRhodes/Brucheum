@@ -102,8 +102,8 @@ function verifyConnectionFunction(calledFrom, folderId) {
         verifyConnectionAvailable = false;
         $.ajax({
             type: "GET",
+            //headers: { 'Access-Control-Allow-Origin': 'https://ogglebooble.com/' },
             url: settingsArray.ApiServer + "api/Common/VerifyConnection",
-            // headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             success: function (successModel) {
                 console.log("GET VerifyConnection: " + verifyConnectionCount);
                 if (successModel.Success == "ok") {

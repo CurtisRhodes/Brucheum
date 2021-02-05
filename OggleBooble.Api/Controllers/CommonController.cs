@@ -15,7 +15,7 @@ using System.Net.Mail;
 
 namespace OggleBooble.Api.Controllers
 {
-    // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class VisitorController : ApiController
     {
         [HttpPost]
@@ -172,7 +172,7 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
-    // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class HitCounterController : ApiController
     {
         [HttpPost]
@@ -325,7 +325,7 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
-    // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class CommonController : ApiController
     {
         [HttpPut]
@@ -349,7 +349,8 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        // [Route("api/Common/VerifyConnection")]
+        [Route("api/Common/VerifyConnection")]
+        [EnableCors("*", "*", "*")]
         public VerifyConnectionSuccessModel VerifyConnection()
         {
             var timer = new System.Diagnostics.Stopwatch();
@@ -555,7 +556,7 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
-    // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class EntityAttributeController : ApiController
     {
         [HttpGet]

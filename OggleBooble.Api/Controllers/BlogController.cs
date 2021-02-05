@@ -11,7 +11,7 @@ using OggleBooble.Api.MySqlDataContext;
 
 namespace OggleBooble.Api.Controllers
 {
-    // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class OggleBlogController : ApiController
     {
         [HttpGet]

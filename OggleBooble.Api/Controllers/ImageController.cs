@@ -15,7 +15,7 @@ using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
-    // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class ImageController : ApiController
     {
         //private readonly string localRepoPath = "F:/Danni/";

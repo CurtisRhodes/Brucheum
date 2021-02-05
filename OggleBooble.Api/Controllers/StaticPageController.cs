@@ -13,7 +13,7 @@ using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
-  // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class StaticPageController : ApiController
     {
         private readonly int staticPageImageCount = 40;

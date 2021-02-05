@@ -13,7 +13,7 @@ using System.Configuration;
 
 namespace OggleBooble.Api.Controllers
 {
-  // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class ReportController : ApiController
     {
         private readonly string httpLocation = "https://ogglebooble.com/";
@@ -623,7 +623,7 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
-  // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class PdfController : ApiController
     {
         [HttpGet]

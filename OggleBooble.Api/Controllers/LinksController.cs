@@ -14,7 +14,7 @@ using System.Web.Http.Cors;
 
 namespace OggleBooble.Api.Controllers
 {
-  // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class LinksController : ApiController
     {
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];

@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace OggleBooble.Api.Controllers
 {
-    // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class CarouselController : ApiController
     {
         [HttpGet]
@@ -48,7 +48,7 @@ namespace OggleBooble.Api.Controllers
         }
     }
 
-  // [EnableCors("*", "*", "*")]
+    [EnableCors("*", "*", "*")]
     public class LatestUpdatesController : ApiController
     {
         [HttpGet]
