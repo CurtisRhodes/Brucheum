@@ -103,13 +103,9 @@ function getAlbumImages(folderId) {
                     if (albumImageInfo.Folders.length > 0) {
                         let imgSrc;
                         $.each(albumImageInfo.Folders, function (idx, folder) {
-                            //if ((folder.FolderType === "singleParent") || (folder.FolderType === "multiFolder")) {
-                                //getDeepFolderCounts(folder.FolderId, folder.FileCount, albumImageInfo.Folders.length);
-                                //$('#galleryBottomfileCount').html(folderCount + " / " + countsModel.TtlFileCount.toLocaleString());
-                            //}
                             let folderCounts = "(" + folder.FileCount.toLocaleString() + ")";
                             if (folder.SubDirCount > 0)
-                                folderCounts = "(" + folder.SubDirCount + "/" + folder.TotalChildFiles.toLocaleString() + ")";
+                                folderCounts = "(" + folder.SubDirCount + "/" + (folder.FileCount + folder.TotalChildFiles).toLocaleString() + ")";
 
                             if (isNullorUndefined(folder.FolderImage)) {
                                 imgSrc = "/Images/binaryCodeRain.gif";
@@ -184,15 +180,16 @@ function getAlbumPageInfo(folderId) {
                 //    < meta property = "og:site_name" content = "OggleBooble" />
 
                 //if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel") || (albumInfo.FolderType === "multiModel")) {
-                if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel")) {
+                if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel") || (albumInfo.FolderType === "multiModel")) {
                     $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
                     //chargeCredits(folderId, albumInfo.RootFolder, albumInfo.FolderType);
                     $('#deepSlideshowButton').hide();
                 }
                 else {
                     //alert("FolderType: " + albumInfo.FolderType + "  FileCount: " + albumInfo.FileCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
-                    $('#galleryBottomfileCount').html("." + albumInfo.FolderCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
-                    getDeepFolderCounts(folderId); //, albumInfo.FileCount, albumInfo.FolderCount);
+                    $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
+                        albumInfo.FolderCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
+                    //getDeepFolderCounts(folderId); //, albumInfo.FileCount, albumInfo.FolderCount);
                     $('#deepSlideshowButton').show();
                 }
 
@@ -252,6 +249,10 @@ function getAlbumPageInfo(folderId) {
 function getDeepFolderCounts(folderId) { //, folderFileCount, folderCount) {
     //ttlFiles += folderFileCount;
     //$('#fc' + folderId).html("?");
+
+
+    $('#spanDeepCount').html("?");
+
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/PageCount/GetDeepFolderCounts?folderId=" + folderId,

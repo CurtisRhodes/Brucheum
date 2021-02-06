@@ -37,7 +37,7 @@ function setHeaderMenu(folderId, subdomain) {
     switch (subdomain) {
         case "Index": {
             $('#oggleHeader').addClass('boobsHeader');
-            $('#mainMenuContainer').html("Home of Big Naturals");
+            $('#mainMenuContainer').html("Home of the Big Naturals");
             $("#divLoginArea").hide();
             break;
         }
@@ -84,7 +84,8 @@ function setHeaderMenu(folderId, subdomain) {
             // porn
             // sluts
 
-            $('#hdrBtmRowSec3').html(addBannerButton("centerfold"));
+            $('#hdrBtmRowSec3').html(addBannerButton("archive"));
+            $('#hdrBtmRowSec3').append(addBannerButton("centerfold"));
             if (subdomain == "root") {
             }
             if (subdomain == "index") {
