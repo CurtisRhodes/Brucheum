@@ -1,0 +1,103 @@
+﻿html {
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%
+}
+
+body {
+    margin: 0
+}
+
+.bsCol {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px
+}
+
+@media (min-width:992px) {
+    .bsCol {
+        float: left
+    }
+    .bsCol {
+        width: 41.66666667%
+    }
+
+}
+
+.bsRow {
+    margin-right: -15px;
+    margin-left: -15px
+}
+
+    .bsRow:after, .bsRow:before {
+        display: table;
+        content: " "
+    }
+
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit
+}
+.h1, .h2, .h3, h1, h2, h3 {
+    margin-top: 20px;
+    margin-bottom: 10px
+}
+.h2, h2 {
+    font-size: 30px
+}
+
+
+.jumbotron {
+    margin-top: 6px;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+    padding-left: 8px;
+    color: inherit;
+    background-color: #dbcdf7;
+}
+
+        .jumbotron h1,
+        .jumbotron .h1 {
+            color: inherit;
+        }
+
+        .jumbotron p {
+            margin-bottom: 15px;
+            font-size: 21px;
+            font-weight: 200;
+        }
+
+        .jumbotron > hr {
+            border-top-color: #d5d5d5;
+        }
+
+    .container .jumbotron,
+    .container-fluid .jumbotron {
+        border-radius: 6px;
+    }
+
+    .jumbotron .container {
+        max-width: 100%;
+    }
+
+    @media screen and (min-width: 768px) {
+        .jumbotron {
+            padding-top: 18px;
+            padding-bottom: 48px;
+        }
+
+        .container .jumbotron,
+        .container-fluid .jumbotron {
+            padding-right: 60px;
+            padding-left: 60px;
+        }
+
+        .jumbotron h1,
+        .jumbotron .h1 {
+            font-size: 63px;
+        }
+    }

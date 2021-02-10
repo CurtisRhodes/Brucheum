@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
-using Microsoft.Owin.Security;
-using Brucheum.Models;
-using Microsoft.Owin.Security.Cookies;
-using Owin;
+//using System.Security.Claims;
+//using System.Threading.Tasks;
+//using System.Web;
+//using Microsoft.AspNet.Identity;
+//using Microsoft.AspNet.Identity.EntityFramework;
+//using Microsoft.AspNet.Identity.Owin;
+//using Microsoft.Owin;
+//using Microsoft.Owin.Security;
+//using Brucheum.Models;
+//using Microsoft.Owin.Security.Cookies;
+//using Owin;
 // using Microsoft.Owin.Security.Facebook;
 
 [assembly: OwinStartupAttribute(typeof(Brucheum.Startup))]

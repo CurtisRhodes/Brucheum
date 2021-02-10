@@ -4,12 +4,7 @@
     <meta charset="utf-8" />
     <title>Brucheum.Api</title>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <link href="Styles/bsExtract.css" rel="stylesheet" />
-    <style>
-        body {
-            margin: 0 30px;
-        }
-    </style>
+    <link href="bsExtract.css" rel="stylesheet" />
   </head>
   <body>
       <div class="jumbotron">
@@ -17,7 +12,6 @@
           <p class="lead">This is a Web Service. Not intended to be accessed directly</p>
           <div id="divLastBuild" class="msgArea">Feb 29</div>
       </div>
-      <a href="Index.html">Index.html</a>
       <div class="bsRow">
           <div class="bsCol">
               <h2>MsSql Data Service</h2>
@@ -47,7 +41,7 @@
       <script>
           $(document).ready(function () {
               $.ajax({
-                  url: "Home/GetBuildInfo",
+                  url: "api/Home/GetBuildInfo",
                   success: function (lastBuild) {
                       $('#divLastBuild').html("Last build: " + lastBuild);
                   },
