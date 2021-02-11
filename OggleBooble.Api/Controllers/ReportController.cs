@@ -16,13 +16,6 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class ReportController : ApiController
     {
-        private readonly string httpLocation = "https://ogglebooble.com/";
-        //private readonly string imagesLocation = "https://api.ogglebooble.com/";
-        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
-        private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
-        private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
-        //private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
-
         [HttpGet]
         [Route("api/Report/MetricMatrixReport")]
         public MatrixResultsModel MetricsMatrixReport()
@@ -56,7 +49,6 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { rslts.Success = Helpers.ErrorDetails(ex); }
             return rslts;
         }
-
         
         [HttpGet]
         [Route("api/Report/DailyVisitors")]
@@ -173,7 +165,6 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { imageHitsReportModel.Success = Helpers.ErrorDetails(ex); }
             return imageHitsReportModel;
         }
-
         
         [HttpGet]
         [Route("api/Report/EventLog")]
@@ -425,130 +416,6 @@ namespace OggleBooble.Api.Controllers
             return userErrors;
         }
 
-        [HttpPost]
-        public string BuildListPage(int rootFolder)
-        {
-            string success;
-            try
-            {
-                // int monthIncimentor;
-                var stringBuilder = new StringBuilder("<html><head>");
-                stringBuilder.Append("</head>\n<body>\n");
-                string pageTitle;
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    //string imgSrc;
-                    //ImageFile dbImageFile;
-                    var dbParentFolder = db.CategoryFolders.Where(f => f.Id == rootFolder).First();
-                    //var folderImage = dbParentFolder.FolderPath;
-                    stringBuilder.Append("\n<H2>" + dbParentFolder.FolderName + "</H2>\n");
-                    pageTitle = dbParentFolder.FolderName;
-                    var dbChildFolders = db.CategoryFolders.Where(f => f.Parent == rootFolder).OrderBy(f => f.SortOrder).ToList();
-
-                    foreach (var dbChildFolder in dbChildFolders) 
-                    {
-                        //stringBuilder.Append("\n<style = '' >\n");
-                        stringBuilder.Append("\n<H3>" + dbChildFolder.FolderName + "</H3>\n");
-                    }
-
-                    //stringBuilder.Append("\n<style>\n" +
-                    //    ".pbDecade { margin - left: 20px; font-family: 'Segoe UI', Tahoma; font-size: 35px; }\n" +
-                    //    ".pbYear { margin - left: 80px; color:#000; font-size: 30px;}\n" +
-                    //    ".pbMonth { margin - left: 40px; font-size: 20px; }\n" +
-                    //    ".pbRow { display: flex; }\n" +
-                    //    ".pbCol { display: inline - block; margin-left: 60px; }\n" +
-                    //    ".pbItemCntr { display: inline-block; }\n" +
-                    //    ".pbImg { height: 45px; }\n</style>\n");
-                    {
-                        //monthIncimentor = 0;
-                        //stringBuilder.Append("<div class='pbDecade'>" + dbPlayboyDecade.FolderName + "</div>\n");
-                        //var dbPlayboyYears = db.CategoryFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
-                        //foreach (var dbPlayboyYear in dbPlayboyYears)
-                        //{
-                        //    //hub.SendMessage("xx", dbPlayboyYear.FolderName);
-                        //    stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "</div>\n");
-                        //    var dbPlayboyMonths = db.CategoryFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
-                        //    stringBuilder.Append("<div class='pbRow'>");
-                        //    foreach (CategoryFolder dbPbmonth in dbPlayboyMonths)
-                        //    {
-                        //        //ProcessStatus = dbPlayboyYear.FolderName + " " + ++monthIncimentor + " " + dbPbmonth.FolderName;
-                        //        imgSrc = "Images/redballon.png";
-                        //        if (dbPbmonth.FolderImage != null)
-                        //        {
-                        //            dbImageFile = db.ImageFiles.Where(i => i.Id == dbPbmonth.FolderImage).FirstOrDefault();
-                        //            if (dbImageFile != null)
-                        //                imgSrc = dbPbmonth.FolderPath + "/" + dbImageFile.FileName;
-                        //        }
-                        //        stringBuilder.Append(
-                        //            "<div class='pbCol' style='width:66px;'>" +
-                        //            //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
-                        //            //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
-                        //            "   <a href='" + httpLocation + "/album.html?folder=" + dbPbmonth.Id + "'>" +
-                        //            "       <img class='pbImg' src='" + imagesLocation + imgSrc + "'>" +
-                        //            "       <div class='pbLabel01'>" + dbPbmonth.FolderName + "</div>\n" +
-                        //            "   </a>" +
-                        //            "</div>\n");
-                        //    }
-                        //    stringBuilder.Append("</div>\n");
-                        //}
-                        //stringBuilder.Append("</div>\n");
-                    }
-                }
-
-                //stringBuilder.Append("<script>\nfunction showCenterfoldImage(link)\n {" +
-                //    "$('.dirTreeImageContainer').css('top', event.clientY - 100);\n" +
-                //    "$('.dirTreeImageContainer').css('left', event.clientX + 10);\n" +
-                //    "$('.dirTreeImage').attr('src', link);\n" +
-                //    "$('.dirTreeImageContainer').show();}\n</script>");
-
-                //$('#footerMessage').html(link);
-                stringBuilder.Append("\n</body>\n</html>");
-
-                success = WriteFileToDisk(stringBuilder.ToString(), pageTitle);
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
-        private string WriteFileToDisk(string staticContent, string pageTitle)
-        {
-            string success;
-            try
-            {
-                // todo  write the image as a file to x.ogglebooble  4/1/19
-                //string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
-                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
-
-                using (var staticFile = File.Open(appDataPath + "/temp.html", FileMode.Create))
-                {
-                    Byte[] byteArray = Encoding.ASCII.GetBytes(staticContent);
-                    staticFile.Write(byteArray, 0, byteArray.Length);
-                }
-                FtpWebRequest webRequest = null;
-                //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
-
-                string ftpFileName = ftpHost + "ogglebooble/" + pageTitle + ".html";
-                string httpFileName = httpLocation + "/" + pageTitle + ".html";
-
-                webRequest = (FtpWebRequest)WebRequest.Create(ftpFileName);
-                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
-                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-                using (Stream requestStream = webRequest.GetRequestStream())
-                {
-                    byte[] fileContents = File.ReadAllBytes(appDataPath + "/temp.html");
-                    webRequest.ContentLength = fileContents.Length;
-                    requestStream.Write(fileContents, 0, fileContents.Length);
-                    requestStream.Flush();
-                    requestStream.Close();
-                }
-
-                //success = RecordPageCreation(folderId, httpFileName, db);
-                success = "ok";
-            }
-            catch (Exception e) { success = Helpers.ErrorDetails(e); }
-            return success;
-        }
-
         [HttpGet]
         [Route("api/Report/ImpactReport")]
         public ImpactReportModel ImpactReport()
@@ -624,6 +491,195 @@ namespace OggleBooble.Api.Controllers
     }
 
     [EnableCors("*", "*", "*")]
+    public class HtmlPageController : ApiController
+    {
+        private readonly string httpLocation = "https://ogglebooble.com/";
+        //private readonly string imagesLocation = "https://api.ogglebooble.com/";
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        private readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
+
+        [HttpPost]
+        public string Build(int rootFolder)
+        {
+            string success;
+            try
+            {
+                var stringBuilder = new StringBuilder("<html><head>");
+
+                stringBuilder.Append("</head>\n<body>\n");
+                string fileName;
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    //string imgSrc;
+                    //ImageFile dbImageFile;
+                    var dbParentFolder = db.CategoryFolders.Where(f => f.Id == rootFolder).First();
+                    fileName = dbParentFolder.FolderName + ".html";
+                    //if (dbParentFolder.FolderType == "singleChild")
+                    if (new string[] { "singleChild", "multiModel" }.Any(s => dbParentFolder.FolderType.Contains(s)))
+                    {
+                        // create a trackback static page
+                    }
+                    if (dbParentFolder.FolderType == "singleParent")
+                    {
+                        // create a trackback static page
+                    }
+
+                    if (dbParentFolder.FolderType == "multiFolder")
+                    {
+                        var sub1Folders = db.CategoryFolders.Where(f => f.Parent == rootFolder).ToList();
+                        foreach (CategoryFolder sub1Folder in sub1Folders)
+                        {
+                            // show playboy decade 
+                            if (sub1Folder.FolderType == "multiFolder")
+                            {
+                                stringBuilder.Append("\n<H2>" + sub1Folder.FolderName + "</H2>\n");
+                                var sub2Folders = db.CategoryFolders.Where(f => f.Parent == sub1Folder.Id).ToList();
+                                foreach (CategoryFolder sub2Folder in sub2Folders)
+                                {
+                                    // playboy year
+                                    if (sub2Folder.FolderType == "multiFolder")
+                                    {
+                                        stringBuilder.Append("\n<H3>" + sub2Folder.FolderName + "</H3>\n");
+                                        var sub3Folders = db.CategoryFolders.Where(f => f.Parent == sub2Folder.Id).ToList();
+                                        stringBuilder.Append("<div class='pbYearRow'>\n");
+                                        foreach (CategoryFolder sub3Folder in sub3Folders)
+                                        {
+                                            // show playboy month
+                                            //if (sub3Folder.FolderType == "multiFolder")
+                                            {
+                                                var sub4Folders = db.CategoryFolders.Where(f => f.Parent == sub3Folder.Id).ToList();
+                                                foreach (CategoryFolder sub4Folder in sub3Folders)
+                                                {
+                                                    ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == sub4Folder.FolderImage).First();
+                                                    stringBuilder.Append("<div><img src='" + imgRepo + "/" +
+                                                        db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath + "/" + dbImageFile.FileName + "'/>\n");
+                                                    stringBuilder.Append("<br/>" + sub4Folder.FolderName + "</div>\n");
+                                                }
+                                                stringBuilder.Append("</div>");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == sub2Folder.FolderImage).First();
+                                        stringBuilder.Append("<div><img src='" + imgRepo + "/" +
+                                            db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath + "/" + dbImageFile.FileName + "'/>\n");
+                                        stringBuilder.Append("<br/>" + sub2Folder.FolderName + "</div>\n");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == sub1Folder.FolderImage).First();
+                                stringBuilder.Append("<div><img src='" + imgRepo + "/" +
+                                    db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath + "/" + dbImageFile.FileName + "'/>\n");
+                                stringBuilder.Append("<br/>" + sub1Folder.FolderName + "</div>\n");
+                            }
+                        }
+                    }
+                    //stringBuilder.Append("\n<style>\n" +
+                    //    ".pbDecade { margin - left: 20px; font-family: 'Segoe UI', Tahoma; font-size: 35px; }\n" +
+                    //    ".pbYear { margin - left: 80px; color:#000; font-size: 30px;}\n" +
+                    //    ".pbMonth { margin - left: 40px; font-size: 20px; }\n" +
+                    //    ".pbRow { display: flex; }\n" +
+                    //    ".pbCol { display: inline - block; margin-left: 60px; }\n" +
+                    //    ".pbItemCntr { display: inline-block; }\n" +
+                    //    ".pbImg { height: 45px; }\n</style>\n");
+                    {
+                        //monthIncimentor = 0;
+                        //stringBuilder.Append("<div class='pbDecade'>" + dbPlayboyDecade.FolderName + "</div>\n");
+                        //var dbPlayboyYears = db.CategoryFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
+                        //foreach (var dbPlayboyYear in dbPlayboyYears)
+                        //{
+                        //    //hub.SendMessage("xx", dbPlayboyYear.FolderName);
+                        //    stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "</div>\n");
+                        //    var dbPlayboyMonths = db.CategoryFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
+                        //    stringBuilder.Append("<div class='pbRow'>");
+                        //    foreach (CategoryFolder dbPbmonth in dbPlayboyMonths)
+                        //    {
+                        //        //ProcessStatus = dbPlayboyYear.FolderName + " " + ++monthIncimentor + " " + dbPbmonth.FolderName;
+                        //        imgSrc = "Images/redballon.png";
+                        //        if (dbPbmonth.FolderImage != null)
+                        //        {
+                        //            dbImageFile = db.ImageFiles.Where(i => i.Id == dbPbmonth.FolderImage).FirstOrDefault();
+                        //            if (dbImageFile != null)
+                        //                imgSrc = dbPbmonth.FolderPath + "/" + dbImageFile.FileName;
+                        //        }
+                        //        stringBuilder.Append(
+                        //            "<div class='pbCol' style='width:66px;'>" +
+                        //            //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
+                        //            //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
+                        //            "   <a href='" + httpLocation + "/album.html?folder=" + dbPbmonth.Id + "'>" +
+                        //            "       <img class='pbImg' src='" + imagesLocation + imgSrc + "'>" +
+                        //            "       <div class='pbLabel01'>" + dbPbmonth.FolderName + "</div>\n" +
+                        //            "   </a>" +
+                        //            "</div>\n");
+                        //    }
+                        //    stringBuilder.Append("</div>\n");
+                        //}
+                        //stringBuilder.Append("</div>\n");
+                    }
+                }
+
+                //stringBuilder.Append("<script>\nfunction showCenterfoldImage(link)\n {" +
+                //    "$('.dirTreeImageContainer').css('top', event.clientY - 100);\n" +
+                //    "$('.dirTreeImageContainer').css('left', event.clientX + 10);\n" +
+                //    "$('.dirTreeImage').attr('src', link);\n" +
+                //    "$('.dirTreeImageContainer').show();}\n</script>");
+
+                //$('#footerMessage').html(link);
+                stringBuilder.Append("\n</body>\n</html>");
+
+                success = WriteFileToDisk(stringBuilder.ToString(), fileName);
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
+
+        private string WriteFileToDisk(string staticContent, string pageTitle)
+        {
+            string success;
+            try
+            {
+                // todo  write the image as a file to x.ogglebooble  4/1/19
+                //string tempFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data");
+                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+
+                using (var staticFile = File.Open(appDataPath + "/temp.html", FileMode.Create))
+                {
+                    Byte[] byteArray = Encoding.ASCII.GetBytes(staticContent);
+                    staticFile.Write(byteArray, 0, byteArray.Length);
+                }
+                FtpWebRequest webRequest = null;
+                //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
+
+                string ftpFileName = ftpHost + "ogglebooble/static/" + pageTitle;
+                string httpFileName = httpLocation + pageTitle;
+
+                webRequest = (FtpWebRequest)WebRequest.Create(ftpFileName);
+                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
+                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                using (Stream requestStream = webRequest.GetRequestStream())
+                {
+                    byte[] fileContents = File.ReadAllBytes(appDataPath + "/temp.html");
+                    webRequest.ContentLength = fileContents.Length;
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+
+                //success = RecordPageCreation(folderId, httpFileName, db);
+                success = "ok";
+            }
+            catch (Exception e) { success = Helpers.ErrorDetails(e); }
+            return success;
+        }
+    }
+
+
+    [EnableCors("*", "*", "*")]
     public class PdfController : ApiController
     {
         [HttpGet]
@@ -695,6 +751,59 @@ namespace OggleBooble.Api.Controllers
                     success = Helpers.ErrorDetails(ex);
                     pdf.Dispose();
                     pdf = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class XhampsterController : ApiController
+    {
+        [HttpPost]
+        public string Create(int folderId)
+        {
+            string success = "";
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    string folderName = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.FolderName).First();
+
+                    List<string> links = (from i in db.CategoryImageLinks
+                                          join g in db.ImageFiles on i.ImageLinkId equals g.Id
+                                          where i.ImageCategoryId == folderId
+                                          select g.FileName).ToList();
+
+                    string destinationFolder = System.Web.HttpContext.Current.Server.MapPath("~/app_data/xhampster/");
+
+                    DirectoryInfo dirInfo = new DirectoryInfo(destinationFolder);
+                    foreach (FileInfo file in dirInfo.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                    using (WebClient wc = new WebClient())
+                    {
+                        try
+                        {
+                            int k = 0;
+                            string fileName = "";
+                            foreach (string link in links)
+                            {
+                                fileName = destinationFolder + "/" + folderName + "_" + string.Format("{0:0000}", ++k) + link.Substring(link.LastIndexOf("."));
+                                wc.DownloadFile(new Uri(link), fileName);
+                            }
+                            success = "ok";
+                        }
+                        catch (Exception ex)
+                        {
+                            success = ex.Message;
+                        }
+                    }
                 }
             }
             catch (Exception ex)

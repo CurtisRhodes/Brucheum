@@ -15,6 +15,57 @@ using System.Web.Http.Cors;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
+    public class DirTreeController : ApiController
+    {
+        [HttpGet]
+        //[Route("api/Links/BuildCatTree")]
+        public DirTreeSuccessModel BuildDirTree(int root)
+        {
+            DirTreeSuccessModel dirTreeModel = new DirTreeSuccessModel();
+            try
+            {
+                var timer = new System.Diagnostics.Stopwatch();
+                timer.Start();
+                IEnumerable<VwDirTree> VwDirTrees = new List<VwDirTree>();
+                //var vwDirTrees;
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    // wow did this speed things up
+                    VwDirTrees = db.VwDirTrees.ToList().OrderBy(v => v.Id);
+                }
+
+                var vRootNode = VwDirTrees.Where(v => v.Id == root).First();
+                DirTreeModelNode rootNode = new DirTreeModelNode() { ThisNode = vRootNode };
+                dirTreeModel.SubDirs.Add(rootNode);
+
+                //GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees);
+                GetDirTreeChildNodes(dirTreeModel, rootNode, VwDirTrees, "");
+                timer.Stop();
+                dirTreeModel.TimeTook = timer.Elapsed;
+                //System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
+                dirTreeModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                dirTreeModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return dirTreeModel;
+        }
+
+        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<VwDirTree> VwDirTrees, string dPath)
+        {
+            List<VwDirTree> vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.ThisNode.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+            foreach (VwDirTree vNode in vwDirTreeNodes)
+            {
+                DirTreeModelNode childNode = new DirTreeModelNode() { ThisNode = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
+                parentNode.SubDirs.Add(childNode);
+                if (vNode.IsStepChild == 0)
+                    GetDirTreeChildNodes(dirTreeModel, childNode, VwDirTrees, (dPath + "/" + vNode.FolderName).Replace(" ", "%20"));
+            }
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
     public class LinksController : ApiController
     {
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
@@ -66,52 +117,6 @@ namespace OggleBooble.Api.Controllers
                 success = "ok";
             }
             return success;
-        }
-
-        [HttpGet]
-        [Route("api/Links/BuildCatTree")]
-        public DirTreeSuccessModel BuildCatTree(int root)
-        {
-            DirTreeSuccessModel dirTreeModel = new DirTreeSuccessModel();
-            try
-            {
-                var timer = new System.Diagnostics.Stopwatch();
-                timer.Start();
-                IEnumerable<VwDirTree> VwDirTrees = new List<VwDirTree>();
-                //var vwDirTrees;
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    // wow did this speed things up
-                    VwDirTrees = db.VwDirTrees.ToList().OrderBy(v => v.Id);
-                }
-
-                var vRootNode = VwDirTrees.Where(v => v.Id == root).First();
-                DirTreeModelNode rootNode = new DirTreeModelNode() { ThisNode = vRootNode };
-                dirTreeModel.SubDirs.Add(rootNode);
-
-                //GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees);
-                GetDirTreeChildNodes(dirTreeModel, rootNode, VwDirTrees, "");
-                timer.Stop();
-                dirTreeModel.TimeTook = timer.Elapsed;
-                //System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
-                dirTreeModel.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                dirTreeModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return dirTreeModel;
-        }
-        private void GetDirTreeChildNodes(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<VwDirTree> VwDirTrees, string dPath)
-        {
-            List<VwDirTree> vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.ThisNode.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
-            foreach (VwDirTree vNode in vwDirTreeNodes)
-            {
-                DirTreeModelNode childNode = new DirTreeModelNode() { ThisNode = vNode, DanniPath = (dPath + "/" + vNode.FolderName).Replace(" ", "%20") };
-                parentNode.SubDirs.Add(childNode);
-                if (vNode.IsStepChild == 0)
-                    GetDirTreeChildNodes(dirTreeModel, childNode, VwDirTrees, (dPath + "/" + vNode.FolderName).Replace(" ", "%20"));
-            }
         }
 
         [HttpPost]
@@ -264,34 +269,47 @@ namespace OggleBooble.Api.Controllers
                     int sortOrder;
                     for (int i = 0; i < moveManyModel.ImageLinkIds.Length; i++) {
                         linkId = moveManyModel.ImageLinkIds[i];
-                        dbImageFile = db.ImageFiles.Where(f => f.Id == linkId).First();
-                        oldFileName = dbImageFile.FileName;
-                        string ext = dbImageFile.FileName.Substring(dbImageFile.FileName.LastIndexOf("."));
-                        newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
-                        if (dbDestFolder.Parent == dbSourceFolder.Id)
-                            newFileName = oldFileName;
-
-                        success = FtpUtilies.MoveFile(sourceFtpPath + "/" + oldFileName, destFtpPath + "/" + newFileName);
-                        if (success == "ok")
-                        {                            
-                            dbImageFile.FolderId = moveManyModel.DestinationFolderId;
-                            dbImageFile.FileName = newFileName;
-                            db.SaveChanges();
-
-                            var oldLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
-                            sortOrder = oldLink.SortOrder;
-                            db.CategoryImageLinks.Remove(oldLink);
-                            db.SaveChanges();
-                            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink() 
-                            { 
-                                ImageCategoryId = dbDestFolder.Id, 
-                                ImageLinkId = linkId, 
-                                SortOrder = sortOrder 
+                        if (moveManyModel.Context == "copy") //only
+                        {
+                            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
+                            {
+                                ImageCategoryId = dbDestFolder.Id,
+                                ImageLinkId = linkId,
+                                SortOrder = 9876
                             });
                             db.SaveChanges();
                         }
                         else
-                            return success;
+                        {
+                            dbImageFile = db.ImageFiles.Where(f => f.Id == linkId).First();
+                            oldFileName = dbImageFile.FileName;
+                            string ext = dbImageFile.FileName.Substring(dbImageFile.FileName.LastIndexOf("."));
+                            newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
+                            if (dbDestFolder.Parent == dbSourceFolder.Id)
+                                newFileName = oldFileName;
+
+                            success = FtpUtilies.MoveFile(sourceFtpPath + "/" + oldFileName, destFtpPath + "/" + newFileName);
+                            if (success == "ok")
+                            {
+                                dbImageFile.FolderId = moveManyModel.DestinationFolderId;
+                                dbImageFile.FileName = newFileName;
+                                db.SaveChanges();
+
+                                var oldLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
+                                sortOrder = oldLink.SortOrder;
+                                db.CategoryImageLinks.Remove(oldLink);
+                                db.SaveChanges();
+                                db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
+                                {
+                                    ImageCategoryId = dbDestFolder.Id,
+                                    ImageLinkId = linkId,
+                                    SortOrder = sortOrder
+                                });
+                                db.SaveChanges();
+                            }
+                            else
+                                return success;
+                        }
                     }
                     success = "ok";
                 }

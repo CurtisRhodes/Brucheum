@@ -611,10 +611,10 @@ function buildListPage() {
     //let pollingLoop = setInterval(function () { pollBuildCenterfoldHtmlPage() }, 5000);
     let startFolder = 1;
     $('#dashBoardLoadingGif').show();
-    $('#dataifyInfo').show().html("building Centerfold List");
+    $('#dataifyInfo').show().html("building Html Page");
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Report/BuildListPage?rootFolder=" + pSelectedTreeId,
+        url: settingsArray.ApiServer + "api/HtmlPage/Build?rootFolder=" + pSelectedTreeId,
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (success == "ok") {
@@ -623,7 +623,7 @@ function buildListPage() {
                 let seconds = (delta % 60000 / 1000).toFixed(0);
                 console.log("build Centerfold List took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                 //clearInterval(pollingLoop);
-                $('#dataifyInfo').html("html List took: " + minutes + ":" + seconds);
+                $('#dataifyInfo').html("build Html Page took: " + minutes + ":" + seconds);
             }
             else {
                 logError("AJX", 3910, success, "build List Page");

@@ -20,14 +20,15 @@
       </div>
       <div class="bsRow">
           <div class="bsCol">
-              <h2>MsSql Data Service</h2>
-              <p>Microsoft SQL Server</p>
-              <p><button onclick="runMStest()">Test</button></p>
+              <h2>Verify Connection</h2>
+              <p>Oracle My SQL Server</p>
+              <p><button onclick="runVerifyConnection()">Verify</button></p>
+              <!--<p><button onclick="runMStest()">Test</button></p>-->
           </div>
           <div class="bsCol">
               <h2>MySql Data Service</h2>
               <p>Oracle My SQL Server</p>
-              <p><button onclick="JournalTest()">Test</button></p>
+              <p><button onclick="runMYtest()">Test</button></p>
           </div>
           <div class="bsCol">
               <h2>Email Test</h2>
@@ -56,6 +57,62 @@
                   }
               });
           });
+
+          function runVerifyConnection() {
+              $.ajax({
+                  type: "GET",
+                  //headers: { 'Access-Control-Allow-Origin': 'https://ogglebooble.com/' },
+                  url: "api/Common/VerifyConnection",
+                  success: function (successModel) {
+                      //console.log("GET VerifyConnection: " + verifyConnectionCount);
+                      if (successModel.Success == "ok") {
+                          if (successModel.ConnectionVerified) {
+                              $('#msgArea').html("Connection Verified");
+                          }
+                          else {
+                              $('#msgArea').html("success but no verify: " + successModel.Success);
+                          }
+                      }
+                      else {
+                          $('#msgArea').html("Error: " + successModel.Success);
+                      }
+                  },
+                  error: function (jqXHR) {
+                      $('#msgArea').html("jqXHR error: " + getXHRErrorDetails(jqXHR));
+
+                  }
+              });
+
+
+
+          }
+         
+          function runMYtest() {
+              try {
+                  $('#msgArea').html("testing");
+                  $.ajax({
+                      type: "GET",
+                      dataType: "json",
+                      url: "api/Local/MySqlTest?parent=4013",
+                      success: function (testResults) {
+                          if (testResults.Success === "ok") {
+                              $('#msgArea').html("");
+                              $.each(testResults.Items, function (idx, obj) {
+                                  $('#msgArea').append("<div>" + obj.Id + "  " + obj.FolderName + "</div>");
+                              });
+                          }
+                          else {
+                              $('#msgArea').html(testResults.Success);
+                          }
+                      },
+                      error: function (jqXHR) {
+                          $('#msgArea').html(getXHRErrorDetails(jqXHR));
+                      }
+                  });
+              } catch (e) {
+                  $('#msgArea').html(e);
+              }
+          }
 
           function runMStest() {
               try {

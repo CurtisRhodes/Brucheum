@@ -62,7 +62,7 @@ function dashboardHtml() {
         "   <div id='moveManySection' class='fullScreenSection'>" +
         "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
         "           <div class='workAreaHeaderArea'>\n" +
-        "               <div class='workAreaHeaderTitle'>Move Many</div>\n" +
+        "               <div id='moveManyTitle' class='workAreaHeaderTitle'>Move Many</div>\n" +
         "               <div class='workAreaHeaderDetailRow'>\n" +
         "                   <div class='moveManyHeaderLabel'>source</div><input id='txtMoveManySource' class='roundedInput' style='width:65%' readonly='readonly' /><br />" +
         "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly' />" +
@@ -76,7 +76,7 @@ function dashboardHtml() {
         "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
         "       <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
         "       <div id='moveManyFooter' class='workareaFooter'>\n" +
-        "           <button onclick='moveCheckedImages(" + mmSourceFolderId + ")'>Move</button>\n" +
+        "           <button id='moveManyButton' onclick='moveCheckedImages(" + mmSourceFolderId + ")'>Move</button>\n" +
         "           <div id='moveManyCountContainer' class='floatRight'></div>" +
         "       </div>\n" +
         "   </div>\n" +
@@ -172,8 +172,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
                 "<div class='clickable' onclick='runImpactReport()'>Impact</div>\n" +
                 "<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>\n" +
-                "<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>\n" +
-                "<div class='clickable' onclick='buildListPage()'>Build List Page</div>\n");
+                "<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>");
             //  <div class='clickable' onclick='buildCenterfoldLsist()'>Build Centerfold List</div>\n" +
             break;
         case "admin":
@@ -190,10 +189,12 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(1);'>Move Many</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(2);'>Copy Many</div>\n" +
-                "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf</div>\n" +
-                "<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" +
-                "<div class='clickable' onclick='HardcoreFilecounts();'>HardcoreFilecounts()</div>");
+                "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf</div>\n"+
+                "<div class='clickable' onclick='buildListPage()'>Build Gallery Page</div>"
+            );
 
+            //"<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" +
+            //"<div class='clickable' onclick='HardcoreFilecounts();'>HardcoreFilecounts()</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
@@ -233,6 +234,27 @@ function showReportsSection() {
     $('#reportsSection').show();
     setLeftMenu("reports");
     $('#reportsMiddleColumn').css("width", $('#dashboardContainer').width() - $('#reportsLeftColumn').width());
+}
+
+// LOAD DIR TREE
+let infoStart;
+function loadDashboardDirTree(forceRefresh) {
+    infoStart = Date.now();
+    activeDirTree = "dashboard";
+    $('#dashBoardLoadingGif').show();
+    $('#dataifyInfo').show().html("loading directory tree");
+    loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
+}
+function onDirTreeComplete() {
+    $('#dashBoardLoadingGif').hide();
+    resizeDashboardPage();
+    let delta = (Date.now() - infoStart) / 1000;
+    if (delta < 1.0)
+        $('#dataifyInfo').hide();
+    else {
+        $('#dataifyInfo').show().html("load directory tree took: " + delta.toFixed(3));
+        setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
+    }
 }
 
 // REPAIR FUNCTIONS
@@ -640,28 +662,20 @@ function perfomAddStepChildFolder(cfSsorceFolderId) {
     });
 }
 
-// ROLES FUNCTION
-function showAssignRolesDialog() {
-    $('#rolesChooseBoxDialog').dialog('open');
-    $('#divChooseAssigned').html("");
-    loadUsers();
-    loadAllUserRoles();
-}
-function showAddRolesDialog() {
-    $('#addEditRolesDialog').dialog('open');
-    loadAaddEditRoles();
-}
-function showAddEditRoles() {
-
-
-}
-
 // MOVE MANY
 let mmSourceFolderId, mmSelectedTreeFolderPath;
 function showMoveManyTool(cx) {
     if (isNullorUndefined(pSelectedTreeFolderPath)) {
         alert("select a folder");
         return;
+    }
+    if (cx == 2) {
+        $('#moveManyTitle').html("Copy Many");
+        $('#moveManyButton').html("Copy");
+    }
+    else {
+        $('#moveManyTitle').html("Move Many");
+        $('#moveManyButton').html("Move");
     }
     mmSourceFolderId = pSelectedTreeId;
     mmSelectedTreeFolderPath = pSelectedTreeFolderPath;
@@ -715,9 +729,16 @@ function moveCheckedImages() {
             checkedImages.push($(this).find("input").attr("imageId"));
         }
     });
-    let lblMoveManyDestination = $('#txtMoveManyDestination').val().replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
-    if (confirm("move " + checkedImages.length + " images to " + lblMoveManyDestination)) {
-        var moveManyModel = {
+
+    let mmContext = "move";
+    if ($('#moveManyTitle').html() == "Copy Many")
+        mmContext = "copy";
+
+    //let lblMoveManyDestination = $('#txtMoveManyDestination').val().replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
+    let lblMoveManyDestination = $('#txtMoveManyDestination').val().replace(/%20/g, " ");
+    if (confirm(mmContext + " " + checkedImages.length + " images to " + lblMoveManyDestination)) {
+        let moveManyModel = {
+            Context: mmContext,
             SourceFolderId: mmSourceFolderId,
             DestinationFolderId: pSelectedTreeId,
             ImageLinkIds: checkedImages
@@ -838,26 +859,6 @@ function loadSortImages() {
     });
 }
 
-function HardcoreFilecounts() {
-    $('#dashBoardLoadingGif').show();
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/HardcoreFilecounts",
-        success: function (success) {
-            $('#dashBoardLoadingGif').hide();
-        },
-        error: function (jqXHR) {
-            $('#dashBoardLoadingGif').hide();
-            let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-            alert(errMsg);
-        }
-    })
-}
-
-
-
 // EMERGENCY TOOLS
 function addFileDates() {
     $('#dataifyInfo').show().html("adding file dates");
@@ -942,9 +943,6 @@ function MoveManyCleanup() {
     });
 }
 
-
-
-
 function showAddVideoLink() {
     $('.workAreaContainer').hide();
     $('#divAddFile').show();
@@ -1027,12 +1025,14 @@ function SaveFileAs() {
         alert("try catch ERROR : " + e);
     }
 }
+
+// XHAMPSTER PAGE
 function prepareXhamsterPage() {
     $('#dashBoardLoadingGif').show();
     try {
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "/api/xHampster?folderId=" + pSelectedTreeId,
+            url: settingsArray.ApiServer + "/api/Xhampster/Create?folderId=" + pSelectedTreeId,
             success: function (success) {
                 $('#dashBoardLoadingGif').hide();
                 if (success === "ok") 
@@ -1050,6 +1050,67 @@ function prepareXhamsterPage() {
         logError("CAT", apFolderId, e, "prepareXhamsterPage");
     }
 }
+
+// RIP PDF
+function showRipPdfDialog() {
+
+    $('#dashboardDialogTitle').html("Rip pdf");
+    $('#dashboardDialogContents').html(
+        "<div><span>pdf file</span><input id='txtPdfFile' class='inlineInput roundedInput'/></div>\n" +
+        "<div><span>dest folder</span><input id='txtDestFolder' class='inlineInput roundedInput'/></div>\n" +
+        "<div><span>start page</span><input id='txtStartPage'/><span>end page</span><input id='txtEndPage'/></div>\n" +
+        "<div class='roundendButton' onclick='performRipPdf()'>rip one</div>\n");
+    $('#dashboardDialog').fadeIn();
+}
+function performRipPdf() {
+    let sourceFile = $('#txtPdfFile').val();
+    let destinationPath = $('#txtDestFolder').val();
+    $('#dashBoardLoadingGif').fadeIn();
+    $('#dataifyInfo').show().html("ripping " + sourceFile);
+
+    if ($('#txtStartPage').val() != "") {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Pdf/RipPdfRange?sourceFile=" + sourceFile + "&destinationPath=" + destinationPath + "&startPage=" +
+                $('#txtStartPage').val() + "&endPage=" + $('#txtEndPage').val(),
+            success: function (success) {
+                $('#dashBoardLoadingGif').hide();
+                if (success === "ok") {
+                    $('#dataifyInfo').show().html("done");
+                }
+                else { logError("AJX", 2020, success, "RipPdf"); }
+            },
+            error: function (jqXHR) {
+                $('#dashBoardLoadingGif').hide();
+                let errMsg = getXHRErrorDetails(jqXHR);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            }
+        });
+    }
+    else {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Pdf/RipPdf?sourceFile=" + sourceFile + "&destinationPath=" + destinationPath,
+            success: function (success) {
+                $('#dashBoardLoadingGif').hide();
+                if (success === "ok") {
+                    $('#dataifyInfo').show().html("done");
+                }
+                else { logError("AJX", 2020, success, "RipPdf"); }
+            },
+            error: function (jqXHR) {
+                $('#dashBoardLoadingGif').hide();
+                let errMsg = getXHRErrorDetails(jqXHR);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            }
+        });
+    }
+}
+
+
+
 
 // UNUSED
 function showRenameFolderDialog(folderId, folderName) {
@@ -1124,6 +1185,24 @@ function addVideoLink() {
     }
 }
 
+function xxHardcoreFilecounts() {
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/GalleryPage/HardcoreFilecounts",
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            alert(errMsg);
+        }
+    })
+}
+
 function XXloadProperties() {
     $('#dataifyInfo').show().html("adding size info");
     $.ajax({
@@ -1175,74 +1254,15 @@ function XXtestAddVisitor() {
     addVisitor(3309, "dashboard");
 }
 
-function loadDashboardDirTree(forceRefresh) {
-    activeDirTree = "dashboard";
-    $('#dashBoardLoadingGif').show();
-    $('#dataifyInfo').show().html("loading directory tree");
-    loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
+function xxshowAssignRolesDialog() {
+    $('#rolesChooseBoxDialog').dialog('open');
+    $('#divChooseAssigned').html("");
+    loadUsers();
+    loadAllUserRoles();
 }
-
-function onDirTreeComplete() {
-    $('#dashBoardLoadingGif').hide();
-    resizeDashboardPage();
-    setTimeout(function () { $('#dataifyInfo').hide() }, 1500);
+function xxshowAddRolesDialog() {
+    $('#addEditRolesDialog').dialog('open');
+    loadAaddEditRoles();
 }
-
-// RIP PDF
-function showRipPdfDialog() {
-
-    $('#dashboardDialogTitle').html("Rip pdf");
-    $('#dashboardDialogContents').html(
-        "<div><span>pdf file</span><input id='txtPdfFile' class='inlineInput roundedInput'/></div>\n" +
-        "<div><span>dest folder</span><input id='txtDestFolder' class='inlineInput roundedInput'/></div>\n" +
-        "<div><span>start page</span><input id='txtStartPage'/><span>end page</span><input id='txtEndPage'/></div>\n" +
-        "<div class='roundendButton' onclick='performRipPdf()'>rip one</div>\n");
-    $('#dashboardDialog').fadeIn();
-}
-
-function performRipPdf() {
-    let sourceFile = $('#txtPdfFile').val();
-    let destinationPath = $('#txtDestFolder').val();
-    $('#dashBoardLoadingGif').fadeIn();
-    $('#dataifyInfo').show().html("ripping " + sourceFile);
-
-    if ($('#txtStartPage').val() != "") {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Pdf/RipPdfRange?sourceFile=" + sourceFile + "&destinationPath=" + destinationPath + "&startPage=" +
-                $('#txtStartPage').val() + "&endPage=" + $('#txtEndPage').val(),
-            success: function (success) {
-                $('#dashBoardLoadingGif').hide();
-                if (success === "ok") {
-                    $('#dataifyInfo').show().html("done");
-                }
-                else { logError("AJX", 2020, success, "RipPdf"); }
-            },
-            error: function (jqXHR) {
-                $('#dashBoardLoadingGif').hide();
-                let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-            }
-        });
-    }
-    else {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Pdf/RipPdf?sourceFile=" + sourceFile + "&destinationPath=" + destinationPath,
-            success: function (success) {
-                $('#dashBoardLoadingGif').hide();
-                if (success === "ok") {
-                    $('#dataifyInfo').show().html("done");
-                }
-                else { logError("AJX", 2020, success, "RipPdf"); }
-            },
-            error: function (jqXHR) {
-                $('#dashBoardLoadingGif').hide();
-                let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-            }
-        });
-    }
+function xxshowAddEditRoles() {
 }

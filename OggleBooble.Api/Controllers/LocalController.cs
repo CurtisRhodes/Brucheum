@@ -94,7 +94,7 @@ namespace OggleBooble.Api.Controllers
         public JsonResult<TestResults> MySqlTest(int parent)
         {
             var testResults = new TestResults();
-            using (var db = new MySqlDataContext.OggleBoobleMySqlContext())
+            using (var db = new OggleBoobleMySqlContext())
             {
                 List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
                 foreach (var categoryFolder in categoryFolders)
