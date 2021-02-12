@@ -7,15 +7,14 @@ var CarouselRotatorInterval;
 var currentArticleId = 0;
 
 function loadAndStartCarousel() {
-
-    console.log("entering loadAndStartCarousel url: " + settingsArray.ApiServer + "api/Article/Get?pageLen=" + numArticles + "&page=1&filterType=null&filter=null");
-
     $('#carouselImage').css('cursor', 'no-drop');
     $('#carouselImage').attr('src', "Images/ingranaggi3.gif" ).fadeIn(50, resizeAddRotator());
-    $('.centeredDivShell').show();
+
+    $('#carosuelContainer').show();
+    let url = settingsArray.ApiServer + "api/Article/GetArticleList?pageLen=" + numArticles + "&page=1&filterType=null&filter=null";
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Article/Get?pageLen=" + numArticles + "&page=1&filterType=null&filter=null",
+        url: url,
         success: function (articlesModel) {
             console.log("articlesModel.Success: " + articlesModel.Success);
             if (articlesModel.Success === "ok") {
@@ -32,7 +31,7 @@ function loadAndStartCarousel() {
         },
         error: function (jqXHR) {
             var errorMessage = getXHRErrorDetails(jqXHR);
-            alert("XHR error in loadAndStartCarousel: " + errorMessage);
+            alert("XHR error in loadAndStartCarousel: " + errorMessage + "\nurl: " + url);
         }
     });
 }

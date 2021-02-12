@@ -20,8 +20,28 @@ namespace WebApi.DataContext
         public virtual DbSet<BlogEntry> BlogEntries { get; set; }
         public virtual DbSet<ToDoList> Lists { get; set; }
         public virtual DbSet<ListItem> ListItems { get; set; }
+        public virtual DbSet<VwArticle> VwArticles { get; set; }
     }
-        
+
+    [Table("website.vwArticles")]
+    public partial class VwArticle
+    {
+        [Key]
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Summary { get; set; }
+        public string Content { get; set; }
+        public string ImageName { get; set; }
+        public string Category { get; set; }
+        public string SubCategory { get; set; }
+        public string ByLine { get; set; }
+        public string CategoryRef { get; set; }
+        public string SubCategoryRef { get; set; }
+        public string ByLineRef { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime LastUpdated { get; set; }
+    }
+
     [Table("website.Comment")]
     public partial class Comment
     {
@@ -31,16 +51,11 @@ namespace WebApi.DataContext
         [Required]
         [StringLength(500)]
         public string CommentTitle { get; set; }
-
         public string CommentText { get; set; }
-
         public DateTime CreateDate { get; set; }
-
         public string UserName { get; set; }
-
         [StringLength(128)]
         public string UserId { get; set; }
-
         [Required]
         [StringLength(128)]
         public string ArticleId { get; set; }

@@ -2,8 +2,8 @@
 <settings>
   <!--<setting name="ApiServer" value="https://api.curtisrhodes.com/"></setting>-->
   <!--<setting name="ApiServer" value="http://localhost:40395/"></setting>-->
-  <setting name="ApiServer" value="https://localhost:44356/"></setting>
-  <setting name="ImageArchive" value="http://library.curtisrhodes.com/article Jogs/"></setting>
+  <setting name="ApiServer" value="https://localhost:44352/"></setting>
+  <setting name="ImageArchive" value="http://img.ogglebooble.com/jogs/"></setting>
   <setting name="Owner" value="Randy Roads"></setting>
   <setting name="ProductName" value="Flitter"></setting>
   <setting name="ColorScheme" value="Hot Pink"></setting>

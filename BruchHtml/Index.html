@@ -7,28 +7,19 @@
     <link rel='shortcut icon' href='Images/Brucheum.ico' type='image/x-icon' />
 
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <!--<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>-->
     <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />-->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>-->
     <script src="Scripts/Login.js"></script>
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/Headers.js"></script>
     <script src="Scripts/Carousel.js"></script>
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
-    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet">-->
-    <!--<link href="Styles/jqueryUI.css" rel="stylesheet">-->
+    <script src="Scripts/Snippets.js"></script>
+
     <link href="Styles/Carousel.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet">
     <link href="Styles/loginDialog.css" rel="stylesheet">
     <link href="Styles/Header.css" rel="stylesheet">
     <link href="Styles/Footer.css" rel="stylesheet">
-    <!--<script async src="ttps://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
-    <!--<script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-1620126417602146",
-            enable_page_level_ads: true
-        });
-    </script>-->
 </head>
 <body>
     <style>
@@ -87,6 +78,7 @@
             <div id="customMessage" class="displayHidden customMessageContainer"></div>
             <div id="divStatusMessage"></div>
             <div id="dots" style="color:white"></div>
+            
             <div class="centeredDivShell">
                 <div class="centeredDivInner">
                     <div id="carosuelContainer" class="carosuelContainer">
@@ -94,13 +86,13 @@
                         <img id="rightFbutton" class="arrowButton" src="Images/blueCircleRight.png" onclick="clickNext()" />
                         <div id='articleTitle' class='carouselLabel'></div>
                         <div id='articleCat' class='carouselLabel'></div>
-
                         <div class="carouselImageContainer">
                             <img id="carouselImage" onclick="viewArticle()" />
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
         <div id="rightColumn"></div>
     </div>
@@ -110,6 +102,8 @@
         var subdomain;
         var permissionsSet = false;
         $(document).ready(function () {
+            $('#carosuelContainer').hide();
+            //alert("carousel should be hidden");
             //var emailSubject = "OH MY GOD: ";
             //sendEmailFromJS(emailSubject, "someone just looked at your skills page");
             //hitSession = logPageHit(service, currentUser, ipAddress, "SKILLs", "nothing");
@@ -132,7 +126,7 @@
                     clearInterval(waiter);
                     //logVisit();
                     //setUserPermissions();
-                    
+                    $('#rightColumn').append(showBookPanel());
                     loadAndStartCarousel();
                     //var waiter2 = setInterval(function () {
                     //    dots += "* ";

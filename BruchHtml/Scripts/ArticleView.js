@@ -11,9 +11,11 @@ function loadArticle(articleId) {
     $('#lnkPermalink').hide();
     $('#lnkFacebook').hide();
     try {
+        let url = settingsArray.ApiServer + "/api/Article/GetSingleArticle?articleId=" + articleId;
+        //alert("url: " + url);
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "/api/Article?articleId=" + articleId,
+            url: url,
             //dataType: "json",
             success: function (article) {
                 if (article.Success === "ok") {
@@ -46,7 +48,7 @@ function loadArticle(articleId) {
                     alert("loadDBArticle: " + article.Success);
             },
             error: function (jqXHR, exception) {
-                alert("loadArticle jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                alert("loadArticle jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "\nurl: " + url);
             }
         });
     } catch (e) {

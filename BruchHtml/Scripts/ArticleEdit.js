@@ -29,9 +29,10 @@ function setUpEditPage() {
 
 function getArticle(articleId) {
     article.Id = articleId;
+    let url = settingsArray.ApiServer + "/api/Article/GetSingleArticle?articleId=" + articleId;
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/Article?articleId=" + articleId,
+        url: url,
         success: function (response) {
             if (response.Success === "ok") {
                 bind(response);
