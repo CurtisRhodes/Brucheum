@@ -108,6 +108,14 @@ namespace OggleBooble.Api.Controllers
                     //albumInfo.FileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
                     //albumInfo.FolderCount = db.CategoryFolders.Where(f => f.Parent == folderId).Count();
 
+                    int curFileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
+                    if (albumInfo.FileCount != curFileCount)
+                    {
+                        dbCategoryFolder.Files = curFileCount;
+                        albumInfo.FileCount = curFileCount;
+                        db.SaveChanges();
+                    }
+
                     #region 1. trackbackLinks
                     var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
                     foreach (TrackbackLink trackbackLink in trackbackLinks)
