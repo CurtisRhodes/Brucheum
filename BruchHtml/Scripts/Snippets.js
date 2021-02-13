@@ -1,8 +1,8 @@
 ﻿function showBookPanel() {
 
     return `
-    <div id="divBookPannel">
-        <div id="divPannelHeader">
+    <div id="divBookPannel" class="mediumAddContainer bookPannel">
+        <div class="bookPannelHeader">
             Check out my books
                 </div>
         <div class="divBookImage" book="The Blond Jew" onclick="window.location.href='/BookDb/ToC?book=1'">

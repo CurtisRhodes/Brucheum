@@ -129,3 +129,30 @@ body {
     padding: 8px 20px;
     cursor: pointer;
 }
+
+
+.mediumAddContainer {
+    position: absolute;
+    right: 10px;
+    top: 222px;
+    background-color: #a781c1;
+    border: solid thin #7f2c8f;
+    padding: 11px 11px 0 11px;
+}
+
+.bookPannel div {
+    text-align: center;
+}
+
+.divBookImage {
+    padding-bottom: 11px;
+}
+
+.bookImage {
+    cursor: pointer;
+    height: 122px;
+}
+.bookPannelHeader {
+    font-size: 14px;
+    margin-bottom: 11px;
+}
