@@ -174,7 +174,7 @@ function updateArticle(view) {
 
 function getCategories() {
     $.ajax({
-        url: settingsArray.ApiServer + "/api/Refs?refType=CAT",
+        url: settingsArray.ApiServer + "/api/Ref/Get?refType=CAT",
         type: "get",
         dataType: "json",
         success: function (response) {
@@ -192,7 +192,7 @@ function getCategories() {
 
 function getAvatars() {
     $.ajax({
-        url: settingsArray.ApiServer + "/api/Refs?refType=AVT",
+        url: settingsArray.ApiServer + "/api/Ref/Get?refType=AVT",
         type: "get",
         dataType: "json",
         success: function (response) {
@@ -221,10 +221,10 @@ function loadImage(imageFullFileName) {
     //alert("article.ImageName: " + article.ImageName)
     //$('#imgArticleJog').attr("src", settingsArray.ApiServer + "/App_Data/Images/" + article.ImageName);
     //setTimeout(function () { adjust() }, 1000);
-    alert("loadImage url: " + settingsArray.ApiServer + "api/Images/AddImage?imageFullFileName=" + imageFullFileName);
+    let url = settingsArray.ApiServer + "api/Images/AddImage?imageFullFileName=" + imageFullFileName;
     $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Images/AddImage?imageFullFileName=" + imageFullFileName,
+        type: "POST",
+        url: url,
         success: function (response) {
             if (response.Success === "ok") {
                 bind(response);

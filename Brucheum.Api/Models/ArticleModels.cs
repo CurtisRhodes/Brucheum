@@ -48,6 +48,11 @@ namespace WebApi.Models
         public string Success { get; set; }
     }
 
+    public class LoadImageSuccessModel {
+        public string ImageFileName { get; set; }
+        public string Success { get; set; }
+    }
+
     public class RefModel
     {
         public RefModel()

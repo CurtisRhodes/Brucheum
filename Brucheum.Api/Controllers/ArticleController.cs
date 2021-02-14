@@ -7,6 +7,7 @@ using System.Web.Http;
 using WebApi.Models;
 using WebApi.DataContext;
 using System.Web.Http.Cors;
+using System.IO;
 
 namespace WebApi
 {
@@ -429,6 +430,36 @@ namespace WebApi
                 }
             }
             return refCode;
+        }
+    }
+
+    [EnableCors("*", "*", "*")]
+    public class ImageController : ApiController
+    {
+        private readonly string imagesPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Images");
+
+        [HttpPost]
+        public LoadImageSuccessModel AddImage(string articleId, string imageFullFileName)
+        {
+            var imageModel = new LoadImageSuccessModel();
+            try
+            {
+                string fullPathImageFileName = Path.Combine(imagesPath, imageFullFileName);
+                Byte[] byteArray = Request.Content.ReadAsByteArrayAsync().Result;
+                File.WriteAllBytes(fullPathImageFileName, byteArray);
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    Article article = db.Articles.Where(a => a.Id == articleId).FirstOrDefault();
+                    article.ImageName = imageFullFileName;
+                    db.SaveChanges();
+                }
+                imageModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                imageModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return imageModel;
         }
     }
 }
