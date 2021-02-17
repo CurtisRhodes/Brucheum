@@ -12,7 +12,6 @@ function indexStartup() {
     loadUpdatedGalleriesBoxes(updatedGalleriesCount, "boobs");
 }
 
-
 function pornStartup() {
     $('#indexMiddleColumn').html(indexPageHTML());
     setOggleHeader(spaPageId, "porn");

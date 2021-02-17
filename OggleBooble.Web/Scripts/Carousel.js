@@ -125,12 +125,10 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                     }
                     else {
                         let delta = (Date.now() - startTime) / 1000;
-                        //if (carouselDebugMode) $('#badgesContainer').html(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                        console.log(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                        console.log(rootFolder + "done.  took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                         $('#footerMessage2').html(rootFolder + ": skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake + "  took: " + delta.toFixed(3) + "  total items: " + carouselItemArray.length.toLocaleString());
-
-                        if (document.domain == "localhost")
-                            alert("done: " + carouselItemArray.length);
+                        //if (document.domain == "localhost") alert("done: " + carouselItemArray.length);
+                        //if (carouselDebugMode) $('#badgesContainer').html(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                     }
                 }
                 else {
@@ -194,9 +192,10 @@ function refreshCache(rootFolder) {
                     let delta = (Date.now() - startTime) / 1000;
                     $('#footerMessage').html("refreshed " + rootFolder + " cache ");
                     console.log("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3));
-                    $('#footerMessage').html("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3) + "  size: " + jsnObj.length);
+                    $('#footerMessage').html("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3) + "  size: " + cacheArray.length);
 
-                    if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache.  \nTook: " + delta.toFixed(3) + "  size: " + jsnObj.length);
+                    //if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache");
+                    //if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache.  \nTook: " + delta.toFixed(3) + "  size: " + cacheArray.length);
                 }
                 else {
                     logError("AJX", 3908, carouselInfo.Success, "refreshCache");
@@ -266,10 +265,15 @@ function setLabelLinks(llIdx) {
         if (carouselItem.RealRoot == "centerfold")
             $('#imageTopLabel').html("Playboy Playmate: " + carouselItem.PlayboyYear);
         else {
-            //$('#imageTopLabel').html("rootfolder: " + carouselItem.RootFolder + "  realroot: " + carouselItem.RealRoot + ": " + carouselItem.FolderName);
-            $('#imageTopLabel').html(carouselItem.RootFolder + ": " + carouselItem.FolderName);
-            pause();
+            if (carouselItem.RealRoot == "playboy")
+                //$('#imageTopLabel').html("rootfolder: " + carouselItem.RootFolder + "  realroot: " + carouselItem.RealRoot + ": " + carouselItem.FolderName);
+                $('#imageTopLabel').html(carouselItem.FolderParentName + ": " + carouselItem.FolderName);
+            else {
+                $('#imageTopLabel').html(carouselItem.RealRoot + ": " + carouselItem.FolderName);
+                //pause();
+            }
         }
+
         if (carouselItem.FolderType == 'singleChild') {
             $('#knownModelLabel').html(carouselItem.FolderParentName);
             $('#carouselFooterLabel').html(carouselItem.FolderGPName);

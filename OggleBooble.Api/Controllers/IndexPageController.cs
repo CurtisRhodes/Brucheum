@@ -32,7 +32,7 @@ namespace OggleBooble.Api.Controllers
 
                         //if (root == "centerfold")
                         //{
-                        //    carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RealRoot == "playboy").Where(v => v.Height < v.Width)
+                        //    carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.ImageFolderName == "extra").Where(v => v.Height < v.Width)
                         //    .Where(v => v.Width > v.Height)
                         //    .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
                         //}
