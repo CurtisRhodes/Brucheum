@@ -707,11 +707,10 @@ namespace OggleBooble.Api.MySqlDataContext
     public class VwCarouselItem
     {
         [Key]
-        public string Id { get; set; }
         public string LinkId { get; set; }
-        public string ImageFile { get; set; }
         public int FolderId { get; set; }
         public string RootFolder { get; set; }
+        public string RealRoot { get; set; }
         public string FolderType { get; set; }
         public string FolderName { get; set; }
         public string FolderParentName { get; set; }
@@ -727,6 +726,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int ImageFolderGPId { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public string ImageFileName { get; set; }
     }
 }
 

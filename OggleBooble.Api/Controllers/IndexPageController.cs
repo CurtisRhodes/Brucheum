@@ -26,12 +26,22 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (includeLandscape)
                     {
-                        //List<VwCarouselItem> carouselItems = db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
-                        //    .Where(v => v.Width > v.Height)
-                        //    .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList();
                         carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
                             .Where(v => v.Width > v.Height)
                             .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
+
+                        //if (root == "centerfold")
+                        //{
+                        //    carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RealRoot == "playboy").Where(v => v.Height < v.Width)
+                        //    .Where(v => v.Width > v.Height)
+                        //    .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
+                        //}
+                        //else
+                        //{
+                        //    carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
+                        //        .Where(v => v.Width > v.Height)
+                        //        .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
+                        //}
                     }
                     if (includePortrait)
                         carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
@@ -41,7 +51,43 @@ namespace OggleBooble.Api.Controllers
                 //carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
                 carouselInfo.Success = "ok";
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
+                carouselInfo.Success = Helpers.ErrorDetails(ex);
+            }
+            return carouselInfo;
+        }
+
+        [HttpGet]
+        public CarouselInfoModel RefreshCache(string root, int cacheCount)
+        {
+            CarouselInfoModel carouselInfo = new CarouselInfoModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    List<VwCarouselItem> allCarouselItems;
+                    allCarouselItems = db.VwCarouselImages.Where(v => v.RootFolder == root)
+                        .Where(v => v.Width > v.Height)
+                        .OrderBy(v => v.LinkId).ToList();
+                    int itemCount = allCarouselItems.Count();
+                    if (itemCount > cacheCount)
+                    {
+                        Random random = new Random();
+                        int rnd = random.Next(0, itemCount);
+                        for (int i = 0; i < cacheCount; i++)
+                        {
+                            carouselInfo.Links.Add(allCarouselItems[rnd]);
+                            rnd = random.Next(0, itemCount);
+                        }
+                    }
+                    else
+                        carouselInfo.Links = allCarouselItems;
+                }
+                carouselInfo.Success = "ok";
+            }
+            catch (Exception ex)
+            {
                 carouselInfo.Success = Helpers.ErrorDetails(ex);
             }
             return carouselInfo;
