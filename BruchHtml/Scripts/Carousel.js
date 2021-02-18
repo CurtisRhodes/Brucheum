@@ -26,10 +26,13 @@ function loadAndStartCarousel() {
                 $('#carouselImage').css('cursor', 'pointer');
                 rotate();
             }
-            else
+            else {
+                $('#carosuelContainer').hide();
                 alert("loadAndStartCarousel: " + articlesModel.Success);
+            }
         },
         error: function (jqXHR) {
+            $('#carosuelContainer').hide();
             var errorMessage = getXHRErrorDetails(jqXHR);
             alert("XHR error in loadAndStartCarousel: " + errorMessage + "\nurl: " + url);
         }

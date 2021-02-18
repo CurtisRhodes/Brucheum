@@ -9,7 +9,7 @@ using System.Net;
 using System.Text;
 //using WebApi.OggleBoobleSqlContext;
 
-namespace WebApi
+namespace Bruchem.Api
 {
     public enum FolderAttributeCode
     {

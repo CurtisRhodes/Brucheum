@@ -1,4 +1,4 @@
-namespace WebApi.DataContext
+namespace Bruchem.Api
 {
     using System;
     using System.Data.Entity;

@@ -4,17 +4,17 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using WebApi.Models;
-using WebApi.DataContext;
 using System.Web.Http.Cors;
 using System.IO;
+using System.Configuration;
 
-namespace WebApi
+namespace Bruchem.Api
 {
     [EnableCors("*", "*", "*")]
     public class ArticleController : ApiController
     {
         [HttpGet]
+        //let url = settingsArray.ApiServer + "api/Article/GetArticleList?pageLen=" + numArticles + "&page=1&filterType=null&filter=null";
         public ArticlesModel GetArticleList(int pageLen, int page, string filterType, string filter)
         {
             var articleModel = new ArticlesModel();
@@ -75,7 +75,7 @@ namespace WebApi
                 {
                     VwArticle dbArticle = db.VwArticles.Where(a => a.Id.ToString() == articleId).FirstOrDefault();
                     if (dbArticle != null)
-                    {
+                    {                 
                         articleModel.Title = dbArticle.Title;
                         articleModel.ByLine = dbArticle.ByLine;
                         articleModel.Category = dbArticle.Category;
@@ -436,6 +436,11 @@ namespace WebApi
     [EnableCors("*", "*", "*")]
     public class ImageController : ApiController
     {
+        private readonly string articleImagesFolder = ConfigurationManager.AppSettings["ImageRepository"];
+        private readonly string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+        static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
+        static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
+        static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
         private readonly string imagesPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Images");
 
         [HttpPost]
@@ -447,12 +452,25 @@ namespace WebApi
                 string fullPathImageFileName = Path.Combine(imagesPath, imageFullFileName);
                 Byte[] byteArray = Request.Content.ReadAsByteArrayAsync().Result;
                 File.WriteAllBytes(fullPathImageFileName, byteArray);
+
+                // USE WEBREQUEST TO UPLOAD THE FILE
+                FtpWebRequest webRequest = null;
+                    string destPath = ftpHost + articleImagesFolder;
+
+                    if (!FtpUtilies.DirectoryExists(destPath))
+                        FtpUtilies.CreateDirectory(destPath);
+
+                    webRequest = (FtpWebRequest)WebRequest.Create(destPath + "/" + imageFullFileName);
+                    webRequest.Credentials = networkCredentials;
+                    webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
                 using (WebSiteContext db = new WebSiteContext())
                 {
                     Article article = db.Articles.Where(a => a.Id == articleId).FirstOrDefault();
                     article.ImageName = imageFullFileName;
                     db.SaveChanges();
                 }
+    
                 imageModel.Success = "ok";
             }
             catch (Exception ex)
