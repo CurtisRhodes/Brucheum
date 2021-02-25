@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using WebApi.DataContext;
 
-namespace WebApi.Models
+namespace Bruchem.Api
 {
     public class DbArticleTagModel
     {
@@ -94,7 +93,7 @@ namespace WebApi.Models
 }
 
 
-namespace WebApi.Xml.Models
+namespace Bruchem.Api.Xml.Models
 {
     public class ArticelXmlModel
     {

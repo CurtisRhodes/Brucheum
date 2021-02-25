@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
-using WebApi.DataContext;
+using System.Web.Http.Cors;
 
-namespace WebApi
+namespace Bruchem.Api
 {
+    [EnableCors("*", "*", "*")]
     public class HomeController : ApiController
     {
         //ResponseModel pageResponse = new ResponseModel();
@@ -16,7 +17,7 @@ namespace WebApi
         public string GetBuildInfo()
         {
             string lastBuild = "11:11";
-            string path = System.Web.HttpContext.Current.Server.MapPath("~/bin/Brucheum.Api.dll");
+            string path = HttpContext.Current.Server.MapPath("~/bin/Brucheum.Api.dll");
             if (System.IO.File.Exists(path))
             {
                 lastBuild = System.IO.File.GetLastWriteTime(path).ToShortDateString();
@@ -36,6 +37,9 @@ namespace WebApi
             }
             return success;
         }
+
+
+
 
         //[HttpGet]
         //public JsonResult MsSqlTest(int parent)
