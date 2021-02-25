@@ -37,6 +37,7 @@ function playboyStartup() {
     setOggleFooter(spaPageId, "centerfold");
     changeFavoriteIcon("centerfold");
     document.title = "Every Playboy Centerfold";
+
     latestGallerySubdomain = "centerfold";
     launchCarousel("centerfold");
     $('#updatedGalleriesSectionLoadingGif').show();
@@ -46,6 +47,7 @@ function playboyStartup() {
 function playboyPageHTML() {
     return "<div class='playboyShell'> <div class='indexPageSection' id='topIndexPageSection'>\n" +
         "       <div class='sectionLabel'>random galleries</div>\n" +
+        "       <div id='testMessage1' class='indexPageHappyMessage' >start</div>\n" +
         "           <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
@@ -62,6 +64,7 @@ function playboyPageHTML() {
 function indexPageHTML() {
     return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
         "       <div class='sectionLabel'>random galleries</div>\n" +
+        "       <div id='testMessage1' class='indexPageHappyMessage' >start</div>\n" +
         "           <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
         //"    <div class='clickable sectionLabel' onclick='cureWIPproblem(211,\"018d1162-61a6-4987-bd90-add6fac518c6\",\"WIP\")'>cure WIP problem</div>\n" +
@@ -106,7 +109,7 @@ function loadUpdatedGalleriesBoxes(numItmes) {
                             "</div>");
                     }
                 });
-                $('.sectionLabel').show();
+                //$('.sectionLabel').show();
                 resizeIndexPage();
                 setTimeout(function () { resizeIndexPage(); }, 300);
                 var delta = (Date.now() - getLatestStart) / 1000;

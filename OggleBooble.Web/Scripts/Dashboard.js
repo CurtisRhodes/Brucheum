@@ -242,17 +242,21 @@ function loadDashboardDirTree(forceRefresh) {
     infoStart = Date.now();
     activeDirTree = "dashboard";
     $('#dashBoardLoadingGif').show();
-    $('#dataifyInfo').show().html("loading directory tree");
+    $('#dataifyInfo').show().html("rebuilding directory tree");
     loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
 }
+
 function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
     resizeDashboardPage();
-    let delta = (Date.now() - infoStart) / 1000;
+    let delta = (Date.now() - infoStart);
     if (delta < 1.0)
         $('#dataifyInfo').hide();
     else {
-        $('#dataifyInfo').show().html("load directory tree took: " + delta.toFixed(3));
+        var minutes = Math.floor(delta / 60000);
+        var seconds = (delta % 60000 / 1000).toFixed(0);
+        $('#dataifyInfo').html("rebuilding directory tree took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+        //$('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toFixed(3));
         setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
     }
 }
@@ -1035,19 +1039,25 @@ function prepareXhamsterPage() {
             url: settingsArray.ApiServer + "/api/Xhampster/Create?folderId=" + pSelectedTreeId,
             success: function (success) {
                 $('#dashBoardLoadingGif').hide();
-                if (success === "ok") 
+                if (success === "ok")
                     displayStatusMessage("ok", "Xhamster Page created");
-                else logError("AJX", apFolderId, success, "prepareXhamsterPage");
+                else {
+                    //logError("AJX", 3499, success, "prepareXhamsterPage");
+                    alert(success);
+                }
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                let functionName = "prepareXhamsterPage";
+                if (!checkFor404(errMsg, folderId, functionName)) {
+                    //logError("XHR", 3499, errMsg, functionName);
+                    alert(errMsg);
+                }
             }
         });
     } catch (e) {
-        logError("CAT", apFolderId, e, "prepareXhamsterPage");
+        logError("CAT", 3499, e, "prepareXhamsterPage");
     }
 }
 
@@ -1108,9 +1118,6 @@ function performRipPdf() {
         });
     }
 }
-
-
-
 
 // UNUSED
 function showRenameFolderDialog(folderId, folderName) {

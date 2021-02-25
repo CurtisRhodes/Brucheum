@@ -764,6 +764,8 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class XhampsterController : ApiController
     {
+        private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
+
         [HttpPost]
         public string Create(int folderId)
         {
@@ -774,13 +776,19 @@ namespace OggleBooble.Api.Controllers
                 {
                     string folderName = db.CategoryFolders.Where(f => f.Id == folderId).Select(f => f.FolderName).First();
 
-                    List<string> links = (from i in db.CategoryImageLinks
+                    List<string> fileNames = (from i in db.CategoryImageLinks
                                           join g in db.ImageFiles on i.ImageLinkId equals g.Id
+                                          join f in db.CategoryFolders on g.FolderId equals f.Id
                                           where i.ImageCategoryId == folderId
-                                          select g.FileName).ToList();
+                                          orderby i.SortOrder
+                                          select f.FolderPath + "/" + g.FileName).ToList();
+                    //List<string> links = db.CategoryImageLinks
+                    //    .Where(l => l.ImageCategoryId == folderId)
+                    //    .OrderBy(l => l.SortOrder)
+                    //    .Select(l => l.ImageLinkId).ToList();
+
 
                     string destinationFolder = System.Web.HttpContext.Current.Server.MapPath("~/app_data/xhampster/");
-
                     DirectoryInfo dirInfo = new DirectoryInfo(destinationFolder);
                     foreach (FileInfo file in dirInfo.GetFiles())
                     {
@@ -791,11 +799,11 @@ namespace OggleBooble.Api.Controllers
                         try
                         {
                             int k = 0;
-                            string fileName = "";
-                            foreach (string link in links)
+                            string xFileName = "";
+                            foreach (string fileName in fileNames)
                             {
-                                fileName = destinationFolder + "/" + folderName + "_" + string.Format("{0:0000}", ++k) + link.Substring(link.LastIndexOf("."));
-                                wc.DownloadFile(new Uri(link), fileName);
+                                xFileName = destinationFolder + folderName + "_" + string.Format("{0:0000}", ++k) + fileName.Substring(fileName.LastIndexOf("."));
+                                wc.DownloadFile(new Uri(imgRepo + "/" + fileName), xFileName);
                             }
                             success = "ok";
                         }

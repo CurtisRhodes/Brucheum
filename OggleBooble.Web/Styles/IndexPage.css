@@ -3,7 +3,7 @@
 .sectionLabel {
     color: var(--oggleTitleColor);
     white-space: nowrap;
-    display: none;
+    display: inline-block;
     /*
         font-size: larger;
         position: relative;
@@ -21,6 +21,12 @@
     border: solid gold 4px;
     border-radius: 20px;
 }
+
+.indexPageHappyMessage {
+    display:block;
+    margin-top:20px;
+}
+
 
 .indexPageSection {
     margin-top: 26px;

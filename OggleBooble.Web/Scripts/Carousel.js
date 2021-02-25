@@ -6,6 +6,7 @@ let imageIndex = 0, numImages = 0, numFolders = 0, backArrowClicks = 0,
     imgSrc, jsCarouselSettings, arryItemsShownCount = 0, carouselRoot, cacheCount = 115;
 
 function launchCarousel(startRoot) {
+    settingsImgRepo = settingsArray.ImageRepo;
     carouselRoot = startRoot;
     absolueStartTime = Date.now();
     $('#carouselContainer').html(carouselHtml());
@@ -26,8 +27,8 @@ function launchCarousel(startRoot) {
                     carouselItemArray.push(obj);
                 });
                 carouselSkip = carouselItemArray.length;
-                intervalBody();
-                resizeCarousel();
+                //intervalBody();
+                //resizeCarousel();
                 startCarousel("centefold cache");
                 console.log("loaded " + carouselItemArray.length + " from centerfold cache");
             }
@@ -41,8 +42,8 @@ function launchCarousel(startRoot) {
                     carouselItemArray.push(obj);
                 });
                 carouselSkip = carouselItemArray.length;
-                intervalBody();
-                resizeCarousel();
+                //intervalBody();
+                //resizeCarousel();
                 startCarousel("big naturals cache");
                 console.log("loaded " + carouselItemArray.length + " from boobs cache");
                 carouselSkip = carouselItemArray.length;
@@ -58,8 +59,8 @@ function launchCarousel(startRoot) {
                     carouselItemArray.push(obj);
                 });
                 carouselSkip = carouselItemArray.length;
-                intervalBody();
-                resizeCarousel();
+                //intervalBody();
+                //resizeCarousel();
                 startCarousel("porn cache");
                 console.log("loaded " + carouselItemArray.length + " from porn cache");
             }
@@ -76,7 +77,6 @@ function launchCarousel(startRoot) {
 }
 
 function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait) {
-    settingsImgRepo = settingsArray.ImageRepo;
     let startTime = Date.now();
     try {
         $.ajax({
@@ -216,7 +216,10 @@ function startCarousel(calledFrom) {
     if (vCarouselInterval)
         console.log("carousel interval already started. Called from: " + calledFrom);
     else {
-        $('.assuranceArrows').show();
+        $('#testMessage1').html("||");
+        intervalBody();
+        $('#testMessage1').html("|v||");
+        //$('.assuranceArrows').show();
         vCarouselInterval = setInterval(function () {
             intervalBody();
         }, rotationSpeed);
@@ -225,30 +228,38 @@ function startCarousel(calledFrom) {
 
 function intervalBody() {
     if ($('#pauseButton').html() == "||") {
+        $('#testMessage1').html("|");
         imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-        if (carouselItemArray.length > 100) {
-            while (alreadyInLast100()) {
-                if (carouselDebugMode) {
-                    //$('#badgesContainer').html("already in last 100 " + carouselItemArray[imageIndex].Id);
-                    alert("already in last 100 " + carouselItemArray[imageIndex].Id);
-                }
-            }
-        }
-        $('.carouselFooter').css("visibility", "hidden");
-        $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-            if (isNullorUndefined(carouselItemArray[imageIndex].ImageFileName)) {
-                //alert("ImageFileName undefined? " + imageIndex);
-                //logError("")
-                imgSrc = "Images/redballon.png";
-            }
-            else
-                imgSrc = settingsImgRepo + carouselItemArray[imageIndex].ImageFileName;
-            $('#thisCarouselImage').attr('src', imgSrc).load(function () {
+        //$('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+        //    if (isNullorUndefined(carouselItemArray[imageIndex].ImageFileName)) {
+        //        //alert("ImageFileName undefined? " + imageIndex);
+        //        //logError("")
+        //        imgSrc = "Images/redballon.png";
+        //    }
+        //    else
+        //        imgSrc = settingsImgRepo + [imageIndex].ImageFileName;
+        //});
+        $('#testMessage1').html("||");
+        let nextImg = settingsImgRepo + carouselItemArray[imageIndex].ImageFileName;
+        $('#testMessage1').html("|||");
+        $('#tempImageLoad').attr('src', nextImg).load(function () {
+            $('#testMessage1').html("||||");
+            imgSrc = nextImg;
+            $('#testMessage1').html("|||||");
+            $('.carouselFooter').css("visibility", "hidden");
+            $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+                $('#testMessage1').html("|");
+                $('#thisCarouselImage').attr('src', imgSrc);
+                $('#testMessage1').html("||");
                 $('#carouselFooter').fadeIn();
+                $('#testMessage1').html("|||....");
                 setLabelLinks(imageIndex);
+                $('#testMessage1').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
                 $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
             });
         });
+        //$('#testMessage1').html("|| image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
+        imageHistory.push(imageIndex);
     }
     else {
         $('#pauseButton').html("|");
@@ -351,6 +362,14 @@ function resizeCarousel() {
 }
 
 function alreadyInLast100() {
+    if (carouselItemArray.length > 100) {
+        while (alreadyInLast100()) {
+            if (carouselDebugMode) {
+                //$('#badgesContainer').html("already in last 100 " + carouselItemArray[imageIndex].Id);
+                alert("already in last 100 " + carouselItemArray[imageIndex].Id);
+            }
+        }
+    }
     let idxStart = Math.max(0, carouselItemArray.length - 300);
     for (i = idxStart; i < imageHistory.length; i++) {
         if (imageIndex === imageHistory[i]) {
@@ -361,7 +380,6 @@ function alreadyInLast100() {
             return true;
         }
     }
-    imageHistory.push(imageIndex);
     return false;
 }
 
@@ -389,7 +407,7 @@ function pause() {
 function resume() {
     $('#pauseButton').html("||");
     backArrowClicks = 0;
-    intervalBody();
+    //intervalBody();
     clearInterval(vCarouselInterval);
     vCarouselInterval = null;
     startCarousel("resume");
@@ -548,6 +566,7 @@ function carouselHtml() {
         "               oncontextmenu='carouselContextMenu()'" +
         "               onclick='clickViewGallery(1)' />\n" +
         "          <img class='assuranceArrows' onclick='assuranceArrowClick(\"foward\")' src='/Images/rightArrowOpaque02.png'/>\n" +
+        "       <img id='tempImageLoad' style='position:absolute; visibility:hidden'/>\n" +
         "      </div>\n" +
         "      <div id='carouselFooter' class='carouselFooter'>\n" +
         "          <img class='speedButton floatLeft' src='Images/speedDialSlower.png' title='slower' onclick='clickSpeed(\"slower\")' />\n" +
