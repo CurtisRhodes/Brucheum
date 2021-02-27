@@ -101,13 +101,10 @@ function getAlbumImages(folderId) {
 
                     //  SUBFOLDERS 
                     if (albumImageInfo.Folders.length > 0) {
-                        let imgSrc
-                        let folderName = folder.DirectoryName;
-                        if (folder.RootFolder == "centerfold") {
-
-
-                        }
-
+                        //let imgSrc
+                        //let folderName = folder.DirectoryName;
+                        //if (folder.RootFolder == "centerfold") {
+                        //}
 
                         $.each(albumImageInfo.Folders, function (idx, folder) {
                             let folderCounts = "(" + folder.FileCount.toLocaleString() + ")";

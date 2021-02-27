@@ -236,7 +236,7 @@ function showReportsSection() {
     $('#reportsMiddleColumn').css("width", $('#dashboardContainer').width() - $('#reportsLeftColumn').width());
 }
 
-// LOAD DIR TREE
+// RELOAD DIR TREE
 let infoStart;
 function loadDashboardDirTree(forceRefresh) {
     infoStart = Date.now();
@@ -245,7 +245,6 @@ function loadDashboardDirTree(forceRefresh) {
     $('#dataifyInfo').show().html("rebuilding directory tree");
     loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
 }
-
 function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
     resizeDashboardPage();
@@ -257,7 +256,7 @@ function onDirTreeComplete() {
         var seconds = (delta % 60000 / 1000).toFixed(0);
         $('#dataifyInfo').html("rebuilding directory tree took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
         //$('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toFixed(3));
-        setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
+        //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
     }
 }
 

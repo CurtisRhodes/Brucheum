@@ -317,18 +317,18 @@ namespace OggleBooble.Api.Controllers
                 //GoDeepRecurr(folderId);
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    CategoryFolder dbThisCatFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    int sub0ttlChildFiles = 0;
+                    int sub0ttlSubFolders = 0;
+                    CategoryFolder dbCatFolder0 = db.CategoryFolders.Where(f => f.Id == folderId).First();
                     int fileLinkCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
                     int subFolderCount = db.CategoryFolders.Where(f => f.Parent == folderId).Count();
                     subFolderCount += db.StepChildren.Where(s => s.Parent == folderId).Count();
-                    if ((dbThisCatFolder.Files != fileLinkCount) || (dbThisCatFolder.SubFolders != subFolderCount))
+                    if ((dbCatFolder0.Files != fileLinkCount) || (dbCatFolder0.SubFolders != subFolderCount))
                     {
-                        dbThisCatFolder.Files = fileLinkCount;
-                        dbThisCatFolder.SubFolders = subFolderCount;
+                        dbCatFolder0.Files = fileLinkCount;
+                        dbCatFolder0.SubFolders = subFolderCount;
                         db.SaveChanges();
                     }
-                    int ttlChildFiles = 0;
-                    int ttlSubFolders = 0;
                     var subFolders1 = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
                     foreach (var subFolder1 in subFolders1)
                     {
@@ -336,7 +336,8 @@ namespace OggleBooble.Api.Controllers
                         int sub1ttlSubFolders = 0;
                         fileLinkCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subFolder1.Id).Count();
                         subFolderCount = db.CategoryFolders.Where(f => f.Parent == subFolder1.Id).Count();
-                        ttlChildFiles += fileLinkCount;
+                        subFolderCount += db.StepChildren.Where(s => s.Parent == subFolder1.Id).Count();
+                        sub0ttlChildFiles += fileLinkCount;
                         if ((fileLinkCount != subFolder1.Files) || (subFolderCount != subFolder1.SubFolders))
                         {
                             subFolder1.Files = fileLinkCount;
@@ -345,7 +346,7 @@ namespace OggleBooble.Api.Controllers
                         }
 
                         var subFolders2 = db.CategoryFolders.Where(f => f.Parent == subFolder1.Id).ToList();
-                        ttlSubFolders += subFolders2.Count();
+                        sub0ttlChildFiles += subFolders2.Count();
                         sub1ttlSubFolders += subFolders2.Count();
                         foreach (CategoryFolder subFolder2 in subFolders2)
                         {
@@ -353,51 +354,104 @@ namespace OggleBooble.Api.Controllers
                             int sub2ttlSubFolders = 0;
                             fileLinkCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subFolder2.Id).Count();
                             subFolderCount = db.CategoryFolders.Where(f => f.Parent == subFolder2.Id).Count();
-                            ttlChildFiles += fileLinkCount;
+                            subFolderCount += db.StepChildren.Where(s => s.Parent == subFolder2.Id).Count();
+                            sub0ttlChildFiles += fileLinkCount;
                             sub1ttlChildFiles += fileLinkCount;
                             if ((fileLinkCount != subFolder2.Files) || (subFolderCount != subFolder2.SubFolders))
                             {
-                                subFolder2.Files = fileLinkCount;
+                                if(fileLinkCount != subFolder2.Files)
+                                    subFolder2.Files = fileLinkCount;
                                 subFolder2.SubFolders = subFolderCount;
                                 db.SaveChanges();
                             }
 
                             var subFolders3 = db.CategoryFolders.Where(f => f.Parent == subFolder2.Id).ToList();
-                            ttlSubFolders += subFolders3.Count();
+                            sub0ttlSubFolders += subFolders3.Count();
                             sub1ttlSubFolders += subFolders3.Count();
                             sub2ttlSubFolders += subFolders3.Count();
                             foreach (CategoryFolder subFolder3 in subFolders3)
                             {
+                                int sub3ttlChildFiles = 0;
+                                int sub3ttlSubFolders = 0;
                                 subFolderCount = db.CategoryFolders.Where(f => f.Parent == subFolder3.Id).Count();
                                 fileLinkCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subFolder3.Id).Count();
-                                ttlChildFiles += fileLinkCount;
+                                sub0ttlChildFiles += fileLinkCount;
                                 sub1ttlChildFiles += fileLinkCount;
                                 sub2ttlChildFiles += fileLinkCount;
                                 if ((fileLinkCount != subFolder3.Files) || (subFolderCount != subFolder3.SubFolders))
                                 {
+                                    if(fileLinkCount != subFolder3.Files)
+                                        subFolder3.Files = fileLinkCount;
                                     subFolder3.SubFolders = subFolderCount;
-                                    subFolder3.Files = fileLinkCount;
                                     db.SaveChanges();
                                 }
 
                                 var subFolders4 = db.CategoryFolders.Where(f => f.Parent == subFolder3.Id).ToList();
-                                ttlSubFolders += subFolders4.Count();
+                                sub0ttlSubFolders += subFolders4.Count();
+                                sub1ttlSubFolders += subFolders4.Count();
                                 sub2ttlSubFolders += subFolders4.Count();
-                                //sub3ttlSubFolders += subFolders4.Count();
+                                sub3ttlSubFolders += subFolders4.Count();
                                 foreach (CategoryFolder subFolder4 in subFolders4)
                                 {
+                                    int sub4ttlChildFiles = 0;
+                                    int sub4ttlSubFolders = 0;
                                     fileLinkCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subFolder4.Id).Count();
                                     subFolderCount = db.CategoryFolders.Where(f => f.Parent == subFolder4.Id).Count();
-
-                                    ttlChildFiles += fileLinkCount;
+                                    sub0ttlChildFiles += fileLinkCount;
                                     sub1ttlChildFiles += fileLinkCount;
                                     sub2ttlChildFiles += fileLinkCount;
+                                    sub3ttlChildFiles += fileLinkCount;
                                     if ((fileLinkCount != subFolder4.Files) || (subFolderCount != subFolder4.SubFolders))
                                     {
                                         subFolder4.Files = fileLinkCount;
                                         subFolder4.SubFolders = subFolderCount;
                                         db.SaveChanges();
                                     }
+
+                                    var subFolders5 = db.CategoryFolders.Where(f => f.Parent == subFolder4.Id).ToList();
+                                    sub0ttlSubFolders += subFolders5.Count();
+                                    sub1ttlSubFolders += subFolders5.Count();
+                                    sub2ttlSubFolders += subFolders5.Count();
+                                    sub3ttlSubFolders += subFolders5.Count();
+                                    sub4ttlSubFolders += subFolders5.Count();
+                                    foreach (CategoryFolder subFolder5 in subFolders5)
+                                    {
+                                        int sub5ttlChildFiles = 0;
+                                        int sub5ttlSubFolders = 0;
+                                        fileLinkCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subFolder5.Id).Count();
+                                        subFolderCount = db.CategoryFolders.Where(f => f.Parent == subFolder5.Id).Count();
+                                        if ((fileLinkCount != subFolder5.Files) || (subFolderCount != subFolder5.SubFolders))
+                                        {
+                                            subFolder5.Files = fileLinkCount;
+                                            subFolder5.SubFolders = subFolderCount;
+                                            db.SaveChanges();
+                                        }
+                                        sub0ttlChildFiles += fileLinkCount;
+                                        sub1ttlChildFiles += fileLinkCount;
+                                        sub2ttlChildFiles += fileLinkCount;
+                                        sub3ttlChildFiles += fileLinkCount;
+                                        sub4ttlChildFiles += fileLinkCount;
+                                        var subFolders6 = db.CategoryFolders.Where(f => f.Parent == subFolder5.Id).ToList();
+                                        if (subFolders6.Count() > 0)
+                                        {
+                                            fileLinkCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == subFolder4.Id).Count();
+                                            sub5ttlChildFiles = fileLinkCount;
+                                            sub5ttlSubFolders = subFolders6.Count();
+                                            throw new Exception("we need to go even deeper");
+                                        }
+                                    }
+                                    if ((subFolder4.TotalChildFiles != sub4ttlChildFiles) || (subFolder4.TotalSubFolders != sub4ttlSubFolders))
+                                    {
+                                        subFolder4.TotalChildFiles = sub4ttlChildFiles;
+                                        subFolder4.TotalSubFolders = sub4ttlSubFolders;
+                                        db.SaveChanges();
+                                    }
+                                }
+                                if ((subFolder3.TotalChildFiles != sub3ttlChildFiles) || (subFolder3.TotalSubFolders != sub3ttlSubFolders))
+                                {
+                                    subFolder3.TotalChildFiles = sub3ttlChildFiles;
+                                    subFolder3.TotalSubFolders = sub3ttlSubFolders;
+                                    db.SaveChanges();
                                 }
                             }
                             if ((subFolder2.TotalChildFiles != sub2ttlChildFiles) || (subFolder2.TotalSubFolders != sub2ttlSubFolders))
@@ -413,19 +467,18 @@ namespace OggleBooble.Api.Controllers
                             subFolder1.TotalSubFolders = sub1ttlSubFolders;
                             db.SaveChanges();
                         }
-
                     }
-                    if ((dbThisCatFolder.TotalChildFiles != ttlChildFiles) || (dbThisCatFolder.TotalSubFolders != ttlSubFolders))
+                    if ((dbCatFolder0.TotalChildFiles != sub0ttlChildFiles) || (dbCatFolder0.TotalSubFolders != sub0ttlSubFolders))
                     {
-                        dbThisCatFolder.TotalChildFiles = ttlChildFiles;
-                        dbThisCatFolder.TotalSubFolders = ttlSubFolders;
+                        dbCatFolder0.TotalChildFiles = sub0ttlChildFiles;
+                        dbCatFolder0.TotalSubFolders = sub0ttlSubFolders;
                         db.SaveChanges();
                     }
 
-                    countModel.FileCount = dbThisCatFolder.Files;
-                    countModel.FolderCount = dbThisCatFolder.SubFolders;
-                    countModel.TtlFileCount = dbThisCatFolder.TotalChildFiles;
-                    countModel.TtlFolderCount = dbThisCatFolder.TotalSubFolders;
+                    countModel.FileCount = dbCatFolder0.Files;
+                    countModel.FolderCount = dbCatFolder0.SubFolders;
+                    countModel.TtlFileCount = dbCatFolder0.TotalChildFiles;
+                    countModel.TtlFolderCount = dbCatFolder0.TotalSubFolders;
                 }
                 countModel.Success = "ok";
             }
