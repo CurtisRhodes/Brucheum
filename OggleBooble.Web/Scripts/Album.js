@@ -278,7 +278,11 @@ function getDeepFolderCounts(folderId) { //, folderFileCount, folderCount) {
                 //    }
                 //}
             }
-            else { logError("AJX", folderId, countsModel.Success, "get DeepFolderCounts"); }
+            else {
+                logError("AJX", folderId, countsModel.Success, "get DeepFolderCounts");
+                $('#galleryBottomfileCount').html = countsModel.Success;
+            }
+            console.log("deep file for folder: " + folderId + " count took: " + countsModel.TimeTook);
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);

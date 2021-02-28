@@ -14,6 +14,7 @@ namespace OggleBooble.Api.Models
         public int FolderCount { get; set; }
         public int TtlFileCount { get; set; }
         public int TtlFolderCount { get; set; }
+        public string TimeTook { get; set; }
         public string Success { get; set; }
     }
 
