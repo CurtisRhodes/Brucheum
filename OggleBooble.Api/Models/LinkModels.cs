@@ -25,11 +25,10 @@ namespace OggleBooble.Api.Models
 
     public class SortOrderItem
     {
-        public int PageId { get; set; }
+        public int FolderId { get; set; }
         public string ItemId { get; set; }
         public int SortOrder { get; set; }
     }
-
 
     public class DirTreeSuccessModel
     {

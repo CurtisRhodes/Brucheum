@@ -1,27 +1,28 @@
 ﻿
 ///////////////  Feedback  ////////////////////////////////////////////////////
 {
-    function showFeedbackDialog(folderId) {
-        $('#centeredDialogContents').html(feedbackDialogHtml(folderId));
+    function showFeedbackDialog(folderId, folderName) {
+
+        $('#centeredDialogContents').html(feedbackDialogHtml(folderId, folderName));
         $('#centeredDialogTitle').html("feedback");
-        $('#smnFeedback').summernote({
-            height: 200,
-            focus: true
-            // toolbar: [['codeview']]
-        });
-        $('.note-editable').trigger('focus');
-        $('.note-editable').trigger('focus');
-        $('.note-editable').click(function () { $(this).focus(); });
 
-
+        //$('#smnFeedback').summernote({
+        //    height: 200,
+        //    focus: true
+        //    // toolbar: [['codeview']]
+        //});
+        //$('.note-editable').trigger('focus');
+        //$('.note-editable').trigger('focus');
+        //$('.note-editable').click(function () { $(this).focus(); });
         //$("#smnFeedback").summernote('codeview.toggle');
         //setTimeout(function () { $("#smnFeedback").summernote('codeview.toggle'); }, 800);
 
         $('#centeredDialogContainer').css("top", $('.oggleHeader').height() + 120);
         $('#centeredDialogContainer').draggable().fadeIn();
         getUserEmail();
-        $('.note-editable').focus();
+        //$('.note-editable').focus();
     }
+
     function validateFeedback() {
         $('.validationError').hide();
         if ($('input[type=radio]:checked').length === 0) {
@@ -36,6 +37,10 @@
             $('#errFeedbackEmail').html("invalid email").show();
             return false;
         }
+        if ($('#smnFeedback').val().length < 4) {
+            $('#errFeedbackRadioButtons').html("comment too short").show();
+            return false;
+        }
 
         //if ($('#smnFeedback').summernote('code').length < 20) {
         //    $('#errFeedbackText').html("too short").show();
@@ -43,20 +48,21 @@
         //}
         return true;
     }
+
     function saveFeedback(folderId) {
         try {
             if (validateFeedback()) {
                 //alert("feedbackType: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
                 let feedbackType = $('#feedbackDialog input[type=\'radio\']:checked').val();
-                let feedbackMessage = $('#smnFeedback').summernote('code');
+                //let feedbackMessage = $('#smnFeedback').summernote('code');
                 $.ajax({
                     type: "POST",
                     url: settingsArray.ApiServer + "api/Common/LogFeedback",
                     data: {
                         VisitorId: getCookieValue("VisitorId"),
                         FolderId: folderId,
-                        FeedBackComment: feedbackMessage,
-                        FeedBackType: feedbackType, // $('input[name="feedbackRadio"]:checked').val()
+                        FeedBackComment: $('#smnFeedback').val(),
+                        FeedBackType: $('input[name="feedbackRadio"]:checked').val(),
                         FeedBackEmail: $('#txtFeedbackEmail').val()  
                     },
                     success: function (success) {
@@ -68,13 +74,13 @@
                             if (document.domain !== "localhost")
                                 sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "Feedback !!!", +
                                     "feedbackBackType: " + feedbackType + "<br/>" +
-                                    "feedbackMessage: " + feedbackMessage + "<br/>" +
+                                    "feedbackMessage: " + $('#smnFeedback').val() + "<br/>" +
                                     "visitor: " + getCookieValue("VisitorId") + "<br/>" +
                                     "folderId: " + folderId);
                             else
                                 alert("sendEmail(CurtishRhodes@hotmail.com, Feedback@Ogglebooble.com, Feedback !!!" +
                                     "\nfeedBackType: " + feedbackType +
-                                    "\nfeedbackMessage: " + feedbackMessage + "\nfolderId: " + folderId);
+                                    "\nfeedbackMessage: " + $('#smnFeedback').val() + "\nfolderId: " + folderId);
 
                             //console.log("is email working?");
                             $("#centeredDialogContainer").fadeOut();
@@ -99,18 +105,18 @@
         }
     }
 
-    function feedbackDialogHtml(folderId) {
+    function feedbackDialogHtml(folderId, folderName) {
         return "<div id='feedbackDialog' class='roundedDialog' >\n" +
             "   <div id='errFeedbackRadioButtons' class='validationError'></div>\n" +
             "    <div class='feedbackRadioButtons'>\n" +
             "       <input type='radio' name='feedbackRadio' checked value='complement'><span> complement</span>\n" +
             "       <input type='radio' name='feedbackRadio' value='suggestion'><span> suggestion</span>\n" +
             "       <input type='radio' name='feedbackRadio' value='report error'><span> report error</span>\n" +
-            "<div>folderId: " + folderId + "</div>\n" +
+            "<div id='divFeedbackFolderInfo'>" + folderName + "</div>\n" +
             "   </div>\n" +
             "   <div id='errFeedbackText' class='validationError'></div>\n" +
             "    <div class='modelInfoCommentArea'>\n" +
-            "       <textarea id='smnFeedback'></textarea>\n" +
+            "       <textarea id='smnFeedback' class='commentTextArea'></textarea>\n" +
             "    </div>\n" +
             "   <div style='display:table; width: 100%'>\n" +
             "       <div style='display:table-cell; width:65px; text-align:right;'>email: </div>" +
@@ -123,6 +129,7 @@
             "   </div>\n" +
             "</div>\n";
     }
+
     function getUserEmail() {
         try {
             $.ajax({
@@ -148,36 +155,20 @@
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /////////////     Folder Comment Dialog  //////////////////////////////////////
 
-function showFolderCommentDialog(folderId,folderName) {
+function showFolderCommentDialog(folderId, folderName) {
     // <div id = "folderCommentContainer"></div >
     $('#centeredDialogContents').html(folderCommentDialogHtml(folderId));
     $('#centeredDialogTitle').html("folder comment: " + folderName);
-    $('#smnFolderComment').summernote({
-        height: 100,
-        toolbar: [['codeview']]
-    });
-    $("#smnFolderComment").summernote('codeview.toggle');
-    setTimeout(function () { $("#smnFolderComment").summernote('codeview.toggle'); }, 500);
+    //$('#smnFolderComment').summernote({
+    //    height: 100,
+    //    toolbar: [['codeview']]
+    //});
+    //$("#smnFolderComment").summernote('codeview.toggle');
+    //setTimeout(function () { $("#smnFolderComment").summernote('codeview.toggle'); }, 500);
 
-    $('#centeredDialogContainer').css("top",135);
+    $('#centeredDialogContainer').css("top", 135);
     $('#centeredDialogContainer').css("left", -700);
     $('#centeredDialogContainer').draggable().fadeIn();
 }
@@ -185,7 +176,7 @@ function showFolderCommentDialog(folderId,folderName) {
 function folderCommentDialogHtml(folderId) {
     return "<div id='folderCommentDialog' class='roundedDialog' >\n" +
         "    <div class='folderCommentCommentArea'>\n" +
-        "       <textarea id='smnFolderComment'></textarea>\n" +
+        "       <textarea id='smnFolderComment' class='commentTextArea'></textarea>\n" +
         "    </div>\n" +
         "   <div class='folderDialogFooter'>\n" +
         "       <div id='btnfolderCommentSave' class='roundendButton' onclick='saveFolderComment(" + folderId + ")'>Post</div>\n" +
@@ -199,7 +190,7 @@ function folderCommentDialogHtml(folderId) {
 function saveFolderComment(folderId) {
     //[Route("api/FolderComment/AddFolderComment")]
     //public string AddEditTrackBackLink(FolderCommentModel folderCommentModel)
-    let folderCommentMessage = $('#smnFolderComment').summernote('code');
+    //let folderCommentMessage = $('#smnFolderComment').summernote('code');
     try {
         $.ajax({
             type: "POST",
@@ -207,6 +198,7 @@ function saveFolderComment(folderId) {
             data: {
                 VisitorId: getCookieValue("VisitorId"),
                 FolderId: folderId,
+                CommentText: $('#smnFolderComment').val()
             },
             success: function (success) {
                 if (success === "ok") {
@@ -215,17 +207,20 @@ function saveFolderComment(folderId) {
                     //sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Wow!! FolderComment", "message:" + folderCommentMessage);
                     if (document.domain !== "localhost")
                         sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Folder Comment !!!", +
-                            "folderCommentMessage: " + folderCommentMessage + "<br/>" +
+                            "folderCommentMessage: " + $('#smnFolderComment').val() + "<br/>" +
                             "visitor: " + getCookieValue("VisitorId") + "<br/>" +
                             "folderId: " + folderId);
                     else
                         alert("sendEmail(CurtishRhodes@hotmail.com, FolderComment@Ogglebooble.com,FolderComment !!!\n" +
-                            "folderCommentMessage: " + folderCommentMessage + "\nfolderId: " + folderId);
+                            "folderCommentMessage: " + $('#smnFolderComment').val() + "\nfolderId: " + folderId);
 
                     $("#centeredDialogContainer").fadeOut();
-                    showMyAlert("Thank you for your comment");
+                    showMyAlert("folder comment", "Thank you for your comment");
+
                 }
                 else {
+                    if (document.domain == "localhost")
+                        alert("" + success);
                     logError("AJX", folderId, success, "saveFolderComment");
                 }
             },

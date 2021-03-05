@@ -1,7 +1,7 @@
 ﻿let exploderInterval, slideShowSpeed = 5000, viewerH = 50, viewerW = 50, viewerT = 0, viewerL = 0, windowW = $(window).width(), windowH = $(window).height(),
     Xincrimentor = 15, Yincrimentor = 10, exploderSpeed = 18, imageViewerFolderId, imageViewerArray = {}, imageViewerIndex = 0, imageViewerIntervalTimer,
     imageViewerFolderName, albumFolderId, spSlideShowRunning, spSessionCount = 0, slideShowButtonsActive = false, spIncludeSubFolders, slideshowSpped = 570,
-    imgSrc = new Image();
+    slideshowImgSrc = new Image(), tempImgSrc = new Image();
 
 function launchViewer(folderId, startItem, includeSubFolders) {
     spSlideShowRunning = false;
@@ -34,13 +34,13 @@ function getSlideshowItems(folderId, startItem) {
                     $('#imageContainer').fadeOut();
                     $('#imagePageLoadingGif').hide();
                     $('#slideShowContainer').html(slideshowHtml()).show();
-                    $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
                     $('#rightClickArea').dblclick(function () {
                         event.preventDefault();
                         window.event.returnValue = false;
                         runSlideShow("start");
                     });
 
+                    $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
                     if (!spIncludeSubFolders) {
                         for (var i = 0; i < imageViewerArray.length; i++) {
                             if (imageViewerArray[i].LinkId === startItem) {
@@ -48,11 +48,9 @@ function getSlideshowItems(folderId, startItem) {
                                 break;
                             }
                         };
-
-                        //if (document.domain === 'localhost') alert("logImageHit(slideshow startItem: " + startItem + "  LinkId: " + imageViewerArray[imageViewerIndex].LinkId + ", folderId: " + folderId + ", true);");
-                        logImageHit(imageViewerArray[imageViewerIndex].LinkId, folderId, true);
                     }
-                    //$('#imageViewerHeaderTitle').html(slideshowItemModel.RootFolder + "/" + slideshowItemModel.FolderName + "/" + slideshowItemModel.ImageFolderName);
+                    logImageHit(imageViewerArray[imageViewerIndex].LinkId, folderId, true);
+
                     viewerShowing = true;
                     resizeViewer();
                     explodeViewer();
@@ -90,21 +88,19 @@ function explodeViewer() {
     $('#viewerButtonsRow').hide();
 
     setTimeout(function () { $('#imagePageLoadingGif').show() }, 500);
-    let tempImgSrc = new Image();
     tempImgSrc.onload = function () {
         $('#imagePageLoadingGif').hide();
         setTimeout(function () { $('#imagePageLoadingGif').hide() }, 500);
         exploderInterval = setInterval(function () {
             incrimentExplode();
         }, exploderSpeed);
-        if (spIncludeSubFolders) {
-            setTimeout(function () {
-                runSlideShow("start");
-                console.log("runSlideShow(start)");
-            }, slideShowSpeed);
-        }
+        $('#ssHeaderCount').html(imageViewerIndex + " / " + imageViewerArray.length);
     };
     tempImgSrc.src = settingsImgRepo + imageViewerArray[imageViewerIndex].FileName;
+    if (spIncludeSubFolders) {
+        runSlideShow("start");
+        console.log("runSlideShow(start)");
+    }
 }
 
 function incrimentExplode() {
@@ -173,7 +169,6 @@ function slide(direction) {
                 if (showLoadingGif)
                     $('#imagePageLoadingGif').show()
             }, 500);
-            let tempImgSrc = new Image();
             tempImgSrc.onload = function () {
                 showLoadingGif = false;
                 $('#imagePageLoadingGif').hide();
@@ -202,8 +197,8 @@ function slide(direction) {
                         $('#viewerImage').css("transform", "translateX(3200px)");
                     }
                     setTimeout(function () {
-                        imgSrc.src = tempImgSrc.src;
-                        $('#viewerImage').attr("src", imgSrc.src);
+                        slideshowImgSrc.src = tempImgSrc.src;
+                        $('#viewerImage').attr("src", slideshowImgSrc.src);
                         $('#viewerImage').show();
                         $('#viewerImage').css("transform", "translateX(0)", slideShowSpeed);
                         setTimeout(function () {
@@ -217,6 +212,7 @@ function slide(direction) {
                                 $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                             }
                         }
+                        $('#ssHeaderCount').html(imageViewerIndex + " / " + imageViewerArray.length);
                     }, 400);
                 }, 300);
                 //resizeViewer();
@@ -232,7 +228,7 @@ function slide(direction) {
             }
             tempImgSrc.src = settingsImgRepo + imageViewerArray[imageViewerIndex].FileName;
             spSessionCount++;
-            $('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
+            //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
             logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
         }        
     } catch (e) {
@@ -365,8 +361,8 @@ function slideshowContextMenu() {
     showContextMenu("Slideshow", pos,        
         settingsImgRepo + imageViewerArray[imageViewerIndex].FileName,
         imageViewerArray[imageViewerIndex].LinkId,
-        imageViewerArray[imageViewerIndex].ImageFolderId,
-        imageViewerArray[imageViewerIndex].ImageFolderName);
+        imageViewerArray[imageViewerIndex].FolderId,
+        imageViewerArray[imageViewerIndex].FolderName);
 }
 
 $(document).keydown(function (event) {
@@ -402,6 +398,8 @@ $(document).keydown(function (event) {
 function slideshowHtml() {
     return "<div id='divStatusMessage'></div>\n" +
         "   <div id='viewerButtonsRow' class='imageViewerHeaderRow' > \n" +
+        "       <div><img id='imgGoHome' class='imgCommentButton' title='comment' onclick='window.location.href=\"Index.html\"' src='/Images/redballon.png'/></div>\n" +
+        "       <div id='ssHeaderCount' class='ssHeaderCount'></div>\n" +
         "       <div><img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png'/></div>\n" +
         "       <div id='imageViewerHeaderTitle' class='imageViewerTitle'></div> \n" +
         "       <div class='floatRight clickable' onclick='runSlideShow(\"faster\");'><img id='fasterSlideshow' title='faster' src='/Images/speedDialFaster.png'/></div>\n" +
@@ -455,4 +453,3 @@ function slideShowDialogClose() {
 function slideShowInstructions() {
 
 }
-

@@ -115,6 +115,10 @@
         if (isNullorUndefined(params.folder)) {
             window.location.href = "Index.html";
         }
+
+        setOggleHeader(3908, "loading");
+
+
         resizeAlbumPage();
         var dots = "";
         loadOggleSettings();
@@ -154,9 +158,9 @@
         window.addEventListener("resize", resizeAlbumPage);
         resizeAlbumPage();
 
-        $('#feedbackButton').on("click", function () {
-            showFeedbackDialog(params.folder);
-        });
+        //$('#feedbackButton').on("click", function () {
+        //    showFeedbackDialog(params.folder);
+        //});
 
         //});
 

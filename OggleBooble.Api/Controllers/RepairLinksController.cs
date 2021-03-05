@@ -264,6 +264,9 @@ namespace OggleBooble.Api.Controllers
                 {
                     fileName = physcialFiles[i];
                     ext = fileName.Substring(fileName.LastIndexOf("."));
+
+
+
                     if (fileName.LastIndexOf("_") > 0)
                     {
                         if (fileName.Length > 40)

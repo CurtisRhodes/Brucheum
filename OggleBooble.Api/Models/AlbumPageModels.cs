@@ -101,9 +101,12 @@ namespace OggleBooble.Api.Models
 
     public class SlideshowItemsModel
     {
+        public SlideshowItemsModel() 
+        {
+            SlideshowItems = new List<VwSlideshowItem>();
+        }
         public string FolderName { get; set; }
-        public string RootFolder { get; set; }
-        public IList<VwSlideshowItem> SlideshowItems { get; set; }
+        public List<VwSlideshowItem> SlideshowItems { get; set; }
         public string Success { get; set; }
     }
 

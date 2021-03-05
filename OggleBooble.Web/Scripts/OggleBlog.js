@@ -8,6 +8,7 @@ function blogStartup() {
     loadBlogHtmlBody();
     loadCommentTypesDD();
 
+    window.addEventListener("resize", resizeBlogPage);
 
     blogObject.CommentType = "BLG";
     //blogObject.CommentType = $('#ddCommentType').val()
@@ -338,6 +339,7 @@ function btnNewCancelAction() {
 }
 
 function resizeBlogPage() {
+
     // set page width
     let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
     $('.middleColumn').width(winW - lcW - rcW);
@@ -345,8 +347,11 @@ function resizeBlogPage() {
     //set page height
     let winH = $(window).height();
     let headerH = $('#oggleHeader').height();
-    $('.threeColumnLayout').css("height", $('#middleColumn').height() - headerH);
-    $('.threeColumnLayout').css("min-height", winH - headerH);
+    //$('.threeColumnLayout').css("height", $('#middleColumn').height() - headerH);
+    //$('.threeColumnLayout').css("min-height", winH - headerH);
+
+    //$('#blogArticleJogContainer').css("height", $('#middleColumn').height() - headerH);
+
 }
 
 function loadBlogHtmlBody() {

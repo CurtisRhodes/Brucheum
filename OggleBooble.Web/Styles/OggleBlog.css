@@ -100,6 +100,7 @@
     display: block;
     border: solid .05px var(--oggleBorderColor);
     overflow-y: auto;
+
 }
 
 .blogArticleJogBody {

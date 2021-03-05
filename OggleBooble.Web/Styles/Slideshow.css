@@ -75,6 +75,11 @@
     margin-right: 22px;
 }
 
+.ssHeaderCount {
+    padding-top: 2.5px;
+    margin-left: 22px;
+}
+
 .imageViewerTitle {
     float: left;
     flex: 1;

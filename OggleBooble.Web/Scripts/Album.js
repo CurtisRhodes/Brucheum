@@ -33,6 +33,11 @@ function qucikHeader(folderId) {
                 setOggleHeader(folderId, albumInfo.RootFolder);
                 setOggleFooter(folderId, albumInfo.RootFolder);
                 setBreadcrumbs(folderId);
+                $('#feedbackButton').on("click", function () {
+                    showFeedbackDialog(folderId, albumInfo.FolderName);
+                });
+
+
 
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("QucikHeader took: " + delta.toFixed(3));

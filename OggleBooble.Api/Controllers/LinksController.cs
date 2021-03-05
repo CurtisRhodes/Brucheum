@@ -1,5 +1,5 @@
 ﻿using OggleBooble.Api.Models;
-using OggleBooble.Api.MSSqlDataContext;
+//using OggleBooble.Api.MSSqlDataContext;
 using OggleBooble.Api.MySqlDataContext;
 using System;
 using System.Collections.Generic;
@@ -102,16 +102,18 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Links/UpdateSortOrder")]
-        public string UpdateSortOrder(List<SortOrderItem> SortOrderItems)
+        public string UpdateSortOrder(List<SortOrderItem> links)
         {
             string success = "";
+            int folderId = links[0].FolderId;
             using (var db = new OggleBoobleMySqlContext())
             {
-                foreach (SortOrderItem item in SortOrderItems)
+                List<CategoryImageLink> catLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
+                foreach (SortOrderItem link in links)
                 {
-                    var link = db.CategoryImageLinks.Where(l => l.ImageCategoryId == item.PageId && l.ImageLinkId == item.ItemId).FirstOrDefault();
-                    if (link != null)
-                        link.SortOrder = item.SortOrder;
+                    CategoryImageLink catLink = catLinks.Where(x => x.ImageLinkId == link.ItemId).FirstOrDefault();
+                    if (catLink != null)
+                        catLink.SortOrder = link.SortOrder;
                 }
                 db.SaveChanges();
                 success = "ok";

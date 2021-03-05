@@ -408,7 +408,7 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpPost]
         [Route("api/FolderComment/AddFolderComment")]
-        public string AddEditTrackBackLink(FolderCommentModel folderCommentModel)
+        public string AddFolderComment(FolderCommentModel folderCommentModel)
         {
             string success;
             try

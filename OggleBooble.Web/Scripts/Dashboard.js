@@ -249,13 +249,14 @@ function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
     resizeDashboardPage();
     let delta = (Date.now() - infoStart);
-    if (delta < 1.0)
+    if (delta < 1000)
         $('#dataifyInfo').hide();
     else {
         var minutes = Math.floor(delta / 60000);
         var seconds = (delta % 60000 / 1000).toFixed(0);
-        $('#dataifyInfo').html("rebuilding directory tree took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+        //$('#dataifyInfo').html("rebuilding directory tree took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
         //$('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toFixed(3));
+        $('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toLocaleString());
         //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
     }
 }
@@ -782,9 +783,11 @@ function updateSortOrder() {
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("sorting array");
     var sortOrderArray = [];
+
+
     $('#sortToolImageArea').children().each(function () {
         sortOrderArray.push({
-            PageId: pSelectedTreeId,
+            FolderId: pSelectedTreeId,
             ItemId: $(this).find("input").attr("id"),
             SortOrder: $(this).find("input").val()
         });
@@ -796,17 +799,21 @@ function autoIncrimentSortOrder() {
         $('#dashBoardLoadingGif').show();
         $('#dataifyInfo').show().html("sorting array");
         var sortOrderArray = [];
-        let autoI = 5;
+        let autoI = 0;
+
+        //alert("pSelectedTreeFolderPath: " + pSelectedTreeId);
+
         $('#sortToolImageArea').children().each(function () {
             sortOrderArray.push({
-                pageId: pSelectedTreeId,
-                itemId: $(this).find("input").attr("id"),
-                SortOrder: autoI += 5
+                FolderId: pSelectedTreeId,
+                ItemId: $(this).find("input").attr("id"),
+                SortOrder: autoI += 2
             });
         });
         saveSortChanges(sortOrderArray);
     }
 }
+
 function saveSortChanges(sortOrderArray) {
     $('#dataifyInfo').html("saving changes");
     $.ajax({
@@ -838,6 +845,7 @@ function loadSortImages() {
     $('#sortTableHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ")
         + "(" + pSelectedTreeId + ")");
     $('#dashBoardLoadingGif').fadeIn();
+    $('#dataifyInfo').html("loading sorted images");
     $.ajax({
         url: settingsArray.ApiServer + "api/Links/GetImageLinks?folderId=" + pSelectedTreeId,
         success: function (imgLinks) {
