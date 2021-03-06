@@ -87,6 +87,47 @@ namespace OggleBooble.Api.Controllers
             return imgLinks;
         }
 
+        [HttpPut]
+        [Route("api/Links/AutoIncriment")]
+        public SuccessModel AutoIncriment(int folderId, bool recurr)
+        {
+            SuccessModel successModel = new SuccessModel();
+            int changes = 0;
+            int incri = 0;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    AutoIncrimentRecurr(folderId, ref incri, ref changes, recurr, db);
+                }
+                successModel.ReturnValue = changes.ToString();
+                successModel.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
+        }
+        private void AutoIncrimentRecurr(int parent, ref int incri, ref int changes, bool recurr, OggleBoobleMySqlContext db)
+        {
+            var links = db.CategoryImageLinks.Where(l => l.ImageCategoryId == parent).OrderBy(l => l.SortOrder).ToList();
+            foreach (CategoryImageLink link in links)
+            {
+                link.SortOrder = incri += 2;
+                changes++;
+            }
+            db.SaveChanges();
+            if (recurr)
+            {
+                var subFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
+                foreach (CategoryFolder subFolder in subFolders)
+                {
+                    AutoIncrimentRecurr(subFolder.Id, ref incri, ref changes, recurr, db);
+                }
+            }
+        }
+
         [HttpGet]
         [Route("api/Links/GetMoveableImageLinks")]
         public ImageLinksModel GetMoveableImageLinks(int folderId)

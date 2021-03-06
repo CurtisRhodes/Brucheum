@@ -527,45 +527,50 @@ function logIpHit(visitorId, ipAddress, folderId) {
 }
 
 function logStaticPageHit(folderId, calledFrom) {
-    if (calledFrom == "Album.html") {
-        if (isNullorUndefined(getCookieValue("VisitorId"))) {
-            logActivity("SP3", folderId, calledFrom); // static page hit no VisitorId
-            getIpInfo(folderId, "logStatic PageHit");
-        }
-    }
-    else {
-        if (isNullorUndefined(getCookieValue("VisitorId"))) {
-            logActivity("SP5", folderId, calledFrom); // no VisitorId loop
-            logError("SPH", folderId, "looping? getIpInfo failed", "logStatic PageHit");
-            return;
-        }
-        else {
-            logActivity("SP4", folderId, calledFrom); // success return to static page hit
-        }
-    }
-    logActivity("SP0", folderId, calledFrom); // calling static page hit
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + getCookieValue("VisitorId") +
-            "&folderId=" + folderId + "&calledFrom=" + calledFrom,
-        success: function (success) {
-            if (success == "ok") {
-                logActivity("SP1", folderId, calledFrom); // static page hit success
-                logEvent("SPH", folderId, "logStatic PageHit/" + calledFrom, "");
+    //if (calledFrom == "Album.html") {
+    //    if (isNullorUndefined(getCookieValue("VisitorId"))) {
+    //        logActivity("SP3", folderId, calledFrom); // static page hit no VisitorId
+    //        getIpInfo(folderId, "logStatic PageHit");
+    //    }
+    //}
+    //else {
+    //    if (isNullorUndefined(getCookieValue("VisitorId"))) {
+    //        logActivity("SP5", folderId, calledFrom); // no VisitorId loop
+    //        logError("SPH", folderId, "looping? getIpInfo failed", "logStatic PageHit");
+    //        return;
+    //    }
+    //    else {
+    //        logActivity("SP4", folderId, calledFrom); // success return to static page hit
+    //    }
+    //}
+
+    let delayVisitorId = "delayed";
+    delayVisitorId = getCookieValue("VisitorId"); 
+    setTimeout(function () {
+        logActivity("SP0", folderId, calledFrom); // calling static page hit
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + delayVisitorId +
+                "&folderId=" + folderId + "&calledFrom=" + calledFrom,
+            success: function (success) {
+                if (success == "ok") {
+                    logActivity("SP1", folderId, calledFrom); // static page hit success
+                    logEvent("SPH", folderId, "logStatic PageHit/" + calledFrom, "");
+                }
+                else {
+                    logActivity("SP2", folderId, calledFrom); // static page hit ajax error
+                    logError("AJX", folderId, success, "logStatic PageHit/" + calledFrom);
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                logActivity("SP6", folderId, calledFrom); // static page hit XHR error
+                let functionName = "logStaticPageHit"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
-            else {
-                logActivity("SP2", folderId, calledFrom); // static page hit ajax error
-                logError("AJX", folderId, success, "logStatic PageHit/" + calledFrom);
-            }
-        },
-        error: function (jqXHR) {
-            logActivity("SP6", folderId, calledFrom); // static page hit XHR error
-            let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-        }
-    });
-    //logEvent("SDS", folderId, "logStatic PageHit/" + calledFrom, "");
+        });
+        //logEvent("SDS", folderId, "logStatic PageHit/" + calledFrom, "");
+    }, 800);
 }
 
 //////////////////////////////////////////////////////////////////

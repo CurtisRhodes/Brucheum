@@ -544,7 +544,7 @@ function commonDirTreeClick(danniPath, folderId) {
             case "moveFolder":
                 $('#txtNewMoveDestiation').val(pSelectedTreeFolderPath); break
             case "moveMany":
-                $('#txtMoveManyDestination').val(danniPath);
+                $('#txtMoveManyDestination').val(pSelectedTreeFolderPath);
                 $('#mmDirTreeContainer').fadeOut();
                 break;
             case "stepchild":
