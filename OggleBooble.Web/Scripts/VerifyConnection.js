@@ -70,8 +70,7 @@ function showConnectingToServerGif() {
         $('#customMessageContainer').css("top", 200);
 
         console.log("showing connectingToServerGif");
-        //alert("showConnectingToServerGif() " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
-
+        //alert("showConnectingToServerGif   " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
         //document.title = "loading : OggleBooble";
         //changeFavoriteIcon("loading");
         //setOggleHeader(3908, "loading s");
@@ -91,7 +90,6 @@ function showCanIgetaConnectionMessage(calledFrom) {
         logError("404", 3910, "SERVICE DOWN", calledFrom);
     }
 }
-
 
 let verifyConnectionAvailable = true;
 function verifyConnectionFunction(calledFrom, folderId) {

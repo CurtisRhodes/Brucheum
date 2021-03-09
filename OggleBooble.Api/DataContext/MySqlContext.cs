@@ -143,7 +143,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int FolderId { get; set; }
         public string Parent { get; set; }
         public string FolderName { get; set; }
-        public DateTime DateUpdated { get; set; }
+        public string DateUpdated { get; set; }
         public int Hits { get; set; }
         public int ImpactHits { get; set; }
     }

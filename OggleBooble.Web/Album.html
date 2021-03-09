@@ -117,8 +117,9 @@
         }
 
         setOggleHeader(3908, "loading");
-
         console.log("setOggleHeader(loading)");
+
+
         resizeAlbumPage();
         var dots = "";
         loadOggleSettings();
@@ -130,13 +131,14 @@
             }
             else {
                 clearInterval(settingsWaiter);
+                $('#mainMenuContainer').html("connecting");
                 checkConnection(params.folder, "album.html");
                 var waiter2 = setInterval(function () {
-                    if (!connectionVerified) {
-                        dots += "< ";
-                        $('#dots').html(dots);
-                    }
-                    else {
+                    if (connectionVerified) {
+                        //    dots += "< ";
+                        //    $('#dots').html(dots);
+                        //}
+                        //else {
                         clearInterval(waiter2);
                         $('#dots').html('');
 

@@ -29,26 +29,12 @@ namespace OggleBooble.Api.Controllers
                         carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
                             .Where(v => v.Width > v.Height)
                             .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
-
-                        //if (root == "centerfold")
-                        //{
-                        //    carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.ImageFolderName == "extra").Where(v => v.Height < v.Width)
-                        //    .Where(v => v.Width > v.Height)
-                        //    .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
-                        //}
-                        //else
-                        //{
-                        //    carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
-                        //        .Where(v => v.Width > v.Height)
-                        //        .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
-                        //}
                     }
                     if (includePortrait)
                         carouselInfo.Links.AddRange(db.VwCarouselImages.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
                             .Where(v => v.Height >= v.Width)
                             .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
                 }
-                //carouselInfo.FolderCount = carouselInfo.Links.GroupBy(l => l.FolderName).Count();
                 carouselInfo.Success = "ok";
             }
             catch (Exception ex)
