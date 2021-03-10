@@ -27,8 +27,6 @@ function launchCarousel(startRoot) {
                     carouselItemArray.push(obj);
                 });
                 carouselSkip = carouselItemArray.length;
-                //intervalBody();
-                //resizeCarousel();
                 startCarousel("centefold cache");
                 console.log("loaded " + carouselItemArray.length + " from centerfold cache");
             }
@@ -42,8 +40,6 @@ function launchCarousel(startRoot) {
                     carouselItemArray.push(obj);
                 });
                 carouselSkip = carouselItemArray.length;
-                //intervalBody();
-                //resizeCarousel();
                 startCarousel("big naturals cache");
                 console.log("loaded " + carouselItemArray.length + " from boobs cache");
                 carouselSkip = carouselItemArray.length;
@@ -59,8 +55,6 @@ function launchCarousel(startRoot) {
                     carouselItemArray.push(obj);
                 });
                 carouselSkip = carouselItemArray.length;
-                //intervalBody();
-                //resizeCarousel();
                 startCarousel("porn cache");
                 console.log("loaded " + carouselItemArray.length + " from porn cache");
             }
@@ -216,7 +210,7 @@ function startCarousel(calledFrom) {
     if (vCarouselInterval)
         console.log("carousel interval already started. Called from: " + calledFrom);
     else {
-        $('#testMessage1').html("||");
+        $('#testMessage1').html("|v|");
         intervalBody();
         $('#testMessage1').html("|v||");
         //$('.assuranceArrows').show();
@@ -230,15 +224,6 @@ function intervalBody() {
     if ($('#pauseButton').html() == "||") {
         $('#testMessage1').html("|");
         imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-        //$('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-        //    if (isNullorUndefined(carouselItemArray[imageIndex].ImageFileName)) {
-        //        //alert("ImageFileName undefined? " + imageIndex);
-        //        //logError("")
-        //        imgSrc = "Images/redballon.png";
-        //    }
-        //    else
-        //        imgSrc = settingsImgRepo + [imageIndex].ImageFileName;
-        //});
         $('#testMessage1').html("||");
         let nextImg = settingsImgRepo + carouselItemArray[imageIndex].ImageFileName;
         $('#testMessage1').html("|||");
@@ -407,7 +392,6 @@ function pause() {
 function resume() {
     $('#pauseButton').html("||");
     backArrowClicks = 0;
-    //intervalBody();
     clearInterval(vCarouselInterval);
     vCarouselInterval = null;
     startCarousel("resume");

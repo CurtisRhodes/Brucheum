@@ -314,7 +314,7 @@ namespace OggleBooble.Api.Controllers
         public SubFolderCountModel GetDeepFolderCounts(int folderId)
         {
             DateTime start = DateTime.Now;
-            var countModel = new SubFolderCountModel() { FolderId = folderId };
+            var countModel = new SubFolderCountModel() { FolderId = folderId, Changes = 0 };
             try
             {
                 //GoDeepRecurr(folderId);
@@ -331,6 +331,7 @@ namespace OggleBooble.Api.Controllers
                         dbCatFolder0.Files = fileLinkCount;
                         dbCatFolder0.SubFolders = subFolderCount;
                         db.SaveChanges();
+                        countModel.Changes++;
                     }
                     var subFolders1 = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
                     foreach (var subFolder1 in subFolders1)
@@ -347,6 +348,7 @@ namespace OggleBooble.Api.Controllers
                             subFolder1.Files = fileLinkCount;
                             subFolder1.SubFolders = subFolderCount;
                             db.SaveChanges();
+                            countModel.Changes++;
                         }
 
                         var subFolders2 = db.CategoryFolders.Where(f => f.Parent == subFolder1.Id).ToList();
@@ -367,6 +369,7 @@ namespace OggleBooble.Api.Controllers
                                     subFolder2.Files = fileLinkCount;
                                 subFolder2.SubFolders = subFolderCount;
                                 db.SaveChanges();
+                                countModel.Changes++;
                             }
 
                             var subFolders3 = db.CategoryFolders.Where(f => f.Parent == subFolder2.Id).ToList();
@@ -388,6 +391,7 @@ namespace OggleBooble.Api.Controllers
                                         subFolder3.Files = fileLinkCount;
                                     subFolder3.SubFolders = subFolderCount;
                                     db.SaveChanges();
+                                    countModel.Changes++;
                                 }
 
                                 var subFolders4 = db.CategoryFolders.Where(f => f.Parent == subFolder3.Id).ToList();
@@ -410,6 +414,7 @@ namespace OggleBooble.Api.Controllers
                                         subFolder4.Files = fileLinkCount;
                                         subFolder4.SubFolders = subFolderCount;
                                         db.SaveChanges();
+                                        countModel.Changes++;
                                     }
 
                                     var subFolders5 = db.CategoryFolders.Where(f => f.Parent == subFolder4.Id).ToList();
@@ -429,6 +434,7 @@ namespace OggleBooble.Api.Controllers
                                             subFolder5.Files = fileLinkCount;
                                             subFolder5.SubFolders = subFolderCount;
                                             db.SaveChanges();
+                                            countModel.Changes++;
                                         }
                                         sub0ttlChildFiles += fileLinkCount;
                                         sub1ttlChildFiles += fileLinkCount;
@@ -453,6 +459,7 @@ namespace OggleBooble.Api.Controllers
                                                 subFolder6.Files = fileLinkCount;
                                                 subFolder6.SubFolders = subFolderCount;
                                                 db.SaveChanges();
+                                                countModel.Changes++;
                                             }
                                             sub0ttlChildFiles += fileLinkCount;
                                             sub1ttlChildFiles += fileLinkCount;
@@ -498,6 +505,7 @@ namespace OggleBooble.Api.Controllers
                                                 subFolder6.TotalChildFiles = sub5ttlChildFiles;
                                                 subFolder6.TotalSubFolders = sub5ttlSubFolders;
                                                 db.SaveChanges();
+                                                countModel.Changes++;
                                             }
                                         }
                                         if ((subFolder5.TotalChildFiles != sub5ttlChildFiles) || (subFolder5.TotalSubFolders != sub5ttlSubFolders))
@@ -505,6 +513,7 @@ namespace OggleBooble.Api.Controllers
                                             subFolder5.TotalChildFiles = sub5ttlChildFiles;
                                             subFolder5.TotalSubFolders = sub5ttlSubFolders;
                                             db.SaveChanges();
+                                            countModel.Changes++;
                                         }
                                     }
                                     if ((subFolder4.TotalChildFiles != sub4ttlChildFiles) || (subFolder4.TotalSubFolders != sub4ttlSubFolders))
@@ -512,6 +521,7 @@ namespace OggleBooble.Api.Controllers
                                         subFolder4.TotalChildFiles = sub4ttlChildFiles;
                                         subFolder4.TotalSubFolders = sub4ttlSubFolders;
                                         db.SaveChanges();
+                                        countModel.Changes++;
                                     }
                                 }
                                 if ((subFolder3.TotalChildFiles != sub3ttlChildFiles) || (subFolder3.TotalSubFolders != sub3ttlSubFolders))
@@ -519,6 +529,7 @@ namespace OggleBooble.Api.Controllers
                                     subFolder3.TotalChildFiles = sub3ttlChildFiles;
                                     subFolder3.TotalSubFolders = sub3ttlSubFolders;
                                     db.SaveChanges();
+                                    countModel.Changes++;
                                 }
                             }
                             if ((subFolder2.TotalChildFiles != sub2ttlChildFiles) || (subFolder2.TotalSubFolders != sub2ttlSubFolders))
@@ -526,6 +537,7 @@ namespace OggleBooble.Api.Controllers
                                 subFolder2.TotalChildFiles = sub2ttlChildFiles;
                                 subFolder2.TotalSubFolders = sub2ttlSubFolders;
                                 db.SaveChanges();
+                                countModel.Changes++;
                             }
                         }
                         if ((subFolder1.TotalChildFiles != sub1ttlChildFiles) || (subFolder1.TotalSubFolders != sub1ttlSubFolders))
@@ -533,6 +545,7 @@ namespace OggleBooble.Api.Controllers
                             subFolder1.TotalChildFiles = sub1ttlChildFiles;
                             subFolder1.TotalSubFolders = sub1ttlSubFolders;
                             db.SaveChanges();
+                            countModel.Changes++;
                         }
                     }
                     if ((dbCatFolder0.TotalChildFiles != sub0ttlChildFiles) || (dbCatFolder0.TotalSubFolders != sub0ttlSubFolders))
@@ -540,6 +553,7 @@ namespace OggleBooble.Api.Controllers
                         dbCatFolder0.TotalChildFiles = sub0ttlChildFiles;
                         dbCatFolder0.TotalSubFolders = sub0ttlSubFolders;
                         db.SaveChanges();
+                        countModel.Changes++;
                     }
 
                     countModel.FileCount = dbCatFolder0.Files;

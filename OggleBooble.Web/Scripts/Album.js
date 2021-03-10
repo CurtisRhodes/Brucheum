@@ -255,39 +255,23 @@ function getAlbumPageInfo(folderId) {
     });
 }
 
-function getDeepFolderCounts(folderId) { //, folderFileCount, folderCount) {
-    //ttlFiles += folderFileCount;
-    //$('#fc' + folderId).html("?");
-
-
+function getDeepFolderCounts(folderId) { 
     $('#spanDeepCount').html("?");
-
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/PageCount/GetDeepFolderCounts?folderId=" + folderId,
         success: function (countsModel) {
             if (countsModel.Success === "ok") {
-                //if (folderId == apFolderId) {
                 if (countsModel.FolderCount > 0)
-                    // $('#galleryBottomfileCount').html(countsModel.TtlFolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
                     $('#galleryBottomfileCount').html(countsModel.FolderCount.toLocaleString() + " / " + countsModel.TtlFileCount.toLocaleString());
                 else
                     $('#galleryBottomfileCount').html(countsModel.FileCount.toLocaleString());
-                //}
-                //else {
-                //    if (countsModel.TtlFileCount > 0) {
-                //        $('#fc' + countsModel.FolderId).html("[" + countsModel.TtlFileCount.toLocaleString() + "]");
-                //    }
-                //    if (countsModel.TtlFolderCount > 1) {
-                //        $('#fc' + countsModel.FolderId).html("{" + countsModel.TtlFolderCount + "/" + countsModel.TtlFileCount.toLocaleString() + "}");
-                //    }
-                //}
             }
             else {
                 logError("AJX", folderId, countsModel.Success, "get DeepFolderCounts");
                 $('#galleryBottomfileCount').html = countsModel.Success;
             }
-            console.log("deep file for folder: " + folderId + " count took: " + countsModel.TimeTook);
+            console.log("deep file count from: " + folderId + " count took: " + countsModel.TimeTook + " changes made: " + countsModel.Changes);
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
