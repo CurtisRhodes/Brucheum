@@ -9,6 +9,7 @@ function launchCarousel(startRoot) {
     settingsImgRepo = settingsArray.ImageRepo;
     carouselRoot = startRoot;
     absolueStartTime = Date.now();
+    imgSrc = "Images/redballon.png";
     $('#carouselContainer').html(carouselHtml());
     loadCarouselSettingsIntoLocalStorage();
     jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
@@ -242,6 +243,9 @@ function intervalBody() {
         $('#testMessage1').html("||");
         let nextImg = settingsImgRepo + carouselItemArray[imageIndex].ImageFileName;
         $('#testMessage1').html("|||");
+
+        //$('#tempImageLoad').attr('src', nextImg);
+
         $('#tempImageLoad').attr('src', nextImg).load(function () {
             $('#testMessage1').html("||||");
             imgSrc = nextImg;

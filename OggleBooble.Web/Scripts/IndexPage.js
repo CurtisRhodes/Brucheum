@@ -5,7 +5,7 @@ function indexStartup() {
     setOggleFooter(3908, "index");
     changeFavoriteIcon("redBallon");
     document.title = "welcome : OggleBooble";
-    //launchPromoMessages();
+    launchPromoMessages();
     latestGallerySubdomain = "boobs";
     launchCarousel("boobs");
     $('.indexPageSection').show();
@@ -146,7 +146,7 @@ function launchPromoMessages() {
         url: settingsArray.ApiServer + "/api/OggleBlog/GetBlogList?commentType=PRO",
         success: function (blogCommentsContainer) {
             if (blogCommentsContainer.Success === "ok") {
-                $.each(blogCommentsContainer.blogComments, function (idx, blogComment) {
+                $.each(blogCommentsContainer.BlogComments, function (idx, blogComment) {
                     promoMessagesArray.push({
                         FolderId: blogComment.Id,
                         Link: blogComment.Link,
@@ -157,6 +157,7 @@ function launchPromoMessages() {
                 showPromoMessages();
             }
             else {
+                alert("launchPromoMessages: " + blogCommentsContainer.Success);
                 logError("XHR", 3908, blogCommentsContainer.Success, "launchPromoMessages");
             }
         },
