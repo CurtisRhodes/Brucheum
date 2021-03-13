@@ -488,6 +488,166 @@ namespace OggleBooble.Api.Controllers
             }
             return centerfoldReport;
         }
+
+
+        [HttpPut]
+        public string PlayboyPlusDupeCheck()
+        {
+            string success;
+            try
+            {
+                string localRepoPath = "F:/Danni/img/";
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var myDupes = db.PlayboyPlusDupes.OrderBy(p => p.PGroup).ToList();
+                    int MaxPGroup = db.PlayboyPlusDupes.Max(p => p.PGroup);
+                    int pGroup = 0;
+
+                    PlayboyPlusDupe maxImageSizeItem = null;
+                    List<PlayboyPlusDupe> dupGroup = null;
+                    LinksController linksController = new LinksController();
+                    string fileName, folderPath, localPath;
+                    while (pGroup < MaxPGroup)
+                    {
+                        dupGroup = myDupes.Where(d => d.PGroup == pGroup).ToList();
+                        if (dupGroup.Count > 1)
+                        {
+                            maxImageSizeItem = dupGroup.Aggregate((i1, i2) => i1.FSize > i2.FSize ? i1 : i2);
+                            foreach (PlayboyPlusDupe smallerDupeImage in dupGroup)
+                            {
+                                if (smallerDupeImage.Pk != maxImageSizeItem.Pk)
+                                {
+                                    string isOk = linksController.MoveLink(maxImageSizeItem.FileId, smallerDupeImage.FolderId, "archive");
+                                    if (isOk == "ok")
+                                    {
+                                        fileName = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault().FileName;
+                                        folderPath = db.CategoryFolders.Where(f => f.Id == smallerDupeImage.FolderId).FirstOrDefault().FolderPath;
+                                        try
+                                        {
+                                            localPath = localRepoPath + folderPath + "/" + fileName;
+                                            if (File.Exists(localPath))
+                                            {
+                                                File.Delete(localPath);
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            string err = Helpers.ErrorDetails(ex);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        pGroup++;
+                    }
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+        [HttpPut]
+        public string RegularDupeCheck()
+        {
+            string success;
+            try
+            {
+                string localRepoPath = "F:/Danni/img/";
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var myDupes = db.PlayboyPlusDupes.OrderBy(p => p.PGroup).ToList();
+                    int MaxPGroup = db.PlayboyPlusDupes.Max(p => p.PGroup);
+                    int pGroup = 0;
+
+                    PlayboyPlusDupe maxImageSizeItem = null;
+                    List<PlayboyPlusDupe> dupGroup = null;
+                    string fileName, folderPath, localPath;
+                    ImageFile dupeImage = null;
+
+                    while (pGroup < MaxPGroup)
+                    {
+                        dupGroup = myDupes.Where(d => d.PGroup == pGroup).ToList();
+                        if (dupGroup.Count > 1)
+                        {
+                            maxImageSizeItem = dupGroup.Aggregate((i1, i2) => i1.FSize > i2.FSize ? i1 : i2);
+                            var dbMaxImageSizeItem = db.ImageFiles.Where(i => i.Id == maxImageSizeItem.FileId).FirstOrDefault();
+                            foreach (PlayboyPlusDupe smallerDupeImage in dupGroup)
+                            {
+                                if (smallerDupeImage.Pk != maxImageSizeItem.Pk)
+                                {
+                                    if (smallerDupeImage.FolderId == maxImageSizeItem.FolderId)
+                                    {
+                                        var dupeLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == smallerDupeImage.FileId).ToList();
+                                        foreach (CategoryImageLink dupeLink in dupeLinks)
+                                        {
+                                            if (dupeLink.ImageCategoryId == maxImageSizeItem.FolderId)
+                                            {
+                                                db.CategoryImageLinks.Remove(dupeLink);
+                                            }
+                                            else
+                                            {
+                                                dupeLink.ImageLinkId = maxImageSizeItem.FileId;
+                                            }
+                                        }
+                                        dupeImage = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault();
+                                        if (dupeImage != null)
+                                            if (dbMaxImageSizeItem.ExternalLink == "?")
+                                            {
+                                                dbMaxImageSizeItem.ExternalLink = dupeImage.ExternalLink;
+                                            }
+                                        db.ImageFiles.Remove(dupeImage);
+                                        db.SaveChanges();
+
+                                        //string isOk = linksController.MoveLink(maxImageSizeItem.FileId, smallerDupeImage.FolderId, "archive");
+                                        fileName = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault().FileName;
+                                        folderPath = db.CategoryFolders.Where(f => f.Id == smallerDupeImage.FolderId).FirstOrDefault().FolderPath;
+                                        try
+                                        {
+                                            localPath = localRepoPath + folderPath + "/" + fileName;
+                                            if (File.Exists(localPath))
+                                            {
+                                                File.Delete(localPath);
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            string err = Helpers.ErrorDetails(ex);
+                                        }
+                                    }
+                                    else {
+                                        success = "here we got to do a archive?";                                    
+                                    }
+                                }
+                            }
+                        }
+                        pGroup++;
+                    }
+                }
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+        public string MySnippet()
+        {
+            string success;
+            try
+            {
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
     }
 
     [EnableCors("*", "*", "*")]

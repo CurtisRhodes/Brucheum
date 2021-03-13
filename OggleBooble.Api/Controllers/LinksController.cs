@@ -363,7 +363,7 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Links/MoveLink")]
-        public string MoveFile(string linkId, int destinationFolderId, string request)
+        public string MoveLink(string linkId, int destinationFolderId, string request)
         {
             string success;
             try
