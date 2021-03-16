@@ -638,6 +638,36 @@ function buildListPage() {
     });
 }
 
+function PlayboyPlusDupeCheck() {
+    let start = Date.now();
+    $.ajax({
+        type: "PUT",
+        url: settingsArray.ApiServer + "api/Report/PlayboyPlusDupeCheck",
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+            if (success == "ok") {
+                let delta = Date.now() - start;
+                let minutes = Math.floor(delta / 60000);
+                let seconds = (delta % 60000 / 1000).toFixed(0);
+                console.log("PlayboyPlusDupeCheck took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                //clearInterval(pollingLoop);
+                $('#dataifyInfo').html("PlayboyPlusDupeCheck took: " + minutes + ":" + seconds);
+            }
+            else {
+                alert("PlayboyPlusDupeCheck: " + success);
+                logError("AJX", 3910, success, "PlayboyPlusDupeCheck");
+            }
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+        }
+    });
+
+}
+
 function runPlayboyListReport() {
     if (connectionVerified) {
         $('#dashBoardLoadingGif').show();

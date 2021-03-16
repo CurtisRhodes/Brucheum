@@ -62,6 +62,18 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<BlogComment> BlogComments { get; set; }
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
         public virtual DbSet<VwBlogComment> VwBlogComments { get; set; }
+        public virtual DbSet<PlayboyPlusDupe> PlayboyPlusDupes { get; set; }
+    }
+
+    [Table("OggleBooble.PlayboyPlusDupes")]
+    public partial class PlayboyPlusDupe
+    {
+        [Key]
+        public int Pk { get; set; }
+        public int FolderId { get; set; }
+        public int PGroup { get; set; }
+        public int FSize { get; set; }
+        public string FileId  { get; set; }
     }
 
     [Table("OggleBooble.VwBlogComment")]

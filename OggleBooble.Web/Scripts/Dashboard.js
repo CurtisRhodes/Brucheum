@@ -190,6 +190,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showMoveManyTool(1);'>Move Many</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(2);'>Copy Many</div>\n" +
                 "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf</div>\n"+
+                "<div class='clickable' onclick='PlayboyPlusDupeCheck();'>PlayboyPlusDupeCheck</div>\n" +
                 "<div class='clickable' onclick='showAutoIncrimentDialog();'>Auto Incriment</div>\n" +
                 "<div class='clickable' onclick='buildListPage()'>Build Gallery Page</div>"
             );
