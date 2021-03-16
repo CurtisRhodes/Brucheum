@@ -52,6 +52,17 @@ namespace OggleBooble.Api.Models
         public string DanniPath { get; set; }
     }
 
+    public class ImageFileInfo {
+        public string Id { get; set; }
+        public string FileName { get; set; }
+        public int FolderId { get; set; }
+        public string ExternalLink { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public long Size { get; set; }
+        public string Success { get; set; }
+    }
+
     public class RepairReportModel
     {
         public RepairReportModel()
@@ -76,7 +87,7 @@ namespace OggleBooble.Api.Models
         public int ImageFilesRemoved { get; set; }
         public int PhyscialFileRenamed { get; set; }
         //ImageFilesRenamed
-        //public int ImagesDownLoaded { get; set; }
+        public int ImagesDownLoaded { get; set; }
         //public int ImagesMoved { get; set; }
         public int NoLinkImageFiles { get; set; }
         //public int BadLinks { get; set; }

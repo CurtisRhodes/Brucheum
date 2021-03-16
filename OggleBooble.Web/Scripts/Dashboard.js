@@ -321,6 +321,10 @@ function performRepairLinks(justOne) {
                             $('#dataifyInfo').append(", CatLinks Added: " + repairReport.CatLinksAdded);
                         if (repairReport.ImageFilesAdded > 0)
                             $('#dataifyInfo').append(", ImageFiles Added: " + repairReport.ImageFilesAdded);
+                        if (repairReport.ImagesDownLoaded > 0)
+                            $('#dataifyInfo').append(", ImageFiles ImagesDownLoaded: " + repairReport.ImagesDownLoaded);
+                        if (repairReport.ImageFilesRemoved > 0)
+                            $('#dataifyInfo').append(", ImageFiles Removed: " + repairReport.ImageFilesRemoved);
                     }
                     catch (e) {
                         alert("problem displaying repair report: " + e);
@@ -342,6 +346,8 @@ function performRepairLinks(justOne) {
         logError("CAT", apFolderId, e, "performRepairLinks");
     }
 }
+
+
 function removeDupeIps() {
     let start = Date.now();
     $('#dataifyInfo').show().html("performing one time fix");
@@ -1129,11 +1135,15 @@ function performRipPdf() {
                 if (success === "ok") {
                     $('#dataifyInfo').show().html("done");
                 }
-                else { logError("AJX", 2020, success, "RipPdf"); }
+                else {
+                    alert(success);
+                    logError("AJX", 2020, success, "RipPdf");
+                }
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
+                alert(errMsg);
                 let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
@@ -1148,11 +1158,15 @@ function performRipPdf() {
                 if (success === "ok") {
                     $('#dataifyInfo').show().html("done");
                 }
-                else { logError("AJX", 2020, success, "RipPdf"); }
+                else {
+                    alert(success);
+                    logError("AJX", 2020, success, "RipPdf");
+                }
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
+                alert(errMsg);
                 let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }

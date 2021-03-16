@@ -1,5 +1,6 @@
 ﻿
 function showDirTreeDialog(imgSrc, pMenuType, title) {
+    slideShowButtonsActive = false;
     let dirTreeDialogHtml =
         "   <div>" +
         "       <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
@@ -32,6 +33,8 @@ function showDirTreeDialog(imgSrc, pMenuType, title) {
 }
     
 function showCopyLinkDialog(linkId, pMenuType, imgSrc) {
+    slideShowButtonsActive = false;
+
     showDirTreeDialog(imgSrc, pMenuType, "Copy Link");
     $('#linkManipulateClick').html("<div class='roundendButton' onclick='perfomCopyLink(\"" + linkId + "\")'>Copy</div>");
 }
@@ -45,6 +48,7 @@ function perfomCopyLink(linkId) {
             $('#imagePageLoadingGif').hide();
             dragableDialogClose();
             slideShowDialogClose();
+            slideShowButtonsActive = true;
             if (success === "ok") {
                 displayStatusMessage("ok", "link copied")
                 logDataActivity({
@@ -93,6 +97,8 @@ function moveFile(request, linkId, folderId) {
             if (success === "ok") {
                 if (viewerShowing)
                     slide("next");
+                slideShowButtonsActive = true;
+
                 getAlbumImages(folderId);
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
 

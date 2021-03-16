@@ -418,36 +418,5 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
-
-        private string DownLoadImage(string ftpPath, string link, string newFileName)
-        {
-            string success = "ok";
-            try
-            {
-                string extension = newFileName.Substring(newFileName.Length - 4);
-                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
-                using (WebClient wc = new WebClient())
-                {
-                    wc.DownloadFile(new Uri(link), appDataPath + "tempImage" + extension);
-                }
-
-                FtpWebRequest webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
-                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
-                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
-                using (Stream requestStream = webRequest.GetRequestStream())
-                {
-                    byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "tempImage" + extension);
-                    webRequest.ContentLength = fileContents.Length;
-                    requestStream.Write(fileContents, 0, fileContents.Length);
-                    requestStream.Flush();
-                    requestStream.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
     }
 }

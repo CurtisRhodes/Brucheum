@@ -49,7 +49,7 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { rslts.Success = Helpers.ErrorDetails(ex); }
             return rslts;
         }
-        
+
         [HttpGet]
         [Route("api/Report/DailyVisitors")]
         public DailyVisitorsReportModel DailyVisitors(DateTime visitDate)
@@ -165,7 +165,7 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { imageHitsReportModel.Success = Helpers.ErrorDetails(ex); }
             return imageHitsReportModel;
         }
-        
+
         [HttpGet]
         [Route("api/Report/EventLog")]
         public EventReportModel EventLog()
@@ -212,7 +212,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     db.ActivityLogs.RemoveRange(db.ActivityLogs.Where(a => a.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.SaveChanges();
-                    
+
                     List<VwActivityLog> activityItems = db.VwActivityLogs.ToList();
                     foreach (var activityItem in activityItems)
                     {
@@ -551,9 +551,11 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPut]
-        public string RegularDupeCheck()
+        public DupeCheckModel RegularDupeCheck()
         {
-            string success;
+            string ftpHost = ConfigurationManager.AppSettings["ftpHost"];
+            string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
+            DupeCheckModel dupeCheckModel = new DupeCheckModel();
             try
             {
                 string localRepoPath = "F:/Danni/img/";
@@ -564,76 +566,125 @@ namespace OggleBooble.Api.Controllers
                     int pGroup = 0;
 
                     PlayboyPlusDupe maxImageSizeItem = null;
-                    List<PlayboyPlusDupe> dupGroup = null;
+                    List<PlayboyPlusDupe> dupeGroup = null;
                     string fileName, folderPath, localPath;
                     ImageFile dupeImage = null;
+                    string serverPath;
 
                     while (pGroup < MaxPGroup)
                     {
-                        dupGroup = myDupes.Where(d => d.PGroup == pGroup).ToList();
-                        if (dupGroup.Count > 1)
+                        dupeGroup = myDupes.Where(d => d.PGroup == pGroup).ToList();
+                        if (dupeGroup.Count > 1)
                         {
-                            maxImageSizeItem = dupGroup.Aggregate((i1, i2) => i1.FSize > i2.FSize ? i1 : i2);
+                            maxImageSizeItem = dupeGroup.Aggregate((i1, i2) => i1.FSize > i2.FSize ? i1 : i2);
                             var dbMaxImageSizeItem = db.ImageFiles.Where(i => i.Id == maxImageSizeItem.FileId).FirstOrDefault();
-                            foreach (PlayboyPlusDupe smallerDupeImage in dupGroup)
+                            foreach (PlayboyPlusDupe smallerDupeImage in dupeGroup)
                             {
                                 if (smallerDupeImage.Pk != maxImageSizeItem.Pk)
                                 {
-                                    if (smallerDupeImage.FolderId == maxImageSizeItem.FolderId)
+                                    if (maxImageSizeItem.FileId == smallerDupeImage.FileId)
                                     {
-                                        var dupeLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == smallerDupeImage.FileId).ToList();
-                                        foreach (CategoryImageLink dupeLink in dupeLinks)
+                                        dupeCheckModel.SameSizeDupes++;
+                                    }
+                                    else
+                                    {
+                                        CategoryFolder dbSmallerDupeImage = db.CategoryFolders.Where(f => f.Id == smallerDupeImage.FolderId).FirstOrDefault();
+                                        if (dbSmallerDupeImage != null)
                                         {
-                                            if (dupeLink.ImageCategoryId == maxImageSizeItem.FolderId)
+                                            folderPath = dbSmallerDupeImage.FolderPath;
+                                            dupeImage = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault();
+                                            if (dupeImage != null)
                                             {
-                                                db.CategoryImageLinks.Remove(dupeLink);
+                                                if (dbMaxImageSizeItem.ExternalLink == "?")
+                                                    dbMaxImageSizeItem.ExternalLink = dupeImage.ExternalLink;
+                                                db.ImageFiles.Remove(dupeImage);
+                                                db.SaveChanges();
+                                                dupeCheckModel.ImageFilesRemoved++;
+                                                fileName = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault().FileName;
                                             }
                                             else
-                                            {
-                                                dupeLink.ImageLinkId = maxImageSizeItem.FileId;
+                                            {                                                
+                                                if (dbSmallerDupeImage.FolderType == "singleChild")
+                                                {
+                                                    var uCP = db.CategoryFolders.Where(f => f.Id == dbSmallerDupeImage.Parent).First();
+                                                    fileName = uCP.FolderName + "_" + smallerDupeImage.FileId + ".jpg";
+                                                }
+                                                else
+                                                {
+                                                    fileName = dbSmallerDupeImage.FolderName + "_" + smallerDupeImage.FileId + ".jpg";
+                                                }
                                             }
-                                        }
-                                        dupeImage = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault();
-                                        if (dupeImage != null)
-                                            if (dbMaxImageSizeItem.ExternalLink == "?")
+                                            try
                                             {
-                                                dbMaxImageSizeItem.ExternalLink = dupeImage.ExternalLink;
+                                                serverPath = ftpHost + folderPath + "/" + fileName;
+                                                if (FtpUtilies.DeleteFile(serverPath) == "ok")
+                                                    dupeCheckModel.ServerFilesDeleted++;
                                             }
-                                        db.ImageFiles.Remove(dupeImage);
-                                        db.SaveChanges();
+                                            catch (Exception ex)
+                                            {
+                                                string err = Helpers.ErrorDetails(ex);
+                                            }
 
-                                        //string isOk = linksController.MoveLink(maxImageSizeItem.FileId, smallerDupeImage.FolderId, "archive");
-                                        fileName = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault().FileName;
-                                        folderPath = db.CategoryFolders.Where(f => f.Id == smallerDupeImage.FolderId).FirstOrDefault().FolderPath;
-                                        try
-                                        {
-                                            localPath = localRepoPath + folderPath + "/" + fileName;
-                                            if (File.Exists(localPath))
+                                            var dupeLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == smallerDupeImage.FileId).ToList();
+                                            foreach (CategoryImageLink dupeLink in dupeLinks)
                                             {
-                                                File.Delete(localPath);
+                                                if (dupeLink.ImageCategoryId == maxImageSizeItem.FolderId)
+                                                {
+                                                    db.CategoryImageLinks.Remove(dupeLink);
+                                                    dupeCheckModel.LinksRemoved++;
+                                                }
+                                                else
+                                                {
+
+                                                    if (db.CategoryImageLinks.Where(l => l.ImageCategoryId == dupeLink.ImageCategoryId
+                                                    && l.ImageLinkId == maxImageSizeItem.FileId).FirstOrDefault() == null)
+                                                    {
+                                                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                                                        {
+                                                            ImageCategoryId = dupeLink.ImageCategoryId,
+                                                            ImageLinkId = maxImageSizeItem.FileId,
+                                                            SortOrder = dupeLink.SortOrder
+                                                        });
+                                                    }
+                                                    else
+                                                        dupeCheckModel.Success = "extra link?";
+
+                                                    db.CategoryImageLinks.Remove(dupeLink);
+                                                    db.SaveChanges();
+                                                    dupeCheckModel.LinksPreserved++;
+                                                }
                                             }
+
+                                            try
+                                            {
+                                                localPath = localRepoPath + folderPath + "/" + fileName;
+                                                if (File.Exists(localPath))
+                                                {
+                                                    File.Delete(localPath);
+                                                    dupeCheckModel.LocalFilesDeleted++;
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                string err = Helpers.ErrorDetails(ex);
+                                            }
+
                                         }
-                                        catch (Exception ex)
-                                        {
-                                            string err = Helpers.ErrorDetails(ex);
-                                        }
-                                    }
-                                    else {
-                                        success = "here we got to do a archive?";                                    
                                     }
                                 }
                             }
+                            dupeCheckModel.GroupsProcessed++;
                         }
                         pGroup++;
                     }
+                    dupeCheckModel.Success = "ok";
                 }
-                success = "ok";
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                dupeCheckModel.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return dupeCheckModel;
         }
         public string MySnippet()
         {

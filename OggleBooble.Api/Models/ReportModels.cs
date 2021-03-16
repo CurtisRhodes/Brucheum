@@ -122,6 +122,18 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
+    public class DupeCheckModel
+    {
+        public int GroupsProcessed { get; set; }
+        public int SameSizeDupes { get; set; }
+        public int ServerFilesDeleted { get; set; }
+        public int LocalFilesDeleted { get; set; }
+        public int ImageFilesRemoved { get; set; }
+        public int LinksRemoved { get; set; }
+        public int LinksPreserved { get; set; }
+        public string Success { get; set; }
+    }
+
     public class PlayboyReportModel
     {
         public PlayboyReportModel()

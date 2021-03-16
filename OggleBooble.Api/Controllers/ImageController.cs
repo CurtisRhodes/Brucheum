@@ -91,6 +91,7 @@ namespace OggleBooble.Api.Controllers
                     imageInfo.FileName = dbImageFile.FileName;
                     imageInfo.Link = dbImageFile.Id;
                     imageInfo.Width = dbImageFile.Width;
+                    imageInfo.Size = dbImageFile.Size;
                     imageInfo.LastModified = dbImageFile.Acquired.ToShortDateString();
                     imageInfo.ExternalLink = dbImageFile.ExternalLink;
                     imageInfo.InternalLinks = (from l in db.CategoryImageLinks

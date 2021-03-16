@@ -130,6 +130,7 @@ function getFullImageDetails() {
                 $('#imageInfoLinkId').val(imageInfo.Link);
                 $('#imageInfoHeight').html(imageInfo.Height);
                 $('#imageInfoWidth').html(imageInfo.Width);
+                $('#imageInfoSize').html(imageInfo.Size);
                 $('#imageInfoLastModified').html(imageInfo.LastModified);
                 $('#imageInfoExternalLink').html(imageInfo.ExternalLink);
 
@@ -290,8 +291,9 @@ function contextMenuHtml() {
         "   <div><span class='ctxInfolabel'>file name</span><span id='imageInfoFileName' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxInfolabel'>folder path</span><span id='imageInfoFolderPath' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxInfolabel'>link id</span><input id='imageInfoLinkId'/></div>\n" +
-        "   <div><span class='ctxInfolabel'>height</span><span id='imageInfoHeight' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>width</span><span id='imageInfoWidth' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxInfolabel'>height</span><span id='imageInfoHeight' class='ctxInfoValue'></span>" +
+        "    <span class='ctxInfolabel'>width</span><span id='imageInfoWidth' class='ctxInfoValue'></span>" +
+        "    <span class='ctxInfolabel'>size</span><span id='imageInfoSize' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxInfolabel'>last modified</span><span id='imageInfoLastModified' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxInfolabel'>external link</span><span id='imageInfoExternalLink' class='ctxInfoValue'></span></div>\n"+
         " </div>\n"+

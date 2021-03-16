@@ -642,20 +642,33 @@ function PlayboyPlusDupeCheck() {
     let start = Date.now();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/Report/PlayboyPlusDupeCheck",
-        success: function (success) {
+        url: settingsArray.ApiServer + "api/Report/RegularDupeCheck",
+        success: function (dupeCheckModel) {
             $('#dashBoardLoadingGif').hide();
-            if (success == "ok") {
+            alert("dupeCheckModel.Success: " + dupeCheckModel.Success);
+            if (dupeCheckModel.Success == "ok") {
                 let delta = Date.now() - start;
                 let minutes = Math.floor(delta / 60000);
                 let seconds = (delta % 60000 / 1000).toFixed(0);
                 console.log("PlayboyPlusDupeCheck took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                //clearInterval(pollingLoop);
-                $('#dataifyInfo').html("PlayboyPlusDupeCheck took: " + minutes + ":" + seconds);
+                $('#dataifyInfo').show().html("PlayboyPlusDupeCheck took: " + minutes + ":" + seconds +
+                    " Groups Processed: " + dupeCheckModel.GroupsProcessed);
+                if (dupeCheckModel.SameSizeDupes > 0)
+                    $('#dataifyInfo').append(" SameSizeDupes: " + dupeCheckModel.SameSizeDupes);
+                if (dupeCheckModel.SameSizeDupes > 0)
+                    $('#dataifyInfo').append(" Server Files Deleted: " + dupeCheckModel.ServerFilesDeleted);
+                if (dupeCheckModel.LocalFilesDeleted > 0)
+                    $('#dataifyInfo').append(" Local Files Deleted: " + dupeCheckModel.LocalFilesDeleted);
+                if (dupeCheckModel.SameSizeDupes > 0)
+                    $('#dataifyInfo').append(" Image Files Removed: " + dupeCheckModel.ImageFilesRemoved);                    
+                if (dupeCheckModel.LinksRemoved > 0)
+                    $('#dataifyInfo').append(" Links Removed: " + dupeCheckModel.LinksRemoved);                    
+                if (dupeCheckModel.LinksPreserved > 0)
+                    $('#dataifyInfo').append(" Links Preserved: " + dupeCheckModel.LinksPreserved);                    
             }
             else {
                 alert("PlayboyPlusDupeCheck: " + success);
-                logError("AJX", 3910, success, "PlayboyPlusDupeCheck");
+                logError("AJX", 3910, dupeCheckModel.Success, "PlayboyPlusDupeCheck");
             }
         },
         error: function (jqXHR) {

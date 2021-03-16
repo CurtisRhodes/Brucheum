@@ -19,7 +19,7 @@ namespace OggleBooble.Api.Controllers
         //private readonly string repoDomain = ConfigurationManager.AppSettings["ImageRepository"];
         static readonly string ftpUserName = ConfigurationManager.AppSettings["ftpUserName"];
         static readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
-        static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
+        //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         [HttpGet]
         [Route("api/RepairLinks/Repair")]
@@ -59,7 +59,7 @@ namespace OggleBooble.Api.Controllers
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
                 if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR")) { repairReport.Success = physcialFiles[0]; return; }
 
-                #region 0 rename ImageFiles
+                #region 0 rename ImageFiles to expected name 
                 var dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
                 string expectedFileName;
                 foreach (ImageFile imageFile in dbFolderImageFiles)
@@ -91,44 +91,18 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
-                            // create new ImageFile record
-                            // USE WEBCLIENT TO CREATE THE FILE
-                            string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
-                            string imgFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
-                            using (WebClient wc = new WebClient())
-                            {
-                                wc.DownloadFile(new Uri(imgFileName), appDataPath + "tempImage.tmp");
-                            }
-                            int fWidth = 0; int fHeight = 0; long fSize = 0;
-                            using (var fileStream = new FileStream(appDataPath + "tempImage.tmp", FileMode.Open, FileAccess.Read, FileShare.Read))
-                            {
-                                fSize = fileStream.Length;
-                                try
-                                {
-                                    using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
-                                    {
-                                        fWidth = image.Width;
-                                        fHeight = image.Height;
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    if (Helpers.ErrorDetails(ex).ToString() == "{Parameter is not valid.}")
-                                        repairReport.Errors.Add("unable to get width and height of " + physcialFileName);
-                                    else
-                                        repairReport.Errors.Add("problem getting filesize" + Helpers.ErrorDetails(ex));
-                                }
-                            }
+                           string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
+                            ImageFileInfo imageFileInfo = GetImageFileInfo(newFileName);
                             ImageFile imageFile = new ImageFile()
                             {
                                 Id = physcialFileLinkId,
                                 Acquired = DateTime.Today,
-                                ExternalLink = "?",
+                                ExternalLink = newFileName,
                                 FileName = physcialFileName,
                                 FolderId = folderId,
-                                Height = fHeight,
-                                Size = fSize,
-                                Width = fWidth
+                                Height = imageFileInfo.Height,
+                                Size = imageFileInfo.Size,
+                                Width = imageFileInfo.Width
                             };
                             db.ImageFiles.Add(imageFile);
                             dbFolderImageFiles.Add(imageFile);
@@ -151,37 +125,11 @@ namespace OggleBooble.Api.Controllers
                     {
                         if (dbFolderImageFile.Size == 0)
                         {
-                            // create new ImageFile record
-                            // USE WEBCLIENT TO CREATE THE FILE
-                            string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
-                            string imgFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
-                            using (WebClient wc = new WebClient())
-                            {
-                                wc.DownloadFile(new Uri(imgFileName), appDataPath + "tempImage.tmp");
-                            }
-                            int fWidth = 0; int fHeight = 0; long fSize = 0;
-                            using (var fileStream = new FileStream(appDataPath + "tempImage.tmp", FileMode.Open, FileAccess.Read, FileShare.Read))
-                            {
-                                fSize = fileStream.Length;
-                                try
-                                {
-                                    using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
-                                    {
-                                        fWidth = image.Width;
-                                        fHeight = image.Height;
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    if (Helpers.ErrorDetails(ex).ToString() == "{Parameter is not valid.}")
-                                        repairReport.Errors.Add("unable to get width and height of " + physcialFileName);
-                                    else
-                                        repairReport.Errors.Add("problem getting filesize" + Helpers.ErrorDetails(ex));
-                                }
-                            }
-                            dbFolderImageFile.Height = fHeight;
-                            dbFolderImageFile.Size = fSize;
-                            dbFolderImageFile.Width = fWidth;
+                            string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
+                            ImageFileInfo imageFileInfo = GetImageFileInfo(newFileName);
+                            dbFolderImageFile.Size = imageFileInfo.Size;
+                            dbFolderImageFile.Height = imageFileInfo.Height;
+                            dbFolderImageFile.Width = imageFileInfo.Width;
                             db.SaveChanges();
                             repairReport.ZeroLenFileResized++;
                         }
@@ -205,11 +153,34 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (!physcialFileLinkIds.Contains(imageFile.Id))
                     {
-                        
-                        repairReport.Errors.Add("ImageFile with no physcial file "+ imageFile.Id);
-                        //db.ImageFiles.Remove(imageFile);
-                        //db.SaveChanges();
-                        //repairReport.ImageFilesRemoved++;
+                        if (imageFile.ExternalLink != "?")
+                        {
+                            // Download missing File
+                            //public SuccessModel AddImageLink(AddLinkModel addLinkModel)
+                            //string xpname = imageFile.Id
+                            expectedFileName = imageFileName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
+                            string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + expectedFileName;
+                            string downLoadSuccess = DownLoadImage(ftpPath, imageFile.ExternalLink, expectedFileName);
+                            if (downLoadSuccess == "ok")
+                                repairReport.ImagesDownLoaded++;
+                            else
+                            {
+                                repairReport.Errors.Add("download faild: " + imageFile.ExternalLink);
+                                db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList());
+                                db.ImageFiles.Remove(imageFile);
+                                db.SaveChanges();
+                                repairReport.ImageFilesRemoved++;
+                            }
+
+                        }
+                        else
+                        {
+                            repairReport.Errors.Add("ImageFile with no physcial file " + imageFile.Id);
+                            db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList());
+                            db.ImageFiles.Remove(imageFile);
+                            db.SaveChanges();
+                            repairReport.ImageFilesRemoved++;
+                        }
                     }
                     repairReport.ImageFilesProcessed++;
                 }
@@ -314,6 +285,76 @@ namespace OggleBooble.Api.Controllers
             }
             return success;
         }
+
+        private ImageFileInfo GetImageFileInfo(string imgFileName)
+        {
+            ImageFileInfo imageFileInfo = new ImageFileInfo();
+            try
+            {
+                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+                using (WebClient wc = new WebClient())
+                {
+                    wc.DownloadFile(new Uri(imgFileName), appDataPath + "tempImage.tmp");
+                }
+                using (var fileStream = new FileStream(appDataPath + "tempImage.tmp", FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    imageFileInfo.Size = fileStream.Length;
+                    try
+                    {
+                        using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                        {
+                            imageFileInfo.Width = image.Width;
+                            imageFileInfo.Height = image.Height;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (Helpers.ErrorDetails(ex).ToString() == "{Parameter is not valid.}")
+                            imageFileInfo.Success = "unable to get width and height of " + imgFileName;
+                        else
+                            imageFileInfo.Success = "problem getting filesize" + Helpers.ErrorDetails(ex);
+                    }
+                }
+                imageFileInfo.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                imageFileInfo.Success = Helpers.ErrorDetails(ex);
+            }
+            return imageFileInfo;
+        }
+
+        private string DownLoadImage(string ftpPath, string externalFileName, string newFileName)
+        {
+            string success = "ok";
+            try
+            {
+                string extension = newFileName.Substring(newFileName.Length - 4);
+                string appDataPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/temp/");
+                using (WebClient wc = new WebClient())
+                {
+                    wc.DownloadFile(new Uri(externalFileName), appDataPath + "tempImage" + extension);
+                }
+
+                FtpWebRequest webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
+                webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
+                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                using (Stream requestStream = webRequest.GetRequestStream())
+                {
+                    byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "tempImage" + extension);
+                    webRequest.ContentLength = fileContents.Length;
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
 
 
         [HttpGet]
