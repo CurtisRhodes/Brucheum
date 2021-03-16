@@ -79,9 +79,7 @@
     <div class="footer"></div>
 
     <script>
-        let spaPageId, dots = "", promoIdx, promoMessagesArray = new Array(),
-            promoMessageRotator, promoMessageRotationSpeed = 15000, updatedGalleriesCount = 25;
-
+        let spaPageId, dots = "";
         //$(document).ready(function () {
         console.log("Index $(document).ready");
 
@@ -91,9 +89,6 @@
         setOggleHeader(3910, "loading");
 
         params = getParams();
-        if (params.subdomain === undefined)
-            subdomain = "index";
-
         if (isNullorUndefined(params.spa))
             spaPageId = 3908;
         else
@@ -118,27 +113,9 @@
                         tryHitStats();
                         changeFavoriteIcon("redBallon");
                         document.title = "OggleBooble";
-
                         verifyVisitorId(3908, "Index.html");
                         localhostBypass();
-
-                        if (spaPageId == 3908) // boobs archive
-                            indexStartup();
-
-                        if (spaPageId == 3909)// porn
-                            pornStartup();
-
-                        if (spaPageId == 72) // every playboy centerfold
-                            playboyStartup();
-
-                        if (spaPageId == 3907) { // ranker
-                            rankerStartup(params.bp);
-                        }
-                        if (spaPageId == 3910)   // dashboard
-                            dashboardStartup();
-                        
-                        if (spaPageId == 3911)  // "blog"
-                            blogStartup();
+                        displaySpaPage(spaPageId);
                     }
                 }, 300);
 

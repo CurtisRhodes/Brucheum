@@ -389,17 +389,6 @@ body {
     padding: 5px;
 }
 
-.ogglePromoContainer {
-    background-color: var(--ogglgeHeaderBarColor);
-    position: absolute;
-    top: 250px;
-    right: 40px;
-    width: 300px;
-    border: solid 3px #4b0d41;
-    font-size: 22px;
-    text-align: center;
-    display: none;
-}
 
 .ogglePromoText {
     background-color: var(--oggleDialogBackgroundColor);
@@ -412,12 +401,6 @@ body {
     background-color: var(--oggleDialogBackgroundColor);
     text-align: right;
     cursor: pointer;
-}
-
-.ogglePromoKillMessage {
-    font-size: 18px;
-    background-color: var(--oggleBackgroundColor);
-    display: none;
 }
 
 .floatingFeedbackButton {
