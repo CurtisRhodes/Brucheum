@@ -14,7 +14,7 @@ function displaySpaPage(spaPageId) {
         case 3911:
             blogStartup();
             break;
-        case 3910:
+        case '3910':
             dashboardStartup();
             break;
         case 3908:  // boobs archive
@@ -27,6 +27,7 @@ function displaySpaPage(spaPageId) {
             launchCarousel("boobs");
             $('.indexPageSection').show();
             loadUpdatedGalleriesBoxes("boobs");
+            //setTimeout(function () { launchPromoMessages(); }, 3000);
             break;
         case 3090: // porn
             $('#indexMiddleColumn').html(indexPageHTML());
@@ -127,9 +128,6 @@ function loadUpdatedGalleriesBoxes(spaType) {
                 //$('.sectionLabel').show();
                 resizeIndexPage();
                 setTimeout(function () { resizeIndexPage(); }, 300);
-
-                setTimeout(function () { launchPromoMessages(); }, 3000);
-
                 var delta = (Date.now() - getLatestStart) / 1000;
                 console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes.  Took: " + delta.toFixed(3));
             }

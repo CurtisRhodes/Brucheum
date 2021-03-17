@@ -57,8 +57,11 @@ namespace OggleBooble.Api.Controllers
                 RenamePhyscialFiles(ftpPath, imageFileName, repairReport);
 
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
-                if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR")) { repairReport.Success = physcialFiles[0]; return; }
-
+                if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR"))
+                {
+                    repairReport.Success = physcialFiles[0];
+                    return;
+                }
                 #region 0 rename ImageFiles to expected name 
                 var dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
                 string expectedFileName;
@@ -85,9 +88,33 @@ namespace OggleBooble.Api.Controllers
                         var dbMisplacedImageFile = db.ImageFiles.Where(m => m.Id == physcialFileLinkId).FirstOrDefault();
                         if (dbMisplacedImageFile != null)
                         {
-                            dbMisplacedImageFile.FolderId = folderId;
-                            db.SaveChanges();
-                            repairReport.ImageFilesMoved++;
+                            if (dbMisplacedImageFile.FolderId == -6)
+                            {
+                                // should have moved file to rejects
+                                //string newFileName = ftpPath + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
+                                string ftpFileName = ftpPath + "/" + physcialFileName;
+                                string rejectFolder = ftpHost + "/archive.OggleBooble.com/rejects/" + dbMisplacedImageFile.FileName;
+                                if (FtpUtilies.MoveFile(ftpFileName, rejectFolder) == "ok")
+                                    repairReport.ImageFilesMoved++;
+                                var dbRejCatlinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == dbMisplacedImageFile.Id).ToList();
+                                if (dbRejCatlinks.Count > 0)
+                                {
+                                    foreach (CategoryImageLink dbRejCatlink in dbRejCatlinks)
+                                    {
+                                        if (dbRejCatlink.ImageCategoryId != -6)
+                                        {
+                                            db.CategoryImageLinks.Remove(dbRejCatlink);
+                                        }
+                                    }
+                                    db.SaveChanges();
+                                }
+                            }
+                            else
+                            {
+                                dbMisplacedImageFile.FolderId = folderId;
+                                db.SaveChanges();
+                                repairReport.ImageFilesMoved++;
+                            }
                         }
                         else
                         {
@@ -127,11 +154,21 @@ namespace OggleBooble.Api.Controllers
                         {
                             string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
                             ImageFileInfo imageFileInfo = GetImageFileInfo(newFileName);
-                            dbFolderImageFile.Size = imageFileInfo.Size;
-                            dbFolderImageFile.Height = imageFileInfo.Height;
-                            dbFolderImageFile.Width = imageFileInfo.Width;
-                            db.SaveChanges();
-                            repairReport.ZeroLenFileResized++;
+                            if (imageFileInfo.Size == 0)
+                            {
+                                db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == dbFolderImageFile.Id).ToList());
+                                db.ImageFiles.Remove(dbFolderImageFile);
+                                db.SaveChanges();
+                                repairReport.ZeroLenImageFilesRemoved++;
+                            }
+                            else
+                            {
+                                dbFolderImageFile.Size = imageFileInfo.Size;
+                                dbFolderImageFile.Height = imageFileInfo.Height;
+                                dbFolderImageFile.Width = imageFileInfo.Width;
+                                db.SaveChanges();
+                                repairReport.ZeroLenFileResized++;
+                            }
                         }
                     }
                     repairReport.PhyscialFilesProcessed++;
@@ -235,9 +272,6 @@ namespace OggleBooble.Api.Controllers
                 {
                     fileName = physcialFiles[i];
                     ext = fileName.Substring(fileName.LastIndexOf("."));
-
-
-
                     if (fileName.LastIndexOf("_") > 0)
                     {
                         if (fileName.Length > 40)
@@ -272,8 +306,9 @@ namespace OggleBooble.Api.Controllers
                     else
                     {
                         newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
-                        FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                        repairReport.PhyscialFileRenamed++;
+                        var sss = FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                        if(sss=="ok")
+                            repairReport.PhyscialFileRenamed++;
                     }
                 }
 
@@ -339,6 +374,8 @@ namespace OggleBooble.Api.Controllers
                 FtpWebRequest webRequest = (FtpWebRequest)WebRequest.Create(ftpPath + "/" + newFileName);
                 webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
                 webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
+
                 using (Stream requestStream = webRequest.GetRequestStream())
                 {
                     byte[] fileContents = System.IO.File.ReadAllBytes(appDataPath + "tempImage" + extension);

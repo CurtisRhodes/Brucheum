@@ -595,12 +595,12 @@ namespace OggleBooble.Api.Controllers
                                             dupeImage = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault();
                                             if (dupeImage != null)
                                             {
+                                                fileName = dupeImage.FileName;
                                                 if (dbMaxImageSizeItem.ExternalLink == "?")
                                                     dbMaxImageSizeItem.ExternalLink = dupeImage.ExternalLink;
                                                 db.ImageFiles.Remove(dupeImage);
                                                 db.SaveChanges();
                                                 dupeCheckModel.ImageFilesRemoved++;
-                                                fileName = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault().FileName;
                                             }
                                             else
                                             {                                                
@@ -616,7 +616,7 @@ namespace OggleBooble.Api.Controllers
                                             }
                                             try
                                             {
-                                                serverPath = ftpHost + folderPath + "/" + fileName;
+                                                serverPath = ftpHost + "img.Ogglebooble.com/" + folderPath + "/" + fileName;
                                                 if (FtpUtilies.DeleteFile(serverPath) == "ok")
                                                     dupeCheckModel.ServerFilesDeleted++;
                                             }

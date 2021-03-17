@@ -325,6 +325,8 @@ function performRepairLinks(justOne) {
                             $('#dataifyInfo').append(", ImageFiles ImagesDownLoaded: " + repairReport.ImagesDownLoaded);
                         if (repairReport.ImageFilesRemoved > 0)
                             $('#dataifyInfo').append(", ImageFiles Removed: " + repairReport.ImageFilesRemoved);
+                        if (repairReport.ZeroLenImageFilesRemoved > 0)
+                            $('#dataifyInfo').append(", ZeroLen ImageFiles Removed: " + repairReport.ZeroLenImageFilesRemoved);
                     }
                     catch (e) {
                         alert("problem displaying repair report: " + e);
