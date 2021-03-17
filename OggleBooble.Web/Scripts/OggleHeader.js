@@ -78,17 +78,12 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",241)'>sizes</a>\n"
             );
 
-            // boobs
-            // playboy
-            // archive
-            // porn
-            // sluts
-
             $('#hdrBtmRowSec3').html(addBannerButton("archive"));
             $('#hdrBtmRowSec3').append(addBannerButton("centerfold"));
             if (subdomain == "root") {
             }
             if (subdomain == "index") {
+                $('#topRowRightContainer').append(addBannerButton("ranker", "boobs"));
             }
             if (subdomain == "archive") {
                 $('#topRowRightContainer').html(addBannerButton("ranker", "archive"));
@@ -172,6 +167,7 @@ function setHeaderMenu(folderId, subdomain) {
             // bottom row
             // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
             $('#breadcrumbContainer').html("every playboy centerfold");
+            $('#hdrBtmRowSec3').append(addBannerButton("backToOggle"));
             $('#hdrBtmRowSec3').append(addBannerButton("archive"));
             $('#hdrBtmRowSec3').append(addBannerButton("porn", "OgglePorn"));
             // <div id='badgesContainer' class='badgesSection'></div>\n" +

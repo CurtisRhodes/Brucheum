@@ -398,7 +398,7 @@ $(document).keydown(function (event) {
 function slideshowHtml() {
     return "<div id='divStatusMessage'></div>\n" +
         "   <div id='viewerButtonsRow' class='imageViewerHeaderRow' > \n" +
-        "       <div><img id='imgGoHome' class='imgCommentButton' title='comment' onclick='window.location.href=\"Index.html\"' src='/Images/redballon.png'/></div>\n" +
+        "       <div><img id='imgGoHome' class='imgCommentButton' title='home' onclick='window.location.href=\"Index.html\"' src='/Images/redballon.png'/></div>\n" +
         "       <div id='ssHeaderCount' class='ssHeaderCount'></div>\n" +
         "       <div><img id='imgComment' class='imgCommentButton' title='comment' onclick='showImageViewerCommentDialog()' src='/Images/comment.png'/></div>\n" +
         "       <div id='imageViewerHeaderTitle' class='imageViewerTitle'></div> \n" +

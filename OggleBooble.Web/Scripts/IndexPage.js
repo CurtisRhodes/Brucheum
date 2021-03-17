@@ -8,16 +8,17 @@
 
 function displaySpaPage(spaPageId) {
     switch (spaPageId) {
-        case 3907:
+        case '3907':
             rankerStartup(params.bp);
             break;
-        case 3911:
+        case '3911':
             blogStartup();
             break;
         case '3910':
             dashboardStartup();
             break;
         case 3908:  // boobs archive
+        case '3908':  // boobs archive
             //indexStartup();
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader(3908, "index");
@@ -29,7 +30,7 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes("boobs");
             //setTimeout(function () { launchPromoMessages(); }, 3000);
             break;
-        case 3090: // porn
+        case '3090': // porn
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader(spaPageId, "porn");
             setOggleFooter(spaPageId, "porn");
@@ -45,7 +46,7 @@ function displaySpaPage(spaPageId) {
             $('#updatedGalleriesSectionLoadingGif').show();
             loadUpdatedGalleriesBoxes("porn");
             break;
-        case 72: // every playboy centerfold
+        case '72': // every playboy centerfold
             $('#indexMiddleColumn').html(playboyPageHTML());
             setOggleHeader(spaPageId, "playboyIndex");
             setOggleFooter(spaPageId, "centerfold");
@@ -56,6 +57,8 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes("centerfold");
             break;
         default:
+            alert("spaPageId: " + spaPageId);
+            break;
     }
 }
 

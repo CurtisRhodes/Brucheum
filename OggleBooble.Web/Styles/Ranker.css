@@ -1,8 +1,14 @@
-﻿.titleContainer {
+﻿
+.rankerOuterContainer {
     display: flex;
+    border: solid thick black;
 }
 .rankerImageContainer {
     display: flex;
+    width: 100%;
+    border: solid thin red;
+}
+.rankerCkBoxesContainer {
 }
 
 .domCkBox {
@@ -47,16 +53,21 @@ input[type=checkbox] {
     border: solid thin black;
 }
 .rankerImageSlotBox {
-    height: 715px;
+/*    height: 715px;
     width: 515px;
-    cursor: not-allowed;
+*/    cursor: not-allowed;
 }
     .rankerImageSlotBox img {
-        height: 700px;
         padding-top: 4px;
         padding-left: 4px;
+/*        height: 700px;
         width: 500px;
-    }
+*/    }
+
+.rankerImage {
+
+}
+
 
 .bigRedBorder {
     border: double 7px red;
