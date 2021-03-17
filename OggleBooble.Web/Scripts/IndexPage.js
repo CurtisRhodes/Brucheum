@@ -5,16 +5,17 @@
     numUpdatedGalleries = 25,
     spaType = "archive";
 
-
 function displaySpaPage(spaPageId) {
+    //alert("spaPageId: " + spaPageId);
     switch (spaPageId) {
         case 3907:
-            rankerStartup(params.bp);
+            //rankerStartup(params.bp);
             break;
         case 3911:
             blogStartup();
             break;
-        case 3910:
+        case '3910':
+            //alert("case 3910");
             dashboardStartup();
             break;
         case 3908:  // boobs archive
@@ -27,6 +28,7 @@ function displaySpaPage(spaPageId) {
             launchCarousel("boobs");
             $('.indexPageSection').show();
             loadUpdatedGalleriesBoxes("boobs");
+            //showPromoMessages(promoMessagesArray);
             break;
         case 3090: // porn
             $('#indexMiddleColumn').html(indexPageHTML());
@@ -55,6 +57,8 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes("centerfold");
             break;
         default:
+            alert("case did not work    spaPageId: " + spaPageId);
+            break;
     }
 }
 
@@ -172,7 +176,6 @@ function launchPromoMessages() {
                         CommentText: blogComment.CommentText
                     });
                 });
-                showPromoMessages(promoMessagesArray);
             }
             else {
                 alert("launchPromoMessages: " + blogCommentsContainer.Success);

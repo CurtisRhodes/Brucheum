@@ -60,7 +60,7 @@ function getSlideshowItems(folderId, startItem) {
                 }
                 else {
                     $('#imagePageLoadingGif').hide();
-                    logError("AJX", folderId, success, "getSlideshowItems");
+                    logError("AJX", folderId, slideshowItemModel.Success, "getSlideshowItems");
                 }
             },
             error: function (jqXHR) {
