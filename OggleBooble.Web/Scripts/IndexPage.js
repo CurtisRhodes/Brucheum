@@ -5,20 +5,20 @@
     numUpdatedGalleries = 25,
     spaType = "archive";
 
+
 function displaySpaPage(spaPageId) {
-    //alert("spaPageId: " + spaPageId);
     switch (spaPageId) {
-        case 3907:
-            //rankerStartup(params.bp);
+        case '3907':
+            rankerStartup(params.bp);
             break;
-        case 3911:
+        case '3911':
             blogStartup();
             break;
         case '3910':
-            //alert("case 3910");
             dashboardStartup();
             break;
         case 3908:  // boobs archive
+        case '3908':  // boobs archive
             //indexStartup();
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader(3908, "index");
@@ -28,9 +28,9 @@ function displaySpaPage(spaPageId) {
             launchCarousel("boobs");
             $('.indexPageSection').show();
             loadUpdatedGalleriesBoxes("boobs");
-            //showPromoMessages(promoMessagesArray);
+            //setTimeout(function () { launchPromoMessages(); }, 3000);
             break;
-        case 3090: // porn
+        case '3090': // porn
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader(spaPageId, "porn");
             setOggleFooter(spaPageId, "porn");
@@ -46,7 +46,7 @@ function displaySpaPage(spaPageId) {
             $('#updatedGalleriesSectionLoadingGif').show();
             loadUpdatedGalleriesBoxes("porn");
             break;
-        case 72: // every playboy centerfold
+        case '72': // every playboy centerfold
             $('#indexMiddleColumn').html(playboyPageHTML());
             setOggleHeader(spaPageId, "playboyIndex");
             setOggleFooter(spaPageId, "centerfold");
@@ -57,7 +57,7 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes("centerfold");
             break;
         default:
-            alert("case did not work    spaPageId: " + spaPageId);
+            alert("spaPageId: " + spaPageId);
             break;
     }
 }
@@ -131,9 +131,6 @@ function loadUpdatedGalleriesBoxes(spaType) {
                 //$('.sectionLabel').show();
                 resizeIndexPage();
                 setTimeout(function () { resizeIndexPage(); }, 300);
-
-                setTimeout(function () { launchPromoMessages(); }, 3000);
-
                 var delta = (Date.now() - getLatestStart) / 1000;
                 console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes.  Took: " + delta.toFixed(3));
             }
@@ -176,6 +173,7 @@ function launchPromoMessages() {
                         CommentText: blogComment.CommentText
                     });
                 });
+                showPromoMessages(promoMessagesArray);
             }
             else {
                 alert("launchPromoMessages: " + blogCommentsContainer.Success);
