@@ -79,8 +79,11 @@
             <div id="albumPageHeader" class="aboveImageContainerDiv">
                 <div id='seoPageName' class="albumPageMetaTitle"></div>
                 <div id="aboveImageContainerMessageArea" class="flexboxMiddleSection"></div>
-                <div id="deepSlideshowButton" class='deepSlideshow'
+                <div id="largeLoadButton" class='deepSlideshow'
                      title='slideshow includes all child folders'
+                     onclick='launchLargeLoad();'>large load</div>
+                <div id="deepSlideshowButton" class='deepSlideshow'
+                     title='album page with all child folder images'
                      onclick='launchDeepSlideShow();'>gallery slideshow</div>
             </div>
             <div id="imageContainer" class="galleryContainer"></div>
@@ -93,7 +96,7 @@
         </div>
     </div>
 
-    <!--
+    
         <script type="text/javascript">
             var _Hasync = _Hasync || [];
             _Hasync.push(['Histats.start', '1,4458214,4,0,0,0,00010000']);
@@ -106,21 +109,29 @@
             })();
         </script>
         <noscript><a href="/" target="_blank"><img src="//sstatic1.histats.com/0.gif?4458214&101" alt="traffic analysis" border="0"></a></noscript>
-    -->
+    
     <div class="footer"></div>
     <script>
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
         //$(document).ready(function () {
         $('#deepSlideshow').hide();
         $('#imageContainer').hide();
-        params = getParams();
-        if (isNullorUndefined(params.folder)) {
-            window.location.href = "Index.html";
+        let params = getParams();
+        let pFolderId;
+        let largeLoad = false;
+        if (isNullorUndefined(params.parentfolder)) {
+            alert("params.parentfolder: " + params.parentfolder);
+            pFolderId = params.parentfolder;
+            largeLoad = true;
         }
-
+        else {
+            if (isNullorUndefined(params.folder)) {
+                window.location.href = "Index.html";
+            }
+            else
+                pFolderId = params.folder;
+        }
         setOggleHeader(3908, "loading");
-        console.log("setOggleHeader(loading)");
-
 
         resizeAlbumPage();
         var dots = "";
@@ -129,7 +140,6 @@
             if (settingsArray.ApiServer === undefined) {
                 dots += "~ ";
                 $('#dots').html(dots);
-                //setOggleHeader(params.folder, "loading");
             }
             else {
                 clearInterval(settingsWaiter);
@@ -137,22 +147,25 @@
                 checkConnection(params.folder, "album.html");
                 var waiter2 = setInterval(function () {
                     if (connectionVerified) {
-                        //    dots += "< ";
-                        //    $('#dots').html(dots);
-                        //}
-                        //else {
+                        dots += ". ";
+                        $('#dots').html(dots);
+                    }
+                    else {
                         clearInterval(waiter2);
                         $('#dots').html('');
 
                         changeFavoriteIcon("redBallon");
                         localhostBypass();
-                        verifyVisitorId(params.folder, "album.html");
+                        verifyVisitorId(pFolderId, "album.html");
 
                         if (!isNullorUndefined(params.tic)) {
-                            logStaticPageHit(params.folder, "Album.html");
-                            window.location.href = "album.html?folder=" + params.folder;
+                            logStaticPageHit(pFolderId, "Album.html");
+                            window.location.href = "album.html?folder=" + pFolderId;
                         }
-                        loadAlbum(params.folder);
+                        if (largeLoad)
+                            loadLargeAlbum(pFolderId);
+                        else
+                            loadAlbum(pFolderId);
                         //if (isInRole("NewUser")) {
                     }
                 }, 300);

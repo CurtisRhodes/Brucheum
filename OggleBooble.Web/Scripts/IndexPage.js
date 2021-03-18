@@ -15,6 +15,7 @@ function displaySpaPage(spaPageId) {
             blogStartup();
             break;
         case '3910':
+        case 3910 :
             dashboardStartup();
             break;
         case 3908:  // boobs archive
@@ -30,7 +31,7 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes("boobs");
             //setTimeout(function () { launchPromoMessages(); }, 3000);
             break;
-        case '3090': // porn
+        case '3909': // porn
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader(spaPageId, "porn");
             setOggleFooter(spaPageId, "porn");
@@ -57,7 +58,7 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes("centerfold");
             break;
         default:
-            alert("spaPageId: " + spaPageId);
+            alert("spaPageId: " + spaPageId + " not found");
             break;
     }
 }

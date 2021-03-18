@@ -1,5 +1,11 @@
 ﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId; //, ttlFiles, ttlFolders;
 
+
+function loadLargeAlbum(pFolderId) {
+
+}
+
+
 function loadAlbum(folderId) {
     if (isNullorUndefined(folderId)) {
         logError("BUG", 999, "folderId not found", "loadAlbum");
@@ -192,7 +198,8 @@ function getAlbumPageInfo(folderId) {
                 if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel") || (albumInfo.FolderType === "multiModel")) {
                     $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
                     //chargeCredits(folderId, albumInfo.RootFolder, albumInfo.FolderType);
-                    $('#deepSlideshowButton').hide();
+                    $('#deepSlideshowButton').hide();                    
+                    $('#largeLoadButton').hide();
                 }
                 else {
                     //alert("FolderType: " + albumInfo.FolderType + "  FileCount: " + albumInfo.FileCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
@@ -200,6 +207,7 @@ function getAlbumPageInfo(folderId) {
                         albumInfo.FolderCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
                     //getDeepFolderCounts(folderId); //, albumInfo.FileCount, albumInfo.FolderCount);
                     $('#deepSlideshowButton').show();
+                    $('#largeLoadButton').show();
                 }
 
                 if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + albumInfo.FolderType);
@@ -365,8 +373,12 @@ function subFolderImgError(imgSrc, linkId) {
     //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
 
-function launchDeepSlideShow()
-{
+function launchLargeLoad() {
+    window.location.href = "/album.html?parentfolder=" + folderId;  //  open page in same window
+
+}
+
+function launchDeepSlideShow() {
     $('#indexPageLoadingGif').show();
     logEvent("DSC", apFolderId, apFolderName, "launchDeepSlideShow");
     launchViewer(apFolderId, 1, true);
