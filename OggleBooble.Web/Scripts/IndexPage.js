@@ -1,10 +1,9 @@
 ﻿let promoMessagesArray = new Array(),
-    promoIdx = 0;
+    promoIdx = 0,
     promoMessageRotator = null,
     promoMessageRotationSpeed = 15000,
     numUpdatedGalleries = 25,
     spaType = "archive";
-
 
 function displaySpaPage(spaPageId) {
     switch (spaPageId) {
@@ -21,6 +20,7 @@ function displaySpaPage(spaPageId) {
         case 3908:  // boobs archive
         case '3908':  // boobs archive
             //indexStartup();
+            spaType = "boobs";
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader(3908, "index");
             setOggleFooter(3908, "index");
@@ -28,10 +28,11 @@ function displaySpaPage(spaPageId) {
             document.title = "welcome : OggleBooble";
             launchCarousel("boobs");
             $('.indexPageSection').show();
-            loadUpdatedGalleriesBoxes("boobs");
+            loadUpdatedGalleriesBoxes();
             //setTimeout(function () { launchPromoMessages(); }, 3000);
             break;
         case '3909': // porn
+            spaType = "porn";
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader(spaPageId, "porn");
             setOggleFooter(spaPageId, "porn");
@@ -45,9 +46,10 @@ function displaySpaPage(spaPageId) {
             //else
             //    $('.threeColumnLayout').css("background-color", "#d279a6");
             $('#updatedGalleriesSectionLoadingGif').show();
-            loadUpdatedGalleriesBoxes("porn");
+            loadUpdatedGalleriesBoxes();
             break;
         case '72': // every playboy centerfold
+            spaType = "centerfold";
             $('#indexMiddleColumn').html(playboyPageHTML());
             setOggleHeader(spaPageId, "playboyIndex");
             setOggleFooter(spaPageId, "centerfold");
@@ -55,7 +57,7 @@ function displaySpaPage(spaPageId) {
             document.title = "Every Playboy Centerfold";
             launchCarousel("centerfold");
             $('#updatedGalleriesSectionLoadingGif').show();
-            loadUpdatedGalleriesBoxes("centerfold");
+            loadUpdatedGalleriesBoxes();
             break;
         default:
             alert("spaPageId: " + spaPageId + " not found");
@@ -63,45 +65,7 @@ function displaySpaPage(spaPageId) {
     }
 }
 
-function playboyPageHTML() {
-    return "<div class='playboyShell'> <div class='indexPageSection' id='topIndexPageSection'>\n" +
-        "       <div class='sectionLabel'>random galleries</div>\n" +
-        "       <div id='testMessage1' class='indexPageHappyMessage' >start</div>\n" +
-        "           <div id='carouselContainer'></div>\n" +
-        "    </div>\n" +
-        "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
-        "    <div class='indexPageSection' id='bottomSection'>\n" +
-        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
-        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' src='Images/loader.gif' />" +
-        "       </div>\n" +
-        "    </div></div>\n" +
-        "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
-        "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
-
-}
-
-function indexPageHTML() {
-    return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
-        "       <div class='sectionLabel'>random galleries</div>\n" +
-        "       <div id='testMessage1' class='indexPageHappyMessage' >start</div>\n" +
-        "       <div id='promoContainer' class='promoContainer' >my promo message</div>\n" +
-        "       <div id='carouselContainer'></div>\n" +
-        "    </div>\n" +
-        //"    <div class='clickable sectionLabel' onclick='cureWIPproblem(211,\"018d1162-61a6-4987-bd90-add6fac518c6\",\"WIP\")'>cure WIP problem</div>\n" +
-        //"    <div class='clickable sectionLabel' onclick='myMsgTest()'>showMyAlert test</div>\n" +
-        //"    <div class='clickable sectionLabel' onclick='testgetIp()'>tryIpx</div><br/>\n" +
-        //"    <div class='clickable sectionLabel' onclick='testgetIp()'>addNonIpVisitor</div>\n" +
-        "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
-        "    <div class='indexPageSection' id='bottomSection'>\n" +
-        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
-        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' src='Images/loader.gif' />"+
-        "       </div>\n" +
-        "    </div>\n" +
-        "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
-        "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
-}
-
-function loadUpdatedGalleriesBoxes(spaType) {
+function loadUpdatedGalleriesBoxes() {
     let settingsImgRepo = settingsArray.ImageRepo, thisItemSrc;
     $('#updatedGalleriesSectionLoadingGif').show();
     let getLatestStart = Date.now();
@@ -135,11 +99,11 @@ function loadUpdatedGalleriesBoxes(spaType) {
                 var delta = (Date.now() - getLatestStart) / 1000;
                 console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes.  Took: " + delta.toFixed(3));
             }
-            else logError("AJX", 3908, latestUpdates.Success, "loadUpdatedGalleriesBoxes");
+            else logError("AJX", 3908, latestUpdates.Success, "load Updated Galleries Boxes");
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "load Updated Galleries Boxes"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", subdomain, errMsg, functionName);
         }
     });
@@ -184,7 +148,7 @@ function launchPromoMessages() {
         error: function (jqXHR) {
             $('#indexPageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "launchPromoMessages"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR",3908, errMsg, functionName);
         }
     });
@@ -221,8 +185,8 @@ function killPromoMessages() {
 }
 
 function showMoreGalleries() {
-    latestGalleriesCount += 15;
-    loadUpdatedGalleriesBoxes(updatedGalleriesCount);
+    numUpdatedGalleries += 25;
+    loadUpdatedGalleriesBoxes();
 }
 
 function showHideGalleries() {
@@ -230,7 +194,6 @@ function showHideGalleries() {
     $('#showMoreGalleriesDiv').toggle();
     resizeIndexPage();
 }
-
 
 function goToPorn() {
 
@@ -272,4 +235,41 @@ function resizeIndexPage() {
     if (winW < 1500) {
         $('section').css("background-color", "red");
     }
+}
+
+function playboyPageHTML() {
+    return "<div class='playboyShell'> <div class='indexPageSection' id='topIndexPageSection'>\n" +
+        "       <div class='sectionLabel'>random galleries</div>\n" +
+        "       <div id='testMessage1' class='indexPageHappyMessage' >start</div>\n" +
+        "           <div id='carouselContainer'></div>\n" +
+        "    </div>\n" +
+        "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
+        "    <div class='indexPageSection' id='bottomSection'>\n" +
+        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
+        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' src='Images/loader.gif' />" +
+        "       </div>\n" +
+        "    </div></div>\n" +
+        "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
+        "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
+}
+
+function indexPageHTML() {
+    return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
+        "       <div class='sectionLabel'>random galleries</div>\n" +
+        "       <div id='testMessage1' class='indexPageHappyMessage' >start</div>\n" +
+        "       <div id='promoContainer' class='promoContainer' >my promo message</div>\n" +
+        "       <div id='carouselContainer'></div>\n" +
+        "    </div>\n" +
+        //"    <div class='clickable sectionLabel' onclick='cureWIPproblem(211,\"018d1162-61a6-4987-bd90-add6fac518c6\",\"WIP\")'>cure WIP problem</div>\n" +
+        //"    <div class='clickable sectionLabel' onclick='myMsgTest()'>showMyAlert test</div>\n" +
+        //"    <div class='clickable sectionLabel' onclick='testgetIp()'>tryIpx</div><br/>\n" +
+        //"    <div class='clickable sectionLabel' onclick='testgetIp()'>addNonIpVisitor</div>\n" +
+        "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
+        "    <div class='indexPageSection' id='bottomSection'>\n" +
+        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
+        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' src='Images/loader.gif' />" +
+        "       </div>\n" +
+        "    </div>\n" +
+        "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
+        "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
 }

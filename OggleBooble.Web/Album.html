@@ -117,11 +117,11 @@
         $('#deepSlideshow').hide();
         $('#imageContainer').hide();
         let params = getParams();
-        let pFolderId;
+        let albumParamFolderId;
         let largeLoad = false;
-        if (isNullorUndefined(params.parentfolder)) {
+        if (!isNullorUndefined(params.parentfolder)) {
             alert("params.parentfolder: " + params.parentfolder);
-            pFolderId = params.parentfolder;
+            albumParamFolderId = params.parentfolder;
             largeLoad = true;
         }
         else {
@@ -129,7 +129,7 @@
                 window.location.href = "Index.html";
             }
             else
-                pFolderId = params.folder;
+                albumParamFolderId = params.folder;
         }
         setOggleHeader(3908, "loading");
 
@@ -156,16 +156,16 @@
 
                         changeFavoriteIcon("redBallon");
                         localhostBypass();
-                        verifyVisitorId(pFolderId, "album.html");
+                        verifyVisitorId(albumParamFolderId, "album.html");
 
                         if (!isNullorUndefined(params.tic)) {
-                            logStaticPageHit(pFolderId, "Album.html");
-                            window.location.href = "album.html?folder=" + pFolderId;
+                            logStaticPageHit(albumParamFolderId, "Album.html");
+                            window.location.href = "album.html?folder=" + albumParamFolderId;
                         }
                         if (largeLoad)
-                            loadLargeAlbum(pFolderId);
+                            loadLargeAlbum(albumParamFolderId);
                         else
-                            loadAlbum(pFolderId);
+                            loadAlbum(albumParamFolderId);
                         //if (isInRole("NewUser")) {
                     }
                 }, 300);

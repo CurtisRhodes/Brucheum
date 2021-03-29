@@ -10,6 +10,9 @@
         border: solid thin red;
     */
 }
+    .sectionLabel:hover {
+        text-decoration: underline;
+    }
 
 .loadingImage {
     height: 233px;

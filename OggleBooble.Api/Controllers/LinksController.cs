@@ -93,12 +93,11 @@ namespace OggleBooble.Api.Controllers
         {
             SuccessModel successModel = new SuccessModel();
             int changes = 0;
-            int incri = 0;
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    AutoIncrimentRecurr(folderId, ref incri, ref changes, recurr, db);
+                    AutoIncrimentRecurr(folderId, recurr, db);
                 }
                 successModel.ReturnValue = changes.ToString();
                 successModel.Success = "ok";
@@ -109,13 +108,13 @@ namespace OggleBooble.Api.Controllers
             }
             return successModel;
         }
-        private void AutoIncrimentRecurr(int parent, ref int incri, ref int changes, bool recurr, OggleBoobleMySqlContext db)
+        private void AutoIncrimentRecurr(int parent, bool recurr, OggleBoobleMySqlContext db)
         {
+            int incri = 0;
             var links = db.CategoryImageLinks.Where(l => l.ImageCategoryId == parent).OrderBy(l => l.SortOrder).ToList();
             foreach (CategoryImageLink link in links)
             {
-                link.SortOrder = incri += 2;
-                changes++;
+                link.SortOrder = incri++;
             }
             db.SaveChanges();
             if (recurr)
@@ -123,7 +122,7 @@ namespace OggleBooble.Api.Controllers
                 var subFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
                 foreach (CategoryFolder subFolder in subFolders)
                 {
-                    AutoIncrimentRecurr(subFolder.Id, ref incri, ref changes, recurr, db);
+                    AutoIncrimentRecurr(subFolder.Id, true, db);
                 }
             }
         }

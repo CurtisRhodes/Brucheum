@@ -711,141 +711,75 @@ namespace OggleBooble.Api.Controllers
         private readonly string ftpPassword = ConfigurationManager.AppSettings["ftpPassword"];
         private readonly string imgRepo = ConfigurationManager.AppSettings["ImageRepository"];
 
+        //[HttpPost]
+        //public string Build(int rootFolder)
+
         [HttpPost]
-        public string Build(int rootFolder)
+        public string BuildEveryPlayboyPlaymatePage()
         {
             string success;
             try
             {
-                var stringBuilder = new StringBuilder("<html><head>");
+                var stringBuilder = new StringBuilder("<html><head>" +
+                    "<title>OggleHtml: Every Playboy Playmate</title>\n" +
+                    "<link rel='shortcut icon' href='https://ogglebooble.com/Images/favicon.png' type='image/x-icon'/>\n" +
+                    "<meta name='viewport' content='width=device-width, initial-scale=.07'>\n" +
+                    "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>\n"+
+                    "<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.0/jquery.min.js'></script>");
+
+                stringBuilder.Append("\n<style>\n" +
+                    "body { font-family: Verdana; background-color:#c1bad1; }" +
+                    ".pbDecade {margin-top: 12px;text-decoration: underline;font-size: 35px;cursor: pointer;width: 100%;background-color: #c2b35f;}\n" +
+                    ".pbCollapse { display:block;}\n" +
+                    ".pbYear {margin-top: 12px;margin-bottom: 12px;cursor: pointer;width: 100%;text-align: center;background-color: #74bac3;font-size: 25px;}\n" +
+                    ".playmateDiv{ display: inline-block; margin-left: 60px; }\n" +
+                    ".playmateImage { height: 122px; }\n" +
+                "</style>\n");
 
                 stringBuilder.Append("</head>\n<body>\n");
-                string fileName;
+                stringBuilder.Append(PbHeader());
+
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    //string imgSrc;
-                    //ImageFile dbImageFile;
-                    var dbParentFolder = db.CategoryFolders.Where(f => f.Id == rootFolder).First();
-                    fileName = dbParentFolder.FolderName + ".html";
-                    //if (dbParentFolder.FolderType == "singleChild")
-                    if (new string[] { "singleChild", "multiModel" }.Any(s => dbParentFolder.FolderType.Contains(s)))
+                    ImageFile dbImageFile;
+                    CategoryFolder dbImageCatFile;
+                    List<CategoryFolder> dbDecades = db.CategoryFolders.Where(f => f.Parent == 1132).OrderBy(f => f.SortOrder).ToList();
+                    foreach (CategoryFolder dbDecade in dbDecades)
                     {
-                        // create a trackback static page
-                    }
-                    if (dbParentFolder.FolderType == "singleParent")
-                    {
-                        // create a trackback static page
-                    }
-
-                    if (dbParentFolder.FolderType == "multiFolder")
-                    {
-                        var sub1Folders = db.CategoryFolders.Where(f => f.Parent == rootFolder).ToList();
-                        foreach (CategoryFolder sub1Folder in sub1Folders)
+                        stringBuilder.Append("<div class='pbDecade' onclick=\"$('#pb" + dbDecade.Id + "').toggle()\">" + dbDecade.FolderName + "</div>\n" +
+                        "<div class='pbCollapse' id='pb" + dbDecade.Id + "' >\n");
+                        List<CategoryFolder> dbDecadeYears = db.CategoryFolders.Where(f => f.Parent == dbDecade.Id).OrderBy(f => f.SortOrder).ToList();
+                        foreach (CategoryFolder dbDecadeYear in dbDecadeYears)
                         {
-                            // show playboy decade 
-                            if (sub1Folder.FolderType == "multiFolder")
+                            stringBuilder.Append("<div class='pbYear' onclick=\"$('#" + dbDecadeYear.Id + "').toggle()\">" + dbDecadeYear.FolderName + "</div>\n" +
+                            "<div class='pbCollapse' id='" + dbDecadeYear.Id + "' >\n");
+                            List<CategoryFolder> dbPaymates = db.CategoryFolders.Where(f => f.Parent == dbDecadeYear.Id).ToList();
+                            foreach (CategoryFolder dbPaymate in dbPaymates)
                             {
-                                stringBuilder.Append("\n<H2>" + sub1Folder.FolderName + "</H2>\n");
-                                var sub2Folders = db.CategoryFolders.Where(f => f.Parent == sub1Folder.Id).ToList();
-                                foreach (CategoryFolder sub2Folder in sub2Folders)
+                                dbImageFile = db.ImageFiles.Where(i => i.Id == dbPaymate.FolderImage).FirstOrDefault();
+                                if (dbImageFile != null)
                                 {
-                                    // playboy year
-                                    if (sub2Folder.FolderType == "multiFolder")
-                                    {
-                                        stringBuilder.Append("\n<H3>" + sub2Folder.FolderName + "</H3>\n");
-                                        var sub3Folders = db.CategoryFolders.Where(f => f.Parent == sub2Folder.Id).ToList();
-                                        stringBuilder.Append("<div class='pbYearRow'>\n");
-                                        foreach (CategoryFolder sub3Folder in sub3Folders)
-                                        {
-                                            // show playboy month
-                                            //if (sub3Folder.FolderType == "multiFolder")
-                                            {
-                                                var sub4Folders = db.CategoryFolders.Where(f => f.Parent == sub3Folder.Id).ToList();
-                                                foreach (CategoryFolder sub4Folder in sub3Folders)
-                                                {
-                                                    ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == sub4Folder.FolderImage).First();
-                                                    stringBuilder.Append("<div><img src='" + imgRepo + "/" +
-                                                        db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath + "/" + dbImageFile.FileName + "'/>\n");
-                                                    stringBuilder.Append("<br/>" + sub4Folder.FolderName + "</div>\n");
-                                                }
-                                                stringBuilder.Append("</div>");
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == sub2Folder.FolderImage).First();
-                                        stringBuilder.Append("<div><img src='" + imgRepo + "/" +
-                                            db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath + "/" + dbImageFile.FileName + "'/>\n");
-                                        stringBuilder.Append("<br/>" + sub2Folder.FolderName + "</div>\n");
-                                    }
+                                    dbImageCatFile = db.CategoryFolders.Where(i => i.Id == dbImageFile.FolderId).FirstOrDefault();
+                                    stringBuilder.Append("<div class='playmateDiv'><a href='https://ogglebooble.com/album.html?folder=" + dbPaymate.Id + " 'target='_blank'>" +
+                                        "<img class='playmateImage' src='" + imgRepo + "/" + dbImageCatFile.FolderPath + "/" + dbImageFile.FileName + "'/>\n");
                                 }
+                                else {
+                                    stringBuilder.Append("<div class='playmateDiv'><a href='https://ogglebooble.com/album.html?folder=" + dbPaymate.Id + "'target='_blank'>" +
+                                        "<img class='playmateImage' src='https://ogglebooble.com/Images/redballon.png'/>\n");                                
+                                }
+                                stringBuilder.Append("<br/>" + dbPaymate.FolderName + "</a></div>\n");
                             }
-                            else
-                            {
-                                ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == sub1Folder.FolderImage).First();
-                                stringBuilder.Append("<div><img src='" + imgRepo + "/" +
-                                    db.CategoryFolders.Where(f => f.Id == dbImageFile.FolderId).First().FolderPath + "/" + dbImageFile.FileName + "'/>\n");
-                                stringBuilder.Append("<br/>" + sub1Folder.FolderName + "</div>\n");
-                            }
+                            stringBuilder.Append("</div>\n");
                         }
-                    }
-                    //stringBuilder.Append("\n<style>\n" +
-                    //    ".pbDecade { margin - left: 20px; font-family: 'Segoe UI', Tahoma; font-size: 35px; }\n" +
-                    //    ".pbYear { margin - left: 80px; color:#000; font-size: 30px;}\n" +
-                    //    ".pbMonth { margin - left: 40px; font-size: 20px; }\n" +
-                    //    ".pbRow { display: flex; }\n" +
-                    //    ".pbCol { display: inline - block; margin-left: 60px; }\n" +
-                    //    ".pbItemCntr { display: inline-block; }\n" +
-                    //    ".pbImg { height: 45px; }\n</style>\n");
-                    {
-                        //monthIncimentor = 0;
-                        //stringBuilder.Append("<div class='pbDecade'>" + dbPlayboyDecade.FolderName + "</div>\n");
-                        //var dbPlayboyYears = db.CategoryFolders.Where(f => f.Parent == dbPlayboyDecade.Id).OrderBy(f => f.SortOrder).ToList();
-                        //foreach (var dbPlayboyYear in dbPlayboyYears)
-                        //{
-                        //    //hub.SendMessage("xx", dbPlayboyYear.FolderName);
-                        //    stringBuilder.Append("<div class='pbYear'>" + dbPlayboyYear.FolderName + "</div>\n");
-                        //    var dbPlayboyMonths = db.CategoryFolders.Where(f => f.Parent == dbPlayboyYear.Id).OrderBy(f => f.SortOrder).ToList();
-                        //    stringBuilder.Append("<div class='pbRow'>");
-                        //    foreach (CategoryFolder dbPbmonth in dbPlayboyMonths)
-                        //    {
-                        //        //ProcessStatus = dbPlayboyYear.FolderName + " " + ++monthIncimentor + " " + dbPbmonth.FolderName;
-                        //        imgSrc = "Images/redballon.png";
-                        //        if (dbPbmonth.FolderImage != null)
-                        //        {
-                        //            dbImageFile = db.ImageFiles.Where(i => i.Id == dbPbmonth.FolderImage).FirstOrDefault();
-                        //            if (dbImageFile != null)
-                        //                imgSrc = dbPbmonth.FolderPath + "/" + dbImageFile.FileName;
-                        //        }
-                        //        stringBuilder.Append(
-                        //            "<div class='pbCol' style='width:66px;'>" +
-                        //            //" onmouseover='showCenterfoldImage(\"" + imgSrc + "\")'" +
-                        //            //" onmouseout=\"$('.dirTreeImageContainer').hide()\">" +
-                        //            "   <a href='" + httpLocation + "/album.html?folder=" + dbPbmonth.Id + "'>" +
-                        //            "       <img class='pbImg' src='" + imagesLocation + imgSrc + "'>" +
-                        //            "       <div class='pbLabel01'>" + dbPbmonth.FolderName + "</div>\n" +
-                        //            "   </a>" +
-                        //            "</div>\n");
-                        //    }
-                        //    stringBuilder.Append("</div>\n");
-                        //}
-                        //stringBuilder.Append("</div>\n");
+                        stringBuilder.Append("</div>\n");
                     }
                 }
-
-                //stringBuilder.Append("<script>\nfunction showCenterfoldImage(link)\n {" +
-                //    "$('.dirTreeImageContainer').css('top', event.clientY - 100);\n" +
-                //    "$('.dirTreeImageContainer').css('left', event.clientX + 10);\n" +
-                //    "$('.dirTreeImage').attr('src', link);\n" +
-                //    "$('.dirTreeImageContainer').show();}\n</script>");
-
-                //$('#footerMessage').html(link);
                 stringBuilder.Append("\n</body>\n</html>");
-
-                success = WriteFileToDisk(stringBuilder.ToString(), fileName);
+                success = WriteFileToDisk(stringBuilder.ToString(), "EveryPlayboyPlaymate3.html");
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex) { 
+                success = Helpers.ErrorDetails(ex);
+            }
             return success;
         }
 
@@ -886,6 +820,16 @@ namespace OggleBooble.Api.Controllers
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
             return success;
+        }
+
+        private string PbHeader()
+        {
+            return "<div style='display:flex; background-color:#74bac3; border:solid thin black;'>" +
+             "   <div style='float:left;'>" +
+             "        <a href='https://ogglebooble.com/'><img style='height:50px; cursor:pointer;' src='https://ogglebooble.com/Images/redballon.png' target='_blank' /></a>" +
+             "   </div>" +
+             "   <div style='float:left;width:100%; font-size:32px; text-align:center;'>Every Playboy Playmate</div>" +
+             "</div>";
         }
     }
 

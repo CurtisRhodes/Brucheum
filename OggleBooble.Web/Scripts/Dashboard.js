@@ -192,7 +192,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf</div>\n"+
                 "<div class='clickable' onclick='PlayboyPlusDupeCheck();'>PlayboyPlusDupeCheck</div>\n" +
                 "<div class='clickable' onclick='showAutoIncrimentDialog();'>Auto Incriment</div>\n" +
-                "<div class='clickable' onclick='buildListPage()'>Build Gallery Page</div>"
+                "<div class='clickable' onclick='buildHtmlPage()'>Build Html Page</div>"
             );
             //"<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" +
             //"<div class='clickable' onclick='HardcoreFilecounts();'>HardcoreFilecounts()</div>");
@@ -252,11 +252,9 @@ function onDirTreeComplete() {
     if (delta < 1000)
         $('#dataifyInfo').hide();
     else {
-        var minutes = Math.floor(delta / 60000);
-        var seconds = (delta % 60000 / 1000).toFixed(0);
-        //$('#dataifyInfo').html("rebuilding directory tree took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+        $('#dataifyInfo').html("directory tree rebuild took: " + (delta / 1000).toFixed(3));
         //$('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toFixed(3));
-        $('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toLocaleString());
+        //$('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toLocaleString());
         //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
     }
 }
@@ -340,7 +338,7 @@ function performRepairLinks(justOne) {
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                let functionName = "performRepairLinks"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
@@ -348,7 +346,6 @@ function performRepairLinks(justOne) {
         logError("CAT", apFolderId, e, "performRepairLinks");
     }
 }
-
 
 function removeDupeIps() {
     let start = Date.now();
@@ -405,7 +402,7 @@ function removeDupeIps() {
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                let functionName = "removeDupeIps"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
@@ -612,8 +609,8 @@ function performMoveFolder() {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, "performMoveFolder")) logError("XHR", folderId, errMsg, "performMoveFolder");
         }
     });
 }
@@ -719,8 +716,8 @@ function loadMMcheckboxes() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, "loadMMcheckboxes")) logError("XHR", folderId, errMsg, "loadMMcheckboxes");
         }
     });
 }
@@ -769,8 +766,8 @@ function moveCheckedImages() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, "loadMMcheckboxes")) logError("XHR", folderId, errMsg, "loadMMcheckboxes");
             }
         });
     }
@@ -806,8 +803,8 @@ function performAutoIncriment(recurr) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, "performAutoIncriment")) logError("XHR", folderId, errMsg, "performAutoIncriment");
         }
     });
 }
@@ -846,8 +843,8 @@ function loadSortImages() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, "loadSortImages")) logError("XHR", folderId, errMsg, "loadSortImages");
         }
     });
 }
@@ -906,7 +903,7 @@ function saveSortChanges(sortOrderArray) {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "saveSortChanges"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
@@ -963,7 +960,7 @@ function emergencyFolderLocationFix() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "emergencyFolderLocationFix"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
@@ -990,7 +987,7 @@ function MoveManyCleanup() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "MoveManyCleanup"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
         }
     });
@@ -1146,7 +1143,7 @@ function performRipPdf() {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
                 alert(errMsg);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                let functionName = "performRipPdf"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
@@ -1169,7 +1166,7 @@ function performRipPdf() {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
                 alert(errMsg);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                let functionName = "performRipPdf"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             }
         });
@@ -1209,7 +1206,7 @@ function performRenameFolder(folderId, newFolderName) {
         },
         error: function (xhr) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "performRenameFolder"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", pSelectedTreeId, errMsg, functionName);
         }
     });
@@ -1260,13 +1257,12 @@ function xxHardcoreFilecounts() {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "xxHardcoreFilecounts"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
             alert(errMsg);
         }
     })
 }
-
 function XXloadProperties() {
     $('#dataifyInfo').show().html("adding size info");
     $.ajax({
@@ -1287,7 +1283,6 @@ function XXloadProperties() {
         }
     });
 }
-
 function XXmergeFolders() {
     if (confirm("collapse " + $('.txtLinkPath').val())) {
         $('#dashBoardLoadingGif').fadeIn();
@@ -1312,12 +1307,10 @@ function XXmergeFolders() {
         });
     }
 }
-
 function XXtestAddVisitor() {
     $('#dataifyInfo').show().html("sending test addVisitor");
     addVisitor(3309, "dashboard");
 }
-
 function xxshowAssignRolesDialog() {
     $('#rolesChooseBoxDialog').dialog('open');
     $('#divChooseAssigned').html("");

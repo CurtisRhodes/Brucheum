@@ -113,7 +113,9 @@ function verifyConnectionFunction(calledFrom, folderId) {
                     }
                     else {
                         console.log("success but no verify: " + successModel.Success);
-                        if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
+                        //if (document.domain === "localhost")
+                        //    alert("proper error in verify ConnectionFunction: " + successModel.Success);
+                        logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
                         connectionVerified = false;
                     }
                 }

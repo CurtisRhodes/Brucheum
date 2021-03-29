@@ -58,7 +58,7 @@ function runMetricsMatrixReport() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                let functionName = "runMetricsMatrixReport"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
             }
         });
@@ -591,22 +591,7 @@ function int2Month(nMonth) {
     }
 }
 
-function poll() {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Report/Poll",
-        success: function (processStatus) {
-            $('#dataifyInfo').html("building centerfold page: " + processStatus);
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
-        }
-    });
-}
-
-function buildListPage() {
+function buildHtmlPage() {
     let start = Date.now();
     //let pollingLoop = setInterval(function () { pollBuildCenterfoldHtmlPage() }, 5000);
     let startFolder = 1;
@@ -614,7 +599,7 @@ function buildListPage() {
     $('#dataifyInfo').show().html("building Html Page");
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/HtmlPage/Build?rootFolder=" + pSelectedTreeId,
+        url: settingsArray.ApiServer + "api/HtmlPage/BuildEveryPlayboyPlaymatePage",
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (success == "ok") {
@@ -632,7 +617,7 @@ function buildListPage() {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "BuildEveryPlayboyPlaymatePage"// arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
         }
     });
@@ -674,7 +659,7 @@ function PlayboyPlusDupeCheck() {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            let functionName = "PlayboyPlusDupeCheck"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
         }
     });

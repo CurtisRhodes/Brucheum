@@ -86,6 +86,8 @@
         }
         case "playboy":
         case "cybergirl":
+        case "muses": 
+        case "magazine": 
         case "centerfold": {
             $('#footerCol1').html(
                 "<div class='clickable' onclick='rtpe(\"FLC\",\"tt\",\"cybergirls\"," + folderId + ")'>cybergirls</div>\n" +
