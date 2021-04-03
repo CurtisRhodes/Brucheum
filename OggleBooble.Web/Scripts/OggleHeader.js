@@ -125,6 +125,7 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"PBB\",72,\"plus\",6368)'>plus</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",72,\"muses\",6095)'>muses</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",72,\"special\",6076)'>special editions</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\",72,\"lingerie\",3393)'>lingerie</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",72,\"cybergirls\",3796)'>cybergirls</a>,\n");
                 //"<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4013)'>Pmoy</a>,\n" +
                 //"<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4932)'>just centerfolds</a>\n");
@@ -163,6 +164,7 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"special\",6076)'>special editions</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"cybergirls\",3796)'>cybergirls</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"muses\",6095)'>muses</a>,\n" +
+                "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"lingerie\",3393)'>lingerie</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"Pmoy\",4013)'>Pmoy</a>\n");
             $('#topRowRightContainer').append(addBannerButton("ranker", "centerfold"));
             // bottom row
@@ -483,11 +485,16 @@ function dragableDialogClose() {
 }
 
 function topLogoClick(subdomain) {
+    //    if (document.domain == "localhost") alert("subdomain: " + subdomain);
     logEvent("TLC", hdrFolderId, subdomain, hdrSubdomain);
     switch (subdomain) {
+        case "playboyIndex":
+            window.location.href = "Index.html";
+            break;
         case "centerfold":
         case "playboy":
-            window.open("index.html?spa=72");
+            window.location.href = "Index.html?spa=72";
+            //window.open("index.html?spa=72");
             break;
         case "soft":
             window.open("album.html?folder=5233");

@@ -550,6 +550,7 @@ function commonDirTreeClick(danniPath, folderId) {
             case "stepchild":
                 $('#txtscSourceFolderName').val(pSelectedTreeFolderPath);
                 $('#scDirTreeContainer').fadeOut();
+                activeDirTree = "dashboard";
                 break;
             default:
         }
