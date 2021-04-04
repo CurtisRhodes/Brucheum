@@ -385,6 +385,9 @@ namespace OggleBooble.Api.Controllers
                     if (dbSourceFolder.Id == dbDestFolder.Parent)
                         newFileName = dbSourceFolder.FolderName + "_" + linkId + ext;
 
+                    if (!FtpUtilies.DirectoryExists(destFtpPath))
+                        FtpUtilies.CreateDirectory(destFtpPath);
+
                     success = FtpUtilies.MoveFile(sourceFtpPath + "/" + fileName, destFtpPath + "/" + newFileName);
 
                     if (success == "ok")

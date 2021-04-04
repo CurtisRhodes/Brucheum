@@ -48,7 +48,7 @@ function dashboardHtml() {
         "                           <label>link</label><input id='txtImageLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()'/>\n" +
         "                       </div>\n" +
         "                       <div class='flexbox'>\n" +
-        "                           <label>path</label><input class='roundedInput txtLinkPath' readonly='readonly' />\n" +
+        "                           <label>path</label><input class='roundedInput txtLinkPath' tabindex='-1' readonly='readonly' />\n" +
         "                       </div>\n" +
         "                       <div class='roundendButton' tabindex='2' onclick='addImageLink()'>Insert</div>\n" +
         "                   </div>\n" +
@@ -185,7 +185,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showSortTool()'>Sort Tool</div>\n" +
                 "<div class='clickable' onclick='showCreateNewFolderDialog(" + pSelectedTreeId + ")';\">Create New Folder</div>\n" +
                 "<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>\n" +
-                "<div class='clickable' onclick='showAddStepChildFolderDialog()'>Copy Folder</div>\n" +
+                "<div class='clickable' onclick='showAddStepChildFolderDialog()'>Add StepChild</div>\n" +
                 "<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(1);'>Move Many</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(2);'>Copy Many</div>\n" +
@@ -245,6 +245,7 @@ function loadDashboardDirTree(forceRefresh) {
     $('#dataifyInfo').show().html("rebuilding directory tree");
     loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
 }
+
 function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
     resizeDashboardPage();
@@ -615,13 +616,13 @@ function performMoveFolder() {
     });
 }
 
-// COPY FOLDER  (create stepchild)
+// ADD STEPCHILD
 function showAddStepChildFolderDialog() {
     let cfSsorceFolderId = pSelectedTreeId;  // captured before 
     $('#dashboardDialogTitle').html("Create Stepchild Folder");
     $('#dashboardDialogContents').html(
-        "    <div><span>folder to copy</span><input id='txtStepParent' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
-        "    <div><span>new parent</span><input id='txtscSourceFolderName' class='roundedInput' readonly='readonly'/>\n" +
+        "    <div><span>parent folder</span><input id='txtStepParent' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
+        "    <div><span>child folder</span><input id='txtscSourceFolderName' class='roundedInput' readonly='readonly'/>\n" +
         "       <img class='dialogDirTreeButton' src='/Images/caretDown.png' onclick='$(\"#scDirTreeContainer\").toggle()'/></div>\n" +
         "    <div><span>new name</span><input id='txtscNewFolderName' class='roundedInput' /></div>\n" +
         "    <div><span>new link</span><input id='txtCustomFolderLink' class='roundedInput' /></div>\n" +
@@ -629,11 +630,11 @@ function showAddStepChildFolderDialog() {
         "       <div id='scDirTreeContainer' class='floatingDirTreeContainer'></div>\n");
     $("#txtStepParent").val(pSelectedTreeFolderPath);
     activeDirTree = "stepchild";
-    loadDirectoryTree(1, "scDirTreeContainer", true);
+    loadDirectoryTree(1, "scDirTreeContainer", false);
     $('#dashboardDialog').fadeIn();
 }
 function perfomAddStepChildFolder(cfSsorceFolderId) {
-    alert("sorceFolderId: " + cfSsorceFolderId + "  DestinationId: " + pSelectedTreeId);
+    //alert("sorceFolderId: " + cfSsorceFolderId + "  DestinationId: " + pSelectedTreeId);
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "POST",

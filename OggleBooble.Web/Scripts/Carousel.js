@@ -211,10 +211,11 @@ function startCarousel(calledFrom) {
     if (vCarouselInterval)
         console.log("carousel interval already started. Called from: " + calledFrom);
     else {
-        $('#testMessage1').html("|v|");
+        //$('#testMessage1').html("|v|");
         intervalBody();
-        $('#testMessage1').html("|v||");
+        //$('#testMessage1').html("|v||");
         //$('.assuranceArrows').show();
+
         vCarouselInterval = setInterval(function () {
             intervalBody();
         }, rotationSpeed);
@@ -233,19 +234,23 @@ function intervalBody() {
 
         $('#tempImageLoad').attr('src', nextImg).load(function () {
             $('#testMessage1').html("||||");
-            imgSrc = nextImg;
-            $('#testMessage1').html("|||||");
-            $('.carouselFooter').css("visibility", "hidden");
-            $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-                $('#testMessage1').html("|");
-                $('#thisCarouselImage').attr('src', imgSrc);
-                $('#testMessage1').html("||");
-                $('#carouselFooter').fadeIn();
-                $('#testMessage1').html("|||....");
-                setLabelLinks(imageIndex);
-                $('#testMessage1').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
-                $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-            });
+            if (isNullorUndefined(nextImg))
+                $('#testMessage1').html("nextImg: " + nextImg);
+            else {
+                imgSrc = nextImg;
+                $('#testMessage1').html("|||||");
+                $('.carouselFooter').css("visibility", "hidden");
+                $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+                    $('#testMessage1').html("|");
+                    $('#thisCarouselImage').attr('src', imgSrc);
+                    $('#testMessage1').html("||");
+                    $('#carouselFooter').fadeIn();
+                    $('#testMessage1').html("|||....");
+                    setLabelLinks(imageIndex);
+                    $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+                    $('#testMessage1').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
+                });
+            }
         });
         //$('#testMessage1').html("|| image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
         imageHistory.push(imageIndex);
