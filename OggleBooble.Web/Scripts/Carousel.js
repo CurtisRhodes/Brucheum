@@ -32,7 +32,7 @@ function launchCarousel(startRoot) {
                 console.log("loaded " + carouselItemArray.length + " from centerfold cache");
             }
             else
-                console.log("no " + rootFolder + " cache found");
+                console.log("no " + startRoot + " cache found");
         }
         if (startRoot === "boobs") {
             if (!isNullorUndefined(window.localStorage["carouselCache"])) {
@@ -46,7 +46,7 @@ function launchCarousel(startRoot) {
                 carouselSkip = carouselItemArray.length;
             }
             else
-                console.log("no " + rootFolder + " cache found");
+                console.log("no " + startRoot + " cache found");
         }
         if (startRoot === "porn") {
             if (!isNullorUndefined(window.localStorage["pornCache"])) {
@@ -60,7 +60,7 @@ function launchCarousel(startRoot) {
                 console.log("loaded " + carouselItemArray.length + " from porn cache");
             }
             else
-                console.log("no " + rootFolder + " cache found");
+                console.log("no " + startRoot + " cache found");
         }
         //$('#footerMessage2').html("initial call to loadimages");
         //console.log("initial call to loadimages");
