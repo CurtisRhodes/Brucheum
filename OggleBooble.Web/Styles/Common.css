@@ -3,7 +3,7 @@
     --brucheumBlue: #74bac3;
     --oggleBackgroundColor: #c1bad1; /*#fef;  #f7eef7  #b081b1 #f8e8e8 */
     --oggleContainerBackgroundColor: #93b798; /* #bc61e4; #d1f5f3; #f8e8e8 */
-    --oggleDialogBackgroundColor: #fc9; /* #d1f5f3; #f8e8e8 */
+    --oggleDialogBackgroundColor: #c4c6ae;
     --oggleBorderColor: #b200ff; /* #f1cff7;*/
     --ogglePurple: #79078f;
     --normalFont: 15px;
@@ -403,17 +403,6 @@ body {
     cursor: pointer;
 }
 
-.floatingFeedbackButton {
-    position: fixed;
-    bottom: 20px;
-    right: 5px;
-    height: 30px;
-    padding: 5px;
-    cursor: pointer;
-    background-color: var(--brucheumBlue);
-    border-radius: 8px;
-}
-
 .dirTreeNode {
     white-space: nowrap;
 }
@@ -436,6 +425,16 @@ body {
 
 .catlyn {
     background-image: url('https://edge206.stream.highwebmedia.com/live-hls/amlst:caylin-sd-8937ba6912ed937e04b8db696878e971b081d644ba83cba4e9b73d5e0af1e0f6_trns_h264/playlist.m3u8');
+}
+
+.floatingFeedbackButton {
+    position: fixed;
+    bottom: 80px;
+    right: 5px;
+    padding: 11px;
+    cursor: pointer;
+    background-color: var(--brucheumBlue);
+    border-radius: 8px;
 }
 
 .feedbackRadioButtons {

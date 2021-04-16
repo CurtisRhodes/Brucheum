@@ -221,43 +221,48 @@ function startCarousel(calledFrom) {
         }, rotationSpeed);
     }
 }
-
+let intervalReady = true;
 function intervalBody() {
-    if ($('#pauseButton').html() == "||") {
-        $('#testMessage1').html("|");
-        imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-        $('#testMessage1').html("||");
-        let nextImg = settingsImgRepo + carouselItemArray[imageIndex].ImageFileName;
-        $('#testMessage1').html("|||");
+    if (intervalReady) {
+        intervalReady = false;
+        if ($('#pauseButton').html() == "||") {
+            $('#testMessage1').html("|");
+            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+            $('#testMessage1').html("||");
+            let nextImg = settingsImgRepo + carouselItemArray[imageIndex].ImageFileName;
+            $('#testMessage1').html("|||");
 
-        //$('#tempImageLoad').attr('src', nextImg);
+            //$('#tempImageLoad').attr('src', nextImg);
 
-        $('#tempImageLoad').attr('src', nextImg).load(function () {
-            $('#testMessage1').html("||||");
-            if (isNullorUndefined(nextImg))
-                $('#testMessage1').html("nextImg: " + nextImg);
-            else {
-                imgSrc = nextImg;
-                $('#testMessage1').html("|||||");
-                $('.carouselFooter').css("visibility", "hidden");
-                $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
-                    $('#testMessage1').html("|");
-                    $('#thisCarouselImage').attr('src', imgSrc);
-                    $('#testMessage1').html("||");
-                    $('#carouselFooter').fadeIn();
-                    $('#testMessage1').html("|||....");
-                    setLabelLinks(imageIndex);
-                    $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
-                    $('#testMessage1').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
-                });
-            }
-        });
-        //$('#testMessage1').html("|| image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
-        imageHistory.push(imageIndex);
-    }
-    else {
-        $('#pauseButton').html("|");
-        setTimeout(function () { $('#pauseButton').html(">") }, 700);
+            $('#tempImageLoad').attr('src', nextImg).load(function () {
+                $('#testMessage1').html("||||");
+                if (isNullorUndefined(nextImg))
+                    $('#testMessage1').html("nextImg: " + nextImg);
+                else {
+                    imgSrc = nextImg;
+                    $('#testMessage1').html("|||||");
+                    $('.carouselFooter').css("visibility", "hidden");
+                    $('#carouselImageContainer').fadeOut(intervalSpeed, "linear", function () {
+                        $('#testMessage1').html("|");
+                        $('#thisCarouselImage').attr('src', imgSrc);
+                        $('#testMessage1').html("||");
+                        $('#carouselFooter').fadeIn();
+                        $('#testMessage1').html("|||....");
+                        setLabelLinks(imageIndex);
+                        $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+                        $('#testMessage1').html("image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
+                        intervalReady = true;
+                    });
+                }
+            });
+            //$('#testMessage1').html("|| image " + imageIndex.toLocaleString() + " of " + carouselItemArray.length.toLocaleString());
+            imageHistory.push(imageIndex);
+        }
+        else {
+            $('#pauseButton').html("|");
+            intervalReady = true;
+            setTimeout(function () { $('#pauseButton').html(">") }, 700);
+        }
     }
 }
 

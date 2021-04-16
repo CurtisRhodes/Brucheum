@@ -34,26 +34,19 @@
     position: absolute;
     top: 111px;
     left: 66px;
-    padding: 4px;
     border: solid 5px var(--oggleBorderColor);
     border-radius: 5px;
     width: 344px;
-    height: 299px;
     display: none;
 }
-.promoFlexContainer {
-    display: flex;
-    flex-flow: row;
-}
 .ogglePromoTitle {
-    flex: 1 0 auto;
     font-size: 22px;
     text-align: center;
     background-color: var(--ogglgeHeaderBarColor);
 }
 .ogglePromoText {
-    flex: 1 1 auto;
-    background-color: var(--oggleContainerBackgroundColor);
+    /*    background-color: var(--oggleContainerBackgroundColor);  */
+    max-height: 222px;
     overflow-y: auto;
 }
 .ogglePromoKillMessage {

@@ -340,6 +340,18 @@ namespace OggleBooble.Api.Controllers
                     MailMessage mailMessage = new MailMessage(message.From, "CurtishRhodes@hotmail.com", message.Subject, message.Message);
                     //MailMessage mailMessage = new MailMessage("info@api.Ogglebooble.com", "CurtishRhodes@hotmail.com", message.Subject, message.Message);
                     mailMessage.IsBodyHtml = true;
+
+                    // "smtp.office365.com, 587"
+
+
+
+
+
+
+
+
+
+
                     smtpClient.Send(mailMessage);
                     success = "ok";
                 }

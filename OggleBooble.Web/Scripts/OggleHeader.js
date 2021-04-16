@@ -491,8 +491,12 @@ function topLogoClick(subdomain) {
         case "playboyIndex":
             window.location.href = "Index.html";
             break;
-        case "centerfold":
         case "playboy":
+        case "cybergirl":
+        case "muses":
+        case "plus":
+        case "magazine":
+        case "centerfold":
             window.location.href = "Index.html?spa=72";
             //window.open("index.html?spa=72");
             break;
