@@ -87,6 +87,8 @@
         case "playboy":
         case "cybergirl":
         case "muses": 
+        case "plus": 
+        case "special": 
         case "magazine": 
         case "centerfold": {
             $('#footerCol1').html(

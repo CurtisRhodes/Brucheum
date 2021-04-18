@@ -21,7 +21,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
             type: "GET",
             url: settingsArray.ApiServer + "api/FolderDetail/GetQuickFolderInfo?folderId=" + folderId,
             success: function (folderInfo) {
-                $('#imagePageLoadingGif').hide();
+                $('#albumPageLoadingGif').hide();
                 if (folderInfo.Success === "ok") {
                     objFolderInfo.FolderId = folderId;
                     objFolderInfo.FolderName = folderInfo.FolderName;
@@ -56,7 +56,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
         });
     }
     catch (e) {
-        $('#imagePageLoadingGif').hide();
+        $('#albumPageLoadingGif').hide();
         logError("CAT", folderId, e, "showFolderInfoDialog");
     }
 }
@@ -106,7 +106,7 @@ function showBasicFolderInfoDialog() {
 }
 
 function showFullModelDetails(folderId) {
-    $('#imagePageLoadingGif').show();
+    $('#albumPageLoadingGif').show();
     $("#modelInfoDetails").html(modelInfoDetailHtml());
     $('#readonlyPoserDetails').show();
     $('#editablePoserDetails').hide();
@@ -118,7 +118,7 @@ function showFullModelDetails(folderId) {
         type: "GET",
         url: settingsArray.ApiServer + "api/FolderDetail/GetFullFolderInfo?folderId=" + folderId,
         success: function (folderInfo) {
-            $('#imagePageLoadingGif').hide();
+            $('#albumPageLoadingGif').hide();
             if (folderInfo.Success === "ok") {
                 objFolderInfo = folderInfo;
                 $('#centeredDialogTitle').html(folderInfo.FolderName);
@@ -134,12 +134,12 @@ function showFullModelDetails(folderId) {
                 $("#summernoteContainer").summernote("code", folderInfo.FolderComments);
             }
             else {
-                $('#imagePageLoadingGif').hide();
+                $('#albumPageLoadingGif').hide();
                 logError("AJX", folderId, folderInfo.Success, "show FullModelDetails");
             }
         },
         error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
+            $('#albumPageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
@@ -225,7 +225,7 @@ function editFolderDialog() {
     //$('#selBoobs').val(objFolderInfo.FakeBoobs ? 1 : 0).change();
 }
 function saveFolderDialog() {
-    $('#imagePageLoadingGif').show();
+    $('#albumPageLoadingGif').show();
     // LOAD GETS
     // alternamtive folderName $('#txtFolderName').val(rtnFolderInfo.FolderName);
     objFolderInfo.FolderName = $('#txtEdtFolderName ').val(); 
@@ -242,7 +242,7 @@ function saveFolderDialog() {
         url: settingsArray.ApiServer + "/api/FolderDetail/AddUpdate",
         data: objFolderInfo,
         success: function (success) {
-            $('#imagePageLoadingGif').fadeOut();
+            $('#albumPageLoadingGif').fadeOut();
             if (success === "ok") {
                 displayStatusMessage("ok", "category description updated");
                 //awardCredits("FIE", objFolderInfo.Id);
@@ -256,7 +256,7 @@ function saveFolderDialog() {
             }
         },
         error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
+            $('#albumPageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", objFolderInfo.Id, errMsg, functionName);

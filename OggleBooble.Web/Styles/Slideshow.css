@@ -12,6 +12,19 @@
     border: dashed thin red;
 }
 
+.copycatMsg {
+    position: absolute;
+    font-size: 12px;
+    top: 133px;
+    right: 222px;
+    padding: 9px;
+    border-radius: 8px;
+    background-color: var(--ogglePurple);
+    color: #fff;
+    z-index: 25;
+    cursor: pointer;
+}
+
 .imageViewerHeaderRow {
     background-color: var(--ogglgeHeaderBarColor);
     display: flex;

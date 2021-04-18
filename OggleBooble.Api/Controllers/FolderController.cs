@@ -129,6 +129,25 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
+        [HttpGet]
+        [Route("api/CatFolder/GetChildFolders")]
+        public SubFoldersModel GetChildFolders(int folderId)
+        {
+            SubFoldersModel subFolders = new SubFoldersModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    subFolders.childFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                    subFolders.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                subFolders.Success = Helpers.ErrorDetails(ex);
+            }
+            return subFolders;
+        }
 
         [HttpGet]
         [Route("api/CatFolder/GetSearchResults")]
