@@ -74,6 +74,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int PGroup { get; set; }
         public int FSize { get; set; }
         public string FileId  { get; set; }
+        public string FolderName { get; set; }
     }
 
     [Table("OggleBooble.VwBlogComment")]

@@ -54,7 +54,12 @@ namespace OggleBooble.Api.Controllers
                     CategoryFolder dbParentFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
                     imageFileName = dbParentFolder.FolderName;
                 }
-                RenamePhyscialFiles(ftpPath, imageFileName, repairReport);
+                string renameSuccess = RenamePhyscialFiles(ftpPath, imageFileName, repairReport);
+                if(renameSuccess!="ok")
+                {
+                    repairReport.Success = renameSuccess + "ftpPath: " + ftpPath + "  imageFileName: " + imageFileName;
+                    return;
+                }
 
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
                 if (physcialFiles.Length > 0 && physcialFiles[0].StartsWith("ERROR"))
@@ -152,6 +157,7 @@ namespace OggleBooble.Api.Controllers
                     {
                         if (dbFolderImageFile.Size == 0)
                         {
+
                             string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
                             ImageFileInfo imageFileInfo = GetImageFileInfo(newFileName);
                             if (imageFileInfo.Size == 0)
@@ -268,6 +274,10 @@ namespace OggleBooble.Api.Controllers
                 // use parent foldername for path
                 string fileName, newFileName, ext, possibleGuid = "";
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
+                if ((physcialFiles.Length == 1) && (physcialFiles[0].StartsWith("ERROR")))
+                {
+                    return physcialFiles[0];
+                }
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
                     fileName = physcialFiles[i];

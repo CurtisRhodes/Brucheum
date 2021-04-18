@@ -29,7 +29,7 @@ function displaySpaPage(spaPageId) {
             launchCarousel("boobs");
             $('.indexPageSection').show();
             loadUpdatedGalleriesBoxes();
-            //setTimeout(function () { launchPromoMessages(); }, 3000);
+            setTimeout(function () { launchPromoMessages(); }, 3000);
             break;
         case '3909': // porn
             spaType = "porn";
@@ -156,12 +156,11 @@ function launchPromoMessages() {
 
 function showPromoMessages(promoMessagesArray) {
     $('#promoContainer').html(
-    "<div class='promoFlexContainer'>\n" +
         "<div id='promoContainerTitle' class='ogglePromoTitle'></div>\n" +
         "<div id='promoContainerText' class='ogglePromoText'></div>\n" +
         "<div onclick='killPromoMessages()' class='tinyDots' onmouseover='$(\"#killPromoPrompt\").show()' onmouseout='$(\"#killPromoPrompt\").hide()'>...</div>\n" +
-        "<div id='killPromoPrompt' class='ogglePromoKillMessage'>had enough promo messages?</div>\n" +
-    "</div>");
+        "<div id='killPromoPrompt' class='ogglePromoKillMessage'>had enough promo messages?</div>");
+
     $('#promoContainer').fadeIn(800,"");
     $('#promoContainer').draggable().resizable();
     //$('#promoContainerText').resizable();

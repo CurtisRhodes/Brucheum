@@ -625,12 +625,13 @@ function buildHtmlPage() {
 
 function PlayboyPlusDupeCheck() {
     let start = Date.now();
+    $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/Report/RegularDupeCheck",
+        url: settingsArray.ApiServer + "api/DupeCheck/ArchiveDupes",
         success: function (dupeCheckModel) {
             $('#dashBoardLoadingGif').hide();
-            alert("dupeCheckModel.Success: " + dupeCheckModel.Success);
+            //alert("dupeCheckModel.Success: " + dupeCheckModel.Success);
             if (dupeCheckModel.Success == "ok") {
                 let delta = Date.now() - start;
                 let minutes = Math.floor(delta / 60000);
@@ -638,21 +639,21 @@ function PlayboyPlusDupeCheck() {
                 console.log("PlayboyPlusDupeCheck took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                 $('#dataifyInfo').show().html("PlayboyPlusDupeCheck took: " + minutes + ":" + seconds +
                     " Groups Processed: " + dupeCheckModel.GroupsProcessed);
-                if (dupeCheckModel.SameSizeDupes > 0)
-                    $('#dataifyInfo').append(" SameSizeDupes: " + dupeCheckModel.SameSizeDupes);
-                if (dupeCheckModel.SameSizeDupes > 0)
+                if (dupeCheckModel.ServerFilesMoved > 0)
+                    $('#dataifyInfo').append(" ServerFilesMoved: " + dupeCheckModel.ServerFilesMoved);
+                if (dupeCheckModel.ServerFilesDeleted > 0)
                     $('#dataifyInfo').append(" Server Files Deleted: " + dupeCheckModel.ServerFilesDeleted);
                 if (dupeCheckModel.LocalFilesDeleted > 0)
                     $('#dataifyInfo').append(" Local Files Deleted: " + dupeCheckModel.LocalFilesDeleted);
-                if (dupeCheckModel.SameSizeDupes > 0)
-                    $('#dataifyInfo').append(" Image Files Removed: " + dupeCheckModel.ImageFilesRemoved);                    
+                if (dupeCheckModel.LocalFilesMoved > 0)
+                    $('#dataifyInfo').append(" Local Files Moved: " + dupeCheckModel.LocalFilesMoved);                    
                 if (dupeCheckModel.LinksRemoved > 0)
                     $('#dataifyInfo').append(" Links Removed: " + dupeCheckModel.LinksRemoved);                    
-                if (dupeCheckModel.LinksPreserved > 0)
-                    $('#dataifyInfo').append(" Links Preserved: " + dupeCheckModel.LinksPreserved);                    
+                if (dupeCheckModel.LinksAdded > 0)
+                    $('#dataifyInfo').append(" Links Added: " + dupeCheckModel.LinksAdded);                    
             }
             else {
-                alert("PlayboyPlusDupeCheck: " + success);
+                alert("PlayboyPlusDupeCheck: " + dupeCheckModel.Success);
                 logError("AJX", 3910, dupeCheckModel.Success, "PlayboyPlusDupeCheck");
             }
         },
@@ -660,10 +661,10 @@ function PlayboyPlusDupeCheck() {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = "PlayboyPlusDupeCheck"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, 3363, functionName)) logError("XHR", 3907, errMsg, functionName);
+            alert("PlayboyPlusDupeCheck XHR: " + errMsg);
         }
     });
-
 }
 
 function runPlayboyListReport() {

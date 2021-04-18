@@ -125,12 +125,17 @@ namespace OggleBooble.Api.Models
     public class DupeCheckModel
     {
         public int GroupsProcessed { get; set; }
-        public int SameSizeDupes { get; set; }
+        public int SameSizeDupeRemoved { get; set; }
+        public int ServerFilesMoved { get; set; }
         public int ServerFilesDeleted { get; set; }
+        public int LocalFilesMoved { get; set; }
         public int LocalFilesDeleted { get; set; }
+        public int ImageFilesMoved { get; set; }
         public int ImageFilesRemoved { get; set; }
         public int LinksRemoved { get; set; }
+        public int LinksAdded { get; set; }
         public int LinksPreserved { get; set; }
+        public int Errors { get; set; }
         public string Success { get; set; }
     }
 
