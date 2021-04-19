@@ -57,14 +57,14 @@ function resizeRankerPage() {
 
 function loadBoobsRanker(rankPref) {
     //alert("loadBoobsRanker: " + rankPref);
-    //$('#boobsRankerLoadingGif').show();
+    $('#rankerLoadingGif').show();
     settingsImgRepo = settingsArray.ImageRepo;
 
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/Ranker/LoadRankerImages?rootFolder=" + rankPref + "&skip=" + skip + "&take=" + take,
         success: function (container) {
-            $('#boobsRankerLoadingGif').hide();
+            $('#rankerLoadingGif').hide();
             if (container.Success === "ok") {
                 $.each(container.RankerLinks, function (idx, obj) {
                     rankerLinksArray[idx + skip] = new Array;
@@ -99,7 +99,7 @@ function loadBoobsRanker(rankPref) {
             }
         },
         error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
+            $('#rankerLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
@@ -206,12 +206,13 @@ function killTimer(rankPref) {
 function unloadBoobsRanker(rankPref) {
     //alert("UNloadBoobsRanker: " + rankPref);
     $('#footerMessage').html("starting to unload " + rankPref);
+    $('#rankerLoadingGif').show();
     killTimer(rankPref);
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/BoobsRanker?rootFolder=" + rankPref + "&skip=0&take=50000",
         success: function (container) {
-            $('#boobsRankerLoadingGif').hide();
+            $('#rankerLoadingGif').hide();
             if (container.Success === "ok") {
                 var kkk = 0;
                 $('#footerMessage').html("unloading " + rankPref);
@@ -232,7 +233,7 @@ function unloadBoobsRanker(rankPref) {
             }
         },
         error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
+            $('#rankerLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
@@ -425,8 +426,7 @@ function imageClick(selectedSide) {
                 }
             },
             error: function (jqXHR) {
-                $('#blogLoadingGif').hide();
-                $('#imagePageLoadingGif').hide();
+                $('#rankerLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
                 let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
@@ -445,7 +445,8 @@ function jumpToFolder(selectedSide) {
 }
 
 function rankerHTML() {
-    return "    <div class='rankerOuterContainer'>\n" +
+    return "<div class='rankerOuterContainer'>\n" +
+        "       <img id='rankerLoadingGif' class='loadingGif' src='Images/loader.gif' />\n" +
         "        <div class='floatLeft'>\n" +
         "            <div class='boobsRankerTitle'>Boobs Ranker</div>\n" +
         "            <div class='rankerImageContainer'>\n" +

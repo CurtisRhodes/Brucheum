@@ -1,10 +1,16 @@
 ﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId; //, ttlFiles, ttlFolders;
+const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
 
+function loadLargeAlbum(folderId) {
+    apFolderId = folderId;
+    apVisitorId = getCookieValue("VisitorId");
 
-function loadLargeAlbum(pFolderId) {
-
+    qucikHeader(folderId);
+    //logPageHit(folderId);
+    settingsImgRepo = settingsArray.ImageRepo;
+    getMultipleAlbumImages(folderId);
+    getAlbumPageInfo(folderId, true);
 }
-
 
 function loadAlbum(folderId) {
     if (isNullorUndefined(folderId)) {
@@ -21,7 +27,7 @@ function loadAlbum(folderId) {
     //}
     settingsImgRepo = settingsArray.ImageRepo;
     getAlbumImages(folderId);
-    getAlbumPageInfo(folderId);
+    getAlbumPageInfo(folderId, false);
 }
 
 function qucikHeader(folderId) {
@@ -43,9 +49,7 @@ function qucikHeader(folderId) {
                     showFeedbackDialog(folderId, albumInfo.FolderName);
                 });
 
-
-
-                var delta = (Date.now() - infoStart) / 1000;
+                let delta = (Date.now() - infoStart) / 1000;
                 console.log("QucikHeader took: " + delta.toFixed(3));
             }
             else {
@@ -60,17 +64,114 @@ function qucikHeader(folderId) {
     });
 }
 
+function getMultipleAlbumImages(folderId) {
+    //alert("getMultipleAlbumImages: " + folderId);
+    let getImagesStart = Date.now();
+    $('#albumPageLoadingGif').show();
+    $('#galleryBottomfileCount').html("?");
+    let imageFrameClass = "folderImageOutterFrame";
+
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/CatFolder/GetChildFolders?folderId=" + folderId,
+            success: function (subFolders) {
+                if (subFolders.Success == "ok") {
+                    $('#imageContainer').show();
+                    $('#imageContainer').html('');
+                    $.each(subFolders.childFolders, function (idx, childFolder) {
+                        console.log("loading images for " + childFolder.Id);
+                        $.ajax({
+                            type: "GET",
+                            url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + childFolder.Id,
+                            success: function (albumImageInfo) {
+                                if (albumImageInfo.Success === "ok") {
+                                    $('#albumPageLoadingGif').show();
+                                    $.each(albumImageInfo.ImageLinks, function (idx, obj) {
+                                        let imgSrc = settingsImgRepo + "/" + obj.FileName;
+                                        if (obj.FileName.endsWith("mpg") || obj.FileName.endsWith("mp4")) {
+                                            $('#imageContainer').append(
+                                                "<div class='" + imageFrameClass +
+                                                "' oncontextmenu='albumContextMenu(\"Video\",\"" + obj.LinkId + "\"," +
+                                                obj.FolderId + ",\"" + posterFolder + obj.Poster + "\")'>" +
+                                                "<video id='" + obj.LinkId + "' controls='controls' class='thumbImage' " +
+                                                " poster='" + posterFolder + obj.Poster + "' >" +
+                                                "   <source src='" + imgSrc + "' type='video/mp4' label='label'>" +
+                                                "</video></div>");
+                                        }
+                                        else {
+                                            let imageHtml = "<div class='" + imageFrameClass + "'>\n" +
+                                                "<img id='" + obj.LinkId + "' class='thumbImage'\n" +
+                                                " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\)'\n" +
+                                                " alt='" + obj.LinkId + "' titile='" + obj.DirectoryName + "' \n" +
+                                                " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + imgSrc + "\")'\n" +
+                                                " onclick='launchViewer(" + obj.FolderId + ",\"" + obj.LinkId + "\",true)' src='" + imgSrc + "'/>\n";
+
+                                            if (obj.FolderId !== obj.SrcId)
+                                                imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
+                                                    obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail\"," + obj.SrcId + ")' /></div>\n";
+
+                                            imageHtml += "</div>\n";
+                                            $('#imageContainer').append(imageHtml);
+                                        }
+                                    });
+                                    $('#albumPageLoadingGif').hide();
+                                }
+                                else {
+                                    alert("albumImageInfo.Success: " + childFolder.Id);
+                                    alert("subFolders.Success: " + subFolders.Success);
+                                     if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
+                                        checkConnection(folderId, "getAlbumImages");
+                                    else
+                                        logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
+                                }
+                            },
+                            error: function (jqXHR) {
+                                $('#albumPageLoadingGif').hide();
+                                let errMsg = getXHRErrorDetails(jqXHR);
+                                alert("getMultipleAlbumImages XHR: " + errMsg);
+                                if (!checkFor404(errMsg, folderId, "getMultipleAlbumImages")) logError("XHR", folderId, errMsg, "getMultipleAlbumImages");
+                            }
+                        });
+                    });
+                    $('#imageContainer').show();
+                    resizeAlbumPage();
+                    //$('#footerMessage').html(": " + imagesModel.Files.length);
+                    $('#folderCommentButton').fadeIn();
+                    let delta = (Date.now() - getImagesStart) / 1000;
+                    console.log("getMultipleAlbumImages took: " + delta.toFixed(3));
+                    $('.footer').show();
+                }
+                else {
+                    if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
+                        checkConnection(folderId, "getAlbumImages");
+                    else
+                        logError("AJX", folderId, albumImageInfo.Success, "getMultipleAlbumImages");
+                }
+            },
+            error: function (jqXHR) {
+                $('#albumPageLoadingGif').hide();
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "getMultipleAlbumImages")) logError("XHR", folderId, errMsg, "getMultipleAlbumImages");
+            }
+        });
+    } catch (e) {
+        alert("getAlbumImages: " + e);
+        logError("CAT", folderId, e, "getAlbumImages");
+    }
+}
+
 function getAlbumImages(folderId) {
     var getImagesStart = Date.now();
     const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
-    $('#indexPageLoadingGif').show();
+    $('#albumPageLoadingGif').show();
     $('#galleryBottomfileCount').html("?");
     try {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + folderId,
             success: function (albumImageInfo) {
-                $('#indexPageLoadingGif').hide();
+                $('#albumPageLoadingGif').hide();
                 if (albumImageInfo.Success === "ok") {
                     //PROCESS IMAGES
                     let labelClass = "defaultSubFolderImage";
@@ -149,13 +250,13 @@ function getAlbumImages(folderId) {
                 }
                 else {
                     if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
-                        verifyConnection();
+                        checkConnection(folderId, "getAlbumImages");
                     else
                         logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
                 }
             },
             error: function (jqXHR) {
-                $('#indexPageLoadingGif').hide();
+                $('#albumPageLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
                 let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
@@ -166,7 +267,7 @@ function getAlbumImages(folderId) {
     }
 }
 
-function getAlbumPageInfo(folderId) {
+function getAlbumPageInfo(folderId, isLargeLoad) {
     var infoStart = Date.now();
     $.ajax({
         type: "GET",
@@ -181,33 +282,26 @@ function getAlbumPageInfo(folderId) {
                 });
 
                 //function addMetaTags() {
-                //jQuery("head").append('<meta property="og:url" content="' + url + '">');
                 jQuery("head").append("<meta property='og:title' content='" + albumInfo.FolderName + ">");
                 let aKeywords = "big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold, ";
                 jQuery("head").append("<meta property='keywords' content='" + aKeywords + albumInfo.FolderName + ">");
                 $('#seoPageName').html(albumInfo.FolderName);
 
-                //<meta name="description" content="Ogglebooble is a large collection of natural big breasted girls" />
-                //    <meta name="keywords" content="big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold" />
-                //    <!--< meta property = 'og:title' content = '" + dbFolder.FolderName + "- Free pics, videos & biography' /> -->
-                //< !--< meta property = 'og:description' content = '" + dbFolder.FolderName + " - Free pics, videos & biography' /> -->
-                //< !--< meta property = "og:url" content = "https://www.Ogglebooble.com/" + dbFolder.FolderName + "'/>-->
-                //    < meta property = "og:site_name" content = "OggleBooble" />
-
-                //if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel") || (albumInfo.FolderType === "multiModel")) {
-                if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel") || (albumInfo.FolderType === "multiModel")) {
-                    $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
-                    //chargeCredits(folderId, albumInfo.RootFolder, albumInfo.FolderType);
-                    $('#deepSlideshowButton').hide();                    
-                    $('#largeLoadButton').hide();
+                $('#deepSlideshowButton').hide();
+                $('#largeLoadButton').hide();
+                if (isLargeLoad) {
+                    $('#galleryBottomfileCount').html(albumInfo.TotalChildFiles.toLocaleString());
                 }
                 else {
-                    //alert("FolderType: " + albumInfo.FolderType + "  FileCount: " + albumInfo.FileCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
-                    $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
-                        albumInfo.FolderCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
-                    //getDeepFolderCounts(folderId); //, albumInfo.FileCount, albumInfo.FolderCount);
-                    $('#deepSlideshowButton').show();
-                    $('#largeLoadButton').show();
+                    if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel") || (albumInfo.FolderType === "multiModel")) {
+                        $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
+                    }
+                    else {
+                        $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
+                            albumInfo.FolderCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
+                        $('#deepSlideshowButton').show();
+                        $('#largeLoadButton').show();
+                    }
                 }
 
                 if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + albumInfo.FolderType);
@@ -237,13 +331,11 @@ function getAlbumPageInfo(folderId) {
 
                 setBadges(albumInfo.FolderComments);
 
-                //$('#headerMessage').html("page hits: " + albumInfo.PageHits.toLocaleString());
                 $('#footerPageHits').html("page hits: " + albumInfo.PageHits.toLocaleString());
                 $('#footerFolderType').html("folder type: " + albumInfo.FolderType);
                 if (!isNullorUndefined(albumInfo.StaticFile)) {
                     $('#footerStaticPage').html("<a href='" + albumInfo.StaticFile + "'>static page created: " + albumInfo.StaticFileUpdate + "</a>\n");
                 }
-
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
             }
@@ -374,12 +466,12 @@ function subFolderImgError(imgSrc, linkId) {
 }
 
 function launchLargeLoad() {
-    window.location.href = "/album.html?parentfolder=" + folderId;  //  open page in same window
-
+    //alert("launch Large Load: " + apFolderId);
+    window.location.href = "/album.html?parentfolder=" + apFolderId;  //  open page in same window
 }
 
 function launchDeepSlideShow() {
-    $('#indexPageLoadingGif').show();
+    $('#albumPageLoadingGif').show();
     logEvent("DSC", apFolderId, apFolderName, "launchDeepSlideShow");
     launchViewer(apFolderId, 1, true);
     sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com", "deep slideshow clicked", "Visitor Id: " + apVisitorId + "<br/>Folder: " + apFolderName);

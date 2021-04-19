@@ -355,43 +355,43 @@ function create_UUID() {
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
     if (document.domain === 'localhost') //  && errorCode !== "ILF"
-        alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
-    
-    console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
-
-    try {
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/Common/LogError",
-            data: {
-                VisitorId: getCookieValue("VisitorId"),
-                ErrorCode: errorCode,
-                FolderId: folderId,
-                ErrorMessage: errorMessage,
-                CalledFrom: calledFrom
-            },
-            success: function (success) {
-                if (success === "ok") {
-                    //displayStatusMessage("ok", "error message logged");
-                    console.log("error message logged.  Called from: " + calledFrom + " message: " + errorMessage);
+        console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
+        //alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+    else {
+        try {
+            $.ajax({
+                type: "POST",
+                url: settingsArray.ApiServer + "api/Common/LogError",
+                data: {
+                    VisitorId: getCookieValue("VisitorId"),
+                    ErrorCode: errorCode,
+                    FolderId: folderId,
+                    ErrorMessage: errorMessage,
+                    CalledFrom: calledFrom
+                },
+                success: function (success) {
+                    if (success === "ok") {
+                        //displayStatusMessage("ok", "error message logged");
+                        console.log("error message logged.  Called from: " + calledFrom + " message: " + errorMessage);
+                    }
+                    else {
+                        console.error("ajx error in logError!!: " + success + " called from: " + calledFrom + "\nerrorMessage: " + errorMessage);
+                    }
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    let functionName = "loGerror"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (!checkFor404(errMsg, folderId, functionName)) {
+                        logError("XHR", folderId, errMsg, functionName);
+                        if (document.domain === 'localhost') alert("XHR error in logError!!: " + errMsg);
+                    }
                 }
-                else {
-                    console.error("ajx error in logError!!: " + success + " called from: " + calledFrom + "\nerrorMessage: " + errorMessage);
-                }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = "loGerror"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) {
-                    logError("XHR", folderId, errMsg, functionName);
-                    if (document.domain === 'localhost') alert("XHR error in logError!!: " + errMsg);
-                }
-            }
-        });
-    }
-    catch (e) {
-        if (document.domain === 'localhost') alert("Catch error in logError!!: " + e);
-        console.error("Catch error in logError!!: " + e);
+            });
+        }
+        catch (e) {
+            if (document.domain === 'localhost') alert("Catch error in logError!!: " + e);
+            console.error("Catch error in logError!!: " + e);
+        }
     }
 }
 

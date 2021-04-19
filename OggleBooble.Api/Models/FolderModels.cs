@@ -67,6 +67,16 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
+    public class SubFoldersModel
+    {
+        public SubFoldersModel()
+        {
+            childFolders = new List<CategoryFolder>();
+        }
+        public List<CategoryFolder> childFolders { get; set; }
+        public string Success { get; set; }
+    }
+
 
     public class SearchResultsModel
     {

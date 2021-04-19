@@ -35,17 +35,17 @@ function showDirTreeDialog(imgSrc, pMenuType, title) {
 function showCopyLinkDialog(linkId, pMenuType, imgSrc) {
     slideShowButtonsActive = false;
 
-    showDirTreeDialog(imgSrc, pMenuType, "Copy Link");
-    $('#linkManipulateClick').html("<div class='roundendButton' onclick='perfomCopyLink(\"" + linkId + "\")'>Copy</div>");
+    showDirTreeDialog(imgSrc, pMenuType, "Caterogize Link");
+    $('#linkManipulateClick').html("<div class='roundendButton' onclick='perfomCopyLink(\"" + linkId + "\")'>Caterogize</div>");
 }
 
 function perfomCopyLink(linkId) {
-    $('#imagePageLoadingGif').show();
+    $('#albumPageLoadingGif').show();
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pSelectedTreeId,
         success: function (success) {
-            $('#imagePageLoadingGif').hide();
+            $('#albumPageLoadingGif').hide();
             dragableDialogClose();
             slideShowDialogClose();
             slideShowButtonsActive = true;
@@ -85,12 +85,12 @@ function showArchiveLinkDialog(linkId, folderId, imgSrc, pMenuType) {
 }
 
 function moveFile(request, linkId, folderId) {
-    $('#imagePageLoadingGif').show();
+    $('#albumPageLoadingGif').show();
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "api/Links/MoveLink?linkId=" + linkId + "&destinationFolderId=" + pSelectedTreeId + "&request=" + request,
         success: function (success) {
-            $('#imagePageLoadingGif').hide();
+            $('#albumPageLoadingGif').hide();
             $('#centeredDialogContainer').fadeOut();
             dragableDialogClose();
             slideShowDialogClose();
@@ -126,14 +126,14 @@ function moveFile(request, linkId, folderId) {
 
 function attemptRemoveLink(linkId, folderId, imgSrc) {
     //alert("attemptRemoveLink(linkId: " + linkId + ", folderId: " + folderId + ", imgSrc: " + imgSrc);
-    $('#imagePageLoadingGif').show();
+    $('#albumPageLoadingGif').show();
     $.ajax({
         type: "DELETE",
         url: settingsArray.ApiServer + "api/Links/AttemptRemoveLink?linkId=" + linkId + "&folderId=" + folderId,
         success: function (success) {
             //alert("attemptRemoveLink   success: " + success);
             if ((success == "single link") || (success == "home folder Link")) {
-                $('#imagePageLoadingGif').hide();
+                $('#albumPageLoadingGif').hide();
                 showConfirmDeteteImageDialog(linkId, folderId, imgSrc, success);
             }
             else {
@@ -149,16 +149,16 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                         PageId: folderId,
                         Details: "link: " + linkId
                     });
-                    $('#imagePageLoadingGif').hide();
+                    $('#albumPageLoadingGif').hide();
                 }
                 else {
-                    $('#imagePageLoadingGif').hide();
+                    $('#albumPageLoadingGif').hide();
                     logError("AJX", folderId, success, "attemptRemoveLink");
                 }
             }
         },
         error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
+            $('#albumPageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", pSelectedTreeId, errMsg, functionName);
@@ -298,13 +298,13 @@ function setFolderImage(linkId, folderId, level) {
 }
 
 function nonFtpMoveCopy() {
-    $('#imagePageLoadingGif').show();
+    $('#albumPageLoadingGif').show();
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "api/OggleFile/MoveCopyArchive",
         data: MoveCopyImageModel,
         success: function (successModel) {
-            $('#imagePageLoadingGif').hide();
+            $('#albumPageLoadingGif').hide();
             if (successModel.Success === "ok") {
 
                 displayStatusMessage("ok", "link " + MoveCopyImageModel.Mode + "ed to " + $('#dirTreeResults').html());
@@ -331,7 +331,7 @@ function nonFtpMoveCopy() {
             }
         },
         error: function (xhr) {
-            $('#imagePageLoadingGif').hide();
+            $('#albumPageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", MoveCopyImageModel.SourceFolderId, errMsg, functionName);

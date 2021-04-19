@@ -207,7 +207,7 @@ function loadCommentTypesDD() {
                 logError("AJX", 3911, refs.Success, "loadCommentTypes");
         },
         error: function (jqXHR) {
-            $('#imagePageLoadingGif').hide();
+            $('#blogLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
             if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3911, errMsg, functionName);

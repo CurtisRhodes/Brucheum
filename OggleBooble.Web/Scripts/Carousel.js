@@ -11,13 +11,15 @@ function launchCarousel(startRoot) {
     absolueStartTime = Date.now();
     imgSrc = "Images/redballon.png";
     $('#carouselContainer').html(carouselHtml());
-    loadCarouselSettingsIntoLocalStorage();
-    jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
+
+
     $('#pauseButton').html("||");
     carouselTake = 777;
     let carouselSkip = 0;
     imageIndex = 0;
     try {
+        loadCarouselSettingsIntoLocalStorage();
+        jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
         window.addEventListener("resize", resizeCarousel);
         if (startRoot === "centerfold") {
             if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
@@ -62,12 +64,19 @@ function launchCarousel(startRoot) {
             else
                 console.log("no " + startRoot + " cache found");
         }
-        //$('#footerMessage2').html("initial call to loadimages");
-        //console.log("initial call to loadimages");
-        loadImages(startRoot, carouselSkip, carouselTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+
+        if (isNullorUndefined(jsCarouselSettings)) {
+            alert("jsCarouselSettings NullorUndefined");
+            loadImages(startRoot, carouselSkip, carouselTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+            logError("BUG", startRoot, "jsCarouselSettings", "launchCarousel");
+        }
+        else
+            loadImages(startRoot, carouselSkip, carouselTake, true, false);
+
         refreshCache(startRoot);
     } catch (e) {
-        logError("CAT", 3908, e, "launchCarousel");
+        // SyntaxError: Unexpected token u in JSON at position 1
+        logError("CAT", startRoot, e, "launchCarousel");
     }
 }
 
@@ -212,6 +221,7 @@ function startCarousel(calledFrom) {
         console.log("carousel interval already started. Called from: " + calledFrom);
     else {
         //$('#testMessage1').html("|v|");
+        //$('#thisCarouselImage').attr('src', settingsImgRepo + carouselItemArray[imageIndex].ImageFileName);
         intervalBody();
         //$('#testMessage1').html("|v||");
         //$('.assuranceArrows').show();

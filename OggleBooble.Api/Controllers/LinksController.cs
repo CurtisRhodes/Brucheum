@@ -75,6 +75,18 @@ namespace OggleBooble.Api.Controllers
         //static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
 
         [HttpGet]
+        [Route("api/Links/GetLinkCount")]
+        public int GetLinkCount(string imageLinkId)
+        {
+            int linkCount;
+            using (var db = new OggleBoobleMySqlContext())
+            {
+                linkCount = db.CategoryImageLinks.Where(l => l.ImageLinkId == imageLinkId).Count();
+            }
+            return linkCount;
+        }
+
+        [HttpGet]
         [Route("api/Links/GetImageLinks")]
         public ImageLinksModel GetImageLinks(int folderId)
         {

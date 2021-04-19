@@ -34,22 +34,27 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
                 if (dirTreeModel.Success === "ok") {
                     buildDirTreeRecurr(dirTreeModel);
                     strdirTree += "<div id='dirTreeCtxMenu'></div>";
-                    if (startNode === 1) {
-                        window.localStorage["dirTree"] = strdirTree;
-                    }
                     $('#' + container + '').html(strdirTree);
+
+                    if (startNode === 1) {
+                        try {
+                            window.localStorage["dirTree"] = strdirTree;
+                        } catch (e) {
+                            //alert(e);
+                        }
+                    }
 
                     if (typeof onDirTreeComplete === 'function') {
                         onDirTreeComplete();
                     }
                 }
                 else {
-                    $('#dashBoardLoadingGif').hide();
+                    //$('#dashBoardLoadingGif').hide();
                     logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
                 }
             },
             error: function (jqXHR) {
-                $('#dashBoardLoadingGif').hide();
+                //$('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
                 let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
                 if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
@@ -132,7 +137,7 @@ function toggleDirTree(id) {
         $('#SS' + id + '').toggle();
     }
     else {
-        if ($('#' + id + '').css("display") === "none")
+        if ($('#Q88' + id + '').css("display") === "none")
             $('#DQ33' + id + '').html("[-] ");
         else
             $('#DQ33' + id + '').html("[+] ");

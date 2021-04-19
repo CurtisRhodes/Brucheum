@@ -152,6 +152,7 @@ function setHeaderMenu(folderId, subdomain) {
         case "cybergirl": 
         case "muses": 
         case "plus": 
+        case "special": 
         case "magazine": 
         case "centerfold": {
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
