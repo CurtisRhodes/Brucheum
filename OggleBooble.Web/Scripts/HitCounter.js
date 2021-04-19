@@ -110,7 +110,7 @@ function logVisit(visitorId, folderId) {
         return;
     lastAddVisitorIdLookup = visitorId;
 
-    logActivity("LV0", folderId,"logVisit");
+    //logActivity("LV0", folderId,"logVisit");
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
@@ -128,8 +128,8 @@ function logVisit(visitorId, folderId) {
             }
             else {
                 if (logVisitSuccessModel.Success == "VisitorId not found") {
-                    logActivity("LV3", folderId, "logVisit");  // return visitor
-                    // getIpInfo(folderId, "LGV");
+                    //logActivity("LV3", folderId, "logVisit");  // return visitor
+                    getIpInfo(folderId, "LGV");
                 }
                 else {
                     logActivity("LV4", folderId, "logVisit");  // Log Visit fail
@@ -195,81 +195,16 @@ function addNonIpVisitor(folderId, visitorId) {
     });
 }
 
-function getIpForExistingVisitorId(folderId, visitorId) {
-    try {
-        logActivity("EX0", folderId, "gIp4ExistingVisitorId"); // calling ipInfo For Existing VisitorId
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + visitorId,
-            success: function (successModel) {
-                if (successModel.Success == "not found") {
-                    let iPSuccess = false;
-                    $.ajax({
-                        type: "GET",
-                        url: "https://ipinfo.io?token=ac5da086206dc4",
-                        success: function (ipResponse) {
-                            iPSuccess = true;
-                            logActivity("EX1", folderId, "gIp4ExistingVisitorId"); // ipInfo Success For Existing VisitorId
-                            tryAddVisitor({
-                                CalledFrom: "getIpForExistingVisitorId",
-                                VisitorId: visitorId,
-                                IpAddress: ipResponse.ip,
-                                FolderId: folderId,
-                                City: ipResponse.city,
-                                Country: ipResponse.country,
-                                Region: ipResponse.region,
-                                GeoCode: ipResponse.loc
-                            }, "exv");
-                        },
-                        error: function (jqXHR) {
-                            logActivity("EX3", folderId, "gIp4ExistingVisitorId"); // ipInfo jqXHR
-                            tryIfy(folderId, visitorId, "getIpExistingVisId");
-                            // logError("XEX", folderId, jqXHR.status + " " + jqXHR.statusText, "getIpInfo");
-                        }
-                    });
-                    setTimeout(function () {
-                        if (!iPSuccess) {
-                            logActivity("EX4", folderId, "gIp4ExistingVisitorId"); // ipInfo failed to respond
-                            //logError("IPF", folderId, "", "getIpInfo/" + calledFrom);
-                            tryIfy(folderId, visitorId, "getIpExistingVisId");
-                        }
-                    }, 777);
-                }
-                else {
-                    if (successModel.Success == "ok") { //alert("visitorId found");
-                        if (getCookieValue("VisitorId") != visitorId) { // Cookie test failed
-                            logError("CTF", folderId, getCookieValue("VisitorId") + " != " + visitorId, "gIp4ExistingVisitorId");
-                        }
-                        if (!navigator.cookieEnabled) {  // user does not accept cookies
-                            logError("UNC", folderId, "CTF", "gIp4ExistingVisitorId");
-                        }
-
-                        logActivity("EX8", folderId, "gIp4ExistingVisitorId"); // VisitorId found in Visitor table
-                        logError("LGV", folderId, avSuccess, "gIp4ExistingVisitorId");
-                    }
-                    else {
-                        logActivity("EX9", folderId, "gIp4ExistingVisitorId"); // unknown success code from Get Visitor
-                        logError("EIF", folderId, successModel.Success, "gIp4ExistingVisitorId");
-                    }
-                }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "gIp4ExistingVisitorId"))
-                    logError("XHR", folderId, errMsg, "gIp4ExistingVisitorId");
-            }
-        });
-    } catch (e) {
-        logError("CAT", folderId, e, "gIp4ExistingVisitorId");
-    }
-}
-
 function getIpInfo(folderId, calledFrom) {
     try {
         //logActivity("AA0", folderId, "getIpInfo/" + calledFrom);
-
         if (!isNullorUndefined(getCookieValue("VisitorId"))) {
-            getIpForExistingVisitorId(folderId, getCookieValue("VisitorId"), calledFrom);
+            getIpForExistingVisitorId(folderId, calledFrom);
+            return;
+        }
+
+        if (calledFrom == "LGV") {
+            logError("BUG", folderId, "this should a been picked up", "getIpInfo");
             return;
         }
 
@@ -346,6 +281,81 @@ function getIpInfo(folderId, calledFrom) {
     catch (e) {
         logActivity("CCC", folderId);
         logError("CAT", folderId, e, "getIpInfo/" + calledFrom);
+    }
+}
+
+
+
+
+function getIpForExistingVisitorId(folderId, calledFrom) {
+    try {
+        if (!navigator.cookieEnabled) {  // user does not accept cookies
+            logError("UNC", folderId, "CTF", "gIp4ExistingVisitorId");
+            weDemandCookies();
+        }
+
+
+        let visitorId = getCookieValue("VisitorId");
+        if (isNullorUndefined(visitorId)) {
+            logError("BUG", folderId, "visitorId expected", "gIp4ExistingVisitorId");
+            return;
+        }
+        logActivity("EX0", folderId, "gIp4ExistingVisitorId"); // calling ipInfo For Existing VisitorId
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + visitorId,
+            success: function (successModel) {
+                if (successModel.Success == "ok") { //alert("visitorId found");
+                    if (getCookieValue("VisitorId") != visitorId) { // Cookie test failed
+                        logError("CTF", folderId, getCookieValue("VisitorId") + " != " + visitorId, "gIp4ExistingVisitorId");
+                    }
+                    logActivity("EX8", folderId, "gIp4ExistingVisitorId"); // VisitorId found in Visitor table
+                    logError("LGV", folderId, avSuccess, "gIp4ExistingVisitorId");
+                }
+                else {
+                    if (successModel.Success == "not found") {
+                        $.ajax({
+                            type: "GET",
+                            url: "https://ipinfo.io?token=ac5da086206dc4",
+                            success: function (ipResponse) {
+                                if (isNullorUndefined(ipResponse.ip)) {
+                                    logError("IPF", folderId, "", "getIpInfo/" + calledFrom);
+                                }
+                                else {
+                                    logActivity("EX1", folderId, "gIp4ExistingVisitorId"); // ipInfo Success For Existing VisitorId
+                                    tryAddVisitor({
+                                        CalledFrom: "getIpForExistingVisitorId",
+                                        VisitorId: visitorId,
+                                        IpAddress: ipResponse.ip,
+                                        FolderId: folderId,
+                                        City: ipResponse.city,
+                                        Country: ipResponse.country,
+                                        Region: ipResponse.region,
+                                        GeoCode: ipResponse.loc
+                                    }, "exv");
+                                }
+                            },
+                            error: function (jqXHR) {
+                                logActivity("EX3", folderId, "gIp4ExistingVisitorId"); // ipInfo jqXHR
+                                tryIfy(folderId, visitorId, "getIpExistingVisId");
+                                // logError("XEX", folderId, jqXHR.status + " " + jqXHR.statusText, "getIpInfo");
+                            }
+                        });
+                    }
+                    else {
+                        logActivity("EX9", folderId, "gIp4ExistingVisitorId"); // unknown success code from Get Visitor
+                        logError("EIF", folderId, successModel.Success, "gIp4ExistingVisitorId");
+                    }
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "gIp4ExistingVisitorId"))
+                    logError("XHR", folderId, errMsg, "gIp4ExistingVisitorId");
+            }
+        });
+    } catch (e) {
+        logError("CAT", folderId, e, "gIp4ExistingVisitorId");
     }
 }
 
@@ -574,6 +584,13 @@ function logStaticPageHit(folderId, calledFrom) {
 }
 
 //////////////////////////////////////////////////////////////////
+
+function weDemandCookies() {
+
+    alert("weDemandCookies");
+    //showCustomMessage(1233, false);
+
+}
 
 function getCloudflare(calledFrom, folderId) {
     $.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {

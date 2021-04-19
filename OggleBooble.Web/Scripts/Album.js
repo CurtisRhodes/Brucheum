@@ -534,8 +534,12 @@ function slowlyShowFolderInfoDialog(folderId) {
 function folderClick(folderId, isStepChild) {
     if (isStepChild == 1)
         window.open("/album.html?folder=" + folderId, "_blank");  // open in new tab
-    else
+    else {
+
+        // report event pare hit
+
         window.location.href = "/album.html?folder=" + folderId;  //  open page in same window
+    }
     //" onclick='rtpe(\"SUB\",\"called from: " + folderId + "\",\"" + folder.DirectoryName + "\"," + folder.FolderId + ")'>\n" +
 }
 

@@ -220,15 +220,13 @@ function startCarousel(calledFrom) {
     if (vCarouselInterval)
         console.log("carousel interval already started. Called from: " + calledFrom);
     else {
-        //$('#testMessage1').html("|v|");
-        //$('#thisCarouselImage').attr('src', settingsImgRepo + carouselItemArray[imageIndex].ImageFileName);
-        intervalBody();
-        //$('#testMessage1').html("|v||");
-        //$('.assuranceArrows').show();
-
-        vCarouselInterval = setInterval(function () {
-            intervalBody();
-        }, rotationSpeed);
+        if (carouselItemArray.length > 10) {
+            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
+            $('#thisCarouselImage').attr('src', settingsImgRepo + carouselItemArray[imageIndex].ImageFileName);
+            vCarouselInterval = setInterval(function () {
+                intervalBody();
+            }, rotationSpeed);
+        }
     }
 }
 let intervalReady = true;

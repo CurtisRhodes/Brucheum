@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Http;
+using System.Web.Http.Cors;
 using static System.Net.WebRequestMethods;
 
 namespace OggleBooble.Api.Controllers
@@ -334,4 +336,25 @@ namespace OggleBooble.Api.Controllers
             return ms.ToArray();
         }
     }
+
+    [EnableCors("*", "*", "*")]
+    public class CacheController : ApiController
+    {
+        public string Get()
+        {
+            string success;
+            try
+            {
+                //AppContext
+                success = "ok";
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+    }
+
 }

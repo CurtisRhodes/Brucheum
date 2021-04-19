@@ -116,9 +116,22 @@ namespace OggleBooble.Api.Controllers
                             }
                             else
                             {
-                                dbMisplacedImageFile.FolderId = folderId;
-                                db.SaveChanges();
-                                repairReport.ImageFilesMoved++;
+                                var catLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == physcialFileLinkId).ToList();
+                                bool itsok = false;
+                                foreach (CategoryImageLink catLink in catLinks)
+                                {
+                                    if (catLink.ImageCategoryId == dbMisplacedImageFile.FolderId)
+                                    {
+                                        itsok = true;
+                                        break;
+                                    }
+                                }
+                                if (!itsok)
+                                {
+                                    dbMisplacedImageFile.FolderId = folderId;
+                                    db.SaveChanges();
+                                    repairReport.ImageFilesMoved++;
+                                }
                             }
                         }
                         else
@@ -185,7 +198,9 @@ namespace OggleBooble.Api.Controllers
                 // rebuild list 
                 dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
                 var physcialFileLinkIds = new List<string>();
-                for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].LastIndexOf("_") + 1, 36)); }
+                for (int i = 0; i < physcialFiles.Length; i++) {
+                    physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].LastIndexOf("_") + 1, 36));
+                }
                 if (physcialFileLinkIds.Count() != dbFolderImageFiles.Count())
                 {
                     repairReport.Errors.Add("physcialFiles: " + physcialFileLinkIds.Count() + " ImageFiles: " + dbFolderImageFiles.Count() +

@@ -27,6 +27,10 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
         }
     }
     else {
+        if (!forceRebuild && isNullorUndefined(window.localStorage["dirTree"])) {
+            console.log("localStorage not found");
+            alert("localStorage not found");
+        }
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/DirTree/BuildDirTree?root=" + startNode,
@@ -39,6 +43,7 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
                     if (startNode === 1) {
                         try {
                             window.localStorage["dirTree"] = strdirTree;
+                            //window.localStorage["dirTree"] = strdirTree;
                         } catch (e) {
                             //alert(e);
                         }
