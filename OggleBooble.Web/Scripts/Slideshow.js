@@ -48,6 +48,7 @@ function getSlideshowItems(folderId, startItem) {
                                 break;
                             }
                         };
+
                     }
                     logImageHit(imageViewerArray[imageViewerIndex].LinkId, folderId, true);
 
@@ -215,20 +216,22 @@ function slide(direction) {
                                 $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                             }
                             else {
-                                $.ajax({
-                                    type: "GET",
-                                    url: settingsArray.ApiServer + "api/Links/GetLinkCount?imageLinkId=" + imageViewerArray[imageViewerIndex].LinkId,
-                                    success: function (linkCount) {
-                                        if (linkCount < 2)
-                                            $('#copycatDiv').fadeIn();
-                                    },
-                                    error: function (jqXHR) {
-                                        $('#albumPageLoadingGif').hide();
-                                        let errMsg = getXHRErrorDetails(jqXHR);
-                                        let functionName = "getSlideshowItems"// arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                                        if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-                                    }
-                                });
+                                if (isInRole("sert")) {
+                                    $.ajax({
+                                        type: "GET",
+                                        url: settingsArray.ApiServer + "api/Links/GetLinkCount?imageLinkId=" + imageViewerArray[imageViewerIndex].LinkId,
+                                        success: function (linkCount) {
+                                            if (linkCount < 2)
+                                                $('#copycatDiv').fadeIn();
+                                        },
+                                        error: function (jqXHR) {
+                                            $('#albumPageLoadingGif').hide();
+                                            let errMsg = getXHRErrorDetails(jqXHR);
+                                            let functionName = "getSlideshowItems"// arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                                            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                                        }
+                                    });
+                                }
                             }
                         }
                         $('#ssHeaderCount').html(imageViewerIndex + " / " + imageViewerArray.length);

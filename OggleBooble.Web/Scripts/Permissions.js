@@ -23,8 +23,7 @@ function isInRole(roleName) {
         else {
             let userRole = window.localStorage["userRole"];
             console.log("userRole from localStorage: " + userRole + " for visitorId: " + visitorId);
-            if (userRole === "admin")
-                return true;
+            if (userRole === "admin") return true;
             if (userRole === roleName)
                 return true;
         }
@@ -93,8 +92,7 @@ function getUserInfo(valueRequested, details) {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+                    if (!checkFor404(errMsg, folderId, "getUserInfo")) logError("XHR", 3907, errMsg, "getUserInfo");
                 }
             });
         }
@@ -125,8 +123,7 @@ function updateUserSettings(visitorId, settingName, settingJson) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "updateUserSettings")) logError("XHR", 3907, errMsg, "updateUserSettings");
             }
         });
     } catch (e) {
