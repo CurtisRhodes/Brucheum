@@ -546,7 +546,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string HitTime { get; set; }
         public string FolderType { get; set; }
         public string RootFolder { get; set; }
-        public int ImageHits { get; set; }
+      //  public int ImageHits { get; set; }
     }
 
     [Table("OggleBooble.VwDirTree")]

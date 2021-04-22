@@ -42,10 +42,12 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
 
                     if (startNode === 1) {
                         try {
+                            localStorage.removeItem("dirTree");
                             window.localStorage["dirTree"] = strdirTree;
-                            //window.localStorage["dirTree"] = strdirTree;
                         } catch (e) {
-                            //alert(e);
+                            localStorage.clear();
+                            window.localStorage["dirTree"] = strdirTree;
+                            alert(e);
                         }
                     }
 

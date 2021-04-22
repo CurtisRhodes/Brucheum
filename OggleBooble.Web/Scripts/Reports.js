@@ -157,13 +157,14 @@ function runPageHitReport() {
             $('#dashBoardLoadingGif').hide();
             if (pageHitReportModel.Success === "ok") {
                 let kludge = "<table class='mostAvtiveUsersTable'>";
-                kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>&nbsp;images hit</th><th>hit time</th></tr>";
+                //kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>&nbsp;images hit</th><th>hit time</th></tr>";
+                kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>hit time</th></tr>";
                 $.each(pageHitReportModel.Items, function (idx, obj) {
                     kludge += "<tr><td class='clickable' onclick='showUserDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
                     kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
                     kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
                     kludge += "<td>" + obj.RootFolder + "</td>";
-                    kludge += "<td>" + obj.ImageHits + "</td>";
+                    // kludge += "<td>" + obj.ImageHits + "</td>";
                     kludge += "<td>" + obj.HitTime + "</td></tr>";
                 });
                 kludge += "</table>";

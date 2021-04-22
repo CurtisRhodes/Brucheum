@@ -223,6 +223,7 @@ function startCarousel(calledFrom) {
         if (carouselItemArray.length > 10) {
             imageIndex = Math.floor(Math.random() * carouselItemArray.length);
             $('#thisCarouselImage').attr('src', settingsImgRepo + carouselItemArray[imageIndex].ImageFileName);
+            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
             vCarouselInterval = setInterval(function () {
                 intervalBody();
             }, rotationSpeed);

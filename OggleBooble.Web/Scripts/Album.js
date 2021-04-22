@@ -458,7 +458,7 @@ function galleryImageError(linkId, imgSrc) {
 
 function subFolderImgError(imgSrc, linkId) {
     setTimeout(function () {
-        if ($('#' + link).attr('src') == null) {
+        if ($('#' + linkId).attr('src') == null) {
             logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "subFolderImg");
         }
     }, 600);

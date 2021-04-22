@@ -313,7 +313,7 @@ namespace OggleBooble.Api.Controllers
                             //PageHits = item.PageHits,
                             RootFolder = item.RootFolder,
                             FolderType = item.FolderType,
-                            ImageHits = item.ImageHits,
+                            //ImageHits = item.ImageHits,
                             HitDate = item.HitDate,
                             HitTime = item.HitTime
                         });
