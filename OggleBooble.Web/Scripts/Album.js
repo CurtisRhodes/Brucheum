@@ -37,13 +37,13 @@ function qucikHeader(folderId) {
         url: settingsArray.ApiServer + "api/GalleryPage/GetQucikHeader?folderId=" + folderId,
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
+                setOggleHeader(folderId, albumInfo.RootFolder);
+                setOggleFooter(folderId, albumInfo.RootFolder);
                 if (albumInfo.RootFolder == "porn")
                     document.title = albumInfo.FolderName + " : OgglePorn";
                 else
                     document.title = albumInfo.FolderName + " : OggleBooble";
 
-                setOggleHeader(folderId, albumInfo.RootFolder);
-                setOggleFooter(folderId, albumInfo.RootFolder);
                 setBreadcrumbs(folderId);
                 $('#feedbackButton').on("click", function () {
                     showFeedbackDialog(folderId, albumInfo.FolderName);
@@ -58,8 +58,7 @@ function qucikHeader(folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "qucikHeader")) logError("XHR", folderId, errMsg, "qucikHeader");
         }
     });
 }
@@ -198,7 +197,7 @@ function getAlbumImages(folderId) {
                             let imageHtml = "<div class='" + imageFrameClass + "'>\n" +
                                 "<img id='" + obj.LinkId + "' class='thumbImage'\n" +
                                 " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\)'\n" +
-                                " alt='" + obj.LinkId + "' titile='" + obj.DirectoryName + "' \n" +
+                                " alt='" + obj.LinkId + "' titile='" + obj.SrcFolder + "' \n" +
                                 " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + imgSrc + "\")'\n" +
                                 " onclick='launchViewer(" + obj.FolderId + ",\"" + obj.LinkId + "\",false)' src='" + imgSrc + "'/>\n";
 
@@ -258,8 +257,7 @@ function getAlbumImages(folderId) {
             error: function (jqXHR) {
                 $('#albumPageLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "getAlbumImages")) logError("XHR", folderId, errMsg, "getAlbumImages");
             }
         });
     } catch (e) {
@@ -349,8 +347,7 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "getAlbumPageInfo")) logError("XHR", folderId, errMsg, "getAlbumPageInfo");
         }
     });
 }
@@ -375,8 +372,7 @@ function getDeepFolderCounts(folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "getDeepFolderCounts")) logError("XHR", folderId, errMsg, "getDeepFolderCounts");
         }
     });
 }
@@ -427,8 +423,7 @@ function setBreadcrumbs(folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "setBreadcrumbs")) logError("XHR", folderId, errMsg, "setBreadcrumbs");
         }
     });
 }
@@ -514,8 +509,7 @@ function chargeCredits(folderId, rootFolder) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "chargeCredits")) logError("XHR", folderId, errMsg, "chargeCredits");
         }
     });
 }

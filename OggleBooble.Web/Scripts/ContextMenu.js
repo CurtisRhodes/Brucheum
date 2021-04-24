@@ -1,4 +1,4 @@
-﻿let pImgSrc, pLinkId, cxFolderId, pFolderName, pFolderType, pModelFolderId, pMenuType, pos = {};
+﻿let pImgSrc, pLinkId, cxFolderId, pFolderName, pFolderType, pModelFolderId, pos = {};
 
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     event.preventDefault();
@@ -9,12 +9,13 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     pImgSrc = imgSrc;
     cxFolderId = folderId;
     pFolderName = folderName;
-    pMenuType = menuType;
-    if (pMenuType === "Slideshow") {
+
+    if (menuType === "Slideshow") {
         $('#slideshowCtxMenuContainer').css("top", pos.y);
         $('#slideshowCtxMenuContainer').css("left", pos.x);
         $('#slideshowCtxMenuContainer').fadeIn();
         $('#slideshowContextMenuContent').html(contextMenuHtml())
+        //$('#ctxMenuType').html(menuType).show();
     }
     else {
         let y = pos.y - $(window).scrollTop();
@@ -23,18 +24,21 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
         $('#contextMenuContainer').fadeIn();
         $('#contextMenuContent').html(contextMenuHtml())
     }
-    $('#ctxModelName').html("<img class='ctxloadingGif' src='Images/loader.gif'/>");
-    $('#ctxMenuType').hide();
-    $('#ctxNewTab').hide();
-    $('#ctxImageShowLinks').hide();
-    $('#ctxCloseSlideShow').hide();
-    $('#ctxDownLoad').hide();
-    $('#ctxSaveAs').hide();
+    $('#ctxComment').show();
+    $('#ctxMdlName').show().html("<img title='loading gif' alt='' class='ctxloadingGif' src='Images/loader.gif'/>");
+    $('#ctxExplode').show();
 
-    if (pMenuType === "Folder")
+    //$('#ctxMenuType').hide();
+    //$('#ctxNewTab').hide();
+    //$('#ctxImageShowLinks').hide();
+    //$('#ctxCloseSlideShow').hide();
+    //$('#ctxDownLoad').hide();
+    //$('#ctxSaveAs').hide();
+
+    if (menuType === "Folder")
         ctxGetFolderDetails();
     else
-        getLimitedImageDetails();
+        getLimitedImageDetails(menuType);
 
     $('.ogContextMenu').draggable();
     if (typeof pause === 'function') pause();
@@ -44,7 +48,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
         $('.adminLink').hide();
 }
 
-function getLimitedImageDetails() {
+function getLimitedImageDetails(menuType) {
     //let start = Date.now();
     $.ajax({
         type: "GET",
@@ -62,15 +66,15 @@ function getLimitedImageDetails() {
                     case "singleModel":
                     case "singleChild":
                     case "singleParent":
-                        $('#ctxModelName').html(imageInfo.FolderName);
+                        $('#ctxMdlName').html(imageInfo.FolderName);
                         $('#ctxSeeMore').hide();
                         break;
                     case "multiModel":
                     case "multiFolder":
                         $('#ctxSeeMore').hide();
-                        $('#ctxModelName').html("unknown model");
+                        $('#ctxMdlName').html("unknown model");
                         if ((imageInfo.ModelFolderId !== 0) && (cxFolderId != imageInfo.ModelFolderId)) {
-                            $('#ctxModelName').html(imageInfo.ModelFolderName);
+                            $('#ctxMdlName').html(imageInfo.ModelFolderName);
                             $('#ctxSeeMore').show();
                         }
                         break;
@@ -79,24 +83,21 @@ function getLimitedImageDetails() {
                         logError("SWT", cxFolderId, "folder type: " + folderType, "getLimitedImageDetails");
                 }
 
-                //$('#ctxMenuType').html(pMenuType).show();
-                //$('#ctxModelName').html(imageInfo.FolderType);
-                switch (pMenuType) {
+                switch (menuType) {
                     case "Slideshow":
-                        //$('#ctxMenuType').html(pMenuType).show();
-                        $('#ctxCloseSlideShow').show();
+                        $('#ctxssClose').show();
                         break;
                     case "Carousel":
                         $('#ctxNewTab').show();
                         break;
                     case "Image":
-                        //$('#ctxModelName').html(imageInfo.FolderName);
+                        //$('#ctxMdlName').html(imageInfo.FolderName);
                         break;
                     case "Video":
                         break;
                     default:
-                        if (document.domain == "localhost") alert("unhandled menu type: " + pMenuType);
-                        logError("SWT", cxFolderId, "unhandled menu type: " + pMenuType, "getAlbumImages");
+                        if (document.domain == "localhost") alert("unhandled menu type: " + menuType);
+                        logError("SWT", cxFolderId, "unhandled menu type: " + menuType, "getAlbumImages");
                 }
                 getFullImageDetails();
             }
@@ -174,7 +175,7 @@ function getFullImageDetails() {
 }
 
 function ctxGetFolderDetails() {
-    $('#ctxModelName').html("folder info");
+    $('#ctxMdlName').html("folder info");
     $('#ctxInfo').html("folder details");
     $('#ctxTags').html("folder tags");
     $('#ctxSeeMore').hide();
@@ -184,7 +185,7 @@ function ctxGetFolderDetails() {
     $('#ctxSaveAs').hide();
 }
 
-function contextMenuAction(action) {
+function contextMenuAction(action, menuType) {
     switch (action) {
         case "saveAs":
            // alert("window.open(" + pImgSrc + ")");
@@ -203,8 +204,7 @@ function contextMenuAction(action) {
                 alert("You must be logged in to download an album");
             break;
         case "showDialog": {
-            if ($('#ctxModelName').html() === "unknown model") {
-                logEvent("UKM", cxFolderId, pMenuType, "details");
+            if ($('#ctxMdlName').html() === "unknown model") {
                 showUnknownModelDialog(pImgSrc, pLinkId, cxFolderId);
             }
             else
@@ -227,13 +227,13 @@ function contextMenuAction(action) {
             break;
         }
         case "comment": {
-            showImageCommentDialog(pLinkId, pImgSrc, cxFolderId, pMenuType);
+            showImageCommentDialog(pLinkId, pImgSrc, cxFolderId, menuType);
             $("#contextMenuContainer").fadeOut();
             break;
         }
         case "explode": {
             // logEvent("EXP", cxFolderId, pFolderName, pLinkId);
-            if (pMenuType === "Slideshow") {
+            if (menuType === "Slideshow") {
                 slideShowButtonsActive = false;
                 $("#slideshowCtxMenuContainer").hide();
                 blowupImage();
@@ -250,7 +250,7 @@ function contextMenuAction(action) {
             openMetaTagDialog(cxFolderId, pLinkId);
             break;
         case "info":
-            if (pMenuType === "Folder")
+            if (menuType === "Folder")
                 $('#folderInfoContainer').toggle();
             else
                 $('#imageInfoContainer').toggle();
@@ -259,15 +259,15 @@ function contextMenuAction(action) {
             $('#linkInfoContainer').toggle();
             break;
         case "archive":
-            showArchiveLinkDialog(pLinkId, cxFolderId, pImgSrc, pMenuType);
+            showArchiveLinkDialog(pLinkId, cxFolderId, pImgSrc, menuType);
             break;
         case "copy":
             //alert("contextMenuAction/copy (pLinkId: " + pLinkId + ", cxFolderId: " + cxFolderId + ", pImgSrc: " + pImgSrc);
-            showCopyLinkDialog(pLinkId, pMenuType, pImgSrc);
+            showCopyLinkDialog(pLinkId, menuType, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
         case "move":
-            showMoveLinkDialog(pLinkId, cxFolderId, pMenuType, pImgSrc);
+            showMoveLinkDialog(pLinkId, cxFolderId, menuType, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
         case "remove":
@@ -295,34 +295,34 @@ function contextMenuAction(action) {
 }
 
 function contextMenuHtml() {
-    return "<div id='ctxMenuType' class='contextMenuInnerContainer'></div>\n" +        
-        "<div id='ctxModelName' onclick='contextMenuAction(\"showDialog\")'>model name</div>\n" +
-        "<div id='ctxSeeMore' onclick='contextMenuAction(\"see more\")'>see more of her</div>\n" +
-        "<div id='ctxNewTab' onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
-        "<div id='ctxComment' onclick='contextMenuAction(\"comment\")'>Comment</div>\n" +
-        "<div id='ctxExplode' onclick='contextMenuAction(\"explode\")'>explode</div>\n" +
-        "<div id='ctxSaveAs' onclick='contextMenuAction(\"saveAs\")'>save as</div>\n" +
-        "<div id='ctxCloseSlideShow' onclick='contextMenuAction(\"closeSlideShow\")'>close slideshow</div>\n" +
-        "<div id='ctxImageShowLinks' onclick='contextMenuAction(\"showLinks\")'>Show Links</div>\n" +
-        "<div id='linkInfoContainer' class='contextMenuInnerContainer'></div>\n" +        
+    return "<div class='ctxItem' id='ctxMenuType'></div>\n" +
+        "<div id='ctxMdlName' class='ctxItem'     onclick='contextMenuAction(\"showDialog\")'>model name</div>\n" +
+        "<div id='ctxSeeMore' class='ctxItem' onclick='contextMenuAction(\"see more\")'>see more of her</div>\n" +
+        "<div id='ctxNewTab'  class='ctxItem' onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
+        "<div id='ctxComment' class='ctxItem' onclick='contextMenuAction(\"comment\")'>Comment</div>\n" +
+        "<div id='ctxExplode' class='ctxItem' onclick='contextMenuAction(\"explode\")'>explode</div>\n" +
+        "<div id='ctxSaveAs'  class='ctxItem' onclick='contextMenuAction(\"saveAs\")'>save as</div>\n" +
+        "<div id='ctxssClose' class='ctxItem' onclick='contextMenuAction(\"closeSlideShow\")'>close slideshow</div>\n" +
+        "<div id='ctxImageShowLinks' class='ctxItem'     onclick='contextMenuAction(\"showLinks\")'>Show Links</div>\n" +
+        "<div id='linkInfoContainer' class='contextMenuInnerContainer'></div>\n" +
         "<div id='ctxInfo' class='adminLink'  onclick='contextMenuAction(\"info\")'>Show Image info</div>\n" +
         " <div id='imageInfoContainer' class='contextMenuInnerContainer'>\n" +
-        "   <div><span class='ctxInfolabel'>file name</span><span id='imageInfoFileName' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>folder path</span><span id='imageInfoFolderPath' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>link id</span><input id='imageInfoLinkId'/></div>\n" +
-        "   <div><span class='ctxInfolabel'>height</span><span id='imageInfoHeight' class='ctxInfoValue'></span>" +
-        "    <span class='ctxInfolabel'>width</span><span id='imageInfoWidth' class='ctxInfoValue'></span>" +
-        "    <span class='ctxInfolabel'>size</span><span id='imageInfoSize' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>last modified</span><span id='imageInfoLastModified' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>external link</span><span id='imageInfoExternalLink' class='ctxInfoValue'></span></div>\n"+
-        " </div>\n"+
+        "   <div><span class='ctxItem'>file name</span><span id='imageInfoFileName' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>folder path</span><span id='imageInfoFolderPath' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>link id</span><input id='imageInfoLinkId'/></div>\n" +
+        "   <div><span class='ctxItem'>height</span><span id='imageInfoHeight' class='ctxInfoValue'></span>" +
+        "    <span class='ctxItem'>width</span><span id='imageInfoWidth' class='ctxInfoValue'></span>" +
+        "    <span class='ctxItem'>size</span><span id='imageInfoSize' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>last modified</span><span id='imageInfoLastModified' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>external link</span><span id='imageInfoExternalLink' class='ctxInfoValue'></span></div>\n" +
+        " </div>\n" +
         " <div id='folderInfoContainer' class='contextMenuInnerContainer'>\n" +
-        "   <div><span class='ctxInfolabel'>file name</span><span id='folderInfoFileName' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>folder id</span><span id='folderInfoId' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>folder path</span><span id='folderInfoPath' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>files</span><span id='folderInfoFileCount' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>subfolders</span><span id='folderInfoSubDirsCount' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxInfolabel'>last modified</span><span id='folderInfoLastModified' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>file name</span><span id='folderInfoFileName' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>folder id</span><span id='folderInfoId' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>folder path</span><span id='folderInfoPath' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>files</span><span id='folderInfoFileCount' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>subfolders</span><span id='folderInfoSubDirsCount' class='ctxInfoValue'></span></div>\n" +
+        "   <div><span class='ctxItem'>last modified</span><span id='folderInfoLastModified' class='ctxInfoValue'></span></div>\n" +
         " </div>\n" +
         //"<div id='ctxDownLoad' onclick='contextMenuAction(\"download\")'>download folder</div>\n" +
         "<div id='ctxShowAdmin' class='adminLink' onclick='$(\"#linkAdminContainer\").toggle()'>Admin</div>\n" +

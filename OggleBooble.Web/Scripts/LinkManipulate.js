@@ -8,7 +8,7 @@ function showDirTreeDialog(imgSrc, pMenuType, title) {
         "       <div class='inline'><img class='dialogDirTreeButton' src='/Images/caretDown.png' " +
         "           onclick='$(\"#linkManipulateDirTree\").toggle()'/></div>\n" +
         "       <div id='linkManipulateClick'></div>\n" +
-        "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' src='Images/loader.gif' /></div>\n" +
+        "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' title='loading gif' alt='' src='Images/loader.gif' /></div>\n" +
         "   </div>";
     if (pMenuType == "Slideshow") {
         // console.log("")

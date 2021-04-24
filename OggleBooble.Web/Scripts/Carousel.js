@@ -221,9 +221,8 @@ function startCarousel(calledFrom) {
         console.log("carousel interval already started. Called from: " + calledFrom);
     else {
         if (carouselItemArray.length > 10) {
-            imageIndex = Math.floor(Math.random() * carouselItemArray.length);
-            $('#thisCarouselImage').attr('src', settingsImgRepo + carouselItemArray[imageIndex].ImageFileName);
-            $('#carouselImageContainer').fadeIn(intervalSpeed, function () { resizeCarousel(); });
+            resizeCarousel();
+            intervalBody();
             vCarouselInterval = setInterval(function () {
                 intervalBody();
             }, rotationSpeed);
@@ -241,7 +240,8 @@ function intervalBody() {
             let nextImg = settingsImgRepo + carouselItemArray[imageIndex].ImageFileName;
             $('#testMessage1').html("|||");
 
-            //$('#tempImageLoad').attr('src', nextImg);
+            //$('#tempImageLoad').attr('src', nextImg);;
+
 
             $('#tempImageLoad').attr('src', nextImg).load(function () {
                 $('#testMessage1').html("||||");

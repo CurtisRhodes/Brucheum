@@ -6,38 +6,35 @@
     spaType = "archive";
 
 function displaySpaPage(spaPageId) {
-    switch (spaPageId) {
-        case '3907':
+    switch (Number(spaPageId)) {
+        case 3907:
             rankerStartup(params.bp);
             break;
-        case '3911':
+        case 3911:
             blogStartup();
             break;
-        case '3910':
-        case 3910 :
+        case 3910:
             dashboardStartup();
             break;
-        case 3908:  // boobs archive
-        case '3908':  // boobs archive
-            //indexStartup();
+        case 3908:  //indexStartup();
             spaType = "boobs";
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader(3908, "index");
             setOggleFooter(3908, "index");
-            changeFavoriteIcon("redBallon");
             document.title = "welcome : OggleBooble";
+            changeFavoriteIcon("redBallon");
             launchCarousel("boobs");
             $('.indexPageSection').show();
             loadUpdatedGalleriesBoxes();
-            setTimeout(function () { launchPromoMessages(); }, 3000);
+            //setTimeout(function () { launchPromoMessages(); }, 3000);
             break;
-        case '3909': // porn
+        case 3909: // porn
             spaType = "porn";
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader(spaPageId, "porn");
             setOggleFooter(spaPageId, "porn");
             changeFavoriteIcon("porn");
-            document.title = "OgglePorn";
+            document.title = "welcome : OgglePorn";
             launchCarousel("porn");
             // set porn colors
             $('.threeColumnLayout').css("background-color", "#d279a6");
@@ -48,13 +45,13 @@ function displaySpaPage(spaPageId) {
             $('#updatedGalleriesSectionLoadingGif').show();
             loadUpdatedGalleriesBoxes();
             break;
-        case '72': // every playboy centerfold
+        case 72: // every playboy centerfold
             spaType = "centerfold";
             $('#indexMiddleColumn').html(playboyPageHTML());
             setOggleHeader(spaPageId, "playboyIndex");
             setOggleFooter(spaPageId, "centerfold");
             changeFavoriteIcon("centerfold");
-            document.title = "Every Playboy Centerfold";
+            document.title = "Every Playboy Centerfold : OggleBooble";
             launchCarousel("centerfold");
             $('#updatedGalleriesSectionLoadingGif').show();
             loadUpdatedGalleriesBoxes();
@@ -245,7 +242,7 @@ function playboyPageHTML() {
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +
         "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
-        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' src='Images/loader.gif' />" +
+        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' title='loading gif' alt='' src='Images/loader.gif' />" +
         "       </div>\n" +
         "    </div></div>\n" +
         "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
@@ -255,7 +252,7 @@ function playboyPageHTML() {
 function indexPageHTML() {
     return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
         "       <div class='sectionLabel'>random galleries</div>\n" +
-        "       <div id='testMessage1' class='indexPageHappyMessage' >start</div>\n" +
+        "       <div id='testMessage1' class='indexPageHappyMessage' >00</div>\n" +
         "       <div id='promoContainer' class='promoContainer' >my promo message</div>\n" +
         "       <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
@@ -266,7 +263,7 @@ function indexPageHTML() {
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +
         "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
-        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' src='Images/loader.gif' />" +
+        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' title='loading gif' alt='' src='Images/loader.gif' />" +
         "       </div>\n" +
         "    </div>\n" +
         "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +

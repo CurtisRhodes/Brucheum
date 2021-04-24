@@ -2,11 +2,9 @@
 var searchString = "";
 var itemIndex = -1;
 var listboxActive = false;
-var currentFolderId;
 
 
 function startOggleSearch(folderId) {
-    currentFolderId = folderId;
 }
 
 function oggleSearchKeyDown(event) {
@@ -100,7 +98,7 @@ function performSearch(searchString) {
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
                     let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", currentFolderId, errMsg, functionName);
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
                 }
             });
         }
@@ -117,12 +115,7 @@ function clearSearch() {
 }
 
 function jumpToSelected(selectedFolderId) {
-    //logEvent("SRC",currentFolderId,
-
-    //rtpe(eventCode, calledFrom, eventDetail, folderId)
     rtpe('SRC', hdrFolderId, searchString, selectedFolderId);
-    //window.open("/album.html?folder=" + selectedFolderId, "_blank");
-
     clearSearch();
 }
 

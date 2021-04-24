@@ -28,14 +28,21 @@
     background-color: #aae890;
     display: none;
 }
-.ctxInfolabel {
+.ctxItem {
+    display: none;
     font-size: 12px;
     font-weight: bold;
-    width:100% !important;
-    margin-right:3px;
+    width: 100% !important;
+    line-height: 13px;
+    margin-right: 3px;
+    cursor: pointer;
 }
+.ctxItem:hover {
+    text-decoration: underline;
+}
+
 .contextMenuInnerContainer div {
-    line-height: 21px;
+    /*    line-height: 21px;*/
     padding: 0 !important;
 }
 .contextMenuInnerContainer div:hover {

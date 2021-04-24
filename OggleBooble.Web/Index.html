@@ -71,7 +71,7 @@
         <div class="middleColumn">
             <div id="divStatusMessage"></div>
             <div id="dots"></div>
-            <img id="indexPageLoadingGif" class="loadingGif" src="Images/loader.gif" />
+            <img id="indexPageLoadingGif" class="loadingGif" title='loading gif' alt='' src="Images/loader.gif" />
             <div id="indexMiddleColumn"></div>
         </div>
         <div id="rightColumnArea" class="rightColumn"></div>
@@ -125,7 +125,6 @@
                         console.log("connection verified: " + verifyConnectionCount + " calling tryHitStats");
                         tryHitStats();
                         changeFavoriteIcon("redBallon");
-                        document.title = "OggleBooble";
                         verifyVisitorId(3908, "Index.html");
                         localhostBypass();
                         displaySpaPage(spaPageId);

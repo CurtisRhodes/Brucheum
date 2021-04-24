@@ -34,7 +34,7 @@ function showDefaultWorkArea() {
 }
 
 function dashboardHtml() {
-    return "<img id='dashBoardLoadingGif' class='loadingGif' src='Images/loader.gif'/>\n" +
+    return "<img id='dashBoardLoadingGif' class='loadingGif' title='loading gif' alt='' src='Images/loader.gif'/>\n" +
         "<div id='dashboardContainer' class='fullScreenContainer'>" +
         "   <div id='defaultSection' class='fullScreenSection flexbox'>\n" +
         "      <div id='dashboardLeftColumn' class='dashboardContainerColumn'>\n" +
@@ -185,7 +185,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showSortTool()'>Sort Tool</div>\n" +
                 "<div class='clickable' onclick='showCreateNewFolderDialog(" + pSelectedTreeId + ")';\">Create New Folder</div>\n" +
                 "<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>\n" +
-                "<div class='clickable' onclick='showAddStepChildFolderDialog()'>Add StepChild</div>\n" +
+                "<div class='clickable' onclick='showAddStepChildFolderDialog()'>Add As StepChild</div>\n" +
                 "<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(1);'>Move Many</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(2);'>Copy Many</div>\n" +
@@ -340,11 +340,11 @@ function performRepairLinks(justOne) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
                 let functionName = "performRepairLinks"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, pSelectedTreeId, "performRepairLinks")) logError("XHR", pSelectedTreeId, errMsg, "performRepairLinks");
             }
         });
     } catch (e) {
-        logError("CAT", apFolderId, e, "performRepairLinks");
+        logError("CAT", pSelectedTreeId, e, "performRepairLinks");
     }
 }
 
@@ -403,8 +403,7 @@ function removeDupeIps() {
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = "removeDupeIps"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, 111, "removeDupeIps")) logError("XHR", pSelectedTreeId, errMsg, "removeDupeIps");
             }
         });
     } catch (e) {
@@ -611,7 +610,7 @@ function performMoveFolder() {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, "performMoveFolder")) logError("XHR", folderId, errMsg, "performMoveFolder");
+            if (!checkFor404(errMsg, pSelectedTreeId, "performMoveFolder")) logError("XHR", pSelectedTreeId, errMsg, "performMoveFolder");
         }
     });
 }
@@ -650,7 +649,7 @@ function perfomAddStepChildFolder(cfSsorceFolderId) {
             $('#dashBoardLoadingGif').hide();
             $('#dataifyInfo').hide();
             if (success === "ok") {
-                displayStatusMessage("ok", "folder " + $('#txtNewFolderParent').val() + " copied to " + $('.txtPartialDirTreePath').val());
+                displayStatusMessage("ok", "folder " + $('#txtscSourceFolderName').val() + " added as stepchild to " + $('#txtStepParent').val());
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "CSF",  // Create Folder Stepchild
@@ -717,8 +716,7 @@ function loadMMcheckboxes() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, "loadMMcheckboxes")) logError("XHR", folderId, errMsg, "loadMMcheckboxes");
+            if (!checkFor404(errMsg, mmSourceFolderId, "loadMMcheckboxes")) logError("XHR", mmSourceFolderId, errMsg, "loadMMcheckboxes");
         }
     });
 }
@@ -728,6 +726,7 @@ function mmSelectAll() {
     else
         $('.loadManyCheckbox').prop("checked", false);
 }
+
 function moveCheckedImages() {
     if (mmSourceFolderId == pSelectedTreeId) {
         alert("select a destination");
@@ -767,8 +766,7 @@ function moveCheckedImages() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, "loadMMcheckboxes")) logError("XHR", folderId, errMsg, "loadMMcheckboxes");
+                if (!checkFor404(errMsg, pSelectedTreeId, "loadMMcheckboxes")) logError("XHR", pSelectedTreeId, errMsg, "loadMMcheckboxes");
             }
         });
     }
@@ -804,8 +802,7 @@ function performAutoIncriment(recurr) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, "performAutoIncriment")) logError("XHR", folderId, errMsg, "performAutoIncriment");
+            if (!checkFor404(errMsg, pSelectedTreeId, "performAutoIncriment")) logError("XHR", pSelectedTreeId, errMsg, "performAutoIncriment");
         }
     });
 }
@@ -844,8 +841,7 @@ function loadSortImages() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, "loadSortImages")) logError("XHR", folderId, errMsg, "loadSortImages");
+            if (!checkFor404(errMsg, pSelectedTreeId, "loadSortImages")) logError("XHR", pSelectedTreeId, errMsg, "loadSortImages");
         }
     });
 }
@@ -904,8 +900,7 @@ function saveSortChanges(sortOrderArray) {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "saveSortChanges"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, pSelectedTreeId, "saveSortChanges")) logError("XHR", pSelectedTreeId, errMsg, "saveSortChanges");
         }
     });
 }
@@ -961,8 +956,7 @@ function emergencyFolderLocationFix() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "emergencyFolderLocationFix"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, pSelectedTreeId, "emergencyFolderLocationFix")) logError("XHR", pSelectedTreeId, errMsg, "emergencyFolderLocationFix");
         }
     });
 }
@@ -988,8 +982,7 @@ function MoveManyCleanup() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "MoveManyCleanup"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, pSelectedTreeId, "MoveManyCleanup")) logError("XHR", pSelectedTreeId, errMsg, "MoveManyCleanup");
         }
     });
 }
@@ -1096,8 +1089,7 @@ function prepareXhamsterPage() {
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = "prepareXhamsterPage";
-                if (!checkFor404(errMsg, folderId, functionName)) {
+                if (!checkFor404(errMsg, pSelectedTreeId, "prepareXhamsterPage")) {
                     //logError("XHR", 3499, errMsg, functionName);
                     alert(errMsg);
                 }
@@ -1144,8 +1136,7 @@ function performRipPdf() {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
                 alert(errMsg);
-                let functionName = "performRipPdf"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, destinationPath, "performRipPdf")) logError("XHR", destinationPath, errMsg, "performRipPdf");
             }
         });
     }
@@ -1167,8 +1158,7 @@ function performRipPdf() {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
                 alert(errMsg);
-                let functionName = "performRipPdf"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, destinationPath, "performRipPdf")) logError("XHR", destinationPath, errMsg, "performRipPdf");
             }
         });
     }
@@ -1207,8 +1197,7 @@ function performRenameFolder(folderId, newFolderName) {
         },
         error: function (xhr) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "performRenameFolder"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", pSelectedTreeId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "performRenameFolder")) logError("XHR", folderId, errMsg, "performRenameFolder");
         }
     });
 }

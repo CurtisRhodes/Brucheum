@@ -6,7 +6,6 @@
 // Request extra privdleges 
 // pay me to do some programming for you and I'll let you in on all my source code
 
-var loginFromPageId;
 function showLoginDialog() {
     $('#centeredDialogTitle').html("Log In to OggleBooble");
     $('#centeredDialogContents').html(loginDialogHtml());
@@ -34,7 +33,7 @@ function attemptLogin() {
                     setCookieValue("UserName", userName);
                     setCookieValue("IsLoggedIn", true);
                     setCookieValue("VisitorId", successModel.ReturnValue);
-                    logEvent("LOG", loginFromPageId, "Successfull log in: " + getCookieValue("UserName"));
+                    logEvent("LOG", 0, "Successfull log in: " + getCookieValue("UserName"));
                     displayStatusMessage("ok", "thanks for logging in " + userName);
                     window.localStorage["userRole"] = null;
                     window.location.href = ".";
@@ -51,18 +50,18 @@ function attemptLogin() {
                             if (successModel.Success == "password fail") {
                                 alert("password fail");
                             } else {
-                                logError("AJX", loginFromPageId, successModel.Success, "attemptLogin");
+                                logError("AJX", 0, successModel.Success, "attemptLogin");
                             }
                     }
                     else {
-                        logError("AJX", loginFromPageId, successModel.Success, "attemptLogin");
+                        logError("AJX", 0, successModel.Success, "attemptLogin");
                     }
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
                 let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", loginFromPageId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
             }
         });
     }
@@ -155,16 +154,6 @@ function checkFaceBookLoginState() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-let showUserProfilePageId;
-function showUserProfileDialog(pageId) {
-    if (typeof pause === 'function') pause();
-    showUserProfilePageId = pageId;
-    $('#centeredDialogContents').html(userProfileHtml());
-    $('#centeredDialogTitle').html("update user profile");
-    $('#centeredDialog').css("top", $('#oggleHeader').height() + 120);
-    $('#centeredDialogContainer').draggable().fadeIn();
-    loadUserProfile();
-}
 
 function userProfileHtml() {
     return "<div id='userProfileDialog' class='roundedDialog' >\n" +
@@ -206,16 +195,16 @@ function loadUserProfile() {
                     alert("userProfileData.VisitorId: " + userProfileData.VisitorId);
                 }
                 else
-                    logError("AJX", showUserProfilePageId, registeredUser.Success, "loadUserProfile");
+                    logError("AJX", 0, registeredUser.Success, "loadUserProfile");
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
                 let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", loginFromPageId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
             }
         });
     } catch (e) {
-        logError("CAT", showUserProfilePageId, e, "loadUserProfile");
+        logError("CAT", 0, e, "loadUserProfile");
     }
 }
 
@@ -235,40 +224,40 @@ function updateUserProfile() {
                     displayStatusMessage("ok", "user profile updated");
                 }
                 else {
-                    logError("AJX", showUserProfilePageId, success, "updateUserProfile");
+                    logError("AJX", 0, success, "updateUserProfile");
                     displayStatusMessage("error", "unable to update user profile: " + success);
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
                 let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", loginFromPageId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
             }
         });
     } catch (e) {
-        logError("CAT", showUserProfilePageId, e, "updateUserProfile");
+        logError("CAT", 0, e, "updateUserProfile");
     }
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function showRegisterDialog(folderId) {
-    loginFromPageId = folderId;
+function showRegisterDialog() {
     let visitorId = getCookieValue("VisitorId");
     if (isNullorUndefined(visitorId)) {
-        getIpInfo(folderId, "showRegisterDialog");
-        logError("BUG", folderId, "attempt to register with no visitorId", "showRegisterDialog");
+        getIpInfo(0, "showRegisterDialog");
+        logError("BUG", 0, "attempt to register with no visitorId", "showRegisterDialog");
     }
-    $('#centeredDialogTitle').html("Register and Login to OggleBooble");
-    $('#centeredDialogContents').html(registerDialogHtml());
-    $("#vailShell").fadeIn();
-    $("#centeredDialogContainer").draggable().fadeIn();
-    $('.validationError').hide();
-    // $("#centeredDialogContainer").css("width", "400");
-    logEvent("RDO", folderId, "YESS!!!");
-    if (typeof pause === 'function')
-        pause();
+    else {
+        if (typeof pause === 'function') pause();
+        $('#centeredDialogTitle').html("Register and Login to OggleBooble");
+        $('#centeredDialogContents').html(registerDialogHtml());
+        $("#vailShell").fadeIn();
+        $("#centeredDialogContainer").draggable().fadeIn();
+        $('.validationError').hide();
+        // $("#centeredDialogContainer").css("width", "400");
+        logEvent("RDO", 0, "YESS!!!");
+    }
 }
 
 function attemptRegister() {
@@ -297,7 +286,7 @@ function attemptRegister() {
                             (success == "visitorId already registered"))
                             $('#errRegisterUserName').text(successModel.Success).show();
                         else {
-                            logError("AJX", loginFromPageId, success, "attemptRegister");
+                            logError("AJX", 0, success, "attemptRegister");
                             $('#registerValidationSummary').html(response).show();
                         }
                     }
@@ -305,11 +294,11 @@ function attemptRegister() {
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
                     let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", loginFromPageId, errMsg, functionName);
+                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
                 }
             });
         } catch (e) {
-            logError("CAT", loginFromPageId, e, "attemptRegister");
+            logError("CAT", 0, e, "attemptRegister");
         }
     }
 }
@@ -399,7 +388,7 @@ function authenticateEmail(usersEmail) {
     $.each(requestedPrivileges, function (idx, obj) {
         privileges += obj + ", ";
     });
-    logEvent("", loginFromPageId, "authenticateEmail");
+    logEvent("", 0, "authenticateEmail");
 
     sendEmail("CurtishRhodes@hotmail.com", "SomeoneAuthenticated@Ogglebooble.com", "Someone Authenticated !!!", "OH MY GOD");
 

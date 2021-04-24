@@ -1,11 +1,8 @@
-﻿let hdrFolderId, hdrSubdomain, hdrRowW, mediaDebug;
+﻿let hdrFolderId, hdrRowW, mediaDebug;
 
-function setOggleHeader(folderId, subdomain) {
-    if (subdomain === undefined) subdomain = "boobs";
-    hdrFolderId = folderId;
-    hdrSubdomain = subdomain;
+function setOggleHeader(headerContext) {
 
-    $('#oggleHeader').html(headerHtml(folderId, subdomain));
+    $('#oggleHeader').html(headerHtml(subdomain));
 
     $('#centeredDialogContents').resizable({
         resize: function () {
@@ -33,8 +30,8 @@ function setOggleHeader(folderId, subdomain) {
     window.addEventListener("resize", mediaSavyHdrResize);
 }
 
-function setHeaderMenu(folderId, subdomain) {
-    switch (subdomain) {
+function setHeaderDetails(rootFolder) {
+    switch (rootFolder) {
         case "Index": {
             $('#oggleHeader').addClass('boobsHeader');
             $('#mainMenuContainer').html("Home of the Big Naturals");
@@ -45,6 +42,7 @@ function setHeaderMenu(folderId, subdomain) {
             $('#oggleHeader').addClass('boobsHeader');
             $('#mainMenuContainer').html("loading");
             $("#divLoginArea").hide();
+            document.title = "loading : OggleBooble";
             break;
         }
         case "dashboard": {
@@ -61,6 +59,13 @@ function setHeaderMenu(folderId, subdomain) {
             $('#mainMenuContainer').html("ranker");
             break;
         }
+
+        default:
+    }
+}
+
+function setHeaderMenu(folderId, subdomain) {
+    switch (subdomain) {
         case "index":
         case "root": 
         case "archive":
@@ -78,22 +83,21 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",241)'>sizes</a>\n"
             );
 
-            $('#hdrBtmRowSec3').html(addBannerButton("archive"));
-            $('#hdrBtmRowSec3').append(addBannerButton("centerfold"));
+            $('#hdrBtmRowSec3').html(addSpaButton(3,"big naturals archive"));
+            $('#hdrBtmRowSec3').append(addSpaButton(72, "every Playboy Centefold"));
             if (subdomain == "root") {
             }
             if (subdomain == "index") {
-                $('#topRowRightContainer').append(addBannerButton("ranker", "boobs"));
+                $('#topRowRightContainer').append(addRankerButton("boobs"));
             }
             if (subdomain == "archive") {
-                $('#topRowRightContainer').html(addBannerButton("ranker", "archive"));
+                $('#topRowRightContainer').html(addRankerButton("boobs"));
             }
             if (subdomain == "boobs") {
-                $('#topRowRightContainer').html(addBannerButton("ranker", "poses"));
-                // alert("addBannerButton('archive')");
-                $('#hdrBtmRowSec3').append(addBannerButton("archive"));
+                $('#topRowRightContainer').html(addRankerButton("poses"));
+                $('#hdrBtmRowSec3').html(addSpaButton(3, "big naturals archive"));
             }
-            $('#hdrBtmRowSec3').append(addBannerButton("soft","softcore"));
+            $('#hdrBtmRowSec3').append(addPgLinkButton("soft","softcore"));
             $('#hdrBtmRowSec3').append(addBannerButton("porn","OgglePorn"));
             break;
         }
@@ -101,6 +105,7 @@ function setHeaderMenu(folderId, subdomain) {
             $('#oggleHeader').switchClass('boobsHeader', 'oggleSoft');
             $('#divSiteLogo').attr("src", "/Images/redwoman.png");
             $('#bannerTitle').html("OggleSoftcore");
+            document.title = "softcore : OggleBooble";
             changeFavoriteIcon("soft");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",243)'>pussy</a>, \n" +
@@ -115,6 +120,7 @@ function setHeaderMenu(folderId, subdomain) {
         }
         case "playboyIndex":
             $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
+            document.title = "every Playboy Centerfold : OggleBooble";
             // top row
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
             $('#bannerTitle').html("<span style='color:#fff;'>every playboy centerfold</span>");  // 1132
@@ -183,6 +189,7 @@ function setHeaderMenu(folderId, subdomain) {
             //$('.threeColumnLayout').css("background-color", "var(--oggleBackgroundColor)");
             $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
+            document.title = "welcome : OgglePorn";
             $('#bannerTitle').html("OgglePorn");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",243)'>cock suckers</a>, \n" +
@@ -201,7 +208,7 @@ function setHeaderMenu(folderId, subdomain) {
             changeFavoriteIcon("porn");
             $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
-            $('#bannerTitle').html("OgglePorn");
+            $('#bannerTitle').html("PornStar Archive ");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",1174)'>big titters gone bad</a>,\n" +
                 //"<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",2677)'>cocksucker lipps</a>,\n" +
@@ -212,8 +219,10 @@ function setHeaderMenu(folderId, subdomain) {
                 //"<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",4198)'>milf cocksuckers</a>,\n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",4271)'>retro porn stars</a>,\n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",3739)'>exploited teens</a>\n");
-            $('#hdrBtmRowSec3').html(addBannerButton("porn", "back to porn"));
-            $('#hdrBtmRowSec3').append(addBannerButton("ranker", "porn"));
+
+            $('#hdrBtmRowSec3').html(addBannerButton("backToOggle"));
+            $('#hdrBtmRowSec3').append(addBannerButton("porn", "back to porn"));
+            $('#hdrBtmRowSec3').append(addRankerButton("porn"));
             break;
         }
         default: {
@@ -222,17 +231,13 @@ function setHeaderMenu(folderId, subdomain) {
     }
 }
 
-function openBannerButton(bannerType, rankerType) {
-    logEvent("BLC", hdrFolderId, hdrSubdomain, bannerType);
+function openBannerButton(bannerType) {
     switch (bannerType) {
         case "archive":
             location.href = "album.html?folder=3";
             break;
         case "centerfold":
             location.href = "index.html?spa=72";
-            break;
-        case "ranker":
-            location.href = "index.html?spa=3907&bp=" + rankerType;
             break;
         case "porn":
             location.href = "index.html?spa=3909";
@@ -254,21 +259,46 @@ function openBannerButton(bannerType, rankerType) {
     }
 }
 
-function addBannerButton(bannerType, rankerType) {
+function addBannerButton(buttonType, folderId) {
+    return "<div class='headerBannerButton'>" +
+        "   <div class='clickable' onclick='location.href=\"album.html?folder=" + folderId + "'</div>" +
+        "</div>\n";
+}
+
+
+function addRankerButton(rankerType) {
+    return "<div class='headerBannerButton'>\n" +
+        "<div class='clickable' onclick=\"location.href=\'index.html?spa=ranker&bp=" + rankerType + "\' " +
+        "title='Spin through the links to land on random portrait images.'>" + rankerType + " ranker</div>" +
+        "</div>\n";
+}
+
+function addPgLinkButton(folderId, labelText) {
+    return "<div class='headerBannerButton'>" +
+        "   <div class='clickable' onclick='location.href=\"album.html?folder=" + folderId + "'</div>" + labelText + "</div>\n";
+}
+
+function addSpaButton(spa,labelText) {
+    return "<div class='headerBannerButton'>" +
+        "   <div class='clickable' onclick='location.href=\"index.html?spa=" + labelText + "'</div>" +
+        "</div>\n";
+
+
+
+
+
+
+
+
     switch (bannerType) {
-        case "ranker":
-            return "<div class='headerBannerButton'>\n" +
-                "<div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")' " +
-                "title='Spin through the links to land on random portrait images.'>" + rankerType + " ranker</div>" +
-                "</div>\n";
         case "porn":
             return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>" + rankerType + "</div>" +
+                "   <div class='clickable' onclick='location.href=\"index.html?spa=3909'</div>" +
                 "</div>\n";
             break;
         case "soft":
             return "<div class='headerBannerButton'>" +
-                "   <div class='clickable' onclick='openBannerButton(\"" + bannerType + "\",\"" + rankerType + "\")'>" + rankerType + "</div>" +
+                "   <div class='clickable' onclick='location.href=\"index.html?spa=" + spa + "'</div>" +
                 "</div>\n";
             break;
         case "backToOggle":
@@ -487,7 +517,7 @@ function dragableDialogClose() {
 
 function topLogoClick(subdomain) {
     //    if (document.domain == "localhost") alert("subdomain: " + subdomain);
-    logEvent("TLC", hdrFolderId, subdomain, hdrSubdomain);
+    logEvent("TLC", hdrFolderId, "", subdomain);
     switch (subdomain) {
         case "playboyIndex":
             window.location.href = "Index.html";
@@ -518,7 +548,7 @@ function topLogoClick(subdomain) {
 // \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
 // \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
 
-function headerHtml(folderId, subdomain) {
+function headerHtml(subdomain) {
     return "<div class='siteLogoContainer'>" +
         "       <a href='javascript:topLogoClick(\"" + subdomain + "\")'>" +
         "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png'/></a>" +
@@ -530,7 +560,7 @@ function headerHtml(folderId, subdomain) {
         "           <div id='topRowRightContainer'></div>" +
         "           <div id='searchBox' class='oggleSearchBox'>\n" +
         "               <span id='notUserName' title='Esc clears search.'>search</span>" +
-        "                   <input class='oggleSearchBoxText' id='txtSearch' onfocus='startOggleSearch(" + folderId + ")' onkeydown='oggleSearchKeyDown(event)' />" +
+        "                   <input class='oggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)' />" +
         "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
         "           </div>\n" +
         "       </div>\n" +
@@ -544,12 +574,12 @@ function headerHtml(folderId, subdomain) {
         "           <div id='divLoginArea' class='loginArea'>\n" +
         "               <div id='optionLoggedIn' class='displayHidden'>\n" +
         //"                   <div class='hoverTab' id='dashboardMenuItem' class='displayHidden'><a href='/index.html?subdomain=dashboard'>Dashboard</a></div>\n" +
-        "                   <div class='hoverTab' title='modify profile'><a href='javascript:showUserProfileDialog(" + folderId + ")'>Hello <span id='spnUserName'></span></a></div>\n" +
+        "                   <div class='hoverTab' title='modify profile'><a href='javascript:showUserProfileDialog()'>Hello <span id='spnUserName'></span></a></div>\n" +
         "                   <div class='hoverTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
         "               </div>\n" +
         "               <div id='optionNotLoggedIn' class='displayHidden'>\n" +
-        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog(" + folderId + ")'>Register</a></div>\n" +
-        "                   <div id='btnLayoutLogin' class='hoverTab'><a href='javascript:showLoginDialog(" + folderId + ")'>Log In</a></div>\n" +
+        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
+        "                   <div id='btnLayoutLogin' class='hoverTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
         "               </div>\n" +
         "           </div>\n" +
         "       </div>\n" +
