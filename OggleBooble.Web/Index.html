@@ -94,37 +94,43 @@
     <script>
         let spaPageId, dots = "";
         //$(document).ready(function () {
-        console.log("Index $(document).ready");
-
-        //$('#footerLastBuild').html("last build: " + lastBuild + "3");
-        //$('#footerMessage').html("loading settings");
-
-        setOggleHeader(3910, "loading");
-
+        //console.log("Index $(document).ready");
         params = getParams();
-        if (isNullorUndefined(params.spa))
+        if (isNullorUndefined(params.spa)) {
+            setOggleHeader("welcome");
             spaPageId = 3908;
-        else
+        }
+        else {
             spaPageId = params.spa;
+            switch (spaPageId) {
+                case 72:
+                    setOggleHeader("playboy");
+                    break;
+                case 72:
+                    setOggleHeader("playboy");
+                    break;
+                default:
+                    break;
+            }
+            setOggleHeader("boobs");
+        }
 
         loadOggleSettings();
         var settingsWaiter = setInterval(function () {
             if (settingsArray.ApiServer === undefined) {
                 dots += "~ ";
                 $('#dots').html(dots);
-                //setOggleHeader(params.folder, "loading");
             }
             else {
                 clearInterval(settingsWaiter);
+
+                setOggleHeader("connecting");
                 //$('#dots').html("*");
                 checkConnection(spaPageId, "Index.html");
                 let connectionVerifiedLoop = setInterval(function () {
                     if (connectionVerified) {
                         clearInterval(connectionVerifiedLoop);
-
-                        console.log("connection verified: " + verifyConnectionCount + " calling tryHitStats");
                         tryHitStats();
-                        changeFavoriteIcon("redBallon");
                         verifyVisitorId(3908, "Index.html");
                         localhostBypass();
                         displaySpaPage(spaPageId);

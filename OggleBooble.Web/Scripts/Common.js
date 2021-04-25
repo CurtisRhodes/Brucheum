@@ -121,7 +121,8 @@ function loadOggleSettings() {
             });
         },
         error: function (jqXHR) {
-            logError("XHR", 3998, getXHRErrorDetails(jqXHR), "loadOggleSettings");
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, 444, "loadOggleSettings")) logError("XHR", 444, errMsg, "loadOggleSettings");
         }
     });
 }

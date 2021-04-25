@@ -37,7 +37,7 @@ function qucikHeader(folderId) {
         url: settingsArray.ApiServer + "api/GalleryPage/GetQucikHeader?folderId=" + folderId,
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
-                setOggleHeader(folderId, albumInfo.RootFolder);
+                resetOggleHeader(folderId, albumInfo.RootFolder);
                 setOggleFooter(folderId, albumInfo.RootFolder);
                 if (albumInfo.RootFolder == "porn")
                     document.title = albumInfo.FolderName + " : OgglePorn";

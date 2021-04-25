@@ -5,8 +5,7 @@ function checkFor404(errMsg, folderId, calledFrom) {
     //if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
     if (errMsg.indexOf("Verify Network") > 0) {
         logError("CKE", folderId, errMsg, calledFrom);
-        // connectionVerified = false;
-        // checkConnection(folderId, calledFrom);
+        checkConnection(folderId, calledFrom);
         return true;
     }
     else {
@@ -16,8 +15,8 @@ function checkFor404(errMsg, folderId, calledFrom) {
 }
 
 function checkConnection(folderId, calledFrom) {
-    //connectionVerified = false;
-    //verifyConnectionCount = 0;
+    connectionVerified = false;
+    verifyConnectionCount = 0;
     let getXMLsettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
             dots += "~ ";
@@ -26,8 +25,6 @@ function checkConnection(folderId, calledFrom) {
         else {
             clearInterval(getXMLsettingsWaiter);
             verifyConnectionFunction(calledFrom, folderId);
-            connectingToServerGifShowing = false;
-
             setTimeout(function () {
                 if (connectionVerified) {
                     $('#dots').html('');
@@ -35,6 +32,9 @@ function checkConnection(folderId, calledFrom) {
                     console.log("connection verified right off");
                 }
                 else {
+                    connectingToServerGifShowing = false;
+                    document.title = "loading : OggleBooble";
+                    changeFavoriteIcon("loading");
                     let verifyConnectionWaiter = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(verifyConnectionWaiter);
@@ -71,9 +71,6 @@ function showConnectingToServerGif() {
 
         console.log("showing connectingToServerGif");
         //alert("showConnectingToServerGif   " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
-        //document.title = "loading : OggleBooble";
-        //changeFavoriteIcon("loading");
-        //setOggleHeader(3908, "loading s");
     }
 }
 

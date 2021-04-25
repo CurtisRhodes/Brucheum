@@ -138,17 +138,20 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                 else {
                     if (document.domain == "localhost")
                         alert("carouselInfo error " + carouselInfo.Success);
-                    logError("AJX", 3908, carouselInfo.Success, "carousel.loadImages");
+
+                    if (carouselInfo.Success.indexOf("connection attempt failed") > 0)
+                        checkConnection(rootFolder, "loadImages");
+                    else
+                        logError("AJX", 3908, carouselInfo.Success, "loadImages");
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, rootFolder, "loadImages")) logError("XHR", rootFolder, errMsg, "loadImages");
             }
         });
     } catch (e) {
-        logError("CAT", 3908, e, "carousel.loadImages");
+        logError("CAT", 3908, e, "loadImages");
     }
 }
 
@@ -212,7 +215,7 @@ function refreshCache(rootFolder) {
             }
         });
     } catch (e) {
-        logError("CAT", 3908, e, "carousel.loadImages");
+        logError("CAT", 3908, e, "refreshCache");
     }
 }
 

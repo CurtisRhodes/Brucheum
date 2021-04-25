@@ -2,7 +2,7 @@
 
 function setOggleHeader(headerContext) {
 
-    $('#oggleHeader').html(headerHtml(subdomain));
+    $('#oggleHeader').html(headerHtml());
 
     $('#centeredDialogContents').resizable({
         resize: function () {
@@ -11,8 +11,7 @@ function setOggleHeader(headerContext) {
     });
 
     mediaDebug = false;
-    if (mediaDebug) {        
-        //$('#bannerTitle').css("border", "solid thin red");
+    if (mediaDebug) {
         $('#mainMenuContainer').css("border", "solid thin red");
         //$('#topRowRightContainer').css("border", "solid thin red");
         $('#searchBox').css("border", "solid thin red");
@@ -24,27 +23,31 @@ function setOggleHeader(headerContext) {
         $('#divLoginArea').css("border", "solid thin red");
     }
 
-    setHeaderMenu(hdrFolderId, subdomain);
-    setLoginSection(subdomain);
-    mediaSavyHdrResize();
-    window.addEventListener("resize", mediaSavyHdrResize);
-}
-
-function setHeaderDetails(rootFolder) {
-    switch (rootFolder) {
-        case "Index": {
-            $('#oggleHeader').addClass('boobsHeader');
-            $('#mainMenuContainer').html("Home of the Big Naturals");
-            $("#divLoginArea").hide();
-            break;
-        }
+    switch (headerContext) {
         case "loading": {
-            $('#oggleHeader').addClass('boobsHeader');
-            $('#mainMenuContainer').html("loading");
             $("#divLoginArea").hide();
             document.title = "loading : OggleBooble";
             break;
         }
+        case "album":
+            break;
+        case "welcome": {
+            changeFavoriteIcon("redBallon");
+            $('#oggleHeader').addClass('boobsHeader');
+            $('#mainMenuContainer').html("Home of the Big Naturals");
+            document.title = "welcome : OggleBooble";
+            $("#divLoginArea").show();
+            setHeaderMenu("boobs")
+            break;
+        }
+        case "playboyIndex":
+            changeFavoriteIcon("centerfold");
+            document.title = "Every Playboy Centerfold : OggleBooble";
+            break;
+        case "porn":
+            changeFavoriteIcon("porn");
+            document.title = "welcome : OgglePorn";
+            break;
         case "dashboard": {
             $('#mainMenuContainer').html("dashboard");
             $("#divLoginArea").hide();
@@ -59,39 +62,86 @@ function setHeaderDetails(rootFolder) {
             $('#mainMenuContainer').html("ranker");
             break;
         }
-
         default:
+            $('#oggleHeader').addClass('boobsHeader');
+            break;
     }
+    setHeaderMenu(hdrFolderId, subdomain);
+    setLoginSection(subdomain);
+    mediaSavyHdrResize();
+    window.addEventListener("resize", mediaSavyHdrResize);
 }
 
-function setHeaderMenu(folderId, subdomain) {
-    switch (subdomain) {
-        case "index":
-        case "root": 
+function resetOggleHeader(folderId, rootFolder) {
+    switch (rootFolder) {
         case "archive":
-        case "boobs": {
             changeFavoriteIcon("redBallon");
             $('#oggleHeader').addClass('boobsHeader');
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
-            $('#bannerTitle').html("OggleBooble");
-            $('#mainMenuContainer').html(
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3)'><span class='bigTits'>BIG Naturals</span></a> organized by\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",3916)'> poses,</a>\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",136)'> positions,</a>\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",159)'> topics,</a>\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",199)'> shapes</a> and\n" +
-                "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"default\",241)'>sizes</a>\n"
-            );
-
-            $('#hdrBtmRowSec3').html(addSpaButton(3,"big naturals archive"));
+            $('#oggleHeaderTitle').html("OggleBooble");
+            $('#hdrBtmRowSec3').html(addSpaButton(3, "big naturals archive"));
             $('#hdrBtmRowSec3').append(addSpaButton(72, "every Playboy Centefold"));
+            $('#topRowRightContainer').html(addRankerButton("boobs"));
+            break;
+        case "playboyIndex":
+        case "playboy":
+        case "cybergirl":
+        case "muses":
+        case "plus":
+        case "magazine":
+        case "centerfold":
+            //window.open("index.html?spa=72");
+            $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
+            setHeaderMenu("playboy");
+            break;
+        case "soft": {
+            // JULIA
+            window.open("album.html?folder=5233");
+            $('#oggleHeader').switchClass('boobsHeader', 'oggleSoft');
+            $('#divSiteLogo').attr("src", "/Images/redwoman.png");
+            $('#oggleHeaderTitle').html("OggleSoftcore");
+            document.title = "softcore : OggleBooble";
+            changeFavoriteIcon("soft");
+            $('#hdrBtmRowSec3').html(addBannerButton("backToOggle"));
+            $('#hdrBtmRowSec3').append(addBannerButton("porn", "OgglePorn"));
+            setHeaderMenu("soft");
+            break;
+        }
+        case "porn": {
+            changeFavoriteIcon("porn");
+            $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
+            $('#divSiteLogo').attr("src", "/Images/csLips02.png");
+            $('#oggleHeaderTitle').html("PornStar Archive ");
+            setHeaderMenu("soft");
+        }
+        case "sluts":
+            window.open("index.html?spa=3909");
+            changeFavoriteIcon("porn");
+            $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
+            $('#divSiteLogo').attr("src", "/Images/csLips02.png");
+            $('#oggleHeaderTitle').html("PornStar Archive ");
+            break;
+        default:
+            window.location.href = "Index.html";
+    }
+}
+
+function setHeaderMenu(menu) {
+    switch (menu) {
+        case "boobs": {
+            $('#mainMenuContainer').html(
+                "<span class='bigTits' onclick='headerMenuClick(3)'>BIG Naturals</span></a > organized by\n" +
+                "<span onclick='headerMenuClick(3916)'>poses, </span>\n" +
+                "<span onclick='headerMenuClick(136)'> positions,</span>\n" +
+                "<span onclick='headerMenuClick(159)'> topics,</span>\n" +
+                "<span onclick='headerMenuClick(199)'> shape,</span>\n" +
+                "<span onclick='headerMenuClick(241)'> sizes</span>\n");
             if (subdomain == "root") {
             }
             if (subdomain == "index") {
                 $('#topRowRightContainer').append(addRankerButton("boobs"));
             }
             if (subdomain == "archive") {
-                $('#topRowRightContainer').html(addRankerButton("boobs"));
             }
             if (subdomain == "boobs") {
                 $('#topRowRightContainer').html(addRankerButton("poses"));
@@ -102,11 +152,6 @@ function setHeaderMenu(folderId, subdomain) {
             break;
         }
         case "soft": {
-            $('#oggleHeader').switchClass('boobsHeader', 'oggleSoft');
-            $('#divSiteLogo').attr("src", "/Images/redwoman.png");
-            $('#bannerTitle').html("OggleSoftcore");
-            document.title = "softcore : OggleBooble";
-            changeFavoriteIcon("soft");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",243)'>pussy</a>, \n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",420)'>boob suckers</a>, \n" +
@@ -114,8 +159,6 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",357)'>fondle</a>, \n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",397)'>kinky</a> and \n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"soft\",411)'>naughty behaviour</a>\n");
-            $('#hdrBtmRowSec3').html(addBannerButton("backToOggle"));
-            $('#hdrBtmRowSec3').append(addBannerButton("porn", "OgglePorn"));
             break;
         }
         case "playboyIndex":
@@ -123,7 +166,7 @@ function setHeaderMenu(folderId, subdomain) {
             document.title = "every Playboy Centerfold : OggleBooble";
             // top row
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
-            $('#bannerTitle').html("<span style='color:#fff;'>every playboy centerfold</span>");  // 1132
+            $('#oggleHeaderTitle').html("<span style='color:#fff;'>every playboy centerfold</span>");  // 1132
             $('#mainMenuContainer').html(
                 //"<a href='javascript:rtpe(\"PBB\",72,\"magazine covers\",1986)'>magazine covers</a>,\n" +
                 "<a href='javascript:rtpe(\"PBB\",72,\"pictorials\",4015)'>pictorials</a>,\n" +
@@ -161,7 +204,6 @@ function setHeaderMenu(folderId, subdomain) {
         case "special": 
         case "magazine": 
         case "centerfold": {
-            $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"playboy\",1132)'>Centerfolds,</a>\n" +
                 "<a href='javascript:rtpe(\"PBB\"," + folderId + ",\"magazine covers\",1986)'>magazine covers</a>,\n" +
@@ -185,12 +227,6 @@ function setHeaderMenu(folderId, subdomain) {
             break;
         }
         case "porn": {
-            changeFavoriteIcon("porn");
-            //$('.threeColumnLayout').css("background-color", "var(--oggleBackgroundColor)");
-            $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
-            $('#divSiteLogo').attr("src", "/Images/csLips02.png");
-            document.title = "welcome : OgglePorn";
-            $('#bannerTitle').html("OgglePorn");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",243)'>cock suckers</a>, \n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",460)'>titty fuck</a>,\n" +
@@ -198,17 +234,9 @@ function setHeaderMenu(folderId, subdomain) {
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",357)'>cum shots</a>, \n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",694)'>kinky</a> and \n" +
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"porn\",411)'>naughty behaviour</a>\n");
-            $('#hdrBtmRowSec3').html(addBannerButton("backToOggle"));
-            $('#hdrBtmRowSec3').append(addBannerButton("sluts"));
-            $('#hdrBtmRowSec3').append(addBannerButton("ranker", "porn"));
-            $('#hdrBtmRowSec3').append(addBannerButton("soft","softcore"));
             break;
         }
         case "sluts": {
-            changeFavoriteIcon("porn");
-            $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
-            $('#divSiteLogo').attr("src", "/Images/csLips02.png");
-            $('#bannerTitle').html("PornStar Archive ");
             $('#mainMenuContainer').html(
                 "<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",1174)'>big titters gone bad</a>,\n" +
                 //"<a href='javascript:rtpe(\"TLM\"," + folderId + ",\"sluts\",2677)'>cocksucker lipps</a>,\n" +
@@ -264,7 +292,6 @@ function addBannerButton(buttonType, folderId) {
         "   <div class='clickable' onclick='location.href=\"album.html?folder=" + folderId + "'</div>" +
         "</div>\n";
 }
-
 
 function addRankerButton(rankerType) {
     return "<div class='headerBannerButton'>\n" +
@@ -429,15 +456,15 @@ function mediaSavyHdrResize() {
         //default top
         $('#divSiteLogo').css("height", "60px").show(); 
         $('#mainMenuContainer').css("font-size", "20px").show();  // id='mainMenuContainer' class='hdrTopRowMenu' font-size: 32px; font-family: Comic Sans MS; color: var(--oggleTitleColor); vertical-align: top; padding-left: 28px; margin-right: 8px; margin-top: 1px;    padding: 0;
-        $('.headerBannerButton').css("font-size", "14px"); //id='bannerTitle' class='headerTitle' font-size: 28px; padding-left: 6px; padding-top: 1px; font-family: 'Lucida Calligraphy';
+        $('.headerBannerButton').css("font-size", "14px");
         $('#topRowRightContainer').show();
-        $('#bannerTitle').css("color", "black").css("height", "28px").show(); ; // font-size: 28px;
+        $('#oggleHeaderTitle').css("color", "black").css("height", "28px").show(); ; // font-size: 28px;
         //<div id='topRowRightContainer'></div>" +
         // searchBox class='oggleSearchBox'
 
         if (hdrTopRowSectionsW() > hdrRowW) {
             //$('#divSiteLogo').css("height", "70px").show(); 
-            $('#bannerTitle').css("color", "blue").css("height", "25px");
+            $('#oggleHeaderTitle').css("color", "blue").css("height", "25px");
             //$('#mainMenuContainer').css("font-size", "25px").show();
             $('.headerBannerButton').css("font-size", "14px");
 
@@ -448,14 +475,14 @@ function mediaSavyHdrResize() {
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             //$('#divSiteLogo').css("height", "60px"); 
-            $('#bannerTitle').css("color", "orange").css("height", "23px");
+            $('#oggleHeaderTitle').css("color", "orange").css("height", "23px");
             $('#mainMenuContainer').css("font-size", "22px").show();
             $('.headerBannerButton').css("font-size", "13px");
             lasttopRowOption = "t2";
         }
         if (hdrTopRowSectionsW() > hdrRowW) {
             $('#divSiteLogo').css("height", "50px"); 
-            $('#bannerTitle').css("color", "red").css("height", "20px");
+            $('#oggleHeaderTitle').css("color", "red").css("height", "20px");
             $('#mainMenuContainer').css("font-size", "20px");
             $('.headerBannerButton').css("font-size", "12px");
             lasttopRowOption ="t3";
@@ -479,7 +506,7 @@ function hdrBottRowSectionsW() {
 }
 function hdrTopRowSectionsW() {
     let topRowFudgeFactor = 16;
-    return $('#bannerTitle').width() + $('#mainMenuContainer').width() + $('#topRowRightContainer').width() + $('#searchBox').width() + topRowFudgeFactor;
+    return $('#oggleHeaderTitle').width() + $('#mainMenuContainer').width() + $('#topRowRightContainer').width() + $('#searchBox').width() + topRowFudgeFactor;
 }
 
 function showHamburger() {
@@ -496,7 +523,6 @@ function showResizeMessage(lasttopRowOption, lastBottomRowOption) {
         $('#aboveImageContainerMessageArea').html("Top: " + lasttopRowOption + " : " + hdrTopRowSectionsW().toLocaleString() +
             " Bot: " + lastBottomRowOption + " : " + hdrBottRowSectionsW().toLocaleString() +
             "<span style='margin-left:45px;'>rW: </span> (" + $('.headerTopRow').width().toLocaleString() + ")");
-        //alert("banner: " + $('#bannerTitle').width() + " menu: " + $('#mainMenuContainer').width() + " rightRow: " + $('#topRowRightContainer').width() + " sbox: " + $('#searchBox').width());
     }
 }
 
@@ -517,29 +543,21 @@ function dragableDialogClose() {
 
 function topLogoClick(subdomain) {
     //    if (document.domain == "localhost") alert("subdomain: " + subdomain);
-    logEvent("TLC", hdrFolderId, "", subdomain);
-    switch (subdomain) {
-        case "playboyIndex":
-            window.location.href = "Index.html";
-            break;
-        case "playboy":
-        case "cybergirl":
-        case "muses":
-        case "plus":
-        case "magazine":
-        case "centerfold":
-            window.location.href = "Index.html?spa=72";
-            //window.open("index.html?spa=72");
-            break;
-        case "soft":
-            window.open("album.html?folder=5233");
-            break;
-        case "porn":
-        case "sluts":
+    //logEvent("TLC", hdrFolderId, "", subdomain);
+    //if ($('divSiteLogo').prop("src") == "/Images/redballon.png")
+
+    switch ($('#divSiteLogo').prop("src")) {
+        case "/Images/redwoman.png":
             window.open("index.html?spa=3909");
             break;
+        case "/Images/playboyBallon.png":
+            window.location.href = "Index.html?spa=72";
+            break;
+        case "/Images/csLips02.png":
+            window.location.href = "Index.html?spa=72";
+            break;
+
         default:
-            window.location.href = "Index.html";
     }
 }
 
@@ -549,13 +567,13 @@ function topLogoClick(subdomain) {
 // \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
 
 function headerHtml(subdomain) {
-    return "<div class='siteLogoContainer'>" +
-        "       <a href='javascript:topLogoClick(\"" + subdomain + "\")'>" +
-        "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png'/></a>" +
+    return "<div class='siteLogoContainer' onclick='topLogoClick()' >" +
+        //"       <a href='javascript:(\"" + subdomain + "\")'>" +
+        "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png'/>" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +
         "       <div class='headerTopRow'>\n" +
-        "           <div id='bannerTitle' class='headerTitle'></div >\n" +
+        "           <div id='oggleHeaderTitle' class='calligraphyTitle'></div >\n" +
         "           <div id='mainMenuContainer' class='hdrTopRowMenu'></div>" +
         "           <div id='topRowRightContainer'></div>" +
         "           <div id='searchBox' class='oggleSearchBox'>\n" +
@@ -615,7 +633,7 @@ function headerHtml(subdomain) {
         "   <div id='contextMenuContent'></div>\n" +
         "</div>\n" +
 
-        "<div id='hamburgerCtx' class='ogContextMenu displayHidden'>\n" +
+         "<div id='hamburgerCtx' class='ogContextMenu displayHidden'>\n" +
         "    <div onclick='rtpe(\"BAC\"," + folderId + ",\"archive\")'>babes archive</div>\n" +
         "    <div onclick='rtpe(\"RNK\",\"hamburger\",\"" + subdomain + "\"," + folderId + ")'>ranker</div>\n" +
         "    <div onclick='window.location.href=\"/index.html?subdomain=blog\"'>blog</div>\n" +

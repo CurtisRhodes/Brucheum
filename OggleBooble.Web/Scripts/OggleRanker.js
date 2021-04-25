@@ -20,8 +20,7 @@ function rankerStartup(rankPref) {
     $('#indexMiddleColumn').html(rankerHTML());
     setInitialCheckbox();
     loadBoobsRanker();
-    changeFavoriteIcon("redBallon");
-    setOggleHeader(spaPageId, "dashboard");
+    setOggleHeader("ranker");
     setOggleFooter(spaPageId, "blog");
     setRankerBreadcrumbMessage();
     //userName = getCookieValue("UserName");

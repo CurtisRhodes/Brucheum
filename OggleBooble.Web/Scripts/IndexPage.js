@@ -17,12 +17,12 @@ function displaySpaPage(spaPageId) {
             dashboardStartup();
             break;
         case 3908:  //indexStartup();
-            spaType = "boobs";
-            $('#indexMiddleColumn').html(indexPageHTML());
-            setOggleHeader(3908, "index");
-            setOggleFooter(3908, "index");
             document.title = "welcome : OggleBooble";
             changeFavoriteIcon("redBallon");
+            spaType = "boobs";
+            $('#indexMiddleColumn').html(indexPageHTML());
+            setOggleHeader("welcome");
+            setOggleFooter(3908, "index");
             launchCarousel("boobs");
             $('.indexPageSection').show();
             loadUpdatedGalleriesBoxes();
@@ -31,10 +31,8 @@ function displaySpaPage(spaPageId) {
         case 3909: // porn
             spaType = "porn";
             $('#indexMiddleColumn').html(indexPageHTML());
-            setOggleHeader(spaPageId, "porn");
+            setOggleHeader("porn");
             setOggleFooter(spaPageId, "porn");
-            changeFavoriteIcon("porn");
-            document.title = "welcome : OgglePorn";
             launchCarousel("porn");
             // set porn colors
             $('.threeColumnLayout').css("background-color", "#d279a6");
@@ -48,10 +46,8 @@ function displaySpaPage(spaPageId) {
         case 72: // every playboy centerfold
             spaType = "centerfold";
             $('#indexMiddleColumn').html(playboyPageHTML());
-            setOggleHeader(spaPageId, "playboyIndex");
+            setOggleHeader("playboyIndex");
             setOggleFooter(spaPageId, "centerfold");
-            changeFavoriteIcon("centerfold");
-            document.title = "Every Playboy Centerfold : OggleBooble";
             launchCarousel("centerfold");
             $('#updatedGalleriesSectionLoadingGif').show();
             loadUpdatedGalleriesBoxes();
