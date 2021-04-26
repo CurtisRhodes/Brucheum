@@ -48,6 +48,7 @@ function displaySpaPage(spaPageId) {
             spaType = "centerfold";
             $('#indexMiddleColumn').html(playboyPageHTML());
             setOggleHeader("playboyIndex");
+            resetOggleHeader(72, "playboyIndex");
             setOggleFooter(spaPageId, "centerfold");
             launchCarousel("centerfold");
             $('#updatedGalleriesSectionLoadingGif').show();

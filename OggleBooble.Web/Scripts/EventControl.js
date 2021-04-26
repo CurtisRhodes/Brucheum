@@ -33,7 +33,7 @@ function performEvent(eventCode, eventDetail, folderId) {
             window.location.href = '/index.html?subdomain=porn';
             break;
         case "HBC":  //  header banner clicked
-            window.location.href = '/index.html?spd=' + eventDetail;
+            window.location.href = '/index.html?spa=' + eventDetail;
             break;
         case "GAX":  // can I get a connection
             alert("can I get a connection");

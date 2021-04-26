@@ -73,7 +73,7 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#oggleHeader').switchClass('playboyHeader','boobsHeader' );
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#oggleHeaderTitle').html("OggleBooble");
-            $('#topRowRightContainer').html(addRankerButton("010000000", "bbig naturals ranker"));
+            $('#topRowRightContainer').html(addRankerButton("010000000", "big naturals ranker"));
             $('#hdrBtmRowSec3').append(addSpaButton(72, "every Playboy Centefold"));
             $('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
             $('#hdrBtmRowSec3').append(addPgLinkButton(5233, "softcore"));
@@ -198,7 +198,7 @@ function setHeaderMenu(menu) {
                 "<span onclick='headerMenuClick(\"soft\",498)'>big tit lezies, </span>\n" +
                 "<span onclick='headerMenuClick(\"soft\",357)'>fondle, </span>\n" +
                 "<span onclick='headerMenuClick(\"soft\",397)'>kinky, </span>\n" +
-                "<span onclick='headerMenuClick(\"soft\",411)'>naughty behaviour, </span>\n");
+                "<span onclick='headerMenuClick(\"soft\",411)'>naughty behaviour</span>\n");
             break;
         }
         case "playboy":
@@ -209,19 +209,35 @@ function setHeaderMenu(menu) {
                 "<span onclick='headerMenuClick(\"centerfold\",6095)'>muses, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",6076)'>specials, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",3393)'>lingerie, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",3796)'>cybergirls, </span>\n"
+                "<span onclick='headerMenuClick(\"centerfold\",3796)'>cybergirls</span>\n"
             );
             break;
         case "playboyIndex":
             $('#mainMenuContainer').html(
-                "<span onclick='headerMenuClick(\"centerfold\",4015)'>pictorials, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",2601)'>extras, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",3796)'>cybergirls, </span>\n"
+                "<span onclick='headerMenuClick(\"playboyIndex\",4015)'>pictorials, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",2601)'>extras, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>plus, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6076)'>specials, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",3393)'>lingerie, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls </span>\n"
+            );
+            $('#breadcrumbContainer').html(
+                "<span onclick='headerMenuClick(\"playboyIndex\",621)'>1950's, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",638)'>1960's, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",339)'>1970's, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",640)'>1980's, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",628)'>1990's, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",641)'>2000's, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",513)'>2010's, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",4128)'>2020's, </span>\n" 
             );
                 //"<a href='javascript:rtpe(\"PBB\",72,\"magazine covers\",1986)'>magazine covers</a>,\n" +
                 //"<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4013)'>Pmoy</a>,\n" +
                 //"<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4932)'>just centerfolds</a>\n");
             //$('#breadcrumbContainer').html(
+            //"<span onclick='headerMenuClick(\"centerfold\",3796)'>cybergirls, </span>\n"
+
             //    "<span onclick='headerMenuClick('playboyCarousel',4015)'>pictorials, </span>\n" +
             //    "<a href='javascript:rtpe(\"PYC\",72,\"Playboy\",472)'>Playboy</a>,\n" +
             //    "<a href='javascript:rtpe(\"PYC\",72,\"1950\",621)'>1950's</a>,\n" +
@@ -283,7 +299,7 @@ function addSpaButton(spaId, labelText) {
     //rtpe("HBC", hdrRootFolder, spaId, hdrFolderId);
     return "<div class='headerBannerButton'>" +
         //"   <div class='clickable' onclick='location.href=\"index.html?spa=" + spaId + "\"'>" + labelText + "</div>" +
-        "   <div class='clickable' onclick='rtpe(\"HBC\",\"" + hdrRootFolder + "\"," + hdrFolderId + "," + spaId + ")'>" + labelText + "</div>" +
+        "   <div class='clickable' onclick='rtpe(\"HBC\",\"" + hdrRootFolder + "\"," + spaId + "," + hdrFolderId + ")'>" + labelText + "</div>" +
         "</div>\n";
 }
 

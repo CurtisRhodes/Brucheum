@@ -1,7 +1,7 @@
 ﻿let rankerLinksArray = [],
     countDownTimer, slotTimer,
     selectedRankerCategories,
-    spinSwapSpeed = 633, spinDuration = 13,
+    spinSwapSpeed = 433, spinDuration = 17,
     leftimageIndex, rightimageIndex,
     rankerItemsLoadedSoFar = 0,
     rankertakeIncriment = 40,
@@ -64,11 +64,11 @@ function loadRankerImages() {
                 });
 
                 if (rankerItemsLoadedSoFar === 0) {
-                    $('#rankerCkBoxesContainer').show();
+                    setTimeout(function () { $('#rankerCkBoxesContainer').show(); }, 800);                    
                     spinTheSlots();
                 }
                 if (container.RankerLinks.length < rankertakeIncriment) {
-                    alert("done loading: " + selectedRankerCategories + "  " + rankerLinksArray.length);
+                    //alert("done loading: " + selectedRankerCategories + "  " + rankerLinksArray.length);
                     $('#footerMessage').html("done loading: " + selectedRankerCategories + "  " + rankerLinksArray.length);
                 }
                 else {
@@ -127,15 +127,16 @@ function spinTheSlots() {
 }
 
 function setCheckboxes() {
-    if (selectedRankerCategories.substring(1, 1) == "1") $('#ckBoxBoobs').prop('checked', true);
-    if (selectedRankerCategories.substring(2, 1) == "1") $('#ckBoxArchive').prop('checked', true);
-    if (selectedRankerCategories.substring(3, 1) == "1") $('#ckBoxPlayboy').prop('checked', true);
-    if (selectedRankerCategories.substring(4, 1) == "1") $('#ckBoxCybergirls').prop('checked', true);
-    if (selectedRankerCategories.substring(5, 1) == "1") $('#ckBoxMuses').prop('checked', true);
-    if (selectedRankerCategories.substring(6, 1) == "1") $('#ckBoxPlus').prop('checked', true);
-    if (selectedRankerCategories.substring(7, 1) == "1") $('#ckBoxSoft').prop('checked', true);
-    if (selectedRankerCategories.substring(8, 1) == "1") $('#ckBoxPorn').prop('checked', true);
-    if (selectedRankerCategories.substring(9, 1) == "1") $('#ckBoxSluts').prop('checked', true);
+    //alert(selectedRankerCategories + "  2,3: " + selectedRankerCategories.substring(2, 3));
+    if (selectedRankerCategories.substring(0, 1) == "1") $('#ckBoxBoobs').prop('checked', true);
+    if (selectedRankerCategories.substring(1, 2) == "1") $('#ckBoxArchive').prop('checked', true);
+    if (selectedRankerCategories.substring(2, 3) == "1") $('#ckBoxPlayboy').prop('checked', true);
+    if (selectedRankerCategories.substring(3, 4) == "1") $('#ckBoxCybergirls').prop('checked', true);
+    if (selectedRankerCategories.substring(4, 5) == "1") $('#ckBoxMuses').prop('checked', true);
+    if (selectedRankerCategories.substring(5, 6) == "1") $('#ckBoxPlus').prop('checked', true);
+    if (selectedRankerCategories.substring(6, 7) == "1") $('#ckBoxSoft').prop('checked', true);
+    if (selectedRankerCategories.substring(7, 8) == "1") $('#ckBoxPorn').prop('checked', true);
+    if (selectedRankerCategories.substring(8, 9) == "1") $('#ckBoxSluts').prop('checked', true);
     ckBoxChanged();
 }
 
@@ -150,17 +151,17 @@ function reloadRankerImages() {
 }
 
 function startCountDown() {
-    let timeLeft = 5;
+    let timeLeft = 6;
     $('#divCountDown').css('visibility', 'visible');
     $('.boobsRankerTitle').html("Pick Which One is Hotter");
     $('.rankerImageSlotBox').css('cursor', 'pointer');
     $('#countDownNumber').html(timeLeft);
     countDownTimer = setInterval(function () {
         $('#countDownNumber').html(--timeLeft);
-        if (timeLeft === -1) {
+        if (timeLeft < 0) {
             spinTheSlots();
         }
-    }, 1100);
+    }, 1050);
 }
 
 function setFolderNameColor(imageType, textObject) {
@@ -193,10 +194,10 @@ function ckBoxChanged() {
     if ($('#ckBoxPorn').is(':checked')) { newMap += "1"; breadcrumbMessage += "Porn "; } else newMap += "0";
     if ($('#ckBoxSluts').is(':checked')) { newMap += "1"; breadcrumbMessage += "Porn Stars "; } else newMap += "0";
     
-    selectedRankerCategories = newMap;
     //alert("selectedRankerCategories: " + selectedRankerCategories + " newMap: " + newMap);
+    selectedRankerCategories = newMap;
 
-    $('#breadcrumbContainer').html(breadcrumbMessage + ":  " + newMap);
+    $('#breadcrumbContainer').html(breadcrumbMessage);
     //alert("breadcrumbMessage: " + breadcrumbMessage + ":  " + newMap)
 }
 

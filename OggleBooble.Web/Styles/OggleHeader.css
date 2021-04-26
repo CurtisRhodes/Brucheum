@@ -15,9 +15,14 @@
 }
 .playboyHeader {
     background-color: #000;
+    color: #bbbd1d;
     border-top: #40767d 3px solid;
     border-bottom: #decd6f 11px solid;
 }
+    .playboyHeader .hdrTopRowMenu {
+        color: #bbbd1d;
+    }
+
 .pornHeader {
     background-color: #cab37e;
     border-top: #40767d 3px solid;
