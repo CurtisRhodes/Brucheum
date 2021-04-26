@@ -2,6 +2,7 @@
 const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
 
 function loadLargeAlbum(folderId) {
+    setOggleHeader("album");
     apFolderId = folderId;
     apVisitorId = getCookieValue("VisitorId");
 
@@ -17,6 +18,7 @@ function loadAlbum(folderId) {
         logError("BUG", 999, "folderId not found", "loadAlbum");
         return;
     }
+    setOggleHeader("album");
     apFolderId = folderId;
     apVisitorId = getCookieValue("VisitorId");
 

@@ -1,4 +1,6 @@
-﻿function rtpe(eventCode, calledFrom, eventDetail, folderId) {
+﻿
+function rtpe(eventCode, calledFrom, eventDetail, folderId) {
+    // REPORT THEN PERFORM EVENT
     try {
         var visitorId = getCookieValue("VisitorId");
         if (isNullorUndefined(visitorId)) {
@@ -6,7 +8,8 @@
             logError("VVE", folderId,"isNullorUndefined(visitorId)", "rtpe/" + calledFrom);
             //visitorId = "unknown";
         }
-        logEvent(eventCode, folderId, "(rtpe) " + calledFrom, eventDetail);
+        //logEvent(eventCode, folderId, "(rtpe) " + calledFrom, eventDetail);
+        logEvent(eventCode, folderId, calledFrom, eventDetail);
         performEvent(eventCode, eventDetail, folderId);
     }
     catch (e) {
@@ -24,15 +27,13 @@ function performEvent(eventCode, eventDetail, folderId) {
         case "CMC": // carousle context menu item clicked
         case "CXM":  // carousle context menu opened
         case "XLC":  // external link clicked
+            // DO NOTHING BUT REPORT
             break;
         case "PRN":  //("Porn Option clicked");
             window.location.href = '/index.html?subdomain=porn';
             break;
         case "HBC":  //  header banner clicked
-            if (eventDetail === "porn")
-                window.location.href = '/index.html?subdomain=porn';
-            else
-                window.location.href = "/";
+            window.location.href = '/index.html?spd=' + eventDetail;
             break;
         case "GAX":  // can I get a connection
             alert("can I get a connection");
@@ -60,6 +61,7 @@ function performEvent(eventCode, eventDetail, folderId) {
         case "PYC":  // playboy year clicked
         case "PBB":  // playboy breadcrumb click
         case "BAC":  // Babes Archive Clicked
+        case "HB2":  // PgLinkButton header banner clicked
             window.location.href = "/album.html?folder=" + folderId;  //  open page in same window
             break;
         case "LUP":  // Update Box click

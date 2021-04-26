@@ -13,7 +13,7 @@
     $('#dashboardDialog').css("top", 250);
     $('#dashboardDialog').css("left", 450);
     showDefaultWorkArea();
-    setOggleHeader(3910, "dashboard");
+    setOggleHeader("dashboard");
     setOggleFooter(3910, "dashboard");
     let userRole = getUserRole();
     if (userRole == "not registered") {

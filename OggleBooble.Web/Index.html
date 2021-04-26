@@ -96,24 +96,10 @@
         //$(document).ready(function () {
         //console.log("Index $(document).ready");
         params = getParams();
-        if (isNullorUndefined(params.spa)) {
-            setOggleHeader("welcome");
+        if (isNullorUndefined(params.spa)) 
             spaPageId = 3908;
-        }
-        else {
+        else
             spaPageId = params.spa;
-            switch (spaPageId) {
-                case 72:
-                    setOggleHeader("playboy");
-                    break;
-                case 72:
-                    setOggleHeader("playboy");
-                    break;
-                default:
-                    break;
-            }
-            setOggleHeader("boobs");
-        }
 
         loadOggleSettings();
         var settingsWaiter = setInterval(function () {
@@ -123,9 +109,7 @@
             }
             else {
                 clearInterval(settingsWaiter);
-
-                setOggleHeader("connecting");
-                //$('#dots').html("*");
+                document.title = "connecting : OggleBooble";
                 checkConnection(spaPageId, "Index.html");
                 let connectionVerifiedLoop = setInterval(function () {
                     if (connectionVerified) {

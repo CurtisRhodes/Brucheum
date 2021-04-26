@@ -1,77 +1,70 @@
 ﻿let rankerLinksArray = [],
     countDownTimer, slotTimer,
     selectedRankerCategories,
-    spinRate = 8, spinSwapSpeed = 133, spinCount = 0,
+    spinSwapSpeed = 633, spinDuration = 13,
     leftimageIndex, rightimageIndex,
     rankerItemsLoadedSoFar = 0,
-    rankertakeIncriment = 40;
+    rankertakeIncriment = 40,
+    rankerPageHeight, rankerImageWidth;
 
 
-function rankerStartup(rankPref) {
-
-    //alert("rankPref: " + rankPref);
-
-    if (isNullorUndefined(rankPref))
-        selectedRankerCategories = "10000";
-
-
-    //document.title = "Hot or Not : OggleBooble";
-    document.title = "image rater : OggleBooble";
-    $('#indexMiddleColumn').html(rankerHTML());
-    setInitialCheckbox();
-    loadBoobsRanker();
+function rankerStartup(initialCategory) {
     setOggleHeader("ranker");
-    setOggleFooter(spaPageId, "blog");
-    setRankerBreadcrumbMessage();
-    //userName = getCookieValue("UserName");
+    setOggleFooter(3911, "blog");
+    selectedRankerCategories = initialCategory;
+    document.title = "Hot or Not : OggleBooble";
+    //document.title = "image rater : OggleBooble";
+    $('#indexMiddleColumn').html(rankerHTML());
+    $('#rankerCkBoxesContainer').hide();
+    setCheckboxes();
+    rankerPageHeight = $(window).height() - $('#oggleHeader').height() - $('#boobsRankerTitle').height() - 185;
+    rankerImageWidth = ($(window).innerWidth() * .588) / 2;
+    loadRankerImages();
     window.addEventListener("resize", resizeRankerPage);
-    resizeRankerPage();
+    //resizeRankerPage();
 }
 
 function resizeRankerPage() {
+    //alert("resizeRanker");
     // height
-    let winHeight = $(window).height() - $('#oggleHeader').height() - $('#boobsRankerTitle').height() - 15;
-    rankerImageHeight = 800;
-    $('.rankerImageSlotBox').css("height", rankerImageHeight);
-    $('.rankerImage').css("height", rankerImageHeight);
-
-    //rankerImageFloatBox
-
+    rankerPageHeight = $(window).height() - $('#oggleHeader').height() - $('#boobsRankerTitle').height() - 185;
+    rankerImageWidth = ($(window).innerWidth() * .588) / 2;
+    $('.rankerImage').css("height", rankerPageHeight);
     // width
-
     $('.rankerImage').css("width", rankerImageWidth);
-    $('.rankerImage').css("height", rankerImageHeight);
-
-    let divCountDownWidth = 200;
-    $('.divCountDown').css("width", divCountDownWidth);
-    rankerImageWidth = ($('.rankerImageContainer').width() / 2) - divCountDownWidth;
-    rankerImageWidth = 500;
-    $('.rankerImageSlotBox').css("width", rankerImageWidth);
-    $('.rankerImage').css("width", rankerImageWidth);
+    //$('#divCountDown').css("width", divCountDownWidth);
+    reloadRankerImages();
+    //alert("rankerPageHeight: " + rankerPageHeight +
+    //    "\n.rankerImage.height: " + $('.rankerImage').height() +
+    //    "\n.rankerImage.width: " + $('.rankerImage').width() +
+    //    "\ndivCountDownWidth: " + divCountDownWidth +
+    //    "\n#divCountDown.width: " + $('#divCountDown').css("width"));
 }
 
-function loadBoobsRanker() {
+function loadRankerImages() {
     //alert("loadBoobsRanker: " + rankPref);
-    $('#rankerLoadingGif').show();
+    //$('#rankerLoadingGif').show();
     settingsImgRepo = settingsArray.ImageRepo;
 
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Ranker/LoadRankerImages?rootFolder=" + selectedRankerCategories + "&rankerItemsLoadedSoFar=" + rankerItemsLoadedSoFar + "&take=" + rankertakeIncriment,
+        url: settingsArray.ApiServer + "api/Ranker/LoadRankerImages?selectedRankerCategories=" + selectedRankerCategories + "&skip=" + rankerItemsLoadedSoFar + "&take=" + rankertakeIncriment,
         success: function (container) {
             $('#rankerLoadingGif').hide();
             if (container.Success === "ok") {
                 $.each(container.RankerLinks, function (idx, obj) {
                     rankerLinksArray[idx + rankerItemsLoadedSoFar] = new Array;
-                    //rankerLinksArray[idx + rankerItemsLoadedSoFar] = new Image();
-                    rankerLinksArray[idx + rankerItemsLoadedSoFar].Img = "<img class='rankerImage' src='" + settingsImgRepo + "/" + obj.Link + "'>";
+                    rankerLinksArray[idx + rankerItemsLoadedSoFar].Img = "<img height='" + rankerPageHeight +
+                        "' width='" + rankerImageWidth + "' src='" + settingsImgRepo + "/" + obj.Link+ "' /></div>";
+                    //rankerLinksArray[idx + rankerItemsLoadedSoFar].Img = settingsImgRepo + "/" + obj.Link;
                     rankerLinksArray[idx + rankerItemsLoadedSoFar].LinkId = obj.LinkId;
-                    rankerLinksArray[idx + rankerItemsLoadedSoFar].ImageType = obj.RootFolder;
+                    rankerLinksArray[idx + rankerItemsLoadedSoFar].ImageType = obj.ImageType;
                     rankerLinksArray[idx + rankerItemsLoadedSoFar].FolderId = obj.FolderId;
                     rankerLinksArray[idx + rankerItemsLoadedSoFar].FolderName = obj.FolderName;
                 });
 
                 if (rankerItemsLoadedSoFar === 0) {
+                    $('#rankerCkBoxesContainer').show();
                     spinTheSlots();
                 }
                 if (container.RankerLinks.length < rankertakeIncriment) {
@@ -81,11 +74,12 @@ function loadBoobsRanker() {
                 else {
                     rankerItemsLoadedSoFar += rankertakeIncriment;
                     rankertakeIncriment = 200;
-                    loadBoobsRanker();
+                    loadRankerImages();
                     $('#footerMessage').html("added " + rankertakeIncriment + " items.  Array length: " + rankerLinksArray.length);
                 }
             }
             else {
+                $('#rankerLoadingGif').hide();
                 if (document.domain == "localHost") alert("loadBoobsRanker: " + success);
                 logError("AJX", 3907, container.Success, "loadBoobsRanker");
             }
@@ -99,47 +93,64 @@ function loadBoobsRanker() {
     });
 }
 
-function setCheckboxes() {
-    let breadcrumbMessage = "";
-    $('#breadcrumbContainer').html(breadcrumbMessage);
-    if (selectedRankerCategories.substring(0, 1) == "1") {
-        $('#ckBoxBoobs').prop('checked', true);
-        breadcrumbMessage = "big naturals";
-    }
-    if (selectedRankerCategories.substring(1, 1) == "1") {
-        $('#ckBoxPlayboy').prop('checked', true);
-        if (breadcrumbMessage !== "") breadcrumbMessage += ", ";
-        breadcrumbMessage += "Playboy centerfolds";
-    }
-    if (selectedRankerCategories.substring(2, 1) == "1") {
-        $('#ckBoxPorn').prop('checked', true);
-        if (breadcrumbMessage !== "") breadcrumbMessage += ", ";
-        breadcrumbMessage += "porn";
-    }
-    if (selectedRankerCategories.substring(3, 1) == "1") {
-        $('#ckBoxSluts').prop('checked', true);
-        if (breadcrumbMessage !== "") breadcrumbMessage += ", ";
-        breadcrumbMessage += "porn stars";
-    }
-    if (selectedRankerCategories.substring(4, 1) == "1") {
-        $('#ckBoxSoft').prop('checked', true);
-        if (breadcrumbMessage !== "") breadcrumbMessage += ", ";
-        breadcrumbMessage += "softcore";
-    }
-    $('#breadcrumbContainer').html(breadcrumbMessage);
+function spinTheSlots() {
+    clearInterval(countDownTimer);
+    $('#divCountDown').css('visibility', 'hidden');
+
+    $('.boobsRankerTitle').html("picking random images");
+    $('.rankerImageSlotBox').css('cursor', 'not-allowed');
+
+    //leftimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
+    //$('#imageLeft').html(rankerLinksArray[leftimageIndex].Img);
+    //rightimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
+    //$('#imageRight').attr("src", rankerLinksArray[rightimageIndex].Img);
+
+    let spinCount = 0;
+    slotTimer = setInterval(function () {
+        leftimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
+        $('#rankerBoxLeft').html(rankerLinksArray[leftimageIndex].Img);
+        $('#rankerLeftText').html(rankerLinksArray[leftimageIndex].FolderName);
+        setFolderNameColor(rankerLinksArray[leftimageIndex].ImageType, $('#rankerLeftText'));
+
+        rightimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
+        $('#rankerBoxRight').html(rankerLinksArray[rightimageIndex].Img);
+        $('#rankerRightText').html(rankerLinksArray[rightimageIndex].FolderName);
+        setFolderNameColor(rankerLinksArray[rightimageIndex].ImageType, $('#rankerRightText'));
+
+        if (++spinCount > spinDuration) {
+            clearInterval(slotTimer);
+            startCountDown();
+            //$('#footerMessage').html("images: " + rankerLinksArray.length + "   spin: " + ++spinCount);
+            //$('#footerMessage').html("   spin: " + ++spinCount);
+        }
+    }, spinSwapSpeed);
 }
 
-function unloadBoobsRanker(rankPref) {
+function setCheckboxes() {
+    if (selectedRankerCategories.substring(1, 1) == "1") $('#ckBoxBoobs').prop('checked', true);
+    if (selectedRankerCategories.substring(2, 1) == "1") $('#ckBoxArchive').prop('checked', true);
+    if (selectedRankerCategories.substring(3, 1) == "1") $('#ckBoxPlayboy').prop('checked', true);
+    if (selectedRankerCategories.substring(4, 1) == "1") $('#ckBoxCybergirls').prop('checked', true);
+    if (selectedRankerCategories.substring(5, 1) == "1") $('#ckBoxMuses').prop('checked', true);
+    if (selectedRankerCategories.substring(6, 1) == "1") $('#ckBoxPlus').prop('checked', true);
+    if (selectedRankerCategories.substring(7, 1) == "1") $('#ckBoxSoft').prop('checked', true);
+    if (selectedRankerCategories.substring(8, 1) == "1") $('#ckBoxPorn').prop('checked', true);
+    if (selectedRankerCategories.substring(9, 1) == "1") $('#ckBoxSluts').prop('checked', true);
+    ckBoxChanged();
+}
+
+function reloadRankerImages() {
     //alert("UNloadBoobsRanker: " + rankPref);
     $('#footerMessage').html("starting to unload " + rankPref);
     $('#rankerLoadingGif').show();
+    rankertakeIncriment = 40;
     clearInterval(countDownTimer);
     rankerLinksArray = [];
     rankerItemsLoadedSoFar = 0;
 }
 
 function startCountDown() {
-    let timeLeft = 6;
+    let timeLeft = 5;
     $('#divCountDown').css('visibility', 'visible');
     $('.boobsRankerTitle').html("Pick Which One is Hotter");
     $('.rankerImageSlotBox').css('cursor', 'pointer');
@@ -152,80 +163,50 @@ function startCountDown() {
     }, 1100);
 }
 
-function spinTheSlots() {
-    clearInterval(countDownTimer);
-    $('#divCountDown').css('visibility', 'hidden');
-
-    $('.boobsRankerTitle').html("picking random images");
-    $('.rankerImageSlotBox').css('cursor', 'not-allowed');
-
-    leftimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
-    $('#rankerBoxLeft').html(rankerLinksArray[leftimageIndex].Img);
-    rightimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
-    $('#rankerBoxRight').html(rankerLinksArray[rightimageIndex].Img);
-
-    let i = 0;
-    slotTimer = setInterval(function () {
-        leftimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
-        $('#rankerBoxLeft').html(rankerLinksArray[leftimageIndex].Img);
-        $('#rankerLeftText').html(rankerLinksArray[leftimageIndex].FolderName);
-
-        rightimageIndex = Math.floor(Math.random() * rankerLinksArray.length);
-        $('#rankerBoxRight').html(rankerLinksArray[rightimageIndex].Img);
-
-        //if(rankerLinksArray[rightimageIndex].rankPref)
-        $('#rankerRightText').html(rankerLinksArray[rightimageIndex].FolderName);
-
-        setFolderNameColor(rankerLinksArray[rightimageIndex].ImageType, $('#rankerRightText'));
-        setFolderNameColor(rankerLinksArray[leftimageIndex].ImageType, $('#rankerLeftText'));
-
-        if (i > spinRate) {
-            clearInterval(slotTimer);
-            startCountDown();
-            //$('#footerMessage').html("images: " + rankerLinksArray.length + "   spin: " + ++spinCount);
-            //$('#footerMessage').html("   spin: " + ++spinCount);
-        }
-        $('#testMessage').html(i++);
-        i++;
-    }, spinSwapSpeed);
-}
-
-function setFolderNameColor(rankPref, textObject) {
-    switch (rankPref) {
-        case "boobs":
-            textObject.css("color", "#446983")
-            break;
-        case "playmates":
-        case "playboy":
-        case "centerfold":
-            textObject.css("color", "#ed11ef")
-            break;
-        case "archive":
-            textObject.css("color", "#63ac44")
-            break;
-        case "porn":
-        case "sluts":
-            textObject.css("color", "#249c40")
-            break;
+function setFolderNameColor(imageType, textObject) {
+    switch (imageType) {
+        case "boobs": textObject.css("color", "#446983"); break;
+        case "cybergirl": textObject.css("color", "#7d7029"); break;
+        case "muses": textObject.css("color", "#2e6a7a"); break;
+        case "plus": textObject.css("color", "red"); break;
+        case "centerfold": textObject.css("color", "#ed11ef"); break;
+        case "archive": textObject.css("color", "#236d69"); break;
+        case "porn": textObject.css("color", "#ff00c3"); break;
+        case "sluts": textObject.css("color", "#249c40"); break;
         default:
-            logError("SWT", 3908, "unknown switch option: " + rankPref, "setFolderNameColor");
+            alert("imageType: " + imageType + " not handled in setFolderNameColor");
+            logError("SWT", 3908, "unknown switch option: " + imageType, "setFolderNameColor");
             break;
     }
 }
 
-function checkDomain(rankPref, isChecked) {
+function ckBoxChanged() {
+    let newMap = "";
+    let breadcrumbMessage = "";
+    if ($('#ckBoxBoobs').is(':checked')) { newMap = "1"; breadcrumbMessage += "Poses and Shapes "; } else newMap = "0";
+    if ($('#ckBoxArchive').is(':checked')) { newMap += "1"; breadcrumbMessage += "Big Naturals "; } else newMap += "0";
+    if ($('#ckBoxPlayboy').is(':checked')) { newMap += "1"; breadcrumbMessage += "Playboy Centerfolds "; } else newMap += "0";
+    if ($('#ckBoxCybergirls').is(':checked')) { newMap += "1"; breadcrumbMessage += "Cybergirls "; } else newMap += "0";
+    if ($('#ckBoxMuses').is(':checked')) { newMap += "1"; breadcrumbMessage += "Muses "; } else newMap += "0";
+    if ($('#ckBoxPlus').is(':checked')) { newMap += "1"; breadcrumbMessage += "Playboy Plus "; } else newMap += "0";
+    if ($('#ckBoxSoft').is(':checked')) { newMap += "1"; breadcrumbMessage += "Softcore "; } else newMap += "0";
+    if ($('#ckBoxPorn').is(':checked')) { newMap += "1"; breadcrumbMessage += "Porn "; } else newMap += "0";
+    if ($('#ckBoxSluts').is(':checked')) { newMap += "1"; breadcrumbMessage += "Porn Stars "; } else newMap += "0";
+    
+    selectedRankerCategories = newMap;
+    //alert("selectedRankerCategories: " + selectedRankerCategories + " newMap: " + newMap);
 
-    // <div class='domCkBox'><input id='ckBoxBoobs' onchange='checkDomain(\"boobs\", $(this).is(\":checked\"))' type='checkbox' />poses and shapes</div>\n" +
-    // <div class='domCkBox'><input id='ckBoxPlayboy' onchange='checkDomain(\"playboy\", $(this).is(\":checked\"))' type='checkbox' />Playboy playmates</div>\n" +
-    // <div class='domCkBox'><input id='ckBoxArchive' onchange='checkDomain(\"archive\", $(this).is(\":checked\"))' type='checkbox' />big naturals</div>\n" +
-    // <div class='domCkBox'><input id='ckBoxPorn' onchange='checkDomain(\"porn\", $(this).is(\":checked\"))' type='checkbox' />porn</div>\n" +
-    // <div class='domCkBox'><input id='ckBoxSluts' onchange='checkDomain(\"sluts\", $(this).is(\":checked\"))' type='checkbox' />sluts</div>\n" +
+    $('#breadcrumbContainer').html(breadcrumbMessage + ":  " + newMap);
+    //alert("breadcrumbMessage: " + breadcrumbMessage + ":  " + newMap)
+}
 
-    if (isChecked)
-        loadBoobsRanker(rankPref);
-    else
-        unloadBoobsRanker(rankPref);
-    setRankerBreadcrumbMessage();
+function reloadRankerImages() {
+    //alert("reloadRankerImages");
+    rankerItemsLoadedSoFar = 0;
+    rankerLinksArray = [];
+    clearInterval(slotTimer);
+    clearInterval(countDownTimer);
+    loadRankerImages();
 }
 
 function imageClick(selectedSide) {
@@ -286,6 +267,7 @@ function jumpToFolder(selectedSide) {
 }
 
 function pauseCountdown() {
+    $('#rankerLoadingGif').hide();
     clearInterval(countDownTimer);
     $('#countDownNumber').html("||");
 }
@@ -297,25 +279,34 @@ function rankerHTML() {
         "            <div class='boobsRankerTitle'>Boobs Ranker</div>\n" +
         "            <div class='rankerImageContainer'>\n" +
         "                <div class='rankerImageFloatBox'>\n" +
-        "                    <div id='rankerBoxLeft' class='rankerImageSlotBox' onclick='imageClick(\"Left\")'></div>\n" +
+        "                    <div id='rankerBoxLeft' class='rankerImageSlotBox' onclick='imageClick(\"left\")'></div>\n" +
+        //"                       <img id='imageLeft' class='rankerImage' src='Images/redballon.png' />" +
         "                    <div id='rankerLeftText' class='rankerImageName' onclick='jumpToFolder(\"left\")'></div>\n" +
         "                </div>\n" +
-        "                <div id='divCountDown' class='roundCountDowner'>\n" +
-        "                    <div id='countDownNumber' class='countDownNumberContainer' onclick='pauseCountdown()'  ></div>\n" +
+        "                <div id='countdownSection' class='middleCountdownSection'>\n" +
+        "                   <div id='divCountDown' class='roundCountDowner'>\n" +
+        "                       <div id='countDownNumber' class='countDownNumberContainer' onclick='pauseCountdown()'  ></div>\n" +
+        "                   </div>\n" +
         "                </div>\n" +
         "                <div class='rankerImageFloatBox'>\n" +
-        "                    <div id='rankerBoxRight' class='rankerImageSlotBox' onclick='imageClick(\"Right\")'></div>\n" +
+        "                    <div id='rankerBoxRight' class='rankerImageSlotBox' onclick='imageClick(\"right\")'></div>\n" +
+        //"                       <img id='imageRight' class='rankerImage' src='Images/redballon.png' /></div>\n" +
         "                    <div id='rankerRightText' class='rankerImageName' onclick='jumpToFolder(\"right\")'></div>\n" +
         "                </div>\n" +
         "            </div>\n" +
         "        </div>\n" +
         "        <div class='floatRight'>\n" +
-        "           <div class='rankerCkBoxesContainer'>\n" +
-        "            <div class='domCkBox'><input id='ckBoxBoobs' onchange='checkDomain(\"boobs\", $(this).is(\":checked\"))' type='checkbox' />poses and shapes</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxPlayboy' onchange='checkDomain(\"playboy\", $(this).is(\":checked\"))' type='checkbox' />Playboy playmates</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxArchive' onchange='checkDomain(\"archive\", $(this).is(\":checked\"))' type='checkbox' />big naturals</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxPorn' onchange='checkDomain(\"porn\", $(this).is(\":checked\"))' type='checkbox' />porn</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxSluts' onchange='checkDomain(\"sluts\", $(this).is(\":checked\"))' type='checkbox' />sluts</div>\n" +
+        "           <div id='rankerCkBoxesContainer' class='rankerCkBoxesContainer'>\n" +
+        "            <div class='domCkBox'><input id='ckBoxBoobs' onchange='ckBoxChanged()' type='checkbox' />poses and shapes</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxArchive' onchange='ckBoxChanged()' type='checkbox' />big naturals</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxPlayboy' onchange='ckBoxChanged()' type='checkbox' />Playboy playmates</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxCybergirls' onchange='ckBoxChanged()' type='checkbox' />Cybergirls</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxMuses' onchange='ckBoxChanged()' type='checkbox' />Muses</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxPlus' onchange='ckBoxChanged()' type='checkbox' />Playboy Plus</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxSoft' onchange='ckBoxChanged()' type='checkbox' />Softcore</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxPorn' onchange='ckBoxChanged()' type='checkbox' />Porn</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxSluts' onchange='ckBoxChanged()' type='checkbox' />Porn Stars</div>\n" +
+        "            <div class='domCkBox'><div class='roundendButton' onclick='reloadRankerImages()'>reload</div></div>\n" +
         "           </div>\n" +
         "        </div>\n" +
         "    </div>";

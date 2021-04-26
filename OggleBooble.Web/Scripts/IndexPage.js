@@ -21,11 +21,12 @@ function displaySpaPage(spaPageId) {
             changeFavoriteIcon("redBallon");
             spaType = "boobs";
             $('#indexMiddleColumn').html(indexPageHTML());
-            setOggleHeader("welcome");
+            setOggleHeader("index");
             setOggleFooter(3908, "index");
             launchCarousel("boobs");
             $('.indexPageSection').show();
             loadUpdatedGalleriesBoxes();
+            resetOggleHeader(3908, "boobs");
             //setTimeout(function () { launchPromoMessages(); }, 3000);
             break;
         case 3909: // porn

@@ -170,15 +170,18 @@ namespace OggleBooble.Api.Controllers
                     {
                         if (dbFolderImageFile.Size == 0)
                         {
-
                             string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
                             ImageFileInfo imageFileInfo = GetImageFileInfo(newFileName);
                             if (imageFileInfo.Size == 0)
                             {
-                                db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == dbFolderImageFile.Id).ToList());
-                                db.ImageFiles.Remove(dbFolderImageFile);
-                                db.SaveChanges();
-                                repairReport.ZeroLenImageFilesRemoved++;
+                                if (FtpUtilies.DeleteFile(ftpPath + "/" + dbFolderImageFile.FileName) == "ok")
+                                {
+                                    db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == dbFolderImageFile.Id).ToList());
+                                    db.ImageFiles.Remove(dbFolderImageFile);
+                                    db.SaveChanges();
+
+                                    repairReport.ZeroLenImageFilesRemoved++;
+                                }
                             }
                             else
                             {

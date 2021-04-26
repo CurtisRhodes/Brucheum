@@ -1,7 +1,7 @@
 ﻿let blogObject = {};
 
 function blogStartup() {
-    setOggleHeader(3911, "blog");
+    setOggleHeader("blog");
     setOggleFooter(3911, "blog");
     document.title = "blog : OggleBooble";
 
@@ -15,7 +15,11 @@ function blogStartup() {
 
     showArticleJogs();
 
-    
+    //<img id='betaExcuse' class='floatingFlow' src='/Images/beta.png' " +
+    // title='I hope you are enjoying my totally free website.\nDuring Beta you can expect continual changes." +
+    // \nIf you experience problems please press Ctrl-F5 to clear your browser cache to make sure you have the most recent html and javascript." +
+    // \nIf you continue to experience problems please send me feedback using the footer link.'/>" + websiteName + "</div >\n" +
+
     //if (isInRole("BLG")) {
     //    //if (document.domain === 'localhost') alert("is in role blog editor");
     //    $('.adminOnly').show();

@@ -11,8 +11,6 @@ function launchCarousel(startRoot) {
     absolueStartTime = Date.now();
     imgSrc = "Images/redballon.png";
     $('#carouselContainer').html(carouselHtml());
-
-
     $('#pauseButton').html("||");
     carouselTake = 777;
     let carouselSkip = 0;
@@ -37,15 +35,15 @@ function launchCarousel(startRoot) {
                 console.log("no " + startRoot + " cache found");
         }
         if (startRoot === "boobs") {
-            if (!isNullorUndefined(window.localStorage["carouselCache"])) {
-                let carouselCacheArray = JSON.parse(window.localStorage["carouselCache"]);
+            if (!isNullorUndefined(localStorage["carouselCache"])) {
+                //localStorage.removeItem("carouselCache");
+                let carouselCacheArray = JSON.parse(localStorage["carouselCache"]);
                 $.each(carouselCacheArray, function (idx, obj) {
                     carouselItemArray.push(obj);
                 });
                 carouselSkip = carouselItemArray.length;
-                startCarousel("big naturals cache");
-                console.log("loaded " + carouselItemArray.length + " from boobs cache");
                 carouselSkip = carouselItemArray.length;
+                startCarousel("big naturals cache");
             }
             else
                 console.log("no " + startRoot + " cache found");
@@ -224,11 +222,17 @@ function startCarousel(calledFrom) {
         console.log("carousel interval already started. Called from: " + calledFrom);
     else {
         if (carouselItemArray.length > 10) {
+            $('#testMessage1').html("started carousel from: " + calledFrom);
             resizeCarousel();
             intervalBody();
             vCarouselInterval = setInterval(function () {
                 intervalBody();
             }, rotationSpeed);
+            console.log("started carousel from: " + calledFrom);
+        }
+        else {
+            alert("failed to start carousel. carouselItemArray.length: " + carouselItemArray.length);
+            $('#testMessage1').html("failed to start carousel. carouselItemArray.length: " + carouselItemArray.length);
         }
     }
 }

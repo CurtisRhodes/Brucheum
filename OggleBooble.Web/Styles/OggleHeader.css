@@ -77,7 +77,8 @@
     padding: 2.5px;
     color: #000;
     background-color: aliceblue;
-    margin: 3px;
+    margin-left: 4px;
+    margin-top: 4px;
     cursor: pointer;
 }
 
@@ -111,6 +112,7 @@
     padding-right: 6px;
     padding-top: 1px;
     margin-right: 11px;
+    margin-bottom: -10px;
     font-family: 'Lucida Calligraphy';
 }
 
@@ -186,7 +188,7 @@
 }
 
 .hdrTopRowMenu {
-    font-size: 28px;
+    font-size: 20px;
     display: inline-block;
     font-family: Comic Sans MS;
     color: var(--oggleTitleColor);
@@ -195,6 +197,10 @@
     margin-right: 8px;
     margin-top: 1px;
     padding: 0;
+    cursor: pointer;
+}
+.hdrTopRowMenu span:hover {
+    text-decoration: underline;
 }
 
 .hdrBtmRowOverflow {
