@@ -285,12 +285,15 @@ function eventSummaryReport() {
             if (eventSummary.Success === "ok") {
                 var kludge = "<table class='noWrap'>";
                 $.each(eventSummary.Items, function (idx, obj) {
-                    kludge += "<div id='ev" + obj.EventCode + "' onclick='eventDetailReport(\"" + obj.EventCode + "\")'>" + obj.EventName + "</div>";
-                    kludge += "<div class='evtDetailRow' id='evd" + obj.EventCode + "' ></div>";
+                    kludge += "<div id='ev" + obj.EventCode + "' class='evtDetailRow' onclick='eventDetailReport(\"" + obj.EventCode + "\")'>" +
+                        "<div style='width:200px'>" + obj.EventName + "</div>" +
+                        "<div>" + obj.Count + "</div>" +
+                    "</div>";
+                    kludge += "<div class='evtDetailContainer' id='evd" + obj.EventCode + "' ></div>";
                 });
                 kludge += "</table>";
                 $("#reportsContentArea").html(kludge);
-                $("#divStandardReportCount").html(" Total: " + eventSummary.Items.Count().toLocaleString());
+                //$("#divStandardReportCount").html(" Total: " + eventSummary.Items.Count().toLocaleString());
             }
             else {
                 logError("AJX", 3910, activityReport.Success, "eventActivityReport");
@@ -303,8 +306,8 @@ function eventSummaryReport() {
         }
     });
 }
+
 function eventDetailReport(eventCode) {
-    //$("#divStandardReportArea").addClass("tightReport");
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",

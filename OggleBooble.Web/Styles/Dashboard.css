@@ -409,10 +409,17 @@ workAreaHeaderDetailRow {
     text-align: center;
     padding-right: 11px;
 }
-
 .evtDetailRow {
-    display: none;
-    border: solid 1px black;
-    background-color:antiquewhite;
+    display: flex;
+    height: 45px;
+    background-color: aliceblue;
+}
+.evtDetailRow div {
+    display: inline-block;
 }
 
+.evtDetailContainer {
+    display: none;
+    border: solid 1px black;
+    background-color: antiquewhite;
+}

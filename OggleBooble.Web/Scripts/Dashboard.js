@@ -167,7 +167,7 @@ function setLeftMenu(role) {
             document.title = "reports : OggleBooble";
             $('#reportsLeftMenu').html("<div class='clickable' onclick='runMetricsMatrixReport()'>Performance Metrics</div>\n" +
                 "<div class='clickable' onclick='runPageHitReport()'>Page Hit Report</div>\n" +
-                "<div class='clickable' onclick='eventReport()'>Event Activity</div>\n" +
+                "<div class='clickable' onclick='eventSummaryReport()'>Event Activity</div>\n" +
                 "<div class='clickable' onclick='errorReport()'>Error Log</div>\n" +
                 "<div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
                 "<div class='clickable' onclick='runImpactReport()'>Impact</div>\n" +
