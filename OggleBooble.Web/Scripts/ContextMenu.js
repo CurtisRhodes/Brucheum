@@ -1,10 +1,11 @@
-﻿let pImgSrc, pLinkId, cxFolderId, pFolderName, pFolderType, pModelFolderId, pos = {};
+﻿let pImgSrc, pMenuType, pLinkId, cxFolderId, pFolderName, pFolderType, pModelFolderId, pos = {};
 
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     event.preventDefault();
     window.event.returnValue = false;
     // logEvent("CXM", folderId, menuType, getCookieValue("VisitorId"));
     console.log("context menu opened: " + menuType);
+    pMenuType = menuType;
     pLinkId = linkId;
     pImgSrc = imgSrc;
     cxFolderId = folderId;
@@ -185,7 +186,7 @@ function ctxGetFolderDetails() {
     $('#ctxSaveAs').hide();
 }
 
-function contextMenuAction(action, menuType) {
+function contextMenuAction(action) {
     switch (action) {
         case "saveAs":
            // alert("window.open(" + pImgSrc + ")");
@@ -227,13 +228,13 @@ function contextMenuAction(action, menuType) {
             break;
         }
         case "comment": {
-            showImageCommentDialog(pLinkId, pImgSrc, cxFolderId, menuType);
+            showImageCommentDialog(pLinkId, pImgSrc, cxFolderId, pMenuType);
             $("#contextMenuContainer").fadeOut();
             break;
         }
         case "explode": {
             // logEvent("EXP", cxFolderId, pFolderName, pLinkId);
-            if (menuType === "Slideshow") {
+            if (pMenuType === "Slideshow") {
                 slideShowButtonsActive = false;
                 $("#slideshowCtxMenuContainer").hide();
                 blowupImage();
@@ -250,7 +251,7 @@ function contextMenuAction(action, menuType) {
             openMetaTagDialog(cxFolderId, pLinkId);
             break;
         case "info":
-            if (menuType === "Folder")
+            if (pMenuType === "Folder")
                 $('#folderInfoContainer').toggle();
             else
                 $('#imageInfoContainer').toggle();
@@ -259,15 +260,15 @@ function contextMenuAction(action, menuType) {
             $('#linkInfoContainer').toggle();
             break;
         case "archive":
-            showArchiveLinkDialog(pLinkId, cxFolderId, pImgSrc, menuType);
+            showArchiveLinkDialog(pLinkId, cxFolderId, pImgSrc, pMenuType);
             break;
         case "copy":
             //alert("contextMenuAction/copy (pLinkId: " + pLinkId + ", cxFolderId: " + cxFolderId + ", pImgSrc: " + pImgSrc);
-            showCopyLinkDialog(pLinkId, menuType, pImgSrc);
+            showCopyLinkDialog(pLinkId, pMenuType, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
         case "move":
-            showMoveLinkDialog(pLinkId, cxFolderId, menuType, pImgSrc);
+            showMoveLinkDialog(pLinkId, cxFolderId, pMenuType, pImgSrc);
             $("#imageContextMenu").fadeOut();
             break;
         case "remove":
@@ -296,7 +297,7 @@ function contextMenuAction(action, menuType) {
 
 function contextMenuHtml() {
     return "<div class='ctxItem' id='ctxMenuType'></div>\n" +
-        "<div id='ctxMdlName' class='ctxItem'     onclick='contextMenuAction(\"showDialog\")'>model name</div>\n" +
+        "<div id='ctxMdlName' class='ctxItem' onclick='contextMenuAction(\"showDialog\")'>model name</div>\n" +
         "<div id='ctxSeeMore' class='ctxItem' onclick='contextMenuAction(\"see more\")'>see more of her</div>\n" +
         "<div id='ctxNewTab'  class='ctxItem' onclick='contextMenuAction(\"openInNewTab\")'>Open in new tab</div>\n" +
         "<div id='ctxComment' class='ctxItem' onclick='contextMenuAction(\"comment\")'>Comment</div>\n" +

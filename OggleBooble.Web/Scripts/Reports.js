@@ -270,7 +270,7 @@ function runMostImageHits() {
     });
 }
 
-function eventReport() {
+function eventSummaryReport() {
     //$("#divStandardReportArea").addClass("tightReport");
     activeReport = "EventActivity";
     $('#reportsHeaderTitle').html("Event Report for : " + todayString());
@@ -279,28 +279,53 @@ function eventReport() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/Report/EventLog",
-        success: function (activityReport) {
+        url: settingsArray.ApiServer + "/api/Report/EventSummary",
+        success: function (eventSummary) {
             $('#dashBoardLoadingGif').hide();
-            if (activityReport.Success === "ok") {
-                var kludge = "<table class='noWrap' >";
-                //var kludge = "<table class='mostAvtiveUsersTable'>";
-                //kludge += "</table>";
-                kludge += "<tr><th>Event</th><th>Ip Address</th><th>City,Country</th><th>hit time </th><th>Called From</th><th>Details</th></tr>";
-                $.each(activityReport.Items, function (idx, obj) {
-                    kludge += "<tr><td>" + obj.Event + "</td>";
-                    kludge += "<td>" + obj.IpAddress + "</td>";
-                    kludge += "<td>" + obj.City + " " + obj.Region + ", " + obj.Country + "</td>";
-                    kludge += "<td>" + obj.HitTime + "  </td>";
-                    // kludge += "<td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td></tr > ";
-                    kludge += "<td>" + obj.CalledFrom + "</td>";
-                    kludge += "<td>" + obj.Detail + "</td></tr>";
-                    //kludge += "<td>" + obj.CalledFrom.replace('OGGLEBOOBLE.COM', '') + "</td><td>" + obj.Detail + "</td></tr > ";
-                    //kludge += "<td>" + obj.HitDate + "</td><td>" + obj.HitTime + "</td></tr>";
+            if (eventSummary.Success === "ok") {
+                var kludge = "<table class='noWrap'>";
+                $.each(eventSummary.Items, function (idx, obj) {
+                    kludge += "<div id='ev" + obj.EventCode + "' onclick='eventDetailReport(\"" + obj.EventCode + "\")'>" + obj.EventName + "</div>";
+                    kludge += "<div class='evtDetailRow' id='evd" + obj.EventCode + "' ></div>";
                 });
                 kludge += "</table>";
                 $("#reportsContentArea").html(kludge);
-                $("#divStandardReportCount").html(" Total: " + activityReport.HitCount.toLocaleString());
+                $("#divStandardReportCount").html(" Total: " + eventSummary.Items.Count().toLocaleString());
+            }
+            else {
+                logError("AJX", 3910, activityReport.Success, "eventActivityReport");
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+        }
+    });
+}
+function eventDetailReport(eventCode) {
+    //$("#divStandardReportArea").addClass("tightReport");
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/Report/EventDetails?eventCode=" + eventCode,
+        success: function (eventDetails) {
+            $('#dashBoardLoadingGif').hide();
+            if (eventDetails.Success === "ok") {
+                var kludge = "<table class='noWrap'>";
+                kludge += "<tr><th>FolderId</th><th>FolderName</th><th>Called From</th><th>Occured</th><th>IpAddress</th><th>Loction</th><th>VisitorId</th></tr>";
+                $.each(eventSummary.Items, function (idx, obj) {
+                    kludge += "<tr><td>" + obj.FolderId + "</td>";
+                    kludge += "<td>" + obj.FolderName + "</td>";
+                    kludge += "<td>" + obj.CalledFrom + "</td>";
+                    kludge += "<td>" + obj.Occured + "</td>";
+                    kludge += "<td>" + obj.IpAddress + "</td>";
+                    kludge += "<td>" + obj.Location + "</td></tr>";
+                    //kludge += "<td>" + obj.Detail + "</td></tr>";
+                });
+                kludge += "</table>";
+                $('#evd' + eventCode + '').html(kludge).show();
+                $("#divStandardReportCount").html(" Total: " + eventSummary.Items.Count().toLocaleString());
             }
             else {
                 logError("AJX", 3910, activityReport.Success, "eventActivityReport");

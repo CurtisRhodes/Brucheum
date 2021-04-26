@@ -1,5 +1,6 @@
 ﻿
-function showDirTreeDialog(imgSrc, pMenuType, title) {
+function showDirTreeDialog(imgSrc, menuType, title) {
+    //alert("showDirTreeDialog.  menuType: " + menuType);
     slideShowButtonsActive = false;
     let dirTreeDialogHtml =
         "   <div>" +
@@ -10,10 +11,12 @@ function showDirTreeDialog(imgSrc, pMenuType, title) {
         "       <div id='linkManipulateClick'></div>\n" +
         "       <div id='linkManipulateDirTree' class='hideableDropDown'><img class='ctxloadingGif' title='loading gif' alt='' src='Images/loader.gif' /></div>\n" +
         "   </div>";
-    if (pMenuType == "Slideshow") {
-        // console.log("")
+
+
+    if (menuType == "Slideshow") {
         $('#slideShowDialogContents').html(dirTreeDialogHtml);
         $('#slideShowDialogTitle').html(title);
+
         $('#slideShowDialogContainer').css("top", 33 + $(window).scrollTop());
         $('#slideShowDialogContainer').draggable().fadeIn();
     }
@@ -32,10 +35,9 @@ function showDirTreeDialog(imgSrc, pMenuType, title) {
     //var dlgH = $('#centeredDialog').height();
 }
     
-function showCopyLinkDialog(linkId, pMenuType, imgSrc) {
+function showCopyLinkDialog(linkId, menuType, imgSrc) {
     slideShowButtonsActive = false;
-
-    showDirTreeDialog(imgSrc, pMenuType, "Caterogize Link");
+    showDirTreeDialog(imgSrc, menuType, "Caterogize Link");
     $('#linkManipulateClick').html("<div class='roundendButton' onclick='perfomCopyLink(\"" + linkId + "\")'>Caterogize</div>");
 }
 
@@ -74,13 +76,13 @@ function perfomCopyLink(linkId) {
     });
 }
 
-function showMoveLinkDialog(linkId, folderId, pMenuType, imgSrc) {
-    showDirTreeDialog(imgSrc, pMenuType, "Move Link");
+function showMoveLinkDialog(linkId, folderId, menuType, imgSrc) {
+    showDirTreeDialog(imgSrc, menuType, "Move Link");
     $('#linkManipulateClick').html("<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\"," + folderId + ")'>Move</div>");
 }
 
-function showArchiveLinkDialog(linkId, folderId, imgSrc, pMenuType) {
-    showDirTreeDialog(imgSrc, pMenuType, "Archive Image");
+function showArchiveLinkDialog(linkId, folderId, imgSrc, menuType) {
+    showDirTreeDialog(imgSrc, menuType, "Archive Image");
     $('#linkManipulateClick').html("<div class='roundendButton' onclick='moveFile(\"ARK\",\"" + linkId + "\"," + folderId + ")'>Archive</div>");
 }
 

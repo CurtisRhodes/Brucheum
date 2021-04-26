@@ -222,27 +222,24 @@ namespace OggleBooble.Api.Models
         public string UserName { get; set; }
     }
 
-    public class EventReportModel
+    public class EventSummaryModel
     {
-        public EventReportModel()
+        public EventSummaryModel()
         {
-            Items = new List<EventItem>();
+            Items = new List<VwEventSummary>();
         }
-        public List<EventItem> Items { get; set; }
-        public int HitCount { get; set; }
+        public List<VwEventSummary> Items { get; set; }
         public string Success { get; set; }
     }
-    public class EventItem
+
+    public class EventDetailsModel
     {
-        public string IpAddress { get; set; }
-        public string City { get; set; }
-        public string Region { get; set; }
-        public string Country { get; set; }
-        public string Event { get; set; }
-        public string CalledFrom { get; set; }
-        public string Detail { get; set; }
-        public string HitDate { get; set; }
-        public string HitTime { get; set; }
+        public EventDetailsModel()
+        {
+            Items = new List<VwEventDetail>();
+        }
+        public List<VwEventDetail> Items { get; set; }
+        public string Success { get; set; }
     }
 
     public class ActivityReportModel

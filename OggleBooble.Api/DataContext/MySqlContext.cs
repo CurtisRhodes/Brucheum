@@ -39,7 +39,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<PageHitTotals> PageHitTotal { get; set; }
         public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
         public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
-        public virtual DbSet<VwEventLog> VwEventLogs { get; set; }
+        public virtual DbSet<VwEventSummary> VwEventSummary { get; set; }
+        public virtual DbSet<VwEventDetail> VwEventDetails { get; set; }
 
         public virtual DbSet<VwVisitor> VwVisitors { get; set; }
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
@@ -669,27 +670,30 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Link { get; set; }
     }
 
-    [Table("OggleBooble.VwEventLog")]
-    public class VwEventLog
+    [Table("OggleBooble.VwEventSummary")]
+    public class VwEventSummary
     {
         [Key]
-        [Column(Order = 0)]
         public string EventCode { get; set; }
-        public string Event { get; set; }
-        public string FolderId { get; set; }
+        public string EventName { get; set; }
+        public string Count { get; set; }
+    }
+
+    [Table("OggleBooble.VwEventSummary")]
+    public class VwEventDetail
+    {
+        public string EventCode { get; set; }
+        public int FolderId { get; set; }
         public string FolderName { get; set; }
-        public string VisitorId { get; set; }
-        public string HitDate { get; set; }
-        public string HitTime { get; set; }
+        public string CalledFrom { get; set; }
+        [Key]
+        [Column(Order = 0)]
+        public string Occured { get; set; }
+        public string IpAddress { get; set; }
+        public string Location { get; set; }
         [Key]
         [Column(Order = 1)]
-        public DateTime Occured { get; set; }
-        public string IpAddress { get; set; }
-        public string City { get; set; }
-        public string Region { get; set; }
-        public string Country { get; set; }
-        public string CalledFrom { get; set; }
-        public string Detail { get; set; }
+        public string VisitorId { get; set; }
     }
 
 

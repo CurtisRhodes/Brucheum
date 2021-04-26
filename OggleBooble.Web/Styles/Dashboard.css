@@ -410,3 +410,9 @@ workAreaHeaderDetailRow {
     padding-right: 11px;
 }
 
+.evtDetailRow {
+    display: none;
+    border: solid 1px black;
+    background-color:antiquewhite;
+}
+

@@ -418,6 +418,7 @@ $(document).keydown(function (event) {
 });
 
 function copyCatClick() {
+
     showCopyLinkDialog(imageViewerArray[imageViewerIndex].LinkId, "Slideshow", settingsImgRepo + imageViewerArray[imageViewerIndex].FileName);
     $('#copycatDiv').hide();
 }
@@ -443,7 +444,7 @@ function slideshowHtml() {
         "   <img id='ssRightwa' class='slideshowRightWingArrow' src='/Images/next_right_arrow.png'/> \n" +
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
-        "      <div id='slideShowDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
+        "      <div id='slideShowDialogContainer' class='oggleDialogContainer' style='z-index: 25;'>\n" +    // draggableDialog
         "           <div class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
         "               <div id='slideShowDialogTitle' class='oggleDialogTitle'></div>" +
         "               <div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +

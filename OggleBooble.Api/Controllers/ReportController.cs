@@ -167,38 +167,38 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Report/EventLog")]
-        public EventReportModel EventLog()
+        [Route("api/Report/EventSummary")]
+        public EventSummaryModel EventSummary()
         {
-            var eventReport = new EventReportModel();
+            var eventSummary = new EventSummaryModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
                     db.SaveChanges();
-                    List<VwEventLog> eventLog = db.VwEventLogs.ToList();
-                    foreach (var item in eventLog)
-                    {
-                        eventReport.Items.Add(new EventItem()
-                        {
-                            IpAddress = item.IpAddress,
-                            City = item.City,
-                            Region = item.Region,
-                            Country = item.Country,
-                            Event = item.Event,
-                            CalledFrom = item.CalledFrom,
-                            Detail = item.Detail,
-                            HitDate = item.HitDate,
-                            HitTime = item.HitTime
-                        });
-                    }
-                    eventReport.HitCount = db.EventLogs.Where(h => h.Occured > DateTime.Today).Count();
+                    eventSummary.Items = db.VwEventSummary.ToList();
                 }
-                eventReport.Success = "ok";
+                eventSummary.Success = "ok";
             }
-            catch (Exception ex) { eventReport.Success = Helpers.ErrorDetails(ex); }
-            return eventReport;
+            catch (Exception ex) { eventSummary.Success = Helpers.ErrorDetails(ex); }
+            return eventSummary;
+        }
+        [HttpGet]
+        [Route("api/Report/EventDetails")]
+        public EventDetailsModel EventDetails(string eventCode)
+        {
+            var eventDetails = new EventDetailsModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    eventDetails.Items = db.VwEventDetails.Where(v => v.EventCode == eventCode).ToList();
+                }
+                eventDetails.Success = "ok";
+            }
+            catch (Exception ex) { eventDetails.Success = Helpers.ErrorDetails(ex); }
+            return eventDetails;
         }
 
         [HttpGet]
