@@ -136,6 +136,14 @@ namespace OggleBooble.Api.Models
         public int LinksAdded { get; set; }
         public int LinksPreserved { get; set; }
         public int Errors { get; set; }
+        public int LocalIssue { get; set; }
+        public int Copy0remove1 { get; set; }
+        public int Move0remove1 { get; set; }
+        public int Move1remove0 { get; set; }
+        public int Copy1remove0 { get; set; }
+        public int BigGroup { get; set; }
+        public int Unhandled { get; set; }
+        public int SingleMemberGroup { get; set; }
         public string Success { get; set; }
     }
 
