@@ -91,6 +91,14 @@ function resetOggleHeader(folderId, rootFolder) {
             setHeaderMenu("playboyIndex");
             break;
         case "playboy":
+            $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
+            $('#oggleHeaderTitle').html("Playboy");
+            $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
+            $('#topRowRightContainer').append(addRankerButton("001000000", "centerfold ranker"));
+            $('#hdrBtmRowSec3').append(addSpaButton(3908, "back to OggleBooble"));
+            //$('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
+            //$('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
+            setHeaderMenu("playboy");
             break;
         case "cybergirl":
             $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
@@ -159,9 +167,12 @@ function resetOggleHeader(folderId, rootFolder) {
             changeFavoriteIcon("porn");
             $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
-            $('#oggleHeaderTitle').html("PornStar Archive ");
+            $('#oggleHeaderTitle').html("OgglePorn ");
             $('#topRowRightContainer').html(addRankerButton("000000010", "porn ranker"));
+            $('#hdrBtmRowSec3').append(addSpaButton(3908, "back to OggleBooble"));
+            $('#hdrBtmRowSec3').append(addPgLinkButton(5233, "softcore"));
             setHeaderMenu("porn");
+            break;
         }
         case "sluts":
             changeFavoriteIcon("porn");
@@ -206,9 +217,10 @@ function setHeaderMenu(menu) {
                 "<span onclick='headerMenuClick(\"centerfold\",4015)'>pictorials, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",2601)'>extras, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",6368)'>plus, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",6095)'>muses, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",6076)'>specials, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",3393)'>lingerie, </span>\n" +
+                "<span onclick='headerMenuClick(\"centerfold\",1986)'>magazine covers, </span>\n" +
+                "<span onclick='headerMenuClick(\"centerfold\",6095)'>muses, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",3796)'>cybergirls</span>\n"
             );
             break;

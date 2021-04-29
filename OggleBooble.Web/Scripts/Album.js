@@ -297,8 +297,14 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
                         $('#galleryBottomfileCount').html(albumInfo.FileCount.toLocaleString());
                     }
                     else {
-                        $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
-                            albumInfo.FolderCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
+                        if (albumInfo.FolderType === "multiFolder") {
+                            $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
+                                " [" + albumInfo.FolderCount + ":" + albumInfo.TotalSubFolders.toLocaleString() + "] / " + albumInfo.TotalChildFiles.toLocaleString());
+                        }
+                        else {
+                            $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
+                                albumInfo.FolderCount + " / " + albumInfo.TotalChildFiles.toLocaleString());
+                        }
                         $('#deepSlideshowButton').show();
                         $('#largeLoadButton').show();
                     }

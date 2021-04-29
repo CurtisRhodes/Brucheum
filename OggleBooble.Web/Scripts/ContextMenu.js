@@ -109,10 +109,9 @@ function getLimitedImageDetails(menuType) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "getLimitedImageDetails"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) {
+            if (!checkFor404(errMsg, folderId, "getLimitedImageDetails")) {
                 if (document.domain == "localhost") alert("getLimitedImageDetails: " + errMsg);
-                logError("XHR", folderId, errMsg, functionName);
+                logError("XHR", folderId, errMsg, "getLimitedImageDetails");
             }
         }
     });
@@ -162,10 +161,9 @@ function getFullImageDetails() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = "getFullImageDetails"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) {
+                if (!checkFor404(errMsg, folderId, "getFullImageDetails")) {
                     if (document.domain == "localhost") alert("getFullImageDetails: " + errMsg);
-                    logError("XHR", cxFolderId, errMsg, functionName);
+                    logError("XHR", cxFolderId, errMsg, "getFullImageDetails");
                 }
             }
         });
@@ -206,7 +204,7 @@ function contextMenuAction(action) {
             break;
         case "showDialog": {
             if ($('#ctxMdlName').html() === "unknown model") {
-                showUnknownModelDialog(pImgSrc, pLinkId, cxFolderId);
+                showUnknownModelDialog(pMenuType, pImgSrc, pLinkId, cxFolderId);
             }
             else
                 if (isNullorUndefined(pModelFolderId))

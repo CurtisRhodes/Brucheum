@@ -16,6 +16,8 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class ReportController : ApiController
     {
+        static readonly string devlVisitorId = ConfigurationManager.AppSettings["devlVisitorId"];
+
         [HttpGet]
         [Route("api/Report/MetricMatrixReport")]
         public MatrixResultsModel MetricsMatrixReport()
@@ -25,8 +27,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
-                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
+                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
                     db.SaveChanges();
                     db.Database.ExecuteSqlCommand("call OggleBooble.spDailyVisits()");
                     var performanceRows = db.Performances.ToList();
@@ -141,7 +143,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
 
                     List<VwImageHit> imageHits = db.VwImageHits.ToList();
                     foreach (VwImageHit imageHit in imageHits)
@@ -175,9 +177,10 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    db.EventLogs.RemoveRange(db.EventLogs.Where(e => e.VisitorId == devlVisitorId));
                     db.SaveChanges();
                     eventSummary.Items = db.VwEventSummary.ToList();
+                    eventSummary.Total = eventSummary.Items.Sum(ev => ev.Count);
                 }
                 eventSummary.Success = "ok";
             }
@@ -210,8 +213,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.ActivityLogs.RemoveRange(db.ActivityLogs.Where(a => a.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
-                    db.SaveChanges();
+                    //db.ActivityLogs.RemoveRange(db.ActivityLogs.Where(a => a.VisitorId == devlVisitorId));
+                    //db.SaveChanges();
 
                     List<VwActivityLog> activityItems = db.VwActivityLogs.ToList();
                     foreach (var activityItem in activityItems)
@@ -245,8 +248,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
-
+                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
+                    db.SaveChanges();
                     var mostActiveUserItems = db.MostActiveUsersForToday.ToList();
                     foreach (VwMostActiveUsersForToday mostActiveUserItem in mostActiveUserItems)
                     {
@@ -292,7 +295,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == "ec6fb880-ddc2-4375-8237-021732907510"));
+                    db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
                     db.SaveChanges();
 
                     //List<VwPageHit> vwPageHits = db.VwPageHits.Take(500).ToList();

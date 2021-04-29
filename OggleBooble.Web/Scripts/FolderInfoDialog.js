@@ -526,9 +526,8 @@ function xxcreatePosersIdentifiedFolder() {
     // 2. add new category folder row and folder detail row
 }
 
-function showUnknownModelDialog(imgSrc, linkId, folderId) {
-    $('#centeredDialogTitle').html("Unknown Poser");
-    $('#centeredDialogContents').html(
+function showUnknownModelDialog(menuType, imgSrc, linkId, folderId) {
+    let unknownModelDialogHtml =
         "<div class='flexContainer'>" +
         "   <div class='floatLeft'>" +
         "          <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
@@ -551,10 +550,23 @@ function showUnknownModelDialog(imgSrc, linkId, folderId) {
         "<div id='poserDialogFooter' class='folderDialogFooter'>\n" +
         "   <div id='btnPoserSave' style='margin-left:114px;'  class='folderCategoryDialogButton' onclick='poserSave(\"" + linkId + "\"," + folderId + ")'>save</div>\n" +
         "   <div id='btnPoserCancel' class='folderCategoryDialogButton' onclick='dragableDialogClose()'>cancel</div>\n" +
-        "</div>");
+        "</div>";
 
-    $('#centeredDialogContainer').css("top", 125);
-    $('#centeredDialogContainer').css("left", -350);
+
+
+    if (menuType == "SlideShow") {
+        $('#slideShowDialogTitle').html("Unknown Poser");
+        $('#slideShowDialogContents').html(unknownModelDialogHtml);
+        $('#slideShowDialogContainer').draggable().fadeIn();
+    }
+    else {
+        $('#centeredDialogTitle').html("Unknown Poser");
+        $('#centeredDialogContents').html(unknownModelDialogHtml);
+        $('#centeredDialogContainer').css("top", 125);
+        $('#centeredDialogContainer').css("left", -350);
+        $('#centeredDialogContainer').draggable().fadeIn();
+    }
+
     //$('#centeredDialogContainer').css("min-width", 470);
     //$('#centeredDialogContainer').mouseleave(function () { dragableDialogClose(); });
     $('#poserSummernoteContainer').summernote({
@@ -563,7 +575,6 @@ function showUnknownModelDialog(imgSrc, linkId, folderId) {
     });
     $("#btnPoserSave").hide();
     $("#btnPoserCancel").hide();
-    $('#centeredDialogContainer').draggable().fadeIn();
     allowDialogClose = true;
 }
 function IamThisModel() {

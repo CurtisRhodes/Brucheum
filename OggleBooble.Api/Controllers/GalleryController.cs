@@ -13,7 +13,7 @@ namespace OggleBooble.Api.Controllers
     [EnableCors("*", "*", "*")]
     public class GalleryPageController : ApiController
     {
-        private readonly string devlVisitorId = System.Configuration.ConfigurationManager.AppSettings["ImageRepository"];
+        private readonly string devlVisitorId = System.Configuration.ConfigurationManager.AppSettings["devlVisitorId"];
 
         [HttpGet]
         public BreadCrumbSuccessModel GetBreadcrumbs(int folderId)
@@ -162,9 +162,9 @@ namespace OggleBooble.Api.Controllers
                     //}
                     #endregion
 
-                    db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
-                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
-
+                    //db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
+                    //db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
+                    //db.SaveChanges();
                     albumInfo.PageHits = db.PageHits.Where(h => h.PageId == folderId).Count();
                     var dbPageHitTotals = db.PageHitTotal.Where(h => h.PageId == folderId).FirstOrDefault();
                     if (dbPageHitTotals != null)
@@ -486,6 +486,7 @@ namespace OggleBooble.Api.Controllers
                                                     subFolder7.Files = fileLinkCount;
                                                     subFolder7.SubFolders = subFolderCount;
                                                     db.SaveChanges();
+                                                    countModel.Changes++;
                                                 }
                                                 sub0ttlChildFiles += fileLinkCount;
                                                 sub1ttlChildFiles += fileLinkCount;

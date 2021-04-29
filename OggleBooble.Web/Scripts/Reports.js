@@ -58,8 +58,7 @@ function runMetricsMatrixReport() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = "runMetricsMatrixReport"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "runMetricsMatrixReport")) logError("XHR", 3907, errMsg, "runMetricsMatrixReport");
             }
         });
     }
@@ -95,8 +94,7 @@ function metrixSubReport(reportId, reportDay) {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = "metrixSubReport/DailyVisitors";
-                    if (!checkFor404(errMsg, 3907, functionName)) logError("XHR", 3907, errMsg, functionName);
+                    if (!checkFor404(errMsg, 3907, "metrixSubReport")) logError("XHR", 3907, errMsg, "metrixSubReport");
                 }
             });
             break;
@@ -126,8 +124,7 @@ function metrixSubReport(reportId, reportDay) {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = "metrixSubReport/DailyVisits";
-                    if (!checkFor404(errMsg, 3907, functionName)) logError("XHR", 3907, errMsg, functionName);
+                    if (!checkFor404(errMsg, 3907, "metrixSubReport/DailyVisits")) logError("XHR", 3907, errMsg, "metrixSubReport/DailyVisits");
                 }
             });
             break;
@@ -178,8 +175,7 @@ function runPageHitReport() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "runPageHitReport")) logError("XHR", 3907, errMsg, "runPageHitReport");
         }
     });
 }
@@ -210,8 +206,7 @@ function showUserDetail(ipAddress) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "showUserDetail")) logError("XHR", 3907, errMsg, "showUserDetail");
         }
     });
 }
@@ -237,8 +232,7 @@ function runMostVisitedPages() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "runMostVisitedPages")) logError("XHR", 3907, errMsg, "runMostVisitedPages");
         }
     });
 }
@@ -264,8 +258,7 @@ function runMostImageHits() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "runMostImageHits")) logError("XHR", 3907, errMsg, "runMostImageHits");
         }
     });
 }
@@ -283,15 +276,16 @@ function eventSummaryReport() {
         success: function (eventSummary) {
             $('#dashBoardLoadingGif').hide();
             if (eventSummary.Success === "ok") {
-                var kludge = "<table class='noWrap'>";
+                let kludge = "";
                 $.each(eventSummary.Items, function (idx, obj) {
                     kludge += "<div id='ev" + obj.EventCode + "' class='evtDetailRow' onclick='eventDetailReport(\"" + obj.EventCode + "\")'>" +
-                        "<div style='width:200px'>" + obj.EventName + "</div>" +
-                        "<div>" + obj.Count + "</div>" +
-                    "</div>";
-                    kludge += "<div class='evtDetailContainer' id='evd" + obj.EventCode + "' ></div>";
+                        "<div style='width:400px'>" + obj.EventName + "</div>" +
+                        "   <div>" + obj.Count.toLocaleString() + "</div>" +
+                        "</div>";
+                    kludge += "<div class='evtDetailContainer' id='evd" + obj.EventCode + "'></div>";
                 });
-                kludge += "</table>";
+                //kludge += "<td colspan='2'>Total</td><td colspan='4'>" + eventDetails.Total.toLocaleString() + "<td></tr>";
+                kludge += "<div class='evtDetailRow'><div style='width:400px'>Total</div><div>" + eventSummary.Total.toLocaleString() + "</div></div>";
                 $("#reportsContentArea").html(kludge);
                 //$("#divStandardReportCount").html(" Total: " + eventSummary.Items.Count().toLocaleString());
             }
@@ -301,13 +295,17 @@ function eventSummaryReport() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "eventSummaryReport")) logError("XHR", 3907, errMsg, "eventSummaryReport");
         }
     });
 }
 
 function eventDetailReport(eventCode) {
+    if ($('#evd' + eventCode + '').is(":visible")) {
+        $('#evd' + eventCode + '').slideUp();
+        return;
+    }
+
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
@@ -316,19 +314,18 @@ function eventDetailReport(eventCode) {
             $('#dashBoardLoadingGif').hide();
             if (eventDetails.Success === "ok") {
                 var kludge = "<table class='noWrap'>";
-                kludge += "<tr><th>FolderId</th><th>FolderName</th><th>Called From</th><th>Occured</th><th>IpAddress</th><th>Loction</th><th>VisitorId</th></tr>";
-                $.each(eventSummary.Items, function (idx, obj) {
+                kludge += "<tr><th>Id</th><th>Folder Name</th><th>Called From</th><th>Occured</th><th>IpAddress</th><th>Loction</th></tr>";
+                $.each(eventDetails.Items, function (idx, obj) {
                     kludge += "<tr><td>" + obj.FolderId + "</td>";
                     kludge += "<td>" + obj.FolderName + "</td>";
                     kludge += "<td>" + obj.CalledFrom + "</td>";
                     kludge += "<td>" + obj.Occured + "</td>";
                     kludge += "<td>" + obj.IpAddress + "</td>";
                     kludge += "<td>" + obj.Location + "</td></tr>";
-                    //kludge += "<td>" + obj.Detail + "</td></tr>";
                 });
                 kludge += "</table>";
                 $('#evd' + eventCode + '').html(kludge).show();
-                $("#divStandardReportCount").html(" Total: " + eventSummary.Items.Count().toLocaleString());
+                //$("#divStandardReportCount").html(" Total: " + eventSummary.Total.toLocaleString());
             }
             else {
                 logError("AJX", 3910, activityReport.Success, "eventActivityReport");
@@ -336,8 +333,7 @@ function eventDetailReport(eventCode) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "eventDetailReport")) logError("XHR", 3907, errMsg, "eventDetailReport");
         }
     });
 }
@@ -369,8 +365,7 @@ function showLatestImageHitsReport() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "showLatestImageHitsReport")) logError("XHR", 3907, errMsg, "showLatestImageHitsReport");
         }
     });
 }
@@ -417,8 +412,7 @@ function showMostActiveUsersReport() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "showMostActiveUsersReport")) logError("XHR", 3907, errMsg, "showMostActiveUsersReport");
         }
     });
 }
@@ -466,8 +460,7 @@ function errorReport() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "PageHitReport";  // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "errorReport")) logError("XHR", 3907, errMsg, "errorReport");
         }
     });
 }
@@ -519,8 +512,7 @@ function showUserErrorDetail(ipAddress) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "showUserErrorDetail")) logError("XHR", 3907, errMsg, "showUserErrorDetail");
         }
     });
 }
@@ -559,8 +551,7 @@ function FeedbackReport() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "FeedbackReport")) logError("XHR", 3907, errMsg, "FeedbackReport");
         }
     });
 }
@@ -596,8 +587,7 @@ function runImpactReport() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "runImpactReport")) logError("XHR", 3907, errMsg, "runImpactReport");
         }
     });
 }
@@ -646,8 +636,7 @@ function buildHtmlPage() {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "BuildEveryPlayboyPlaymatePage"// arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "buildHtmlPage")) logError("XHR", 3907, errMsg, "buildHtmlPage");
         }
     });
 }
@@ -689,8 +678,7 @@ function PlayboyPlusDupeCheck() {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "PlayboyPlusDupeCheck"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, 3363, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, 3363, "PlayboyPlusDupeCheck")) logError("XHR", 3907, errMsg, "PlayboyPlusDupeCheck");
             alert("PlayboyPlusDupeCheck XHR: " + errMsg);
         }
     });
@@ -740,8 +728,7 @@ function runPlayboyListReport() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "runPlayboyListReport")) logError("XHR", 3907, errMsg, "runPlayboyListReport");
             }
         });
     } 

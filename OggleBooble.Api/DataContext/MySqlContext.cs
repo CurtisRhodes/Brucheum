@@ -676,7 +676,7 @@ namespace OggleBooble.Api.MySqlDataContext
         [Key]
         public string EventCode { get; set; }
         public string EventName { get; set; }
-        public string Count { get; set; }
+        public int Count { get; set; }
     }
 
     [Table("OggleBooble.VwEventDetail")]

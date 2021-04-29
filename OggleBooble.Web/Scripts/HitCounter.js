@@ -43,8 +43,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "logImageHit")) logError("XHR", folderId, errMsg, "logImageHit");
             }
         });
     } catch (e) {
@@ -87,8 +86,7 @@ function logPageHit(folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "logPageHit")) logError("XHR", folderId, errMsg, "logPageHit");
         }
     });
 }
@@ -139,8 +137,7 @@ function logVisit(visitorId, folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "logVisit")) logError("XHR", folderId, errMsg, "logVisit");
         }
     });
 }
@@ -180,9 +177,7 @@ function addNonIpVisitor(folderId, visitorId) {
                     error: function (jqXHR) {
                         logActivity("NV3", folderId, "add NonIp Visitor"); // add NonIp Visitor XHR error
                         let errMsg = getXHRErrorDetails(jqXHR);
-                        let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                        if (!checkFor404(errMsg, folderId, functionName))
-                            logError("XHR", folderId, errMsg, functionName);
+                        if (!checkFor404(errMsg, folderId, "addNonIpVisitor")) logError("XHR", folderId, errMsg, "addNonIpVisitor");
                     }
                 });
             }
@@ -496,8 +491,7 @@ function checkForLooping(folderId, visitorId, calledFrom, errorCode) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "checkForLooping")) logError("XHR", folderId, errMsg, "checkForLooping");
             }
         });
     } catch (e) {
@@ -527,8 +521,7 @@ function logIpHit(visitorId, ipAddress, folderId) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "logIpHit")) logError("XHR", folderId, errMsg, "logIpHit");
             }
         });
     } catch (e) {
@@ -575,8 +568,7 @@ function logStaticPageHit(folderId, calledFrom) {
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
                 logActivity("SP6", folderId, calledFrom); // static page hit XHR error
-                let functionName = "logStaticPageHit"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "logStaticPageHit")) logError("XHR", folderId, errMsg, "logStaticPageHit");
             }
         });
         //logEvent("SDS", folderId, "logStatic PageHit/" + calledFrom, "");

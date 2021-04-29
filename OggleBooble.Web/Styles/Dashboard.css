@@ -411,10 +411,16 @@ workAreaHeaderDetailRow {
 }
 .evtDetailRow {
     display: flex;
-    height: 45px;
-    background-color: aliceblue;
+    height: 40px;
+    font-size: 18px;
+    background-color: #d5a085;
+    margin-bottom: 2px;
+    padding-top: 8px;
+    padding-left: 10px;
+    cursor: pointer;
 }
 .evtDetailRow div {
+    float: left;
     display: inline-block;
 }
 
@@ -423,3 +429,14 @@ workAreaHeaderDetailRow {
     border: solid 1px black;
     background-color: antiquewhite;
 }
+    .evtDetailContainer td {
+        padding-left:10px;
+    }
+    .evtDetailContainer th {
+        text-align: center;
+    }
+    .evtDetailContainer table {
+        margin-right: 33px;
+    }
+
+

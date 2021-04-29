@@ -43,6 +43,7 @@ function displaySpaPage(spaPageId) {
             //    $('.threeColumnLayout').css("background-color", "#d279a6");
             $('#updatedGalleriesSectionLoadingGif').show();
             loadUpdatedGalleriesBoxes();
+            resetOggleHeader(3909, "porn");
             break;
         case 72: // every playboy centerfold
             spaType = "centerfold";

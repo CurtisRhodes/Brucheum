@@ -229,6 +229,7 @@ namespace OggleBooble.Api.Models
             Items = new List<VwEventSummary>();
         }
         public List<VwEventSummary> Items { get; set; }
+        public int Total { get; set; }
         public string Success { get; set; }
     }
 
