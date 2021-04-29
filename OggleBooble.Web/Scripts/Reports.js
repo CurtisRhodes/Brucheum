@@ -641,12 +641,12 @@ function buildHtmlPage() {
     });
 }
 
-function PlayboyPlusDupeCheck() {
+function DupeCheck() {
     let start = Date.now();
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/DupeCheck/ArchiveDupes",
+        url: settingsArray.ApiServer + "api/DupeCheck/PlusDupeCheck",
         success: function (dupeCheckModel) {
             $('#dashBoardLoadingGif').hide();
             //alert("dupeCheckModel.Success: " + dupeCheckModel.Success);

@@ -207,11 +207,11 @@ namespace OggleBooble.Api.Controllers
                 success = Upload(destination, ToByteArray(ftpStream));
                 if (success == "ok")
                 {
+                    ftpStream.Close();
+                    response.Close();
+                    requestDir = null;
                     success = DeleteFile(source);
                 }
-                ftpStream.Close();
-                response.Close();
-                requestDir = null;
             }
             catch (Exception ex)
             {
