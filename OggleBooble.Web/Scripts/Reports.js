@@ -302,10 +302,9 @@ function eventSummaryReport() {
 
 function eventDetailReport(eventCode) {
     if ($('#evd' + eventCode + '').is(":visible")) {
-        $('#evd' + eventCode + '').slideUp();
+        $('#evd' + eventCode + '').slideUp('slow');
         return;
     }
-
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
@@ -324,7 +323,7 @@ function eventDetailReport(eventCode) {
                     kludge += "<td>" + obj.Location + "</td></tr>";
                 });
                 kludge += "</table>";
-                $('#evd' + eventCode + '').html(kludge).show();
+                $('#evd' + eventCode + '').html(kludge).slideDown('slow');
                 //$("#divStandardReportCount").html(" Total: " + eventSummary.Total.toLocaleString());
             }
             else {

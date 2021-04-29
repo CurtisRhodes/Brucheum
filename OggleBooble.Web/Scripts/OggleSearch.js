@@ -116,7 +116,7 @@ function clearSearch() {
 
 function jumpToSelected(selectedFolderId) {
     //rtpe('SRC', hdrFolderId, searchString, selectedFolderId);
-    logEvent("SRC", selectedFolderId, 0, searchString);
+    logEvent("SRC", selectedFolderId, searchString, "");
     window.open("/album.html?folder=" + selectedFolderId, "_blank");  // open in new tab
     clearSearch();
 }
