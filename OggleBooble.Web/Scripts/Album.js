@@ -1,11 +1,10 @@
-﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId; //, ttlFiles, ttlFolders;
+﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId; isLargeLoad = false;
 const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
 
 function loadLargeAlbum(folderId) {
     setOggleHeader("album");
     apFolderId = folderId;
     apVisitorId = getCookieValue("VisitorId");
-
     qucikHeader(folderId);
     //logPageHit(folderId);
     settingsImgRepo = settingsArray.ImageRepo;
@@ -71,7 +70,7 @@ function getMultipleAlbumImages(folderId) {
     $('#albumPageLoadingGif').show();
     $('#galleryBottomfileCount').html("?");
     let imageFrameClass = "folderImageOutterFrame";
-
+    isLargeLoad = true;
     try {
         $.ajax({
             type: "GET",
@@ -106,8 +105,7 @@ function getMultipleAlbumImages(folderId) {
                                                 " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\)'\n" +
                                                 " alt='" + obj.LinkId + "' titile='" + obj.DirectoryName + "' \n" +
                                                 " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + imgSrc + "\")'\n" +
-                                                " onclick='launchViewer(" + obj.FolderId + ",\"" + obj.LinkId + "\",true)' src='" + imgSrc + "'/>\n";
-
+                                                " onclick='launchViewer(" + folderId + ",\"" + obj.LinkId + "\",true)' src='" + imgSrc + "'/>\n";
                                             if (obj.FolderId !== obj.SrcId)
                                                 imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
                                                     obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail\"," + obj.SrcId + ")' /></div>\n";
@@ -267,7 +265,7 @@ function getAlbumImages(folderId) {
     }
 }
 
-function getAlbumPageInfo(folderId, isLargeLoad) {
+function getAlbumPageInfo(folderId) {
     var infoStart = Date.now();
     $.ajax({
         type: "GET",
@@ -275,22 +273,21 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
                 apFolderName = albumInfo.FolderName;
-                //setBreadCrumbs(albumInfo.BreadCrumbs);
-
                 $('#folderCommentButton').on("click", function () {
                     showFolderCommentDialog(folderId, albumInfo.FolderName);
                 });
 
-                //function addMetaTags() {
-                jQuery("head").append("<meta property='og:title' content='" + albumInfo.FolderName + ">");
-                let aKeywords = "big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold, ";
-                jQuery("head").append("<meta property='keywords' content='" + aKeywords + albumInfo.FolderName + ">");
-                $('#seoPageName').html(albumInfo.FolderName);
+                ////function addMetaTags() {
+                //jQuery("head").append("<meta property='og:title' content='" + albumInfo.FolderName + ">");
+                //let aKeywords = "big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold, ";
+                //jQuery("head").append("<meta property='keywords' content='" + aKeywords + albumInfo.FolderName + ">");
+                //$('#seoPageName').html(albumInfo.FolderName);
 
                 $('#deepSlideshowButton').hide();
                 $('#largeLoadButton').hide();
                 if (isLargeLoad) {
                     $('#galleryBottomfileCount').html(albumInfo.TotalChildFiles.toLocaleString());
+                    logEvent("LAP", folderId, apFolderName, "SubFolders: " + albumInfo.TotalSubFolders);
                 }
                 else {
                     if ((albumInfo.FolderType === "singleChild") || (albumInfo.FolderType === "singleModel") || (albumInfo.FolderType === "multiModel")) {
@@ -408,30 +405,33 @@ function setBreadcrumbs(folderId) {
                     }
                     else {
                         if (breadCrumbSuccess.BreadCrumbs[i].IsInitialFolder) {
-                            $('#breadcrumbContainer').append(
-                                "<a class='inactiveBreadCrumb' " +
-                                "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")' " +
-                                "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
-                                "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" +
-                                breadCrumbSuccess.BreadCrumbs[i].FolderId + ",\"bc click\")'>" + breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                            if (!isLargeLoad)
+                                $('#breadcrumbContainer').append(
+                                    "<a class='inactiveBreadCrumb' " +
+                                    "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")' " +
+                                    "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
+                                    "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" +
+                                    breadCrumbSuccess.BreadCrumbs[i].FolderId + ",\"bc click\")'>" +
+                                    breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
                         }
                         else {
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
                                 // rtpe(eventCode, calledFrom, eventDetail, pageId)
-                                "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" + breadCrumbSuccess.BreadCrumbs[i].FolderName + "\"," + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")'>" +
+                                "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" +
+                                breadCrumbSuccess.BreadCrumbs[i].FolderName + "\"," + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")'>" +
                                 breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
                         }
                     }
                 }
             }
             else {
-                $('#breadcrumbContainer').html("setBreadcrumbs: " + breadCrumbSuccess.Success);
-                logError("AJX", folderId, albumInfo.Success, "setBreadcrumbs");
+                $('#breadcrumbContainer').html("set Breadcrumbs: " + breadCrumbSuccess.Success);
+                logError("AJX", folderId, albumInfo.Success, "set Breadcrumbs");
             }
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "setBreadcrumbs")) logError("XHR", folderId, errMsg, "setBreadcrumbs");
+            if (!checkFor404(errMsg, folderId, "set Breadcrumbs")) logError("XHR", folderId, errMsg, "set Breadcrumbs");
         }
     });
 }
@@ -477,7 +477,8 @@ function launchDeepSlideShow() {
     $('#albumPageLoadingGif').show();
     logEvent("DSC", apFolderId, apFolderName, "launchDeepSlideShow");
     launchViewer(apFolderId, 1, true);
-    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com", "deep slideshow clicked", "Visitor Id: " + apVisitorId + "<br/>Folder: " + apFolderName);
+    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com",
+        "deep slideshow clicked", "Visitor Id: " + apVisitorId + "<br/>Folder: " + apFolderName);
 }
 
 function checkAlbumCost() {

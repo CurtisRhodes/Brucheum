@@ -41,15 +41,13 @@ function getSlideshowItems(folderId, startItem) {
                     });
 
                     $('#imageViewerHeaderTitle').html(slideshowItemModel.FolderName);
-                    if (!spIncludeSubFolders) {
-                        for (var i = 0; i < imageViewerArray.length; i++) {
-                            if (imageViewerArray[i].LinkId === startItem) {
-                                imageViewerIndex = i;
-                                break;
-                            }
-                        };
-
-                    }
+                    //if (!spIncludeSubFolders) {
+                    for (var i = 0; i < imageViewerArray.length; i++) {
+                        if (imageViewerArray[i].LinkId === startItem) {
+                            imageViewerIndex = i;
+                            break;
+                        }
+                    };
                     logImageHit(imageViewerArray[imageViewerIndex].LinkId, folderId, true);
 
                     viewerShowing = true;

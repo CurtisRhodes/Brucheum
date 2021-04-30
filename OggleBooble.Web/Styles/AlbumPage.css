@@ -33,14 +33,17 @@
     cursor: pointer;
 }
 
-.deepSlideshow {
+.albumMsgLink {
     display: none;
     float: right;
     cursor: pointer;
     color: var(--oggleTitleColor);
     white-space: nowrap;
 }
-
+.albumMsgLink:hover {
+    text-decoration: underline;
+}
+    
 .floatRightLabel {
     float: right;
 }
