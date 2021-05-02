@@ -410,9 +410,9 @@ body {
     background-color: #dcd7be; /* #b2e5eb; */
 }
 
-.redTreeLabelDiv {
+.stepchildTreeLabel {
     display: inline;
-    color: red;
+    color: #878080;
 }
 
 .treeLabelDiv {

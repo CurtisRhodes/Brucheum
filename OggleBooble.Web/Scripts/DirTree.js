@@ -109,7 +109,7 @@ function buildDirTreeRecurr(parentNode) {
 
         let treeNodeClass = "treeLabelDiv";
         if (vwDir.IsStepChild == 1) {
-            treeNodeClass = "redTreeLabelDiv";
+            treeNodeClass = "stepchildTreeLabel";
         }
 
         if (isNullorUndefined(vwDir.FolderName)) {

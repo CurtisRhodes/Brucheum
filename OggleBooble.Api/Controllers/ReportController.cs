@@ -747,6 +747,12 @@ namespace OggleBooble.Api.Controllers
             if (dupe0.FileId == dupe1.FileId) 
                 return "local issue";
 
+            if (dupe0.FolderId == dupe1.FolderId)
+                if (dupe0.FSize >= dupe1.FSize)
+                    return "remove1";
+                else
+                    return "remove0";
+
             if ((dbCatFolder0.RootFolder == "magazine") && (dbCatFolder1.RootFolder != "magazine"))
             {
                 if (dupe0.FSize >= dupe1.FSize)
@@ -853,6 +859,61 @@ namespace OggleBooble.Api.Controllers
 
                                     switch (strategy)
                                     {
+                                        case "remove1":
+                                            {
+                                                ftpSuccess = RemoveImage(dupeFolderId1, imageId1, ftpIimage1);
+                                                if (ftpSuccess == "ok")
+                                                {
+                                                    dupeCheckModel.ImageFilesRemoved++;
+                                                    localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
+
+                                                    if (localSuccess == "ok")
+                                                    {
+                                                        dupeCheckModel.LocalFilesDeleted++;
+                                                        db.PlayboyPlusDupes.RemoveRange(dupGroup);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName1);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    LogDupeError(dupeFolderId0, "ftp fail: " + ftpSuccess, fileName0);
+                                                    dupeCheckModel.Errors++;
+                                                }
+                                                break;
+                                            }
+                                        case "remove0":
+                                            {
+                                                ftpSuccess = RemoveImage(dupeFolderId0, imageId1, ftpIimage0);
+                                                if (ftpSuccess == "ok")
+                                                {
+                                                    dupeCheckModel.ImageFilesRemoved++;
+                                                    localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
+
+                                                    if (localSuccess == "ok")
+                                                    {
+                                                        dupeCheckModel.LocalFilesDeleted++;
+                                                        db.PlayboyPlusDupes.RemoveRange(dupGroup);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId0, "local delete fail: " + localSuccess, fileName0);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    LogDupeError(dupeFolderId0, "ftp fail: " + ftpSuccess, fileName0);
+                                                    dupeCheckModel.Errors++;
+                                                }
+                                                //dupeCheckModel.Copy0remove1++;
+                                                break;
+                                            }
                                         case "local issue":
                                             {
                                                 localSuccess = "xx";
@@ -1215,6 +1276,37 @@ namespace OggleBooble.Api.Controllers
             }
             return dupeCheckModel;
         }
+
+
+        private string RemoveImage(int folderId, string imageId, string ftpFileName)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    success = FtpUtilies.DeleteFile(ftpFileName);
+                    if (success == "ok")
+                    {
+                        var dbCategoryImageLinks = db.CategoryImageLinks.
+                            Where(l => l.ImageCategoryId == folderId
+                            && l.ImageLinkId == imageId).ToList();
+                        db.CategoryImageLinks.RemoveRange(dbCategoryImageLinks);
+                        db.SaveChanges();
+
+                        ImageFile dbImageFile = db.ImageFiles.Where(i => i.Id == imageId).First();
+                        db.ImageFiles.Remove(dbImageFile);
+                        db.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
 
         [HttpPut]
         public DupeCheckModel RegularDupeCheck()
