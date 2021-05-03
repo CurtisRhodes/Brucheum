@@ -149,7 +149,6 @@ function launchPromoMessages() {
         }
     });
 }
-
 function showPromoMessages(promoMessagesArray) {
     $('#promoContainer').html(
         "<div id='promoContainerTitle' class='ogglePromoTitle'></div>\n" +
@@ -172,7 +171,6 @@ function showPromoMessages(promoMessagesArray) {
         promoIdx++;
     }, promoMessageRotationSpeed);
 }
-
 function killPromoMessages() {
     $('#promoContainer').fadeOut();
     clearInterval(promoMessageRotator);
@@ -185,16 +183,16 @@ function showMoreGalleries() {
 }
 
 function showHideGalleries() {
-    $('#updatedGalleriesSection').toggle();
+    $('#bottomSection').toggle();
+    //$('#updatedGalleriesSection').toggle();
     $('#showMoreGalleriesDiv').toggle();
+    // make slideshow area bigger
     resizeIndexPage();
 }
 
 function goToPorn() {
-
     //if(hasPorn)
     //if (document.domain === 'localhost') alert("goToPorn()");
-
     // if user porn status not already set
     showCustomMessage(35);
 }
@@ -202,7 +200,6 @@ function goToPorn() {
 function localhostBypass() {
     if (document.domain === 'localhost') {
         setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-
         let visitorId = getCookieValue("VisitorId");
         console.log("localhostBypass visitorId: " + visitorId);
         setCookieValue("UserName", "developer");
@@ -211,7 +208,6 @@ function localhostBypass() {
 }
 
 function resizeIndexPage() {
-
     // set page width
     let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
     $('.middleColumn').width(winW - lcW - rcW);

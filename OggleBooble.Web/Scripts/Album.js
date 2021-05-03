@@ -281,7 +281,7 @@ function getAlbumPageInfo(folderId) {
                 //jQuery("head").append("<meta property='og:title' content='" + albumInfo.FolderName + ">");
                 //let aKeywords = "big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold, ";
                 //jQuery("head").append("<meta property='keywords' content='" + aKeywords + albumInfo.FolderName + ">");
-                //$('#seoPageName').html(albumInfo.FolderName);
+                $('#seoPageName').html(albumInfo.FolderName);
 
                 $('#deepSlideshowButton').hide();
                 $('#largeLoadButton').hide();

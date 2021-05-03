@@ -47,17 +47,19 @@ namespace OggleBooble.Api.Controllers
                 CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
                 string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
                 //string folderName = dbCategoryFolder.FolderName;
-
-                string imageFileName = ftpPath.Substring(ftpPath.LastIndexOf("/") + 1);
+                ImageFile dbFolderImageFile, dbMisplacedImageFile;
+                List<CategoryImageLink> dbRejCatlinks;
+                string ftpFileName, physcialFileName, physcialFileLinkId, rejectFolder, ftpSuccess;
+                string imageFolderName = ftpPath.Substring(ftpPath.LastIndexOf("/") + 1);
                 if (dbCategoryFolder.FolderType == "singleChild")
                 {
                     CategoryFolder dbParentFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
-                    imageFileName = dbParentFolder.FolderName;
+                    imageFolderName = dbParentFolder.FolderName;
                 }
-                string renameSuccess = RenamePhyscialFiles(ftpPath, imageFileName, repairReport);
+                string renameSuccess = RenamePhyscialFiles(ftpPath, imageFolderName, repairReport);
                 if(renameSuccess!="ok")
                 {
-                    repairReport.Success = renameSuccess + "ftpPath: " + ftpPath + "  imageFileName: " + imageFileName;
+                    repairReport.Success = renameSuccess + "ftpPath: " + ftpPath + "  imageFolderName: " + imageFolderName;
                     return;
                 }
 
@@ -72,7 +74,7 @@ namespace OggleBooble.Api.Controllers
                 string expectedFileName;
                 foreach (ImageFile imageFile in dbFolderImageFiles)
                 {
-                    expectedFileName = imageFileName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
+                    expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
                     if (imageFile.FileName != expectedFileName)
                     {
                         imageFile.FileName = expectedFileName;
@@ -85,23 +87,23 @@ namespace OggleBooble.Api.Controllers
                 #region 1. make sure every physicalFile has an ImageFile row
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
-                    var physcialFileName = physcialFiles[i];
-                    var physcialFileLinkId = physcialFileName.Substring(physcialFileName.LastIndexOf("_") + 1, 36);
-                    var dbFolderImageFile = dbFolderImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault();
+                    physcialFileName = physcialFiles[i];
+                    physcialFileLinkId = physcialFileName.Substring(physcialFileName.LastIndexOf("_") + 1, 36);
+                    dbFolderImageFile = dbFolderImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault();
                     if (dbFolderImageFile == null)
                     {
-                        var dbMisplacedImageFile = db.ImageFiles.Where(m => m.Id == physcialFileLinkId).FirstOrDefault();
+                        dbMisplacedImageFile = db.ImageFiles.Where(m => m.Id == physcialFileLinkId).FirstOrDefault();
                         if (dbMisplacedImageFile != null)
                         {
                             if (dbMisplacedImageFile.FolderId == -6)
                             {
                                 // should have moved file to rejects
                                 //string newFileName = ftpPath + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
-                                string ftpFileName = ftpPath + "/" + physcialFileName;
-                                string rejectFolder = ftpHost + "/archive.OggleBooble.com/rejects/" + dbMisplacedImageFile.FileName;
+                                ftpFileName = ftpPath + "/" + physcialFileName;
+                                rejectFolder = ftpHost + "/archive.OggleBooble.com/rejects/" + dbMisplacedImageFile.FileName;
                                 if (FtpUtilies.MoveFile(ftpFileName, rejectFolder) == "ok")
                                     repairReport.ImageFilesMoved++;
-                                var dbRejCatlinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == dbMisplacedImageFile.Id).ToList();
+                                dbRejCatlinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == dbMisplacedImageFile.Id).ToList();
                                 if (dbRejCatlinks.Count > 0)
                                 {
                                     foreach (CategoryImageLink dbRejCatlink in dbRejCatlinks)
@@ -109,6 +111,7 @@ namespace OggleBooble.Api.Controllers
                                         if (dbRejCatlink.ImageCategoryId != -6)
                                         {
                                             db.CategoryImageLinks.Remove(dbRejCatlink);
+                                            repairReport.CatLinksRemoved++;
                                         }
                                     }
                                     db.SaveChanges();
@@ -201,13 +204,40 @@ namespace OggleBooble.Api.Controllers
                 // rebuild list 
                 dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
                 var physcialFileLinkIds = new List<string>();
-                for (int i = 0; i < physcialFiles.Length; i++) {
-                    physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].LastIndexOf("_") + 1, 36));
-                }
+                for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].LastIndexOf("_") + 1, 36)); }
                 if (physcialFileLinkIds.Count() != dbFolderImageFiles.Count())
                 {
-                    repairReport.Errors.Add("physcialFiles: " + physcialFileLinkIds.Count() + " ImageFiles: " + dbFolderImageFiles.Count() +
-                        " " + imageFileName);
+                    if (physcialFileLinkIds.Count() > dbFolderImageFiles.Count())
+                    {
+                        foreach (string pflinkId in physcialFileLinkIds)
+                        {
+                            dbFolderImageFile = db.ImageFiles.Where(i => i.Id == pflinkId).FirstOrDefault();
+                            if (dbFolderImageFile == null)
+                            {
+                                db.ImageFiles.Add(new ImageFile()
+                                {
+                                    Id = pflinkId,
+                                    FolderId = folderId,
+                                    FileName = ""
+                                });
+
+                            }
+                            else if (dbFolderImageFile.FolderId != folderId)
+                            {
+                                ftpSuccess = FtpUtilies.DeleteFile(ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg");
+                                if (ftpSuccess == "ok")
+                                    repairReport.ImageFilesRemoved++;
+                                else
+                                    repairReport.Errors.Add("for: " + imageFolderName + "_" + pflinkId + "ftp delete failed: " + ftpSuccess);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        repairReport.Errors.Add("Folder: " + folderId + " FolderName: " + imageFolderName +
+                            "  physcialFiles: " + physcialFileLinkIds.Count() +
+                            " ImageFiles: " + dbFolderImageFiles.Count());
+                    }
                 }
 
                 foreach (ImageFile imageFile in dbFolderImageFiles)
@@ -219,7 +249,7 @@ namespace OggleBooble.Api.Controllers
                             // Download missing File
                             //public SuccessModel AddImageLink(AddLinkModel addLinkModel)
                             //string xpname = imageFile.Id
-                            expectedFileName = imageFileName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
+                            expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
                             string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + expectedFileName;
                             string downLoadSuccess = DownLoadImage(ftpPath, imageFile.ExternalLink, expectedFileName);
                             if (downLoadSuccess == "ok")
@@ -250,14 +280,14 @@ namespace OggleBooble.Api.Controllers
 
                 #region 3. check if there is a catlink for every physcial file 
                 var dbCatLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
-                foreach (string physcialFileLinkId in physcialFileLinkIds)
+                foreach (string pfLinkId in physcialFileLinkIds)
                 {
-                    if (dbCatLinks.Where(il => il.ImageLinkId == physcialFileLinkId).FirstOrDefault() == null)
+                    if (dbCatLinks.Where(il => il.ImageLinkId == pfLinkId).FirstOrDefault() == null)
                     {
                         db.CategoryImageLinks.Add(new CategoryImageLink()
                         {
                             ImageCategoryId = folderId,
-                            ImageLinkId = physcialFileLinkId,
+                            ImageLinkId = pfLinkId,
                             SortOrder = 0
                         });
                         db.SaveChanges();
