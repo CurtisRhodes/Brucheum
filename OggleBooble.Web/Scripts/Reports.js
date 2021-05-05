@@ -775,6 +775,3 @@ function resizeReportsPage() {
     let winW = $(window).width(); //, lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
     $('.middleColumn').width(winW - 100);
 }
-
-function sub
-

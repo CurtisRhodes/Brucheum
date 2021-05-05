@@ -236,7 +236,7 @@ function imageClick(selectedSide) {
             data: {
                 Winner: winnerLinkId,
                 Looser: looserLinkId,
-                VisitorId: getCookieValue("VisitorId")
+                VisitorId: globalVisitorId
             },
             success: function (success) {
                 if (success === "ok") {

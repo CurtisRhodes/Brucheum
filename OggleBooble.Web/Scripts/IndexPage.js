@@ -200,8 +200,8 @@ function goToPorn() {
 function localhostBypass() {
     if (document.domain === 'localhost') {
         window.localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
-        setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-        let visitorId = getCookieValue("VisitorId");
+        //setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+        let visitorId = globalVisitorId;
         console.log("localhostBypass visitorId: " + visitorId);
         alert("localhostBypass visitorId: " + visitorId);
         //setCookieValue("UserName", "developer");

@@ -15,52 +15,64 @@ function launchCarousel(startRoot) {
     carouselTake = 777;
     let carouselSkip = 0;
     imageIndex = 0;
-    try {
+    try
+    {
+        //alert("launchCarousel.  root: " + startRoot);
         loadCarouselSettingsIntoLocalStorage();
         jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
         window.addEventListener("resize", resizeCarousel);
-        if (startRoot === "centerfold") {
-            if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
-                //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
-                console.log("loading centerfold from centerfold cache");
-                let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
-                $.each(carouselCacheArray, function (idx, obj) {
-                    carouselItemArray.push(obj);
-                });
-                carouselSkip = carouselItemArray.length;
-                startCarousel("centefold cache");
-                console.log("loaded " + carouselItemArray.length + " from centerfold cache");
-            }
-            else
-                console.log("no " + startRoot + " cache found");
-        }
-        if (startRoot === "boobs") {
-            if (!isNullorUndefined(localStorage["carouselCache"])) {
+
+        switch (startRoot) {
+            case "centerfold":
+                if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
+                    //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
+                    console.log("loading centerfold from centerfold cache");
+                    let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
+                    $.each(carouselCacheArray, function (idx, obj) {
+                        carouselItemArray.push(obj);
+                    });
+                    carouselSkip = carouselItemArray.length;
+                    startCarousel("centefold cache");
+                    console.log("loaded " + carouselItemArray.length + " from centerfold cache");
+                }
+                else {
+                    alert("no " + startRoot + " cache found");
+                    console.log("no " + startRoot + " cache found");
+                }
+                break;
+            case "boobs":
                 //localStorage.removeItem("carouselCache");
-                let carouselCacheArray = JSON.parse(localStorage["carouselCache"]);
-                $.each(carouselCacheArray, function (idx, obj) {
-                    carouselItemArray.push(obj);
-                });
-                carouselSkip = carouselItemArray.length;
-                carouselSkip = carouselItemArray.length;
-                startCarousel("big naturals cache");
-            }
-            else
-                console.log("no " + startRoot + " cache found");
-        }
-        if (startRoot === "porn") {
-            if (!isNullorUndefined(window.localStorage["pornCache"])) {
-                console.log("loading porn from centerfold cache");
-                let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
-                $.each(carouselCacheArray, function (idx, obj) {
-                    carouselItemArray.push(obj);
-                });
-                carouselSkip = carouselItemArray.length;
-                startCarousel("porn cache");
-                console.log("loaded " + carouselItemArray.length + " from porn cache");
-            }
-            else
-                console.log("no " + startRoot + " cache found");
+                //alert("Boobs  localStorage[carouselCache]: " + localStorage["carouselCache"]);
+                if (!isNullorUndefined(localStorage["carouselCache"])) {
+                    //alert("localStorage[carouselCache]: " + localStorage["carouselCache"]);
+                    //localStorage.removeItem("carouselCache");
+                    let carouselCacheArray = JSON.parse(localStorage["carouselCache"]);
+                    $.each(carouselCacheArray, function (idx, obj) {
+                        carouselItemArray.push(obj);
+                    });
+                    carouselSkip = carouselItemArray.length;
+                    carouselSkip = carouselItemArray.length;
+                    startCarousel("big naturals cache");
+                }
+                else
+                    console.log("no " + startRoot + " cache found");
+                break;
+            case "porn":
+                if (!isNullorUndefined(window.localStorage["pornCache"])) {
+                    console.log("loading porn from centerfold cache");
+                    let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
+                    $.each(carouselCacheArray, function (idx, obj) {
+                        carouselItemArray.push(obj);
+                    });
+                    carouselSkip = carouselItemArray.length;
+                    startCarousel("porn cache");
+                    console.log("loaded " + carouselItemArray.length + " from porn cache");
+                }
+                else
+                    console.log("no " + startRoot + " cache found");
+                break;
+            default:
+                alert("SWT " + startRoot);
         }
 
         if (isNullorUndefined(jsCarouselSettings)) {
@@ -72,8 +84,11 @@ function launchCarousel(startRoot) {
             loadImages(startRoot, carouselSkip, carouselTake, true, false);
 
         refreshCache(startRoot);
-    } catch (e) {
-        // SyntaxError: Unexpected token u in JSON at position 1
+    }
+    catch (e)
+    {
+        // SyntaxError: Unexpected token u in JSON at position 
+        alert("launchCarousel CATCH: " + e);
         logError("CAT", startRoot, e, "launchCarousel");
     }
 }
@@ -536,7 +551,7 @@ function clickViewGallery(labelClick) {
         "<br/>button: " + carouselButtonClicked +
         "<br/>folder: " + carouselItemArray[imageIndex].ImageFolderName + " : " + clickFolderId +
         "<br/>image: " + carouselItemArray[imageIndex].LinkId +
-        "<br/>visitorId: " + getCookieValue("VisitorId")
+        "<br/>visitorId: " + globalVisitorId
     );
     console.log("clickViewGallery email sent");
 

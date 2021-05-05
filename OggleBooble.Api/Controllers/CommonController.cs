@@ -19,6 +19,44 @@ namespace OggleBooble.Api.Controllers
     public class VisitorController : ApiController
     {
         [HttpPost]
+        [Route("api/Common/TryAddVisitor")]
+        public AddVisitorSuccessModel TryAddVisitor(AddVisitorModel visitorData)
+        {
+            var addVisitorModel = new AddVisitorSuccessModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    if (dbExistingIpVisitor != null)
+                    {
+                        addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
+                        addVisitorModel.Success = "existing Ip";
+                    }
+                    else
+                    {
+                        var newVisitor = new Visitor()
+                        {
+                            VisitorId = visitorData.VisitorId,
+                            InitialPage = visitorData.FolderId,
+                            City = visitorData.City,
+                            Country = visitorData.Country,
+                            GeoCode = visitorData.GeoCode,
+                            Region = visitorData.Region,
+                            InitialVisit = DateTime.Now,
+                            IpAddress = visitorData.IpAddress
+                        };
+                        db.Visitors.Add(newVisitor);
+                        db.SaveChanges();
+                        addVisitorModel.Success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex) { addVisitorModel.Success = Helpers.ErrorDetails(ex); }
+            return addVisitorModel;
+        }
+
+        [HttpPost]
         [Route("api/Common/AddVisitor")]
         public string AddVisitor(AddVisitorModel visitorData)
         {
@@ -118,6 +156,44 @@ namespace OggleBooble.Api.Controllers
             }
             return visitSuccessModel;
         }
+
+        [HttpGet]
+        [Route("api/Common/GetVisitorInfo")]
+        public VisitorInfoModel GetVisitorInfo(string visitorId)
+        {
+            var visitorInfoModel = new VisitorInfoModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (dbVisitor == null)
+                        visitorInfoModel.Success = "not found";
+                    else
+                    {
+                        RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+                        if (dbRegisteredUser == null)
+                        {
+                            visitorInfoModel.UserName = "unregistered";
+                            visitorInfoModel.IsLoggedIn = false;
+                        }
+                        else
+                        {
+                            visitorInfoModel.IsLoggedIn = dbRegisteredUser.IsLoggedIn;
+                            visitorInfoModel.UserName = dbRegisteredUser.UserName;
+                        }
+                        visitorInfoModel.IpAddress= dbVisitor.IpAddress;
+                        visitorInfoModel.Success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                visitorInfoModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return visitorInfoModel;
+        }
+
 
         [HttpGet]
         [Route("api/Common/GetVisitor")]

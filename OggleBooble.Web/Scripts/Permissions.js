@@ -4,14 +4,13 @@ function isInRole(roleName) {
         //console.log("calling getUserInfo from isInRole")
         //if (document.domain === 'localhost') return true;
 
-        if (getCookieValue("IsLoggedIn") == "false") {
+        if (!globalIsLoggedIn) {
             console.log("isInRole not logged in");
             roleName = "not registered";
         }
         if (roleName == "not registered") return false;
 
-        const visitorId = getCookieValue("VisitorId");
-        if (isNullorUndefined(visitorId)) {
+        if (isNullorUndefined(globalVisitorId)) {
             console.log("visitorId undefined in isInRole")
             return false;
         }
@@ -38,7 +37,7 @@ function getUserRole() {
     if (!isNullorUndefined(window.localStorage["userRole"]))
         return window.localStorage["userRole"];
 
-    const visitorId = getCookieValue("VisitorId");
+    const visitorId = globalVisitorId;
     if (isNullorUndefined(visitorId)) {
         window.localStorage["userRole"] = "not registered";
         return window.localStorage["userRole"];
@@ -58,12 +57,13 @@ function resetUserSettings() {
 
 function isLoggedIn() {
     //if (document.domain === 'localhost') return true;
-    return getCookieValue("IsLoggedIn") == "true";
+    alert("who is calling this?");
+    return globalIsLoggedIn;
 }
 
 function getUserInfo(valueRequested, details) {
     try {
-        let visitorId = getCookieValue("VisitorId");
+        let visitorId = globalVisitorId;
         if (isNullorUndefined(visitorId)) {
             logError("BUG", 1, "I thought visitorId had been tested", "getUserInfo");
         }
@@ -101,11 +101,11 @@ function getUserInfo(valueRequested, details) {
     }
 }
 
-function updateUserSettings(visitorId, settingName, settingJson) {
+function updateUserSettings(settingName, settingJson) {
     try {
         $.ajax({
             type: "PUT",
-            url: settingsArray.ApiServer + "api/OggleUser/UpdateUserSettings?visitorId=" + visitorId + "&settingName=" + settingName + "&settingJson=" + settingJson,
+            url: settingsArray.ApiServer + "api/OggleUser/UpdateUserSettings?visitorId=" + globalVisitorId + "&settingName=" + settingName + "&settingJson=" + settingJson,
             success: function (successModel) {
                 if (successModel.Success === "ok") {
                     if (!isNullorUndefined(successModel.ReturnValue)) {
@@ -156,26 +156,31 @@ function loadInitialJson() {
 }
 
 function loadCarouselSettingsIntoLocalStorage() {
-    if (isNullorUndefined(window.localStorage["carouselSettings"])) {
-        lsCarouselSettings = {
-            includeArchive: false,
-            includeCenterfolds: false,
-            includePorn: false,
-            includeSoftcore: true,
-            includeLandscape: true,
-            includePortrait: false
-        };
-        window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
-        console.log("default carouselSettings loaded int local storage");
+    if (!isNullorUndefined(window.localStorage)) {
+        if (isNullorUndefined(window.localStorage["carouselSettings"])) {
+            lsCarouselSettings = {
+                includeArchive: false,
+                includeCenterfolds: false,
+                includePorn: false,
+                includeSoftcore: true,
+                includeLandscape: true,
+                includePortrait: false
+            };
+            window.localStorage["carouselSettings"] = JSON.stringify(lsCarouselSettings);
+            console.log("default carouselSettings loaded int local storage");
+        }
+        else {
+            console.log("carouselSettings found in local storage!");
+        }
     }
-    else {
-        console.log("carouselSettings found in local storage!");
-    }
+    else
+        alert("window.localStorage undefined");
+
     //jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
 }
 
 function updateCarouselSettings() {
-    let visitorId = getCookieValue("VisitorId");
+    let visitorId = globalVisitorId;
     if (isNullorUndefined(visitorId)) {
         displayStatusMessage("warning", "You must be logged in for settings to persist");
     }

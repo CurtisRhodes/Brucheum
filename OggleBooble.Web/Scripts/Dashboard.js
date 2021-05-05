@@ -481,7 +481,7 @@ function addImageLink() {
                 $('#txtImageLink').val("");
 
                 logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: globalVisitorId,
                     ActivityCode: "NIA",
                     FolderId: pSelectedTreeId,
                     Details: pSelectedTreeFolderPath
@@ -548,7 +548,7 @@ function performCreateNewFolder() {
             if (successModel.Success === "ok") {
                 displayStatusMessage("ok", "new folder " + $('#txtNewFolderTitle').val() + " created");
                 logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: globalVisitorId,
                     ActivityCode: "NFC",
                     PageId: successModel.ReturnValue,
                     Details: $('#txtNewFolderTitle').val()
@@ -596,7 +596,7 @@ function performMoveFolder() {
                 displayStatusMessage("ok", "folder " + pSelectedTreeFolderPath + " moved to " + $('#txtNewMoveDestiation').val());
                 loadDashboardDirTree(true);
                 logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: globalVisitorId,
                     ActivityCode: "LKM",
                     FolderId: pSelectedTreeId,
                     //PageName: $('.txtPartialDirTreePath').val(),
@@ -651,7 +651,7 @@ function perfomAddStepChildFolder(cfSsorceFolderId) {
             if (success === "ok") {
                 displayStatusMessage("ok", "folder " + $('#txtscSourceFolderName').val() + " added as stepchild to " + $('#txtStepParent').val());
                 logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: globalVisitorId,
                     ActivityCode: "CSF",  // Create Folder Stepchild
                     FolderId: pSelectedTreeId,
                     Details: "linkId: " + $('#txtCustomFolderLink').val() + " DestinationId: " + pSelectedTreeId
@@ -1195,7 +1195,7 @@ function performRenameFolder(folderId, newFolderName) {
             if (success === "ok") {
                 $('#centeredDialog').fadeOut();
                 logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: globalVisitorId,
                     ActivityCode: "RNF",
                     FolderId: pSelectedTreeId,
                     Details: linkId + ' renamed to ' + newFolderName

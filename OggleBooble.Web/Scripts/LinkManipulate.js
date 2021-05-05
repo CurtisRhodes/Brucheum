@@ -54,7 +54,7 @@ function perfomCopyLink(linkId) {
             if (success === "ok") {
                 displayStatusMessage("ok", "link copied")
                 logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: globalVisitorId,
                     ActivityCode: "LKC",
                     FolderId: pSelectedTreeId,
                     Details: "copy: " + linkId + " to: " + pSelectedTreeFolderPath
@@ -105,7 +105,7 @@ function moveFile(request, linkId, folderId) {
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
 
                 logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: globalVisitorId,
                     ActivityCode: request,
                     FolderId: pSelectedTreeId,
                     Details: linkId + " " + request + " from " + folderId
@@ -146,7 +146,7 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                     getAlbumImages(folderId);
 
                     logDataActivity({
-                        VisitorId: getCookieValue("VisitorId"),
+                        VisitorId: globalVisitorId,
                         ActivityCode: "REM",
                         PageId: folderId,
                         Details: "link: " + linkId
@@ -212,7 +212,7 @@ function performMoveImageToRejects(linkId, folderId) {
                     slideShowDialogClose();
                     displayStatusMessage("ok", "link moved to rejects" + linkId);
                     logDataActivity({
-                        VisitorId: getCookieValue("VisitorId"),
+                        VisitorId: globalVisitorId,
                         ActivityCode: "REJ",
                         FolderId: folderId,
                         Details: "link moved to rejects" + linkId
@@ -248,7 +248,7 @@ function removeHomeFolderLink(linkId, folderId) {
                         slide("next");
                     getAlbumImages(folderId);
                     logDataActivity({
-                        VisitorId: getCookieValue("VisitorId"),
+                        VisitorId: globalVisitorId,
                         FolderId: folderId,
                         ActivityCode: "RHL",
                         Details: "link: " + selectedImageLinkId + " removed from " + currentAlbumJSfolderName

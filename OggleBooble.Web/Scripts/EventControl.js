@@ -2,12 +2,6 @@
 function rtpe(eventCode, calledFrom, eventDetail, folderId) {
     // REPORT THEN PERFORM EVENT
     try {
-        var visitorId = getCookieValue("VisitorId");
-        if (isNullorUndefined(visitorId)) {
-            //verifiyVisitor(calledFrom, folderId);
-            logError("VVE", folderId,"isNullorUndefined(visitorId)", "rtpe/" + calledFrom);
-            //visitorId = "unknown";
-        }
         //logEvent(eventCode, folderId, "(rtpe) " + calledFrom, eventDetail);
         logEvent(eventCode, folderId, calledFrom, eventDetail);
         performEvent(eventCode, eventDetail, folderId);

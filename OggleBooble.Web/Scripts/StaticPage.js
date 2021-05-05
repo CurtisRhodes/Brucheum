@@ -25,7 +25,7 @@ $(document).ready(function () {
     var dots = "";
     loadSettings();
     $('#adminLink').hide();
-    var visitorId = getCookieValue("VisitorId");
+    var visitorId = globalVisitorId;
 
     var loadSettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
@@ -33,68 +33,35 @@ $(document).ready(function () {
             $('#dots').html(dots);
         }
         else {
-            if (isNullorUndefined(visitorId)) {
-                if (isNullorUndefined(internalLink)) {
-                    if (isNullorUndefined(calledFrom)) {
-                        logEventActivity({
-                            VisitorId: "knull",
-                            EventCode: "XLC",
-                            EventDetail: "no visitorId no calledFrom no h",
-                            PageId: staticPageFolderId,
-                            CalledFrom: "staticPage"
-                        });
-                    }
-                    else {
-                        logEventActivity({
-                            VisitorId: "knull",
-                            EventCode: "XLC",
-                            EventDetail: "no visitorId",
-                            PageId: staticPageFolderId,
-                            CalledFrom: "staticPage"
-                        });
-                    }
-                }
-                else {
+            if (isNullorUndefined(internalLink)) {
+                if (isNullorUndefined(calledFrom)) {
                     logEventActivity({
                         VisitorId: "knull",
-                        EventCode: "AL1",
-                        EventDetail: "h but no visitorId",
+                        EventCode: "XLC",
+                        EventDetail: "no h an no calledFrom. an old Link?",
                         PageId: staticPageFolderId,
                         CalledFrom: "staticPage"
                     });
                 }
-                callIpServiceFromStaticPage(staticPageFolderId, calledFrom);
-            }
-            else {  // visitorId ok
-                if (isNullorUndefined(internalLink)) {
-                    if (isNullorUndefined(calledFrom)) {
-                        logEventActivity({
-                            VisitorId: "knull",
-                            EventCode: "XLC",
-                            EventDetail: "no h an no calledFrom. an old Link?",
-                            PageId: staticPageFolderId,
-                            CalledFrom: "staticPage"
-                        });
-                    }
-                    else {
-                        logEventActivity({
-                            VisitorId: "knull",
-                            EventCode: "XLC",
-                            EventDetail: calledFrom,
-                            PageId: staticPageFolderId,
-                            CalledFrom: "staticPage"
-                        });
-                    }
-                }
-                else { 
+                else {
                     logEventActivity({
-                        VisitorId: visitorId,
-                        EventCode: "AL1",
-                        EventDetail: "perfect h: " + internalLink,
-                        CalledFrom: staticPageFolderId
+                        VisitorId: "knull",
+                        EventCode: "XLC",
+                        EventDetail: calledFrom,
+                        PageId: staticPageFolderId,
+                        CalledFrom: "staticPage"
                     });
                 }
             }
+            else {
+                logEventActivity({
+                    VisitorId: visitorId,
+                    EventCode: "AL1",
+                    EventDetail: "perfect h: " + internalLink,
+                    CalledFrom: staticPageFolderId
+                });
+            }
+
             clearInterval(loadSettingsWaiter);
             $('#dots').html('');
             resizeStaticPage();

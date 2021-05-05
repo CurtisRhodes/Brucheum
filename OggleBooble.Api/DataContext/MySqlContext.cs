@@ -351,6 +351,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string UserSettings { get; set; }
         public int UserCredits { get; set; }
         public string Pswrd { get; set; }
+        public bool IsLoggedIn { get; set; }
     }
 
     [Table("OggleBooble.TrackbackLink")]

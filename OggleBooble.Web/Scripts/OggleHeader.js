@@ -52,17 +52,15 @@ function resetOggleHeader(folderId, rootFolder) {
     $('#divLoginArea').show();
     $('#optionLoggedIn').hide();
     $('#optionNotLoggedIn').show();
-
-    let userName = getCookieValue("UserName");
-    if (!isNullorUndefined(userName)) {
-        let isLoggedIn = getCookieValue("IsLoggedIn");
-        alert("isLoggedIn: " + isLoggedIn);
-        if (isLoggedIn == "true") {
-            $('#spnUserName').html(userName);
+        
+    if (!isNullorUndefined(globalIsLoggedIn)) {
+        if (globalIsLoggedIn) {
+            $('#spnUserName').html(globalUserName);
             $('#optionLoggedIn').show();
             $('#optionNotLoggedIn').hide();
         }
     }
+
     $('#hdrBtmRowSec3').html("");
     $('#oggleHeaderTitle').html("unhandled");
     switch (rootFolder) {

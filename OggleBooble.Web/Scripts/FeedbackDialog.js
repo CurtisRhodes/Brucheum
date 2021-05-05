@@ -59,7 +59,7 @@
                     type: "POST",
                     url: settingsArray.ApiServer + "api/Common/LogFeedback",
                     data: {
-                        VisitorId: getCookieValue("VisitorId"),
+                        VisitorId: globalVisitorId,
                         FolderId: folderId,
                         FeedBackComment: $('#smnFeedback').val(),
                         FeedBackType: $('input[name="feedbackRadio"]:checked').val(),
@@ -75,7 +75,7 @@
                                 sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "Feedback !!!", +
                                     "feedbackBackType: " + feedbackType + "<br/>" +
                                     "feedbackMessage: " + $('#smnFeedback').val() + "<br/>" +
-                                    "visitor: " + getCookieValue("VisitorId") + "<br/>" +
+                                    "visitor: " + globalVisitorId + "<br/>" +
                                     "folderId: " + folderId);
                             else
                                 alert("sendEmail(CurtishRhodes@hotmail.com, Feedback@Ogglebooble.com, Feedback !!!" +
@@ -134,7 +134,7 @@
         try {
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + getCookieValue("VisitorId"),
+                url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + globalVisitorId,
                 success: function (registeredUser) {
                     if (registeredUser.Success == "ok") {
                         $('#txtFeedbackEmail').val(registeredUser.Email);
@@ -196,7 +196,7 @@ function saveFolderComment(folderId) {
             type: "POST",
             url: settingsArray.ApiServer + "api/FolderComment/AddFolderComment",
             data: {
-                VisitorId: getCookieValue("VisitorId"),
+                VisitorId: globalVisitorId,
                 FolderId: folderId,
                 CommentText: $('#smnFolderComment').val()
             },
@@ -208,7 +208,7 @@ function saveFolderComment(folderId) {
                     if (document.domain !== "localhost")
                         sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Folder Comment !!!", +
                             "folderCommentMessage: " + $('#smnFolderComment').val() + "<br/>" +
-                            "visitor: " + getCookieValue("VisitorId") + "<br/>" +
+                            "visitor: " + globalVisitorId + "<br/>" +
                             "folderId: " + folderId);
                     else
                         alert("sendEmail(CurtishRhodes@hotmail.com, FolderComment@Ogglebooble.com,FolderComment !!!\n" +

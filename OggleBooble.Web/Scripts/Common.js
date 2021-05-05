@@ -1,7 +1,7 @@
-﻿let verbosity = 5, freeVisitorHitsAllowed = 7500, settingsArray = {}, userRoles = [], settingsImgRepo,
+﻿let globalVisitorId = "unset", globalVisitorVerified = false, globalIsLoggedIn = false, globalUserName,
+    verbosity = 5, freeVisitorHitsAllowed = 7500, settingsArray = {}, userRoles = [], settingsImgRepo,
     viewerShowing = false, waitingForReportThenPerformEvent = true, forgetShowingCustomMessage = true,
-    debugMode = false;
-let pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
+    debugMode = false, pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
 
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -49,119 +49,6 @@ function explodedImageClick() {
         $('#explodedImage').css("width", winW * .7);
         $('#explodedImage').css("cursor", "zoom-in");
     }
-}
-
-function setCookieValue(elementToSet, newValue) {
-    //alert("setCookieValue:" + elementToSet + " to: " + newValue);
-    try {
-        //let returnValue = window.localStorage[itemName];
-        //window.localStorage[elementName] = elementValue;
-        if (document.cookie) {
-            let decodedCookie = decodeURIComponent(document.cookie);
-            let cookieElements = decodedCookie.split(",");
-
-            //alert("cookieElements: " + cookieElements);
-
-            let elementFound = false;
-            let cookieItem, cookieItemName, reconstitutedCookie = "?";
-            for (var i = 0; i < cookieElements.length; i++) {
-                cookieItem = cookieElements[i];
-                cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
-                cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
-
-                if (elementToSet == cookieItemName) {
-                    elementFound = true;
-                    if (cookieItemName != newValue) {
-                        //expiryDate = new Date();
-                        //expiryDate.setMonth(expiryDate.getMonth() + 9);
-                        //decodedCookie = decodedCookie.substring(decodedCookie.indexOf("expires")+22,)
-                        reconstitutedCookie = decodedCookie.replace(cookieItem, elementToSet + "=" + newValue);
-                        alert("setCookieValue success: " + reconstitutedCookie);
-                    }
-                    else
-                        alert("existing value for: " + elementToSet + "already: " + newValue);
-                    break
-                }
-            }
-            if (!elementFound) {
-                alert(elementToSet + "not found in cookie")
-                expiryDate = new Date();
-                expiryDate.setMonth(expiryDate.getMonth() + 9);
-                let winStorageVisId = window.localStorage["VisitorId"];
-                let cookieString = "VisitorId:" + winStorageVisId + ",expires:" + expiryDate.toUTCString();
-                //let cookieString = "VisitorId:" + winStorageVisId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
-
-                document.cookie = cookieString;
-
-                decodedCookie = decodeURIComponent(document.cookie);
-                cookieElements = decodedCookie.split(",");
-                alert("New cookieElements: " + cookieElements);
-            }
-
-
-
-            if (reconstitutedCookie != "?") {
-                //deleteCookie();
-                document.cookie = "";
-
-                expiryDate = new Date();
-                expiryDate.setMonth(expiryDate.getMonth() + 9);
-                let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
-
-                alert("reconstructed cookieString:\n" + cookieString);
-                document.cookie = cookieString;
-                //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
-            }
-        }
-        else {
-            alert("no cookie found");
-        }
-        //    createCookie();
-
-    } catch (e) {
-        alert("setcookie: " + e);
-        logError("CAT", 111, e, "setCookieValue");
-    }
-}
-
-//function createCookie() {
-//    logEvent("");
-//    expiryDate = new Date();
-//    expiryDate.setMonth(expiryDate.getMonth() + 9);
-
-//    //let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
-//    let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",expires:" + expiryDate.toUTCString();
-//    document.cookie = cookieString;
-
-
-
-//}
-
-function getCookieValue(itemName, calledFrom) {
-    //let returnValue = window.localStorage[itemName];
-    let returnValue = "not found";
-
-    //if (isNullorUndefined(returnValue))
-    {
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let cookieElements = decodedCookie.split(",");
-        let cookieItem, cookieItemName, cookieItemValue;
-        for (var i = 0; i < cookieElements.length; i++) {
-            cookieItem = cookieElements[i].split(":");
-            cookieItemName = cookieItem[0].trim();//.substring(0, cookieElements[i].indexOf("=")).trim();
-            cookieItemValue = cookieItem[1];//.substring(cookieElements[i].indexOf("=") + 1);
-            if (cookieItemName === itemName) {
-                alert("cookeie value FOUND. " + itemName + " = " + cookieItemValue);
-                returnValue = cookieItemValue;
-                break;
-            }
-        }
-        if (returnValue == "not found") {
-            alert("getCookieValue(" + itemName + ")  returnValue: " + returnValue + "  called from: " + calledFrom);
-            returnValue = window.localStorage[itemName];
-        }
-    }
-    return returnValue;
 }
 
 function loadOggleSettings() {
@@ -247,111 +134,6 @@ function todayString() {
     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     let yyyy = today.getFullYear();
     return mm + '/' + dd + '/' + yyyy;
-}
-
-function verifyVisitorId(folderId, calledFrom) {
-    try {
-        if (!document.cookie) {
-            if (!isNullOrUndefined(window.localStorage["VisitorId"])) {
-                // no cookie but visitorId found in local storage
-                if (!navigator.cookieEnabled) {  // user does not accept cookies
-                    logError("UNC", folderId, "CTF 1", "getIpInfo/CTF/" + calledFrom);
-                }
-                else {
-                    logEvent("NOC", folderId, calledFrom, "all new problem");
-                    createCookie();
-                }
-            }
-            else {
-                // no cookie and no visitorId found in local storage
-                logEvent("NOC", folderId, calledFrom, "all new problem");
-                getIpInfo(folderId, "verifyVisitorId");
-
-
-            }
-
-
-            if (!navigator.cookieEnabled) {  // user does not accept cookies
-                logError("UNC", folderId, "CTF 1", "getIpInfo/CTF/" + calledFrom);
-            }
-            else {
-                logEvent("NOC", folderId, calledFrom, "all new problem");
-
-
-
-
-            }
-
-
-
-            //insert OggleBooble.Ref values('EVT', 'NOC', 'no cookie');
-
-            //if()
-
-            logEvent("NOC", folderId, calledFrom, "all new problem");
-            getIpInfo(folderId, "verifyVisitorId");
-
-
-        }
-
-
-        let cokieTest = getCookieValue("VisitorId", "cookieTest");
-        let lclStorTest = window.localStorage["VisitorId"];
-        if (!isNullorUndefined(cokieTest)) {
-
-
-
-        }
-        
-        if (!isNullorUndefined(cokieTest) && !isNullorUndefined(lclStorTest)) {
-            console.log("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
-            //logEvent("VL0", folderId, calledFrom, "visitorId cookie and local storage verified");
-            // alert("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + cokieTest,
-                success: function (successModel) {
-                    if (successModel.Success == "ok") {
-                        // visitor id verified
-                        // logActivity("VVI", folderId);
-                    }
-                    else {
-                        // visitorId seems to exist, but not found in table
-                        logError("LGV", folderId, success, "verifyVisitorId");
-                    }
-                },
-                error: function (jqXHR) {
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-                }
-            });
-        }
-        else {
-            if (!isNullorUndefined(lclStorTest)) {
-                if (isNullorUndefined(cokieTest)) {
-                    setCookieValue("VisitorId", lclStrTest);
-                    logEvent("VL1", folderId, calledFrom, "cookie loaded from local storage");
-                }
-            }
-            if (!isNullorUndefined(cokieTest)) {
-                if (isNullorUndefined(lclStorTest)) {
-                    window.localStorage["VisitorId"] = cokieTest;
-                    //logEvent("VL2", folderId, calledFrom, "local storage loaded from cookie");
-                    //logActivity("VL2", folderId, calledFrom);
-                }
-            }
-            if (isNullorUndefined(cokieTest) && isNullorUndefined(lclStorTest)) {
-                //logError("VVF", folderId, "could be a new user", calledFrom);
-                getIpInfo(folderId, "verifyVisitorId");
-            }
-        }
-    }
-    catch (e) {
-        logError("CAT", folderId, "hmwiwd", calledFrom);
-        if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
-        console.error("Catch error in verifyVisitorId!!: " + e);
-    }
 }
 
 function letemPorn(response, pornType, folderId) {
@@ -444,6 +226,87 @@ function isNullorUndefined(val) {
     return false;
 }
 
+function verifyVisitorId(folderId, calledFrom) {
+    try {
+        if (!document.cookie) {
+            alert("No document.cookie exists")
+        }
+        if (isNullorUndefined(window.localStorage)) {
+            alert("window.localStorage doens't exist");
+        }
+
+        if (isNullorUndefined(window.localStorage["VisitorId"])) {
+            if (globalVisitorId != "unset") {
+                alert("localStorage null and globalVisitorId: " + globalVisitorId);
+                window.localStorage["VisitorId"] = globalVisitorId;
+            }
+            // no cookie but visitorId found in local storage
+            globalVisitorId = window.localStorage["VisitorId"];
+        }
+
+        if ((globalVisitorId == "unset") && (!isNullorUndefined(window.localStorage["VisitorId"]))) {
+            logActivity("GVS", folderId, calledFrom); //  globalVisitorId set to localStorage[VisitorId]
+            //alert("one time fix"); window.localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
+            globalVisitorId = window.localStorage["VisitorId"];
+        }
+
+        if (globalVisitorId != window.localStorage["VisitorId"]) {
+            alert("verifyVisitorId localStorage: " + window.localStorage["VisitorId"] + "\nand globalVisitorId: " + globalVisitorId);
+            //globalVisitorId = window.localStorage["VisitorId"];
+        }
+
+        if (globalVisitorId == "unset") {
+            logActivity("CBN", folderId, calledFrom);
+            //alert("no cookie and no visitorId found in local storage\ncalling getIpInfo");
+            getIpInfo(folderId, "verifyVisitorId");
+        }
+
+        if (!globalVisitorVerified) {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Common/GetVisitorInfo?visitorId=" + globalVisitorId,
+                success: function (visitorInfo) {
+                    if (visitorInfo.Success == "ok") {
+                        //alert("visitor id verified. UserName: " + visitorInfo.UserName);
+                        $('#spnUserName').html(visitorInfo.UserName);
+
+                        globalVisitorVerified = true;
+                        globalUserName = visitorInfo.UserName;
+                        globalIsLoggedIn = visitorInfo.IsLoggedIn;
+                        console.log("VisitorVerified.  globalVisitorId: " + globalVisitorId + "  IsLoggedIn: " + globalIsLoggedIn);
+
+                        createCookie();
+
+                        var test1 = getCookieValue("Visitorid", "boogers");
+
+                        alert("cookieTest1: " + test1);
+
+                        // logActivity("VVI", folderId);
+                    }
+                    else {
+                        //alert("visitorId seems to exist, but not found in table/n" + visitorInfo.Success);
+                        logError("LGV", folderId, visitorInfo.Success, calledFrom + "/verifyVisitorId");
+                    }
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg, folderId, "verify Visitor")) {
+                        alert("XHR error in verify Visitor: " + errMsg);
+                        logError("XHR", folderId, errMsg, "verify Visitor");
+                    }
+                }
+            });
+        }
+        else
+            console.log("visitor verified: " + globalVisitorId);
+    }
+    catch (e) {
+        logError("CAT", folderId, "hmwiwd", calledFrom);
+        if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
+        console.error("Catch error in verifyVisitorId!!: " + e);
+    }
+}
+
 function create_UUID() {
     // thank tohttps://www.w3resource.com/javascript-exercises/javascript-math-exercise-23.php
     //let dt = new Date().getTime();
@@ -468,7 +331,7 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
                 type: "POST",
                 url: settingsArray.ApiServer + "api/Common/LogError",
                 data: {
-                    VisitorId: getCookieValue("VisitorId", "logError"),
+                    VisitorId: globalVisitorId,
                     ErrorCode: errorCode,
                     FolderId: folderId,
                     ErrorMessage: errorMessage,
@@ -505,15 +368,11 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     //    alert("logEvent. eventCode: " + eventCode + "  folderId: " + folderId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
     //else
     {
-        let visitorId = getCookieValue("VisitorId", "logEvent");
-        if (isNullorUndefined(visitorId))
-            //verifiyVisitor(calledFrom, folderId);
-            visitorId = "unknown";
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogEvent",
             data: {
-                VisitorId: visitorId,
+                VisitorId: globalVisitorId,
                 EventCode: eventCode,
                 EventDetail: eventDetails,
                 CalledFrom: calledFrom,
@@ -546,7 +405,7 @@ function logActivity(activityCode, folderId, calledFrom) {
             ActivityCode: activityCode,
             FolderId: folderId,
             CalledFrom: calledFrom,
-            VisitorId: getCookieValue("VisitorId", "logActivity");
+            VisitorId: globalVisitorId
         },
         success: function (success) {
             if (success === "ok") {
@@ -569,12 +428,6 @@ function logActivity(activityCode, folderId, calledFrom) {
 }
 
 function logDataActivity(activityModel) {
-    //activityModel{
-    //    VisitorId: getCookieValue("VisitorId"),
-    //    ActivityCode: "LKC",
-    //    folderId: pDirTreeId,
-    //    Activity: "copy: " + linkId + " to: " + pDirTreeId
-    //};
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogDataActivity",

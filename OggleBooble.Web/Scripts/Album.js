@@ -4,7 +4,7 @@ const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
 function loadLargeAlbum(folderId) {
     setOggleHeader("album");
     apFolderId = folderId;
-    apVisitorId = getCookieValue("VisitorId");
+    apVisitorId = globalVisitorId;
     qucikHeader(folderId);
     //logPageHit(folderId);
     settingsImgRepo = settingsArray.ImageRepo;
@@ -19,7 +19,7 @@ function loadAlbum(folderId) {
     }
     setOggleHeader("album");
     apFolderId = folderId;
-    apVisitorId = getCookieValue("VisitorId");
+    apVisitorId = globalVisitorId;
 
     qucikHeader(folderId);
     logPageHit(folderId);

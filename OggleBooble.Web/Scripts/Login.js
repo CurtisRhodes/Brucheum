@@ -33,7 +33,7 @@ function attemptLogin() {
                     setCookieValue("UserName", userName);
                     setCookieValue("IsLoggedIn", true);
                     setCookieValue("VisitorId", successModel.ReturnValue);
-                    logEvent("LOG", 0, "Successfull log in: " + getCookieValue("UserName"));
+                    logEvent("LOG", 0, "Successfull log in: " + globalUserName);
                     displayStatusMessage("ok", "thanks for logging in " + userName);
                     window.localStorage["userRole"] = null;
                     window.location.href = ".";
@@ -86,8 +86,10 @@ function validateLogin() {
 
 function onLogoutClick(pageId) {
     if (confirm("log out?")) {
-        setCookieValue("IsLoggedIn", "false");
-        //let isLoggedIn = getCookieValue("IsLoggedIn");
+        //setCookieValue("IsLoggedIn", "false");
+        globalIsLoggedIn = false;
+        // updateRegisteredUser
+        
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         $('#footerCol5').hide();
@@ -180,7 +182,7 @@ function loadUserProfile() {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + getCookieValue("VisitorId"),
+            url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + globalVisitorId,
             success: function (registeredUser) {
                 if (registeredUser.Success == "ok") {
                     $('#txtUserProfileName').val(registeredUser.UserName);
@@ -249,7 +251,7 @@ function updateUserProfile() {
 ///////////////////////////////////////////////////////////////////////////////////////
 
 function showRegisterDialog() {
-    let visitorId = getCookieValue("VisitorId");
+    let visitorId = globalVisitorId;
     if (isNullorUndefined(visitorId)) {
         getIpInfo(0, "showRegisterDialog");
         logError("BUG", 0, "attempt to register with no visitorId", "showRegisterDialog");
@@ -273,7 +275,7 @@ function attemptRegister() {
                 type: "POST",
                 url: settingsArray.ApiServer + "/api/Login/RegisterUser",
                 data: {
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: globalVisitorId,
                     UserName: $('#txtRegisterUserName').val(),
                     ClearPassword: $('#txtRegisterClearPassword').val(),
                     FirstName: $('#txtRegisterFirstName').val(),
@@ -311,14 +313,13 @@ function attemptRegister() {
 
 function registerHappyPath(successMessage) {
 
-    displayStatusMessage("ok", "thanks for Registering " + $('#txtRegisterUserName').val());
+    globalUserName = $('#txtRegisterUserName').val();
+    displayStatusMessage("ok", "thanks for Registering " + globalUserName);
 
     sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
-        "UserName: " + $('#txtRegisterUserName').val() + "<br/>VisitorId: " + getCookieValue("VisitorId"));
+        "UserName: " + globalUserName + "<br/>VisitorId: " + globalVisitorId);
 
-    setCookieValue("IsLoggedIn", "true");
-    setCookieValue("UserName", $('#txtRegisterUserName').val());
-    $('#spnUserName').html(getCookieValue("UserName"));
+    globalIsLoggedIn = true;
     $('#optionLoggedIn').show();
     $('#optionNotLoggedIn').hide();
     dragableDialogClose();
@@ -326,7 +327,7 @@ function registerHappyPath(successMessage) {
         resume();
 
     //window.location.href = ".";
-    showCustomMessage(96, false);
+    //showCustomMessage(96, false);
 }
 
 function validateRegister() {
@@ -398,7 +399,7 @@ function authenticateEmail(usersEmail) {
 
     sendEmail("CurtishRhodes@hotmail.com", "SomeoneAuthenticated@Ogglebooble.com", "Someone Authenticated !!!", "OH MY GOD");
 
-    alert("Thank you for registering " + getCookieValue("UserName") + "\n please reply to the two factor authentitifcation email sent to you" +
+    alert("Thank you for registering " + globalUserName + "\n please reply to the two factor authentitifcation email sent to you" +
         "\nYou will then be granted the access you requested." + "\nThe menu item 'Dashboard' will appear next to your 'Hello' message");
     dragableDialogClose();
 }
@@ -431,7 +432,7 @@ function awardCredits(activityCode, folderId) {
         //public int PageId { get; set; }
         //public DateTime Occured { get; set; }
 
-            VisitorId: getCookieValue("VisitorId"),
+            VisitorId: globalVisitorId,
             ActivityCode: activityCode,
             PageId: folderId,
             Credits: credits

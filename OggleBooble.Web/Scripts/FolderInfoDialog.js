@@ -15,7 +15,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
     if (typeof pause === 'function') pause();
     //alert("showFolderInfoDialog(folderId: " + folderId + ", calledFrom: " + calledFrom + ")");
     showBasicFolderInfoDialog();
-    logEvent("FID", folderId, calledFrom, getCookieValue("VisitorId"));
+    logEvent("FID", folderId, calledFrom, globalVisitorId);
     try {  // GetQuickFolderInfo
         $.ajax({
             type: "GET",
@@ -594,13 +594,13 @@ function poserSave(linkId, folderId) {
     if (document.domain !== "localhost")
         sendEmail("CurtishRhodes@hotmail.com", "PoserIdentified@Ogglebooble.com", "poser identified !!!", +
             "suggested name: " + $('#txtPoserIdentified').val() + "<br/>" +
-            "visitor: " + getCookieValue("VisitorId") + "<br/>" +
+            "visitor: " + globalVisitorId + "<br/>" +
             "folderId: " + folderId + "<br/>" +
             "linkId: " + linkId);
     else
         alert("sendEmail(CurtishRhodes@hotmail.com, PoserIdentified@Ogglebooble.com,\nposer identified !!!\n" +
             "suggested name: " + $('#txtPoserIdentified').val() +
-            "\nvisitor: " + getCookieValue("VisitorId") + "\nfolderId: " + folderId + "\nlinkId: " + linkId
+            "\nvisitor: " + globalVisitorId + "\nfolderId: " + folderId + "\nlinkId: " + linkId
         );
 
     showMyAlert("Thank you for your input\nYou have earned 1000 credits.");
