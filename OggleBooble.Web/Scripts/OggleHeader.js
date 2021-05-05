@@ -56,7 +56,7 @@ function resetOggleHeader(folderId, rootFolder) {
     let userName = getCookieValue("UserName");
     if (!isNullorUndefined(userName)) {
         let isLoggedIn = getCookieValue("IsLoggedIn");
-        //alert("isLoggedIn: " + isLoggedIn);
+        alert("isLoggedIn: " + isLoggedIn);
         if (isLoggedIn == "true") {
             $('#spnUserName').html(userName);
             $('#optionLoggedIn').show();

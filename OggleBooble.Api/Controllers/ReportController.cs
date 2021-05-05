@@ -52,6 +52,25 @@ namespace OggleBooble.Api.Controllers
             return rslts;
         }
 
+
+
+        [HttpGet]
+        [Route("api/Report/ReferralsReport")]
+        public DailyReferralsReportModel ReferralsReport()
+        {
+            var rslts = new DailyReferralsReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    rslts.StaticPageReferrals = db.StaticPageReferrals.ToList();
+                    rslts.Success = "ok";
+                }
+            }
+            catch (Exception ex) { rslts.Success = Helpers.ErrorDetails(ex); }
+            return rslts;
+        }
+
         [HttpGet]
         [Route("api/Report/DailyVisitors")]
         public DailyVisitorsReportModel DailyVisitors(DateTime visitDate)

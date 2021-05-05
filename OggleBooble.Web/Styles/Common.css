@@ -36,12 +36,10 @@ body {
 
     .threeColumnLayout .leftColumn {
         float: left;
-        /*border-right: solid 5px var(--ogglgeHeaderBarColor);*/
-        min-width: 4%;
+        min-width: 1%;
     }
 
     .threeColumnLayout .middleColumn {
-
         float: left;
         width: 100%;
         height: inherit;
@@ -50,7 +48,7 @@ body {
 
     .threeColumnLayout .rightColumn {
         float: left;
-        min-width: 5%;
+        min-width: 1%;
     }
 
 .pornBodyColors {
@@ -411,7 +409,7 @@ body {
 }
 
 .stepchildTreeLabel {
-    display: inline;
+    display: inline !important;
     color: #878080;
 }
 

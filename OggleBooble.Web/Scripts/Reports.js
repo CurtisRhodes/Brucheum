@@ -23,6 +23,7 @@ function runMetricsMatrixReport() {
                         "   <div id='mmBotRow' class='flexbox'>" +
                         "       <div id='mostPopularPagesContainer' class='subreportContainer'></div>" +
                         "       <div id='mostImageHitsContainer' class='subreportContainer'></div>" +
+                        "       <div id='dailyRefferalsContainer' class='subreportContainer'></div>" +
                         "   </div>" +
                         "</div>");
                     $("#dailyActivityReportContainer").html("<div id='fxShell' class='flexbox'>");
@@ -48,8 +49,8 @@ function runMetricsMatrixReport() {
                     $("#fxShell").append("</div>")
                     runMostVisitedPages();
                     runMostImageHits();
+                    runDailyRefferals();
                     //runMostActiveUsers();
-
                     $("#reportsFooter").html("<button onclick='rerun()'>reload</button>\n");
                 }
                 else {
@@ -65,7 +66,6 @@ function runMetricsMatrixReport() {
     else
         alert("unable to run report");
 }
-
 function metrixSubReport(reportId, reportDay) {
     switch (reportId) {
         case 1: // NewVisitors
@@ -140,6 +140,84 @@ function metrixSubReport(reportId, reportDay) {
         default:
     }
 }
+function runMostImageHits() {
+    $('#dashBoardLoadingGif').show();
+    $("#mostImageHitsContainer").html("");
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/Report/MostImageHitsReport",
+        success: function (mostImageHits) {
+            $('#dashBoardLoadingGif').hide();
+            if (mostImageHits.Success === "ok") {
+                $("#mostImageHitsContainer").html("<div>Most Image Hits" + todayString() + "</div>");
+                $.each(mostImageHits.Items, function (idx, obj) {
+                    $("#mostImageHitsContainer").append("<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
+                        obj.PageName + "</a>" + obj.PageHits + "</div>");
+                });
+            }
+            else {
+                logError("AJX", 3910, mostImageHits.Success, "runMostImageHits");
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, folderId, "runMostImageHits")) logError("XHR", 3907, errMsg, "runMostImageHits");
+        }
+    });
+}
+function runMostVisitedPages() {
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Report/MostVisitedPagesReport",
+        success: function (popularPages) {
+            $('#dashBoardLoadingGif').hide();
+            $('.subreportContainer').css("height", $('#dashboardContainer').height() - $("#dailyActivityReportContainer").height() * 2.13);
+            if (popularPages.Success === "ok") {
+                $("#mostPopularPagesContainer").html("<div>Most Popular Pages " + todayString() + "</div>");
+                $.each(popularPages.Items, function (idx, obj) {
+                    $("#mostPopularPagesContainer").append("<div>" +
+                        "<a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" + obj.PageName + "</a>" + obj.PageHits + "</div>");
+                });
+            }
+            else {
+                logError("AJX", 3910, popularPages.Success, "mostVisitedPages");
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, folderId, "runMostVisitedPages")) logError("XHR", 3907, errMsg, "runMostVisitedPages");
+        }
+    });
+}
+function runDailyRefferals() {
+    $('#dashBoardLoadingGif').show();
+    $("#dailyRefferalsContainer").html("");
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/Report/ReferralsReport",
+        success: function (referrals) {
+            $('#dashBoardLoadingGif').hide();
+            if (referrals.Success === "ok") {
+                $("#dailyRefferalsContainer").html("<div>Refferals " + todayString() + "</div>");
+                $.each(referrals.StaticPageReferrals, function (idx, obj) {
+                    $("#dailyRefferalsContainer").append("<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
+                        obj.PageName + "</a>" + obj.Hits + "</div>");
+                });
+            }
+            else {
+                logError("AJX", 3910, referrals.Success, "Daily Refferals Report");
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, folderId, "Daily Refferals Report")) logError("XHR", 3907, errMsg, "Daily Refferals Report");
+        }
+    });
+}
+
+
+
 
 function runPageHitReport() {
     activeReport = "PageHitReport";
@@ -207,58 +285,6 @@ function showUserDetail(ipAddress) {
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errMsg, folderId, "showUserDetail")) logError("XHR", 3907, errMsg, "showUserDetail");
-        }
-    });
-}
-
-function runMostVisitedPages() {
-    $('#dashBoardLoadingGif').show();
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Report/MostVisitedPagesReport",
-        success: function (popularPages) {
-            $('#dashBoardLoadingGif').hide();
-            $('.subreportContainer').css("height", $('#dashboardContainer').height() - $("#dailyActivityReportContainer").height() * 2.13);
-            if (popularPages.Success === "ok") {
-                $("#mostPopularPagesContainer").html("<div>Most Popular Pages " + todayString() + "</div>");
-                $.each(popularPages.Items, function (idx, obj) {
-                    $("#mostPopularPagesContainer").append("<div>" +
-                        "<a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" + obj.PageName + "</a>" + obj.PageHits + "</div>");
-                });
-            }
-            else {
-                logError("AJX", 3910, popularPages.Success, "mostVisitedPages");
-            }
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "runMostVisitedPages")) logError("XHR", 3907, errMsg, "runMostVisitedPages");
-        }
-    });
-}
-
-function runMostImageHits() {
-    $('#dashBoardLoadingGif').show();
-    $("#mostImageHitsContainer").html("");
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/Report/MostImageHitsReport",
-        success: function (mostImageHits) {
-            $('#dashBoardLoadingGif').hide();
-            if (mostImageHits.Success === "ok") {
-                $("#mostImageHitsContainer").html("<div>Most Image Hits" + todayString() + "</div>");
-                $.each(mostImageHits.Items, function (idx, obj) {
-                    $("#mostImageHitsContainer").append("<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
-                        obj.PageName + "</a>" + obj.PageHits + "</div>");
-                });
-            }
-            else {
-                logError("AJX", 3910, mostImageHits.Success, "runMostImageHits");
-            }
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "runMostImageHits")) logError("XHR", 3907, errMsg, "runMostImageHits");
         }
     });
 }
@@ -749,3 +775,6 @@ function resizeReportsPage() {
     let winW = $(window).width(); //, lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();
     $('.middleColumn').width(winW - 100);
 }
+
+function sub
+

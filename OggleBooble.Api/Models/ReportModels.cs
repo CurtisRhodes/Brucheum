@@ -39,6 +39,16 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
+    public class DailyReferralsReportModel
+    {
+        public DailyReferralsReportModel()
+        {
+            StaticPageReferrals = new List<VwStaticPageReferral>();
+        }
+        public List<VwStaticPageReferral> StaticPageReferrals { get; set; }
+        public string Success { get; set; }
+    }
+
 
     public class MostPopularPagesReportModel
     {

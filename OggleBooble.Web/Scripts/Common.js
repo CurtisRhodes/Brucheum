@@ -51,46 +51,98 @@ function explodedImageClick() {
     }
 }
 
-function setCookieValue(elementName, elementValue) {
-    //alert("setCookieValue(" + elementName + "," + elementValue + ")");
+function setCookieValue(elementToSet, newValue) {
+    //alert("setCookieValue:" + elementToSet + " to: " + newValue);
     try {
-        window.localStorage[elementName] = elementValue;
-        let visitorId = null, isLoggedIn = "true", userName = "", decodedCookie = "";
+        //let returnValue = window.localStorage[itemName];
+        //window.localStorage[elementName] = elementValue;
         if (document.cookie) {
-            decodedCookie = decodeURIComponent(document.cookie);
-            //       let cookieObj = JSON.parse(decodeURIComponent(document.cookie));
-            // cookieObj.elementName = elementValue;
-            // $.each(cookieObj, function (idx, obj) {
-            let cookieItem, cookieItemName, cookieItemValue;
+            let decodedCookie = decodeURIComponent(document.cookie);
             let cookieElements = decodedCookie.split(",");
+
+            //alert("cookieElements: " + cookieElements);
+
+            let elementFound = false;
+            let cookieItem, cookieItemName, reconstitutedCookie = "?";
             for (var i = 0; i < cookieElements.length; i++) {
                 cookieItem = cookieElements[i];
                 cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
                 cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
-                if (cookieItemName === "UserName") userName = cookieItemValue;
-                if (cookieItemName === "VisitorId") visitorId = cookieItemValue;
-                if (cookieItemName === "IsLoggedIn") isLoggedIn = cookieItemValue;
+
+                if (elementToSet == cookieItemName) {
+                    elementFound = true;
+                    if (cookieItemName != newValue) {
+                        //expiryDate = new Date();
+                        //expiryDate.setMonth(expiryDate.getMonth() + 9);
+                        //decodedCookie = decodedCookie.substring(decodedCookie.indexOf("expires")+22,)
+                        reconstitutedCookie = decodedCookie.replace(cookieItem, elementToSet + "=" + newValue);
+                        alert("setCookieValue success: " + reconstitutedCookie);
+                    }
+                    else
+                        alert("existing value for: " + elementToSet + "already: " + newValue);
+                    break
+                }
+            }
+            if (!elementFound) {
+                alert(elementToSet + "not found in cookie")
+                expiryDate = new Date();
+                expiryDate.setMonth(expiryDate.getMonth() + 9);
+                let winStorageVisId = window.localStorage["VisitorId"];
+                let cookieString = "VisitorId:" + winStorageVisId + ",expires:" + expiryDate.toUTCString();
+                //let cookieString = "VisitorId:" + winStorageVisId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+
+                document.cookie = cookieString;
+
+                decodedCookie = decodeURIComponent(document.cookie);
+                cookieElements = decodedCookie.split(",");
+                alert("New cookieElements: " + cookieElements);
+            }
+
+
+
+            if (reconstitutedCookie != "?") {
+                //deleteCookie();
+                document.cookie = "";
+
+                expiryDate = new Date();
+                expiryDate.setMonth(expiryDate.getMonth() + 9);
+                let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+
+                alert("reconstructed cookieString:\n" + cookieString);
+                document.cookie = cookieString;
+                //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
             }
         }
-        if (elementName === "IsLoggedIn") isLoggedIn = elementValue;
-        //if (elementName === "UserName") userName = elementValue;
-        if (elementName === "VisitorId") visitorId = elementValue;
-        //deleteCookie();
-        expiryDate = new Date();
-        expiryDate.setMonth(expiryDate.getMonth() + 9);
-        let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
-        //let cookieString = "VisitorId:" + visitorId + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
-        document.cookie = cookieString;
-        //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
+        else {
+            alert("no cookie found");
+        }
+        //    createCookie();
+
     } catch (e) {
+        alert("setcookie: " + e);
         logError("CAT", 111, e, "setCookieValue");
     }
 }
 
-function getCookieValue(itemName) {
-    let returnValue = window.localStorage[itemName];
+//function createCookie() {
+//    logEvent("");
+//    expiryDate = new Date();
+//    expiryDate.setMonth(expiryDate.getMonth() + 9);
 
-    if (isNullorUndefined(returnValue)) {
+//    //let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+//    let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",expires:" + expiryDate.toUTCString();
+//    document.cookie = cookieString;
+
+
+
+//}
+
+function getCookieValue(itemName, calledFrom) {
+    //let returnValue = window.localStorage[itemName];
+    let returnValue = "not found";
+
+    //if (isNullorUndefined(returnValue))
+    {
         let decodedCookie = decodeURIComponent(document.cookie);
         let cookieElements = decodedCookie.split(",");
         let cookieItem, cookieItemName, cookieItemValue;
@@ -99,11 +151,14 @@ function getCookieValue(itemName) {
             cookieItemName = cookieItem[0].trim();//.substring(0, cookieElements[i].indexOf("=")).trim();
             cookieItemValue = cookieItem[1];//.substring(cookieElements[i].indexOf("=") + 1);
             if (cookieItemName === itemName) {
-                //if (!isNullorUndefined(cookieItemValue))
-                //  alert("cookeie value FOUND. " + itemName + " = " + cookieItemValue);
+                alert("cookeie value FOUND. " + itemName + " = " + cookieItemValue);
                 returnValue = cookieItemValue;
                 break;
             }
+        }
+        if (returnValue == "not found") {
+            alert("getCookieValue(" + itemName + ")  returnValue: " + returnValue + "  called from: " + calledFrom);
+            returnValue = window.localStorage[itemName];
         }
     }
     return returnValue;
@@ -196,8 +251,58 @@ function todayString() {
 
 function verifyVisitorId(folderId, calledFrom) {
     try {
-        let cokieTest = getCookieValue("VisitorId")
+        if (!document.cookie) {
+            if (!isNullOrUndefined(window.localStorage["VisitorId"])) {
+                // no cookie but visitorId found in local storage
+                if (!navigator.cookieEnabled) {  // user does not accept cookies
+                    logError("UNC", folderId, "CTF 1", "getIpInfo/CTF/" + calledFrom);
+                }
+                else {
+                    logEvent("NOC", folderId, calledFrom, "all new problem");
+                    createCookie();
+                }
+            }
+            else {
+                // no cookie and no visitorId found in local storage
+                logEvent("NOC", folderId, calledFrom, "all new problem");
+                getIpInfo(folderId, "verifyVisitorId");
+
+
+            }
+
+
+            if (!navigator.cookieEnabled) {  // user does not accept cookies
+                logError("UNC", folderId, "CTF 1", "getIpInfo/CTF/" + calledFrom);
+            }
+            else {
+                logEvent("NOC", folderId, calledFrom, "all new problem");
+
+
+
+
+            }
+
+
+
+            //insert OggleBooble.Ref values('EVT', 'NOC', 'no cookie');
+
+            //if()
+
+            logEvent("NOC", folderId, calledFrom, "all new problem");
+            getIpInfo(folderId, "verifyVisitorId");
+
+
+        }
+
+
+        let cokieTest = getCookieValue("VisitorId", "cookieTest");
         let lclStorTest = window.localStorage["VisitorId"];
+        if (!isNullorUndefined(cokieTest)) {
+
+
+
+        }
+        
         if (!isNullorUndefined(cokieTest) && !isNullorUndefined(lclStorTest)) {
             console.log("visitorId ok for: " + folderId + " calledFrom: " + calledFrom);
             //logEvent("VL0", folderId, calledFrom, "visitorId cookie and local storage verified");
@@ -363,7 +468,7 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
                 type: "POST",
                 url: settingsArray.ApiServer + "api/Common/LogError",
                 data: {
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: getCookieValue("VisitorId", "logError"),
                     ErrorCode: errorCode,
                     FolderId: folderId,
                     ErrorMessage: errorMessage,
@@ -400,7 +505,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     //    alert("logEvent. eventCode: " + eventCode + "  folderId: " + folderId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
     //else
     {
-        let visitorId = getCookieValue("VisitorId");
+        let visitorId = getCookieValue("VisitorId", "logEvent");
         if (isNullorUndefined(visitorId))
             //verifiyVisitor(calledFrom, folderId);
             visitorId = "unknown";
@@ -441,7 +546,7 @@ function logActivity(activityCode, folderId, calledFrom) {
             ActivityCode: activityCode,
             FolderId: folderId,
             CalledFrom: calledFrom,
-            VisitorId: getCookieValue("VisitorId")
+            VisitorId: getCookieValue("VisitorId", "logActivity");
         },
         success: function (success) {
             if (success === "ok") {

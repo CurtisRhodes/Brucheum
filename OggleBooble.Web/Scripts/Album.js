@@ -295,8 +295,13 @@ function getAlbumPageInfo(folderId) {
                     }
                     else {
                         if (albumInfo.FolderType === "multiFolder") {
-                            $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
-                                " [" + albumInfo.FolderCount + ":" + albumInfo.TotalSubFolders.toLocaleString() + "] / " + albumInfo.TotalChildFiles.toLocaleString());
+                            if (albumInfo.TotalSubFolders > albumInfo.FolderCount) {
+                                $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
+                                    " [" + albumInfo.FolderCount + ":" + albumInfo.TotalSubFolders.toLocaleString() + "] / " + albumInfo.TotalChildFiles.toLocaleString());
+                            }
+                            else
+                                $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
+                                    + albumInfo.TotalSubFolders.toLocaleString() + " / " + albumInfo.TotalChildFiles.toLocaleString());
                         }
                         else {
                             $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
@@ -306,7 +311,6 @@ function getAlbumPageInfo(folderId) {
                         $('#largeLoadButton').show();
                     }
                 }
-
                 if (debugMode) $('#aboveImageContainerMessageArea').html("aFolderType: " + albumInfo.FolderType);
 
                 if ((albumInfo.TrackBackItems.length > 0)) {
@@ -405,21 +409,30 @@ function setBreadcrumbs(folderId) {
                     }
                     else {
                         if (breadCrumbSuccess.BreadCrumbs[i].IsInitialFolder) {
-                            if (!isLargeLoad)
+                            if (isLargeLoad) {
+                                $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
+                                    "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" +
+                                    breadCrumbSuccess.BreadCrumbs[i].FolderName + "\"," + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")'>" +
+                                    "return to " + breadCrumbSuccess.BreadCrumbs[i].FolderName + "</a>"
+                                );
+                            }
+                            else {
                                 $('#breadcrumbContainer').append(
                                     "<a class='inactiveBreadCrumb' " +
                                     "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")' " +
                                     "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
                                     "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" +
                                     breadCrumbSuccess.BreadCrumbs[i].FolderId + ",\"bc click\")'>" +
-                                    breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>");
+                                    breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>"
+                                );
+                            }
                         }
                         else {
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
-                                // rtpe(eventCode, calledFrom, eventDetail, pageId)
                                 "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" +
                                 breadCrumbSuccess.BreadCrumbs[i].FolderName + "\"," + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")'>" +
-                                breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>");
+                                breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>"
+                            );
                         }
                     }
                 }

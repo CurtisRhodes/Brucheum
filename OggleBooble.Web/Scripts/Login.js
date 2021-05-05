@@ -85,8 +85,14 @@ function validateLogin() {
 }
 
 function onLogoutClick(pageId) {
-    setCookieValue("IsLoggedIn", "false");
-    window.location.href = ".";
+    if (confirm("log out?")) {
+        setCookieValue("IsLoggedIn", "false");
+        //let isLoggedIn = getCookieValue("IsLoggedIn");
+        $('#optionLoggedIn').hide();
+        $('#optionNotLoggedIn').show();
+        $('#footerCol5').hide();
+    }
+    //window.location.href = ".";
 }
 
 function cancelLogin() {

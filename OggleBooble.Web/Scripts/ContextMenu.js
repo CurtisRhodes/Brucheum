@@ -29,13 +29,6 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     $('#ctxMdlName').show().html("<img title='loading gif' alt='' class='ctxloadingGif' src='Images/loader.gif'/>");
     $('#ctxExplode').show();
 
-    //$('#ctxMenuType').hide();
-    //$('#ctxNewTab').hide();
-    //$('#ctxImageShowLinks').hide();
-    //$('#ctxCloseSlideShow').hide();
-    //$('#ctxDownLoad').hide();
-    //$('#ctxSaveAs').hide();
-
     if (menuType === "Folder")
         ctxGetFolderDetails();
     else

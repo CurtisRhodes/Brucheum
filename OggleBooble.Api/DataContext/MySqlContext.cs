@@ -64,6 +64,22 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
         public virtual DbSet<VwBlogComment> VwBlogComments { get; set; }
         public virtual DbSet<PlayboyPlusDupe> PlayboyPlusDupes { get; set; }
+        public virtual DbSet<VwStaticPageReferral> StaticPageReferrals { get; set; }
+    }
+
+    [Table("OggleBooble.VwStaticPageReferral")]
+    public partial class VwStaticPageReferral
+    {
+        public string Occured { get; set; }
+        [Key]
+        public int FolderId { get; set; }
+        public string RootFolder { get; set; }
+        public string FolderName { get; set; }
+        public int Hits { get; set; }
+        public string Location { get; set; }
+        public string IpAddress { get; set; }
+        public string VisitorId { get; set; }
+        public string UserName { get; set; }
     }
 
     [Table("OggleBooble.PlayboyPlusDupes")]

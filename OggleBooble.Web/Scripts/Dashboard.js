@@ -693,7 +693,7 @@ function showMoveManyTool(cx) {
     $('#txtMoveManySource').val(mmSelectedTreeFolderPath);
     $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyHeader').height());
     activeDirTree = "moveMany";
-    loadDirectoryTree(1, "mmDirTreeContainer", true);
+    loadDirectoryTree(1, "mmDirTreeContainer", false);
     loadMMcheckboxes();
 }
 function loadMMcheckboxes() {
@@ -822,7 +822,8 @@ function loadSortImages() {
     $('#sortTableHeader').html(pSelectedTreeFolderPath.replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ")
         + "(" + pSelectedTreeId + ")");
     $('#dashBoardLoadingGif').fadeIn();
-    $('#dataifyInfo').html("loading sorted images");
+    var daInfoMessage = $('#dataifyInfo').html();
+    $('#dataifyInfo').append(" reloading sorted images");
     $.ajax({
         url: settingsArray.ApiServer + "api/Links/GetImageLinks?folderId=" + pSelectedTreeId,
         success: function (imgLinks) {
@@ -835,7 +836,7 @@ function loadSortImages() {
                         "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></div>");
                 });
                 $('#dashBoardLoadingGif').hide();
-                $('#dataifyInfo').hide();
+                $('#dataifyInfo').html(daInfoMessage + " done");
             }
             else { logError("AJX", pSelectedTreeId, imgLinks.Success, "loadSortImages"); }
         },
@@ -855,6 +856,7 @@ function updateSortOrder() {
             ItemId: $(this).find("input").attr("id"),
             SortOrder: $(this).find("input").val()
         });
+        $('#dataifyInfo').show().html("sorting array: " + autoI);
     });
     saveSortChanges(sortOrderArray);
 }
@@ -879,7 +881,8 @@ function autoIncrimentSortOrder() {
 }
 
 function saveSortChanges(sortOrderArray) {
-    $('#dataifyInfo').html("saving changes");
+    $('#dataifyInfo').html("Updating sort order");
+    let sStart = Date.now();
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "api/Links/UpdateSortOrder",
@@ -887,8 +890,14 @@ function saveSortChanges(sortOrderArray) {
         data: JSON.stringify(sortOrderArray),
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
-            if (success === "ok") {
-                $('#dataifyInfo').html("reloading");
+            if (success === "ok")
+            {
+                let delta = (Date.now() - sStart);
+                if (delta < 1000)
+                    $('#dataifyInfo').hide();
+                else 
+                    $('#dataifyInfo').html("Updating sort order took: " + (delta / 1000).toFixed(3));
+
                 loadSortImages();
             }
             else {
@@ -900,6 +909,7 @@ function saveSortChanges(sortOrderArray) {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
+            alert("XHR: " + errMsg);
             if (!checkFor404(errMsg, pSelectedTreeId, "saveSortChanges")) logError("XHR", pSelectedTreeId, errMsg, "saveSortChanges");
         }
     });

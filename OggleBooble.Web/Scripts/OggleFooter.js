@@ -19,9 +19,14 @@
         "       <div id='footerCol4' class='footerColCustContainer'></div>\n" +
         "    </div>\n" +
         "    <div class='footerCol'>\n" +  // column 5
-        "       <div id='footerCol5' class='footerColCustContainer'></div>\n" +
+        "       <div id='footerCol5' class='footerColCustContainer'>" +
+        "           <div class='clickable' onclick='window.open(\"index.html?spa=3910\")'>dashboard</div>\n" +
+        "           <div>page type: " + rootFolder + "</div>\n" +
+        "           <div id='footerFolderType'></div>\n" +
+        "           <div id='footerStaticPage'></div>\n" +
+        "       </div>\n" +
         "    </div>\n" +
-        "    <div class='footerCol'>\n" +  // column 5
+        "    <div class='footerCol'>\n" +  // column 6
         "       <div id='footerCol6' class='footerColCustContainer'></div>\n" +
         "    </div>\n" +
         "   </div>\n<div class='footerFooter'>\n" +
@@ -151,16 +156,8 @@
         }
     }
 
-    if (isInRole("admin")) {
-        $('#footerCol5').html(
-            //"       <div class='clickable' onclick='window.open(\"index.html?spa=3910\", \"_blank\")'>dashboard</div>\n" +
-            "       <div class='clickable' onclick='window.open(\"index.html?spa=3910\")'>dashboard</div>\n" +
-            //"       <div class='clickable' onclick='window.location.href=\"/index.html?spa=3910\"'>dashboard</div>\n" +
-            "       <div>page type: " + rootFolder + "</div>\n" +
-            "       <div id='footerFolderType'></div>\n" +
-            "       <div id='footerStaticPage'></div>\n");
-    }
-}
-
-function defaultFooterHTML(folderId, rootFolder) {
+    if (isInRole("trusted")) 
+        $('#footerCol5').show();
+    else
+        $('#footerCol5').hide();
 }

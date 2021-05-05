@@ -6,7 +6,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
             logError("IHF", folderId, "linkId: " + linkId, "logImageHit");
             return;
         }
-        let visitorId = getCookieValue("VisitorId");
+        let visitorId = getCookieValue("VisitorId", "logImageHit");
         if (isNullorUndefined(visitorId)) {
             //verifiyVisitor("logImageHit", folderId);
             setTimeout(function () { logError("IHE", folderId, "linkId: " + linkId, "logImageHit") }, 200);
@@ -61,7 +61,7 @@ function logPageHit(folderId) {
         return;
     }
 
-    if (isNullorUndefined(getCookieValue("VisitorId"))) {
+    if (isNullorUndefined(getCookieValue("VisitorId", "logPageHit"))) {
         logError("VIV", folderId, "log visit called with no visitorId", "logVisit");
         getIpInfo(folderId, "logPageHit");
         return;
@@ -204,9 +204,11 @@ function getIpInfo(folderId, calledFrom) {
         }
 
         let newVisitorId = create_UUID();
+
         setCookieValue("VisitorId", newVisitorId);
 
         if (getCookieValue("VisitorId") != newVisitorId) {
+
             logError("CTF", folderId, getCookieValue("VisitorId") + " != " + newVisitorId, "getIpInfo/" + calledFrom);
             //wipMessage += "<br/>Unable to store a cookie";
             if (!navigator.cookieEnabled) {  // user does not accept cookies

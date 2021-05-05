@@ -2,15 +2,20 @@
     verifyConnectionCountLimit = 25, verifyConnectionLoop = null, persistConnectionInterval = null;
 
 function checkFor404(errMsg, folderId, calledFrom) {
-    //if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
-    if (errMsg.indexOf("Verify Network") > 0) {
-        logError("CKE", folderId, errMsg, calledFrom);
-        checkConnection(folderId, calledFrom);
-        return true;
-    }
-    else {
-        logError("CK2", folderId, errMsg, calledFrom);
-        return false;
+    try {
+
+        //if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
+        if (errMsg.indexOf("Verify Network") > 0) {
+            logError("CKE", folderId, errMsg, calledFrom);
+            checkConnection(folderId, calledFrom);
+            return true;
+        }
+        else {
+            logError("CK2", folderId, errMsg, calledFrom);
+            return false;
+        }
+    } catch (e) {
+        throw 404;
     }
 }
 
@@ -90,54 +95,63 @@ function showCanIgetaConnectionMessage(calledFrom) {
 
 let verifyConnectionAvailable = true;
 function verifyConnectionFunction(calledFrom, folderId) {
-    if (connectionVerified)
-        return;
+    try {
 
-    if (verifyConnectionAvailable) {
-        verifyConnectionAvailable = false;
-        $.ajax({
-            type: "GET",
-            //headers: { 'Access-Control-Allow-Origin': 'https://ogglebooble.com/' },
-            url: settingsArray.ApiServer + "api/Common/VerifyConnection",
-            success: function (successModel) {
-                console.log("GET VerifyConnection: " + verifyConnectionCount);
-                if (successModel.Success == "ok") {
-                    if (successModel.ConnectionVerified) {
-                        connectionVerified = true;
-                        $('#customMessage').hide();
-                        canIgetaConnectionMessageShowing = false;
-                        launchingServiceGifShowing = false;
+        if (connectionVerified)
+            return;
+
+        if (verifyConnectionAvailable) {
+            verifyConnectionAvailable = false;
+            $.ajax({
+                type: "GET",
+                //headers: { 'Access-Control-Allow-Origin': 'https://ogglebooble.com/' },
+                url: settingsArray.ApiServer + "api/Common/VerifyConnection",
+                success: function (successModel) {
+                    console.log("GET VerifyConnection: " + verifyConnectionCount);
+                    if (successModel.Success == "ok") {
+                        if (successModel.ConnectionVerified) {
+                            connectionVerified = true;
+                            $('#customMessage').hide();
+                            canIgetaConnectionMessageShowing = false;
+                            launchingServiceGifShowing = false;
+                        }
+                        else {
+                            console.log("success but no verify: " + successModel.Success);
+                            //if (document.domain === "localhost")
+                            //    alert("proper error in verify ConnectionFunction: " + successModel.Success);
+                            //logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
+                            connectionVerified = false;
+                        }
                     }
                     else {
-                        console.log("success but no verify: " + successModel.Success);
-                        //if (document.domain === "localhost")
-                        //    alert("proper error in verify ConnectionFunction: " + successModel.Success);
-                        //logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
-                        connectionVerified = false;
+                        if (successModel.Success.indexOf("Parameter name: app") > 0) {
+                            connectionVerified = false;
+                            //console.log("TRAPPED: " + successModel.Success);
+                        }
+                        else {
+                            console.log("proper error in verify ConnectionFunction: " + successModel.Success);
+                            logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
+                            //if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
+                        }
                     }
+                    verifyConnectionAvailable = true;
+                },
+                error: function (jqXHR) {
+                    verifyConnectionAvailable = false;
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    let functionName = "verifyConnectionFunction"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                    if (verifyConnectionCount > verifyConnectionCountLimit) {
+                        $('#dots').html('');
+                        throw 404;
+                        alert("404");
+                    }
+                    if (document.domain === "localhost") alert("verifyConnection XHR: " + errMsg);
+                    connectionVerified = false;
                 }
-                else {
-                    if (successModel.Success.indexOf("Parameter name: app") > 0) {
-                        connectionVerified = false;
-                        //console.log("TRAPPED: " + successModel.Success);
-                    }
-                    else {
-                        console.log("proper error in verify ConnectionFunction: " + successModel.Success);
-                        logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
-                        //if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
-                    }
-                }
-                verifyConnectionAvailable = true;
-            },
-            error: function (jqXHR) {
-                verifyConnectionAvailable = false;
-                let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = "verifyConnectionFunction"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-                if (document.domain === "localhost") alert("verifyConnection XHR: " + errMsg);
-                connectionVerified = false;
-            }
-        });
+            });
+        }
+    } catch (e) {
+        throw e;
     }
 }
 
