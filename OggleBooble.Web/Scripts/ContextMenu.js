@@ -1,45 +1,49 @@
 ﻿let pImgSrc, pMenuType, pLinkId, cxFolderId, pFolderName, pFolderType, pModelFolderId, pos = {};
 
 function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
-    event.preventDefault();
-    window.event.returnValue = false;
-    logEvent("CXM", folderId, menuType, globalVisitorId);
-    console.log("context menu opened: " + menuType);
-    pMenuType = menuType;
-    pLinkId = linkId;
-    pImgSrc = imgSrc;
-    cxFolderId = folderId;
-    pFolderName = folderName;
+    try {
+        event.preventDefault();
+        window.event.returnValue = false;
+        logEvent("CXM", folderId, menuType, globalVisitorId);
+        console.log("context menu opened: " + menuType);
+        pMenuType = menuType;
+        pLinkId = linkId;
+        pImgSrc = imgSrc;
+        cxFolderId = folderId;
+        pFolderName = folderName;
 
-    if (menuType === "Slideshow") {
-        $('#slideshowCtxMenuContainer').css("top", pos.y);
-        $('#slideshowCtxMenuContainer').css("left", pos.x);
-        $('#slideshowCtxMenuContainer').fadeIn();
-        $('#slideshowContextMenuContent').html(contextMenuHtml())
-        //$('#ctxMenuType').html(menuType).show();
+        if (menuType === "Slideshow") {
+            $('#slideshowCtxMenuContainer').css("top", pos.y);
+            $('#slideshowCtxMenuContainer').css("left", pos.x);
+            $('#slideshowCtxMenuContainer').fadeIn();
+            $('#slideshowContextMenuContent').html(contextMenuHtml())
+            //$('#ctxMenuType').html(menuType).show();
+        }
+        else {
+            let y = pos.y - $(window).scrollTop();
+            $('#contextMenuContainer').css("top", y);
+            $('#contextMenuContainer').css("left", pos.x);
+            $('#contextMenuContainer').fadeIn();
+            $('#contextMenuContent').html(contextMenuHtml())
+        }
+        $('#ctxComment').show();
+        $('#ctxMdlName').show().html("<img title='loading gif' alt='' class='ctxloadingGif' src='Images/loader.gif'/>");
+        $('#ctxExplode').show();
+
+        if (menuType === "Folder")
+            ctxGetFolderDetails();
+        else
+            getLimitedImageDetails(menuType);
+
+        $('.ogContextMenu').draggable();
+        if (typeof pause === 'function') pause();
+        if (isInRole("admin", folderId, "showContextMenu"))
+            $('.adminLink').show();
+        else
+            $('.adminLink').hide();
+    } catch (e) {
+        logError("CAT", folderId, e, "showContextMenu");
     }
-    else {
-        let y = pos.y - $(window).scrollTop();
-        $('#contextMenuContainer').css("top", y);
-        $('#contextMenuContainer').css("left", pos.x);
-        $('#contextMenuContainer').fadeIn();
-        $('#contextMenuContent').html(contextMenuHtml())
-    }
-    $('#ctxComment').show();
-    $('#ctxMdlName').show().html("<img title='loading gif' alt='' class='ctxloadingGif' src='Images/loader.gif'/>");
-    $('#ctxExplode').show();
-
-    if (menuType === "Folder")
-        ctxGetFolderDetails();
-    else
-        getLimitedImageDetails(menuType);
-
-    $('.ogContextMenu').draggable();
-    if (typeof pause === 'function') pause();
-    if (isInRole("admin")) 
-        $('.adminLink').show();
-    else
-        $('.adminLink').hide();
 }
 
 function getLimitedImageDetails(menuType) {
@@ -190,7 +194,7 @@ function contextMenuAction(action) {
             // <a href="data:application/xml;charset=utf-8,your code here" download="filename.html">Save</a>
             break;
         case "download":
-            if (isLoggedIn())
+            if (localStorage["IsLoggedIn"] == "true")
                 alert("still working on this feature. Send site developer an email to request folder");
             else
                 alert("You must be logged in to download an album");

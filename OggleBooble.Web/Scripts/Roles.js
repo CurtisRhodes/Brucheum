@@ -85,7 +85,6 @@ function loadCooseBox(column,option) {
     }
 }
 
-
 function loadUserRoles(whichType) {
     try {
         $.ajax({
@@ -335,5 +334,3 @@ function updateRole(newName) {
         logError("CAT", 3910, e, "updateRole");
     }
 }
-
-

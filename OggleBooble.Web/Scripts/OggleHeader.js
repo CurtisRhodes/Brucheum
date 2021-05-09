@@ -50,14 +50,23 @@ function resetOggleHeader(folderId, rootFolder) {
     hdrFolderId = folderId;
     hdrRootFolder = rootFolder;
     $('#divLoginArea').show();
-    $('#optionLoggedIn').hide();
-    $('#optionNotLoggedIn').show();
         
-    if (!isNullorUndefined(globalIsLoggedIn)) {
-        if (globalIsLoggedIn) {
-            $('#spnUserName').html(globalUserName);
+    if (!isNullorUndefined(localStorage["IsLoggedIn"])) {
+        //alert("localStorage[IsLoggedIn]: " + localStorage["IsLoggedIn"]);
+        if (localStorage["IsLoggedIn"] == "true") {
+            $('#spnUserName').html(localStorage["UserName"]);
             $('#optionLoggedIn').show();
             $('#optionNotLoggedIn').hide();
+
+            if (isInRole("trusted", folderId, "resetOggleHeader"))
+                $('#footerCol5').show();
+            else
+                $('#footerCol5').hide();
+        }
+        else {
+            $('#optionLoggedIn').hide();
+            $('#optionNotLoggedIn').show();
+            $('#footerCol5').hide();
         }
     }
 
@@ -158,6 +167,7 @@ function resetOggleHeader(folderId, rootFolder) {
             changeFavoriteIcon("soft");
             $('#hdrBtmRowSec3').append(addSpaButton(3908, "back to OggleBooble"));
             $('#hdrBtmRowSec3').append(addSpaButton(3909, "OgglePorn"));
+            $('#hdrBtmRowSec3').append(addPgLinkButton(440, "porn actresses archive"));
             setHeaderMenu("soft");
             break;
         }
@@ -168,6 +178,7 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#oggleHeaderTitle').html("OgglePorn ");
             $('#topRowRightContainer').html(addRankerButton("000000010", "porn ranker"));
             $('#hdrBtmRowSec3').append(addSpaButton(3908, "back to OggleBooble"));
+            $('#hdrBtmRowSec3').append(addPgLinkButton(440, "porn actresses archive"));
             $('#hdrBtmRowSec3').append(addPgLinkButton(5233, "softcore"));
             setHeaderMenu("porn");
             break;

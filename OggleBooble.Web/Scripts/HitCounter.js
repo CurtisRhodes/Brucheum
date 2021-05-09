@@ -40,11 +40,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
             }
         });
     } catch (e) {
-        if (document.domain === 'localhost') {
-            //alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
-            alert(e);
-        } else
-            logError("CAT", folderId, e, "logImageHit");
+        logError("CAT", folderId, e, "logImageHit");
     }
 }
 
@@ -68,9 +64,8 @@ function logPageHit(folderId) {
             }
             else {
                 if (pageHitSuccess.Success == "VisitorId not found") {
-                    logError("VIV", folderId, "log visit called with no visitorId", "logVisit");
+                    logError("PHV", folderId, globalVisitorId, "logPageHit");
                     getIpInfo(folderId, "logPageHit");
-                    //logError("XOM", folderId, "-2282-", "logPageHit");
                 }
                 else
                     logError("AJX", folderId, pageHitSuccess.Success, "visitorId: " + globalVisitorId, "logPageHit");
@@ -86,8 +81,10 @@ function logPageHit(folderId) {
 let lastAddVisitorIdLookup;
 function logVisit(folderId) {
 
-    if (globalVisitorId == lastAddVisitorIdLookup)
+    if (globalVisitorId == lastAddVisitorIdLookup) {
+        logError("LV4", folderId, "lastAddVisitorIdLookup: " + lastAddVisitorIdLookup, "logVisit"); // attempt to add most recent visitor twice
         return;
+    }
     lastAddVisitorIdLookup = globalVisitorId;
 
     //logActivity("LV0", folderId,"logVisit");
@@ -108,8 +105,13 @@ function logVisit(folderId) {
             }
             else {
                 if (logVisitSuccessModel.Success == "VisitorId not found") {
-                    //logActivity("LV3", folderId, "logVisit");  // return visitor
-                    getIpInfo(folderId, "LGV");
+                    logActivity("LV3", folderId, "logVisit");  // return visitor
+                    logError("LV5", folderId, "globalVisitorId: " + globalVisitorId, "logVisit");
+                    //getIpInfo(folderId, "logVisit");
+                    //addVisitor()
+
+
+
                 }
                 else {
                     logActivity("LV4", folderId, "logVisit");  // Log Visit fail
@@ -124,252 +126,194 @@ function logVisit(folderId) {
     });
 }
 
-let lastAddNonIdVisitorIdLookup;
-function addNonIpVisitor(folderId, visitorId) {
-    if (visitorId == lastAddNonIdVisitorIdLookup)
-        return;
-    lastAddNonIdVisitorIdLookup = visitorId;
-    logActivity("NV0", folderId, "add NonIp Visitor"); // calling add NonIp Visitor
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + visitorId,
-        success: function (successModel) {
-            if (successModel.Success == "ok") { //alert("visitorId found");
-                logError("EIF", folderId, successModel.Success, "add NonIpVisitor/" + calledFrom);
-            }
-            else {
-                $.ajax({
-                    type: "POST",
-                    url: settingsArray.ApiServer + "api/Common/AddVisitor",
-                    data: {
-                        VisitorId: visitorId,
-                        IpAddress: '00.00.00.00',
-                        FolderId: folderId,
-                        Country: "UK",
-                        GeoCode: "00"
-                    },
-                    success: function (avSuccess) {
-                        if ((avSuccess == "ok") || (avSuccess == "existing Ip"))
-                            logActivity("NV1", folderId, "add NonIp Visitor"); // add NonIp Visitor Success
-                        else {
-                            logActivity("NV2", folderId, avSuccess); // add NonIp Visitor AJX error
-                            logError("AJX", folderId, "avSuccess: " + avSuccess, "add NonIp Visitor");
-                        }
-                    },
-                    error: function (jqXHR) {
-                        logActivity("NV3", folderId, "add NonIp Visitor"); // add NonIp Visitor XHR error
-                        let errMsg = getXHRErrorDetails(jqXHR);
-                        if (!checkFor404(errMsg, folderId, "add NonIpVisitor")) logError("XHR", folderId, errMsg, "add NonIpVisitor");
-                    }
-                });
-            }
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "GetVisitor"))
-                logError("XHR", folderId, errMsg, "GetVisitor");
-        }
-    });
-}
-
 function getIpInfo(folderId, calledFrom) {
     try {
-        //logActivity("AA0", folderId, "getIpInfo/" + calledFrom);
+        setTimeout(function () {
+            if (!isNullorUndefined(localStorage["VisitorId"])) {
+                if (localStorage["VisitorId"] != 'unset') {
+                    if (localStorage["VisitorId"].indexOf("failedGetIpInfo") > -1) {
+                        logError("IP4", folderId, localStorage["VisitorId"], "getIpInfo/" + calledFrom);
+                        //logActivity("IP4", folderId, calledFrom); // we got a looper
+                        return;
+                    }
+                }
+                //if (localStorage["VisitorId"].length() == 36) { }
+            }
 
-        //if (calledFrom == "LGV") {
-        //    logError("BUG", folderId, "this should a been picked up", "getIpInfo");
-        //    return;
-        //}
-
-        //if (!navigator.cookieEnabled) {  // user does not accept cookies
-        //    logError("UNC", folderId, "cookie test passed", "getIpInfo/" + calledFrom);
-
-        //    //return;
-        //    //wipMessage += "<br/>This site requires cookies enabled";
-        //    //wipMessage += "<br/>You may be asked to login on every page until you leave.";
-        //}
-
-
-        try {
-            //alert("AA1 IP info call null visitorId")
             let newVisitorId = create_UUID();
-            //logActivity("AA1", folderId, "getIpInfo/" + calledFrom);
-            let ipInfoSuccess = false;
+            logActivity("IP1", folderId, "getIpInfo/" + calledFrom);
+            let ipInfoExited = false;
             $.ajax({
                 type: "GET",
                 url: "https://ipinfo.io?token=ac5da086206dc4",
                 dataType: "JSON",
                 //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
                 success: function (ipResponse) {
-                    logActivity("AA2", folderId, "getIpInfo/" + calledFrom);
-                    ipInfoSuccess = true;
-                    //alert("AA2 IP info call success");
+                    ipInfoExited = true;
+                    logActivity("IP2", folderId, "getIpInfo/" + calledFrom)
                     if (isNullorUndefined(ipResponse.ip)) {
-                        //logActivity("AA3", folderId);
-                        alert("ipInfo success but came back with no ip")
-                        //logError("BUG", folderId, "ipInfo came back with no ip. VisitorId: " + newVisitorId, "getIpInfo/" + calledFrom);
+                        logActivity("IP6", folderId, "getIpInfo/" + calledFrom);  // ipInfo success but came back with no ip
+
+                        // logError("BUG", folderId, "ipInfo came back with no ip. VisitorId: " + newVisitorId, "getIpInfo/" + calledFrom);
+                        // globalVisitorId = localStorage["VisitorId"] = "failedGetIpInfo_" + newVisitorId.substr(0, 15);
+                         addBadVisitor();
+                        // 
+                        tryIfy(folderId, "getIpInfo/" + calledFrom, newVisitorId);
+
                     }
                     else {
-                        globalVisitorId = newVisitorId;
+                        //alert("AA2 IP info call success");
+                        localStorage["VisitorId"] = newVisitorId;
                         addVisitor(
                             {
                                 VisitorId: newVisitorId,
                                 IpAddress: ipResponse.ip,
                                 FolderId: folderId,
-                                CalledFrom: "getIpInfo/" + calledFrom,
                                 City: ipResponse.city,
                                 Country: ipResponse.country,
                                 Region: ipResponse.region,
-                                GeoCode: ipResponse.loc
+                                GeoCode: ipResponse.loc,
+                                CalledFrom: "getIpInfo/" + calledFrom
                             },
                             "getIpInfo"
                         );
                     }
                 },
                 error: function (jqXHR) {
+                    ipInfoExited = true;
+                    logActivity("IP3", folderId, "getIpInfo/" + calledFrom); // XHR error
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    alert("XHR in getIpInfo: " + errMsg);
-                    //logActivity("AA3", folderId, "getIpInfo/" + calledFrom);
-                    //tryIfy(folderId, "getIpInfo/" + calledFrom, newVisitorId);
+                    if (!checkFor404(errMsg, visitorData.FolderId, "getIpInfo/" + calledFrom)) {
+                        logError("IP3", visitorData.FolderId, errMsg, "try AddVisitor");
+                        // Not connect.Verify Network.
+                        let errMsg = getXHRErrorDetails(jqXHR);
+                        //tryIfy(folderId, "getIpInfo/" + calledFrom, newVisitorId);
+                    }
                 }
             });
-
-
-
             setTimeout(function () {
-                if (!ipInfoSuccess) {
-                    logActivity("AA5", folderId, "getIpInfo/" + calledFrom); // ipInfo failed to respond
-                    //logError("IPF", folderId, "", "getIpInfo/" + calledFrom);
-                    tryIfy(folderId, "getIpInfo/" + calledFrom, newVisitorId);
+                if (!ipInfoExited) {
+                    logActivity("IP4", folderId, "getIpInfo/" + calledFrom); // ipInfo failed to respond
+                    logError("IP6", folderId, "", "getIpInfo/" + calledFrom);
+                    //tryIfy(folderId, "getIpInfo/" + calledFrom, newVisitorId);
                 }
-            }, 771);
-
-        } catch (e) {
-            logActivity("CCC", folderId);
-            logError("CAT", folderId, e, "getIpInfo/" + calledFrom);
-        }
-    }
-    catch (e) {
-        logActivity("CCC", folderId);
+            }, 888);
+        }, 889);
+    } catch (e) {
+        ipInfoExited = true;
         logError("CAT", folderId, e, "getIpInfo/" + calledFrom);
     }
 }
 
-function getIpForExistingVisitorId(folderId, calledFrom) {
-    try {
-        if (!navigator.cookieEnabled) {  // user does not accept cookies
-            logError("UNC", folderId, "CTF", "gIp4ExistingVisitorId");
-            weDemandCookies();
-        }
-        logActivity("EX0", folderId, "gIp4ExistingVisitorId"); // calling ipInfo For Existing VisitorId
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + globalVisitorId,
-            success: function (successModel) {
-                if (successModel.Success == "ok") { //alert("visitorId found");
-                    //logError("CTF", folderId, globalVisitorId + " != " + visitorId, "gIp4ExistingVisitorId");
-                    logActivity("EX8", folderId, "gIp4ExistingVisitorId"); // VisitorId found in Visitor table
-                    logError("LGV", folderId, avSuccess, "gIp4ExistingVisitorId");
-                }
-                else {
-                    if (successModel.Success == "not found") {
-                        $.ajax({
-                            type: "GET",
-                            url: "https://ipinfo.io?token=ac5da086206dc4",
-                            success: function (ipResponse) {
-                                if (isNullorUndefined(ipResponse.ip)) {
-                                    logError("IPF", folderId, "", "getIpInfo/" + calledFrom);
-                                }
-                                else {
-                                    logActivity("EX1", folderId, "gIp4ExistingVisitorId"); // ipInfo Success For Existing VisitorId
-                                    addVisitor({
-                                        CalledFrom: "getIpForExistingVisitorId",
-                                        VisitorId: visitorId,
-                                        IpAddress: ipResponse.ip,
-                                        FolderId: folderId,
-                                        City: ipResponse.city,
-                                        Country: ipResponse.country,
-                                        Region: ipResponse.region,
-                                        GeoCode: ipResponse.loc
-                                    }, "exv");
-                                }
-                            },
-                            error: function (jqXHR) {
-                                logActivity("EX3", folderId, "gIp4ExistingVisitorId"); // ipInfo jqXHR
-                                tryIfy(folderId, visitorId, "getIpExistingVisId");
-                                // logError("XEX", folderId, jqXHR.status + " " + jqXHR.statusText, "getIpInfo");
-                            }
-                        });
-                    }
-                    else {
-                        logActivity("EX9", folderId, "gIp4ExistingVisitorId"); // unknown success code from Get Visitor
-                        logError("EIF", folderId, successModel.Success, "gIp4ExistingVisitorId");
-                    }
-                }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "gIp4ExistingVisitorId"))
-                    logError("XHR", folderId, errMsg, "gIp4ExistingVisitorId");
+function addBadVisitor() {
+    // insert Visitor values('failedGetIpInfo_12345678-90abcb', '00.00.00', 'xx', 'xx', 'US', '000', current_date, 122);
+    let badVisitorId = "failedGetIpInfo_" + create_UUID().substr(0, 15);
+    let dd = {
+        VisitorId: "failedGetIpInfo_" + create_UUID().substr(0, 15),
+        IpAddress: "00.00.00",
+        City: "xx",
+        Country: "US",
+        Region: "xx",
+        GeoCode: '000'
+    };
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Common/TryAddVisitor",
+        data: {
+            VisitorId: "failedGetIpInfo_" + create_UUID().substr(0, 15),
+            IpAddress: "00.00.00",
+            City: "xx",
+            Country: "US",
+            Region: "xx",
+            GeoCode: '000'
+        },
+        success: function (avSuccess) {
+            if (avSuccess.Success == "ok")
+                alert(avSuccess.VisitorId + "added");
+            else
+                alert("Add bad visitor: "+ avSuccess.Success);
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, visitorData.FolderId, "addBadVisitor/" + calledFrom)) {
+                //logError("XHR", visitorData.FolderId, errMsg, "addVisitor/" + calledFrom);
+                //logActivity("IP3", folderId + "getIpInfo/" + calledFrom);
+                alert("addBadVisitor XHR: " + errMsg);
             }
-        });
-    } catch (e) {
-        logError("CAT", folderId, e, "gIp4ExistingVisitorId");
-    }
+        }
+    });
 }
 
 let lastTryaddVisitorIdLookup;
 function addVisitor(visitorData, calledFrom) {
-    if (visitorData.VisitorId == lastTryaddVisitorIdLookup)
-        return;
-    lastTryaddVisitorIdLookup = visitorData.VisitorId;
-    //logActivity("AV0", visitorData.FolderId, calledFrom + "/" + visitorData.CalledFrom); // calling AddVisitor 
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Common/TryAddVisitor",
-        data: visitorData,
-        success: function (avSuccess) {
-            logActivity("AV1", visitorData.FolderId, visitorData.CalledFrom); // add visit success
-            switch (avSuccess.Success) {
-                case "ok":
-                    logIpHit(visitorData.VisitorId, visitorData.IpAddress, visitorData.FolderId);
-                    logActivity("AV3", visitorData.FolderId, visitorData.CalledFrom); // new visitor added
-                    if (visitorData.CalledFrom.EndsWith("logStatic PageHit"))
-                        logStaticPageHit(visitorData.FolderId, "add visitor");
-                    break;
-                case "existing Ip":
-                    logIpHit(visitorData.VisitorId, visitorData.IpAddress, visitorData.FolderId);
-                    globalVisitorId = avSuccess.VisitorId;
-                    window.localStorage["VisitorId"] = globalVisitorId;
-                    alert("TryAddVisitor found existing Ip\nglobalVisitorId set to: " + globalVisitorId);
-                    logActivity("AV5", visitorData.FolderId, visitorData.CalledFrom);  // existing IP visitorId used
-
-                    //if (visitorData.CalledFrom.EndsWith("logStatic PageHit"))
-                      //  logStaticPageHit(visitorData.FolderId, "add visitor");
-                    break;
-                default: {
-                    if (avSuccess.indexOf("Duplicate entry") > 0) {
+    try {
+        if (visitorData.VisitorId == lastTryaddVisitorIdLookup)
+            return;
+        lastTryaddVisitorIdLookup = visitorData.VisitorId;
+        logActivity("AV0", visitorData.FolderId, calledFrom + "/" + visitorData.CalledFrom); // calling AddVisitor 
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/TryAddVisitor",
+            data: visitorData,
+            success: function (avSuccess) {
+                switch (avSuccess.Success) {
+                    case "ok":
+                        //logActivity("AV1", visitorData.FolderId, visitorData.CalledFrom); // add visit success
+                        logActivity("AV3", visitorData.FolderId, visitorData.CalledFrom); // new visitor added
+                        logIpHit(visitorData.VisitorId, visitorData.IpAddress, visitorData.FolderId);
+                        if (calledFrom == "getIpInfo") {
+                            globalVisitorId = avSuccess.VisitorId;
+                            loadUserInfoIntoLocalStorage(4554, "addVisitor/" + calledFrom);
+                            logActivity("IP2", folderId, "addVisitor/" + calledFrom);
+                            globalVisitorId = avSuccess.VisitorId;
+                            if (localStorage["VisitorId"] != avSuccess.VisitorId) 
+                                logError("IP7", visitorData.FolderId, "avSuccess.VisitorId: " + avSuccess.VisitorId + ", localStorage: " + localStorage["VisitorId"]);
+                        }
+                        if (visitorData.CalledFrom.EndsWith("logStatic PageHit")) {
+                            logStaticPageHit(visitorData.FolderId, "addVisitor/" + calledFrom);
+                        }
+                        break;
+                    case "existing Ip":
+                        logActivity("AV5", visitorData.FolderId, visitorData.CalledFrom);  // existing IP visitorId used
+                        if (calledFrom == "getIpInfo") {
+                            //logError("IP5", visitorData.FolderId, "Ip: " + visitorData.IpAddress, "addVisitor/" + calledFrom)
+                            globalVisitorId = avSuccess.VisitorId;
+                            window.localStorage["VisitorId"] = globalVisitorId;
+                        }
+                        //logIpHit(visitorData.VisitorId, visitorData.IpAddress, visitorData.FolderId);
+                        //alert("TryAddVisitor found existing Ip\nglobalVisitorId set to: " + globalVisitorId);
+                        //if (visitorData.CalledFrom.EndsWith("logStatic PageHit"))
+                        //  logStaticPageHit(visitorData.FolderId, "add visitor");
+                        break;
+                    default: {
                         if (!navigator.cookieEnabled) {  // user does not accept cookies
                             logError("UNC", visitorData.FolderId, "3", "AddVisitor/" + visitorData.CalledFrom);
                         }
-                        logActivity("AV9", visitorData.FolderId, visitorData.CalledFrom); // Duplicate. Attempt to add new visitorId
-                        //logError("DVA", visitorData.FolderId, avSuccess, "AddVisitor/" + calledFrom);
-                    }
-                    else {
-                        logActivity("AV7", visitorData.FolderId, visitorData.CalledFrom); // unknown success code from Add Visitor
-                        logError("AJ7", visitorData.FolderId, avSuccess, "AddVisitor/" + visitorData.CalledFrom);
+                        if (avSuccess.indexOf("Duplicate entry") > 0) {
+                            logActivity("AV9", visitorData.FolderId, visitorData.CalledFrom); // Duplicate. Attempt to add new visitorId
+                            logError("DVA", visitorData.FolderId,avSuccess.Success, "AddVisitor/" + calledFrom);
+                        }
+                        else {
+                            logActivity("AV7", visitorData.FolderId, visitorData.CalledFrom); // unknown success code from Add Visitor
+                            logError("AJ7", visitorData.FolderId, avSuccess, "AddVisitor/" + visitorData.CalledFrom);
+                        }
                     }
                 }
+            },
+            error: function (jqXHR) {
+                logActivity("AV8", visitorData.FolderId, visitorData.CalledFrom); // XHR error
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, visitorData.FolderId, "addVisitor/" + calledFrom)) {
+                    logError("XHR", visitorData.FolderId, errMsg, "addVisitor/" + calledFrom);
+                    logActivity("IP3", folderId + "getIpInfo/" + calledFrom);
+                }
             }
-        },
-        error: function (jqXHR) {
-            logActivity("AV8", visitorData.FolderId, visitorData.CalledFrom); // XHR error
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, visitorData.FolderId, "try AddVisitor"))
-                logError("XHR", visitorData.FolderId, errMsg, "try AddVisitor");
-        }
-    });
+        });
+    } catch (e) {
+        logError("CAT", 4567, e, "addVisitor/" + calledFrom);
+    }
 }
+
 let lastTryIfyVisitorIdLookup;
 function tryIfy(folderId, newVisitorId, calledFrom) {
     if (newVisitorId == lastTryIfyVisitorIdLookup)
@@ -385,36 +329,164 @@ function tryIfy(folderId, newVisitorId, calledFrom) {
         //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
         dataType: "JSON",
         success: function (ipResponse) {
+            if (ipResponse.Success == "ok")
+
+
+
+
             console.log("api.ipstack.com success");
+
+
+
+
             //$.getJSON()
-            $.ajax({
-                url: "https://geo.ipify.org/api/v1?apiKey=at_QDHGDpxlpti3hQ9WQMvjXxFX54Sgf&ipAddress=" + ipResponse.ip,
-                dataType: "JSON",
-                success: function (geoResponse) {
-                    addVisitor({
-                        VisitorId: newVisitorId,
-                        IpAddress: ipResponse.ip,
-                        FolderId: folderId,
-                        CalledFrom: "tryIfy/" + calledFrom,
-                        City: geoResponse.location.city,
-                        Country: geoResponse.location.country,
-                        Region: geoResponse.location.region,
-                        GeoCode: "00"
-                    }, "ipify");
-                    logActivity("IF1", folderId, "tryIfy/" + calledFrom); // ipfy lookup success
-                },
-                error: function (jqXHR) {
-                    logActivity("IF2", folderId, "tryIfy/" + calledFrom); // ipfy lookup also failed
-                    addNonIpVisitor(folderId, newVisitorId);
-                }
-            });
         },
         error: function (jqXHR) {
-            logActivity("AA8", folderId, "tryIfy/" + calledFrom); // ipfy XHR fail
-            addNonIpVisitor(folderId, newVisitorId);
+            logActivity("IF3", folderId, "tryIfy/" + calledFrom); // ipfy XHR fail
+            let errMsg = getXHRErrorDetails(jqXHR);
+            logActivity("SP6", folderId, calledFrom); // static page hit XHR error
+            if (!checkFor404(errMsg, folderId, "logStaticPageHit")) logError("XHR", folderId, errMsg, "tryIfy/" + calledFrom);
+            //addNonIpVisitor(folderId, newVisitorId);
         }
     });
 }
+
+//let lastAddNonIdVisitorIdLookup;
+//function addNonIpVisitor(folderId, visitorId) {
+//    if (visitorId == lastAddNonIdVisitorIdLookup)
+//        return;
+//    lastAddNonIdVisitorIdLookup = visitorId;
+//    logActivity("NV0", folderId, "add NonIp Visitor"); // calling add NonIp Visitor
+//    $.ajax({
+//        type: "GET",
+//        url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + visitorId,
+//        success: function (successModel) {
+//            if (successModel.Success == "ok") { //alert("visitorId found");
+//                logError("EIF", folderId, successModel.Success, "add NonIpVisitor/" + calledFrom);
+//            }
+//            else {
+//                $.ajax({
+//                    type: "POST",
+//                    url: settingsArray.ApiServer + "api/Common/AddVisitor",
+//                    data: {
+//                        VisitorId: visitorId,
+//                        IpAddress: '00.00.00.00',
+//                        FolderId: folderId,
+//                        Country: "UK",
+//                        GeoCode: "00"
+//                    },
+//                    success: function (avSuccess) {
+//                        if (avSuccess == "ok")
+//                            logActivity("NV1", folderId, "add NonIp Visitor"); // add NonIp Visitor Success
+//                        else if (avSuccess == "existing Ip")
+//                            logActivity("NV1", folderId, "add NonIp Visitor"); // add NonIp Visitor Success
+//                        else
+//                        {
+//                            logActivity("NV2", folderId, avSuccess); // add NonIp Visitor AJX error
+
+//                            logError("AJX", folderId, "avSuccess: " + avSuccess, "add NonIp Visitor");
+//                        }
+//                    },
+//                    error: function (jqXHR) {
+//                        logActivity("NV3", folderId, "add NonIp Visitor"); // add NonIp Visitor XHR error
+//                        let errMsg = getXHRErrorDetails(jqXHR);
+//                        if (!checkFor404(errMsg, folderId, "add NonIpVisitor")) logError("XHR", folderId, errMsg, "add NonIpVisitor");
+//                    }
+//                });
+//            }
+//        },
+//        error: function (jqXHR) {
+//            let errMsg = getXHRErrorDetails(jqXHR);
+//            if (!checkFor404(errMsg, folderId, "GetVisitor"))
+//                logError("XHR", folderId, errMsg, "GetVisitor");
+//        }
+//    });
+//}
+
+
+//$.ajax({
+//    url: "https://geo.ipify.org/api/v1?apiKey=at_QDHGDpxlpti3hQ9WQMvjXxFX54Sgf&ipAddress=" + ipResponse.ip,
+//    dataType: "JSON",
+//    success: function (geoResponse) {
+//        addVisitor({
+//            VisitorId: newVisitorId,
+//            IpAddress: ipResponse.ip,
+//            FolderId: folderId,
+//            CalledFrom: "tryIfy/" + calledFrom,
+//            City: geoResponse.location.city,
+//            Country: geoResponse.location.country,
+//            Region: geoResponse.location.region,
+//            GeoCode: "00"
+//        }, "ipify");
+//        logActivity("IF1", folderId, "tryIfy/" + calledFrom); // ipfy lookup success
+//    },
+//    error: function (jqXHR) {
+//        logActivity("IF2", folderId, "tryIfy/" + calledFrom); // ipfy lookup also failed
+//        //addNonIpVisitor(folderId, newVisitorId);
+//    }
+//});
+//function getIpForExistingVisitorId(folderId, calledFrom) {
+//    try {
+//        if (!navigator.cookieEnabled) {  // user does not accept cookies
+//            logError("UNC", folderId, "CTF", "gIp4ExistingVisitorId");
+//            weDemandCookies();
+//        }
+//        logActivity("EX0", folderId, "gIp4ExistingVisitorId"); // calling ipInfo For Existing VisitorId
+//        $.ajax({
+//            type: "GET",
+//            url: settingsArray.ApiServer + "api/Common/GetVisitor?visitorId=" + globalVisitorId,
+//            success: function (successModel) {
+//                if (successModel.Success == "ok") { //alert("visitorId found");
+//                    //logError("CTF", folderId, globalVisitorId + " != " + visitorId, "gIp4ExistingVisitorId");
+//                    logActivity("EX8", folderId, "gIp4ExistingVisitorId"); // VisitorId found in Visitor table
+//                    logError("LGV", folderId, avSuccess, "gIp4ExistingVisitorId");
+//                }
+//                else {
+//                    if (successModel.Success == "not found") {
+//                        $.ajax({
+//                            type: "GET",
+//                            url: "https://ipinfo.io?token=ac5da086206dc4",
+//                            success: function (ipResponse) {
+//                                if (isNullorUndefined(ipResponse.ip)) {
+//                                    logError("IPF", folderId, "", "getIpInfo/" + calledFrom);
+//                                }
+//                                else {
+//                                    logActivity("EX1", folderId, "gIp4ExistingVisitorId"); // ipInfo Success For Existing VisitorId
+//                                    addVisitor({
+//                                        CalledFrom: "getIpForExistingVisitorId",
+//                                        VisitorId: visitorId,
+//                                        IpAddress: ipResponse.ip,
+//                                        FolderId: folderId,
+//                                        City: ipResponse.city,
+//                                        Country: ipResponse.country,
+//                                        Region: ipResponse.region,
+//                                        GeoCode: ipResponse.loc
+//                                    }, "exv");
+//                                }
+//                            },
+//                            error: function (jqXHR) {
+//                                logActivity("EX3", folderId, "gIp4ExistingVisitorId"); // ipInfo jqXHR
+//                                tryIfy(folderId, visitorId, "getIpExistingVisId");
+//                                // logError("XEX", folderId, jqXHR.status + " " + jqXHR.statusText, "getIpInfo");
+//                            }
+//                        });
+//                    }
+//                    else {
+//                        logActivity("EX9", folderId, "gIp4ExistingVisitorId"); // unknown success code from Get Visitor
+//                        logError("EIF", folderId, successModel.Success, "gIp4ExistingVisitorId");
+//                    }
+//                }
+//            },
+//            error: function (jqXHR) {
+//                let errMsg = getXHRErrorDetails(jqXHR);
+//                if (!checkFor404(errMsg, folderId, "gIp4ExistingVisitorId"))
+//                    logError("XHR", folderId, errMsg, "gIp4ExistingVisitorId");
+//            }
+//        });
+//    } catch (e) {
+//        logError("CAT", folderId, e, "gIp4ExistingVisitorId");
+//    }
+//}
 
  function myMsgTest() {
     let wipTitle = "data tracking error";
@@ -431,8 +503,10 @@ function tryIfy(folderId, newVisitorId, calledFrom) {
 let lastIpHitVisitorId;
 function logIpHit(visitorId, ipAddress, folderId) {
     try {
-        if (visitorId == lastIpHitVisitorId)
+        if (visitorId == lastIpHitVisitorId) {
+            logError("PH1", folderId, "VisitorId: " + visitorId + ", IpAddress: " + ipAddress, "logIpHit");
             return;
+        }
         lastIpHitVisitorId = visitorId;
 
         $.ajax({
@@ -518,7 +592,9 @@ function getCloudflare(calledFrom, folderId) {
 }
 
 function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {
-    if (!isLoggedIn()) {
+    if (localStorage["IsLoggedIn"] == "true") { }
+    //if (!isLoggedIn())
+    {
         if (calledFrom === "pages") {
             if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0) {
                 // if (window.localStorage["IpAddress"] !== "68.203.90.183")
@@ -563,3 +639,5 @@ function testgetIp() {
     tryIfy(9999, "a950b00f-46d2-45d5-b165-8846bf96130e", "testgetIp");
 
 }
+
+

@@ -24,9 +24,10 @@ namespace OggleBooble.Api.Models
         public string Status { get; set; }
         public string UserRole { get; set; }
         public string UserSettings { get; set; }
-        public int UserCredits { get; set; }
+        public int? UserCredits { get; set; }
         public DateTime Created { get; set; }
         public string ClearPassword { get; set; }
+        public bool? IsLoggedIn { get; set; }
         public string Success { get; set; }
     }
 

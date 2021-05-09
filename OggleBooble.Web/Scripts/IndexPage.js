@@ -56,7 +56,8 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes();
             break;
         default:
-            alert("spaPageId: " + spaPageId + " not found");
+            if (domain === 'localhost') alert("spaPageId: " + spaPageId + " not found");
+            logError("SWT", spaPageId, "fer sur", "displaySpaPage");
             break;
     }
 }
@@ -199,11 +200,11 @@ function goToPorn() {
 
 function localhostBypass() {
     if (document.domain === 'localhost') {
-        window.localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
+        globalVisitorId = window.localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
         //setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-        let visitorId = globalVisitorId;
-        console.log("localhostBypass visitorId: " + visitorId);
-        alert("localhostBypass visitorId: " + visitorId);
+        //let visitorId = globalVisitorId;
+        console.log("localhostBypass visitorId: " + globalVisitorId);
+        //alert("localhostBypass visitorId: " + visitorId);
         //setCookieValue("UserName", "developer");
         //window.localStorage["IsLoggedIn"] = "true";
     }
@@ -233,7 +234,7 @@ function resizeIndexPage() {
 function playboyPageHTML() {
     return "<div class='playboyShell'> <div class='indexPageSection' id='topIndexPageSection'>\n" +
         "       <div class='sectionLabel'>random galleries</div>\n" +
-        "       <div id='testMessage1' class='indexPageHappyMessage' >start</div>\n" +
+        //"       <div id='testMessage1' class='indexPageHappyMessage'></div>\n" +
         "           <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
@@ -249,13 +250,15 @@ function playboyPageHTML() {
 function indexPageHTML() {
     return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
         "       <div class='sectionLabel'>random galleries</div>\n" +
-        "       <div id='testMessage1' class='indexPageHappyMessage' >00</div>\n" +
+        //"       <div id='testMessage1' class='indexPageHappyMessage'></div>\n" +
         "       <div id='promoContainer' class='promoContainer' >my promo message</div>\n" +
         "       <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
         //"    <div class='clickable sectionLabel' onclick='cureWIPproblem(211,\"018d1162-61a6-4987-bd90-add6fac518c6\",\"WIP\")'>cure WIP problem</div>\n" +
         //"    <div class='clickable sectionLabel' onclick='myMsgTest()'>showMyAlert test</div>\n" +
-        //"    <div class='clickable sectionLabel' onclick='testgetIp()'>tryIpx</div><br/>\n" +
+        //"    <div class='clickable sectionLabel' onclick='addBadVisitor()'>try addBadVisitor</div><br/>\n" +
+        // tryIfy(folderId, newVisitorId, calledFrom)
+        "    <div class='clickable sectionLabel' onclick='tryIfy(22,\'xxx\',\'test\')'>try ify</div><br/>\n" +
         //"    <div class='clickable sectionLabel' onclick='testgetIp()'>addNonIpVisitor</div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +

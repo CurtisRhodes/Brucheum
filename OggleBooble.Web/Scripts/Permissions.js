@@ -1,48 +1,30 @@
-﻿
-function isInRole(roleName) {
+﻿function isInRole(roleName, folderId,  calledFrom) {
     try {
-        //console.log("calling getUserInfo from isInRole")
-        //if (document.domain === 'localhost') return true;
 
-        if (!globalIsLoggedIn) {
-            console.log("isInRole not logged in");
-            roleName = "not registered";
+        if (isNullorUndefined(localStorage["IsLoggedIn"])) {
+            //logError("BUG", 22668, "localStorage[IsLoggedIn] undefined", "isInRole/" + calledFrom);
+            loadUserInfoIntoLocalStorage(558, "isInRole/" + calledFrom);
+            return false;
         }
-        if (roleName == "not registered") return false;
-
-        if (isNullorUndefined(globalVisitorId)) {
-            console.log("visitorId undefined in isInRole")
+        if (!localStorage["UserName"] == "unregistered") {
             return false;
         }
 
-        if (isNullorUndefined(window.localStorage["userRole"])) {
-            console.log("calling getUserInfo from isInRole")
-            getUserInfo("isInRole", roleName);
+        if (!localStorage["IsLoggedIn"] == "false") {
+            //logError("BUG", 30578, "bool false THIS WORKED  localStorage[IsLoggedIn]:" + localStorage["IsLoggedIn"], "isInRole/" + calledFrom);
+            return false;
         }
-        else {
-            let userRole = window.localStorage["userRole"];
-            console.log("userRole from localStorage: " + userRole + " for visitorId: " + visitorId);
-            if (userRole === "admin") return true;
-            if (userRole === roleName)
-                return true;
-        }
+
+        if (localStorage["UserRole"] == "admin")
+            return true;
+
+        if (window.localStorage["UserRole"] == roleName)
+            return true;
     }
-    catch (e) { logError("CAT", 3908, e, "isInRole"); }
-}
-
-function getUserRole() {
-
-    if (document.domain === 'localhost') return "admin";
-
-    if (!isNullorUndefined(window.localStorage["userRole"]))
-        return window.localStorage["userRole"];
-
-    const visitorId = globalVisitorId;
-    if (isNullorUndefined(visitorId)) {
-        window.localStorage["userRole"] = "not registered";
-        return window.localStorage["userRole"];
+    catch (e) {
+        logError("CAT", 39048, e, "isInRole");
+        return false;
     }
-    getUserInfo("getUserRole", details);
 }
 
 function resetUserSettings() {
@@ -57,48 +39,8 @@ function resetUserSettings() {
 
 function isLoggedIn() {
     //if (document.domain === 'localhost') return true;
-    alert("who is calling this?");
-    return globalIsLoggedIn;
-}
-
-function getUserInfo(valueRequested, details) {
-    try {
-        let visitorId = globalVisitorId;
-        if (isNullorUndefined(visitorId)) {
-            logError("BUG", 1, "I thought visitorId had been tested", "getUserInfo");
-        }
-        else {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + visitorId,
-                success: function (userInfoModel) {
-                    if (userInfoModel.Success === "ok") {
-                        if (isNullorUndefined(window.localStorage["userRole"]))
-                            window.localStorage["userRole"] = userInfoModel.UserRole;
-                    }
-                    else {
-                        if (userInfoModel.Success == "not registered") {
-                            window.localStorage["userRole"] = "not registered";
-                        }
-                        else
-                            logError("AJX", 2, userInfoModel.Success + ". visitorId: " + visitorId, "getUserInfo(permissions)");
-                    }
-                    if (valueRequested == "isInRole") {
-                        isInRole(details)
-                    }
-                    if (valueRequested == "getUserRole") {
-                        getUserRole();
-                    }
-                },
-                error: function (jqXHR) {
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg, folderId, "getUserInfo")) logError("XHR", 3907, errMsg, "getUserInfo");
-                }
-            });
-        }
-    } catch (e) {
-        logError("CAT", 3908, e, "getUserInfo");
-    }
+    //alert("who is calling this?");
+    return localStorage["IsLoggedIn"] == "true";
 }
 
 function updateUserSettings(settingName, settingJson) {
@@ -199,5 +141,106 @@ function updateCarouselSettings() {
 
         updateUserSettings(visitorId, "CarouselSettings", lsCarouselSettings);
 
+    }
+}
+
+function loadUserInfoIntoLocalStorage(folderId, calledFrom) {
+    try {
+        if (globalVisitorId == "unset") {
+            logError("UI1", folderId, "globalVisitorId = unset", "loadUserInfo/" + calledFrom); // globalVisitorId == "unset"
+            getIpInfo(folderId, "loadUserInfo/" + calledFrom)
+            return;
+        }
+
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Common/GetVisitorInfo?visitorId=" + globalVisitorId,
+            success: function (visitorInfo) {
+                if (visitorInfo.Success == "ok") {
+                    localStorage["VisitorId"] = globalVisitorId;
+                    localStorage["VisitorVerified"] = true;
+                    localStorage["IsLoggedIn"] = visitorInfo.IsLoggedIn;
+                    localStorage["UserName"] = visitorInfo.UserName;
+                    localStorage["UserRole"] = visitorInfo.UserRole;
+                    $('#spnUserName').html(localStorage["UserName"]);
+                    if (visitorInfo.IsLoggedIn) {
+                        $('#optionLoggedIn').show();
+                        $('#optionNotLoggedIn').hide();
+                    }
+                    else {
+                        $('#optionLoggedIn').show();
+                        $('#optionNotLoggedIn').hide();
+                    }
+                    if (isInRole("trusted", folderId, "loadUserInfo/" + calledFrom))
+                        $('#footerCol5').show();
+                    else
+                        $('#footerCol5').hide();
+
+                    logActivity("UI2", 4744, "loadUserInfo/" + calledFrom)
+                }
+                else {
+                    logError("AJX", 545, visitorInfo.Success, "loadUserInfo/" + calledFrom);
+                }
+
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "loadUserInfo")) {
+                    logError("XHR", folderId, errMsg, "loadUserInfo");
+                }
+            }
+        });
+    } catch (e) {
+        logError("CAT", 3908, e, "loadUserInfo/" + calledFrom);
+    }
+}
+
+function verifyVisitorId(folderId, calledFrom) {
+    try {
+        //if (!document.cookie) {
+        //    logError("VV1", folderId, "not a real problem", "verifyVisitor"); // No document.cookie exists
+        //    return;
+        //}
+
+        if (isNullorUndefined(localStorage["VisitorId"])) {
+            if (globalVisitorId == "unset") {
+                logError("VV2", folderId, "sent to getIpInfo", "verifyVisitor"); // visitorId found in local storage
+                getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
+                return;
+            }
+            else {
+                // no local storage but globalVisitorId set
+                // alert("no local storage but globalVisitorId set to: " + globalVisitorId);
+                localStorage["VisitorId"] = globalVisitorId;
+            }
+        }
+
+        if (globalVisitorId == "unset") {
+            if (!isNullorUndefined(localStorage["VisitorId"])) {
+                globalVisitorId = localStorage["VisitorId"];
+                //console.log("globalVisitorId set to: " + localStorage["VisitorId"]);
+                //logActivity("GVS", folderId, "verifyVisitorId/" + calledFrom); //  globalVisitorId set to localStorage[VisitorId]
+            }
+            else {
+                logError("VV3", folderId, "not a real problem", "verifyVisitor"); // globalVisitorId = unset and localStorage[VisitorId] undefined
+                getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
+                return;
+            }
+        }
+
+        if (globalVisitorId != localStorage["VisitorId"]) {  
+            logError("VV4", folderId, "globalVisitorId: " + globalVisitorId + ", localStorage: " + localStorage["VisitorId"], "verifyVisitorId/" + calledFrom);
+            return;
+        }
+
+        if (isNullorUndefined(localStorage["VisitorVerified"])) {
+            loadUserInfoIntoLocalStorage(folderId, "verifyVisitorId/" + calledFrom);
+        }
+        console.log("visitor verified: " + globalVisitorId);
+    }
+    catch (e) {
+        logError("CAT", folderId, e, "verifyVisitorId/" + calledFrom);
+        if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
+        console.error("Catch error in verifyVisitorId!!: " + e);
     }
 }

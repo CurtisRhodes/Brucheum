@@ -94,25 +94,36 @@ function setCookieValue(elementToSet, newValue) {
         //    createCookie();
 
     } catch (e) {
-        alert("setcookie: " + e);
+        alert("setcookie CATCH Error: " + e);
         logError("CAT", 111, e, "setCookieValue");
     }
 }
 
 function createCookie() {
+    try {
+        console.log("createCookie");
+        //alert("createCookie");
+        //cookies.remove("document.cookie");
+        document.cookie = "expires=Thu, 01 Jan 1970 00: 00: 00 UTC; path =/;";
 
-    alert("createCookie");
-    //cookies.remove("document.cookie");
+        alert("deleted decoded cookie: " + decodeURIComponent(document.cookie));
 
-    expirydate = new Date();
-    expirydate.setMonth(expirydate.getMonth() + 9);
-    //let cookiestring = "visitorid:" + globalVisitorId + ",username:" + username + ",isloggedin:" + isloggedin + ",path:'/,expires:" + expirydate.toutcstring();
+        expirydate = new Date();
+        expirydate.setMonth(expirydate.getMonth() + 9);
+        let cookiestring = ";VisitorId=" + globalVisitorId + ";UserName=" + localStorage["UserName"] +
+            "VisitorVerified=true;Isloggedin=" + localStorage["IsLoggedIn"] + ";expires=" + expirydate.toUTCString();
+        document.cookie = cookiestring;
 
-    let cookiestring = ";Visitorid=" + globalVisitorId + ";UserName=" + visitorInfo.UserName +
-        "VisitorVerified=true;Isloggedin=" + visitorInfo.IsLoggedIn + ";expires=" + expirydate.toUTCString();
 
-    document.cookie = cookiestring;
+        var test1 = getCookieValue("Visitorid", "boogers");
 
-    alert("cookie: " + decodeURIComponent(document.cookie));
+        //alert("cookieTest1: " + test1);
+
+
+        //alert("decoded cookie: " + decodeURIComponent(document.cookie));
+
+    } catch (e) {
+        console.log("createCookie CATCH " + e);
+    }
 }
 

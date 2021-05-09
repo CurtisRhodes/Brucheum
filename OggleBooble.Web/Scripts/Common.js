@@ -1,4 +1,4 @@
-﻿let globalVisitorId = "unset", globalVisitorVerified = false, globalIsLoggedIn = false, globalUserName,
+﻿let globalVisitorId = "unset", 
     verbosity = 5, freeVisitorHitsAllowed = 7500, settingsArray = {}, userRoles = [], settingsImgRepo,
     viewerShowing = false, waitingForReportThenPerformEvent = true, forgetShowingCustomMessage = true,
     debugMode = false, pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
@@ -226,87 +226,6 @@ function isNullorUndefined(val) {
     return false;
 }
 
-function verifyVisitorId(folderId, calledFrom) {
-    try {
-        if (!document.cookie) {
-            alert("No document.cookie exists")
-        }
-        if (isNullorUndefined(window.localStorage)) {
-            alert("window.localStorage doens't exist");
-        }
-
-        if (isNullorUndefined(window.localStorage["VisitorId"])) {
-            if (globalVisitorId != "unset") {
-                alert("localStorage null and globalVisitorId: " + globalVisitorId);
-                window.localStorage["VisitorId"] = globalVisitorId;
-            }
-            // no cookie but visitorId found in local storage
-            globalVisitorId = window.localStorage["VisitorId"];
-        }
-
-        if ((globalVisitorId == "unset") && (!isNullorUndefined(window.localStorage["VisitorId"]))) {
-            logActivity("GVS", folderId, calledFrom); //  globalVisitorId set to localStorage[VisitorId]
-            //alert("one time fix"); window.localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
-            globalVisitorId = window.localStorage["VisitorId"];
-        }
-
-        if (globalVisitorId != window.localStorage["VisitorId"]) {
-            alert("verifyVisitorId localStorage: " + window.localStorage["VisitorId"] + "\nand globalVisitorId: " + globalVisitorId);
-            //globalVisitorId = window.localStorage["VisitorId"];
-        }
-
-        if (globalVisitorId == "unset") {
-            logActivity("CBN", folderId, calledFrom);
-            //alert("no cookie and no visitorId found in local storage\ncalling getIpInfo");
-            getIpInfo(folderId, "verifyVisitorId");
-        }
-
-        if (!globalVisitorVerified) {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/Common/GetVisitorInfo?visitorId=" + globalVisitorId,
-                success: function (visitorInfo) {
-                    if (visitorInfo.Success == "ok") {
-                        //alert("visitor id verified. UserName: " + visitorInfo.UserName);
-                        $('#spnUserName').html(visitorInfo.UserName);
-
-                        globalVisitorVerified = true;
-                        globalUserName = visitorInfo.UserName;
-                        globalIsLoggedIn = visitorInfo.IsLoggedIn;
-                        console.log("VisitorVerified.  globalVisitorId: " + globalVisitorId + "  IsLoggedIn: " + globalIsLoggedIn);
-
-                        createCookie();
-
-                        var test1 = getCookieValue("Visitorid", "boogers");
-
-                        alert("cookieTest1: " + test1);
-
-                        // logActivity("VVI", folderId);
-                    }
-                    else {
-                        //alert("visitorId seems to exist, but not found in table/n" + visitorInfo.Success);
-                        logError("LGV", folderId, visitorInfo.Success, calledFrom + "/verifyVisitorId");
-                    }
-                },
-                error: function (jqXHR) {
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg, folderId, "verify Visitor")) {
-                        alert("XHR error in verify Visitor: " + errMsg);
-                        logError("XHR", folderId, errMsg, "verify Visitor");
-                    }
-                }
-            });
-        }
-        else
-            console.log("visitor verified: " + globalVisitorId);
-    }
-    catch (e) {
-        logError("CAT", folderId, "hmwiwd", calledFrom);
-        if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
-        console.error("Catch error in verifyVisitorId!!: " + e);
-    }
-}
-
 function create_UUID() {
     // thank tohttps://www.w3resource.com/javascript-exercises/javascript-math-exercise-23.php
     //let dt = new Date().getTime();
@@ -322,9 +241,14 @@ function create_UUID() {
 }
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
-    if (document.domain === 'localhost') //  && errorCode !== "ILF"
+    //alert("logError  document.domain:" + document.domain);
+    //alert("logError  globalVisitorId:" + globalVisitorId);
+
+    if (document.domain === 'localhost') {
+        //  && errorCode !== "ILF"
         console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
-        //alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+        alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+    }
     else {
         try {
             $.ajax({
@@ -413,7 +337,7 @@ function logActivity(activityCode, folderId, calledFrom) {
             }
             else {
                 if (success.indexOf("Duplicate entry") > 0)
-                    logError("DUP", folderId, activityCode + ": " + success, "log activity/" + calledFrom);
+                    logError("DUP", folderId, "Duplicate entry: "+ activityCode, "log activity/" + calledFrom);
                 else
                     logError("AJX", folderId, activityCode + ": " + success, "log activity/");
             }
@@ -482,8 +406,6 @@ function changeFavoriteIcon(icon) {
     }
 }
 
-function animateFaviconGif() { }
-
 function commonDirTreeClick(danniPath, folderId) {
     try {
         //alert("activeDirTree: "+activeDirTree);
@@ -540,13 +462,6 @@ function showCatListDialog(root) {
     $('#indexCatTreeContainer').show();
     $('#dtDialogContainer').draggable().show();    
     //alert("showCatListDialog: " + root);
-}
-
-// GET BUILD INFO
-function getFileDate() {
-     
-
-
 }
 
 function slowlyShowCustomMessage(blogId) {

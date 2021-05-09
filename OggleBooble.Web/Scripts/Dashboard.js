@@ -3,6 +3,11 @@
     changeFavoriteIcon("redBallon");
     $('#indexMiddleColumn').html(dashboardHtml());
 
+    if (!isInRole("admin", 444, "dashboardStartup")) {
+        alert("admin role required");
+        window.location.href = "Index.html";
+    }
+
     $('#addLinkCrudArea').keydown(function (event) {
         if (event.keyCode === 13) {
             //alert("keydown 13");
@@ -15,13 +20,8 @@
     showDefaultWorkArea();
     setOggleHeader("dashboard");
     setOggleFooter(3910, "dashboard");
-    let userRole = getUserRole();
-    if (userRole == "not registered") {
-        //alert("not registered");
-        window.location.href = "Index.html";
-    }
-    loadHeaderTabs(userRole);
-    setLeftMenu(userRole);
+    loadHeaderTabs(localStorage["UserRole"]);
+    setLeftMenu(localStorage["UserRole"]);
     resizeDashboardPage();
     loadDashboardDirTree(false);
     window.addEventListener("resize", resizeDashboardPage);
@@ -850,7 +850,9 @@ function updateSortOrder() {
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("sorting array");
     var sortOrderArray = [];
+    let autoI = 0;
     $('#sortToolImageArea').children().each(function () {
+        autoI++;
         sortOrderArray.push({
             FolderId: pSelectedTreeId,
             ItemId: $(this).find("input").attr("id"),

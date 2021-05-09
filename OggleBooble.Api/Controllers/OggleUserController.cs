@@ -135,14 +135,24 @@ namespace OggleBooble.Api.Controllers
                         success= "not found";
                     else
                     {
+                        if(userInfo.UserName!=null)
                         dbUser.UserName = userInfo.UserName;
-                        dbUser.LastName = userInfo.LastName;
-                        dbUser.FirstName = userInfo.FirstName;
-                        dbUser.Status = userInfo.Status;
-                        dbUser.UserSettings = userInfo.UserSettings;
-                        dbUser.UserRole = userInfo.UserRole;
-                        dbUser.UserCredits = userInfo.UserCredits;
-                        dbUser.Email = userInfo.Email;
+                        if (userInfo.LastName != null)
+                            dbUser.LastName = userInfo.LastName;
+                        if (userInfo.FirstName != null)
+                            dbUser.FirstName = userInfo.FirstName;
+                        if (userInfo.Status != null)
+                            dbUser.Status = userInfo.Status;
+                        if (userInfo.UserSettings != null)
+                            dbUser.UserSettings = userInfo.UserSettings;
+                        if (userInfo.UserRole != null)
+                            dbUser.UserRole = userInfo.UserRole;
+                        if (userInfo.UserCredits != null)
+                            dbUser.UserCredits = userInfo.UserCredits.Value;
+                        if (userInfo.Email != null)
+                            dbUser.Email = userInfo.Email;
+                        if (userInfo.IsLoggedIn != null)
+                            dbUser.IsLoggedIn = userInfo.IsLoggedIn.Value;
                         db.SaveChanges();                        
                         success = "ok";
                     }

@@ -124,9 +124,18 @@ function verifyConnectionFunction(calledFrom, folderId) {
                         }
                     }
                     else {
-                        if (successModel.Success.indexOf("Parameter name: app") > 0) {
+                        if (successModel.Success.indexOf("Parameter name: app") > -1) {
                             connectionVerified = false;
                             //console.log("TRAPPED: " + successModel.Success);
+                        }
+                        if (successModel.Success.indexOf("A socket operation was attempted to an unreachable network") > -1)
+                        {
+                            $('#customMessage').html(
+                                "<div class='shaddowBorder'>" +
+                                "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
+                                "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
+                                "</div>"
+                            ).show();
                         }
                         else {
                             console.log("proper error in verify ConnectionFunction: " + successModel.Success);
@@ -139,12 +148,7 @@ function verifyConnectionFunction(calledFrom, folderId) {
                 error: function (jqXHR) {
                     verifyConnectionAvailable = false;
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = "verifyConnectionFunction"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (verifyConnectionCount > verifyConnectionCountLimit) {
-                        $('#dots').html('');
-                        throw 404;
-                        alert("404");
-                    }
+                    //let functionName = "verifyConnectionFunction"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
                     if (document.domain === "localhost") alert("verifyConnection XHR: " + errMsg);
                     connectionVerified = false;
                 }

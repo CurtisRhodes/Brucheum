@@ -96,86 +96,83 @@
             <div id="feedbackButton" class="floatingFeedbackButton">feedback</div>
         </div>
     </div>
+
     <script type="text/javascript">
         var _Hasync = _Hasync || [];
         _Hasync.push(['Histats.start', '1,4458214,4,0,0,0,00010000']);
         _Hasync.push(['Histats.fasi', '1']);
         _Hasync.push(['Histats.track_hits', '']);
-        (function () {
-            var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
-            hs.src = ('//s10.histats.com/js15_as.js');
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
-        })();
+        //(function () {
+        //    var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+        //    hs.src = ('//s10.histats.com/js15_as.js');
+        //    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+        //})();
     </script>
-    <noscript><a href="/" target="_blank"><img src="//sstatic1.histats.com/0.gif?4458214&101" alt="traffic analysis" border="0"></a></noscript>
     
     <div class="footer"></div>
     <script>
         //This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”. album.html
-        //$(document).ready(function () {
-        $('#deepSlideshow').hide();
-        $('#imageContainer').hide();
-        let params = getParams();
-        let albumParamFolderId;
-        let largeLoad = false;
-        if (!isNullorUndefined(params.parentfolder)) {
-            //alert("params.parentfolder: " + params.parentfolder);
-            albumParamFolderId = params.parentfolder;
-            largeLoad = true;
-        }
-        else {
-            if (isNullorUndefined(params.folder)) {
-                window.location.href = "Index.html";
-            }
-            else
-                albumParamFolderId = params.folder;
-        }
-        setOggleHeader("loading");
-
-        resizeAlbumPage();
-        var dots = "";
-        loadOggleSettings();
-        var settingsWaiter = setInterval(function () {
-            if (settingsArray.ApiServer === undefined) {
-                dots += "~ ";
-                $('#dots').html(dots);
+        $(document).ready(function () {
+            $('#deepSlideshow').hide();
+            $('#imageContainer').hide();
+            let params = getParams();
+            let albumParamFolderId;
+            let largeLoad = false;
+            if (!isNullorUndefined(params.parentfolder)) {
+                //alert("params.parentfolder: " + params.parentfolder);
+                albumParamFolderId = params.parentfolder;
+                largeLoad = true;
             }
             else {
-                clearInterval(settingsWaiter);
-                $('#mainMenuContainer').html("connecting");
-                checkConnection(params.folder, "album.html");
-                var waiter2 = setInterval(function () {
-                    if (connectionVerified) {
-                        dots += ". ";
-                        $('#dots').html(dots);
-                    }
-                    else {
-                        clearInterval(waiter2);
-                        $('#dots').html('');
-
-                        changeFavoriteIcon("redBallon");
-                        localhostBypass();
-                        verifyVisitorId(albumParamFolderId, "album.html");
-
-                        if (!isNullorUndefined(params.tic)) {
-                            logStaticPageHit(albumParamFolderId, "Album.html");
-                            window.location.href = "album.html?folder=" + albumParamFolderId;
-                        }
-                        //if (largeLoad)
-                        //    alert("largeLoad: " + largeLoad);
-
-                        if (largeLoad)
-                            loadLargeAlbum(albumParamFolderId);
-                        else
-                            loadAlbum(albumParamFolderId);
-                        //if (isInRole("NewUser")) {
-                    }
-                }, 300);
+                if (isNullorUndefined(params.folder)) {
+                    window.location.href = "Index.html";
+                }
+                else
+                    albumParamFolderId = params.folder;
             }
-        }, 300);
+            setOggleHeader("loading");
 
-        window.addEventListener("resize", resizeAlbumPage);
-        resizeAlbumPage();
+            resizeAlbumPage();
+            var dots = "";
+            loadOggleSettings();
+            var settingsWaiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += "~ ";
+                    $('#dots').html(dots);
+                }
+                else {
+                    clearInterval(settingsWaiter);
+                    $('#mainMenuContainer').html("connecting");
+                    checkConnection(params.folder, "album.html");
+                    var waiter2 = setInterval(function () {
+                        if (connectionVerified) {
+                            dots += ". ";
+                            $('#dots').html(dots);
+                        }
+                        else {
+                            clearInterval(waiter2);
+                            $('#dots').html('');
+
+                            changeFavoriteIcon("redBallon");
+                            localhostBypass();
+                            verifyVisitorId(albumParamFolderId, "album.html");
+
+                            if (!isNullorUndefined(params.tic)) {
+                                logStaticPageHit(albumParamFolderId, "Album.html");
+                                window.location.href = "album.html?folder=" + albumParamFolderId;
+                            }
+
+                            if (largeLoad)
+                                loadLargeAlbum(albumParamFolderId);
+                            else
+                                loadAlbum(albumParamFolderId);
+                        }
+                    }, 300);
+                }
+            }, 300);
+            window.addEventListener("resize", resizeAlbumPage);
+            resizeAlbumPage();
+        });
         function resizeAlbumPage() {
             // set page width
             //let winW = $(window).width();

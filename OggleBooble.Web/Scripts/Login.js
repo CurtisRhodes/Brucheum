@@ -30,13 +30,22 @@ function attemptLogin() {
             url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + userName + "&passWord=" + clearPasswod,
             success: function (successModel) {
                 if (successModel.Success === "ok") {
-                    setCookieValue("UserName", userName);
-                    setCookieValue("IsLoggedIn", true);
-                    setCookieValue("VisitorId", successModel.ReturnValue);
-                    logEvent("LOG", 0, "Successfull log in: " + globalUserName);
+                    //setCookieValue("UserName", userName);
+                    //setCookieValue("IsLoggedIn", true);
+                    localStorage["IsLoggedIn"] = "true";
+
+                    //setCookieValue("VisitorId", successModel.ReturnValue);
+                    logEvent("LOG", 0, "Successfull log in: " + userName);
+                    updateUser({
+                        VisitorId: globalVisitorId,
+                        IsLoggedIn: "true"
+                    });
+
+                    setTimeout(function () { loadUserInfoIntoLocalStorage(87478, "attrmptLogin") }, 800);
+                    $("#vailShell").hide();
+                    $("#centeredDialogContainer").hide();
                     displayStatusMessage("ok", "thanks for logging in " + userName);
-                    window.localStorage["userRole"] = null;
-                    window.location.href = ".";
+                    //window.location.href = ".";
                 }
                 else {
                     //successModel.ReturnValue = "valid";
@@ -87,9 +96,14 @@ function validateLogin() {
 function onLogoutClick(pageId) {
     if (confirm("log out?")) {
         //setCookieValue("IsLoggedIn", "false");
-        globalIsLoggedIn = false;
-        // updateRegisteredUser
-        
+        localStorage["IsLoggedIn"] = "false";
+        //alert("IsLoggedIn: " + localStorage["IsLoggedIn"]);
+
+        updateUser({
+            VisitorId: globalVisitorId,
+            IsLoggedIn: false
+        });
+
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         $('#footerCol5').hide();
@@ -177,7 +191,6 @@ function userProfileHtml() {
         "</div>\n";
 }
 
-let userProfileData = {};
 function loadUserProfile() {
     try {
         $.ajax({
@@ -217,11 +230,19 @@ function loadUserProfile() {
 }
 
 function updateUserProfile() {
+    let userProfileData = {
+        VisitorId: globalVisitorId,
+        UserName: $('#txtUserProfileName').val(),
+        FirstName: $('#txtUserProfileFirstName').val(),
+        LastName: $('#txtUserProfileLastName').val(),
+        Email: $('#txtUserProfileEmail').val()
+    };
+    updateUser(userProfileData);
+}
+
+
+function updateUser(userProfileData) {
     try {
-        userProfileData.UserName = $('#txtUserProfileName').val();
-        userProfileData.FirstName = $('#txtUserProfileFirstName').val();
-        userProfileData.LastName = $('#txtUserProfileLastName').val();
-        userProfileData.Email = $('#txtUserProfileEmail').val();
 
         $.ajax({
             type: "PUT",
@@ -313,13 +334,15 @@ function attemptRegister() {
 
 function registerHappyPath(successMessage) {
 
-    globalUserName = $('#txtRegisterUserName').val();
-    displayStatusMessage("ok", "thanks for Registering " + globalUserName);
+    loadUserInfoIntoLocalStorage(4554, "registerHappyPath");
+    localStorage["UserName"] = $('#txtRegisterUserName').val();
+
+    displayStatusMessage("ok", "thanks for Registering " + localStorage["UserName"]);
 
     sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
-        "UserName: " + globalUserName + "<br/>VisitorId: " + globalVisitorId);
+        "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + globalVisitorId);
 
-    globalIsLoggedIn = true;
+    localStorage["IsLoggedIn"] = true;
     $('#optionLoggedIn').show();
     $('#optionNotLoggedIn').hide();
     dragableDialogClose();
@@ -399,7 +422,7 @@ function authenticateEmail(usersEmail) {
 
     sendEmail("CurtishRhodes@hotmail.com", "SomeoneAuthenticated@Ogglebooble.com", "Someone Authenticated !!!", "OH MY GOD");
 
-    alert("Thank you for registering " + globalUserName + "\n please reply to the two factor authentitifcation email sent to you" +
+    alert("Thank you for registering " + localStorage["UserName"] + "\n please reply to the two factor authentitifcation email sent to you" +
         "\nYou will then be granted the access you requested." + "\nThe menu item 'Dashboard' will appear next to your 'Hello' message");
     dragableDialogClose();
 }

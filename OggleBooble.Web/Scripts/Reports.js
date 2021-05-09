@@ -198,11 +198,12 @@ function runDailyRefferals() {
         url: settingsArray.ApiServer + "/api/Report/ReferralsReport",
         success: function (referrals) {
             $('#dashBoardLoadingGif').hide();
+            $('.subreportContainer').css("height", $('#dashboardContainer').height() - $("#dailyActivityReportContainer").height() * 2.13);
             if (referrals.Success === "ok") {
                 $("#dailyRefferalsContainer").html("<div>Refferals " + todayString() + "</div>");
                 $.each(referrals.StaticPageReferrals, function (idx, obj) {
                     $("#dailyRefferalsContainer").append("<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
-                        obj.PageName + "</a>" + obj.Hits + "</div>");
+                        obj.FolderName + "</a>" + obj.Hits + "</div>");
                 });
             }
             else {

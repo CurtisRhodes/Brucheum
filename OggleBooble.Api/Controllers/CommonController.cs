@@ -27,13 +27,13 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (dbExistingIpVisitor != null)
-                    {
-                        addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
-                        addVisitorModel.Success = "existing Ip";
-                    }
-                    else
+                    //var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    //if (dbExistingIpVisitor != null)
+                    //{
+                    //    addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
+                    //    addVisitorModel.Success = "existing Ip";
+                    //}
+                    //else
                     {
                         var newVisitor = new Visitor()
                         {
@@ -65,12 +65,11 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    success = "nan";
-                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (dbExistingIpVisitor != null)
-                    {
-                        success = "existing Ip";
-                    }
+                    //var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    //if (dbExistingIpVisitor != null)
+                    //{
+                    //    success = "existing Ip";
+                    //}
 
                     var newVisitor = new Visitor()
                     {
@@ -85,8 +84,7 @@ namespace OggleBooble.Api.Controllers
                     };
                     db.Visitors.Add(newVisitor);
                     db.SaveChanges();
-                    if (success == "nan")
-                        success = "ok";
+                    success = "ok";
                 }
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
@@ -176,10 +174,15 @@ namespace OggleBooble.Api.Controllers
                         {
                             visitorInfoModel.UserName = "unregistered";
                             visitorInfoModel.IsLoggedIn = false;
+                            visitorInfoModel.UserRole = "unregistered";
+                            visitorInfoModel.UserCredits = 120;
                         }
                         else
                         {
-                            visitorInfoModel.IsLoggedIn = dbRegisteredUser.IsLoggedIn;
+                            visitorInfoModel.IsLoggedIn = dbRegisteredUser.IsLoggedIn.Value;
+                            visitorInfoModel.UserRole = dbRegisteredUser.UserRole;
+                            visitorInfoModel.UserCredits = dbRegisteredUser.UserCredits.Value;
+                            visitorInfoModel.Email = dbRegisteredUser.Email;
                             visitorInfoModel.UserName = dbRegisteredUser.UserName;
                         }
                         visitorInfoModel.IpAddress= dbVisitor.IpAddress;

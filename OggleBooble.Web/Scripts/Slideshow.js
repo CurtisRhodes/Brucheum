@@ -214,7 +214,7 @@ function slide(direction) {
                                 $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                             }
                             else {
-                                if (isInRole("sert")) {
+                                if (isInRole("sert", albumFolderId, "slideshow")) {
                                     $.ajax({
                                         type: "GET",
                                         url: settingsArray.ApiServer + "api/Links/GetLinkCount?imageLinkId=" + imageViewerArray[imageViewerIndex].LinkId,
@@ -225,8 +225,7 @@ function slide(direction) {
                                         error: function (jqXHR) {
                                             $('#albumPageLoadingGif').hide();
                                             let errMsg = getXHRErrorDetails(jqXHR);
-                                            let functionName = "getSlideshowItems"// arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                                            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                                            if (!checkFor404(errMsg, folderId, "getSlideshowItems")) logError("XHR", folderId, errMsg, "getSlideshowItems");
                                         }
                                     });
                                 }

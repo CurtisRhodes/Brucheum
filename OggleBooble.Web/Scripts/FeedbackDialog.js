@@ -63,7 +63,7 @@
                         FolderId: folderId,
                         FeedBackComment: $('#smnFeedback').val(),
                         FeedBackType: $('input[name="feedbackRadio"]:checked').val(),
-                        FeedBackEmail: $('#txtFeedbackEmail').val()  
+                        FeedBackEmail: $('#txtFeedbackEmail').val()
                     },
                     success: function (success) {
                         if (success === "ok") {
@@ -84,10 +84,9 @@
 
                             //console.log("is email working?");
                             $("#centeredDialogContainer").fadeOut();
-                            
-                            if (isLoggedIn)
 
-                                showMyAlert("feedback received", "Thank you for your " + feedbackType);
+                            //if (isLoggedIn)
+                            showMyAlert("feedback received", "Thank you for your " + feedbackType);
                         }
                         else {
                             logError("AJX", folderId, success, "log feedback");
