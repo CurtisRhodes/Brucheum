@@ -4,7 +4,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     try {
         event.preventDefault();
         window.event.returnValue = false;
-        logEvent("CXM", folderId, menuType, globalVisitorId);
+        logEvent("CXM", folderId, menuType, "showContextMenu");
         console.log("context menu opened: " + menuType);
         pMenuType = menuType;
         pLinkId = linkId;

@@ -15,7 +15,7 @@ function showFolderInfoDialog(folderId, calledFrom) {
     if (typeof pause === 'function') pause();
     //alert("showFolderInfoDialog(folderId: " + folderId + ", calledFrom: " + calledFrom + ")");
     showBasicFolderInfoDialog();
-    logEvent("FID", folderId, calledFrom, globalVisitorId);
+    //logEvent("FID", folderId, calledFrom,"");
     try {  // GetQuickFolderInfo
         $.ajax({
             type: "GET",
@@ -141,8 +141,7 @@ function showFullModelDetails(folderId) {
         error: function (jqXHR) {
             $('#albumPageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "show FullModelDetails")) logError("XHR", folderId, errMsg, "show FullModelDetails");
         }
     });
 }
@@ -591,16 +590,17 @@ function showIdentifyPoserDialog() {
 }
 
 function poserSave(linkId, folderId) {
+    let visitorId = getVisitorId(folderId, "poserSave");
     if (document.domain !== "localhost")
         sendEmail("CurtishRhodes@hotmail.com", "PoserIdentified@Ogglebooble.com", "poser identified !!!", +
             "suggested name: " + $('#txtPoserIdentified').val() + "<br/>" +
-            "visitor: " + globalVisitorId + "<br/>" +
+            "visitor: " + visitorId + "<br/>" +
             "folderId: " + folderId + "<br/>" +
             "linkId: " + linkId);
     else
         alert("sendEmail(CurtishRhodes@hotmail.com, PoserIdentified@Ogglebooble.com,\nposer identified !!!\n" +
             "suggested name: " + $('#txtPoserIdentified').val() +
-            "\nvisitor: " + globalVisitorId + "\nfolderId: " + folderId + "\nlinkId: " + linkId
+            "\nvisitor: " + visitorId + "\nfolderId: " + folderId + "\nlinkId: " + linkId
         );
 
     showMyAlert("Thank you for your input\nYou have earned 1000 credits.");

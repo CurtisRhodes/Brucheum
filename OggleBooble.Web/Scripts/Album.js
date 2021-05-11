@@ -1,10 +1,9 @@
-﻿let apFolderName, apFolderRoot, apFolderId = 0, apVisitorId; isLargeLoad = false;
+﻿let apFolderName, apFolderRoot, apFolderId = 0, isLargeLoad = false;
 const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
 
 function loadLargeAlbum(folderId) {
     setOggleHeader("album");
     apFolderId = folderId;
-    apVisitorId = globalVisitorId;
     qucikHeader(folderId);
     //logPageHit(folderId);
     settingsImgRepo = settingsArray.ImageRepo;
@@ -19,13 +18,8 @@ function loadAlbum(folderId) {
     }
     setOggleHeader("album");
     apFolderId = folderId;
-    apVisitorId = globalVisitorId;
-
     qucikHeader(folderId);
     logPageHit(folderId);
-    //if (isNullorUndefined(apVisitorId)) {
-    //    apVisitorId = "stillOkUnknown";
-    //}
     settingsImgRepo = settingsArray.ImageRepo;
     getAlbumImages(folderId);
     getAlbumPageInfo(folderId, false);
@@ -490,24 +484,19 @@ function launchDeepSlideShow() {
     $('#albumPageLoadingGif').show();
     logEvent("DSC", apFolderId, apFolderName, "launchDeepSlideShow");
     launchViewer(apFolderId, 1, true);
+    let visitorId = getVisitorId(apFolderId, "launchDeep");
     sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com",
-        "deep slideshow clicked", "Visitor Id: " + apVisitorId + "<br/>Folder: " + apFolderName);
+        "deep slideshow clicked", "Visitor Id: " + visitorId + "<br/>Folder: " + apFolderName);
 }
 
 function checkAlbumCost() {
-    if (apVisitorId === "stillOkUnknown")
-        alert("You must be logged in to view this album");
+    //alert("You must be logged in to view this album");
 }
 
 function chargeCredits(folderId, rootFolder) {
         let activityCode = "PGV"  //  
     if (rootFolder === "centerfold")
         activityCode = "PBV";
-
-    if (apVisitorId === "stillOkUnknown")
-        // at this time this bypass is not handled
-        return;
-
     let credits;
     switch (activityCode) {
         case "PBV": credits = -20; break; // Playboy Page View
@@ -518,7 +507,7 @@ function chargeCredits(folderId, rootFolder) {
         type: "POST",
         url: settingsArray.ApiServer + "api/User/AwardCredits",
         data: {
-            VisitorId: apVisitorId,
+            VisitorId: getVisitorId(222, "chargeCredits"),
             ActivityCode: activityCode,
             PageId: folderId,
             Credits: credits

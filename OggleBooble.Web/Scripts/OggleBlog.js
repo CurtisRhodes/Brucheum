@@ -268,7 +268,7 @@ function clearBlogGets() {
 function saveBlogEntry() {
     try {
         blogObject.CommentTitle = $('#txtCommentTitle').val();
-        blogObject.VisitorId = globalVisitorId;
+        blogObject.VisitorId = getVisitorId(3911, "saveBlogEntry");
         blogObject.Link = $('#txtLink').val();
         blogObject.CommentText = $('#summernoteContainer').summernote('code');
         blogObject.CommentType = $('#selBlogEditCommentType').val();
@@ -289,8 +289,7 @@ function saveBlogEntry() {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3911, errMsg, functionName);
+                    if (!checkFor404(errMsg, folderId, "saveBlogEntry")) logError("XHR", 3911, errMsg, "saveBlogEntry");
                 }
             });
         }

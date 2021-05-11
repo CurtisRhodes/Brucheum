@@ -179,9 +179,9 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
-                            visitorInfoModel.IsLoggedIn = dbRegisteredUser.IsLoggedIn.Value;
+                            visitorInfoModel.IsLoggedIn = dbRegisteredUser.IsLoggedIn;
                             visitorInfoModel.UserRole = dbRegisteredUser.UserRole;
-                            visitorInfoModel.UserCredits = dbRegisteredUser.UserCredits.Value;
+                            visitorInfoModel.UserCredits = dbRegisteredUser.UserCredits;
                             visitorInfoModel.Email = dbRegisteredUser.Email;
                             visitorInfoModel.UserName = dbRegisteredUser.UserName;
                         }

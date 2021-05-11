@@ -236,7 +236,7 @@ function imageClick(selectedSide) {
             data: {
                 Winner: winnerLinkId,
                 Looser: looserLinkId,
-                VisitorId: globalVisitorId
+                VisitorId: getVisitorId(333, "imageClick")
             },
             success: function (success) {
                 if (success === "ok") {
@@ -244,7 +244,7 @@ function imageClick(selectedSide) {
                     $('#rankerBox' + selectedSide).removeClass("bigRedBorder");
                 }
                 else {
-                    if (document.domain == "localHost") alert("InsertVote: " + success);                    
+                    if (document.domain == "localHost") alert("InsertVote: " + success);
                     logError("AJX", 3907, success, "imageClick");
                 }
             },

@@ -56,7 +56,7 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes();
             break;
         default:
-            if (domain === 'localhost') alert("spaPageId: " + spaPageId + " not found");
+            if (document.domain === 'localhost') alert("spaPageId: " + spaPageId + " not found");
             logError("SWT", spaPageId, "fer sur", "displaySpaPage");
             break;
     }
@@ -100,8 +100,7 @@ function loadUpdatedGalleriesBoxes() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "load Updated Galleries Boxes"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", subdomain, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "load Updated Galleries Boxes")) logError("XHR", subdomain, errMsg, "load Updated Galleries Boxes");
         }
     });
 }
@@ -145,8 +144,7 @@ function launchPromoMessages() {
         error: function (jqXHR) {
             $('#indexPageLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = "launchPromoMessages"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR",3908, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "launchPromoMessages")) logError("XHR", 3908, errMsg, "launchPromoMessages");
         }
     });
 }
@@ -200,10 +198,9 @@ function goToPorn() {
 
 function localhostBypass() {
     if (document.domain === 'localhost') {
-        globalVisitorId = window.localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
+        localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
         //setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-        //let visitorId = globalVisitorId;
-        console.log("localhostBypass visitorId: " + globalVisitorId);
+        console.log("localhostBypass visitorId: " + localStorage["VisitorId"]);
         //alert("localhostBypass visitorId: " + visitorId);
         //setCookieValue("UserName", "developer");
         //window.localStorage["IsLoggedIn"] = "true";
@@ -258,7 +255,7 @@ function indexPageHTML() {
         //"    <div class='clickable sectionLabel' onclick='myMsgTest()'>showMyAlert test</div>\n" +
         //"    <div class='clickable sectionLabel' onclick='addBadVisitor()'>try addBadVisitor</div><br/>\n" +
         // tryIfy(folderId, newVisitorId, calledFrom)
-        "    <div class='clickable sectionLabel' onclick='tryIfy(22,\'xxx\',\'test\')'>try ify</div><br/>\n" +
+        //"    <div class='clickable sectionLabel' onclick='tryIfy(22,\'xxx\',\'test\')'>try ify</div><br/>\n" +
         //"    <div class='clickable sectionLabel' onclick='testgetIp()'>addNonIpVisitor</div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +

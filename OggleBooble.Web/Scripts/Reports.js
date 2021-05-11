@@ -202,7 +202,8 @@ function runDailyRefferals() {
             if (referrals.Success === "ok") {
                 $("#dailyRefferalsContainer").html("<div>Refferals " + todayString() + "</div>");
                 $.each(referrals.StaticPageReferrals, function (idx, obj) {
-                    $("#dailyRefferalsContainer").append("<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
+                    $("#dailyRefferalsContainer").append(
+                        "<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
                         obj.FolderName + "</a>" + obj.Hits + "</div>");
                 });
             }
@@ -212,13 +213,11 @@ function runDailyRefferals() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "Daily Refferals Report")) logError("XHR", 3907, errMsg, "Daily Refferals Report");
+            if (!checkFor404(errMsg, folderId, "Daily Refferals Report"))
+                logError("XHR", 3907, errMsg, "Daily Refferals Report");
         }
     });
 }
-
-
-
 
 function runPageHitReport() {
     activeReport = "PageHitReport";

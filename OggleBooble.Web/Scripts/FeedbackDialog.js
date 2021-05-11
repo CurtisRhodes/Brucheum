@@ -52,6 +52,7 @@
     function saveFeedback(folderId) {
         try {
             if (validateFeedback()) {
+
                 //alert("feedbackType: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
                 let feedbackType = $('#feedbackDialog input[type=\'radio\']:checked').val();
                 //let feedbackMessage = $('#smnFeedback').summernote('code');
@@ -59,7 +60,7 @@
                     type: "POST",
                     url: settingsArray.ApiServer + "api/Common/LogFeedback",
                     data: {
-                        VisitorId: globalVisitorId,
+                        VisitorId: getVisitorId(2222, "saveFeedback"),
                         FolderId: folderId,
                         FeedBackComment: $('#smnFeedback').val(),
                         FeedBackType: $('input[name="feedbackRadio"]:checked').val(),
@@ -75,7 +76,7 @@
                                 sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "Feedback !!!", +
                                     "feedbackBackType: " + feedbackType + "<br/>" +
                                     "feedbackMessage: " + $('#smnFeedback').val() + "<br/>" +
-                                    "visitor: " + globalVisitorId + "<br/>" +
+                                    "visitor: " + getVisitorId(444, "savefeedback") + "<br/>" +
                                     "folderId: " + folderId);
                             else
                                 alert("sendEmail(CurtishRhodes@hotmail.com, Feedback@Ogglebooble.com, Feedback !!!" +
@@ -94,8 +95,7 @@
                     },
                     error: function (jqXHR) {
                         let errMsg = getXHRErrorDetails(jqXHR);
-                        let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                        if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                        if (!checkFor404(errMsg, folderId, "saveFeedback")) logError("XHR", folderId, errMsg, "saveFeedback");
                     }
                 });
             }
@@ -133,7 +133,7 @@
         try {
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + globalVisitorId,
+                url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + getVisitorId(12333, "getUserEmail"),
                 success: function (registeredUser) {
                     if (registeredUser.Success == "ok") {
                         $('#txtFeedbackEmail').val(registeredUser.Email);
@@ -191,11 +191,12 @@ function saveFolderComment(folderId) {
     //public string AddEditTrackBackLink(FolderCommentModel folderCommentModel)
     //let folderCommentMessage = $('#smnFolderComment').summernote('code');
     try {
+        let visitorId = getVisitorId(566, "saveFolderComment");
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/FolderComment/AddFolderComment",
             data: {
-                VisitorId: globalVisitorId,
+                VisitorId: visitorId,
                 FolderId: folderId,
                 CommentText: $('#smnFolderComment').val()
             },
@@ -207,7 +208,7 @@ function saveFolderComment(folderId) {
                     if (document.domain !== "localhost")
                         sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Folder Comment !!!", +
                             "folderCommentMessage: " + $('#smnFolderComment').val() + "<br/>" +
-                            "visitor: " + globalVisitorId + "<br/>" +
+                            "visitor: " + visitorId + "<br/>" +
                             "folderId: " + folderId);
                     else
                         alert("sendEmail(CurtishRhodes@hotmail.com, FolderComment@Ogglebooble.com,FolderComment !!!\n" +

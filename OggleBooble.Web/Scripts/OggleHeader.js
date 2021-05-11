@@ -51,6 +51,9 @@ function resetOggleHeader(folderId, rootFolder) {
     hdrRootFolder = rootFolder;
     $('#divLoginArea').show();
         
+    $('#optionLoggedIn').hide();
+    $('#optionNotLoggedIn').show();
+    $('#footerCol5').hide();
     if (!isNullorUndefined(localStorage["IsLoggedIn"])) {
         //alert("localStorage[IsLoggedIn]: " + localStorage["IsLoggedIn"]);
         if (localStorage["IsLoggedIn"] == "true") {
@@ -62,11 +65,6 @@ function resetOggleHeader(folderId, rootFolder) {
                 $('#footerCol5').show();
             else
                 $('#footerCol5').hide();
-        }
-        else {
-            $('#optionLoggedIn').hide();
-            $('#optionNotLoggedIn').show();
-            $('#footerCol5').hide();
         }
     }
 
@@ -389,7 +387,7 @@ function headerHtml() {
         "                   <div class='hoverTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
         "               </div>\n" +
         "               <div id='optionNotLoggedIn' class='displayHidden'>\n" +
-        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
+        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog(\"header\")'>Register</a></div>\n" +
         "                   <div id='btnLayoutLogin' class='hoverTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
         "               </div>\n" +
         "           </div>\n" +

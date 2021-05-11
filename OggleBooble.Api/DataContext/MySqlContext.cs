@@ -70,17 +70,27 @@ namespace OggleBooble.Api.MySqlDataContext
     [Table("OggleBooble.VwStaticPageReferral")]
     public partial class VwStaticPageReferral
     {
-        public string Occured { get; set; }
         [Key]
         public int FolderId { get; set; }
-        public string RootFolder { get; set; }
         public string FolderName { get; set; }
         public int Hits { get; set; }
-        public string Location { get; set; }
-        public string IpAddress { get; set; }
-        public string VisitorId { get; set; }
-        public string UserName { get; set; }
+        public int Total { get; set; }
     }
+
+    //[Table("OggleBooble.VwStaticPageReferral")]
+    //public partial class VwStaticPageReferral
+    //{
+    //    public string Occured { get; set; }
+    //    [Key]
+    //    public int FolderId { get; set; }
+    //    public string RootFolder { get; set; }
+    //    public string FolderName { get; set; }
+    //    public int Hits { get; set; }
+    //    public string Location { get; set; }
+    //    public string IpAddress { get; set; }
+    //    public string VisitorId { get; set; }
+    //    public string UserName { get; set; }
+    //}
 
     [Table("OggleBooble.PlayboyPlusDupes")]
     public partial class PlayboyPlusDupe
@@ -349,9 +359,9 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Status { get; set; }
         public string UserRole { get; set; }
         public string UserSettings { get; set; }
-        public int? UserCredits { get; set; }
+        public int UserCredits { get; set; }
         public string Pswrd { get; set; }
-        public bool? IsLoggedIn { get; set; }
+        public bool IsLoggedIn { get; set; }
     }
 
     [Table("OggleBooble.TrackbackLink")]

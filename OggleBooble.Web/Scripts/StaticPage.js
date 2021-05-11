@@ -25,9 +25,9 @@ $(document).ready(function () {
     var dots = "";
     loadSettings();
     $('#adminLink').hide();
-    var visitorId = globalVisitorId;
+    let visitorId = getVisitorId(111, "staticPage");
 
-    var loadSettingsWaiter = setInterval(function () {
+    let loadSettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {
             dots += "?. ";
             $('#dots').html(dots);

@@ -54,7 +54,7 @@ function perfomCopyLink(linkId) {
             if (success === "ok") {
                 displayStatusMessage("ok", "link copied")
                 logDataActivity({
-                    VisitorId: globalVisitorId,
+                    VisitorId: getVisitorId(33, "perfomCopyLink"),
                     ActivityCode: "LKC",
                     FolderId: pSelectedTreeId,
                     Details: "copy: " + linkId + " to: " + pSelectedTreeFolderPath
@@ -70,8 +70,7 @@ function perfomCopyLink(linkId) {
         },
         error: function (xhr) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", pSelectedTreeId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "performCopyLink")) logError("XHR", pSelectedTreeId, errMsg, "performCopyLink");
         }
     });
 }
@@ -105,7 +104,7 @@ function moveFile(request, linkId, folderId) {
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
 
                 logDataActivity({
-                    VisitorId: globalVisitorId,
+                    VisitorId: getVisitorId(233, "movefile"),
                     ActivityCode: request,
                     FolderId: pSelectedTreeId,
                     Details: linkId + " " + request + " from " + folderId
@@ -146,7 +145,7 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                     getAlbumImages(folderId);
 
                     logDataActivity({
-                        VisitorId: globalVisitorId,
+                        VisitorId: getVisitorId(222, "attemptRemoveLink"),
                         ActivityCode: "REM",
                         PageId: folderId,
                         Details: "link: " + linkId
@@ -212,14 +211,14 @@ function performMoveImageToRejects(linkId, folderId) {
                     slideShowDialogClose();
                     displayStatusMessage("ok", "link moved to rejects" + linkId);
                     logDataActivity({
-                        VisitorId: globalVisitorId,
+                        VisitorId: getVisitorId(folderId, "performMoveImageToRejects"),
                         ActivityCode: "REJ",
                         FolderId: folderId,
                         Details: "link moved to rejects" + linkId
                     });
                 }
                 else {
-                    logError("AJX", 3908, success, "performDeleteImage");
+                    logError("AJX", 3908, success, "performMoveImageToRejects");
                 }
             }
         },
@@ -233,7 +232,7 @@ function performMoveImageToRejects(linkId, folderId) {
 
 function removeHomeFolderLink(linkId, folderId) {
 
-    alert("removeFolderLink: " + linkId);
+    //alert("removeFolderLink: " + linkId);
 
     $.ajax({
         type: "DELETE",
@@ -248,7 +247,7 @@ function removeHomeFolderLink(linkId, folderId) {
                         slide("next");
                     getAlbumImages(folderId);
                     logDataActivity({
-                        VisitorId: globalVisitorId,
+                        VisitorId: getVisitorId(folderId,"removeHomeFolderLink"),
                         FolderId: folderId,
                         ActivityCode: "RHL",
                         Details: "link: " + selectedImageLinkId + " removed from " + currentAlbumJSfolderName
@@ -261,8 +260,7 @@ function removeHomeFolderLink(linkId, folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", pSelectedTreeId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "removeHomeFolderLink")) logError("XHR", pSelectedTreeId, errMsg, "removeHomeFolderLink");
         }
     });
 }

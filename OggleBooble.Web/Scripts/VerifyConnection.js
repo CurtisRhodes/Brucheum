@@ -1,9 +1,7 @@
-﻿let connectionVerified = false, canIgetaConnectionMessageShowing = false, verifyConnectionCount = 0, connectingToServerGifShowing = false,
-    verifyConnectionCountLimit = 25, verifyConnectionLoop = null, persistConnectionInterval = null;
+﻿let connectionVerified = false;
 
 function checkFor404(errMsg, folderId, calledFrom) {
     try {
-
         //if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
         if (errMsg.indexOf("Verify Network") > 0) {
             logError("CKE", folderId, errMsg, calledFrom);
@@ -15,148 +13,98 @@ function checkFor404(errMsg, folderId, calledFrom) {
             return false;
         }
     } catch (e) {
-        throw 404;
+        alert("404: " + e);
     }
 }
 
 function checkConnection(folderId, calledFrom) {
-    connectionVerified = false;
-    verifyConnectionCount = 0;
+    changeFavoriteIcon("loading");
+    let dots = "";
     let getXMLsettingsWaiter = setInterval(function () {
+        document.title = "loading settings : OggleBooble";
         if (settingsArray.ApiServer === undefined) {
             dots += "~ ";
             $('#dots').html(dots);
         }
         else {
             clearInterval(getXMLsettingsWaiter);
-            verifyConnectionFunction(calledFrom, folderId);
-            setTimeout(function () {
+            let verifyConnectionCount = 0, verifyConnectionAvailable = true;
+            let connectingToServerImgShowing = false, canIgetaConnectionImgShowing = false;
+            document.title = "connecting : OggleBooble";
+            connectionVerified = false;
+            let verifyConnectionWaiter = setInterval(function () {
                 if (connectionVerified) {
+                    clearInterval(verifyConnectionWaiter);
                     $('#dots').html('');
                     tryHitStats();
-                    console.log("connection verified right off");
+                    console.log("connection verified after: " + verifyConnectionCount);
                 }
                 else {
-                    connectingToServerGifShowing = false;
-                    document.title = "loading : OggleBooble";
-                    changeFavoriteIcon("loading");
-                    let verifyConnectionWaiter = setInterval(function () {
-                        if (connectionVerified) {
-                            clearInterval(verifyConnectionWaiter);
-                            $('#dots').html('');
+                    dots += ". ";
+                    $('#dots').html(dots);
+                    if (verifyConnectionAvailable) {
+                        verifyConnectionAvailable = false;
+                        verifyConnectionCount++;
+                        $('#dots').html(dots);
+                        if (!connectingToServerImgShowing && verifyConnectionCount > 8) {
+                            $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
+                            $('#customMessageContainer').css("top", 200);
+                            console.log("showing connectingToServerGif");
+                            connectingToServerImgShowing = true;
                         }
-                        else {
-                            verifyConnectionCount++;
-                            dots += ". ";
-                            $('#dots').html(dots);
-
-                            //$('#headerMessage').html(verifyConnectionCount);
-                            if ((verifyConnectionCount > 4) && (!connectingToServerGifShowing)) showConnectingToServerGif();
-                            if ((verifyConnectionCount > verifyConnectionCountLimit) && (!canIgetaConnectionMessageShowing)) {
-                                showCanIgetaConnectionMessage(calledFrom);
-                                $('#dots').html('');
-                            }
-                            //alert("verifyConnectionCount: " + verifyConnectionCount);
-                            verifyConnectionFunction("settimeout", folderId);
-                        }
-                    }, 850);
-                }
-            }, 2000);
-        }
-    }, 300);
-}
-
-function showConnectingToServerGif() {
-    //alert("showConnectingToServerGif() " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
-    if (!connectingToServerGifShowing) {
-        
-        connectingToServerGifShowing = true;
-        $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
-        $('#customMessageContainer').css("top", 200);
-
-        console.log("showing connectingToServerGif");
-        //alert("showConnectingToServerGif   " + verifyConnectionCount + "  connectingToServerGifShowing: " + connectingToServerGifShowing);
-    }
-}
-
-function showCanIgetaConnectionMessage(calledFrom) {
-    if (!canIgetaConnectionMessageShowing) {
-        canIgetaConnectionMessageShowing = true;
-        console.log("SERVICE DOWN " + verifyConnectionCount);
-        $('#customMessage').html(
-            "<div class='shaddowBorder'>" +
-            "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
-            "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-            "</div>").show();
-        console.log("canIgetaConnection message showing");
-        logError("404", 3910, "SERVICE DOWN", calledFrom);
-    }
-}
-
-let verifyConnectionAvailable = true;
-function verifyConnectionFunction(calledFrom, folderId) {
-    try {
-
-        if (connectionVerified)
-            return;
-
-        if (verifyConnectionAvailable) {
-            verifyConnectionAvailable = false;
-            $.ajax({
-                type: "GET",
-                //headers: { 'Access-Control-Allow-Origin': 'https://ogglebooble.com/' },
-                url: settingsArray.ApiServer + "api/Common/VerifyConnection",
-                success: function (successModel) {
-                    console.log("GET VerifyConnection: " + verifyConnectionCount);
-                    if (successModel.Success == "ok") {
-                        if (successModel.ConnectionVerified) {
-                            connectionVerified = true;
-                            $('#customMessage').hide();
-                            canIgetaConnectionMessageShowing = false;
-                            launchingServiceGifShowing = false;
-                        }
-                        else {
-                            console.log("success but no verify: " + successModel.Success);
-                            //if (document.domain === "localhost")
-                            //    alert("proper error in verify ConnectionFunction: " + successModel.Success);
-                            //logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
-                            connectionVerified = false;
-                        }
-                    }
-                    else {
-                        if (successModel.Success.indexOf("Parameter name: app") > -1) {
-                            connectionVerified = false;
-                            //console.log("TRAPPED: " + successModel.Success);
-                        }
-                        if (successModel.Success.indexOf("A socket operation was attempted to an unreachable network") > -1)
-                        {
+                        if (!canIgetaConnectionImgShowing && verifyConnectionCount > 22) {
                             $('#customMessage').html(
                                 "<div class='shaddowBorder'>" +
                                 "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
                                 "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
-                                "</div>"
-                            ).show();
+                                "</div>").show();
+                            console.log("canIgetaConnection message showing");
+                            logError("404", 3910, "SERVICE DOWN", calledFrom);
+                            canIgetaConnectionImgShowing = true;
                         }
-                        else {
-                            console.log("proper error in verify ConnectionFunction: " + successModel.Success);
-                            logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
-                            //if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
-                        }
+                        $.ajax({
+                            type: "GET",
+                            url: settingsArray.ApiServer + "api/Common/VerifyConnection",
+                            success: function (successModel) {
+                                console.log("GET VerifyConnection: " + verifyConnectionCount);
+                                if (successModel.Success == "ok") {
+                                    if (successModel.ConnectionVerified) {
+                                        connectionVerified = true;
+                                        $('#customMessage').hide();
+                                        canIgetaConnectionMessageShowing = false;
+                                        launchingServiceGifShowing = false;
+                                    }
+                                    else {
+                                        console.log("success but no verify: " + successModel.Success);
+                                        if (document.domain === "localhost") alert("success but no verify: " + successModel.Success);
+                                    }
+                                }
+                                else {
+                                    if (successModel.Success.indexOf("Parameter name: app") > -1) {
+                                        //console.log("TRAPPED: " + successModel.Success);
+                                    }
+                                    if (successModel.Success.indexOf("A socket operation was attempted to an unreachable network") > -1) {
+                                        $('#dots').html('');
+                                        clearInterval(verifyConnectionWaiter);
+                                        alert("no network connection");
+                                    }
+                                    //   console.log("proper error in verify ConnectionFunction: " + successModel.Success);
+                                    //   logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
+                                    //if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
+                                }
+                                verifyConnectionAvailable = true;
+                            },
+                            error: function (jqXHR) {
+                                clearInterval(verifyConnectionWaiter);
+                                let errMsg = getXHRErrorDetails(jqXHR);
+                                if (document.domain === "localhost") alert("verifyConnection XHR: " + errMsg);
+                            }
+                        });
                     }
-                    verifyConnectionAvailable = true;
-                },
-                error: function (jqXHR) {
-                    verifyConnectionAvailable = false;
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    //let functionName = "verifyConnectionFunction"; // arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (document.domain === "localhost") alert("verifyConnection XHR: " + errMsg);
-                    connectionVerified = false;
                 }
-            });
+            }, 550);
         }
-    } catch (e) {
-        throw e;
-    }
+    }, 300);
 }
 
 function tryHitStats() {

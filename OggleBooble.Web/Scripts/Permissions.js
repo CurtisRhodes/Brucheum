@@ -2,8 +2,8 @@
     try {
 
         if (isNullorUndefined(localStorage["IsLoggedIn"])) {
-            //logError("BUG", 22668, "localStorage[IsLoggedIn] undefined", "isInRole/" + calledFrom);
-            loadUserInfoIntoLocalStorage(558, "isInRole/" + calledFrom);
+            logError("BUG", 22668, "localStorage[IsLoggedIn] undefined", "isInRole/" + calledFrom);
+            loadUserProfile("is in role");
             return false;
         }
         if (!localStorage["UserName"] == "unregistered") {
@@ -47,7 +47,7 @@ function updateUserSettings(settingName, settingJson) {
     try {
         $.ajax({
             type: "PUT",
-            url: settingsArray.ApiServer + "api/OggleUser/UpdateUserSettings?visitorId=" + globalVisitorId + "&settingName=" + settingName + "&settingJson=" + settingJson,
+            url: settingsArray.ApiServer + "api/OggleUser/UpdateUserSettings?visitorId=" + localStorage["VisitorId"] + "&settingName=" + settingName + "&settingJson=" + settingJson,
             success: function (successModel) {
                 if (successModel.Success === "ok") {
                     if (!isNullorUndefined(successModel.ReturnValue)) {
@@ -122,7 +122,7 @@ function loadCarouselSettingsIntoLocalStorage() {
 }
 
 function updateCarouselSettings() {
-    let visitorId = globalVisitorId;
+    let visitorId = localStorage["VisitorId"];
     if (isNullorUndefined(visitorId)) {
         displayStatusMessage("warning", "You must be logged in for settings to persist");
     }
@@ -144,99 +144,24 @@ function updateCarouselSettings() {
     }
 }
 
-function loadUserInfoIntoLocalStorage(folderId, calledFrom) {
-    try {
-        if (globalVisitorId == "unset") {
-            logError("UI1", folderId, "globalVisitorId = unset", "loadUserInfo/" + calledFrom); // globalVisitorId == "unset"
-            getIpInfo(folderId, "loadUserInfo/" + calledFrom)
-            return;
-        }
-
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Common/GetVisitorInfo?visitorId=" + globalVisitorId,
-            success: function (visitorInfo) {
-                if (visitorInfo.Success == "ok") {
-                    localStorage["VisitorId"] = globalVisitorId;
-                    localStorage["VisitorVerified"] = true;
-                    localStorage["IsLoggedIn"] = visitorInfo.IsLoggedIn;
-                    localStorage["UserName"] = visitorInfo.UserName;
-                    localStorage["UserRole"] = visitorInfo.UserRole;
-                    $('#spnUserName').html(localStorage["UserName"]);
-                    if (visitorInfo.IsLoggedIn) {
-                        $('#optionLoggedIn').show();
-                        $('#optionNotLoggedIn').hide();
-                    }
-                    else {
-                        $('#optionLoggedIn').show();
-                        $('#optionNotLoggedIn').hide();
-                    }
-                    if (isInRole("trusted", folderId, "loadUserInfo/" + calledFrom))
-                        $('#footerCol5').show();
-                    else
-                        $('#footerCol5').hide();
-
-                    logActivity("UI2", 4744, "loadUserInfo/" + calledFrom)
-                }
-                else {
-                    logError("AJX", 545, visitorInfo.Success, "loadUserInfo/" + calledFrom);
-                }
-
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "loadUserInfo")) {
-                    logError("XHR", folderId, errMsg, "loadUserInfo");
-                }
-            }
-        });
-    } catch (e) {
-        logError("CAT", 3908, e, "loadUserInfo/" + calledFrom);
-    }
-}
-
 function verifyVisitorId(folderId, calledFrom) {
     try {
         //if (!document.cookie) {
         //    logError("VV1", folderId, "not a real problem", "verifyVisitor"); // No document.cookie exists
         //    return;
-        //}
 
         if (isNullorUndefined(localStorage["VisitorId"])) {
-            if (globalVisitorId == "unset") {
-                logError("VV2", folderId, "sent to getIpInfo", "verifyVisitor"); // visitorId found in local storage
-                getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
-                return;
-            }
-            else {
-                // no local storage but globalVisitorId set
-                // alert("no local storage but globalVisitorId set to: " + globalVisitorId);
-                localStorage["VisitorId"] = globalVisitorId;
-            }
-        }
-
-        if (globalVisitorId == "unset") {
-            if (!isNullorUndefined(localStorage["VisitorId"])) {
-                globalVisitorId = localStorage["VisitorId"];
-                //console.log("globalVisitorId set to: " + localStorage["VisitorId"]);
-                //logActivity("GVS", folderId, "verifyVisitorId/" + calledFrom); //  globalVisitorId set to localStorage[VisitorId]
-            }
-            else {
-                logError("VV3", folderId, "not a real problem", "verifyVisitor"); // globalVisitorId = unset and localStorage[VisitorId] undefined
-                getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
-                return;
-            }
-        }
-
-        if (globalVisitorId != localStorage["VisitorId"]) {  
-            logError("VV4", folderId, "globalVisitorId: " + globalVisitorId + ", localStorage: " + localStorage["VisitorId"], "verifyVisitorId/" + calledFrom);
+            logError("VV2", folderId, "sent to getIpInfo", "verifyVisitor"); // visitorId found in local storage
+            getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
             return;
         }
 
-        if (isNullorUndefined(localStorage["VisitorVerified"])) {
-            loadUserInfoIntoLocalStorage(folderId, "verifyVisitorId/" + calledFrom);
+        if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
+            $('#headerMessage').html("new session started");
+            // if (document.domain === 'localhost') alert("new session started");
+            loadUserProfile("verify visitor");
         }
-        console.log("visitor verified: " + globalVisitorId);
+        console.log("visitor verified: " + localStorage["VisitorId"]);
     }
     catch (e) {
         logError("CAT", folderId, e, "verifyVisitorId/" + calledFrom);
@@ -244,3 +169,4 @@ function verifyVisitorId(folderId, calledFrom) {
         console.error("Catch error in verifyVisitorId!!: " + e);
     }
 }
+

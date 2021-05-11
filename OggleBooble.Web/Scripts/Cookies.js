@@ -99,7 +99,7 @@ function setCookieValue(elementToSet, newValue) {
     }
 }
 
-function createCookie() {
+function createCookie(visitorId) {
     try {
         console.log("createCookie");
         //alert("createCookie");
@@ -109,8 +109,9 @@ function createCookie() {
         alert("deleted decoded cookie: " + decodeURIComponent(document.cookie));
 
         expirydate = new Date();
+
         expirydate.setMonth(expirydate.getMonth() + 9);
-        let cookiestring = ";VisitorId=" + globalVisitorId + ";UserName=" + localStorage["UserName"] +
+        let cookiestring = ";VisitorId=" + visitorId + ";UserName=" + localStorage["UserName"] +
             "VisitorVerified=true;Isloggedin=" + localStorage["IsLoggedIn"] + ";expires=" + expirydate.toUTCString();
         document.cookie = cookiestring;
 

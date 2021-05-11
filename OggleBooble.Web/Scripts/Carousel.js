@@ -18,7 +18,6 @@ function launchCarousel(startRoot) {
     let lastStep = "o";
     try
     {
-        let lastStep = "o";
         loadCarouselSettingsIntoLocalStorage();
         jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
         window.addEventListener("resize", resizeCarousel);
@@ -91,8 +90,15 @@ function launchCarousel(startRoot) {
     }
     catch (e)
     {
+        if (lastStep == "porn") {
+            //if (e.indexOf("Unexpected token u in JSON at position 1") > 0)
+            {
+                localStorage.removeItem("pornCache");
+                launchCarousel("porn");
+            }
+        }
         // SyntaxError: Unexpected token u in JSON at position 
-        if (domain == "localHost") alert("launchCarousel CATCH: lastStep:" + lastStep + "  e: " + e);
+        if (document.domain == "localHost") alert("launchCarousel CATCH: lastStep:" + lastStep + "  e: " + e);
         logError("CAT", startRoot, "lastStep:" + lastStep + "  e: " + e, "launchCarousel");
     }
 }
@@ -220,8 +226,7 @@ function refreshCache(rootFolder) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "refreshCache")) logError("XHR", folderId, errMsg, "refreshCache");
             }
         });
     } catch (e) {
@@ -548,7 +553,7 @@ function clickViewGallery(labelClick) {
     //    "<br/>button: " + carouselButtonClicked +
     //    "<br/>folder: " + carouselItemArray[imageIndex].ImageFolderName + " : " + clickFolderId +
     //    "<br/>image: " + carouselItemArray[imageIndex].LinkId +
-    //    "<br/>visitorId: " + globalVisitorId
+    //    "<br/>visitorId: " + gVisitorId
     //);
     //console.log("clickViewGallery email sent");
 
@@ -575,7 +580,7 @@ function imgErrorThrown() {
             carouselImageErrors++;
             logError("ILF", carouselItemArray[imageIndex].FolderId, "linkId: " + carouselItemArray[imageIndex].LinkId + " imgSrc: " + imgSrc, "Carousel");
 
-            if (domain === 'localhost') {
+            if (document.domain == 'localhost') {
                 pause();
                 alert("image error\npage: " + carouselItemArray[imageIndex].FolderId +
                     ",\nPageName: " + carouselItemArray[imageIndex].FolderName +

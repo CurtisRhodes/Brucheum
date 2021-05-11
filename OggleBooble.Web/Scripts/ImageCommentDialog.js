@@ -1,7 +1,7 @@
 ﻿let imageComment = {};
 
 function showImageCommentDialog(linkId, imgSrc, folderId, calledFrom) {
-    imageComment.VisitorId = globalVisitorId;
+    imageComment.VisitorId = getVisitorId(folderId, "showImageCommentDialog");
     imageComment.ImageLinkId = linkId;
     imageComment.CalledFrom = calledFrom;
     imageComment.FolderId = folderId;
@@ -62,7 +62,7 @@ function loadComment() {
     //}
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/OggleBlog?linkId=" + imageComment.LinkId + "&userId=" + globalVisitorId,
+        url: settingsArray.ApiServer + "/api/OggleBlog?linkId=" + imageComment.LinkId + "&userId=" + getVisitorId(5678, "loadComment"),
         success: function (comment) {
             if (comment.Success === "ok") {
                 if (comment.Id !== 0) {

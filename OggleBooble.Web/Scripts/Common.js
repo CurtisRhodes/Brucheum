@@ -1,11 +1,30 @@
-﻿let globalVisitorId = "unset", 
-    verbosity = 5, freeVisitorHitsAllowed = 7500, settingsArray = {}, userRoles = [], settingsImgRepo,
+﻿let verbosity = 5, freeVisitorHitsAllowed = 7500, settingsArray = {}, userRoles = [], settingsImgRepo, userProfileData = {},
     viewerShowing = false, waitingForReportThenPerformEvent = true, forgetShowingCustomMessage = true,
     debugMode = false, pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
 
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 //<div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
+
+
+function getVisitorId(folderId, calledFrom) {
+    try {
+        if (isNullorUndefined(localStorage["VisitorId"])) {
+            if (document.domain == "localhost") alert("VisitorId undefined");
+
+            getIpInfo(folderId, "getVisitorId/" + calledFrom);
+            logError("BUG", folderId, "localStorage[VisitorId] undefined", "getVisitorId/" + calledFrom);
+        }
+        else
+            return localStorage["VisitorId"];
+
+    } catch (e) {
+        localStorage["VisitorId"] = "unset";
+        logError("CAT", folderId, e, "getVisitorId/" + calledFrom);
+        if (document.domain == "localhost") alert("Catch error in getVisitorId: " + e);
+        return localStorage["VisitorId"];
+    }
+}
 
 let entirePage;
 function replaceFullPage(imgSrc) {
@@ -241,11 +260,7 @@ function create_UUID() {
 }
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
-    //alert("logError  document.domain:" + document.domain);
-    //alert("logError  globalVisitorId:" + globalVisitorId);
-
     if (document.domain === 'localhost') {
-        //  && errorCode !== "ILF"
         console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
     }
@@ -255,7 +270,7 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
                 type: "POST",
                 url: settingsArray.ApiServer + "api/Common/LogError",
                 data: {
-                    VisitorId: globalVisitorId,
+                    VisitorId: getVisitorId(folderId, "logError/" + calledFrom),
                     ErrorCode: errorCode,
                     FolderId: folderId,
                     ErrorMessage: errorMessage,
@@ -272,10 +287,9 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = "loGerror"; //arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) {
-                        logError("XHR", folderId, errMsg, functionName);
-                        if (document.domain === 'localhost') alert("XHR error in logError!!: " + errMsg);
+                    if (!checkFor404(errMsg, folderId, "logError")) {
+                        //logError("XHR", folderId, errMsg, functionName);
+                        if (document.domain === 'localhost') alert("XHR error in logError!!: " + "logError");
                     }
                 }
             });
@@ -296,7 +310,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogEvent",
             data: {
-                VisitorId: globalVisitorId,
+                VisitorId: getVisitorId(folderId, "logEvent/" + calledFrom),
                 EventCode: eventCode,
                 EventDetail: eventDetails,
                 CalledFrom: calledFrom,
@@ -313,8 +327,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "logEvent")) logError("XHR", folderId, errMsg, "logEvent");
             }
         });
     }
@@ -329,7 +342,7 @@ function logActivity(activityCode, folderId, calledFrom) {
             ActivityCode: activityCode,
             FolderId: folderId,
             CalledFrom: calledFrom,
-            VisitorId: globalVisitorId
+            VisitorId: getVisitorId(folderId, "logActivity/" + calledFrom),
         },
         success: function (success) {
             if (success === "ok") {
@@ -345,8 +358,7 @@ function logActivity(activityCode, folderId, calledFrom) {
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "logActivity")) logError("XHR", folderId, errMsg, "logActivity");
         }
     });
 }
@@ -359,15 +371,14 @@ function logDataActivity(activityModel) {
         success: function (success) {
             if (success === "ok") {
                 //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
-            }
+            } 
             else
                 logError("AJX", activityModel.FolderId, success, "logDataActivity");
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "logDataActivity")) logError("XHR", folderId, errMsg, "logDataActivity");
         }
     });
 }
@@ -507,8 +518,7 @@ function showCustomMessage(blogId, allowClickAnywhere) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 311, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "showCustomMessage")) logError("XHR", 311, errMsg, "showCustomMessage");
         }
     });
 }
@@ -541,8 +551,7 @@ function sendEmail(to, from, subject, message) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3992, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "sendEmail")) logError("XHR", 3992, errMsg, "sendEmail");
             }
         });
     } catch (e) {

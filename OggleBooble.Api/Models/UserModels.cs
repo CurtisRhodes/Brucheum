@@ -1,33 +1,18 @@
-﻿using System;
+﻿using OggleBooble.Api.MySqlDataContext;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace OggleBooble.Api.Models
 {
-    //public class RegisteredUsersSuccessModel
-    //{
-    //    public RegisteredUsersSuccessModel(){
-    //        RegisteredUsers = new List<UsersModel>();
-    //    }
-    //    public List<UsersModel> RegisteredUsers { get; set; }
-    //    public string Success { get; set; }
-    //}
-
-    public class RegisteredUserModel
+    public class RegisteredUsersSuccessModel
     {
-        public string VisitorId { get; set; }
-        public string UserName { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Status { get; set; }
-        public string UserRole { get; set; }
-        public string UserSettings { get; set; }
-        public int? UserCredits { get; set; }
-        public DateTime Created { get; set; }
-        public string ClearPassword { get; set; }
-        public bool? IsLoggedIn { get; set; }
+        public RegisteredUsersSuccessModel()
+        {
+            UserInfo = new RegisteredUser();
+        }
+        public RegisteredUser UserInfo { get; set; }
         public string Success { get; set; }
     }
 

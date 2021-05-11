@@ -21,37 +21,58 @@ function showLoginDialog() {
         pause();
 }
 
+function updateIsLoggedIn(isLoggedIn) {
+    try {
+        let visitorId = getVisitorId(444, "updateIsLoggedIn");
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Login/UpdateIsLoggedIn?visitorId=" + visitorId + "&isLoggedIn=" + isLoggedIn,
+            success: function (successModel) {
+
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
+            }
+        });
+    } catch (e) {
+        logError("CAT", 333, e, "updateIsLoggedIn");
+    }
+}
+
 function attemptLogin() {
-    var userName = $('#txtLoginUserName').val();
-    var clearPasswod = $('#txtLoginClearPassword').val();
+    let userName = $('#txtLoginUserName').val();
+    let clearPasswod = $('#txtLoginClearPassword').val();
     if (validateLogin()) {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + userName + "&passWord=" + clearPasswod,
-            success: function (successModel) {
-                if (successModel.Success === "ok") {
+            success: function (registeredUserSuccess) {
+                if (registeredUserSuccess.Success === "ok") {
+                    localStorage["IsLoggedIn"] = "true";
+                    localStorage["UserName"] = registeredUserSuccess.UserInfo.UserName;
+                    $('#spnUserName').html(localStorage["UserName"]);
+                    localStorage["UserRole"] = registeredUserSuccess.UserInfo.UserRole;
+
+                    //loadUserProfile(calledFrom);
+
+                    updateIsLoggedIn(true);
+                    $('#optionNotLoggedIn').hide();
+                    $('#optionLoggedIn').show();
+                    $('#footerCol5').show();
+
                     //setCookieValue("UserName", userName);
                     //setCookieValue("IsLoggedIn", true);
-                    localStorage["IsLoggedIn"] = "true";
-
                     //setCookieValue("VisitorId", successModel.ReturnValue);
                     logEvent("LOG", 0, "Successfull log in: " + userName);
-                    updateUser({
-                        VisitorId: globalVisitorId,
-                        IsLoggedIn: "true"
-                    });
 
-                    setTimeout(function () { loadUserInfoIntoLocalStorage(87478, "attrmptLogin") }, 800);
                     $("#vailShell").hide();
                     $("#centeredDialogContainer").hide();
                     displayStatusMessage("ok", "thanks for logging in " + userName);
                     //window.location.href = ".";
                 }
                 else {
-                    //successModel.ReturnValue = "valid";
-                    //successModel.Success = "user name not found";
-                    //alert("successModel.ReturnValue: " + successModel.ReturnValue + "\nsuccessModel.Success: " + successModel.Success);
-
                     if (successModel.ReturnValue == "valid") {
                         if (successModel.Success == "user name not found") {
                             showMyAlert("user name not found", "<div>you need to <a href='#'>register</a> username before you can login<div>");
@@ -59,11 +80,12 @@ function attemptLogin() {
                             if (successModel.Success == "password fail") {
                                 alert("password fail");
                             } else {
-                                logError("AJX", 0, successModel.Success, "attemptLogin");
+                                logError("AJX", 0, successModel.Success, "attempt Login");
                             }
                     }
                     else {
-                        logError("AJX", 0, successModel.Success, "attemptLogin");
+                        logError("AJX", 0, successModel.Success, "attempt Login");
+                        alert("validate login: " + successModel.Success);
                     }
                 }
             },
@@ -98,12 +120,7 @@ function onLogoutClick(pageId) {
         //setCookieValue("IsLoggedIn", "false");
         localStorage["IsLoggedIn"] = "false";
         //alert("IsLoggedIn: " + localStorage["IsLoggedIn"]);
-
-        updateUser({
-            VisitorId: globalVisitorId,
-            IsLoggedIn: false
-        });
-
+        updateIsLoggedIn(false);
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         $('#footerCol5').hide();
@@ -120,7 +137,7 @@ function cancelLogin() {
 function transferToRegisterPopup() {
     //$('#loginDialog').dialog('close');
     //$('#loginDialog').hide();
-    showRegisterDialog(loginFromPageId);
+    showRegisterDialog("transfer");
 }
 
 function loginDialogHtml() {
@@ -191,17 +208,22 @@ function userProfileHtml() {
         "</div>\n";
 }
 
-function loadUserProfile() {
+function loadUserProfile(calledFrom) {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + globalVisitorId,
+            url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + getVisitorId(22, "load UserProfile"),
             success: function (registeredUser) {
                 if (registeredUser.Success == "ok") {
-                    $('#txtUserProfileName').val(registeredUser.UserName);
-                    $('#txtUserProfileFirstName').val(registeredUser.FirstName);
-                    $('#txtUserProfileLastName').val(registeredUser.LastName);
-                    $('#txtUserProfileEmail').val(registeredUser.Email);
+
+                    //if (calledFrom == "verify visitor") 
+                    {
+                        localStorage["VisitorVerified"] = "true";
+                        sessionStorage["IsLoggedIn"] = registeredUser.UserInfo.IsLoggedIn ?? "true", "false";
+                        //alert("IsLoggedIn: " + sessionStorage["IsLoggedIn"]);
+                        localStorage["UserName"] = registeredUser.UserInfo.UserName;
+                        localStorage["UserRole"] = registeredUser.UserInfo.UserRole;
+                    }
                     userProfileData = {
                         VisitorId: registeredUser.VisitorId,
                         UserName: registeredUser.UserName,
@@ -213,90 +235,115 @@ function loadUserProfile() {
                         UserSettings: registeredUser.UserSettings,
                         UserCredits: registeredUser.UserCredits
                     };
-                    alert("userProfileData.VisitorId: " + userProfileData.VisitorId);
+
+                    if (calledFrom == "") {
+                        $('#txtUserProfileName').val(registeredUser.UserName);
+                        $('#txtUserProfileFirstName').val(registeredUser.FirstName);
+                        $('#txtUserProfileLastName').val(registeredUser.LastName);
+                        $('#txtUserProfileEmail').val(registeredUser.Email);
+                    }
                 }
-                else
-                    logError("AJX", 0, registeredUser.Success, "loadUserProfile");
+                else {
+                    if (registeredUser.Success == "not registered") {
+
+                    }
+                    else {
+                        logError("AJX", 0, registeredUser.Success, "load UserProfile");
+                        if (document.domain == "localhost") alert("load UserProfile: " + registeredUser.Success);
+                    }
+                }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "load UserProfile")) logError("XHR", 0, errMsg, "load UserProfile");
             }
         });
     } catch (e) {
-        logError("CAT", 0, e, "loadUserProfile");
+        logError("CAT", 0, e, "load UserProfile");
     }
 }
 
 function updateUserProfile() {
     let userProfileData = {
-        VisitorId: globalVisitorId,
         UserName: $('#txtUserProfileName').val(),
         FirstName: $('#txtUserProfileFirstName').val(),
         LastName: $('#txtUserProfileLastName').val(),
         Email: $('#txtUserProfileEmail').val()
     };
-    updateUser(userProfileData);
+    updateRegisteredUser(userProfileData);
 }
 
-
-function updateUser(userProfileData) {
+function updateRegisteredUser(userProfileData) {
     try {
-
+        let visitorId = getVisitorId(222, "updateRegisteredUser");
         $.ajax({
-            type: "PUT",
-            url: settingsArray.ApiServer + "api/OggleUser/UpdateUser",
-            data: userProfileData,
-            success: function (success) {
-                if (success == "ok") {
-                    displayStatusMessage("ok", "user profile updated");
+            type: "GET",
+            url: settingsArray.ApiServer + "api/OggleUser/GetUserInfo?visitorId=" + visitorId,
+            success: function (registeredUser) {
+                if (registeredUser.Success == "ok") {
+                    let currentRegisteredUser = registeredUser.UserInfo;
+                    currentRegisteredUser.UserName = userProfileData.UserName;
+                    currentRegisteredUser.FirstName = userProfileData.FirstName;
+                    currentRegisteredUser.LastName = userProfileData.LastName;
+                    currentRegisteredUser.Email  = userProfileData.Email;
+
+                    $.ajax({
+                        type: "PUT",
+                        url: settingsArray.ApiServer + "api/OggleUser/UpdateUser",
+                        data: currentRegisteredUser,
+                        success: function (success) {
+                            if (success == "ok") {
+                                displayStatusMessage("ok", "user profile updated");
+                            }
+                            else {
+                                logError("AJX", 0, success, "update Registered User");
+                                displayStatusMessage("error", "unable to update user profile: " + success);
+                            }
+                        },
+                        error: function (jqXHR) {
+                            let errMsg = getXHRErrorDetails(jqXHR);
+                            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
+                        }
+                    });
                 }
                 else {
-                    logError("AJX", 0, success, "updateUserProfile");
+                    logError("AJX", 0, success, "update Registered User");
                     displayStatusMessage("error", "unable to update user profile: " + success);
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "Get UserInfo")) logError("XHR", 0, errMsg, "Get UserInfo");
             }
         });
     } catch (e) {
-        logError("CAT", 0, e, "updateUserProfile");
+        logError("CAT", 0, e, "update Registered User");
     }
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function showRegisterDialog() {
-    let visitorId = globalVisitorId;
-    if (isNullorUndefined(visitorId)) {
-        getIpInfo(0, "showRegisterDialog");
-        logError("BUG", 0, "attempt to register with no visitorId", "showRegisterDialog");
-    }
-    else {
-        if (typeof pause === 'function') pause();
-        $('#centeredDialogTitle').html("Register and Login to OggleBooble");
-        $('#centeredDialogContents').html(registerDialogHtml());
-        $("#vailShell").fadeIn();
-        $("#centeredDialogContainer").draggable().fadeIn();
-        $('.validationError').hide();
-        // $("#centeredDialogContainer").css("width", "400");
-        logEvent("RDO", 0, "YESS!!!");
-    }
+function showRegisterDialog(calledFrom) {
+    if (typeof pause === 'function') pause();
+    $('#centeredDialogTitle').html("Register and Login to OggleBooble");
+    $('#centeredDialogContents').html(registerDialogHtml());
+    $("#vailShell").fadeIn();
+    $("#centeredDialogContainer").draggable().fadeIn();
+    $('.validationError').hide();
+    // $("#centeredDialogContainer").css("width", "400");
+    logEvent("RDO", 0, "YESS!!!");
 }
 
 function attemptRegister() {
-    if (validateRegister()) {
-        try {
+    try {
+        if (validateRegister()) {
+            let visitorId = getVisitorId(3333, "attemptRegister");
             $.ajax({
                 type: "POST",
-                url: settingsArray.ApiServer + "/api/Login/RegisterUser",
+                url: settingsArray.ApiServer + "/api/Login/AddRegisterUser",
                 data: {
-                    VisitorId: globalVisitorId,
+                    VisitorId: visitorId,
                     UserName: $('#txtRegisterUserName').val(),
                     ClearPassword: $('#txtRegisterClearPassword').val(),
                     FirstName: $('#txtRegisterFirstName').val(),
@@ -308,14 +355,30 @@ function attemptRegister() {
                 },
                 success: function (success) {
                     if (success === "ok") {
-                        registerHappyPath();
+                        // registerHappyPath();
+                        loadUserProfile("attempt register");
+
+                        displayStatusMessage("ok", "thanks for Registering " + localStorage["UserName"]);
+
+                        sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
+                            "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visitorId);
+
+                        localStorage["IsLoggedIn"] = true;
+                        $('#optionLoggedIn').show();
+                        $('#optionNotLoggedIn').hide();
+                        dragableDialogClose();
+                        if (typeof resume === 'function')
+                            resume();
+
+                        //window.location.href = ".";
+                        //showCustomMessage(96, false);
                     }
                     else {
                         if ((success == "user name already exists") ||
                             (success == "visitorId already registered"))
                             $('#errRegisterUserName').text(successModel.Success).show();
                         else {
-                            logError("AJX", 0, success, "attemptRegister");
+                            logError("AJX", 0, success, "attemptcRegister");
                             $('#registerValidationSummary').html(response).show();
                         }
                     }
@@ -326,31 +389,10 @@ function attemptRegister() {
                     if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
                 }
             });
-        } catch (e) {
-            logError("CAT", 0, e, "attemptRegister");
         }
+    } catch (e) {
+        logError("CAT", 0, e, "attempt Register");
     }
-}
-
-function registerHappyPath(successMessage) {
-
-    loadUserInfoIntoLocalStorage(4554, "registerHappyPath");
-    localStorage["UserName"] = $('#txtRegisterUserName').val();
-
-    displayStatusMessage("ok", "thanks for Registering " + localStorage["UserName"]);
-
-    sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
-        "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + globalVisitorId);
-
-    localStorage["IsLoggedIn"] = true;
-    $('#optionLoggedIn').show();
-    $('#optionNotLoggedIn').hide();
-    dragableDialogClose();
-    if (typeof resume === 'function')
-        resume();
-
-    //window.location.href = ".";
-    //showCustomMessage(96, false);
 }
 
 function validateRegister() {
@@ -411,6 +453,9 @@ function registerDialogHtml() {
         "   <button class='roundendButton submitButton' onclick='attemptRegister()'>Submit</button>\n";
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 var registerEmail;
 var requestedPrivileges = [];
 function authenticateEmail(usersEmail) {
@@ -427,10 +472,13 @@ function authenticateEmail(usersEmail) {
     dragableDialogClose();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 //DAC	IME	Image Error
 //DAC	LKM	Link Moved
 //DAC	ARK	Archive Image
 function awardCredits(activityCode, folderId) {
+    let visitorId = getVisitorId(3333, "awardCredits");
     let credits;
     switch (activityCode) {
         case "PBV": credits = -20; break; // Playboy Page View
@@ -449,13 +497,7 @@ function awardCredits(activityCode, folderId) {
         type: "POST",
         url: settingsArray.ApiServer + "api/User/AwardCredits",
         data: {
-        //public string VisitorId { get; set; }
-        //public string ActivityCode { get; set; }
-        //public int Credits { get; set; }
-        //public int PageId { get; set; }
-        //public DateTime Occured { get; set; }
-
-            VisitorId: globalVisitorId,
+            VisitorId: visitorId,
             ActivityCode: activityCode,
             PageId: folderId,
             Credits: credits
@@ -465,13 +507,12 @@ function awardCredits(activityCode, folderId) {
                 //displayStatusMessage("ok", "credits charged");
             }
             else {
-                logError("AJX", folderId, success, "awardCredits/" + activityCode);
+                logError("AJX", folderId, success, "awardCredits");
             }
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "awardCredits")) logError("XHR", folderId, errMsg, "awardCredits");
         }
     });
 }
