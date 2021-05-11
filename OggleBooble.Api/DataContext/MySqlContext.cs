@@ -64,7 +64,19 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
         public virtual DbSet<VwBlogComment> VwBlogComments { get; set; }
         public virtual DbSet<PlayboyPlusDupe> PlayboyPlusDupes { get; set; }
-        public virtual DbSet<VwStaticPageReferral> StaticPageReferrals { get; set; }
+        public virtual DbSet<VwStaticPageReferral> VwStaticPageReferrals { get; set; }
+        public virtual DbSet<DailyPerformance> DailyPerformances { get; set; }
+    }
+
+    [Table("OggleBooble.DailyPerformance")]
+    public partial class DailyPerformance
+    {
+        [Key]
+        public DateTime ReportDay { get; set; }
+        public int NewVisitors { get; set; }
+        public int ReturnVisits { get; set; }
+        public int PageHits { get; set; }
+        public int ImageHits { get; set; }
     }
 
     [Table("OggleBooble.VwStaticPageReferral")]
@@ -74,7 +86,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public int FolderId { get; set; }
         public string FolderName { get; set; }
         public int Hits { get; set; }
-        public int Total { get; set; }
+        //public int Total { get; set; }
     }
 
     //[Table("OggleBooble.VwStaticPageReferral")]

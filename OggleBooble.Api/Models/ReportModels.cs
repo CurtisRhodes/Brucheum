@@ -43,9 +43,9 @@ namespace OggleBooble.Api.Models
     {
         public DailyReferralsReportModel()
         {
-            StaticPageReferrals = new List<VwStaticPageReferral>();
+            VwStaticPageReferrals = new List<VwStaticPageReferral>();
         }
-        public List<VwStaticPageReferral> StaticPageReferrals { get; set; }
+        public List<VwStaticPageReferral> VwStaticPageReferrals { get; set; }
         public string Success { get; set; }
     }
 

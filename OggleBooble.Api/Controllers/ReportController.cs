@@ -19,6 +19,43 @@ namespace OggleBooble.Api.Controllers
         static readonly string devlVisitorId = ConfigurationManager.AppSettings["devlVisitorId"];
 
         [HttpGet]
+        [Route("api/Report/DailyPerformance")]
+        public MatrixResultsModel DailyPerformance()
+        {
+            var rslts = new MatrixResultsModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
+                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
+                    db.SaveChanges();
+                    DateTime maxReportDay = db.DailyPerformances.Max(p => p.ReportDay);
+                    int dd = Math.Max(1, (int)DateTime.Today.Subtract(maxReportDay).TotalDays);
+                    db.Database.ExecuteSqlCommand("call spPerformance(" + dd + ")");
+                    var sevenDaysAgo =  DateTime.Today.AddDays(-14);
+                    var performanceRows = db.DailyPerformances.Where(p => p.ReportDay > sevenDaysAgo).ToList();
+                    foreach (DailyPerformance pRow in performanceRows)
+                    {
+                        rslts.mRows.Add(new MatrixModel()
+                        {
+                            ReportDay = pRow.ReportDay,
+                            DateString = pRow.ReportDay.ToShortDateString(),
+                            DayofWeek = pRow.ReportDay.DayOfWeek.ToString(),
+                            NewVisitors = pRow.NewVisitors,
+                            Visits = pRow.ReturnVisits,
+                            PageHits = pRow.PageHits,
+                            ImageHits = pRow.ImageHits
+                        });
+                    }
+                    rslts.Success = "ok";
+                }
+            }
+            catch (Exception ex) { rslts.Success = Helpers.ErrorDetails(ex); }
+            return rslts;
+        }
+
+        [HttpGet]
         [Route("api/Report/MetricMatrixReport")]
         public MatrixResultsModel MetricsMatrixReport()
         {
@@ -52,8 +89,6 @@ namespace OggleBooble.Api.Controllers
             return rslts;
         }
 
-
-
         [HttpGet]
         [Route("api/Report/ReferralsReport")]
         public DailyReferralsReportModel ReferralsReport()
@@ -63,7 +98,7 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    rslts.StaticPageReferrals = db.StaticPageReferrals.ToList();
+                    rslts.VwStaticPageReferrals = db.VwStaticPageReferrals.ToList();
                     rslts.Success = "ok";
                 }
             }

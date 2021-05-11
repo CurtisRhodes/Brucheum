@@ -9,7 +9,8 @@ function runMetricsMatrixReport() {
 
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Report/MetricMatrixReport",
+            url: settingsArray.ApiServer + "api/Report/DailyPerformance",
+            // url: settingsArray.ApiServer + "api/Report/MetricMatrixReport",
             success: function (rslts) {
                 $('#dashBoardLoadingGif').hide();
                 if (rslts.Success === "ok") {
@@ -33,6 +34,7 @@ function runMetricsMatrixReport() {
                         "<div>PageHits</div>" +
                         "<div>ImageHits</div></div>"
                     );
+
                     for (let i = 0; i < rslts.mRows.length; i++) {
                         $("#fxShell").append("<div><div class='mmDate'>" + rslts.mRows[i].DayofWeek + "</div>" +
                             "<div><div class='center'>&nbsp;" + rslts.mRows[i].DateString + "&nbsp;</div>" +
@@ -47,6 +49,7 @@ function runMetricsMatrixReport() {
                         );
                     }
                     $("#fxShell").append("</div>")
+
                     runMostVisitedPages();
                     runMostImageHits();
                     runDailyRefferals();
@@ -191,6 +194,8 @@ function runMostVisitedPages() {
     });
 }
 function runDailyRefferals() {
+    try {
+
     $('#dashBoardLoadingGif').show();
     $("#dailyRefferalsContainer").html("");
     $.ajax({
@@ -198,10 +203,10 @@ function runDailyRefferals() {
         url: settingsArray.ApiServer + "/api/Report/ReferralsReport",
         success: function (referrals) {
             $('#dashBoardLoadingGif').hide();
-            $('.subreportContainer').css("height", $('#dashboardContainer').height() - $("#dailyActivityReportContainer").height() * 2.13);
+            //$('.subreportContainer').css("height", $('#dashboardContainer').height() - $("#dailyActivityReportContainer").height() * 2.13);
             if (referrals.Success === "ok") {
                 $("#dailyRefferalsContainer").html("<div>Refferals " + todayString() + "</div>");
-                $.each(referrals.StaticPageReferrals, function (idx, obj) {
+                $.each(referrals.VwStaticPageReferrals, function (idx, obj) {
                     $("#dailyRefferalsContainer").append(
                         "<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
                         obj.FolderName + "</a>" + obj.Hits + "</div>");
@@ -209,6 +214,7 @@ function runDailyRefferals() {
             }
             else {
                 logError("AJX", 3910, referrals.Success, "Daily Refferals Report");
+                if (document.domain == "localhost") alert("runDailyRefferals: " + referrals.Success);
             }
         },
         error: function (jqXHR) {
@@ -217,6 +223,9 @@ function runDailyRefferals() {
                 logError("XHR", 3907, errMsg, "Daily Refferals Report");
         }
     });
+    } catch (e) {
+        alert("runDailyRefferals Catch: " + e);
+    }
 }
 
 function runPageHitReport() {
