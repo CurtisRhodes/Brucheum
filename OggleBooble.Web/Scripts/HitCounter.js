@@ -10,7 +10,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
             data: {
-                VisitorId: getVisitorId(folderId, "logImageHit/" + calledFrom),
+                VisitorId: getVisitorId(folderId, "logImageHit"),
                 FolderId: folderId,
                 LinkId: linkId,
                 IsInitialHit: isInitialHit
