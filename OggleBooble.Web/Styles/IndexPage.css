@@ -4,6 +4,7 @@
     color: var(--oggleTitleColor);
     white-space: nowrap;
     display: inline-block;
+    display: none;
     /*
         font-size: larger;
         position: relative;

@@ -75,22 +75,25 @@ function loadUpdatedGalleriesBoxes() {
                 $('#updatedGalleriesSection').html("");
                 $.each(latestUpdates.LatestTouchedGalleries, function (idx, LatestUpdate) {
                     if (!isNullorUndefined(LatestUpdate.ImageFile)) {
-                        //if (idx === 0) alert("LatestUpdate.ImageFile: " + LatestUpdate.ImageFile);
 
-                        thisItemSrc = settingsImgRepo + LatestUpdate.ImageFile;
-                        //console.log(LatestUpdate.FolderName + ". src: " + src);
-                        //rtpe(eventCode, calledFrom, eventDetail, folderId)
+                        if (isNullorUndefined(LatestUpdate.ImageFile)) {
+                            thisItemSrc = "/Images/binaryCodeRain.gif";
+                            logError("FIM", folder.FolderId, "UpdatedGalleriesBox image missing", "load UpdatedGalleriesBoxes");
+                        }
+                        else
+                            thisItemSrc = settingsImgRepo + LatestUpdate.ImageFile;
 
                         $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
                             "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
                             "<img id='lt" + LatestUpdate.FolderId + "' class='newsContentBoxImage' " +
+                            "alt='Images/redballon.png' "+
                             "onerror='latestGalleryImageError(" + LatestUpdate.FolderId + ",\"" + thisItemSrc + "\")' src='" + thisItemSrc + "'" +
                             "onclick='rtpe(\"LUP\",\"" + spaType + "\",\"" + LatestUpdate.FolderName + "\"," + LatestUpdate.FolderId + ")' />" +
                             "<div class='newsContentBoxDateLabel'>updated: " + dateString2(LatestUpdate.Acquired) + "</span></div>" +
                             "</div>");
                     }
                 });
-                //$('.sectionLabel').show();
+                $('.sectionLabel').show();
                 resizeIndexPage();
                 setTimeout(function () { resizeIndexPage(); }, 300);
                 var delta = (Date.now() - getLatestStart) / 1000;
@@ -106,18 +109,27 @@ function loadUpdatedGalleriesBoxes() {
 }
 
 function latestGalleryImageError(folderId, thisItemSrc) {    
-    setTimeout(function () {
-        if ($('#lt' + folderId).attr('src') == null) {
-            $('#lt' + folderId).attr('src', "Images/redballon.png");
-            logError("ILF", folderId, "Src: " + thisItemSrc, "latest Galleries");
 
-            if (document.domain === 'localhost') {
-                pause();
-                alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
-                console.log("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
-            }
-        }
-    }, 600);
+    logError("ILF", folderId, thisItemSrc, "latestGalleryImage");
+
+    if (document.domain === 'localhost') {
+        //pause();
+        alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+        //console.log("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+    }
+
+//    setTimeout(function () {
+//        if ($('#lt' + folderId).attr('src') == null) {
+//            $('#lt' + folderId).attr('src', "Images/redballon.png");
+//            logError("ILF", folderId, "Src: " + thisItemSrc, "latest Galleries");
+
+//            if (document.domain === 'localhost') {
+//                pause();
+//                alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+//                console.log("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+//            }
+//        }
+//    }, 600);
 }
 
 function launchPromoMessages() {
@@ -198,7 +210,7 @@ function goToPorn() {
 
 function localhostBypass() {
     if (document.domain === 'localhost') {
-        localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
+        //localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
         //setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
         console.log("localhostBypass visitorId: " + localStorage["VisitorId"]);
         //alert("localhostBypass visitorId: " + visitorId);

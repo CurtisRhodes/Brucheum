@@ -501,14 +501,22 @@ function addImageLink() {
 
 }
 function previewLinkImage() {
-    $('#imgLinkPreview').attr('src', $('#txtImageLink').val());
-    $('#imgLinkPreview').one("load", function () {
-        //$('#footerMessage').html("image height: " + $('#imgLinkPreview').height());
-        var winH = $(window).height();
-        var headerH = $('header').height();
-        var uploadImageAreaH = $('#uploadArea').height();
-        $('.threeColumnLayout').height(Math.max(winH, uploadImageAreaH) - headerH);
-    });
+
+    try {
+        $('#imgLinkPreview').attr('src', $('#txtImageLink').val());
+        $('#imgLinkPreview').one("load", function () {
+            //$('#footerMessage').html("image height: " + $('#imgLinkPreview').height());
+            var winH = $(window).height();
+            var headerH = $('header').height();
+            var uploadImageAreaH = $('#uploadArea').height();
+            $('.threeColumnLayout').height(Math.max(winH, uploadImageAreaH) - headerH);
+        });
+    } catch (e) {
+        $('#dataifyInfo').show().html("previewLinkImage: " + e);
+        //$('#txtImageLink').val("");
+        alert("previewLinkImage: " + e);
+
+    }
 }
 
 // CREATE NEW FOLDER

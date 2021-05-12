@@ -2,6 +2,7 @@
     $("#divLoginArea").hide();
     $('#oggleHeader').html(headerHtml());
     switch (headerContext) {
+        case "root":
         case "index": {
             changeFavoriteIcon("redBallon");
             $('#oggleHeader').addClass('boobsHeader');

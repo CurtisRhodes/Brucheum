@@ -74,12 +74,19 @@ namespace OggleBooble.Api.Controllers
                 string expectedFileName;
                 foreach (ImageFile imageFile in dbFolderImageFiles)
                 {
-                    expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
-                    if (imageFile.FileName != expectedFileName)
+                    if (imageFile.FileName.LastIndexOf(".") < 5)
                     {
-                        imageFile.FileName = expectedFileName;
-                        db.SaveChanges();
-                        repairReport.ImageFilesRenamed++;
+                        repairReport.Errors.Add("bad filename: " + imageFile.FileName + "folder: " + imageFile.FolderId);
+                    }
+                    else
+                    {
+                        expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
+                        if (imageFile.FileName != expectedFileName)
+                        {
+                            imageFile.FileName = expectedFileName;
+                            db.SaveChanges();
+                            repairReport.ImageFilesRenamed++;
+                        }
                     }
                 }
                 #endregion
@@ -247,22 +254,26 @@ namespace OggleBooble.Api.Controllers
                         if (imageFile.ExternalLink != "?")
                         {
                             // Download missing File
-                            //public SuccessModel AddImageLink(AddLinkModel addLinkModel)
-                            //string xpname = imageFile.Id
-                            expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
-                            string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + expectedFileName;
-                            string downLoadSuccess = DownLoadImage(ftpPath, imageFile.ExternalLink, expectedFileName);
-                            if (downLoadSuccess == "ok")
-                                repairReport.ImagesDownLoaded++;
+                            if (imageFile.FileName.LastIndexOf(".") < 2)
+                            {
+                                repairReport.Errors.Add("bad filename: " + imageFile.FileName + "folder: " + imageFile.FolderId);
+                            }
                             else
                             {
-                                repairReport.Errors.Add("download faild: " + imageFile.ExternalLink);
-                                db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList());
-                                db.ImageFiles.Remove(imageFile);
-                                db.SaveChanges();
-                                repairReport.ImageFilesRemoved++;
+                                expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
+                                string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + expectedFileName;
+                                string downLoadSuccess = DownLoadImage(ftpPath, imageFile.ExternalLink, expectedFileName);
+                                if (downLoadSuccess == "ok")
+                                    repairReport.ImagesDownLoaded++;
+                                else
+                                {
+                                    repairReport.Errors.Add("download faild: " + imageFile.ExternalLink);
+                                    db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList());
+                                    db.ImageFiles.Remove(imageFile);
+                                    db.SaveChanges();
+                                    repairReport.ImageFilesRemoved++;
+                                }
                             }
-
                         }
                         else
                         {

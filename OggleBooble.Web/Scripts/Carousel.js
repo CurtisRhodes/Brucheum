@@ -208,8 +208,12 @@ function refreshCache(rootFolder) {
                             case "centerfold":
                                 window.localStorage["centerfoldCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
                                 break;
-                            default:
+                            case "boobs":
+                                window.localStorage.removeItem["carouselCache"];
                                 window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                                break;
+                            default:
+                                logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refreshCache");
                         }
                     });
 
