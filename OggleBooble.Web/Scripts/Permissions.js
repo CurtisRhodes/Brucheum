@@ -1,9 +1,67 @@
-﻿function isInRole(roleName, folderId,  calledFrom) {
+﻿function loadUserProfile(calledFrom) {
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + getVisitorId(22, "load UserProfile"),
+            success: function (registeredUser) {
+                if (registeredUser.Success == "ok") {
+
+                    //if (calledFrom == "verify visitor") 
+                    {
+                        localStorage["VisitorVerified"] = "true";
+                        sessionStorage["IsLoggedIn"] = registeredUser.UserInfo.IsLoggedIn ?? "true", "false";
+                        //alert("IsLoggedIn: " + sessionStorage["IsLoggedIn"]);
+                        localStorage["UserName"] = registeredUser.UserInfo.UserName;
+                        localStorage["UserRole"] = registeredUser.UserInfo.UserRole;
+                    }
+                    userProfileData = {
+                        VisitorId: registeredUser.VisitorId,
+                        UserName: registeredUser.UserName,
+                        FirstName: registeredUser.FirstName,
+                        LastName: registeredUser.LastName,
+                        Email: registeredUser.Email,
+                        Status: registeredUser.Status,
+                        UserRole: registeredUser.UserRole,
+                        UserSettings: registeredUser.UserSettings,
+                        UserCredits: registeredUser.UserCredits
+                    };
+
+                    if (calledFrom == "") {
+                        $('#txtUserProfileName').val(registeredUser.UserName);
+                        $('#txtUserProfileFirstName').val(registeredUser.FirstName);
+                        $('#txtUserProfileLastName').val(registeredUser.LastName);
+                        $('#txtUserProfileEmail').val(registeredUser.Email);
+                    }
+                }
+                else {
+                    if (registeredUser.Success == "not registered") {
+                        localStorage["UserName"] = "not registered";
+                        localStorage["UserRole"] = "not registered";
+                    }
+                    else {
+                        logError("AJX", 0, registeredUser.Success, "load UserProfile");
+                        if (document.domain == "localhost") alert("load UserProfile: " + registeredUser.Success);
+                    }
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "load UserProfile")) logError("XHR", 0, errMsg, "load UserProfile");
+            }
+        });
+    } catch (e) {
+        logError("CAT", 0, e, "load UserProfile");
+    }
+}
+
+
+function isInRole(roleName, folderId, calledFrom) {
     try {
 
         if (isNullorUndefined(localStorage["IsLoggedIn"])) {
-            logError("BUG", 22668, "localStorage[IsLoggedIn] undefined", "isInRole/" + calledFrom);
-            loadUserProfile("is in role");
+            //let visitorId = getVisitorId(folderId, "isInRole/" + calledFrom);
+            //logError("BUG", 22668, "localStorage[IsLoggedIn] undefined", "isInRole/" + calledFrom);
+            //loadUserProfile("is in role");
             return false;
         }
         if (!localStorage["UserName"] == "unregistered") {
@@ -156,8 +214,14 @@ function verifyVisitorId(folderId, calledFrom) {
             return;
         }
 
+        if (localStorage["VisitorId"]=="unset") {
+            logError("VV3", folderId, "sent to getIpInfo", "verifyVisitor"); // visitorId found in local storage
+            return;
+        }
+
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
             $('#headerMessage').html("new session started");
+            sessionStorage["VisitorVerified"] = "true";
             // if (document.domain === 'localhost') alert("new session started");
             loadUserProfile("verify visitor");
         }
@@ -166,7 +230,6 @@ function verifyVisitorId(folderId, calledFrom) {
     catch (e) {
         logError("CAT", folderId, e, "verifyVisitorId/" + calledFrom);
         if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
-        console.error("Catch error in verifyVisitorId!!: " + e);
     }
 }
 

@@ -11,9 +11,9 @@ function getVisitorId(folderId, calledFrom) {
     try {
         if (isNullorUndefined(localStorage["VisitorId"])) {
             if (document.domain == "localhost") alert("VisitorId undefined");
-
             getIpInfo(folderId, "getVisitorId/" + calledFrom);
             logError("BUG", folderId, "localStorage[VisitorId] undefined", "getVisitorId/" + calledFrom);
+            return "undefined";
         }
         else
             return localStorage["VisitorId"];

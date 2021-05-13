@@ -515,7 +515,6 @@ function previewLinkImage() {
         $('#dataifyInfo').show().html("previewLinkImage: " + e);
         //$('#txtImageLink').val("");
         alert("previewLinkImage: " + e);
-
     }
 }
 

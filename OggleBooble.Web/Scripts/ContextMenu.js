@@ -228,7 +228,7 @@ function contextMenuAction(action) {
             break;
         }
         case "explode": {
-            // logEvent("EXP", cxFolderId, pFolderName, pLinkId);
+            logEvent("EXP", cxFolderId, pFolderName, pLinkId);
             if (pMenuType === "Slideshow") {
                 slideShowButtonsActive = false;
                 $("#slideshowCtxMenuContainer").hide();

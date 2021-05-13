@@ -477,6 +477,7 @@ function subFolderImgError(imgSrc, linkId) {
 
 function launchLargeLoad() {
     //alert("launch Large Load: " + apFolderId);
+    logEvent("LLL", apFolderId, "album.js", apFolderName);
     window.location.href = "/album.html?parentfolder=" + apFolderId;  //  open page in same window
 }
 
@@ -484,9 +485,9 @@ function launchDeepSlideShow() {
     $('#albumPageLoadingGif').show();
     logEvent("DSC", apFolderId, apFolderName, "launchDeepSlideShow");
     launchViewer(apFolderId, 1, true);
-    let visitorId = getVisitorId(apFolderId, "launchDeep");
-    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com",
-        "deep slideshow clicked", "Visitor Id: " + visitorId + "<br/>Folder: " + apFolderName);
+    //    let visitorId = getVisitorId(apFolderId, "launchDeep");
+    //    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com",
+    //        "deep slideshow clicked", "Visitor Id: " + visitorId + "<br/>Folder: " + apFolderName);
 }
 
 function checkAlbumCost() {
