@@ -89,14 +89,13 @@ function logPageHit(folderId) {
 
 let lastAddVisitorIdLookup;
 function logVisit(folderId, calledFrom) {
+
     let visitorId = getVisitorId(folderId, "logVisit/" + calledFrom);
     if (visitorId == lastAddVisitorIdLookup) {
-        logError("BUG", folderId, "same visitorId came in twice in a row", "logVisit/" + calledFrom);
+        logError("DBV", folderId, "visitorId: " + lastAddVisitorIdLookup, calledFrom + "/logVisit");
         return;
     }
     lastAddVisitorIdLookup = visitorId;
-
-
 
     //logActivity("LV0", folderId,"logVisit");
     $.ajax({
@@ -150,6 +149,9 @@ function getIpInfo(folderId, calledFrom) {
                 //if (localStorage["VisitorId"].length() == 36) { }
             }
 
+
+
+
             let newVisitorId = create_UUID();
             logActivity("IP1", folderId, "getIpInfo/" + calledFrom);
             let ipInfoExited = false;
@@ -184,14 +186,16 @@ function getIpInfo(folderId, calledFrom) {
                 error: function (jqXHR) {
                     ipInfoExited = true;
                     logActivity("IP3", folderId, "getIpInfo/" + calledFrom); // XHR error
-
-                    tryIfy(folderId, "getIpInfo/" + calledFrom);
-
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg, folderId, "getIpInfo/" + calledFrom)) {
-                        logError("IP3", folderId, errMsg, "try AddVisitor");
-                        // Not connect.Verify Network.
-                        //tryIfy(folderId, "getIpInfo/" + calledFrom, newVisitorId);
+                    if (ipResponse.Status == "429") {
+                        logActivity("IP5", folderId, "getIpInfo/" + calledFrom)
+                        tryIfy(folderId, "getIpInfo/" + calledFrom, newVisitorId);
+                    }
+                    else {
+                        let errMsg = getXHRErrorDetails(jqXHR);
+                        //if (!checkFor404(errMsg, visitorData.FolderId, "getIpInfo/" + calledFrom)) {
+                        logActivity("IP3", folderId, "getIpInfo/" + calledFrom); // XHR error
+                        logError("IP3", visitorData.FolderId, errMsg, "try AddVisitor");
+                        tryIfy(folderId, "getIpInfo/" + calledFrom, newVisitorId);
                     }
                 }
             });
@@ -269,10 +273,11 @@ function addVisitor(visitorData) {
 let lastTryIfyVisitorIdLookup;
 function tryIfy(folderId, calledFrom) {
     try {
-
-        if (newVisitorId == lastTryIfyVisitorIdLookup) {
-            logError('BUG', folderId, "same visitorId came in to tryIfy twice in a row", "folderId/" + calledFrom);
-            return;
+        if (!isNullorUndefined(lastTryIfyVisitorIdLookup)) {
+            if (newVisitorId == lastTryIfyVisitorIdLookup) {
+                logError('BUG', folderId, "same visitorId came in to tryIfy twice in a row", "tryIfy/" + calledFrom);
+                return;
+            }
         }
         let newVisitorId = create_UUID();
         lastTryIfyVisitorIdLookup = newVisitorId;
@@ -324,13 +329,10 @@ function tryIfy(folderId, calledFrom) {
             },
             error: function (jqXHR) {
                 logActivity("IF3", folderId, "tryIfy/" + calledFrom); // ipfy XHR fail
-
-
-
                 let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity("SP6", folderId, calledFrom); // static page hit XHR error
-                if (!checkFor404(errMsg, folderId, "logStaticPageHit")) logError("XHR", folderId, errMsg, "tryIfy/" + calledFrom);
-                //addNonIpVisitor(folderId, newVisitorId);
+                if (!checkFor404(errMsg, folderId, "logStaticPageHit")) {
+                    logError("XHR", folderId, errMsg, "tryIfy/" + calledFrom);
+                }
             }
         });
     } catch (e) {
@@ -584,7 +586,7 @@ function testgetIp() {
 
 
 //$.ajax({
-//    url: "https://geo.ipify.org/api/v1?apiKey=at_QDHGDpxlpti3hQ9WQMvjXxFX54Sgf&ipAddress=" + ipResponse.ip,
+//    url: "https ://geo.ipify.org/api/v1?apiKey=at_QDHGDpxlpti3hQ9WQMvjXxFX54Sgf&ipAddress=" + ipResponse.ip,
 //    dataType: "JSON",
 //    success: function (geoResponse) {
 //        addVisitor({
