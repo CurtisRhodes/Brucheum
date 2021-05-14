@@ -54,7 +54,6 @@
     }
 }
 
-
 function isInRole(roleName, folderId, calledFrom) {
     try {
 
@@ -204,31 +203,30 @@ function updateCarouselSettings() {
 
 function verifyVisitorId(folderId, calledFrom) {
     try {
-        //if (!document.cookie) {
-        //    logError("VV1", folderId, "not a real problem", "verifyVisitor"); // No document.cookie exists
-        //    return;
+        logActivity("VV0", folderId, calledFrom);
 
         if (isNullorUndefined(localStorage["VisitorId"])) {
-            logError("VV2", folderId, "sent to getIpInfo", "verifyVisitor"); // visitorId found in local storage
+            logActivity("VV2", folderId, calledFrom);
             getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
             return;
         }
 
-        if (localStorage["VisitorId"]=="unset") {
-            logError("VV3", folderId, "sent to getIpInfo", "verifyVisitor"); // visitorId found in local storage
+        if (localStorage["VisitorId"] == "unset") {
+            logActivity("VV3", folderId, calledFrom);
             return;
         }
 
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
             $('#headerMessage').html("new session started");
             sessionStorage["VisitorVerified"] = "true";
-            // if (document.domain === 'localhost') alert("new session started");
             loadUserProfile("verify visitor");
+            logVisit(folderId, "verify visitor");
+            console.log("visitor verified: " + localStorage["VisitorId"]);
+            // if (document.domain === 'localhost') alert("new session started");
         }
-        console.log("visitor verified: " + localStorage["VisitorId"]);
     }
     catch (e) {
-        logError("CAT", folderId, e, "verifyVisitorId/" + calledFrom);
+        logError("CAT", folderId, e, calledFrom + "/verifyVisitorId");
         if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
     }
 }

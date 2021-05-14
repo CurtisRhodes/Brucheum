@@ -9,20 +9,25 @@
 
 function getVisitorId(folderId, calledFrom) {
     try {
+        if (localStorage["VisitorId"] == "unset") {
+            if (document.domain == "localhost") alert("VisitorId undefined");
+            //getIpInfo(folderId, calledFrom + "/getVisitorId");
+            return "unset";
+        }
+
         if (isNullorUndefined(localStorage["VisitorId"])) {
             if (document.domain == "localhost") alert("VisitorId undefined");
-            getIpInfo(folderId, "getVisitorId/" + calledFrom);
-            logError("BUG", folderId, "localStorage[VisitorId] undefined", "getVisitorId/" + calledFrom);
-            return "undefined";
+            //getIpInfo(folderId, calledFrom + "/getVisitorId");
+            return "unset";
         }
         else
             return localStorage["VisitorId"];
 
     } catch (e) {
         localStorage["VisitorId"] = "unset";
-        logError("CAT", folderId, e, "getVisitorId/" + calledFrom);
+        logError("CAT", folderId, e, calledFrom + "/getVisitorId");
         if (document.domain == "localhost") alert("Catch error in getVisitorId: " + e);
-        return localStorage["VisitorId"];
+        return "unset";
     }
 }
 
@@ -357,8 +362,10 @@ function logActivity(activityCode, folderId, calledFrom) {
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
+
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "logActivity")) logError("XHR", folderId, errMsg, "logActivity");
+            //if (!checkFor404(errMsg, folderId, "logActivity"))
+            logError("XHR", folderId, errMsg, "logActivity");
         }
     });
 }
