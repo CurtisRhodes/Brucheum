@@ -305,7 +305,7 @@ function contextMenuHtml() {
         " <div id='imageInfoContainer' class='contextMenuInnerContainer'>\n" +
         "   <div><span class='ctxItem'>file name</span><span id='imageInfoFileName' class='ctxInfoValue'></span></div>\n" +
         "   <div><span class='ctxItem'>folder path</span><span id='imageInfoFolderPath' class='ctxInfoValue'></span></div>\n" +
-        "   <div><span class='ctxItem'>link id</span><input id='imageInfoLinkId'/></div>\n" +
+        "   <div><span class='ctxItem'>link id</span><input id='imageInfoLinkId'></input></div>\n" +
         "   <div><span class='ctxItem'>height</span><span id='imageInfoHeight' class='ctxInfoValue'></span>" +
         "    <span class='ctxItem'>width</span><span id='imageInfoWidth' class='ctxInfoValue'></span>" +
         "    <span class='ctxItem'>size</span><span id='imageInfoSize' class='ctxInfoValue'></span></div>\n" +

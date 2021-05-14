@@ -78,7 +78,7 @@ function logPageHit(folderId) {
 function logVisit(folderId, calledFrom) {
 
     let visitorId = getVisitorId(folderId, calledFrom + "/logVisit");
-    if (visitorId.length() != 36) {
+    if (visitorId.length != 36) {
         logActivity("LV5", folderId, calledFrom + "/logVisit");
         logError("LV5", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
         return;
@@ -104,7 +104,7 @@ function logVisit(folderId, calledFrom) {
             }
             else {
                 if (logVisitSuccessModel.Success == "VisitorId not found") {
-                    if (visitorId.length() == 36) {
+                    if (visitorId.length == 36) {
                         logActivity("LV3", folderId, "logVisit");  // visitorId not found
                         logError("LV3", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
                         addVisitor(
@@ -149,7 +149,10 @@ function getIpInfo(folderId, calledFrom) {
                         return;
                     }
                 }
-                //if (localStorage["VisitorId"].length() == 36) { }
+                if (localStorage["VisitorId"].length == 36) {
+                    logError("IP2", folderId, "visitorId: " + localStorage["VisitorId"]);
+                    verifyVisitorId(folderId, calledFrom);
+                }
             }
 
             let newVisitorId = create_UUID();
@@ -277,7 +280,7 @@ function tryAlt_IpLookup(folderId, calledFrom) {
     try {
 
         let visitorId = getVisitorId(folderId, calledFrom + "/tryAlt_IpLookup");
-        if (visitorId.length() == 36) {
+        if (visitorId.length == 36) {
             logError("WHY", folderId, "visitorId: " + visitorId, calledFrom + "/tryAlt_IpLookup");
             return;
         }
@@ -460,7 +463,7 @@ function myMsgTest() {
     wipMessage += "<br/>This site requires cookies enabled";
     wipMessage += "<br/>You may be asked to login on every page until you leave.";
     wipMessage += "<br/>you must <a href=''>Register</a> or <a href=''>login</a> to continue";
-    wipMessage += "<div class='robotWarning'><input type='checkbox'/> I am not a robot.</div>";
+    wipMessage += "<div class='robotWarning'><input type='checkbox'> I am not a robot.</input></div>";
 
     showMyAlert(wipTitle, wipMessage);
 }

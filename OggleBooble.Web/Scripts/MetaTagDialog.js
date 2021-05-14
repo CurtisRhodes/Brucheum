@@ -173,7 +173,7 @@ function showMetaTagDialogHtml() {
     $('#metaTagDilogContainer').html(
         "<div id='metaTagDialog' class='oggleDialogWindow' title=''>\n" +
         "    <label>Tag</label>\n" +
-        "    <input id='txtMetaTag' class='roundedInput tagInput' onblur='blurMetaTag()' />\n" +
+        "    <input id='txtMetaTag' class='roundedInput tagInput' onblur='blurMetaTag()'></input>\n" +
         "    <div class='flexContainer'>\n" +
         "        <div class='floatLeft'>\n" +
         "            <div id='metaTagsAssignedList' class='metaTagAssignedArea'></div>\n" +

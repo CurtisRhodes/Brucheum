@@ -45,10 +45,10 @@ function dashboardHtml() {
         "               <div id='addImageLinkDialog'>\n" +
         "                   <div id='addLinkCrudArea' class='addLinkCrudArea'>\n" +
         "                       <div class='flexbox'>\n" +
-        "                           <label>link</label><input id='txtImageLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()'/>\n" +
+        "                           <label>link</label><input id='txtImageLink' tabindex='1' class='roundedInput' onblur='previewLinkImage()'></input>\n" +
         "                       </div>\n" +
         "                       <div class='flexbox'>\n" +
-        "                           <label>path</label><input class='roundedInput txtLinkPath' tabindex='-1' readonly='readonly' />\n" +
+        "                           <label>path</label><input class='roundedInput txtLinkPath' tabindex='-1' readonly='readonly'></input>\n" +
         "                       </div>\n" +
         "                       <div class='roundendButton' tabindex='2' onclick='addImageLink()'>Insert</div>\n" +
         "                   </div>\n" +
@@ -64,11 +64,11 @@ function dashboardHtml() {
         "           <div class='workAreaHeaderArea'>\n" +
         "               <div id='moveManyTitle' class='workAreaHeaderTitle'>Move Many</div>\n" +
         "               <div class='workAreaHeaderDetailRow'>\n" +
-        "                   <div class='moveManyHeaderLabel'>source</div><input id='txtMoveManySource' class='roundedInput' style='width:65%' readonly='readonly' /><br />" +
-        "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly' />" +
+        "                   <div class='moveManyHeaderLabel'>source</div><input id='txtMoveManySource' class='roundedInput' style='width:65%' readonly='readonly'></input><br />" +
+        "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly'></input>" +
         "                   <img class='dialogDirTreeButton' src='/Images/caretDown.png' " +
         "                      onclick='$(\"#mmDirTreeContainer\").toggle()'/>\n" +
-        "                   <div class='floatRight'><input type='checkbox' id='mmCkSelectAll' onclick='mmSelectAll()'>  Select All</div>\n" +
+        "                   <div class='floatRight'><input type='checkbox' id='mmCkSelectAll' onclick='mmSelectAll()'></input>  Select All</div>\n" +
         "               </div>\n" +
         "           </div>\n" +
         "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='showDefaultWorkArea()'></div>\n" +
@@ -264,8 +264,8 @@ function onDirTreeComplete() {
 function showRepairLinksDialog() {
     $('#dashboardDialogTitle').html("Repair Links");
     $('#dashboardDialogContents').html(
-        "    <div><span>folder to repair</span><input id='txtFolderToRepair' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
-        "    <div><span>include all subfolders </span><input type='checkbox' id='ckRepairIncludeSubfolders' /></div>\n" +
+        "    <div><span>folder to repair</span><input id='txtFolderToRepair' class='txtLinkPath roundedInput' readonly='readonly'></input></div>\n" +
+        "    <div><span>include all subfolders </span><input type='checkbox' id='ckRepairIncludeSubfolders'></input></div>\n" +
         "    <div class='roundendButton' onclick='performRepairLinks($(\"#ckRepairIncludeSubfolders\").is(\":checked\"))'>Run</div>\n");
     $("#txtFolderToRepair").val(pSelectedTreeFolderPath);
     $('#dashboardDialog').fadeIn();
@@ -415,8 +415,8 @@ function removeDupeIps() {
 function showCreateStaticPagesDialog() {
     $('#dashboardDialogTitle').html("Create Static Pages");
     $('#dashboardDialogContents').html(
-        "    <div><span>folders to staticify</span><input id='txtFolderToStaticify' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
-        "    <div><span>include all subfolders </span><input type='checkbox' id='ckStaticIncludeSubfolders' checked='checked' /></div>\n" +
+        "    <div><span>folders to staticify</span><input id='txtFolderToStaticify' class='txtLinkPath roundedInput' readonly='readonly'></input></div>\n" +
+        "    <div><span>include all subfolders </span><input type='checkbox' id='ckStaticIncludeSubfolders' checked='checked'></input></div>\n" +
         "    <div class='roundendButton' onclick='createStaticPages($(\"#ckStaticIncludeSubfolders\").is(\":checked\"))'>Build Files</div>\n");    
     $("#txtFolderToStaticify").val(pSelectedTreeFolderPath);
     $('#dashboardDialog').fadeIn();    
@@ -523,8 +523,8 @@ function showCreateNewFolderDialog() {
     $('#dashboardDialogTitle').html("Create New Folder");
     $('#dashboardDialogContents').html(
         //"       <div></div>\n" +
-        "       <div><span>parent</span><input id='txtCreateFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
-        "       <div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput' /></div>\n" +
+        "       <div><span>parent</span><input id='txtCreateFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly'></input></div>\n" +
+        "       <div><span>title</span><input id='txtNewFolderTitle' class='inlineInput roundedInput'></input></div>\n" +
         "       <div><span>type</span><select id='ddNewFolderType' class='inlineInput roundedInput'>\n" +
         "              <option value='singleChild'>singleChild</option>\n" +
         "              <option value='singleModel'>singleModel</option>\n" +
@@ -577,8 +577,8 @@ function performCreateNewFolder() {
 function showMoveFolderDialog() {
     $('#dashboardDialogTitle').html("Move Folder");
     $('#dashboardDialogContents').html(
-        "       <div><span>folder to move</span><input id='txtMoveFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
-        "       <div><span>destiation</span><input id='txtNewMoveDestiation' class='inlineInput roundedInput' />" +
+        "       <div><span>folder to move</span><input id='txtMoveFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly'></input></div>\n" +
+        "       <div><span>destiation</span><input id='txtNewMoveDestiation' class='inlineInput roundedInput'></input>" +
         "           <img class='dialogDirTreeButton' src='/Images/caretDown.png' onclick='$(\"#moveFolderDirTreeContainer\").toggle()'/>\n" +
         "       </div>\n" +
         "       <div class='roundendButton' onclick='performMoveFolder()'>move</div>\n" +
@@ -627,11 +627,11 @@ function showAddStepChildFolderDialog() {
     let cfSsorceFolderId = pSelectedTreeId;  // captured before 
     $('#dashboardDialogTitle').html("Create Stepchild Folder");
     $('#dashboardDialogContents').html(
-        "    <div><span>parent folder</span><input id='txtStepParent' class='txtLinkPath roundedInput' readonly='readonly'/></div>\n" +
-        "    <div><span>child folder</span><input id='txtscSourceFolderName' class='roundedInput' readonly='readonly'/>\n" +
+        "    <div><span>parent folder</span><input id='txtStepParent' class='txtLinkPath roundedInput' readonly='readonly'></input></div>\n" +
+        "    <div><span>child folder</span><input id='txtscSourceFolderName' class='roundedInput' readonly='readonly'></input>\n" +
         "       <img class='dialogDirTreeButton' src='/Images/caretDown.png' onclick='$(\"#scDirTreeContainer\").toggle()'/></div>\n" +
-        "    <div><span>new name</span><input id='txtscNewFolderName' class='roundedInput' /></div>\n" +
-        "    <div><span>new link</span><input id='txtCustomFolderLink' class='roundedInput' /></div>\n" +
+        "    <div><span>new name</span><input id='txtscNewFolderName' class='roundedInput'></input></div>\n" +
+        "    <div><span>new link</span><input id='txtCustomFolderLink' class='roundedInput'></input></div>\n" +
         "    <div class='roundendButton' onclick='perfomAddStepChildFolder(" + cfSsorceFolderId + ")'>Create Stepchild</div>\n" +
         "       <div id='scDirTreeContainer' class='floatingDirTreeContainer'></div>\n");
     $("#txtStepParent").val(pSelectedTreeFolderPath);
@@ -715,7 +715,7 @@ function loadMMcheckboxes() {
                 $('#moveManyImageArea').html("");
                 $.each(imgLinks.Links, function (ndx, obj) {
                     $('#moveManyImageArea').append("<div class='sortBox'><img class='sortBoxImage' src='" + imgRepo + "/" + obj.FileName + "'/>" +
-                        "<br/><input type='checkbox' class='loadManyCheckbox' imageId=" + obj.LinkId + "></div>");
+                        "<br/><input type='checkbox' class='loadManyCheckbox' imageId=" + obj.LinkId + "></input></div>");
                 });
                 $('#moveManyCountContainer').html(imgLinks.Links.length.toLocaleString());
             }
@@ -783,8 +783,8 @@ function moveCheckedImages() {
 function showAutoIncrimentDialog() {
     $('#dashboardDialogTitle').html("AutoIncriment Folder");
     $('#dashboardDialogContents').html(
-        "<div><span>folder to move</span><input id='txtAutoIncrimentParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly' /></div>\n" +
-        "<div><span>include all subfolders </span><input type='checkbox' id='ckAutoIncrimentIncludeSubfolders' checked='checked' /></div>\n" +
+        "<div><span>folder to move</span><input id='txtAutoIncrimentParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly'></input></div>\n" +
+        "<div><span>include all subfolders </span><input type='checkbox' id='ckAutoIncrimentIncludeSubfolders' checked='checked'></input></div>\n" +
         "<div class='roundendButton' onclick='performAutoIncriment($(\"#ckAutoIncrimentIncludeSubfolders\").is(\":checked\"))'>incriment</div>\n");
     $("#txtAutoIncrimentParent").val(pSelectedTreeFolderPath);
     $('#dashboardDialog').fadeIn();
@@ -840,7 +840,7 @@ function loadSortImages() {
                 $.each(imgLinks.Links, function (ndx, obj) {
                     $('#sortToolImageArea').append("<div class='sortBox'><img class='sortBoxImage' src='" +
                         settingsImgRepo + obj.FileName + "'/>" +
-                        "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></div>");
+                        "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></input></div>");
                 });
                 $('#dashBoardLoadingGif').hide();
                 $('#dataifyInfo').html(daInfoMessage + " done");
@@ -1124,9 +1124,9 @@ function showRipPdfDialog() {
 
     $('#dashboardDialogTitle').html("Rip pdf");
     $('#dashboardDialogContents').html(
-        "<div><span>pdf file</span><input id='txtPdfFile' class='inlineInput roundedInput'/></div>\n" +
-        "<div><span>dest folder</span><input id='txtDestFolder' class='inlineInput roundedInput'/></div>\n" +
-        "<div><span>start page</span><input id='txtStartPage'/><span>end page</span><input id='txtEndPage'/></div>\n" +
+        "<div><span>pdf file</span><input id='txtPdfFile' class='inlineInput roundedInput'></input></div>\n" +
+        "<div><span>dest folder</span><input id='txtDestFolder' class='inlineInput roundedInput'></input></div>\n" +
+        "<div><span>start page</span><input id='txtStartPage'></input><span>end page</span><input id='txtEndPage'></input></div>\n" +
         "<div class='roundendButton' onclick='performRipPdf()'>rip one</div>\n");
     $('#dashboardDialog').fadeIn();
 }

@@ -298,15 +298,15 @@ function rankerHTML() {
         "        </div>\n" +
         "        <div class='floatRight'>\n" +
         "           <div id='rankerCkBoxesContainer' class='rankerCkBoxesContainer'>\n" +
-        "            <div class='domCkBox'><input id='ckBoxBoobs' onchange='ckBoxChanged()' type='checkbox' />poses and shapes</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxArchive' onchange='ckBoxChanged()' type='checkbox' />big naturals</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxPlayboy' onchange='ckBoxChanged()' type='checkbox' />Playboy playmates</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxCybergirls' onchange='ckBoxChanged()' type='checkbox' />Cybergirls</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxMuses' onchange='ckBoxChanged()' type='checkbox' />Muses</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxPlus' onchange='ckBoxChanged()' type='checkbox' />Playboy Plus</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxSoft' onchange='ckBoxChanged()' type='checkbox' />Softcore</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxPorn' onchange='ckBoxChanged()' type='checkbox' />Porn</div>\n" +
-        "            <div class='domCkBox'><input id='ckBoxSluts' onchange='ckBoxChanged()' type='checkbox' />Porn Stars</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxBoobs' onchange='ckBoxChanged()' type='checkbox'></input>poses and shapes</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxArchive' onchange='ckBoxChanged()' type='checkbox'></input>big naturals</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxPlayboy' onchange='ckBoxChanged()' type='checkbox'></input>Playboy playmates</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxCybergirls' onchange='ckBoxChanged()' type='checkbox'></input>Cybergirls</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxMuses' onchange='ckBoxChanged()' type='checkbox'></input>Muses</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxPlus' onchange='ckBoxChanged()' type='checkbox'></input>Playboy Plus</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxSoft' onchange='ckBoxChanged()' type='checkbox'></input>Softcore</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxPorn' onchange='ckBoxChanged()' type='checkbox'></input>Porn</div>\n" +
+        "            <div class='domCkBox'><input id='ckBoxSluts' onchange='ckBoxChanged()' type='checkbox'></input>Porn Stars</div>\n" +
         "            <div class='domCkBox'><div class='roundendButton' onclick='reloadRankerImages()'>reload</div></div>\n" +
         "           </div>\n" +
         "        </div>\n" +

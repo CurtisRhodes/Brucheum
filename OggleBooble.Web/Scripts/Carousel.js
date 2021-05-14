@@ -629,12 +629,12 @@ function carouselHtml() {
         "       <img src='/images/poweroffRed01.png' onclick='resume(); $(\"#carouselSettingsDialog\").hide();'/></div>\n" +
         "   </div>\n" +
         "   <div class='oggleDialogContents'>\n" +
-        "       <input type='checkbox' id='ckCenterfold'/> Include Centerfolds<br/>\n" +
-        "       <input type='checkbox' id='ckArchive'/> Include Big Naturals Archive<br/>\n" +
-        "       <input type='checkbox' id='ckSoftcore'/> Include softcore<br/>\n" +
-        "       <input type='checkbox' id='ckPorn'/> Include porn<br/>\n" +
-        "       <input type='checkbox' id='ckLandscape'/> allow landscape size<br/>\n" +
-        "       <input type='checkbox' id='ckPortrait'/> allow portrait size<br/>\n" +
+        "       <input type='checkbox' id='ckCenterfold'></input> Include Centerfolds<br/>\n" +
+        "       <input type='checkbox' id='ckArchive'></input> Include Big Naturals Archive<br/>\n" +
+        "       <input type='checkbox' id='ckSoftcore'></input> Include softcore<br/>\n" +
+        "       <input type='checkbox' id='ckPorn'></input> Include porn<br/>\n" +
+        "       <input type='checkbox' id='ckLandscape'></input> allow landscape size<br/>\n" +
+        "       <input type='checkbox' id='ckPortrait'></input> allow portrait size<br/>\n" +
         "   </div>\n" +
         "</div>\n";
 }

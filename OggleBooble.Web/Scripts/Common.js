@@ -355,9 +355,9 @@ function logActivity(activityCode, folderId, calledFrom) {
             }
             else {
                 if (success.indexOf("Duplicate entry") > 0)
-                    logError("DUP", folderId, "Duplicate entry: "+ activityCode, "log activity/" + calledFrom);
+                    logError("DUP", folderId, "Duplicate entry: " + activityCode, calledFrom + "/log activity");
                 else
-                    logError("AJX", folderId, activityCode + ": " + success, "log activity/");
+                    logError("AJX", folderId, activityCode + ": " + success, calledFrom + "/log activity");
             }
         },
         error: function (jqXHR) {

@@ -171,11 +171,13 @@ function showConfirmDeteteImageDialog(linkId, folderId, imgSrc, errMsg) {
     if (errMsg === "single link") {
         $('#centeredDialogTitle').html("Delete Image");
         $('#centeredDialogContents').html(
+            "<form id='frmReject>'\n" +
             "    <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
-            "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked' />  duplicate</div>\n" +
-            "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons' />  bad link</div>\n" +
-            "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons' />  low quality</div>\n" +
-            "    <div class='roundendButton' onclick='performMoveImageToRejects(\"" + linkId + "\"," + folderId + ")'>ok</div>\n");
+            "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked'></input>  duplicate</div>\n" +
+            "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons'></input>  bad link</div>\n" +
+            "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons'></input>  low quality</div>\n" +
+            "    <div class='roundendButton' onclick='performMoveImageToRejects(\"" + linkId + "\"," + folderId + ")'>ok</div>\n" +
+            "</form>>");
     }
 
     if (errMsg === "home folder Link") {
@@ -206,6 +208,8 @@ function performMoveImageToRejects(linkId, folderId) {
                         // TODO: remove image from slideshow array
                         slide("next");
                     }
+
+                   // TODO: include reason radio button
                     getAlbumImages(folderId);
                     dragableDialogClose();
                     slideShowDialogClose();
@@ -214,7 +218,7 @@ function performMoveImageToRejects(linkId, folderId) {
                         VisitorId: getVisitorId(folderId, "performMoveImageToRejects"),
                         ActivityCode: "REJ",
                         FolderId: folderId,
-                        Details: "link moved to rejects" + linkId
+                        Details: "reason: " + $('input[name=rdoRejectImageReasons]:checked', '#frmReject').val() + "link moved to rejects" + linkId
                     });
                 }
                 else {

@@ -378,7 +378,7 @@ function loadBlogHtmlBody() {
         "                   <div class='rightBlogEditPane' >\n" +
         "                        <div class='crudRow'>\n" +
         "                            <div class='crudLabel inline'>Title</div>\n" +
-        "                            <input id='txtCommentTitle' class='oggleInput' />\n" +
+        "                            <input id='txtCommentTitle' class='oggleInput'></input>\n" +
         "                        </div>\n" +
         "                        <div class='crudRow'>\n" +
         "                            <div class='crudLabel inline'>Type</div>\n" +
@@ -386,11 +386,11 @@ function loadBlogHtmlBody() {
         "                        </div>\n" +
         "                        <div class='crudRow'>\n" +
         "                            <div class='crudLabel inline'>Link</div>\n" +
-        "                            <input id='txtLink' class='oggleInput' onBlur='loadImage()' />\n" +
+        "                            <input id='txtLink' class='oggleInput' onBlur='loadImage()'></input>\n" +
         "                        </div>\n" +
         "                        <div class='crudRow'>\n" +
         "                            <div class='crudLabel inline'>Date</div>\n" +
-        "                            <input id='txtPosted' class='oggleInput' />\n" +
+        "                            <input id='txtPosted' class='oggleInput'></input>\n" +
         "                        </div>\n" +
         "                   </div>\n" +
         "                </div>\n" +

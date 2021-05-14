@@ -68,7 +68,7 @@ function showBasicFolderInfoDialog() {
         "    <div id='modelInfoDetails' class='flexContainer'>\n" +
         "    </div>\n" +
         "    <div class='modelInfoCommentArea'>\n" +
-        "       <div id='divEdtFolderName' class='displayHidden'>folder name: <input id='txtEdtFolderName' /></div>\n" +
+        "       <div id='divEdtFolderName' class='displayHidden'>folder name: <input id='txtEdtFolderName'></input></div>\n" +
         "       <textarea id='summernoteContainer'></textarea>\n" +
         "    </div>\n" +
         "    <div id='folderInfoDialogFooter' class='folderDialogFooter'>\n" +
@@ -171,15 +171,15 @@ function modelInfoDetailHtml() {
         "            <div id='readOnlyMeasurements'></div>\n" +
         "        </div>\n" +
         "        <div id='editablePoserDetails' class='editablePoserDetails floatLeft'>\n" +
-        "            <input id='txtFolderName'/>\n" +
-        "            <input id='txtHomeCountry'/>\n" +
-        "            <input id='txtHometown'/>\n" +
-        "            <input id='txtBorn'/>\n" +
+        "            <input id='txtFolderName'></input>\n" +
+        "            <input id='txtHomeCountry'></input>\n" +
+        "            <input id='txtHometown'></input>\n" +
+        "            <input id='txtBorn'></input>\n" +
         "            <select id='selBoobs' class='boobDropDown'>\n" +
         "               <option value=0>Real</option>\n" +
         "               <option value=1>Fake</option>\n" +
         "            </select>\n" +
-        "            <input id='txtMeasurements'/>\n" +
+        "            <input id='txtMeasurements'></input>\n" +
         "        </div>\n" +
         "        <div class='floatLeft'>\n" +
         "            <img id='modelDialogThumbNailImage' src='/Images/redballon.png' class='modelDialogImage' />\n" +
@@ -330,12 +330,12 @@ function showTrackbackDialog() {
         "       <div id='cc' class='oggleDialogTitle'>Trackback Links</div>" +
         "       <div id='ddd' class='oggleDialogCloseButton'><img src='/images/poweroffRed01.png' onclick='$(\"#trackBackDialog\").hide()'/></div>\n" +
         "   </div>\n" +
-        "   <div>link <input id='txtTrackBackLink'  class='roundedInput' style='width:85%' /></div>" +
+        "   <div>link <input id='txtTrackBackLink'  class='roundedInput' style='width:85%'></input></div>" +
         "   <div>site <select id='selTrackBackLinkSite' class='roundedInput'>\n" +
         "          <option value='BAB'>babepedia</option>\n" +
         "          <option value='FRE'>freeones</option>\n" +
         "       </select></div>\n" +
-        "   <div>status<input id='txtTrackBackStatus' class='roundedInput' /></div>" +
+        "   <div>status<input id='txtTrackBackStatus' class='roundedInput'></input></div>" +
         "   <div class='tbResultsContainer'>" +
         "       <ul id='ulExistingLinks'></ul>" +
         "   </div>\n" +
@@ -539,7 +539,7 @@ function showUnknownModelDialog(menuType, imgSrc, linkId, folderId) {
         "   </div>" +
 
         "   <div id='identifyPoserDialog' class='floatLeft displayHidden' style='width:400px'>\n" +
-        "       <span>I think this poser&apos;s name is</span><input id='txtPoserIdentified' class='roundedInput'/>\n" +
+        "       <span>I think this poser&apos;s name is</span><input id='txtPoserIdentified' class='roundedInput'></input>\n" +
         "       <div>comment</div>" +
         "       <div class='modelInfoCommentArea'>\n" +
         "          <textarea id='poserSummernoteContainer'></textarea>\n" +

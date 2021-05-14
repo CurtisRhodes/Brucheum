@@ -54,7 +54,9 @@
             if (validateFeedback()) {
 
                 //alert("feedbackType: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
-                let feedbackType = $('#feedbackDialog input[type=\'radio\']:checked').val();
+                //let feedbackType = $('#feedbackDialog input[type=\'radio\']:checked').val();
+                let feedbackType = $('input[name=\'radio\']:checked', '#frmFeedbackRdo').val();
+
                 //let feedbackMessage = $('#smnFeedback').summernote('code');
                 $.ajax({
                     type: "POST",
@@ -74,7 +76,7 @@
                             //sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Wow!! FolderComment", "message:" + folderCommentMessage);
                             if (document.domain !== "localhost")
                                 sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "Feedback !!!", +
-                                    "feedbackBackType: " + feedbackType + "<br/>" +
+                                    "feedbackBackType: " + feedbackType + "<br/><br/>" +
                                     "feedbackMessage: " + $('#smnFeedback').val() + "<br/>" +
                                     "visitor: " + getVisitorId(444, "savefeedback") + "<br/>" +
                                     "folderId: " + folderId);
@@ -108,10 +110,12 @@
         return "<div id='feedbackDialog' class='roundedDialog' >\n" +
             "   <div id='errFeedbackRadioButtons' class='validationError'></div>\n" +
             "    <div class='feedbackRadioButtons'>\n" +
-            "       <input type='radio' name='feedbackRadio' checked value='complement'><span> complement</span>\n" +
-            "       <input type='radio' name='feedbackRadio' value='suggestion'><span> suggestion</span>\n" +
-            "       <input type='radio' name='feedbackRadio' value='report error'><span> report error</span>\n" +
-            "<div id='divFeedbackFolderInfo'>" + folderName + "</div>\n" +
+            "       <form id='frmFeedbackRdo'>\n"+
+            "           <input type='radio' name='feedbackRadio' checked value='complement'></input><span> complement</span>\n" +
+            "           <input type='radio' name='feedbackRadio' value='suggestion'></input><span> suggestion</span>\n" +
+            "           <input type='radio' name='feedbackRadio' value='report error'></input><span> report error</span>\n" +
+            "           <div id='divFeedbackFolderInfo'>" + folderName + "</div>\n" +
+            "      </form>"+
             "   </div>\n" +
             "   <div id='errFeedbackText' class='validationError'></div>\n" +
             "    <div class='modelInfoCommentArea'>\n" +
@@ -120,7 +124,7 @@
             "   <div style='display:table; width: 100%'>\n" +
             "       <div style='display:table-cell; width:65px; text-align:right;'>email: </div>" +
             "       <div id='errFeedbackEmail' class='validationError'></div>\n" +
-            "       <input id='txtFeedbackEmail' style='roundedInput; width:100%'/>\n" +
+            "       <input id='txtFeedbackEmail' style='roundedInput; width:100%'></input>\n" +
             "   </div>\n" +
             "   <div class='folderDialogFooter'>\n" +
             "       <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedback(" + folderId + ")'>Send</div>\n" +

@@ -143,14 +143,14 @@ function transferToRegisterPopup() {
 function loginDialogHtml() {
     let loginHtml = "<div id='errLoginUserName' class='validationError'>Required</div>\n" +
         "    <label>User Name</label><br>\n" +
-        "    <input id='txtLoginUserName' class='roundedInput'><br>\n" +
+        "    <input id='txtLoginUserName' class='roundedInput'></input><br>\n" +
         "    <div id='errLoginPassword' class='validationError'>Required</div>\n" +
         "    <label>Password</label><br>\n" +
-        "    <input id='txtLoginClearPassword' class='roundedInput' placeholder='********'><br>\n" +
+        "    <input id='txtLoginClearPassword' class='roundedInput' placeholder='********'></input><br>\n" +
         "    <button id='btnLoginPopupLogin' class='roundendButton' onclick='attemptLogin()'>" +
         "        <img id='btnLoginSpinnerImage' class='btnSpinnerImage' src='/images/loader.gif'>Log in</button>\n" +
         "    <div class='ckRemember'>\n" +
-        "        <input id='ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)\n" +
+        "        <input id='ckRememberMe' type='checkbox' checked='checked'></input> Remember Me ?  (<span>uses a cookie</span>)\n" +
         "    </div>\n" +
         "    <div class='forgot'>\n" +
         "        <a id='forgot-pw' href='/users/account-recovery'>forgot password ?</a>\n" +
@@ -196,11 +196,11 @@ function checkFaceBookLoginState() {
 
 function userProfileHtml() {
     return "<div id='userProfileDialog' class='roundedDialog' >\n" +
-        "   <div><label style='white-space:nowrap;'>user name</label><input id='txtUserProfileName' class='roundedInput' placeholder='your go by name'></div>\n" +
-        "   <div><label style='white-space:nowrap;'>First Name</label><input id='txtUserProfileFirstName' class='roundedInput'></div>\n" +
-        "   <div><label style='white-space:nowrap;'>Last Name</label><input id='txtUserProfileLastName' class='roundedInput'></div>\n" +
+        "   <div><label style='white-space:nowrap;'>user name</label><input id='txtUserProfileName' class='roundedInput' placeholder='your go by name'></input></div>\n" +
+        "   <div><label style='white-space:nowrap;'>First Name</label><input id='txtUserProfileFirstName' class='roundedInput'></input></div>\n" +
+        "   <div><label style='white-space:nowrap;'>Last Name</label><input id='txtUserProfileLastName' class='roundedInput'></input></div>\n" +
         "       <div id='errUserProfileEmail' class='validationError'></div>\n" +
-        "   <div><label>Email</label><input id='txtUserProfileEmail' style='roundedInput; width:100%'/>\n" +
+        "   <div><label>Email</label><input id='txtUserProfileEmail' style='roundedInput; width:100%'></input>\n" +
         "   <div class='folderDialogFooter'>\n" +
         "       <div id='btnUserProfileSave' class='roundendButton' onclick='updateUserProfile()'>Save</div>\n" +
         "       <div id='btnUserProfileCancel' class='roundendButton' onclick='dragableDialogClose()'>Cancel</div>\n" +
@@ -379,22 +379,22 @@ function registerDialogHtml() {
     return "   <div id='registerValidationSummary' class='validationError'></div>\n" +
         "   <div id='errRegisterUserName' class='validationError'>Required</div>\n" +
         "   <label style='white-space:nowrap;'>user name</label><span class='requiredField' title='required'>  *</span><br>\n" +
-        "   <input id='txtRegisterUserName' type='text' class='roundedInput' placeholder='your go by name'><br>\n" +
+        "   <input id='txtRegisterUserName' type='text' class='roundedInput' placeholder='your go by name'></input><br>\n" +
         "   <div id='errRegisterPassword' class='validationError'>Password Required</div>\n" +
         "   <label>password</label><span class='requiredField' title='required'> *</span><br>\n" +
-        "   <input id='txtRegisterClearPassword' class='roundedInput' placeholder='********'><br>\n" +
+        "   <input id='txtRegisterClearPassword' class='roundedInput' placeholder='********'></input><br>\n" +
         "   <label style='white-space:nowrap;'>retype password</label><span class='requiredField' title='retype Password required'>  *</span><br>\n" +
-        "   <input id='txtRegisterClearPasswordRetype' class='roundedInput' autocomplete='off' placeholder='********'><br>\n" +
+        "   <input id='txtRegisterClearPasswordRetype' class='roundedInput' autocomplete='off' placeholder='********'></input><br>\n" +
         "   <div class='rememberMe'>\n" +
-        "       <input id='ckRememberMe' type='checkbox' checked='checked' />  Remember Me ?  (<span>uses a cookie</span>)\n" +
+        "       <input id='ckRememberMe' type='checkbox' checked='checked'></input>  Remember Me ?  (<span>uses a cookie</span>)\n" +
         "   </div>\n" +
         "   <label style='white-space:nowrap;'>First Name</label>\n" +
-        "   <input id='txtRegisterFirstName' type='text' class='roundedInput'><br>\n" +
+        "   <input id='txtRegisterFirstName' type='text' class='roundedInput'></input><br>\n" +
         "   <label style='white-space:nowrap;'>Last Name</label>\n" +
-        "   <input style='white-space:nowrap;' id='txtLastName' type='text' class='roundedInput'><br>\n" +
+        "   <input style='white-space:nowrap;' id='txtLastName' type='text' class='roundedInput'></input><br>\n" +
         "   <div id='errRegisterEmail' class='validationError'>Email Required</div>\n" +
         "   <label>Email</label>\n" +
-        "   <input id='txtRegisterEmail' type='email' class='roundedInput' placeholder='you@example.org'><br>\n" +
+        "   <input id='txtRegisterEmail' type='email' class='roundedInput' placeholder='you@example.org'></input><br>\n" +
         "   <button class='roundendButton submitButton' onclick='attemptRegister()'>Submit</button>\n";
 }
 

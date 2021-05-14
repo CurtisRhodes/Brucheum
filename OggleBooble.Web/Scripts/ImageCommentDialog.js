@@ -175,7 +175,7 @@ function imageCommentDialogHtml() {
     return "<div class='imageCommentDialogContainer'>\n" +
         "    <div id='divStatusMessage'></div>\n" +
         "    <div class='center'><img id='commentDialogImage' class='commentDialogImage'/></div>\n" +
-        "    <div><input id='txtCommentTitle' class='roundedInput commentTitleText' tabindex='1' placeholder='Give your comment a title' /></div>\n" +
+        "    <div><input id='txtCommentTitle' class='roundedInput commentTitleText' tabindex='1' placeholder='Give your comment a title'></input></div>\n" +
         "    <div id='imageCommentEditor' tabindex='2'></div>\n" +
         "   <div class='folderDialogFooter'>\n" +
         "    <div id='divSaveFantasy' class='roundendButton clickable commentDialogButton inline' onclick='saveComment()'>save</div>\n" +
