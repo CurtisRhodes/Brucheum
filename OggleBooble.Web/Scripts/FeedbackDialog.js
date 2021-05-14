@@ -49,23 +49,20 @@
         return true;
     }
 
-    function saveFeedback(folderId) {
+    function saveFeedback(folderId, folderName) {
         try {
             if (validateFeedback()) {
 
                 //alert("feedbackType: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
-                //let feedbackType = $('#feedbackDialog input[type=\'radio\']:checked').val();
-                let feedbackType = $('input[name=\'radio\']:checked', '#frmFeedbackRdo').val();
-
-                //let feedbackMessage = $('#smnFeedback').summernote('code');
+                let feedbackType = $('#feedbackDialog input[type=\'radio\']:checked').val();
                 $.ajax({
                     type: "POST",
                     url: settingsArray.ApiServer + "api/Common/LogFeedback",
                     data: {
-                        VisitorId: getVisitorId(2222, "saveFeedback"),
+                        VisitorId: getVisitorId(folderId, "saveFeedback"),
                         FolderId: folderId,
                         FeedBackComment: $('#smnFeedback').val(),
-                        FeedBackType: $('input[name="feedbackRadio"]:checked').val(),
+                        FeedBackType: feedbackType,
                         FeedBackEmail: $('#txtFeedbackEmail').val()
                     },
                     success: function (success) {
@@ -75,15 +72,15 @@
                             //sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "Wow!! FeedBack", "feedbackType: " + feedbackType + "message:" + feedbackMessage);
                             //sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Wow!! FolderComment", "message:" + folderCommentMessage);
                             if (document.domain !== "localhost")
-                                sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "Feedback !!!", +
-                                    "feedbackBackType: " + feedbackType + "<br/><br/>" +
+                                sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "You Got Some Feedback", " radio button: " + feedbackType + "<br/><br/>" +
                                     "feedbackMessage: " + $('#smnFeedback').val() + "<br/>" +
                                     "visitor: " + getVisitorId(444, "savefeedback") + "<br/>" +
-                                    "folderId: " + folderId);
+                                    "folder: " + folderName);
                             else
                                 alert("sendEmail(CurtishRhodes@hotmail.com, Feedback@Ogglebooble.com, Feedback !!!" +
                                     "\nfeedBackType: " + feedbackType +
-                                    "\nfeedbackMessage: " + $('#smnFeedback').val() + "\nfolderId: " + folderId);
+                                    "\nfeedbackMessage: " + $('#smnFeedback').val() +
+                                    "\nfolder: " + folderName);
 
                             //console.log("is email working?");
                             $("#centeredDialogContainer").fadeOut();
@@ -110,12 +107,12 @@
         return "<div id='feedbackDialog' class='roundedDialog' >\n" +
             "   <div id='errFeedbackRadioButtons' class='validationError'></div>\n" +
             "    <div class='feedbackRadioButtons'>\n" +
-            "       <form id='frmFeedbackRdo'>\n"+
-            "           <input type='radio' name='feedbackRadio' checked value='complement'></input><span> complement</span>\n" +
+            "       <form id='frmFeedbackRdo'>\n" +
+            "           <input type='radio' name='feedbackRadio' checked value='compliment'></input><span> compliment</span>\n" +
             "           <input type='radio' name='feedbackRadio' value='suggestion'></input><span> suggestion</span>\n" +
-            "           <input type='radio' name='feedbackRadio' value='report error'></input><span> report error</span>\n" +
+            "           <input type='radio' name='feedbackRadio' value='error report'></input><span> report error</span>\n" +
             "           <div id='divFeedbackFolderInfo'>" + folderName + "</div>\n" +
-            "      </form>"+
+            "      </form>" +
             "   </div>\n" +
             "   <div id='errFeedbackText' class='validationError'></div>\n" +
             "    <div class='modelInfoCommentArea'>\n" +
@@ -127,7 +124,7 @@
             "       <input id='txtFeedbackEmail' style='roundedInput; width:100%'></input>\n" +
             "   </div>\n" +
             "   <div class='folderDialogFooter'>\n" +
-            "       <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedback(" + folderId + ")'>Send</div>\n" +
+            "       <div id='btnfeedbackDialogSave' class='roundendButton' onclick='saveFeedback(" + folderId + "\,\"" + folderName + "\")'>Send</div>\n" +
             "       <div id='btnfeedbackDialogCancel' class='roundendButton' onclick='dragableDialogClose()'>Cancel</div>\n" +
             "   </div>\n" +
             "</div>\n";

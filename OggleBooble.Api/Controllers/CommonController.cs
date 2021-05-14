@@ -19,21 +19,21 @@ namespace OggleBooble.Api.Controllers
     public class VisitorController : ApiController
     {
         [HttpPost]
-        [Route("api/Common/TryAddVisitor")]
-        public AddVisitorSuccessModel TryAddVisitor(AddVisitorModel visitorData)
+        [Route("api/Common/AddVisitor")]
+        public AddVisitorSuccessModel AddVisitor(AddVisitorModel visitorData)
         {
-            var addVisitorModel = new AddVisitorSuccessModel();
+            var addVisitorModel = new AddVisitorSuccessModel() { Success = "ono" };
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    //var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    //if (dbExistingIpVisitor != null)
-                    //{
-                    //    addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
-                    //    addVisitorModel.Success = "existing Ip";
-                    //}
-                    //else
+                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                    if (dbExistingIpVisitor != null)
+                    {
+                        addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
+                        addVisitorModel.Success = "existing Ip";
+                    }
+                    else
                     {
                         var newVisitor = new Visitor()
                         {
@@ -54,41 +54,6 @@ namespace OggleBooble.Api.Controllers
             }
             catch (Exception ex) { addVisitorModel.Success = Helpers.ErrorDetails(ex); }
             return addVisitorModel;
-        }
-
-        [HttpPost]
-        [Route("api/Common/AddVisitor")]
-        public string AddVisitor(AddVisitorModel visitorData)
-        {
-            string success;
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    //var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    //if (dbExistingIpVisitor != null)
-                    //{
-                    //    success = "existing Ip";
-                    //}
-
-                    var newVisitor = new Visitor()
-                    {
-                        VisitorId = visitorData.VisitorId,
-                        InitialPage = visitorData.FolderId,
-                        City = visitorData.City,
-                        Country = visitorData.Country,
-                        GeoCode = visitorData.GeoCode,
-                        Region = visitorData.Region,
-                        InitialVisit = DateTime.Now,
-                        IpAddress = visitorData.IpAddress
-                    };
-                    db.Visitors.Add(newVisitor);
-                    db.SaveChanges();
-                    success = "ok";
-                }
-            }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
         }
 
         [HttpPost]

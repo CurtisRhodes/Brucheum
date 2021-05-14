@@ -2942,7 +2942,7 @@ if ( !assert( function( el ) {
 // Support: IE<9
 // Use defaultValue in place of getAttribute("value")
 if ( !support.attributes || !assert( function( el ) {
-	el.innerHTML = "<input/>";
+	el.innerHTML = "<input></input>";
 	el.firstChild.setAttribute( "value", "" );
 	return el.firstChild.getAttribute( "value" ) === "";
 } ) ) {

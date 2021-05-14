@@ -203,7 +203,7 @@ function updateCarouselSettings() {
 
 function verifyVisitorId(folderId, calledFrom) {
     try {
-        logActivity("VV0", folderId, calledFrom);
+        //logActivity("VV0", folderId, calledFrom);
 
         if (isNullorUndefined(localStorage["VisitorId"])) {
             logActivity("VV2", folderId, calledFrom);

@@ -194,81 +194,6 @@ function checkFaceBookLoginState() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function userProfileHtml() {
-    return "<div id='userProfileDialog' class='roundedDialog' >\n" +
-        "   <div><label style='white-space:nowrap;'>user name</label><input id='txtUserProfileName' class='roundedInput' placeholder='your go by name'></input></div>\n" +
-        "   <div><label style='white-space:nowrap;'>First Name</label><input id='txtUserProfileFirstName' class='roundedInput'></input></div>\n" +
-        "   <div><label style='white-space:nowrap;'>Last Name</label><input id='txtUserProfileLastName' class='roundedInput'></input></div>\n" +
-        "       <div id='errUserProfileEmail' class='validationError'></div>\n" +
-        "   <div><label>Email</label><input id='txtUserProfileEmail' style='roundedInput; width:100%'></input>\n" +
-        "   <div class='folderDialogFooter'>\n" +
-        "       <div id='btnUserProfileSave' class='roundendButton' onclick='updateUserProfile()'>Save</div>\n" +
-        "       <div id='btnUserProfileCancel' class='roundendButton' onclick='dragableDialogClose()'>Cancel</div>\n" +
-        "   </div>\n" +
-        "</div>\n";
-}
-
-function updateUserProfile() {
-    let userProfileData = {
-        UserName: $('#txtUserProfileName').val(),
-        FirstName: $('#txtUserProfileFirstName').val(),
-        LastName: $('#txtUserProfileLastName').val(),
-        Email: $('#txtUserProfileEmail').val()
-    };
-    updateRegisteredUser(userProfileData);
-}
-
-function updateRegisteredUser(userProfileData) {
-    try {
-        let visitorId = getVisitorId(222, "updateRegisteredUser");
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/OggleUser/GetUserInfo?visitorId=" + visitorId,
-            success: function (registeredUser) {
-                if (registeredUser.Success == "ok") {
-                    let currentRegisteredUser = registeredUser.UserInfo;
-                    currentRegisteredUser.UserName = userProfileData.UserName;
-                    currentRegisteredUser.FirstName = userProfileData.FirstName;
-                    currentRegisteredUser.LastName = userProfileData.LastName;
-                    currentRegisteredUser.Email  = userProfileData.Email;
-
-                    $.ajax({
-                        type: "PUT",
-                        url: settingsArray.ApiServer + "api/OggleUser/UpdateUser",
-                        data: currentRegisteredUser,
-                        success: function (success) {
-                            if (success == "ok") {
-                                displayStatusMessage("ok", "user profile updated");
-                            }
-                            else {
-                                logError("AJX", 0, success, "update Registered User");
-                                displayStatusMessage("error", "unable to update user profile: " + success);
-                            }
-                        },
-                        error: function (jqXHR) {
-                            let errMsg = getXHRErrorDetails(jqXHR);
-                            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
-                        }
-                    });
-                }
-                else {
-                    logError("AJX", 0, success, "update Registered User");
-                    displayStatusMessage("error", "unable to update user profile: " + success);
-                }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "Get UserInfo")) logError("XHR", 0, errMsg, "Get UserInfo");
-            }
-        });
-    } catch (e) {
-        logError("CAT", 0, e, "update Registered User");
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////
-
 function showRegisterDialog(calledFrom) {
     if (typeof pause === 'function') pause();
     $('#centeredDialogTitle').html("Register and Login to OggleBooble");
@@ -283,7 +208,9 @@ function showRegisterDialog(calledFrom) {
 function attemptRegister() {
     try {
         if (validateRegister()) {
+
             let visitorId = getVisitorId(3333, "attemptRegister");
+
             $.ajax({
                 type: "POST",
                 url: settingsArray.ApiServer + "/api/Login/AddRegisterUser",
@@ -398,9 +325,6 @@ function registerDialogHtml() {
         "   <button class='roundendButton submitButton' onclick='attemptRegister()'>Submit</button>\n";
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 var registerEmail;
 var requestedPrivileges = [];
 function authenticateEmail(usersEmail) {
@@ -415,6 +339,81 @@ function authenticateEmail(usersEmail) {
     alert("Thank you for registering " + localStorage["UserName"] + "\n please reply to the two factor authentitifcation email sent to you" +
         "\nYou will then be granted the access you requested." + "\nThe menu item 'Dashboard' will appear next to your 'Hello' message");
     dragableDialogClose();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+function userProfileHtml() {
+    return "<div id='userProfileDialog' class='roundedDialog' >\n" +
+        "   <div><label style='white-space:nowrap;'>user name</label><input id='txtUserProfileName' class='roundedInput' placeholder='your go by name'></input></div>\n" +
+        "   <div><label style='white-space:nowrap;'>First Name</label><input id='txtUserProfileFirstName' class='roundedInput'></input></div>\n" +
+        "   <div><label style='white-space:nowrap;'>Last Name</label><input id='txtUserProfileLastName' class='roundedInput'></input></div>\n" +
+        "       <div id='errUserProfileEmail' class='validationError'></div>\n" +
+        "   <div><label>Email</label><input id='txtUserProfileEmail' style='roundedInput; width:100%'></input>\n" +
+        "   <div class='folderDialogFooter'>\n" +
+        "       <div id='btnUserProfileSave' class='roundendButton' onclick='updateUserProfile()'>Save</div>\n" +
+        "       <div id='btnUserProfileCancel' class='roundendButton' onclick='dragableDialogClose()'>Cancel</div>\n" +
+        "   </div>\n" +
+        "</div>\n";
+}
+
+function updateUserProfile() {
+    let userProfileData = {
+        UserName: $('#txtUserProfileName').val(),
+        FirstName: $('#txtUserProfileFirstName').val(),
+        LastName: $('#txtUserProfileLastName').val(),
+        Email: $('#txtUserProfileEmail').val()
+    };
+    updateRegisteredUser(userProfileData);
+}
+
+function updateRegisteredUser(userProfileData) {
+    try {
+        let visitorId = getVisitorId(222, "updateRegisteredUser");
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/OggleUser/GetUserInfo?visitorId=" + visitorId,
+            success: function (registeredUser) {
+                if (registeredUser.Success == "ok") {
+                    let currentRegisteredUser = registeredUser.UserInfo;
+                    currentRegisteredUser.UserName = userProfileData.UserName;
+                    currentRegisteredUser.FirstName = userProfileData.FirstName;
+                    currentRegisteredUser.LastName = userProfileData.LastName;
+                    currentRegisteredUser.Email = userProfileData.Email;
+
+                    $.ajax({
+                        type: "PUT",
+                        url: settingsArray.ApiServer + "api/OggleUser/UpdateUser",
+                        data: currentRegisteredUser,
+                        success: function (success) {
+                            if (success == "ok") {
+                                displayStatusMessage("ok", "user profile updated");
+                            }
+                            else {
+                                logError("AJX", 0, success, "update Registered User");
+                                displayStatusMessage("error", "unable to update user profile: " + success);
+                            }
+                        },
+                        error: function (jqXHR) {
+                            let errMsg = getXHRErrorDetails(jqXHR);
+                            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
+                        }
+                    });
+                }
+                else {
+                    logError("AJX", 0, success, "update Registered User");
+                    displayStatusMessage("error", "unable to update user profile: " + success);
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "Get UserInfo")) logError("XHR", 0, errMsg, "Get UserInfo");
+            }
+        });
+    } catch (e) {
+        logError("CAT", 0, e, "update Registered User");
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
