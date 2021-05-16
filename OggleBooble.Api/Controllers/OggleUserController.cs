@@ -137,7 +137,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPut]
-        [Route("api/Login/UpdateUser")]
+        [Route("api/Login/UpdateIsLoggedIn")]
         public string UpdateIsLoggedIn(string visitorId, bool isLoggedIn)
         {
             //url: settingsArray.ApiServer + "api/Login/UpdateIsLoggedIn?visitorId=" + visitorId + "&isLoggedIn=" + isLoggedIn,

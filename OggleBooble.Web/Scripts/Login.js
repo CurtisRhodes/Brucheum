@@ -54,6 +54,7 @@ function attemptLogin() {
                     localStorage["UserName"] = registeredUserSuccess.UserInfo.UserName;
                     $('#spnUserName').html(localStorage["UserName"]);
                     localStorage["UserRole"] = registeredUserSuccess.UserInfo.UserRole;
+                    localStorage["VisitorId"] = registeredUserSuccess.UserInfo.VisitorId;
 
                     //loadUserProfile(calledFrom);
 

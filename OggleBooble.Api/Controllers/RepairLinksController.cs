@@ -461,7 +461,11 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
-
+        public class DupeGroup
+        {
+            public string IpAddress { get; set; }
+            public int Count { get; set; }
+        }
 
         [HttpGet]
         [Route("api/RepairLinks/RemoveDuplicateIps")]
@@ -473,52 +477,47 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     int imageHitsChanged, pageHitsChanged, activityLogsChanged;
-                    string defaultVisitorId = "";
-                    List<Visitor> badIps = db.Database.SqlQuery<Visitor>(
-                        "select * from OggleBooble.Visitor group by IpAddress having count(*) > 1;").ToList();
 
-                    for (int i = 0; i < badIps.Count; i++)
+                    //List<Visitor> unregistedVisitors =
+                    //    db.Database.SqlQuery<Visitor>("select * from OggleBooble.Visitor where VisitorId not in (select VisitorId from OggleBooble.RegisteredUser)").ToList();
+
+                    List<DupeGroup> dupGroups = db.Database.SqlQuery<DupeGroup>("select IpAddress, count(*) from Visitor v left join RegisteredUser r " +
+                    "on v.VisitorId = r.VisitorId where r.VisitorId is null group by IpAddress having count(*) > 1 order by count(*) desc").ToList();
+                        
+                    //"select IpAddress, count(*) from Visitor group by IpAddress having count(*) > 1 order by count(*) desc;").ToList();
+
+                    foreach (DupeGroup dupGroup in dupGroups)
                     {
-                        try
+                        List<Visitor> duplicateIps = db.Visitors.Where(v => v.IpAddress == dupGroup.IpAddress).ToList();
+                        Visitor firstVisitor = duplicateIps[0];
+                        foreach (Visitor duplicateIp in duplicateIps)
                         {
-                            if (i == 0)
-                            {
-                                defaultVisitorId = badIps[0].VisitorId;
-                            }
-                            else
+                            if (duplicateIp.VisitorId != firstVisitor.VisitorId)
                             {
                                 imageHitsChanged = db.Database.ExecuteSqlCommand(
-                                    "Update OggleBooble.ImageHit set VisitorId = '" + defaultVisitorId + "' where VisitorId='" + badIps[i].VisitorId + "';");
+                                    "Update OggleBooble.ImageHit set VisitorId = '" + firstVisitor.VisitorId + "' where VisitorId='" + duplicateIp.VisitorId + "';");
+                                repairReport.ImageHitsUpdated += imageHitsChanged;
+
                                 pageHitsChanged = db.Database.ExecuteSqlCommand(
-                                    "Update OggleBooble.PageHit set VisitorId = '" + defaultVisitorId + "' where VisitorId='" + badIps[i].VisitorId + "';");
-                                activityLogsChanged = db.Database.ExecuteSqlCommand(
-                                    "Update OggleBooble.ActivityLog set VisitorId = '" + defaultVisitorId + "' where VisitorId='" + badIps[i].VisitorId + "';");
-
-                                if (imageHitsChanged > 0)
-                                    repairReport.ImageHitsUpdated += imageHitsChanged;
-
+                                    "Update OggleBooble.PageHit set VisitorId = '" + firstVisitor.VisitorId + "' where VisitorId='" + duplicateIp.VisitorId + "';");
                                 repairReport.PageHitsUpdated += pageHitsChanged;
+
+                                activityLogsChanged = db.Database.ExecuteSqlCommand(
+                                    "Update OggleBooble.ActivityLog set VisitorId ='" + firstVisitor.VisitorId + "' where VisitorId='" + duplicateIp.VisitorId + "';");
                                 repairReport.ActivityLogsUpdated += activityLogsChanged;
 
-                                string visIdtoRemove = badIps[i].VisitorId;
-                                Visitor rowToRemove = db.Visitors.Where(v => v.VisitorId == visIdtoRemove).First();
-                                db.Visitors.Remove(rowToRemove);
-                                db.SaveChanges();
+                                //unregistedVisitors.Remove(duplicateIp);
                                 repairReport.VisitorRowsRemoved++;
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            repairReport.Errors.Add(Helpers.ErrorDetails(ex));
-                        }
+                        db.Visitors.RemoveRange(duplicateIps);
+                        db.SaveChanges();
                     }
-
                     repairReport.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-
                 repairReport.Success = Helpers.ErrorDetails(ex);
             }
             return repairReport;

@@ -201,33 +201,3 @@ function updateCarouselSettings() {
     }
 }
 
-function verifyVisitorId(folderId, calledFrom) {
-    try {
-        //logActivity("VV0", folderId, calledFrom);
-
-        if (isNullorUndefined(localStorage["VisitorId"])) {
-            logActivity("VV2", folderId, calledFrom);
-            getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
-            return;
-        }
-
-        if (localStorage["VisitorId"] == "unset") {
-            logActivity("VV3", folderId, calledFrom);
-            return;
-        }
-
-        if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
-            $('#headerMessage').html("new session started");
-            sessionStorage["VisitorVerified"] = "true";
-            loadUserProfile("verify visitor");
-            logVisit(folderId, "verify visitor");
-            console.log("visitor verified: " + localStorage["VisitorId"]);
-            // if (document.domain === 'localhost') alert("new session started");
-        }
-    }
-    catch (e) {
-        logError("CAT", folderId, e, calledFrom + "/verifyVisitorId");
-        if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
-    }
-}
-

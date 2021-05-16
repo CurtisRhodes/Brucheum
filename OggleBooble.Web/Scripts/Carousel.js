@@ -102,9 +102,8 @@ function launchCarousel(startRoot) {
             launchCarousel("centerfold");
         }
 
-
         // SyntaxError: Unexpected token u in JSON at position 
-        if (document.domain == "localHost") alert("launchCarousel CATCH: lastStep:" + lastStep + "  e: " + e);
+        if (document.domain == "localHost") alert("launchCarousel CATCH: lastStep: " + lastStep + " e: " + e);
         logError("CAT", startRoot, "lastStep:" + lastStep + "  e: " + e, "launchCarousel");
     }
 }
@@ -236,7 +235,7 @@ function refreshCache(rootFolder) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "refreshCache")) logError("XHR", folderId, errMsg, "refreshCache");
+                if (!checkFor404(errMsg, 366, "refreshCache")) logError("XHR", 366, errMsg, "refreshCache");
             }
         });
     } catch (e) {
@@ -553,9 +552,6 @@ function clickViewGallery(labelClick) {
         default: logError("SWT", 3908, "labelClick: " + labelClick, "clickViewGallery");
     }
 
-    // rtpe(eventCode, calledFrom, eventDetail, folderId)
-    // rtpe("CIC", labelClick, carouselItemArray[imageIndex].ImageFolderName, clickFolderId);
-    // logEvent(eventCode, folderId, calledFrom, eventDetails)
     logEvent("CIC", clickFolderId, carouselButtonClicked, carouselItemArray[imageIndex].LinkId);
 
     //sendEmail("CurtishRhodes@hotmail.com", "SlideshowClick@Ogglebooble.com", "carousel image clicked",

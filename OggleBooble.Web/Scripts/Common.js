@@ -6,31 +6,6 @@
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 //<div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
 
-
-function getVisitorId(folderId, calledFrom) {
-    try {
-        if (localStorage["VisitorId"] == "unset") {
-            if (document.domain == "localhost") alert("VisitorId undefined");
-            //getIpInfo(folderId, calledFrom + "/getVisitorId");
-            return "unset";
-        }
-
-        if (isNullorUndefined(localStorage["VisitorId"])) {
-            if (document.domain == "localhost") alert("VisitorId undefined");
-            //getIpInfo(folderId, calledFrom + "/getVisitorId");
-            return "unset";
-        }
-        else
-            return localStorage["VisitorId"];
-
-    } catch (e) {
-        localStorage["VisitorId"] = "unset";
-        logError("CAT", folderId, e, calledFrom + "/getVisitorId");
-        if (document.domain == "localhost") alert("Catch error in getVisitorId: " + e);
-        return "unset";
-    }
-}
-
 let entirePage;
 function replaceFullPage(imgSrc) {
     entirePage = $('body').html();

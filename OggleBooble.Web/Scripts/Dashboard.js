@@ -192,9 +192,9 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf</div>\n"+
                 "<div class='clickable' onclick='DupeCheck();'>Dupe Check</div>\n" +
                 "<div class='clickable' onclick='showAutoIncrimentDialog();'>Auto Incriment</div>\n" +
+                "<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" +
                 "<div class='clickable' onclick='buildHtmlPage()'>Build Html Page</div>"
             );
-            //"<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" +
             //"<div class='clickable' onclick='HardcoreFilecounts();'>HardcoreFilecounts()</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
@@ -700,7 +700,7 @@ function showMoveManyTool(cx) {
     $('#txtMoveManySource').val(mmSelectedTreeFolderPath);
     $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyHeader').height());
     activeDirTree = "moveMany";
-    loadDirectoryTree(1, "mmDirTreeContainer", false);
+    loadDirectoryTree(1, "mmDirTreeContainer", true);
     loadMMcheckboxes();
 }
 function loadMMcheckboxes() {
