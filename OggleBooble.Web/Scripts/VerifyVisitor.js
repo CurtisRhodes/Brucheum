@@ -119,44 +119,6 @@ function addVisitor(visitorData) {
     }
 }
 
-function addBadVisitor(folderId, calledFrom) {
-    try {
-        logActivity("AB0", 222, "add BadVisitor");
-        let badVisitorId = "failedGetIpInfo_" + create_UUID().substr(0, 15);
-        localStorage["VisitorId"] = badVisitorId;
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/Common/TryAddVisitor",
-            data: {
-                VisitorId: badVisitorId,
-                IpAddress: "00.00.00",
-                City: "xx",
-                Country: "US",
-                Region: "xx",
-                GeoCode: '000'
-            },
-            success: function (avSuccess) {
-                if (avSuccess.Success == "ok") {
-                    logActivity("AB1", folderId, "add BadVisitor/" + calledFrom);
-                }
-                else {
-                    logError("AJX", folderId, avSuccess.Success, "add BadVisitor/" + calledFrom);
-                    logActivity("AB2", folderId, "add BadVisitor/" + calledFrom);
-                }
-            },
-            error: function (jqXHR) {
-                logActivity("AB3", folderId, "add BadVisitor/" + calledFrom);
-                let errMsg = getXHRErrorDetails(jqXHR);
-                //if (!checkFor404(errMsg, folderId, "add BadVisitor/" + calledFrom)) 
-                logError("XHR", folderId, errMsg, "add BadVisitor/" + calledFrom);
-            }
-        });
-    } catch (e) {
-        logActivity("AB4", 222, "add BadVisitor");
-        logError("CAT", 456, e, "add BadVisitor");
-    }
-}
-
 function getVisitorId(folderId, calledFrom) {
     try {
         if (isNullorUndefined(localStorage["VisitorId"])) {

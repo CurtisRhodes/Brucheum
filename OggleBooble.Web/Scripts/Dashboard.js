@@ -3,7 +3,7 @@
     changeFavoriteIcon("redBallon");
     $('#indexMiddleColumn').html(dashboardHtml());
 
-    if (!isInRole("admin", 444, "dashboardStartup")) {
+    if (!isInRole("admin")) {
         alert("admin role required");
         window.location.href = "Index.html";
     }
@@ -19,7 +19,7 @@
     $('#dashboardDialog').css("left", 450);
     showDefaultWorkArea();
     setOggleHeader("dashboard");
-    setOggleFooter(3910, "dashboard");
+    setOggleFooter(3910, "dashboard", "dashboard");
     loadHeaderTabs(localStorage["UserRole"]);
     setLeftMenu(localStorage["UserRole"]);
     resizeDashboardPage();

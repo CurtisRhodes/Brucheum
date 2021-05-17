@@ -72,10 +72,6 @@ $(document).ready(function () {
     }, 300);
 });
 
-//function getBreadCrumbs(staticPageFolderId) {
-//    setOggleFooter(staticPageFolderId, currentFolderRoot);
-//}
-
 function resizeStaticPage() {
     resizePage();
     $('#imageContainer').width($('#middleColumn').width());

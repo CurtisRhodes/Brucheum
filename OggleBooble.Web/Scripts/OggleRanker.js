@@ -10,7 +10,7 @@
 
 function rankerStartup(initialCategory) {
     setOggleHeader("ranker");
-    setOggleFooter(3911, "blog");
+    setOggleFooter(3911, "blog", "ranker");
     selectedRankerCategories = initialCategory;
     document.title = "Hot or Not : OggleBooble";
     //document.title = "image rater : OggleBooble";
@@ -81,14 +81,14 @@ function loadRankerImages() {
             else {
                 $('#rankerLoadingGif').hide();
                 if (document.domain == "localHost") alert("loadBoobsRanker: " + success);
-                logError("AJX", 3907, container.Success, "loadBoobsRanker");
+                logError("AJX", 3907, container.Success, "load RankerImages");
             }
         },
         error: function (jqXHR) {
             $('#rankerLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 3907, errMsg, functionName);
+            if (!checkFor404(errMsg, folderId, "load RankerImages"))
+                logError("XHR", 3907, errMsg, "load RankerImages");
         }
     });
 }

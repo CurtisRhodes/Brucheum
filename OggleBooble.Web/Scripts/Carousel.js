@@ -287,6 +287,9 @@ function intervalBody() {
                         $('#thisCarouselImage').css('height', window.innerHeight * .62);
                         $('#thisCarouselImage').attr('src', nextImg);
                         //$('#testMessage1').html("first time in"); // + $('#thisCarouselImage').height());
+                        setLabelLinks(imageIndex);
+                        $('.carouselFooter').width($('#thisCarouselImage').width());
+                        $('.carouselFooter').css("visibility", "visible");
                         firstTime = false;
                         intervalReady = true;
                     }

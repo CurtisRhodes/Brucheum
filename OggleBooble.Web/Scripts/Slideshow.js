@@ -214,7 +214,7 @@ function slide(direction) {
                                 $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                             }
                             else {
-                                if (isInRole("sert", albumFolderId, "slideshow")) {
+                                if (isInRole("sert")) {
                                     $.ajax({
                                         type: "GET",
                                         url: settingsArray.ApiServer + "api/Links/GetLinkCount?imageLinkId=" + imageViewerArray[imageViewerIndex].LinkId,

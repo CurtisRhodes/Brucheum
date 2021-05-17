@@ -54,7 +54,7 @@
     }
 }
 
-function isInRole(roleName, folderId, calledFrom) {
+function isInRole(roleName) {
     try {
 
         if (isNullorUndefined(localStorage["IsLoggedIn"])) {

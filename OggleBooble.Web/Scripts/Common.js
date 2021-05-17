@@ -6,50 +6,6 @@
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 //<div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
 
-let entirePage;
-function replaceFullPage(imgSrc) {
-    entirePage = $('body').html();
-    $('body').html(
-        "<div id='expImgpg' tabindex='0' class='fullF11'>" +
-        "   <div class='fullF11Header'>" +
-        "       <div id='fullF11Title' class='fullF11Title'></div>" +
-        "       <div class='fullF11HeaderCloseButton' onclick='closeExplodedImage()'><img src='/Images/close.png' title='you may use the {esc} key'/></div>\n" +
-        "   </div>" +
-        "   <img id='explodedImage' onclick='explodedImageClick()' src='" + imgSrc + "'/>" +
-        "</div>"
-    );
-    let winW = $(window).width();
-    $('#explodedImage').css("width", winW * .7);
-    $('#explodedImage').css("cursor", "zoom-in");
-    $('#expImgpg').focus();
-
-    $('#expImgpg').on('keydown', function (event) {
-        //alert("entirePage.keydown");
-        if (event.which == 27) {
-            event.preventDefault();
-            window.event.returnValue = false;
-            closeExplodedImage();
-        }
-    });
-}
-
-function closeExplodedImage() {
-    $('body').html(entirePage);
-    slideShowButtonsActive = true;
-}
-
-function explodedImageClick() {
-    if ($('#explodedImage').css("cursor") == "zoom-in") {
-        $('#explodedImage').css("cursor", "zoom-out");
-        $('#explodedImage').css("width", "100%");
-    }
-    else {
-        let winW = $(window).width();
-        $('#explodedImage').css("width", winW * .7);
-        $('#explodedImage').css("cursor", "zoom-in");
-    }
-}
-
 function loadOggleSettings() {
     document.title = "loading settings : OggleBooble";
     $.ajax({
@@ -322,7 +278,7 @@ function logActivity(activityCode, folderId, calledFrom) {
             ActivityCode: activityCode,
             FolderId: folderId,
             CalledFrom: calledFrom,
-            VisitorId: getVisitorId(folderId, "logActivity/" + calledFrom),
+            VisitorId: getVisitorId(folderId, "log Activity/" + calledFrom),
         },
         success: function (success) {
             if (success === "ok") {
@@ -339,8 +295,8 @@ function logActivity(activityCode, folderId, calledFrom) {
             $('#dashBoardLoadingGif').hide();
 
             let errMsg = getXHRErrorDetails(jqXHR);
-            //if (!checkFor404(errMsg, folderId, "logActivity"))
-            logError("XHR", folderId, errMsg, "logActivity");
+            if (!checkFor404(errMsg, folderId, "log Activity"))
+                logError("XHR", folderId, errMsg, "log Activity");
         }
     });
 }

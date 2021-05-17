@@ -1,20 +1,6 @@
 ﻿function getIpInfo(folderId, calledFrom) {
     try {
         setTimeout(function () {
-            //if (!isNullorUndefined(localStorage["VisitorId"])) {
-            //    if (localStorage["VisitorId"] != 'unset') {
-            //        if (localStorage["VisitorId"].indexOf("failedGetIpInfo") > -1) {
-            //            logError("IP4", folderId, localStorage["VisitorId"], "getIpInfo/" + calledFrom);
-            //            //logActivity("IP4", folderId, calledFrom); // we got a looper
-            //            return;
-            //        }
-            //    }
-            //    //    if (localStorage["VisitorId"].length == 36) {
-            //    //        logError("IP2", folderId, "visitorId: " + localStorage["VisitorId"]);
-            //    //        verifyVisitorId(folderId, calledFrom);
-            //    //    }
-            //}
-
             // logActivity("IP1", folderId, "getIpInfo/" + calledFrom);
             let ipInfoExited = false;
             $.ajax({
@@ -110,22 +96,26 @@ function tryAlt_IpLookup(folderId, calledFrom) {
                 }
                 else {
                     logActivity("IF2", folderId, "altIpLookup/" + calledFrom); // ipfy lookup also failed
-                    addBadVisitor(folderId, "altIpLookup/" + calledFrom);
+                    addVisitor({
+                        VisitorId: "failedGetIpInfo_" + create_UUID().substr(0, 20),
+                        IpAddress: "00.00.00",
+                        City: "xx",
+                        Country: "US",
+                        Region: "xx",
+                        GeoCode: '000'
+                    });
                 }
             },
             error: function (jqXHR) {
                 logActivity("IF3", folderId, "altIpLookup/" + calledFrom); // ipfy XHR fail
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "logStaticPageHit")) {
+                if (!checkFor404(errMsg, folderId, "logStaticPageHit"))
                     logError("XHR", folderId, errMsg, "altIpLookup/" + calledFrom);
-                    addBadVisitor(folderId, "altIpLookupXHR/" + calledFrom);
-                }
             }
         });
     } catch (e) {
         logError("CAT", folderId, e, "altIpLookup");
         logActivity("IF4", 444, "altIpLookup");
-        addBadVisitor(folderId, "altIpLookupCAT/" + calledFrom);
     }
 }
 
@@ -171,6 +161,7 @@ function logStaticPageHit(folderId, calledFrom) {
         url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId +
             "&folderId=" + folderId + "&calledFrom=" + calledFrom,
         success: function (success) {
+            logActivity("SP4", folderId, success); // static page hit return
             if (success == "ok") {
                 logActivity("SP1", folderId, calledFrom); // static page hit success
                 logEvent("SPH", folderId, "logStatic PageHit/" + calledFrom, "");
@@ -183,8 +174,8 @@ function logStaticPageHit(folderId, calledFrom) {
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
             logActivity("SP6", folderId, calledFrom); // static page hit XHR error
-            //if (!checkFor404(errMsg, folderId, "logStaticPageHit"))
-            logError("XHR", folderId, errMsg, "logStaticPageHit");
+            if (!checkFor404(errMsg, folderId, "log StaticPageHit"))
+                logError("XHR", folderId, errMsg, "log StaticPageHit");
         }
     });
     //logEvent("SDS", folderId, "logStatic PageHit/" + calledFrom, "");

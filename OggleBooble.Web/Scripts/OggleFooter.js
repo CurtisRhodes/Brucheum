@@ -1,4 +1,4 @@
-﻿function setOggleFooter(folderId, rootFolder) {
+﻿function setOggleFooter(folderId, rootFolder, calledFrom) {
     //alert("setOggleFooter. folderId: " + folderId + "  rootFolder: " + rootFolder);
     try {
 
@@ -164,12 +164,12 @@
             }
         }
 
-        if (isInRole("trusted", folderId, "setOggleFooter"))
+        if (isInRole("trusted"))
             $('#footerCol5').show();
         else
             $('#footerCol5').hide();
 
     } catch (e) {
-        logError("CAT", folderId, e, "setOggleFooter");
+        logError("CAT", folderId, e, "setOggleFooter", "footer/" + calledFrom);
     }
 }

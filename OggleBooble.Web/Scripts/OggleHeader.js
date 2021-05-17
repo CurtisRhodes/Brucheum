@@ -62,7 +62,7 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#optionLoggedIn').show();
             $('#optionNotLoggedIn').hide();
 
-            if (isInRole("trusted", folderId, "resetOggleHeader"))
+            if (isInRole("trusted"))
                 $('#footerCol5').show();
             else
                 $('#footerCol5').hide();

@@ -22,7 +22,7 @@ function displaySpaPage(spaPageId) {
             spaType = "boobs";
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader("index");
-            setOggleFooter(3908, "index");
+            setOggleFooter(3908, "index", "index");
             launchCarousel("boobs");
             $('.indexPageSection').show();
             loadUpdatedGalleriesBoxes();
@@ -33,7 +33,7 @@ function displaySpaPage(spaPageId) {
             spaType = "porn";
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader("porn");
-            setOggleFooter(spaPageId, "porn");
+            setOggleFooter(spaPageId, "porn", "porn");
             launchCarousel("porn");
             // set porn colors
             $('.threeColumnLayout').css("background-color", "#d279a6");
@@ -50,7 +50,7 @@ function displaySpaPage(spaPageId) {
             $('#indexMiddleColumn').html(playboyPageHTML());
             setOggleHeader("playboyIndex");
             resetOggleHeader(72, "playboyIndex");
-            setOggleFooter(spaPageId, "centerfold");
+            setOggleFooter(spaPageId, "centerfold", "centerfold");
             launchCarousel("centerfold");
             $('#updatedGalleriesSectionLoadingGif').show();
             loadUpdatedGalleriesBoxes();
