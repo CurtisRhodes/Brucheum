@@ -1,19 +1,19 @@
 ﻿function getIpInfo(folderId, calledFrom) {
     try {
         setTimeout(function () {
-            if (!isNullorUndefined(localStorage["VisitorId"])) {
-                if (localStorage["VisitorId"] != 'unset') {
-                    if (localStorage["VisitorId"].indexOf("failedGetIpInfo") > -1) {
-                        logError("IP4", folderId, localStorage["VisitorId"], "getIpInfo/" + calledFrom);
-                        //logActivity("IP4", folderId, calledFrom); // we got a looper
-                        return;
-                    }
-                }
-                //    if (localStorage["VisitorId"].length == 36) {
-                //        logError("IP2", folderId, "visitorId: " + localStorage["VisitorId"]);
-                //        verifyVisitorId(folderId, calledFrom);
-                //    }
-            }
+            //if (!isNullorUndefined(localStorage["VisitorId"])) {
+            //    if (localStorage["VisitorId"] != 'unset') {
+            //        if (localStorage["VisitorId"].indexOf("failedGetIpInfo") > -1) {
+            //            logError("IP4", folderId, localStorage["VisitorId"], "getIpInfo/" + calledFrom);
+            //            //logActivity("IP4", folderId, calledFrom); // we got a looper
+            //            return;
+            //        }
+            //    }
+            //    //    if (localStorage["VisitorId"].length == 36) {
+            //    //        logError("IP2", folderId, "visitorId: " + localStorage["VisitorId"]);
+            //    //        verifyVisitorId(folderId, calledFrom);
+            //    //    }
+            //}
 
             // logActivity("IP1", folderId, "getIpInfo/" + calledFrom);
             let ipInfoExited = false;
@@ -54,14 +54,13 @@
                             if (document.domain == "localhost") alert("calling getIpInfo from log visit");
                             getIpInfo(folderId, "verify visitor");
                             logActivity("IP5", folderId, calledFrom + "/getIpInfo");
+                            tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo5V");
+                        }
+                        else {
+                            logActivity("IP5", folderId, calledFrom + "/getIpInfo");
+                            //"verify visitor"
                             tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo5");
                         }
-                        else
-                            logActivity("IP5", folderId, calledFrom + "/getIpInfo");
-
-
-                        "verify visitor"
-                        tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo5");
                     }
                     else {
                         //if (!checkFor404(errMsg, visitorData.FolderId, "getIpInfo/" + calledFrom)) {

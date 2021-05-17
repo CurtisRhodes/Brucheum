@@ -28,7 +28,14 @@
             "       </div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +  // column 6
-            "       <div id='footerCol6' class='footerColCustContainer'></div>\n" +
+            "       <div id='footerCol6' class='footerColCustContainer'>\n" +
+            "       </div >\n" +
+            "    </div>\n" +
+            "    <div class='rightMostfooterColumn'>\n" +  // column 7
+            "       <div id='footerCol7' class='rightMostColCustContainer'>\n" +
+            "           <a href='https://ipinfo.io/' alt='IPinfo - Comprehensive IP address data, IP geolocation API and database'>" +
+            "           this site uses<img src='/images/ipinfo.png' height='40' /></a>\n" +
+            "       </div >\n" +
             "    </div>\n" +
             "   </div>\n<div class='footerFooter'>\n" +
             "       <div id='footerMessage'></div>\n" +

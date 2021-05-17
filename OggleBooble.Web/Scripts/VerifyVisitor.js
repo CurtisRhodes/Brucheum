@@ -17,7 +17,7 @@ function verifyVisitorId(folderId, calledFrom) {
 
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
             $('#headerMessage').html("new session started");
-            if (localStorage["VisitorId"].length == 36) {
+            if ((localStorage["VisitorId"].length == 36) || (localStorage["VisitorId"].indexOf("failedGetIpInfo") > -1)) {
                 $.ajax({
                     type: "GET",
                     url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + localStorage["VisitorId"],
@@ -31,8 +31,8 @@ function verifyVisitorId(folderId, calledFrom) {
                         }
                         else {  // visitorId not found
                             logActivity("VV7", folderId, "verifyVisitor/" + calledFrom);
-                            logError("BUG", folderId, "visitorId not found: " + localStorage["VisitorId"], "verifyVisitor/" + calledFrom);
-                            console.log("visitorId not found: " + localStorage["VisitorId"]);
+                            //logError("BUG", folderId, "visitorId not found: " + localStorage["VisitorId"], "verifyVisitor/" + calledFrom);
+                            console.log("visitorId not found: " + localStorage["VisitorId"] + "  calling getIpInfo");
                             getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
                         }
                     },
@@ -45,7 +45,7 @@ function verifyVisitorId(folderId, calledFrom) {
             }
             else {
                 logActivity("VV4", folderId, "verifyVisitor/" + calledFrom);
-                logError("BUG", folderId, "size issue visitorId: " + localStorage["VisitorId"], "verifyVisitor/" + calledFrom);
+                logError("BUG", folderId, "susspiciosus visitorId: " + localStorage["VisitorId"], "verifyVisitor/" + calledFrom);
             }
         }
     }
