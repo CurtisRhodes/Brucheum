@@ -52,14 +52,14 @@
     function saveFeedback(folderId, folderName) {
         try {
             if (validateFeedback()) {
-
                 //alert("feedbackType: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
+                let visitorId = getCookieValue("VisitorId");
                 let feedbackType = $('#feedbackDialog input[type=\'radio\']:checked').val();
                 $.ajax({
                     type: "POST",
                     url: settingsArray.ApiServer + "api/Common/LogFeedback",
                     data: {
-                        VisitorId: getVisitorId(folderId, "saveFeedback"),
+                        VisitorId: visitorId,
                         FolderId: folderId,
                         FeedBackComment: $('#smnFeedback').val(),
                         FeedBackType: feedbackType,
@@ -74,7 +74,7 @@
                             if (document.domain !== "localhost")
                                 sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "You Got Some Feedback", " radio button: " + feedbackType + "<br/><br/>" +
                                     "feedbackMessage: " + $('#smnFeedback').val() + "<br/>" +
-                                    "visitor: " + getVisitorId(444, "savefeedback") + "<br/>" +
+                                    "visitor: " + getCookieValue("VisitorId") + "<br/>" +
                                     "folder: " + folderName);
                             else
                                 alert("sendEmail(CurtishRhodes@hotmail.com, Feedback@Ogglebooble.com, Feedback !!!" +
@@ -134,7 +134,7 @@
         try {
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + getVisitorId(12333, "getUserEmail"),
+                url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + getCookieValue("VisitorId"),
                 success: function (visitorInfo) {
                     if (visitorInfo.Success == "ok") {
                         if (visitorInfo.IsRegisteredUser)
@@ -193,7 +193,7 @@ function saveFolderComment(folderId) {
     //public string AddEditTrackBackLink(FolderCommentModel folderCommentModel)
     //let folderCommentMessage = $('#smnFolderComment').summernote('code');
     try {
-        let visitorId = getVisitorId(566, "saveFolderComment");
+        let visitorId = getCookieValue("VisitorId");
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/FolderComment/AddFolderComment",

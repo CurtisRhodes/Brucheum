@@ -206,7 +206,7 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
                 type: "POST",
                 url: settingsArray.ApiServer + "api/Common/LogError",
                 data: {
-                    VisitorId: getVisitorId(folderId, "logError/" + calledFrom),
+                    VisitorId: getCookieValue("VisitorId"),
                     ErrorCode: errorCode,
                     FolderId: folderId,
                     ErrorMessage: errorMessage,
@@ -246,7 +246,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogEvent",
             data: {
-                VisitorId: getVisitorId(folderId, "logEvent/" + calledFrom),
+                VisitorId: getCookieValue("VisitorId"),
                 EventCode: eventCode,
                 EventDetail: eventDetails,
                 CalledFrom: calledFrom,
@@ -278,7 +278,7 @@ function logActivity(activityCode, folderId, calledFrom) {
             ActivityCode: activityCode,
             FolderId: folderId,
             CalledFrom: calledFrom,
-            VisitorId: getVisitorId(folderId, "log Activity/" + calledFrom),
+            VisitorId: getCookieValue("VisitorId"),
         },
         success: function (success) {
             if (success === "ok") {

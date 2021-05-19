@@ -6,12 +6,6 @@ using System.Web;
 
 namespace OggleBooble.Api.Models
 {
-    public class AddRegisteredUserSuccessModel
-    {
-        public string Success { get; set; }
-        public string NewVisitorId { get; set; }
-    }
-
     public class RegisteredUsersSuccessModel
     {
         public RegisteredUsersSuccessModel()

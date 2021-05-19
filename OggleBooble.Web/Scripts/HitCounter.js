@@ -10,7 +10,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
             data: {
-                VisitorId: getVisitorId(folderId, "log ImageHit"),
+                VisitorId: getCookieValue("VisitorId"),
                 FolderId: folderId,
                 LinkId: linkId,
                 IsInitialHit: isInitialHit
@@ -52,7 +52,7 @@ function logPageHit(folderId) {
             return;
         }
 
-        let visitorId = getVisitorId(folderId, "logPageHit");
+        let visitorId = getCookieValue("VisitorId");
 
         $.ajax({
             type: "POST",
@@ -77,7 +77,7 @@ function logPageHit(folderId) {
 
 function logVisit(folderId, calledFrom) {
     try {
-        let visitorId = getVisitorId(folderId, calledFrom + "/logVisit");
+        let visitorId = getCookieValue("VisitorId");
         if (visitorId.length != 36) {
             logActivity("LV5", folderId, calledFrom + "/logVisit");
             logError("LV5", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
@@ -161,27 +161,6 @@ function weDemandCookies() {
     alert("weDemandCookies");
     //showCustomMessage(1233, false);
 
-}
-
-function getCloudflare(calledFrom, folderId) {
-    $.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
-        console.log("Cloudflare IP: " + data.ip);
-        window.localStorage["IpAddress"] = data.ip;
-
-        let visitorId = getVisitorId(folderId, "getCloudflare/" + calledFrom);
-        if (isNullorUndefined(visitorId)) {
-            addVisitor({
-                IpAddress: data.ip,
-                FolderId: folderId,
-                CalledFrom: calledFrom,
-                City: data.loc,
-                Country: data.loc,
-                Region: data.loc,
-                GeoCode: data.ts
-            });
-        }
-        //getVisitorInfo(visitorId, calledFrom, folderId);
-    });
 }
 
 function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {

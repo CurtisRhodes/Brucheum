@@ -476,7 +476,7 @@ function launchDeepSlideShow() {
     $('#albumPageLoadingGif').show();
     logEvent("DSC", apFolderId, apFolderName, "launchDeepSlideShow");
     launchViewer(apFolderId, 1, true);
-    //    let visitorId = getVisitorId(apFolderId, "launchDeep");
+    //    let visitorId = getCookieValue("VisitorId");
     //    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com",
     //        "deep slideshow clicked", "Visitor Id: " + visitorId + "<br/>Folder: " + apFolderName);
 }
@@ -499,7 +499,7 @@ function chargeCredits(folderId, rootFolder) {
         type: "POST",
         url: settingsArray.ApiServer + "api/User/AwardCredits",
         data: {
-            VisitorId: getVisitorId(222, "chargeCredits"),
+            VisitorId: getCookieValue("VisitorId"),
             ActivityCode: activityCode,
             PageId: folderId,
             Credits: credits

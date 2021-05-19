@@ -53,9 +53,9 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/Login/AddRegisterUser")]
-        public AddRegisteredUserSuccessModel AddRegisterUser(RegisteredUser newRegisteredUser)
+        public SuccessModel AddRegisterUser(RegisteredUser newRegisteredUser)
         {
-            var addRegisteredUserSuccess = new AddRegisteredUserSuccessModel();
+            var successModel = new SuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -63,32 +63,33 @@ namespace OggleBooble.Api.Controllers
                     RegisteredUser dbUserName = db.RegisteredUsers.Where(u => u.UserName == newRegisteredUser.UserName).FirstOrDefault();
                     if (dbUserName != null)
                     {
-                        addRegisteredUserSuccess.Success = "user name already exists";
-                        return addRegisteredUserSuccess;
+                        successModel.Success = "user name already exists";
+                        return successModel;
                     }
                     RegisteredUser dbUserVisitorId = db.RegisteredUsers.Where(u => u.VisitorId == newRegisteredUser.VisitorId).FirstOrDefault();
                     if (dbUserVisitorId != null)
                     {
                         if (dbUserVisitorId.UserRole == "admin")
                         {
+                            successModel.Success = "admin override";
                             newRegisteredUser.VisitorId = Guid.NewGuid().ToString();
-                            addRegisteredUserSuccess.NewVisitorId = newRegisteredUser.VisitorId;
+                            successModel.ReturnValue = newRegisteredUser.VisitorId;
                         }
                         else
                         {
-                            addRegisteredUserSuccess.Success = "visitorId already registered";
-                            return addRegisteredUserSuccess;
+                            successModel.Success = "visitorId already registered";
+                            return successModel;
                         }
                     }
                     newRegisteredUser.Created = DateTime.Now;
                     newRegisteredUser.Pswrd = HashSHA256(newRegisteredUser.Pswrd);
                     db.RegisteredUsers.Add(newRegisteredUser);
                     db.SaveChanges();
-                    addRegisteredUserSuccess.Success = "ok";
+                    successModel.Success = "ok";
                 }
             }
-            catch (Exception ex) { addRegisteredUserSuccess.Success = Helpers.ErrorDetails(ex); }
-            return addRegisteredUserSuccess;
+            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
+            return successModel;
         }
 
         [HttpPut]

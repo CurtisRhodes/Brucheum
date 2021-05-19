@@ -2,9 +2,6 @@
     try {
 
         if (isNullorUndefined(localStorage["IsLoggedIn"])) {
-            //let visitorId = getVisitorId(folderId, "isInRole/" + calledFrom);
-            //logError("BUG", 22668, "localStorage[IsLoggedIn] undefined", "isInRole/" + calledFrom);
-            //loadUserProfile("is in role");
             return false;
         }
         if (!localStorage["UserName"] == "unregistered") {

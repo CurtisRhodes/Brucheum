@@ -1,98 +1,85 @@
-﻿function getCookieValue(itemName, calledFrom) {
-    let returnValue = "not found"; // window.localStorage[itemName];
+﻿
+function getCookieValue(itemName) {
+    let returnValue = "not found"; 
     let decodedCookie = decodeURIComponent(document.cookie);
     let cookieElements = decodedCookie.split(";");
     let cookieItem, cookieItemName, cookieItemValue;
-
-    //alert("cookieElements: " + cookieElements);
-
     for (var i = 0; i < cookieElements.length; i++) {
         cookieItem = cookieElements[i].split(":");
-        cookieItemName = cookieItem[0].trim();//.substring(0, cookieElements[i].indexOf("=")).trim();
-        cookieItemValue = cookieItem[1];//.substring(cookieElements[i].indexOf("=") + 1);
-
-        alert("cookieItemName: " + cookieItemName);
+        cookieItemName = cookieItem[0].trim();
+        cookieItemValue = cookieItem[1];
 
         if (cookieItemName === itemName) {
-            alert("cookie value FOUND. " + itemName + " = " + cookieItemValue);
+            //alert("cookie value FOUND. " + itemName + " = " + cookieItemValue);
+            localStorage[itemName] = cookieItemValue;
             returnValue = cookieItemValue;
             break;
         }
     }
     if (returnValue == "not found") {
-        //alert("get CookieValue called from: " + calledFrom + "\nitemName: " + itemName + "  returnValue: " + returnValue);
-        returnValue = "cookie not found";
+        if (!isNullorUndefined(localStorage[itemName])) {
+            console.log("localStorage[" + itemName + "] set to: " + localStorage[itemName] + " and cookie not found");
+            setCookieValue(itemName, localStorage[itemName]);
+        }
     }
     return returnValue;
 }
 
 function setCookieValue(elementToSet, newValue) {
-    alert("calling setCookieValue.  set:" + elementToSet + " to: " + newValue);
+    //alert("calling setCookieValue.  set:" + elementToSet + " to: " + newValue);
     try {
-        //let returnValue = window.localStorage[itemName];
-        //window.localStorage[elementName] = elementValue;
-        if (document.cookie) {
-            let decodedCookie = decodeURIComponent(document.cookie);
-            let cookieElements = decodedCookie.split(",");
 
-            //alert("cookieElements: " + cookieElements);
+        let cookieString = elementToSet + ": " + newValue;
+        //let cookieString = "VisitorId:" + winStorageVisId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+        document.cookie = cookieString;
 
-            let elementFound = false;
-            let cookieItem, cookieItemName, reconstitutedCookie = "?";
-            for (var i = 0; i < cookieElements.length; i++) {
-                cookieItem = cookieElements[i];
-                cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
-                cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
+        return;
 
-                if (elementToSet == cookieItemName) {
-                    elementFound = true;
-                    if (cookieItemName != newValue) {
-                        //expiryDate = new Date();
-                        //expiryDate.setMonth(expiryDate.getMonth() + 9);
-                        //decodedCookie = decodedCookie.substring(decodedCookie.indexOf("expires")+22,)
-                        reconstitutedCookie = decodedCookie.replace(cookieItem, elementToSet + "=" + newValue);
-                        alert("setCookieValue success: " + reconstitutedCookie);
-                    }
-                    else
-                        alert("existing value for: " + elementToSet + "already: " + newValue);
-                    break
-                }
-            }
-            if (!elementFound) {
-                //alert("setCookieValue  " + elementToSet + "not found in cookie");
-                expiryDate = new Date();
-                expiryDate.setMonth(expiryDate.getMonth() + 9);
-                let winStorageVisId = window.localStorage["VisitorId"];
-                let cookieString = "VisitorId:" + winStorageVisId + ",expires:" + expiryDate.toUTCString();
-                //let cookieString = "VisitorId:" + winStorageVisId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+        //let curCookieValue = getCookieValue(elementToSet);
+        //if (newValue == curCookieValue) {
+        //    logActivity("CC3", 225519, "setCookieValue"); // attempt to set cookie to its existing value
+        //    return;
+        //}
+        //if (localStorage[elementToSet] != newValue) {
+        //    console.log("localStorage[" + elementToSet + "] set from: " + localStorage[elementToSet] + "  to: " + newValue);
+        //    localStorage[elementToSet] = newValue;
+        //}
 
-                document.cookie = cookieString;
+        //let spValue = window.localStorage[itemName];
+        //if (document.cookie) {
+        //    let decodedCookie = decodeURIComponent(document.cookie);
+        //    let cookieElements = decodedCookie.split(",");
 
-                //decodedCookie = decodeURIComponent(document.cookie);
-                //cookieElements = decodedCookie.split(",");
-                //alert("New cookieElements: " + cookieElements);
-            }
+        //    //alert("cookieElements: " + cookieElements);
+        //    let elementFound = false;
+        //    let cookieItem, cookieItemName;
+        //    for (var i = 0; i < cookieElements.length; i++) {
+        //        cookieItem = cookieElements[i];
+        //        cookieItemName = cookieItem.substring(0, cookieItem.indexOf("="));
+        //        cookieItemValue = cookieItem.substring(cookieItem.indexOf("=") + 1);
+        //        if (elementToSet == cookieItemName) {
+        //            elementFound = true;
+        //        }
+        //    }
+        //    if (elementFound) {
+        //        expiryDate = new Date();
+        //        expiryDate.setMonth(expiryDate.getMonth() + 9);
+        //        let cookieString = elementToSet + ":" + newValue + ", expires: " + expiryDate.toUTCString();
+        //        //let cookieString = "VisitorId:" + winStorageVisId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
+        //        document.cookie = cookieString;
+        //        //decodedCookie = decodeURIComponent(document.cookie);
+        //        //cookieElements = decodedCookie.split(",");
+        //        //alert("New cookieElements: " + cookieElements);
+        //    }
+        //    else {
+        //        logError("CTF", 4455438, "elementToSet: " + elementToSet, "setCookieValue");
+        //    }
 
 
 
-            if (reconstitutedCookie != "?") {
-                //deleteCookie();
-                document.cookie = "";
-
-                expiryDate = new Date();
-                expiryDate.setMonth(expiryDate.getMonth() + 9);
-                let cookieString = "VisitorId:" + visitorId + ",UserName:" + userName + ",IsLoggedIn:" + isLoggedIn + ",path:'/,expires:" + expiryDate.toUTCString();
-
-                alert("reconstructed cookieString:\n" + cookieString);
-                document.cookie = cookieString;
-                //alert("setCookieValue(" + elementName + "," + elementValue + ")\ncookie:\n" + document.cookie);
-            }
-        }
-        else {
-            alert("no cookie found");
-        }
-        //    createCookie();
-
+        //    }
+        //    else {
+        //        alert("no cookie found");
     } catch (e) {
         alert("setcookie CATCH Error: " + e);
         logError("CAT", 111, e, "setCookieValue");

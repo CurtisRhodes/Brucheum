@@ -134,8 +134,7 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                     });
 
                     if (!vCarouselInterval) {
-                        if (document.domain == "localhost") alert("starting carousel from after ajax");
-
+                        //if (document.domain == "localhost") alert("starting carousel from after ajax");
                         console.log("starting carousel from after ajax");
                         startCarousel("ajax");
                     }

@@ -121,7 +121,10 @@ namespace OggleBooble.Api.Controllers
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
                     if (dbVisitor == null)
-                        successModel.Success = "not found";
+                    {
+                        successModel.ReturnValue = "not found";
+                        successModel.Success = "ok";
+                    }
                     else
                     {
                         successModel.ReturnValue = dbVisitor.VisitorId;

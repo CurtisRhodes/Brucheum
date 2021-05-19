@@ -200,17 +200,6 @@ function goToPorn() {
     showCustomMessage(35);
 }
 
-function localhostBypass() {
-    if (document.domain === 'localhost') {
-        //localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
-        //setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-        //console.log("localhostBypass visitorId: " + localStorage["VisitorId"]);
-        //alert("localhostBypass visitorId: " + visitorId);
-        //setCookieValue("UserName", "developer");
-        //window.localStorage["IsLoggedIn"] = "true";
-    }
-}
-
 function resizeIndexPage() {
     // set page width
     let winW = $(window).width(), lcW = $('.leftColumn').width(), rcW = $('.rightColumn').width();

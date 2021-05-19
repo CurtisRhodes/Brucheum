@@ -54,7 +54,7 @@ function perfomCopyLink(linkId) {
             if (success === "ok") {
                 displayStatusMessage("ok", "link copied")
                 logDataActivity({
-                    VisitorId: getVisitorId(33, "perfomCopyLink"),
+                    VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKC",
                     FolderId: pSelectedTreeId,
                     Details: "copy: " + linkId + " to: " + pSelectedTreeFolderPath
@@ -104,7 +104,7 @@ function moveFile(request, linkId, folderId) {
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
 
                 logDataActivity({
-                    VisitorId: getVisitorId(233, "movefile"),
+                    VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: request,
                     FolderId: pSelectedTreeId,
                     Details: linkId + " " + request + " from " + folderId
@@ -145,7 +145,7 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                     getAlbumImages(folderId);
 
                     logDataActivity({
-                        VisitorId: getVisitorId(222, "attemptRemoveLink"),
+                        VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "REM",
                         PageId: folderId,
                         Details: "link: " + linkId
@@ -215,7 +215,7 @@ function performMoveImageToRejects(linkId, folderId) {
                     slideShowDialogClose();
                     displayStatusMessage("ok", "link moved to rejects" + linkId);
                     logDataActivity({
-                        VisitorId: getVisitorId(folderId, "performMoveImageToRejects"),
+                        VisitorId: getCookieValue("VisitorId"),
                         ActivityCode: "REJ",
                         FolderId: folderId,
                         Details: "reason: " + $('input[name=rdoRejectImageReasons]:checked', '#frmReject').val() + "link moved to rejects" + linkId
@@ -251,7 +251,7 @@ function removeHomeFolderLink(linkId, folderId) {
                         slide("next");
                     getAlbumImages(folderId);
                     logDataActivity({
-                        VisitorId: getVisitorId(folderId,"removeHomeFolderLink"),
+                        VisitorId: getCookieValue("VisitorId"),
                         FolderId: folderId,
                         ActivityCode: "RHL",
                         Details: "link: " + selectedImageLinkId + " removed from " + currentAlbumJSfolderName

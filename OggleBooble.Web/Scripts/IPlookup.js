@@ -1,166 +1,193 @@
 ﻿function getIpInfo(folderId, calledFrom) {
 
-    tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo43");
+    getIp3();
     return;
-    setTimeout(function () {
-        // logActivity("IP1", folderId, "getIpInfo/" + calledFrom);
-        // ac5da086206dc4
-        let ipInfoExited = false;
-        $.ajax({
-            type: "GET",
-            url: "https://ipinfo.io?token=ac5da086206dc4",
-            dataType: "JSON",
-            //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
-            success: function (ipResponse) {
-                ipInfoExited = true;
-                if (isNullorUndefined(ipResponse.ip)) {
-                    logActivity("IP6", folderId, "getIpInfo/" + calledFrom);  // ipInfo success but came back with no ip
-                    logError("BUG", folderId, "ipInfo came back with no ip. Bad visitorId added: ", "getIpInfo/" + calledFrom);
-                }
-                else {
-                    logActivity("IP2", folderId, "getIpInfo/" + calledFrom)
-                    addVisitor(
-                        {
-                            IpAddress: ipResponse.ip,
-                            City: ipResponse.city,
-                            Country: ipResponse.country,
-                            Region: ipResponse.region,
-                            GeoCode: ipResponse.loc,
-                            FolderId: folderId,
-                            CalledFrom: "getIpInfo/" + calledFrom
-                        }
-                    );
-                }
-            },
-            error: function (jqXHR) {
-                ipInfoExited = true;
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (errMsg.indexOf("Rate limit exceeded") > 0) {
-                    //Uncaught Error. { "status": 429, "error": { "title": "Rate limit exceeded", "message": 
-                    //"Upgrade to increase your usage limits at https ://ipinfo.io/pricing, or contact us via https ://ipinfo.io/contact"}
 
-                    if (calledFrom == "verify visitor") {
-                        if (document.domain == "localhost") alert("calling getIpInfo from log visit");
-                        getIpInfo(folderId, "verify visitor");
-                        logActivity("IP5", folderId, calledFrom + "/getIpInfo");
-                        tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo5V");
-                    }
-                    else {
-                        logActivity("IP5", folderId, calledFrom + "/getIpInfo");
-                        //"verify visitor"
-                        tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo5");
-                    }
-                }
-                else {
-                    //if (!checkFor404(errMsg, visitorData.FolderId, "getIpInfo/" + calledFrom)) {
-                    logActivity("IP3", folderId, "getIpInfo/" + calledFrom); // XHR error
-                    logError("XHR", visitorData.FolderId, errMsg, "try AddVisitor");
-                    tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo3");
-                }
-            }
-        });
-        setTimeout(function () {
-            if (!ipInfoExited) {
-                logActivity("IP4", folderId, "getIpInfo/" + calledFrom); // ipInfo failed to respond
-                //logError("IP6", folderId, "", "getIpInfo/" + calledFrom);
-                tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo43");
-            }
-        }, 855);
-    }, 889);
-}
+    //tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo43");
+    //return;
 
-function getIp3(folderId, calledFrom) {
-    try {
-        //logActivity("IP1", folderId, "getIpInfo/" + calledFrom);
+    //console.log("calling ipapi.co");
+    //$.getJSON('https://ipapi.co/json/', function (data) {
+    //    console.log(JSON.stringify(data, null, 2));
+    //});
 
-        console.log("calling ip-api.com");
-        $.getJSON('http://ip-api.com/json', function (ipApiData) {
-            //console.log(JSON.stringify(data, null, 2));
-            //ipApiData = data;
-            GetVisitorFromIp(ipApiData);
-        });
-        {
-            //console.log("calling ipapi.co");
-            //$.getJSON('https://ipapi.co/json/', function (data) {
-            //    console.log(JSON.stringify(data, null, 2));
-            //});
+    //console.log("calling geoplugin.net");
+    //$.getJSON('http://www.geoplugin.net/json.gp', function (data) {
+    //    console.log(JSON.stringify(data, null, 2));
+    //});
 
-            //console.log("calling geoplugin.net");
-            //$.getJSON('http://www.geoplugin.net/json.gp', function (data) {
-            //    console.log(JSON.stringify(data, null, 2));
-            //});
+    //$.getJSON('http ://gd.geobytes.com/GetCityDetails?callback=?', function (data) {
+    //    console.log(JSON.stringify(data, null, 2));        });
 
-            //$.getJSON('http ://gd.geobytes.com/GetCityDetails?callback=?', function (data) {
-            //    console.log(JSON.stringify(data, null, 2));        });
-
-
-
-        }
-    } catch (e) {
-        console.log("geobytes: " + e);
-        ipInfoExited = true;
-        logError("CAT", folderId, e, "getIpInfo/" + calledFrom);
-    }
-}
-
-function GetVisitorFromIp(ipApiData) {
+    logActivity("IP1", folderId, "getIpInfo/" + calledFrom);
+    let ipInfoExited = false;
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "/api/Visitor/GetVisitorFromIp?ipAddress=" + ipApiData.query,
-        success: function (successModel) {
-            if (successModel.Success == "ok") {
-                console.log("GetVisitorFromIp: " + successModel.Success);
-                loadUserProfile(successModel.ReturnValue, "Get VisitorFromIp");
+        url: "https://ipinfo.io?token=ac5da086206dc4",
+        dataType: "JSON",
+        //url: "http//api.ipstack.com/check?access_key=5de5cc8e1f751bc1456a6fbf1babf557",
+        success: function (ipResponse) {
+            console.log(JSON.stringify(ipResponse, null, 2));
+            return;
+            ipInfoExited = true;
+            //if (ipResponse.status="ok")
+            if (isNullorUndefined(ipResponse.ip)) {
+                logActivity("IP6", folderId, "getIpInfo/" + calledFrom);  // ipInfo success but came back with no ip
+                logError("BUG", folderId, "ipInfo came back with no ip. Bad visitorId added: ", "getIpInfo/" + calledFrom);
             }
             else {
-
-                console.log("ipApiData: " + data);
-
                 logActivity("IP2", folderId, "getIpInfo/" + calledFrom)
                 addVisitor(
                     {
+                        VisitorId: create_UUID(),
                         IpAddress: ipResponse.ip,
                         City: ipResponse.city,
                         Country: ipResponse.country,
                         Region: ipResponse.region,
                         GeoCode: ipResponse.loc,
                         FolderId: folderId,
-                        CalledFrom: "getIpInfo/" + calledFrom
+                        CalledFrom: "getIpInfo"
                     }
                 );
             }
         },
         error: function (jqXHR) {
+            ipInfoExited = true;
             let errMsg = getXHRErrorDetails(jqXHR);
-            logActivity("IP3", folderId, "getIpInfo/" + calledFrom); // XHR error
-            logError("XHR", visitorData.FolderId, errMsg, "try AddVisitor");
+            if (errMsg.indexOf("Rate limit exceeded") > 0) {
+                //Uncaught Error. { "status": 429, "error": { "title": "Rate limit exceeded", "message": 
+                //"Upgrade to increase your usage limits at https ://ipinfo.io/pricing, or contact us via https ://ipinfo.io/contact"}
+
+                if (calledFrom == "verify visitor") {
+                    if (document.domain == "localhost") alert("calling getIpInfo from log visit");
+                    getIpInfo(folderId, "verify visitor");
+                    logActivity("IP5", folderId, calledFrom + "/getIpInfo");
+                    tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo5V");
+                }
+                else {
+                    logActivity("IP5", folderId, calledFrom + "/getIpInfo");
+                    //"verify visitor"
+                    tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo5");
+                }
+            }
+            else {
+                //if (!checkFor404(errMsg, visitorData.FolderId, "getIpInfo/" + calledFrom)) {
+                logActivity("IP3", folderId, "getIpInfo/" + calledFrom); // XHR error
+                logError("XHR", visitorData.FolderId, errMsg, "try AddVisitor");
+                tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo3");
+            }
         }
     });
+    setTimeout(function () {
+        if (!ipInfoExited) {
+            logActivity("IP4", folderId, "getIpInfo/" + calledFrom); // ipInfo failed to respond
+            //logError("IP6", folderId, "", "getIpInfo/" + calledFrom);
+            tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo43");
+        }
+    }, 855);
 }
 
-function tryAlt_IpLookup(folderId, calledFrom) {
+function getIp3() {
     try {
-        //url: "http ://api.ipstack.com/2603:8080:a703:4e4d:8eb:74a:df9b:8b7a?access_key=6ce14ea4abcc6bc7023cfd74c5fc29a4",
-        logActivity("IF0", folderId, "altIpLookup/" + calledFrom); // attempting ipfy lookup
+        logActivity("IP0", 33100, "ip-api.com");
+        console.log("calling ip-api.com");
+        $.getJSON('http://ip-api.com/json', function (ipApiData) {
+            console.log(JSON.stringify(ipApiData, null, 2));
+            if (ipApiData.status == "success") {
+                $.ajax({
+                    type: "GET",
+                    url: settingsArray.ApiServer + "/api/Visitor/GetVisitorFromIp?ipAddress=" + ipApiData.query,
+                    success: function (successModel) {
+                        if (successModel.Success == "ok") {
+                            if (successModel.ReturnValue == "not found") {
+                                addVisitor(
+                                    {
+                                        VisitorId: create_UUID(),
+                                        IpAddress: ipResponse.ip,
+                                        City: ipResponse.city,
+                                        Country: ipResponse.country,
+                                        Region: ipResponse.region,
+                                        GeoCode: ipResponse.loc,
+                                        FolderId: 33100,
+                                        CalledFrom: "ip-api.com"
+                                    }
+                                );
+                            }
+                            else {
+                                setCookieValue("VisitorId", successModel.ReturnValue);
+                                logActivity("IP2", 33100, "getIp3"); // ip exiting used
+                                loadUserProfile();                                
+                            }
+                        }
+                        else {
+                            console.log("ipApiData: " + ipApiData);
+                            logActivity("IP2", 33100, "getIp3");
+                        }
+                    },
+                    error: function (jqXHR) {
+                        let errMsg = getXHRErrorDetails(jqXHR);
+                        logActivity("IP3", 6588, "GetVisitorFromIp");
+                        logError("XHR", 6588, errMsg, "GetVisitorFromIp");
+                    }
+                });
+                console.log("ip-api.com success: " + ipApiData.query);
+            }
+            else {
+                logError("IPF", 5466, ipApiData.status, "ip-api.com");
+                logActivity("IP2", 43337, "ip-api.com");
+            }
+            //logIpHit()
+        });
+    } catch (e) {
+        console.log("geobytes: " + e);
+        ipInfoExited = true;
+        logError("CAT", 33773, e, "getIpInfo/" + calledFrom);
+    }
+}
+
+function tryApiDbIpFree() {
+    try {
+        logActivity("IP1", 4555, "tryApiDbioFree"); // attempting ipfy lookup
         $.ajax({
             type: "GET",
             url: "https://api.db-ip.com/v2/free/self",
             dataType: "JSON",
             success: function (ipResponse) {
                 if (!isNullorUndefined(ipResponse.ipAddress)) {
-                    //logActivity("IF1", folderId, "api.db-ip.com/v2/free/self/" + calledFrom); // ipfy lookup success
-                    console.log("api.db-ip.com success");
-                    addVisitor(
-                        {
-                            IpAddress: ipResponse.ipAddress,
-                            City: ipResponse.city,
-                            Country: ipResponse.countryCode,
-                            Region: ipResponse.continentName,
-                            GeoCode: ipResponse.continentName,
-                            FolderId: folderId,
-                            CalledFrom: "altIpLookup/" + calledFrom
+
+                    $.ajax({
+                        type: "GET",
+                        url: settingsArray.ApiServer + "/api/Visitor/GetVisitorFromIp?ipAddress=" + ipApiData.query,
+                        success: function (successModel) {
+                            if (successModel.Success == "ok") {
+                                if (successModel.ReturnValue == "not found") {
+                                    addVisitor(
+                                        {
+                                            VisitorId: create_UUID(),
+                                            IpAddress: ipResponse.ipAddress,
+                                            City: ipResponse.city,
+                                            Country: ipResponse.countryCode,
+                                            Region: ipResponse.countryName,
+                                            GeoCode: create_UUID(),
+                                            FolderId: 300519,
+                                            CalledFrom: "tryApiDbioFree"
+                                        }
+                                    );
+                                }
+                                else {
+
+                                }
+                            }
+                            else {
+
+                            }
+                        },
+                        error: function (jqXHR) {
+                            let errMsg = getXHRErrorDetails(jqXHR);
+                            logActivity("IP3", 6588, "GetVisitorFromIp");
+                            logError("XHR", 6588, errMsg, "GetVisitorFromIp");
                         }
-                    );
+                    });
                 }
                 else {
                     console.log("api.db-ip.com response: " + ipResponse);
@@ -188,6 +215,27 @@ function tryAlt_IpLookup(folderId, calledFrom) {
         logError("CAT", folderId, e, "altIpLookup");
         logActivity("IF4", 444, "altIpLookup");
     }
+}
+
+function getCloudflare(calledFrom, folderId) {
+    $.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
+        console.log("Cloudflare IP: " + data.ip);
+        window.localStorage["IpAddress"] = data.ip;
+
+        let visitorId = getCookieValue("VisitorId")
+        if (isNullorUndefined(visitorId)) {
+            addVisitor({
+                IpAddress: data.ip,
+                FolderId: folderId,
+                CalledFrom: calledFrom,
+                City: data.loc,
+                Country: data.loc,
+                Region: data.loc,
+                GeoCode: data.ts
+            });
+        }
+        //getVisitorInfo(visitorId, calledFrom, folderId);
+    });
 }
 
 let lastIpHitVisitorId;
@@ -226,7 +274,7 @@ function logIpHit(visitorId, ipAddress, folderId) {
 function logStaticPageHit(folderId, calledFrom) {
 
     logActivity("SP0", folderId, calledFrom); // calling static page hit
-    let visitorId = getVisitorId(folderId, "logStaticPageHit/" + calledFrom);
+    let visitorId = getCookieValue("VisitorId");
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId +
