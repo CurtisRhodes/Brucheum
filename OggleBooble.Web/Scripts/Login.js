@@ -21,84 +21,6 @@ function showLoginDialog() {
         pause();
 }
 
-function updateIsLoggedIn(isLoggedIn) {
-    try {
-        let visitorId = getVisitorId(444, "updateIsLoggedIn");
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Login/UpdateIsLoggedIn?visitorId=" + visitorId + "&isLoggedIn=" + isLoggedIn,
-            success: function (successModel) {
-
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
-            }
-        });
-    } catch (e) {
-        logError("CAT", 333, e, "updateIsLoggedIn");
-    }
-}
-
-function attemptLogin() {
-    let userName = $('#txtLoginUserName').val();
-    let clearPasswod = $('#txtLoginClearPassword').val();
-    if (validateLogin()) {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + userName + "&passWord=" + clearPasswod,
-            success: function (registeredUserSuccess) {
-                if (registeredUserSuccess.Success === "ok") {
-                    localStorage["IsLoggedIn"] = "true";
-                    localStorage["UserName"] = registeredUserSuccess.UserInfo.UserName;
-                    $('#spnUserName').html(localStorage["UserName"]);
-                    localStorage["UserRole"] = registeredUserSuccess.UserInfo.UserRole;
-                    localStorage["VisitorId"] = registeredUserSuccess.UserInfo.VisitorId;
-
-                    //loadUserProfile(calledFrom);
-
-                    updateIsLoggedIn(true);
-                    $('#optionNotLoggedIn').hide();
-                    $('#optionLoggedIn').show();
-                    $('#footerCol5').show();
-
-                    //setCookieValue("UserName", userName);
-                    //setCookieValue("IsLoggedIn", true);
-                    //setCookieValue("VisitorId", successModel.ReturnValue);
-                    logEvent("LOG", 0, "Successfull log in: " + userName);
-
-                    $("#vailShell").hide();
-                    $("#centeredDialogContainer").hide();
-                    displayStatusMessage("ok", "thanks for logging in " + userName);
-                    //window.location.href = ".";
-                }
-                else {
-                    if (successModel.ReturnValue == "valid") {
-                        if (successModel.Success == "user name not found") {
-                            showMyAlert("user name not found", "<div>you need to <a href='#'>register</a> username before you can login<div>");
-                        } else
-                            if (successModel.Success == "password fail") {
-                                alert("password fail");
-                            } else {
-                                logError("AJX", 0, successModel.Success, "attempt Login");
-                            }
-                    }
-                    else {
-                        logError("AJX", 0, successModel.Success, "attempt Login");
-                        alert("validate login: " + successModel.Success);
-                    }
-                }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
-            }
-        });
-    }
-} 
-
 function validateLogin() {
     $('.validationError').hide();
 
@@ -116,17 +38,82 @@ function validateLogin() {
     return true;
 }
 
+function attemptLogin() {
+    if (validateLogin()) {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + $("#txtLoginUserName").val() + "&passWord=" + $("#txtLoginClearPassword").val(),
+            success: function (loginSuccess) {
+                if (loginSuccess.Success === "ok") {
+                    $("#vailShell").hide();
+                    $("#centeredDialogContainer").hide();
+
+                    localStorage["IsLoggedIn"] = true;
+                    localStorage["VisitorId"] = loginSuccess.VisitorId;
+                    localStorage["UserName"] = loginSuccess.UserName;
+                    localStorage["UserRole"] = loginSuccess.UserRole;
+
+                    //setCookieValue("UserName", userName);
+                    //setCookieValue("IsLoggedIn", true);
+                    //setCookieValue("VisitorId", successModel.ReturnValue);
+
+                    $('#spnUserName').html(localStorage["UserName"]);
+                    $('#optionNotLoggedIn').hide();
+                    $('#optionLoggedIn').show();
+                    $('#footerCol5').show();
+
+                    logEvent("LOG", 2380, "Successfull log in: " + localStorage["UserName"]);
+                    displayStatusMessage("ok", "thanks for logging in " + localStorage["UserName"]);
+
+                    //if (document.domain == "localhost") alert("ok", "thanks for logging in " + userName);
+                    console.log("attempt Login. IsloggedIn: " + localStorage["IsLoggedIn"] + "UserName: " +
+                        localStorage["UserName"] + " UserRole: " + localStorage["UserRole"]);
+                }
+                else
+                {
+                    if (loginSuccess.Success == "user name not found") {
+                        showMyAlert("user name not found", "<div>you need to <a href='#'>register</a> username before you can login<div>");
+                    }
+                    else {
+                        if (loginSuccess.Success == "password fail") {
+                            alert("password fail");
+                        }
+                        else {
+                            logError("AJX", 0, loginSuccess.Success, "attempt Login");
+                        }
+                    }
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
+            }
+        });
+    }
+}
+
 function onLogoutClick(pageId) {
     if (confirm("log out?")) {
         //setCookieValue("IsLoggedIn", "false");
-        localStorage["IsLoggedIn"] = "false";
-        //alert("IsLoggedIn: " + localStorage["IsLoggedIn"]);
-        updateIsLoggedIn(false);
+        updateRegisteredUser({
+            VisitorId: getVisitorId(444, "updateIsLoggedIn"),
+            IsLoggedIn: false
+        });
+        localStorage["IsLoggedIn"] = false;
+        localStorage["UserName"] = "not registered";
+        localStorage["UserRole"] = "not registered";
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         $('#footerCol5').hide();
+
+        if (document.domain == "localhost") alert("onLogoutClick IsLoggedIn: " + localStorage["IsLoggedIn"] +
+            " UserName: " + localStorage["UserName"] +
+            " UserRole: " + localStorage["UserRole"]);
+        console.log("onLogoutClick IsLoggedIn: " + localStorage["IsLoggedIn"] +
+            " UserName: " + localStorage["UserName"] +
+            " UserRole: " + localStorage["UserRole"]);
     }
-    //window.location.href = ".";
 }
 
 function cancelLogin() {
@@ -139,6 +126,35 @@ function transferToRegisterPopup() {
     //$('#loginDialog').dialog('close');
     //$('#loginDialog').hide();
     showRegisterDialog("transfer");
+}
+
+function updateRegisteredUser(userInfo) {
+    try {
+        $.ajax({
+            type: "PUT",
+            data: userInfo,
+            url: settingsArray.ApiServer + "api/Login/UpdateUser",
+            success: function (successModel) {
+                localStorage["IsLoggedIn"] = userInfo.IsLoggedIn;
+                localStorage["UserName"] = userInfo.UserName;
+                localStorage["UserRole"] = userInfo.UserRole;
+
+                if (document.domain == "localhost") alert("update RegisteredUseronLogoutClick IsLoggedIn: " + localStorage["IsLoggedIn"] +
+                    " UserName: " + localStorage["UserName"] +
+                    " UserRole: " + localStorage["UserRole"]);
+                console.log("update RegisteredUser IsLoggedIn: " + localStorage["IsLoggedIn"] +
+                    " UserName: " + localStorage["UserName"] +
+                    " UserRole: " + localStorage["UserRole"]);
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "update RegisteredUser"))
+                    logError("XHR", 0, errMsg, "update RegisteredUser");
+            }
+        });
+    } catch (e) {
+        logError("CAT", 333, e, "update RegisteredUser");
+    }
 }
 
 function loginDialogHtml() {
@@ -208,34 +224,52 @@ function showRegisterDialog(calledFrom) {
 
 function attemptRegister() {
     try {
-        if (validateRegister()) {
-
-            let visitorId = getVisitorId(3333, "attemptRegister");
-
+        if (validateRegister())
+        {
+            let visitorId = getVisitorId(3333, "attempt Register");
+            let userInfo = {
+                VisitorId: visitorId,
+                UserName: $('#txtRegisterUserName').val(),
+                IsLoggedIn: false,
+                FirstName: $('#txtRegisterFirstName').val(),
+                LastName: $('#txtLastName').val(),
+                Email: $('#txtRegisterEmail').val(),
+                Status: "NEW",
+                UserRole: "normal",
+                UserSettings: $('#txtLoginUserName').val(),
+                UserCredits: 1200,
+                Pswrd: $('#txtRegisterClearPassword').val()
+            };
             $.ajax({
                 type: "POST",
                 url: settingsArray.ApiServer + "/api/Login/AddRegisterUser",
-                data: {
-                    VisitorId: visitorId,
-                    UserName: $('#txtRegisterUserName').val(),
-                    ClearPassword: $('#txtRegisterClearPassword').val(),
-                    FirstName: $('#txtRegisterFirstName').val(),
-                    LastName: $('#txtLastName').val(),
-                    UserRole: "normal",
-                    UserCredits: 5000,
-                    Email: $('#txtRegisterEmail').val(),
-                    Status: "NEW"
-                },
-                success: function (success) {
-                    if (success === "ok") {
-                        // registerHappyPath();
-                        loadUserProfile("attempt register");
+                data: userInfo,
+                success: function (registeredUserSuccess) {
+                    if (registeredUserSuccess.Success === "ok") {
 
+                        localStorage["IsLoggedIn"] = true;
+                        localStorage["UserName"] = userInfo.UserName;
+                        localStorage["UserRole"] = userInfo.UserRole;
+
+                        if (registeredUserSuccess.NewVisitorId != null) {
+                            addVisitor({});
+                            localStorage["VisitorId"] = registeredUserSuccess.NewVisitorId;
+                        }
+
+                        $('#spnUserName').html(localStorage["UserName"]);
+                        $('#optionNotLoggedIn').hide();
+                        $('#optionLoggedIn').show();
+                        $('#footerCol5').show();
+
+                        //setCookieValue("UserName", userName);
+                        //setCookieValue("IsLoggedIn", true);
+                        //setCookieValue("VisitorId", successModel.ReturnValue);
+                        logEvent("LOG", 0, "Successfull log in: " + localStorage["UserName"]);
+
+                        loadUserProfile(visitorId, "attempt register");
                         displayStatusMessage("ok", "thanks for Registering " + localStorage["UserName"]);
-
                         sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
                             "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visitorId);
-
                         localStorage["IsLoggedIn"] = true;
                         $('#optionLoggedIn').show();
                         $('#optionNotLoggedIn').hide();
@@ -243,16 +277,27 @@ function attemptRegister() {
                         if (typeof resume === 'function')
                             resume();
 
-                        //window.location.href = ".";
-                        //showCustomMessage(96, false);
+                        $("#vailShell").hide();
+                        $("#centeredDialogContainer").hide();
+                        displayStatusMessage("ok", "thanks for Registering" + userName);
+
+                        if (document.domain == "localhost") alert("update RegisteredUseronLogoutClick IsLoggedIn: " + localStorage["IsLoggedIn"] +
+                            " UserName: " + localStorage["UserName"] +
+                            " UserRole: " + localStorage["UserRole"]);
+                        console.log("update RegisteredUser IsLoggedIn: " + localStorage["IsLoggedIn"] +
+                            " UserName: " + localStorage["UserName"] +
+                            " UserRole: " + localStorage["UserRole"]);
                     }
                     else {
-                        if ((success == "user name already exists") ||
-                            (success == "visitorId already registered"))
-                            $('#errRegisterUserName').text(successModel.Success).show();
+                        if (successModel.Success == "user name not found") {
+                            showMyAlert("user name not found", "<div>you need to <a href='#'>register</a> username before you can login<div>");
+                        }
                         else {
-                            logError("AJX", 0, success, "attemptcRegister");
-                            $('#registerValidationSummary').html(response).show();
+                            if (successModel.Success == "password fail") {
+                                alert("password fail");
+                            } else {
+                                logError("AJX", 0, successModel.Success, "attempt Login");
+                            }
                         }
                     }
                 },
@@ -263,7 +308,8 @@ function attemptRegister() {
                 }
             });
         }
-    } catch (e) {
+    }
+    catch (e) {
         logError("CAT", 0, e, "attempt Register");
     }
 }
@@ -344,8 +390,18 @@ function authenticateEmail(usersEmail) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
+function showUserProfileDialog() {
+    let visitorId = getVisitorId(544, "show UserProfileDialog");
+    $('#centeredDialogTitle').html("Register and Login to OggleBooble");
+    $('#centeredDialogContents').html(userProfileHtml());
+    $("#vailShell").fadeIn();
+    $("#centeredDialogContainer").draggable().fadeIn();
+    loadUserProfile(visitorId, "show UserProfileDialog");
+}
+
 function userProfileHtml() {
     return "<div id='userProfileDialog' class='roundedDialog' >\n" +
+        "   <div><label style='white-space:nowrap;'>visitorId</label><span>" + getVisitorId(544, "show UserProfileDialog") + "</span></div>\n" +
         "   <div><label style='white-space:nowrap;'>user name</label><input id='txtUserProfileName' class='roundedInput' placeholder='your go by name'></input></div>\n" +
         "   <div><label style='white-space:nowrap;'>First Name</label><input id='txtUserProfileFirstName' class='roundedInput'></input></div>\n" +
         "   <div><label style='white-space:nowrap;'>Last Name</label><input id='txtUserProfileLastName' class='roundedInput'></input></div>\n" +
@@ -369,38 +425,20 @@ function updateUserProfile() {
 }
 
 function updateRegisteredUser(userProfileData) {
+    //console.log("updateRegisteredUser");
     try {
-        let visitorId = getVisitorId(222, "updateRegisteredUser");
         $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/OggleUser/GetUserInfo?visitorId=" + visitorId,
-            success: function (registeredUser) {
-                if (registeredUser.Success == "ok") {
-                    let currentRegisteredUser = registeredUser.UserInfo;
-                    currentRegisteredUser.UserName = userProfileData.UserName;
-                    currentRegisteredUser.FirstName = userProfileData.FirstName;
-                    currentRegisteredUser.LastName = userProfileData.LastName;
-                    currentRegisteredUser.Email = userProfileData.Email;
-
-                    $.ajax({
-                        type: "PUT",
-                        url: settingsArray.ApiServer + "api/OggleUser/UpdateUser",
-                        data: currentRegisteredUser,
-                        success: function (success) {
-                            if (success == "ok") {
-                                displayStatusMessage("ok", "user profile updated");
-                            }
-                            else {
-                                logError("AJX", 0, success, "update Registered User");
-                                displayStatusMessage("error", "unable to update user profile: " + success);
-                            }
-                        },
-                        error: function (jqXHR) {
-                            let errMsg = getXHRErrorDetails(jqXHR);
-                            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
-                        }
-                    });
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/Login/UpdateUser",
+            data: userProfileData,
+            success: function (success) {
+                if (success == "ok") {
+                    displayStatusMessage("ok", "user profile updated");
+                    localStorage["IsLoggedIn"] = userProfileData.IsLoggedIn;
+                    localStorage["UserName"] = userProfileData.UserName;
+                    localStorage["UserRole"] = userProfileData.UserRole;
+                    console.log("user profile updated. IsloggedIn: " + localStorage["IsLoggedIn"] + "\nUserName: " +
+                        localStorage["UserName"] + " UserRole: " + localStorage["UserRole"]);
                 }
                 else {
                     logError("AJX", 0, success, "update Registered User");
@@ -409,9 +447,10 @@ function updateRegisteredUser(userProfileData) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "Get UserInfo")) logError("XHR", 0, errMsg, "Get UserInfo");
+                if (!checkFor404(errMsg, folderId, "update RegisteredUser")) logError("XHR", 0, errMsg, "update RegisteredUser");
             }
         });
+
     } catch (e) {
         logError("CAT", 0, e, "update Registered User");
     }

@@ -94,6 +94,7 @@ function getMultipleAlbumImages(folderId) {
                                                 "</video></div>");
                                         }
                                         else {
+                                            //  ImageLinks
                                             let imageHtml = "<div class='" + imageFrameClass + "'>\n" +
                                                 "<img id='" + obj.LinkId + "' class='thumbImage'\n" +
                                                 " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\)'\n" +
@@ -111,12 +112,7 @@ function getMultipleAlbumImages(folderId) {
                                     $('#albumPageLoadingGif').hide();
                                 }
                                 else {
-                                    alert("albumImageInfo.Success: " + childFolder.Id);
-                                    alert("subFolders.Success: " + subFolders.Success);
-                                     if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
-                                        checkConnection(folderId, "getAlbumImages");
-                                    else
-                                        logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
+                                    logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
                                 }
                             },
                             error: function (jqXHR) {
@@ -136,10 +132,7 @@ function getMultipleAlbumImages(folderId) {
                     $('.footer').show();
                 }
                 else {
-                    if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
-                        checkConnection(folderId, "getAlbumImages");
-                    else
-                        logError("AJX", folderId, albumImageInfo.Success, "getMultipleAlbumImages");
+                    logError("AJX", folderId, albumImageInfo.Success, "getMultipleAlbumImages");
                 }
             },
             error: function (jqXHR) {
@@ -185,9 +178,7 @@ function getAlbumImages(folderId) {
                                 "</video></div>");
                         }
                         else {
-
-                            //imageFrameClass = "defaultImageFrame";
-                            //let imgSrc = settingsImgRepo + "/" + obj.FileName;
+                            //  getMultipleAlbumImages
                             let imageHtml = "<div class='" + imageFrameClass + "'>\n" +
                                 "<img id='" + obj.LinkId + "' class='thumbImage'\n" +
                                 " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\)'\n" +
@@ -227,7 +218,7 @@ function getAlbumImages(folderId) {
                                 " oncontextmenu='albumContextMenu(\"Folder\",\"" + folder.LinkId + "\"," + folder.FolderId + ",\"" + imgSrc + "\")'\n" +
                                 " onclick='folderClick(" + folder.FolderId + "," + folder.IsStepChild + ")'>\n" +
                                 "<img id='" + folder.LinkId + "' class='folderImage'\n" +
-                                "onerror='subFolderImgError(\"" + imgSrc + "\",\"" + folder.LinkId + "\")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
+                                "onerror='subFolderImgError(\"" + folder.LinkId + "\",\"" + imgSrc + "\")\n' alt='Images/redballon.png'\n src='" + imgSrc + "'/>" +
                                 "<div class='" + labelClass + "'>" + folder.DirectoryName + "</div>\n" +
                                 "<span Id='fc" + folder.FolderId + "'>" + folderCounts + "</span></div>");
                         });
@@ -242,10 +233,7 @@ function getAlbumImages(folderId) {
                     $('.footer').show();
                 }
                 else {
-                    if (albumImageInfo.Success.indexOf("connection attempt failed") > 0)
-                        checkConnection(folderId, "getAlbumImages");
-                    else
-                        logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
+                    logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
                 }
             },
             error: function (jqXHR) {
@@ -461,18 +449,21 @@ function setBadges(folderComments) {
 }
 
 function galleryImageError(linkId, imgSrc) {
-    $('#' + linkId).attr('src', "Images/redballon.png");
-    logError("ILF", apFolderId, "imgSrc: " + imgSrc, "galleryImage");
-    //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
-}
-
-function subFolderImgError(imgSrc, linkId) {
     setTimeout(function () {
         if ($('#' + linkId).attr('src') == null) {
+            $('#' + linkId).attr('src', "Images/redballon.png");
+            logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "galleryImageError");
+        }
+    }, 600);
+}
+
+function subFolderImgError(linkId, imgSrc) {
+    setTimeout(function () {
+        if ($('#' + linkId).attr('src') == null) {
+            $('#' + linkId).attr('src', "Images/redballon.png");
             logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "subFolderImg");
         }
     }, 600);
-    //alert("image not found LinkId: " + linkId + " imgSrc: " + imgSrc, "Album galleryImageError");
 }
 
 function launchLargeLoad() {

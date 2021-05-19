@@ -236,7 +236,7 @@
     <Compile Include="Controllers\LinksController.cs" />
     <Compile Include="Controllers\LocalController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
-    <Compile Include="Controllers\OggleUserController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RankerController.cs" />
     <Compile Include="Controllers\RepairLinksController.cs" />
     <Compile Include="Controllers\ReportController.cs" />

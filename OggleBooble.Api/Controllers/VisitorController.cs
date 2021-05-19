@@ -53,9 +53,9 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        public VisitorInfoModel GetVisitorInfo(string visitorId)
+        public VisitorInfoSuccessModel GetVisitorInfo(string visitorId)
         {
-            var visitorInfoModel = new VisitorInfoModel();
+            var visitorInfoModel = new VisitorInfoSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -68,18 +68,12 @@ namespace OggleBooble.Api.Controllers
                         RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
                         if (dbRegisteredUser == null)
                         {
-                            visitorInfoModel.UserName = "unregistered";
-                            visitorInfoModel.IsLoggedIn = false;
-                            visitorInfoModel.UserRole = "unregistered";
-                            visitorInfoModel.UserCredits = 120;
+                            visitorInfoModel.IsRegisteredUser = false;
                         }
                         else
                         {
-                            visitorInfoModel.IsLoggedIn = dbRegisteredUser.IsLoggedIn;
-                            visitorInfoModel.UserRole = dbRegisteredUser.UserRole;
-                            visitorInfoModel.UserCredits = dbRegisteredUser.UserCredits;
-                            visitorInfoModel.Email = dbRegisteredUser.Email;
-                            visitorInfoModel.UserName = dbRegisteredUser.UserName;
+                            visitorInfoModel.IsRegisteredUser = true;
+                            visitorInfoModel.RegisteredUser = dbRegisteredUser;
                         }
                         visitorInfoModel.IpAddress = dbVisitor.IpAddress;
                         visitorInfoModel.Success = "ok";

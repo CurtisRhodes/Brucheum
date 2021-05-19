@@ -164,10 +164,10 @@
             }
         }
 
-        if (isInRole("trusted"))
-            $('#footerCol5').show();
-        else
-            $('#footerCol5').hide();
+        //if (isInRole("trusted"))
+        //    $('#footerCol5').show();
+        //else
+        //    $('#footerCol5').hide();
 
     } catch (e) {
         logError("CAT", folderId, e, "setOggleFooter", "footer/" + calledFrom);

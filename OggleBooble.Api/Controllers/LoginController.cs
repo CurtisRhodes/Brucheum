@@ -10,13 +10,13 @@ using System.Web.Http.Cors;
 namespace OggleBooble.Api.Controllers
 {
     [EnableCors("*", "*", "*")]
-    public class OggleUserController : ApiController
+    public class LoginController : ApiController
     {
         [HttpGet]
         [Route("api/Login/VerifyLogin")]
-        public RegisteredUsersSuccessModel VerifyLogin(string userName, string passWord)
+        public VerifyLoginSuccessModel VerifyLogin(string userName, string passWord)
         {
-            var registeredUserSuccess = new RegisteredUsersSuccessModel();
+            var verifyRegisteredUserSuccess = new VerifyLoginSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -25,88 +25,70 @@ namespace OggleBooble.Api.Controllers
                     RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName && u.Pswrd == encryptedPassword).FirstOrDefault();
                     if (dbRegisteredUser != null)
                     {
-                        registeredUserSuccess.UserInfo.IsLoggedIn = dbRegisteredUser.IsLoggedIn;
-                        registeredUserSuccess.UserInfo.VisitorId = dbRegisteredUser.VisitorId;
-                        registeredUserSuccess.UserInfo.UserName = dbRegisteredUser.UserName;
-                        registeredUserSuccess.UserInfo.UserRole = dbRegisteredUser.UserRole;
-                        registeredUserSuccess.Success = "ok";
+                        verifyRegisteredUserSuccess.VisitorId = dbRegisteredUser.VisitorId;
+                        verifyRegisteredUserSuccess.UserName = dbRegisteredUser.UserName;
+                        verifyRegisteredUserSuccess.UserRole = dbRegisteredUser.UserRole;
+                        verifyRegisteredUserSuccess.Success = "ok";
                     }
                     else
                     {
                         dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName).FirstOrDefault();
                         if (dbRegisteredUser == null)
                         {
-                            registeredUserSuccess.Success = "user name not found";
+                            verifyRegisteredUserSuccess.Success = "user name not found";
                         }
                         else
                         {
-                            registeredUserSuccess.Success = "password fail";
+                            verifyRegisteredUserSuccess.Success = "password fail";
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                registeredUserSuccess.Success = Helpers.ErrorDetails(ex);
+                verifyRegisteredUserSuccess.Success = Helpers.ErrorDetails(ex);
             }
-            return registeredUserSuccess;
+            return verifyRegisteredUserSuccess;
         }
 
         [HttpPost]
-        [Route("api/Login/RegisterUser")]
-        public string AddRegisterUser(RegisteredUser newUser)
+        [Route("api/Login/AddRegisterUser")]
+        public AddRegisteredUserSuccessModel AddRegisterUser(RegisteredUser newRegisteredUser)
         {
-            string success;
+            var addRegisteredUserSuccess = new AddRegisteredUserSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    RegisteredUser dbUserName = db.RegisteredUsers.Where(u => u.UserName == newUser.UserName).FirstOrDefault();
+                    RegisteredUser dbUserName = db.RegisteredUsers.Where(u => u.UserName == newRegisteredUser.UserName).FirstOrDefault();
                     if (dbUserName != null)
                     {
-                        return "user name already exists";
+                        addRegisteredUserSuccess.Success = "user name already exists";
+                        return addRegisteredUserSuccess;
                     }
-                    RegisteredUser dbUserVisitorId = db.RegisteredUsers.Where(u => u.VisitorId == newUser.VisitorId).FirstOrDefault();
+                    RegisteredUser dbUserVisitorId = db.RegisteredUsers.Where(u => u.VisitorId == newRegisteredUser.VisitorId).FirstOrDefault();
                     if (dbUserVisitorId != null)
                     {
-                        return "visitorId already registered";
+                        if (dbUserVisitorId.UserRole == "admin")
+                        {
+                            newRegisteredUser.VisitorId = Guid.NewGuid().ToString();
+                            addRegisteredUserSuccess.NewVisitorId = newRegisteredUser.VisitorId;
+                        }
+                        else
+                        {
+                            addRegisteredUserSuccess.Success = "visitorId already registered";
+                            return addRegisteredUserSuccess;
+                        }
                     }
-
-                    newUser.Created = DateTime.Now;
-                    newUser.IsLoggedIn = true;                  
-                    db.RegisteredUsers.Add(newUser);
+                    newRegisteredUser.Created = DateTime.Now;
+                    newRegisteredUser.Pswrd = HashSHA256(newRegisteredUser.Pswrd);
+                    db.RegisteredUsers.Add(newRegisteredUser);
                     db.SaveChanges();
-                    success = "ok";
+                    addRegisteredUserSuccess.Success = "ok";
                 }
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
-            return success;
-        }
-
-        [HttpGet]
-        [Route("api/Login/GetUserInfo")]
-        public RegisteredUsersSuccessModel GetUserInfo(string visitorId)
-        {
-            var registeredUser = new RegisteredUsersSuccessModel();
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    var dbRegisteredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-                    if (dbRegisteredUser == null)
-                        registeredUser.Success = "not registered";
-                    else
-                    {
-                        registeredUser.UserInfo = dbRegisteredUser;
-                        registeredUser.Success = "ok";
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                registeredUser.Success = Helpers.ErrorDetails(ex);
-            }
-            return registeredUser;
+            catch (Exception ex) { addRegisteredUserSuccess.Success = Helpers.ErrorDetails(ex); }
+            return addRegisteredUserSuccess;
         }
 
         [HttpPut]
@@ -123,35 +105,23 @@ namespace OggleBooble.Api.Controllers
                         success = "not found";
                     else
                     {
-                        dbRegisteredUser = userInfo;
-                        db.SaveChanges();
-                        success = "ok";
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
-        }
-
-        [HttpPut]
-        [Route("api/Login/UpdateIsLoggedIn")]
-        public string UpdateIsLoggedIn(string visitorId, bool isLoggedIn)
-        {
-            //url: settingsArray.ApiServer + "api/Login/UpdateIsLoggedIn?visitorId=" + visitorId + "&isLoggedIn=" + isLoggedIn,
-            string success;
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    var dbRegisteredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-                    if (dbRegisteredUser == null)
-                        success = "user not found";
-                    else
-                    {
-                        dbRegisteredUser.IsLoggedIn = isLoggedIn;
+                        dbRegisteredUser.IsLoggedIn = userInfo.IsLoggedIn;
+                        if (userInfo.UserCredits > 0)
+                            dbRegisteredUser.UserCredits = userInfo.UserCredits;
+                        if (userInfo.UserName != null)
+                            dbRegisteredUser.UserName = userInfo.UserName;
+                        if (userInfo.FirstName != null)
+                            dbRegisteredUser.FirstName = userInfo.FirstName;
+                        if (userInfo.LastName != null)
+                            dbRegisteredUser.LastName = userInfo.LastName;
+                        if (userInfo.Status != null)
+                            dbRegisteredUser.Status = userInfo.Status;
+                        if (userInfo.UserRole != null)
+                            dbRegisteredUser.UserRole = userInfo.UserRole;
+                        if (userInfo.Email != null)
+                            dbRegisteredUser.Email = userInfo.Email;
+                        if (userInfo.UserSettings != null)
+                            dbRegisteredUser.UserSettings = userInfo.UserSettings;
                         db.SaveChanges();
                         success = "ok";
                     }

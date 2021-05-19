@@ -134,18 +134,19 @@
         try {
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/Login/GetUserInfo?visitorId=" + getVisitorId(12333, "getUserEmail"),
-                success: function (registeredUser) {
-                    if (registeredUser.Success == "ok") {
-                        $('#txtFeedbackEmail').val(registeredUser.Email);
+                url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + getVisitorId(12333, "getUserEmail"),
+                success: function (visitorInfo) {
+                    if (visitorInfo.Success == "ok") {
+                        if (visitorInfo.IsRegisteredUser)
+                            $('#txtFeedbackEmail').val(visitorInfo.RegisteredUser.Email);
                     }
                     else
-                        logError("AJX", folderId, registeredUser.Success, "feedback/getUserEmail");
+                        logError("AJX", folderId, visitorInfo.Success, "feedback/getUserEmail");
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                    if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                    if (!checkFor404(errMsg, folderId, "getUserEmail"))
+                        logError("XHR", folderId, errMsg, "getUserEmail");
                 }
             });
         } catch (e) {

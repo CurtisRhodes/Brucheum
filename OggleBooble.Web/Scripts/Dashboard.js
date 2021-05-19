@@ -196,7 +196,6 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='buildHtmlPage()'>Build Html Page</div>"
             );
             //"<div class='clickable' onclick='HardcoreFilecounts();'>HardcoreFilecounts()</div>");
-            //$('#dashboardLeftMenu').append("<div class='clickable' onclick='testAddVisitor()'>test AddVisitor</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='MoveManyCleanup()'>MoveManyCleanup</div>");
@@ -1315,10 +1314,6 @@ function XXmergeFolders() {
             }
         });
     }
-}
-function XXtestAddVisitor() {
-    $('#dataifyInfo').show().html("sending test addVisitor");
-    addVisitor(3309, "dashboard");
 }
 function xxshowAssignRolesDialog() {
     $('#rolesChooseBoxDialog').dialog('open');

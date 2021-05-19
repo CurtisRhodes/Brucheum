@@ -18,14 +18,14 @@ function launchCarousel(startRoot) {
     let lastStep = "o";
     try
     {
-        loadCarouselSettingsIntoLocalStorage();
-        jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
+        //loadCarouselSettingsIntoLocalStorage();
+        //jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
         window.addEventListener("resize", resizeCarousel);
 
         switch (startRoot) {
             case "centerfold":
                 lastStep = "centerfold";
-                if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {                    
+                if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
                     //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
                     console.log("loading centerfold from centerfold cache");
                     let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
@@ -77,13 +77,13 @@ function launchCarousel(startRoot) {
                 logError("SWT", 222, startRoot, "launchCarousel");
         }
         lastStep = "jsCarouselSettings";
-        if (isNullorUndefined(jsCarouselSettings)) {
-            //alert("jsCarouselSettings NullorUndefined");
-            loadImages(startRoot, carouselSkip, carouselTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-            logError("BUG", startRoot, "jsCarouselSettings", "launchCarousel");
-        }
-        else
-            loadImages(startRoot, carouselSkip, carouselTake, true, false);
+        //if (isNullorUndefined(jsCarouselSettings)) {
+        //    //alert("jsCarouselSettings NullorUndefined");
+        //    loadImages(startRoot, carouselSkip, carouselTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
+        //    logError("BUG", startRoot, "jsCarouselSettings", "launchCarousel");
+        //}
+        //else
+        loadImages(startRoot, carouselSkip, carouselTake, true, false);
 
         refreshCache(startRoot);
     }
@@ -161,10 +161,7 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                 }
                 else {
                     if (document.domain == "localhost") alert("carouselInfo error " + carouselInfo.Success);
-                    if (carouselInfo.Success.indexOf("connection attempt failed") > 0)
-                        checkConnection(rootFolder, "loadImages");
-                    else
-                        logError("AJX", 3908, carouselInfo.Success, "loadImages");
+                    logError("AJX", 3908, carouselInfo.Success, "loadImages");
                 }
             },
             error: function (jqXHR) {
@@ -208,14 +205,24 @@ function refreshCache(rootFolder) {
                         }
                         switch (rootFolder) {
                             case "porn":
+                                window.localStorage.removeItem["pornCache"];
                                 window.localStorage["pornCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
                                 break;
                             case "centerfold":
+                                window.localStorage.removeItem["centerfoldCache"];
                                 window.localStorage["centerfoldCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
                                 break;
                             case "boobs":
-                                window.localStorage.removeItem["carouselCache"];
-                                window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                                try {
+                                    window.localStorage.removeItem["carouselCache"];
+                                    window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                                }
+                                catch (e)
+                                {
+                                    window.localStorage.removeItem["pornCache"];
+                                    window.localStorage.removeItem["carouselCache"];
+                                    window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                              }
                                 break;
                             default:
                                 logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refreshCache");
@@ -230,7 +237,7 @@ function refreshCache(rootFolder) {
                     //if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache.  \nTook: " + delta.toFixed(3) + "  size: " + cacheArray.length);
                 }
                 else {
-                    logError("AJX", 3908, carouselInfo.Success, "refreshCache");
+                    logError("AJX", 77508, carouselInfo.Success, "refreshCache");
                 }
             },
             error: function (jqXHR) {
@@ -445,6 +452,7 @@ function clickSpeed(speed) {
     vCarouselInterval = null;
     startCarousel("speed");
 }
+
 function togglePause() {
     if ($('#pauseButton').html() == "||")
         pause();

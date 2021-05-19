@@ -32,6 +32,8 @@ function checkConnection(folderId, calledFrom) {
             let connectingToServerImgShowing = false, canIgetaConnectionImgShowing = false;
             document.title = "connecting : OggleBooble";
             connectionVerified = false;
+
+
             let verifyConnectionWaiter = setInterval(function () {
                 if (connectionVerified) {
                     clearInterval(verifyConnectionWaiter);
@@ -108,20 +110,19 @@ function checkConnection(folderId, calledFrom) {
 }
 
 function tryHitStats() {
-    if (document.domain == "localhost")
-        console.log("hitstats bypass")
-    else {
-        var _Hasync = _Hasync || [];
-        _Hasync.push(['Histats.start', '1,4458214,4,0,0,0,00010000']);
-        _Hasync.push(['Histats.fasi', '1']);
-        _Hasync.push(['Histats.track_hits', '']);
-        (function () {
-            var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
-            hs.src = ('//s10.histats.com/js15_as.js');
-            //hs.src = ('https://10.histats.com/js15_as.js');
-            //(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
-        })();
-    }
+    //if (document.domain == "localhost")
+    //    console.log("hitstats bypass")
+    //else {
+    var _Hasync = _Hasync || [];
+    _Hasync.push(['Histats.start', '1,4458214,4,0,0,0,00010000']);
+    _Hasync.push(['Histats.fasi', '1']);
+    _Hasync.push(['Histats.track_hits', '']);
+    (function () {
+        var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+        hs.src = ('//s10.histats.com/js15_as.js');
+        //hs.src = ('https://10.histats.com/js15_as.js');
+        //(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+    })();
 }
 
 function persistConnection() {

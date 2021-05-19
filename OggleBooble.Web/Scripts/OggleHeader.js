@@ -1,6 +1,7 @@
 ﻿function setOggleHeader(headerContext) {
-    $("#divLoginArea").hide();
+
     $('#oggleHeader').html(headerHtml());
+
     switch (headerContext) {
         case "root":
         case "index": {
@@ -51,24 +52,6 @@ function resetOggleHeader(folderId, rootFolder) {
     hdrFolderId = folderId;
     hdrRootFolder = rootFolder;
     $('#divLoginArea').show();
-        
-    $('#optionLoggedIn').hide();
-    $('#optionNotLoggedIn').show();
-    $('#footerCol5').hide();
-    if (!isNullorUndefined(localStorage["IsLoggedIn"])) {
-        //alert("localStorage[IsLoggedIn]: " + localStorage["IsLoggedIn"]);
-        if (localStorage["IsLoggedIn"] == "true") {
-            $('#spnUserName').html(localStorage["UserName"]);
-            $('#optionLoggedIn').show();
-            $('#optionNotLoggedIn').hide();
-
-            if (isInRole("trusted"))
-                $('#footerCol5').show();
-            else
-                $('#footerCol5').hide();
-        }
-    }
-
     $('#hdrBtmRowSec3').html("");
     $('#oggleHeaderTitle').html("unhandled");
     switch (rootFolder) {
@@ -76,7 +59,7 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
         case "archive": {
             changeFavoriteIcon("redBallon");
-            $('#oggleHeader').switchClass('playboyHeader','boobsHeader' );
+            $('#oggleHeader').switchClass('playboyHeader', 'boobsHeader');
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#oggleHeaderTitle').html("OggleBooble");
             $('#topRowRightContainer').html(addRankerButton("010000000", "big naturals ranker"));
@@ -195,6 +178,21 @@ function resetOggleHeader(folderId, rootFolder) {
         default:
             alert("resetOggleHeader rootFolder " + rootFolder + " not handled");
             window.location.href = "Index.html";
+    }
+
+    console.log("header says IsLoggedIn = " + localStorage["IsLoggedIn"]);
+
+    if (localStorage["IsLoggedIn"] == true) {
+        console.log("I say IsLoggedIn is true: " + localStorage["IsLoggedIn"]);
+        $('#optionNotLoggedIn').hide();
+        $('#optionLoggedIn').show();
+        $('#footerCol5').show();
+    }
+    else {
+        console.log("I say IsLoggedIn is false: " + localStorage["IsLoggedIn"]);
+        $('#optionLoggedIn').hide();
+        $('#optionNotLoggedIn').show();
+        $('#footerCol5').hide();
     }
 }
 
@@ -383,7 +381,6 @@ function headerHtml() {
         "           </div>\n" +
         "           <div id='divLoginArea' class='loginArea'>\n" +
         "               <div id='optionLoggedIn' class='displayHidden'>\n" +
-        //"                   <div class='hoverTab' id='dashboardMenuItem' class='displayHidden'><a href='/index.html?subdomain=dashboard'>Dashboard</a></div>\n" +
         "                   <div class='hoverTab' title='modify profile'><a href='javascript:showUserProfileDialog()'>Hello <span id='spnUserName'></span></a></div>\n" +
         "                   <div class='hoverTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
         "               </div>\n" +

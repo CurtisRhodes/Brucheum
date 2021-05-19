@@ -109,27 +109,19 @@ function loadUpdatedGalleriesBoxes() {
 }
 
 function latestGalleryImageError(folderId, thisItemSrc) {    
+    //logError("ILF", folderId, thisItemSrc, "latestGalleryImage");
+    setTimeout(function () {
+        if ($('#lt' + folderId).attr('src') == null) {
+            $('#lt' + folderId).attr('src', "Images/redballon.png");
+            logError("ILF", folderId, "Src: " + thisItemSrc, "latest Galleries");
 
-    logError("ILF", folderId, thisItemSrc, "latestGalleryImage");
-
-    if (document.domain === 'localhost') {
-        //pause();
-        alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
-        //console.log("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
-    }
-
-//    setTimeout(function () {
-//        if ($('#lt' + folderId).attr('src') == null) {
-//            $('#lt' + folderId).attr('src', "Images/redballon.png");
-//            logError("ILF", folderId, "Src: " + thisItemSrc, "latest Galleries");
-
-//            if (document.domain === 'localhost') {
-//                pause();
-//                alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
-//                console.log("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
-//            }
-//        }
-//    }, 600);
+            if (document.domain === 'localhost') {
+                pause();
+                alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+                console.log("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+            }
+        }
+    }, 600);
 }
 
 function launchPromoMessages() {
@@ -212,7 +204,7 @@ function localhostBypass() {
     if (document.domain === 'localhost') {
         //localStorage["VisitorId"] = "ec6fb880-ddc2-4375-8237-021732907510";
         //setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-        console.log("localhostBypass visitorId: " + localStorage["VisitorId"]);
+        //console.log("localhostBypass visitorId: " + localStorage["VisitorId"]);
         //alert("localhostBypass visitorId: " + visitorId);
         //setCookieValue("UserName", "developer");
         //window.localStorage["IsLoggedIn"] = "true";

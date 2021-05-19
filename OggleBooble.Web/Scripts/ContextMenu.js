@@ -43,6 +43,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
             $('.adminLink').hide();
     } catch (e) {
         logError("CAT", folderId, e, "showContextMenu");
+        if (document.domain == "localhost") alert("context menu CATCH: " + e);
     }
 }
 

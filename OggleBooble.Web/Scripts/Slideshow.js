@@ -391,7 +391,7 @@ $(document).keydown(function (event) {
                 closeViewer("escape key");
                 break;
             //case 38: scrollTabStrip('foward'); break;
-            //case 33: scrollTabStrip('foward'); breaks api/VisitorInfo/verifyVisitorId
+            //case 33: scrollTabStrip('foward'); break;
             case 34:                        // pg down
             case 40:                        // dowm arrow
             case 37:                        // left arrow

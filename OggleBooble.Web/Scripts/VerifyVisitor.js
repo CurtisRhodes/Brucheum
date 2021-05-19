@@ -1,57 +1,61 @@
-﻿
-function verifyVisitorId(folderId, calledFrom) {
+﻿function verifyVisitor() {
     try {
-        //logActivity("VV0", folderId, calledFrom);
+        //getIpInfo(14, "verify Visitor");
+        //return;
+
+        //logActivity("VV0", 333, calledFrom);
+
+        console.log("1 verify visitorId: " + localStorage["VisitorId"]);
 
         if (isNullorUndefined(localStorage["VisitorId"])) {
-            logActivity("VV2", folderId, "verifyVisitorId/" + calledFrom);
-            getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
+            logActivity("VV2", 15, "verify Visitor");
+            getIpInfo(15, "verify Visitor");
             return;
         }
 
         if (localStorage["VisitorId"] == "unset") {
-            logActivity("VV3", folderId, "verifyVisitorId/" + calledFrom);
-            getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
+            logActivity("VV3", 16, "verify Visitor");
+            getIpInfo(16, "verify Visitor");
             return;
         }
 
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
+            $('#badgesContainer').html("new session started");
+          if (document.domain == "localhost") alert("new session started");
             $('#headerMessage').html("new session started");
-            if ((localStorage["VisitorId"].length == 36) || (localStorage["VisitorId"].indexOf("failedGetIpInfo") > -1)) {
-                $.ajax({
-                    type: "GET",
-                    url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + localStorage["VisitorId"],
-                    success: function (success) {
-                        if (success == "ok") {
-                            sessionStorage["VisitorVerified"] = "true";
-                            logActivity("VV1", folderId, calledFrom);
-                            loadUserProfile("verify visitor");
-                            logVisit(folderId, "verify visitor");
-                            console.log("visitor verified: " + localStorage["VisitorId"]);
-                        }
-                        else {  // visitorId not found
-                            logActivity("VV7", folderId, "verifyVisitor/" + calledFrom);
-                            //logError("BUG", folderId, "visitorId not found: " + localStorage["VisitorId"], "verifyVisitor/" + calledFrom);
-                            console.log("visitorId not found: " + localStorage["VisitorId"] + "  calling getIpInfo");
-                            getIpInfo(folderId, "verifyVisitorId/" + calledFrom);
-                        }
-                    },
-                    error: function (jqXHR) {
-                        //if (!checkFor404(errMsg, visitorData.FolderId, "getIpInfo/" + calledFrom)) {
-                        logActivity("VV6", folderId, "verifyVisitor/" + calledFrom);
-                        logError("XHR", folderId, errMsg, "verifyVisitor/" + calledFrom);
+            console.log("2 verify visitorId: " + localStorage["VisitorId"]);
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + localStorage["VisitorId"],
+                success: function (success) {
+                    if (success == "ok") {
+                        logActivity("VV1", 22, "verify Visitor");
+                        loadUserProfile(localStorage["VisitorId"], "verify visitor");
+                        logVisit(222, "verify visitor");
+                        console.log("visitor verified: " + localStorage["VisitorId"]);
+                        sessionStorage["VisitorVerified"] = "true";
                     }
-                });
-            }
-            else {
-                logActivity("VV4", folderId, "verifyVisitor/" + calledFrom);
-                logError("BUG", folderId, "susspiciosus visitorId: " + localStorage["VisitorId"], "verifyVisitor/" + calledFrom);
-            }
+                    else {  // visitorId not found
+                        logActivity("VV7", 77, "verify Visitor");
+                        //logError("BUG", folderId, "visitorId not found: " + localStorage["VisitorId"], "verifyVisitor/" + calledFrom);
+                        console.log("visitorId not found: " + localStorage["VisitorId"] + "  calling getIpInfo");
+                        getIpInfo(77, "verify Visitor");
+                    }
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    //if (!checkFor404(errMsg, visitorData.FolderId, "getIpInfo/" + calledFrom)) {
+                    logActivity("VV6", 666, "verify Visitor");
+                    logError("XHR", 666, errMsg, "verify Visitor");
+                }
+            });
         }
+        else
+            console.log("visitor verified: " + sessionStorage["VisitorVerified"] + " visitorId: " + localStorage["VisitorId"]);
     }
     catch (e) {
-        logActivity("VV5", folderId, "verifyVisitor/" + calledFrom);
-        logError("CAT", folderId, e, "verifyVisitor/" + calledFrom);
+        logActivity("VV5", 255, "verify Visitor");
+        logError("CAT", 255, e, "verify Visitor");
         if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
     }
 }
@@ -59,9 +63,8 @@ function verifyVisitorId(folderId, calledFrom) {
 function addVisitor(visitorData) {
     try
     {
-        logActivity("AV0", visitorData.FolderId, "addVisitor/" + visitorData.CalledFrom); // calling AddVisitor 
+        logActivity("AV0", visitorData.FolderId, "addVisitor/" + visitorData.CalledFrom); // entering Add Visitor 
 
-        visitorData.VisitorId = create_UUID();
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
@@ -81,16 +84,18 @@ function addVisitor(visitorData) {
                             logActivity("AV3", visitorData.FolderId, "addVisitor" + "/" + visitorData.CalledFrom); // new visitor added
                             logIpHit(visitorData.VisitorId, visitorData.IpAddress, visitorData.FolderId);
                             console.log("new visitor added");
-                            if (visitorData.CalledFrom.EndsWith("logStatic PageHit")) {
+                            if (visitorData.CalledFrom.endsWith("logStatic PageHit")) {
                                 logStaticPageHit(visitorData.FolderId, "addVisitor" + "/" + visitorData.CalledFrom);
                             }
                             break;
                         case "existing Ip":
+
                             logActivity("AV5", visitorData.FolderId, "addVisitor" + "/" + visitorData.CalledFrom);  // existing IP visitorId used
                             /// 5/14/2021
                             localStorage["VisitorId"] = visitorData.VisitorId;
-                            // logIpHit(visitorData.VisitorId, visitorData.IpAddress, visitorData.FolderId);
-                            if (visitorData.CalledFrom.EndsWith("logStatic PageHit"))
+                            console.log("existing IP assigned: " + localStorage["VisitorId"]);
+                            logIpHit(visitorData.VisitorId, visitorData.IpAddress, visitorData.FolderId);
+                            if (visitorData.CalledFrom.endsWith("logStatic PageHit"))
                                 logStaticPageHit(visitorData.FolderId, "addVisitor" + "/" + visitorData.CalledFrom);
                             break;
                         default: {
@@ -116,6 +121,56 @@ function addVisitor(visitorData) {
     } catch (e) {
         logActivity("AV2", 555, "addVisitor"); // add vis catch error
         logError("CAT", 555, e, "addVisitor");
+    }
+}
+
+function loadUserProfile(visitorId, calledFrom) {
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + visitorId,
+            success: function (visitorInfo) {
+                if (visitorInfo.Success == "ok") {
+                    localStorage["VisitorVerified"] = true;
+                    if (visitorInfo.IsRegisteredUser) {
+                        localStorage["IsLoggedIn"] = visitorInfo.RegisteredUser.IsLoggedIn;
+                        localStorage["UserName"] = visitorInfo.RegisteredUser.UserName;
+                        localStorage["UserRole"] = visitorInfo.RegisteredUser.UserRole;
+
+                        if (calledFrom == "show UserProfileDialog") {
+                            $('#txtUserProfileName').val(visitorInfo.RegisteredUser.UserName);
+                            $('#txtUserProfileFirstName').val(visitorInfo.RegisteredUser.FirstName);
+                            $('#txtUserProfileLastName').val(visitorInfo.LastName);
+                            $('#txtUserProfileEmail').val(visitorInfo.Email);
+                        }
+                    }
+                    else {
+                        localStorage["IsLoggedIn"] = false;
+                        localStorage["UserName"] = "not registered";
+                        localStorage["UserRole"] = "not registered";
+                    }
+
+                    console.log("loadUserProfile  IsLoggedIn: " + localStorage["IsLoggedIn"] +
+                        " UserName: " + localStorage["UserName"] +
+                        " UserRole: " + localStorage["UserRole"]);
+                }
+                else {
+                    if (visitorInfo.Success == "not found") {
+                        logError("EVT", 470, "Ip:", "load UserProfile");
+                    }
+                    else {
+                        logError("AJX", 0, visitorInfo.Success, "load UserProfile");
+                        if (document.domain == "localhost") alert("load UserProfile: " + visitorInfo.Success);
+                    }
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "load UserProfile")) logError("XHR", 0, errMsg, "load UserProfile");
+            }
+        });
+    } catch (e) {
+        logError("CAT", 12440, e, "load UserProfile");
     }
 }
 
