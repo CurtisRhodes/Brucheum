@@ -182,8 +182,9 @@ function resetOggleHeader(folderId, rootFolder) {
 
     console.log("header says IsLoggedIn = " + localStorage["IsLoggedIn"]);
 
-    if (localStorage["IsLoggedIn"] == true) {
+    if (localStorage["IsLoggedIn"] == "true") {
         console.log("I say IsLoggedIn is true: " + localStorage["IsLoggedIn"]);
+        $('#spnUserName').html(localStorage["UserName"]);
         $('#optionNotLoggedIn').hide();
         $('#optionLoggedIn').show();
         $('#footerCol5').show();

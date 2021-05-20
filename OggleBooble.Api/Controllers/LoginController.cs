@@ -25,6 +25,9 @@ namespace OggleBooble.Api.Controllers
                     RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.UserName == userName && u.Pswrd == encryptedPassword).FirstOrDefault();
                     if (dbRegisteredUser != null)
                     {
+                        dbRegisteredUser.IsLoggedIn = true;
+                        db.SaveChanges();
+
                         verifyRegisteredUserSuccess.VisitorId = dbRegisteredUser.VisitorId;
                         verifyRegisteredUserSuccess.UserName = dbRegisteredUser.UserName;
                         verifyRegisteredUserSuccess.UserRole = dbRegisteredUser.UserRole;
@@ -53,17 +56,20 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/Login/AddRegisterUser")]
-        public SuccessModel AddRegisterUser(RegisteredUser newRegisteredUser)
+        public AddRegisterdUserSuccessModel AddRegisterUser(RegisteredUser newRegisteredUserModel)
         {
-            var successModel = new SuccessModel();
+            var successModel = new AddRegisterdUserSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    RegisteredUser dbUserName = db.RegisteredUsers.Where(u => u.UserName == newRegisteredUser.UserName).FirstOrDefault();
-                    if (dbUserName != null)
+                    var newRegisteredUser = new RegisteredUser();
+                    newRegisteredUser.VisitorId = newRegisteredUserModel.VisitorId;
+                    var dbRegisteredUserUserName = db.RegisteredUsers.Where(u => u.UserName == newRegisteredUser.UserName).FirstOrDefault();
+                    if (dbRegisteredUserUserName != null)
                     {
-                        successModel.Success = "user name already exists";
+                        successModel.RegisterStatus = "user name already exists";
+                        successModel.Success = "ok";
                         return successModel;
                     }
                     RegisteredUser dbUserVisitorId = db.RegisteredUsers.Where(u => u.VisitorId == newRegisteredUser.VisitorId).FirstOrDefault();
@@ -71,18 +77,28 @@ namespace OggleBooble.Api.Controllers
                     {
                         if (dbUserVisitorId.UserRole == "admin")
                         {
-                            successModel.Success = "admin override";
+                            successModel.RegisterStatus = "admin override";
                             newRegisteredUser.VisitorId = Guid.NewGuid().ToString();
-                            successModel.ReturnValue = newRegisteredUser.VisitorId;
+                            successModel.NewVisitorId = newRegisteredUser.VisitorId;
                         }
                         else
                         {
-                            successModel.Success = "visitorId already registered";
+                            successModel.RegisterStatus = "visitorId already registered";
+                            successModel.Success = "ok";
                             return successModel;
                         }
                     }
+
+                    newRegisteredUser.UserName = newRegisteredUserModel.UserName;
+                    newRegisteredUser.UserRole = newRegisteredUserModel.UserRole;
+                    newRegisteredUser.UserCredits = newRegisteredUserModel.UserCredits;
+                    newRegisteredUser.Status = newRegisteredUserModel.Status;
+                    newRegisteredUser.IsLoggedIn = true;
+                    newRegisteredUser.Email = newRegisteredUserModel.Email;
+                    newRegisteredUser.FirstName = newRegisteredUserModel.FirstName;
+                    newRegisteredUser.LastName = newRegisteredUserModel.LastName;
                     newRegisteredUser.Created = DateTime.Now;
-                    newRegisteredUser.Pswrd = HashSHA256(newRegisteredUser.Pswrd);
+                    newRegisteredUser.Pswrd = HashSHA256(newRegisteredUserModel.Pswrd);
                     db.RegisteredUsers.Add(newRegisteredUser);
                     db.SaveChanges();
                     successModel.Success = "ok";

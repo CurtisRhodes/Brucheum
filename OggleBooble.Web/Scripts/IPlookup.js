@@ -45,7 +45,7 @@
                         Country: ipResponse.country,
                         Region: ipResponse.region,
                         GeoCode: ipResponse.loc,
-                        FolderId: folderId,
+                        InitialPage: folderId,
                         CalledFrom: "getIpInfo"
                     }
                 );
@@ -92,8 +92,11 @@ function getIp3() {
         logActivity("IP0", 33100, "ip-api.com");
         console.log("calling ip-api.com");
         $.getJSON('http://ip-api.com/json', function (ipApiData) {
-            console.log(JSON.stringify(ipApiData, null, 2));
+            //console.log(JSON.stringify(ipApiData, null, 2));
+
             if (ipApiData.status == "success") {
+                logActivity("IP1", 33100, "ip-api.com");
+
                 $.ajax({
                     type: "GET",
                     url: settingsArray.ApiServer + "/api/Visitor/GetVisitorFromIp?ipAddress=" + ipApiData.query,
@@ -108,20 +111,21 @@ function getIp3() {
                                         Country: ipResponse.country,
                                         Region: ipResponse.region,
                                         GeoCode: ipResponse.loc,
-                                        FolderId: 33100,
+                                        InitialPage: 33100,
                                         CalledFrom: "ip-api.com"
                                     }
                                 );
                             }
                             else {
+
+
                                 setCookieValue("VisitorId", successModel.ReturnValue);
-                                logActivity("IP2", 33100, "getIp3"); // ip exiting used
-                                loadUserProfile();                                
+                                loadUserProfile("getIp info");                                
                             }
                         }
                         else {
                             console.log("ipApiData: " + ipApiData);
-                            logActivity("IP2", 33100, "getIp3");
+                            logActivity("IP2", 33100, "getIp info");
                         }
                     },
                     error: function (jqXHR) {
@@ -132,16 +136,16 @@ function getIp3() {
                 });
                 console.log("ip-api.com success: " + ipApiData.query);
             }
+
             else {
                 logError("IPF", 5466, ipApiData.status, "ip-api.com");
-                logActivity("IP2", 43337, "ip-api.com");
+                logActivity("IP4", 43337, "ip-api.com");
             }
             //logIpHit()
         });
     } catch (e) {
-        console.log("geobytes: " + e);
-        ipInfoExited = true;
-        logError("CAT", 33773, e, "getIpInfo/" + calledFrom);
+        logActivity("IP7", 3777, "ip-api.com")
+        logError("CAT", 33773, e, "ip-api.com");
     }
 }
 
@@ -169,7 +173,7 @@ function tryApiDbIpFree() {
                                             Country: ipResponse.countryCode,
                                             Region: ipResponse.countryName,
                                             GeoCode: create_UUID(),
-                                            FolderId: 300519,
+                                            InitialPage: 3000,
                                             CalledFrom: "tryApiDbioFree"
                                         }
                                     );
@@ -199,7 +203,7 @@ function tryApiDbIpFree() {
                         Country: "US",
                         Region: "xx",
                         GeoCode: create_UUID(),
-                        FolderId: folderId,
+                        InitialPage: 333,
                         CalledFrom: "failedGetIpInfo"
                     });
                 }
@@ -226,7 +230,7 @@ function getCloudflare(calledFrom, folderId) {
         if (isNullorUndefined(visitorId)) {
             addVisitor({
                 IpAddress: data.ip,
-                FolderId: folderId,
+                InitialPage: folderId,
                 CalledFrom: calledFrom,
                 City: data.loc,
                 Country: data.loc,

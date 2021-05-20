@@ -106,9 +106,6 @@ function onLogoutClick(pageId) {
         $('#optionNotLoggedIn').show();
         $('#footerCol5').hide();
 
-        if (document.domain == "localhost") alert("onLogoutClick IsLoggedIn: " + localStorage["IsLoggedIn"] +
-            " UserName: " + localStorage["UserName"] +
-            " UserRole: " + localStorage["UserRole"]);
         console.log("onLogoutClick IsLoggedIn: " + localStorage["IsLoggedIn"] +
             " UserName: " + localStorage["UserName"] +
             " UserRole: " + localStorage["UserRole"]);
@@ -234,27 +231,35 @@ function attemptRegister() {
     try {
         if (validateRegister())
         {
-            let visitorId = getCookieValue("VisitorId");
             let userInfo = {
-                VisitorId: visitorId,
+                VisitorId: getCookieValue("VisitorId"),
                 UserName: $('#txtRegisterUserName').val(),
-                IsLoggedIn: false,
                 FirstName: $('#txtRegisterFirstName').val(),
                 LastName: $('#txtLastName').val(),
                 Email: $('#txtRegisterEmail').val(),
+                UserSettings: $('#txtLoginUserName').val(),
+                Pswrd: $('#txtRegisterClearPassword').val(),
+                UserCredits: 1200,
                 Status: "NEW",
                 UserRole: "normal",
-                UserSettings: $('#txtLoginUserName').val(),
-                UserCredits: 1200,
-                Pswrd: $('#txtRegisterClearPassword').val()
+                IsLoggedIn: true,
             };
             $.ajax({
                 type: "POST",
                 url: settingsArray.ApiServer + "/api/Login/AddRegisterUser",
                 data: userInfo,
-                success: function (successModel) {
+                success: function (registerdUserSuccessModel) {
+                    if (registerdUserSuccessModel.Success == "ok") {
+                        if (registerdUserSuccessModel.RegisterStatus == "user name already exists") {
+                            $('#errRegisterUserName').html("user name already exists").show();
+                            return;
+                        }
+                        if (registerdUserSuccessModel.RegisterStatus == "visitorId already registered") {
+                            alert("visitorId already registered");
+                            return;
+                        }
 
-                    if (successModel.Success === "ok") {
+
                         if (typeof resume === 'function') resume();
                         $("#vailShell").hide();
                         $("#centeredDialogContainer").hide();
@@ -268,61 +273,29 @@ function attemptRegister() {
                         $('#optionNotLoggedIn').hide();
                         $('#optionLoggedIn').show();
                         $('#footerCol5').show();
+                        let visid = getCookieValue("VisitorId");
+
+                        if (registerdUserSuccessModel.RegisterStatus == "admin override")
+                        {
+                            visid = registerdUserSuccessModel.NewVisitorId;
+                            console.log("admin override. New visitorId: " + visid);
+                            addVisitor({
+                                VisitorId: registerdUserSuccessModel.NewVisitorId,
+                                IpAddress: create_UUID(),
+                                City: "AnyTown",
+                                Country: "US",
+                                Region: "test",
+                                GeoCode: "33",
+                                InitialPage: 3000,
+                                CalledFrom: "attempt Register"
+                            });
+                        }
 
                         sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
-                            "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visitorId);
-
-                    }
-                    if (successModel.Success === "admin override") {
-                        if (typeof resume === 'function') resume();
-                        $("#vailShell").hide();
-                        $("#centeredDialogContainer").hide();
-
-                        addVisitor({
-                            VisitorId: successModel.ReturnValue,
-                            IpAddress: ipResponse.ip,
-                            City: ipResponse.city,
-                            Country: ipResponse.country,
-                            Region: ipResponse.region,
-                            GeoCode: ipResponse.loc,
-                            FolderId: folderId,
-                            CalledFrom: "attempt Register"
-                        });
-
-                        //setCookieValue("UserName", userName);
-                        //setCookieValue("IsLoggedIn", true);
-                        //setCookieValue("VisitorId", successModel.ReturnValue);
-                        logEvent("LOG", 0, "Successfull log in: " + localStorage["UserName"]);
-
-                        loadUserProfile(visitorId, "attempt register");
-                        displayStatusMessage("ok", "thanks for Registering " + localStorage["UserName"]);
-
-
-                        localStorage["IsLoggedIn"] = true;
-                        $('#optionLoggedIn').show();
-                        $('#optionNotLoggedIn').hide();
-                        dragableDialogClose();
-                        displayStatusMessage("ok", "thanks for Registering" + userName);
-
-                        if (document.domain == "localhost") alert("update RegisteredUseronLogoutClick IsLoggedIn: " + localStorage["IsLoggedIn"] +
-                            " UserName: " + localStorage["UserName"] +
-                            " UserRole: " + localStorage["UserRole"]);
-
-                        console.log("update RegisteredUser IsLoggedIn: " + localStorage["IsLoggedIn"] +
-                            " UserName: " + localStorage["UserName"] +
-                            " UserRole: " + localStorage["UserRole"]);
+                            "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visid);
                     }
                     else {
-                        if (successModel.Success == "user name already exists") {
-                            //showMyAlert("user name not found", "<div>you need to <a href='#'>register</a> username before you can login<div>");
-                        }
-                        else {
-                            if (successModel.Success == "visitorId already registered") {
-                                alert("visitorId already registered");
-                            } else {
-                                logError("AJX", 0, successModel.Success, "attempt Login");
-                            }
-                        }
+                        logError("AJX", 0, successModel.Success, "attempt Login");
                     }
                 },
                 error: function (jqXHR) {
@@ -418,12 +391,11 @@ function authenticateEmail(usersEmail) {
 ///////////////////////////////////////////////////////////////////////////////////////
 
 function showUserProfileDialog() {
-    let visitorId = getCookieValue("VisitorId");
-    $('#centeredDialogTitle').html("Register and Login to OggleBooble");
+    $('#centeredDialogTitle').html("user profile");
     $('#centeredDialogContents').html(userProfileHtml());
     $("#vailShell").fadeIn();
     $("#centeredDialogContainer").draggable().fadeIn();
-    loadUserProfile(visitorId, "show UserProfileDialog");
+    loadUserProfile("show UserProfileDialog");
 }
 
 function userProfileHtml() {

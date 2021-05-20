@@ -23,30 +23,32 @@ namespace OggleBooble.Api.Controllers
                     var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
                     if (dbExistingIpVisitor != null)
                     {
-                        addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
-                        addVisitorModel.Success = "existing Ip";
-                    }
-                    else
-                    {
-                        var newVisitor = new Visitor()
+                        if (visitorData.CalledFrom != "attempt Register")
                         {
-                            VisitorId = visitorData.VisitorId,
-                            InitialPage = visitorData.FolderId,
-                            City = visitorData.City,
-                            Country = visitorData.Country,
-                            GeoCode = visitorData.GeoCode,
-                            Region = visitorData.Region,
-                            InitialVisit = DateTime.Now,
-                            IpAddress = visitorData.IpAddress
-                        };
-                        db.Visitors.Add(newVisitor);
-                        db.SaveChanges();
-                        addVisitorModel.Success = "ok";
+                            addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
+                            addVisitorModel.Success = "existing Ip";
+                            return addVisitorModel;
+                        }
                     }
+
+                    var newVisitor = new Visitor()
+                    {
+                        VisitorId = visitorData.VisitorId,
+                        InitialPage = visitorData.InitialPage,
+                        City = visitorData.City,
+                        Country = visitorData.Country,
+                        GeoCode = visitorData.GeoCode,
+                        Region = visitorData.Region,
+                        InitialVisit = DateTime.Now,
+                        IpAddress = visitorData.IpAddress
+                    };
+                    db.Visitors.Add(newVisitor);
+                    db.SaveChanges();
+                    addVisitorModel.Success = "ok";
                 }
             }
-            catch (Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 addVisitorModel.Success = Helpers.ErrorDetails(ex);
             }
             return addVisitorModel;
