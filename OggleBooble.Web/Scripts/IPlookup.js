@@ -1,6 +1,6 @@
 ﻿function getIpInfo(folderId, calledFrom) {
 
-    getIp3();
+    getIp3(folderId, calledFrom);
     return;
 
     //tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo43");
@@ -82,67 +82,61 @@
         if (!ipInfoExited) {
             logActivity("IP4", folderId, "getIpInfo/" + calledFrom); // ipInfo failed to respond
             //logError("IP6", folderId, "", "getIpInfo/" + calledFrom);
-            tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo43");
+            //tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo43");
         }
     }, 855);
 }
 
-function getIp3() {
+
+let ip3Busy = false;
+function getIp3(folderId, calledFrom) {
     try {
-        logActivity("IP0", 33100, "ip-api.com");
+        if (ip3Busy) {
+            // try something else
+        }
+        else {
+            // create_UUID()
+            logActivity("IP0", 33100, "ip-api.com");
+            ip3Busy = true;
+            let ip3returned = false;
+            $.getJSON('http://ip-api.com/json', function (ipApiData) {
+                ip3returned = true;
+                if (ipApiData.status == "success") {
+                    setCookieValue("VisitorId",)
+                    addVisitor(
+                        {
+                            VisitorId: create_UUID(),
+                            IpAddress: ipApiData.query,
+                            City: ipApiData.city,
+                            Country: ipApiData.countryCode,
+                            Region: ipApiData.regionName,
+                            GeoCode: ipApiData.lat + ipApiData.Ion,
+                            InitialPage: 33100,
+                            CalledFrom: "ip-api.com"
+                        }
+                    );
+                    console.log("ip-api.com success: " + ipApiData.query);
+                    logActivity("IP1", 33100, "ip-api.com");
+                }
+                else {
+                    logError("IPF", 5466, ipApiData.status, "ip-api.com");
+                    logActivity("IP6", 43337, "ip-api.com");
+
+                }
+            });
+            setTimeout(function () {
+                if (!ip3returned) {
+                    logActivity("IP4", 43337, "ip-api.com");
+                    // try something else
+                }
+                ip3Busy = false;
+            }, 2000);
+        }
+
+
+        //alert("getIp3  calledFrom: " + calledFrom);
         console.log("calling ip-api.com");
-        $.getJSON('http://ip-api.com/json', function (ipApiData) {
-            //console.log(JSON.stringify(ipApiData, null, 2));
 
-            if (ipApiData.status == "success") {
-                logActivity("IP1", 33100, "ip-api.com");
-
-                $.ajax({
-                    type: "GET",
-                    url: settingsArray.ApiServer + "/api/Visitor/GetVisitorFromIp?ipAddress=" + ipApiData.query,
-                    success: function (successModel) {
-                        if (successModel.Success == "ok") {
-                            if (successModel.ReturnValue == "not found") {
-                                addVisitor(
-                                    {
-                                        VisitorId: create_UUID(),
-                                        IpAddress: ipResponse.ip,
-                                        City: ipResponse.city,
-                                        Country: ipResponse.country,
-                                        Region: ipResponse.region,
-                                        GeoCode: ipResponse.loc,
-                                        InitialPage: 33100,
-                                        CalledFrom: "ip-api.com"
-                                    }
-                                );
-                            }
-                            else {
-
-
-                                setCookieValue("VisitorId", successModel.ReturnValue);
-                                loadUserProfile("getIp info");                                
-                            }
-                        }
-                        else {
-                            console.log("ipApiData: " + ipApiData);
-                            logActivity("IP2", 33100, "getIp info");
-                        }
-                    },
-                    error: function (jqXHR) {
-                        let errMsg = getXHRErrorDetails(jqXHR);
-                        logActivity("IP3", 6588, "GetVisitorFromIp");
-                        logError("XHR", 6588, errMsg, "GetVisitorFromIp");
-                    }
-                });
-                console.log("ip-api.com success: " + ipApiData.query);
-            }
-
-            else {
-                logError("IPF", 5466, ipApiData.status, "ip-api.com");
-                logActivity("IP4", 43337, "ip-api.com");
-            }
-            //logIpHit()
-        });
     } catch (e) {
         logActivity("IP7", 3777, "ip-api.com")
         logError("CAT", 33773, e, "ip-api.com");
@@ -246,7 +240,7 @@ let lastIpHitVisitorId;
 function logIpHit(visitorId, ipAddress, folderId) {
     try {
         if (visitorId == lastIpHitVisitorId) {
-            logError("PH1", folderId, "VisitorId: " + visitorId + ", IpAddress: " + ipAddress, "logIpHit");
+            logError("PH1", folderId, "VisitorId: " + visitorId + ", IpAddress: " + ipAddress, "log IpHit");
             return;
         }
         lastIpHitVisitorId = visitorId;
@@ -261,17 +255,17 @@ function logIpHit(visitorId, ipAddress, folderId) {
             },
             success: function (success) {
                 if (success == "ok")
-                    logActivity("IPH", folderId, "logIpHit");
+                    logActivity("IPH", folderId, "log IpHit");
                 else
-                    logError("AJX", folderId, success, "logIpHit");
+                    logError("AJX", folderId, success, "log IpHit");
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "logIpHit")) logError("XHR", folderId, errMsg, "logIpHit");
+                if (!checkFor404(errMsg, folderId, "log IpHit")) logError("XHR", folderId, errMsg, "log IpHit");
             }
         });
     } catch (e) {
-        logError("CAT", folderId, e, "logIpHit");
+        logError("CAT", folderId, e, "log IpHit");
     }
 }
 

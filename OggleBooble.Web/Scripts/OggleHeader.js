@@ -180,20 +180,25 @@ function resetOggleHeader(folderId, rootFolder) {
             window.location.href = "Index.html";
     }
 
-    console.log("header says IsLoggedIn = " + localStorage["IsLoggedIn"]);
-
-    if (localStorage["IsLoggedIn"] == "true") {
-        console.log("I say IsLoggedIn is true: " + localStorage["IsLoggedIn"]);
-        $('#spnUserName').html(localStorage["UserName"]);
-        $('#optionNotLoggedIn').hide();
-        $('#optionLoggedIn').show();
-        $('#footerCol5').show();
+    //console.log("header says IsLoggedIn = " + localStorage["IsLoggedIn"]);
+    if (isNullorUndefined(localStorage["IsLoggedIn"])) {
+        console.log("localStorage isLoggedIn Undefined in header");
+        loadUserProfile("resetOggleHeader");
     }
     else {
-        console.log("I say IsLoggedIn is false: " + localStorage["IsLoggedIn"]);
-        $('#optionLoggedIn').hide();
-        $('#optionNotLoggedIn').show();
-        $('#footerCol5').hide();
+        if (localStorage["IsLoggedIn"] == "true") {
+            //console.log("I say IsLoggedIn is true: " + localStorage["IsLoggedIn"]);
+            $('#spnUserName').html(localStorage["UserName"]);
+            $('#optionNotLoggedIn').hide();
+            $('#optionLoggedIn').show();
+            $('#footerCol5').show();
+        }
+        else {
+            //console.log("I say IsLoggedIn is false: " + localStorage["IsLoggedIn"]);
+            $('#optionLoggedIn').hide();
+            $('#optionNotLoggedIn').show();
+            $('#footerCol5').hide();
+        }
     }
 }
 

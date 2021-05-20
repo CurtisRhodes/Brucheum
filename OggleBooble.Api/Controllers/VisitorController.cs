@@ -13,6 +13,7 @@ namespace OggleBooble.Api.Controllers
     public class VisitorController : ApiController
     {
         [HttpPost]
+        [Route("api/Visitor/AddVisitor")]
         public AddVisitorSuccessModel AddVisitor(AddVisitorModel visitorData)
         {
             var addVisitorModel = new AddVisitorSuccessModel() { Success = "ono" };
@@ -23,12 +24,15 @@ namespace OggleBooble.Api.Controllers
                     var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
                     if (dbExistingIpVisitor != null)
                     {
-                        if (visitorData.CalledFrom != "attempt Register")
-                        {
-                            addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
-                            addVisitorModel.Success = "existing Ip";
-                            return addVisitorModel;
-                        }
+                        visitorData.IpAddress = visitorData.IpAddress + "." + new Random().Next(0, 4).ToString("0000"); 
+
+                        //if (visitorData.CalledFrom != "attempt Register")
+                        //{
+                        //    addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
+                        //    addVisitorModel.Success = "existing Ip";
+
+                        //    return addVisitorModel;
+                        //}
                     }
 
                     var newVisitor = new Visitor()
@@ -55,6 +59,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
+        [Route("api/Visitor/GetVisitorInfo")]
         public VisitorInfoSuccessModel GetVisitorInfo(string visitorId)
         {
             var visitorInfoModel = new VisitorInfoSuccessModel();
@@ -90,6 +95,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
+        [Route("api/Visitor/VerifyVisitor")]
         public string VerifyVisitor(string visitorId)
         {
             string success;
@@ -114,6 +120,7 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
+        [Route("api/Visitor/GetVisitorFromIp")]
         public SuccessModel GetVisitorFromIp(string ipAddress)
         {
             var successModel = new SuccessModel();

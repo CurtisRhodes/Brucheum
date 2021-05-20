@@ -1,4 +1,5 @@
-﻿function verifyVisitor() {
+﻿let sessionGVV = false;
+function verifyVisitor() {
     try {
 
         //if (document.domain === 'localhost') setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
@@ -20,6 +21,7 @@
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
             $('#headerMessage').html("new session started");
             sessionStorage["VisitorVerified"] = true;
+            //getIpInfo(99, "verify Visitor");
             console.log("verifying visitor: " + visitorId);
             $.ajax({
                 type: "GET",
@@ -62,19 +64,20 @@ function addVisitor(visitorData) {
     {
         logActivity("AV0", 215519, "addVisitor"); // entering Add Visitor 
         console.log("attempting to addVisitor");
+        //alert("CALLing addVisitor  calledFrom: " + visitorData.CalledFrom);
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
             data: visitorData,
             success: function (avSuccess) {
                 if (avSuccess.Success == "ok") {
+                    logActivity("IP2", visitorData.InitialPage, visitorData.CalledFrom + "/addVisitor");
                     setCookieValue("VisitorId", visitorData.VisitorId);
                     loadUserProfile("add new visitor");
                     logIpHit(visitorData.VisitorId, visitorData.IpAddress, 215519);
                     if (visitorData.CalledFrom.endsWith("logStatic PageHit")) {
                         logStaticPageHit(215519, "add visitor");
-                    }
-                    logActivity("IP1", 44556, visitorData.VisitorId)
+                    }                   
                     logActivity("AV3", 215519, "add visitor"); // new visitor added
                     console.log("new visitor added");
                     if (visitorData.CalledFrom == "attempt Register") {
@@ -109,6 +112,7 @@ function addVisitor(visitorData) {
                     logError("DVA", 656, avSuccess.Success, "addVisitor");
                 }
                 if (avSuccess.Success.indexOf("ERROR:") > -1) {
+                    logActivity("IP4", 215519, avSuccess.Success);
                     logActivity("AV4", 215519, avSuccess.Success);
                     logError("AJ7", 215519, avSuccess.Success, "addVisitor");
                 }
@@ -121,6 +125,7 @@ function addVisitor(visitorData) {
             }
         });
     } catch (e) {
+        alert("AddVisitor CATCH: " + e);
         logActivity("AV2", 555, "addVisitor"); // add vis catch error
         logError("CAT", 555, e, "addVisitor");
     }
@@ -157,6 +162,10 @@ function loadUserProfile(calledFrom) {
                         localStorage["IsLoggedIn"] = false;
                         localStorage["UserName"] = "not registered";
                         localStorage["UserRole"] = "not registered";
+                        $('#spnUserName').html(localStorage["UserName"]);
+                        $('#optionNotLoggedIn').show();
+                        $('#optionLoggedIn').hide();
+                        $('#footerCol5').hide();
                     }
 
                     console.log("load UserProfile  IsLoggedIn: " + localStorage["IsLoggedIn"] +

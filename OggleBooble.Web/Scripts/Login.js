@@ -407,13 +407,13 @@ function userProfileHtml() {
         "       <div id='errUserProfileEmail' class='validationError'></div>\n" +
         "   <div><label>Email</label><input id='txtUserProfileEmail' style='roundedInput; width:100%'></input>\n" +
         "   <div class='folderDialogFooter'>\n" +
-        "       <div id='btnUserProfileSave' class='roundendButton' onclick='updateUserProfile()'>Save</div>\n" +
+        "       <div id='btnUserProfileSave' class='roundendButton' onclick='callUpdateUserProfile()'>Save</div>\n" +
         "       <div id='btnUserProfileCancel' class='roundendButton' onclick='dragableDialogClose()'>Cancel</div>\n" +
         "   </div>\n" +
         "</div>\n";
 }
 
-function updateUserProfile() {
+function callUpdateUserProfile() {
     let userProfileData = {
         UserName: $('#txtUserProfileName').val(),
         FirstName: $('#txtUserProfileFirstName').val(),
