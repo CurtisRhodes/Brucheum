@@ -69,6 +69,7 @@ function runMetricsMatrixReport() {
     else
         alert("unable to run report");
 }
+
 function metrixSubReport(reportId, reportDay) {
     switch (reportId) {
         case 1: // NewVisitors
@@ -143,6 +144,7 @@ function metrixSubReport(reportId, reportDay) {
         default:
     }
 }
+
 function runMostImageHits() {
     $('#dashBoardLoadingGif').show();
     $("#mostImageHitsContainer").html("");
@@ -168,6 +170,7 @@ function runMostImageHits() {
         }
     });
 }
+
 function runMostVisitedPages() {
     $('#dashBoardLoadingGif').show();
     $.ajax({
@@ -193,6 +196,7 @@ function runMostVisitedPages() {
         }
     });
 }
+
 function runDailyRefferals() {
     try {
 

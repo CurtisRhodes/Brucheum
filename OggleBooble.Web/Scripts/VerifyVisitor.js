@@ -6,14 +6,18 @@ function verifyVisitor() {
 
         let visitorId = getCookieValue("VisitorId");
 
+        if (isNullorUndefined(visitorId)) {
+            logActivity("VV2", 13, "undefined verify Visitor");
+            getIpInfo(13, "verify Visitor");
+            return;
+        }
         if (visitorId == "not found") {
-            logActivity("VV2", 15, "verify Visitor");
+            logActivity("VV2", 15, "not found verify Visitor");
             getIpInfo(15, "verify Visitor");
             return;
         }
-
         if (localStorage["VisitorId"] == "unset") {
-            logActivity("VV3", 16, "verify Visitor");
+            logActivity("VV2", 16, "unset verify Visitor");
             getIpInfo(16, "verify Visitor");
             return;
         }
@@ -71,7 +75,11 @@ function addVisitor(visitorData) {
             data: visitorData,
             success: function (avSuccess) {
                 if (avSuccess.Success == "ok") {
-                    logActivity("IP2", visitorData.InitialPage, visitorData.CalledFrom + "/addVisitor");
+
+                    //alert("well add visitor worked: " + avSuccess.VisitorId);
+
+
+                    //logActivity("IP2", visitorData.InitialPage, visitorData.CalledFrom + "/addVisitor");
                     setCookieValue("VisitorId", visitorData.VisitorId);
                     loadUserProfile("add new visitor");
                     logIpHit(visitorData.VisitorId, visitorData.IpAddress, 215519);
@@ -94,12 +102,12 @@ function addVisitor(visitorData) {
                     }
                 }
                 if (avSuccess.Success == "existing Ip") {
-                    logActivity("IP2", 33100, "getIp info"); // ip exiting used
+                    //logActivity("IP2", 33100, "getIp info"); // ip exiting used
 
-                    console.log("NO ADD. existing Ip") 
+                    //console.log("NO ADD. existing Ip") 
                     setCookieValue("VisitorId", visitorData.VisitorId);
                     loadUserProfile("add existing Ip visitor");
-                    console.log("wasted Ip call : " + visitorData.VisitorId);
+                    //console.log("wasted Ip call : " + visitorData.VisitorId);
                     console.log("existing IP assigned: " + visitorData.VisitorId);
                     logIpHit(visitorData.VisitorId, visitorData.IpAddress, 215519);
                     if (visitorData.CalledFrom.endsWith("logStatic PageHit"))
@@ -112,9 +120,9 @@ function addVisitor(visitorData) {
                     logError("DVA", 656, avSuccess.Success, "addVisitor");
                 }
                 if (avSuccess.Success.indexOf("ERROR:") > -1) {
-                    logActivity("IP4", 215519, avSuccess.Success);
+                    logActivity("IP3", 215519, avSuccess.Success);
                     logActivity("AV4", 215519, avSuccess.Success);
-                    logError("AJ7", 215519, avSuccess.Success, "addVisitor");
+                    logError("AJ7", 215519, avSuccess.Success, "addVisitor/" + visitorData.CalledFrom);
                 }
             },
             error: function (jqXHR) {
@@ -124,8 +132,10 @@ function addVisitor(visitorData) {
                     logError("XHR", 999, errMsg, "addVisitor");
             }
         });
+
     } catch (e) {
-        alert("AddVisitor CATCH: " + e);
+        //alert("AddVisitor CATCH: " + e);
+
         logActivity("AV2", 555, "addVisitor"); // add vis catch error
         logError("CAT", 555, e, "addVisitor");
     }
@@ -174,7 +184,7 @@ function loadUserProfile(calledFrom) {
                 }
                 else {
                     if (visitorInfo.Success == "not found") {
-                        logError("EVT", 470, "Ip:", "load UserProfile");
+                        //logError("EVT", 470, "Ip:", "load UserProfile");  // VisitorId not found                    
                     }
                     else {
                         logError("AJX", 0, visitorInfo.Success, "load UserProfile");

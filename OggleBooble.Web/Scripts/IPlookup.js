@@ -1,10 +1,7 @@
 ﻿function getIpInfo(folderId, calledFrom) {
 
-    getIp3(folderId, calledFrom);
+    ipapico(folderId, calledFrom);
     return;
-
-    //tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo43");
-    //return;
 
     //console.log("calling ipapi.co");
     //$.getJSON('https://ipapi.co/json/', function (data) {
@@ -44,7 +41,7 @@
                         City: ipResponse.city,
                         Country: ipResponse.country,
                         Region: ipResponse.region,
-                        GeoCode: ipResponse.loc,
+                        GeoCode: "getIpInfo", //ipResponse.loc,
                         InitialPage: folderId,
                         CalledFrom: "getIpInfo"
                     }
@@ -73,7 +70,7 @@
             else {
                 //if (!checkFor404(errMsg, visitorData.FolderId, "getIpInfo/" + calledFrom)) {
                 logActivity("IP3", folderId, "getIpInfo/" + calledFrom); // XHR error
-                logError("XHR", visitorData.FolderId, errMsg, "try AddVisitor");
+                logError("XHR", visitorData.FolderId, errMsg, "try AddV isitor");
                 tryAlt_IpLookup(folderId, calledFrom + "/getIpInfo3");
             }
         }
@@ -87,22 +84,88 @@
     }, 855);
 }
 
+let ipapicoBusy = false;
+function ipapico(folderId, calledFrom) {
+    try {
+        if (ipapicoBusy) {
+            // try something else
+            logActivity("IP8", folderId, "ipapico/" + calledFrom);
+            getIp3(folderId, calledFrom);
+        }
+        else {
+            logActivity("IP0", folderId, "ipapico/" + calledFrom);
+            ipapicoBusy = true;
+            let ipapicoReturned = false;
+            $.getJSON('http://ip-api.com/json', function (ipapicoData) {
+                ipapicoReturned = true;
+                //alert("well it worked fine.");
+                if (ipApiData.status == "success") {
+                    if (isNullorUndefined(ipApiData.query)) {
+                        logActivity("IP9", folderId, "ipapico");
+                        ipApiData.query = "undefined";
+                    }
+                    logActivity("IP1", folderId, "ipapico");
+                    console.log("calling addVisitor from: ipapico");
+                    addVisitor(
+                        {
+                            VisitorId: create_UUID(),
+                            IpAddress: ipapicoData.ip,
+                            City: ipapicoData.city,
+                            Country: ipapicoData.country_code,
+                            Region: ipapicoData.region,
+                            GeoCode: "ipapico",
+                            InitialPage: folderId,
+                            CalledFrom: "ipapico"
+                        }
+                    );
+                }
+                else {
+                    logError("IPF", 5466, ipApiData.status, "ipapico");
+                    logActivity("IP6", 43337, "ipapico");
+                    // try something else
+                    getIp3(folderId, calledFrom);
+                }
+            });
+            setTimeout(function () {
+                if (!ipapicoReturned) {
+                    logActivity("IP4", folderId, "ipapico");
+                    // try something else
+                    getIp3(folderId, calledFrom);
+                }
+                ipapicoBusy = false;
+            }, 2000);
+        }
+    } catch (e) {
+        logActivity("IP7", folderId, "ipapico")
+        logError("CAT", folderId, e, "ipapico");
+    }
+}
+
 
 let ip3Busy = false;
 function getIp3(folderId, calledFrom) {
     try {
         if (ip3Busy) {
             // try something else
+            logActivity("IP8", folderId, "ip-api.com/" + calledFrom);
+            tryApiDbIpFree(folderId, calledFrom);
+            // addBadIpVisitorId(folderId, calledFrom);
         }
         else {
-            // create_UUID()
-            logActivity("IP0", 33100, "ip-api.com");
+            logActivity("IP0", folderId, "ip-api.com/" + calledFrom);
             ip3Busy = true;
             let ip3returned = false;
             $.getJSON('http://ip-api.com/json', function (ipApiData) {
                 ip3returned = true;
                 if (ipApiData.status == "success") {
-                    setCookieValue("VisitorId",)
+
+                    if (isNullorUndefined(ipApiData.query)) {
+                        logActivity("IP9", folderId, "ip-api.com");
+                        ipApiData.query = create_UUID();
+                    }
+
+                    logActivity("IP1", folderId, "ip-api.com");
+                    console.log("calling addVisitor from: ip-api.com");
                     addVisitor(
                         {
                             VisitorId: create_UUID(),
@@ -110,13 +173,13 @@ function getIp3(folderId, calledFrom) {
                             City: ipApiData.city,
                             Country: ipApiData.countryCode,
                             Region: ipApiData.regionName,
-                            GeoCode: ipApiData.lat + ipApiData.Ion,
-                            InitialPage: 33100,
+                            GeoCode: "ip-api.com",
+                            InitialPage: folderId,
                             CalledFrom: "ip-api.com"
                         }
                     );
                     console.log("ip-api.com success: " + ipApiData.query);
-                    logActivity("IP1", 33100, "ip-api.com");
+                    logActivity("IP1", folderId, "ip-api.com");
                 }
                 else {
                     logError("IPF", 5466, ipApiData.status, "ip-api.com");
@@ -127,91 +190,98 @@ function getIp3(folderId, calledFrom) {
             setTimeout(function () {
                 if (!ip3returned) {
                     logActivity("IP4", 43337, "ip-api.com");
+                    //alert("ip3 failed to respond returned")
                     // try something else
+                    tryApiDbIpFree(folderId, calledFrom);
                 }
                 ip3Busy = false;
             }, 2000);
         }
-
-
-        //alert("getIp3  calledFrom: " + calledFrom);
-        console.log("calling ip-api.com");
-
     } catch (e) {
         logActivity("IP7", 3777, "ip-api.com")
         logError("CAT", 33773, e, "ip-api.com");
     }
 }
 
-function tryApiDbIpFree() {
+let apiDbIpFreeBusy = false;
+function tryApiDbIpFree(folderId, calledFrom) {
     try {
-        logActivity("IP1", 4555, "tryApiDbioFree"); // attempting ipfy lookup
-        $.ajax({
-            type: "GET",
-            url: "https://api.db-ip.com/v2/free/self",
-            dataType: "JSON",
-            success: function (ipResponse) {
-                if (!isNullorUndefined(ipResponse.ipAddress)) {
+        if (apiDbIpFreeBusy) {
+            logActivity("IP8", folderId, "ip-api.com/" + calledFrom);
+            // try something else
+            addBadIpVisitorId(folderId, calledFrom);
+        }
+        else
+        {
+            apiDbIpFreeBusy = true;
+            let apiDbIpFreereturned = false;
+            logActivity("IP0", folderId, "apiDbIpFree/" + calledFrom); // attempting ipfy lookup
+            $.ajax({
+                type: "GET",
+                url: "https://api.db-ip.com/v2/free/self",
+                dataType: "JSON",
+                success: function (ipResponse) {
+                    apiDbIpFreereturned = true;
+                    if (isNullorUndefined(ipResponse.ipAddress)) {
+                        logActivity("IP9", folderId, "apiDbIpFree/" + calledFrom);
+                        ipResponse.ipAddress = create_UUID();
+                    }
+                    if (isNullorUndefined(ipResponse.countryCode)) {
+                        ipResponse.countryCode = "ZZ";
+                    }
 
-                    $.ajax({
-                        type: "GET",
-                        url: settingsArray.ApiServer + "/api/Visitor/GetVisitorFromIp?ipAddress=" + ipApiData.query,
-                        success: function (successModel) {
-                            if (successModel.Success == "ok") {
-                                if (successModel.ReturnValue == "not found") {
-                                    addVisitor(
-                                        {
-                                            VisitorId: create_UUID(),
-                                            IpAddress: ipResponse.ipAddress,
-                                            City: ipResponse.city,
-                                            Country: ipResponse.countryCode,
-                                            Region: ipResponse.countryName,
-                                            GeoCode: create_UUID(),
-                                            InitialPage: 3000,
-                                            CalledFrom: "tryApiDbioFree"
-                                        }
-                                    );
-                                }
-                                else {
-
-                                }
-                            }
-                            else {
-
-                            }
-                        },
-                        error: function (jqXHR) {
-                            let errMsg = getXHRErrorDetails(jqXHR);
-                            logActivity("IP3", 6588, "GetVisitorFromIp");
-                            logError("XHR", 6588, errMsg, "GetVisitorFromIp");
-                        }
-                    });
-                }
-                else {
-                    console.log("api.db-ip.com response: " + ipResponse);
-                    logActivity("IF2", folderId, "altIpLookup/" + calledFrom); // ipfy lookup also failed
+                    logActivity("IP1", folderId, "apiDbIpFree/" + calledFrom);
+                    console.log("calling addVisitor from: apiDbIpFree");
                     addVisitor({
-                        VisitorId: "failedGetIpInfo_" + create_UUID().substr(0, 20),
-                        IpAddress: "00.00.00",
-                        City: "xx",
-                        Country: "US",
-                        Region: "xx",
-                        GeoCode: create_UUID(),
-                        InitialPage: 333,
-                        CalledFrom: "failedGetIpInfo"
+                        VisitorId: create_UUID(),
+                        IpAddress: ipResponse.ipAddress,
+                        City: ipResponse.city,
+                        Country: ipResponse.countryCode,
+                        Region: ipResponse.stateProv,
+                        GeoCode: "apiDbIpFree",
+                        InitialPage: folderId,
+                        CalledFrom: "apiDbIpFree/" + calledFrom
                     });
+                },
+                error: function (jqXHR) {
+                    logActivity("IF3", folderId, "altIpLookup/" + calledFrom); // ipfy XHR fail
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg, folderId, "logStaticPageHit"))
+                        logError("XHR", folderId, errMsg, "altIpLookup/" + calledFrom);
                 }
-            },
-            error: function (jqXHR) {
-                logActivity("IF3", folderId, "altIpLookup/" + calledFrom); // ipfy XHR fail
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "logStaticPageHit"))
-                    logError("XHR", folderId, errMsg, "altIpLookup/" + calledFrom);
-            }
-        });
+            });
+            setTimeout(function () {
+                if (!apiDbIpFreereturned) {
+                    logActivity("IP4", 43337, "ip-api.com");
+                    // try something else
+                    addBadIpVisitorId(folderId, calledFrom);
+                }
+                apiDbIpFreeBusy = false;
+            }, 2000);
+        }
     } catch (e) {
         logError("CAT", folderId, e, "altIpLookup");
-        logActivity("IF4", 444, "altIpLookup");
+        logActivity("IP7", folderId, "altIpLookup");
+    }
+}
+
+function addBadIpVisitorId(folderId, calledFrom) {
+    try {
+        console.log("calling addVisitor from: addBadIp");
+        addVisitor(
+            {
+                VisitorId: create_UUID(),
+                IpAddress: create_UUID(),
+                City: "BadIp",
+                Country: "ZZ",
+                Region: "unknown",
+                GeoCode: "badIp",
+                InitialPage: folderId,
+                CalledFrom: "badIp/" + calledFrom
+            }
+        );
+    } catch (e) {
+        logError("CAT", folderId, e, "addBadIpVisitorId");
     }
 }
 
@@ -261,7 +331,8 @@ function logIpHit(visitorId, ipAddress, folderId) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "log IpHit")) logError("XHR", folderId, errMsg, "log IpHit");
+                if (!checkFor404(errMsg, folderId, "log IpHit"))
+                    logError("XHR", folderId, errMsg, "log IpHit");
             }
         });
     } catch (e) {
