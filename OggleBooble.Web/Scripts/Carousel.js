@@ -3,7 +3,7 @@ let imageIndex = 0, numImages = 0, numFolders = 0, backArrowClicks = 0,
     carouselItemArray = [], imageHistory = [], absolueStartTime,
     carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
-    imgSrc, jsCarouselSettings, arryItemsShownCount = 0, carouselRoot, cacheCount = 115;
+    imgSrc, jsCarouselSettings, arryItemsShownCount = 0, carouselRoot, cacheCount = 55;
 
 function launchCarousel(startRoot) {
     settingsImgRepo = settingsArray.ImageRepo;

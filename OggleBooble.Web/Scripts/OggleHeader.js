@@ -52,11 +52,13 @@ function resetOggleHeader(folderId, rootFolder) {
     hdrFolderId = folderId;
     hdrRootFolder = rootFolder;
     $('#divLoginArea').show();
-    $('#hdrBtmRowSec3').html("");
-    $('#oggleHeaderTitle').html("unhandled");
+    //$('#hdrBtmRowSec3').html("");
+    $('#oggleHeaderTitle').html(rootFolder);
     switch (rootFolder) {
         case "boobs":
             $('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
+        case "root":
+        case "index":
         case "archive": {
             changeFavoriteIcon("redBallon");
             $('#oggleHeader').switchClass('playboyHeader', 'boobsHeader');

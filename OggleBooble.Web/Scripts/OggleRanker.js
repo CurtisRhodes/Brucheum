@@ -174,6 +174,7 @@ function setFolderNameColor(imageType, textObject) {
         case "archive": textObject.css("color", "#236d69"); break;
         case "porn": textObject.css("color", "#ff00c3"); break;
         case "sluts": textObject.css("color", "#249c40"); break;
+        case "soft": textObject.css("color", "#249c40"); break;
         default:
             alert("imageType: " + imageType + " not handled in setFolderNameColor");
             logError("SWT", 3908, "unknown switch option: " + imageType, "setFolderNameColor");

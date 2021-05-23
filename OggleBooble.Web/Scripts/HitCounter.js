@@ -7,12 +7,12 @@ function logImageHit(linkId, folderId, isInitialHit) {
             return;
         }
 
-        let hVisId = getCookieValue("VisitorId");
+        let visitorId = getCookieValue("VisitorId");
         setTimeout(function () {
 
             if (visitorId == "not found") {
                 logActivity("VV2", folderId, "log ImageHit");
-                getIpInfo(folderId, "log ImageHit");
+                tryAddNewIP(folderId, "log ImageHit");
                 return;
             }
 
@@ -20,7 +20,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
                 type: "POST",
                 url: settingsArray.ApiServer + "api/Common/LogImageHit",
                 data: {
-                    VisitorId: hVisId,
+                    VisitorId: visitorId,
                     FolderId: folderId,
                     LinkId: linkId,
                     IsInitialHit: isInitialHit
@@ -70,7 +70,7 @@ function logPageHit(folderId) {
 
             if (visitorId == "not found") {
                 logActivity("VV2", folderId, "log PageHit");
-                getIpInfo(folderId, "log PageHit");
+                tryAddNewIP(folderId, "log PageHit");
                 return;
             }
 
@@ -131,18 +131,18 @@ function logVisit(folderId, calledFrom) {
                 else {
                     if (logVisitSuccessModel.Success == "VisitorId not found") {
                         if (visitorId.length == 36) {
-                            logActivity("LV3", folderId, "logVisit");  // visitorId not found
+                            logActivity("LV3", folderId, "log Visit");  // visitorId not found
                             //logError("LV3", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
 
                             if (calledFrom == "verify visitor") {
                                 if (document.domain == "localhost") alert("calling getIpInfo from log visit");
-                                getIpInfo(folderId, "verify visitor");
+                                tryAddNewIP(folderId, "log Visit");
                             }
                             else
-                                getIpInfo(folderId, "logVisit/" + calledFrom);
+                                tryAddNewIP(folderId, "log Visit");
                         }
                         else
-                            logError("LV5", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
+                            logError("LV5", folderId, "visitorId: " + visitorId, "logVisit");
                     }
                     else {
                         logActivity("LV4", folderId, "logVisit/" + calledFrom);  // Log Visit fail
@@ -160,6 +160,62 @@ function logVisit(folderId, calledFrom) {
     } catch (e) {
         logError("LV7", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
         logError("CAT", folderId, e, calledFrom);
+    }
+}
+
+function logStaticPageHit(folderId, calledFrom) {
+
+    logActivity("SP0", folderId, calledFrom); // calling static page hit
+    let visitorId = getCookieValue("VisitorId");
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId +
+            "&folderId=" + folderId + "&calledFrom=" + calledFrom,
+        success: function (success) {
+            logActivity("SP4", folderId, success); // static page hit return
+            if (success == "ok") {
+                logActivity("SP1", folderId, calledFrom); // static page hit success
+                logEvent("SPH", folderId, "logStatic PageHit/" + calledFrom, "");
+            }
+            else {
+                logActivity("SP2", folderId, calledFrom); // static page hit ajax error
+                logError("AJX", folderId, success, "logStatic PageHit/" + calledFrom);
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            logActivity("SP6", folderId, calledFrom); // static page hit XHR error
+            if (!checkFor404(errMsg, folderId, "log StaticPageHit"))
+                logError("XHR", folderId, errMsg, "log StaticPageHit");
+        }
+    });
+    //logEvent("SDS", folderId, "logStatic PageHit/" + calledFrom, "");
+}
+
+function logIpHit(visitorId, ipAddress, folderId) {
+    try {
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogIpHit",
+            data: {
+                VisitorId: visitorId,
+                FolderId: folderId,
+                IpAddress: ipAddress
+            },
+            success: function (success) {
+                if (success == "ok")
+                    logActivity("IPH", folderId, "log IpHit");
+                else
+                    logError("AJX", folderId, success, "log IpHit");
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "log IpHit"))
+                    logError("XHR", folderId, errMsg, "log IpHit");
+            }
+        });
+    } catch (e) {
+        logError("CAT", folderId, e, "log IpHit");
     }
 }
 

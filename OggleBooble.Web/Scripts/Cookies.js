@@ -31,6 +31,7 @@ function getCookieValue(itemName) {
 function setCookieValue(elementToSet, newValue) {
     try
     {
+        localStorage[elementToSet] = newValue;
         let cookieString = elementToSet + ":" + newValue;
         document.cookie = cookieString;
         console.log("calling setCookieValue.  set:" + elementToSet + " to: " + newValue);

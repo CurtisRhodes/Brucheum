@@ -51,6 +51,7 @@
                 break;
             case "blog":
             case "root":
+            case "special":
             case "index": {
                 $('#footerCol1').html(
                     "<div class='clickable' onclick='window.location.href=\"index.html?spa=3909\", \"_blank\"'>OgglePorn</div>\n" +

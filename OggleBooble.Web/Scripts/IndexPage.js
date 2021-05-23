@@ -57,7 +57,7 @@ function displaySpaPage(spaPageId) {
             break;
         default:
             if (document.domain === 'localhost') alert("spaPageId: " + spaPageId + " not found");
-            logError("SWT", spaPageId, "fer sur", "displaySpaPage");
+            logError("SWT", spaPageId, spaPageId, "displaySpaPage");
             break;
     }
 }
