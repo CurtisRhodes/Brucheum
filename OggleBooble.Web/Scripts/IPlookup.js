@@ -146,6 +146,7 @@ function tryApiDbIpFree(folderId, calledFrom) {
                         ip2Busy = false;
                     }
                     else {
+                        // logError("IP9",folderId,)
                         logActivity("IP9", folderId, "apiDbIpFree/" + calledFrom);
                         ipapico(folderId, calledFrom); // try something else
                     }
@@ -183,7 +184,7 @@ function ipapico(folderId, calledFrom) {
     try {
         if (ip3Busy) {
             logActivity("IP8", folderId, "ip-api.com/" + calledFrom);
-            addBadIpVisitorId(folderId, calledFrom);
+            //addBadIpVisitorId(folderId, calledFrom);
             //getIpInfo(folderId, calledFrom); // try something else
         }
         else {
@@ -213,7 +214,7 @@ function ipapico(folderId, calledFrom) {
                     else {
                         //logError("IPF", folderId, ipApiData.status, "ip-api.com");
                         logActivity("IP6", folderId, "ip-api.com");
-                        addBadIpVisitorId(folderId, calledFrom);
+                        //addBadIpVisitorId(folderId, calledFrom);
                         //getIpInfo(folderId, calledFrom); // try something else 4
                     }
                 },
@@ -253,7 +254,7 @@ function XXgetIpInfo(folderId, calledFrom) {
     try {
         if (ip4Busy) {
             logActivity("IP8", folderId, "get IpInfo/" + calledFrom);
-            addBadIpVisitorId(folderId, calledFrom);
+            //addBadIpVisitorId(folderId, calledFrom);
             return;
         }
         ip4Busy = true;
@@ -293,14 +294,14 @@ function XXgetIpInfo(folderId, calledFrom) {
                     logActivity("IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
                     logError("XHR", visitorData.FolderId, errMsg, "try Add Visitor");
                 }
-                addBadIpVisitorId(folderId, calledFrom);
+                //addBadIpVisitorId(folderId, calledFrom);
                 ip4Busy = false;
             }
         });
         setTimeout(function () {
             if (!ipCallReturned) {
                 logActivity("IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
-                addBadIpVisitorId(folderId, calledFrom);
+                //addBadIpVisitorId(folderId, calledFrom);
             }
             ip4Busy = false;
         }, 855);
@@ -325,9 +326,9 @@ function addBadIpVisitorId(folderId, calledFrom) {
             }
         );
     } catch (e) {
-        logError("CAT", folderId, e, "addBadIpVisitorId");
+        logError("CAT", folderId, e, "add BadIpVisitorId");
     }
-} // 5 addBadIpVisitorId
+} // 5 add BadIpVisitorId
 
 /////////////////////////////////////////////////////////////////////////////////////
 
