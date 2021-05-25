@@ -279,7 +279,7 @@ function getAlbumPageInfo(folderId) {
                         if (albumInfo.FolderType === "multiFolder") {
                             if (albumInfo.TotalSubFolders > albumInfo.FolderCount) {
                                 $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
-                                    " [" + albumInfo.FolderCount + ":" + albumInfo.TotalSubFolders.toLocaleString() + "] / " + albumInfo.TotalChildFiles.toLocaleString());
+                                    albumInfo.FolderCount.toLocaleString() + " / " + albumInfo.TotalChildFiles.toLocaleString());
                             }
                             else
                                 $('#galleryBottomfileCount').html("<span id='spanDeepCount' class='clickable' onclick='getDeepFolderCounts(" + folderId + ")' >.</span>" +
