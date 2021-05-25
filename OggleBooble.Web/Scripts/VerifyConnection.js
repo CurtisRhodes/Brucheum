@@ -3,7 +3,7 @@
 function checkFor404(errMsg, folderId, calledFrom) {
     try {
         //if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
-        if (errMsg.indexOf("Verify Network") > 0) {
+        if (errMsg.indexOf("Not connect") > -1) {
             logError("CKE", folderId, errMsg, calledFrom);
             checkConnection(folderId, calledFrom);
             return true;
@@ -13,7 +13,8 @@ function checkFor404(errMsg, folderId, calledFrom) {
             return false;
         }
     } catch (e) {
-        alert("404: " + e);
+        //alert("404: " + e);
+        return true;
     }
 }
 
