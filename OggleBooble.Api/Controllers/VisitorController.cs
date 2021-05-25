@@ -22,22 +22,21 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (dbExistingIpVisitor != null)
+                    if (dbExistingIpVisitor == null)
+                        addVisitorModel.VisitorId = Guid.NewGuid().ToString();
+                    else
                     {
-                        visitorData.IpAddress = visitorData.IpAddress + "." + new Random().Next(0, 4).ToString("0000"); 
-
-                        //if (visitorData.CalledFrom != "attempt Register")
-                        //{
-                        //    addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
-                        //    addVisitorModel.Success = "existing Ip";
-
-                        //    return addVisitorModel;
-                        //}
+                        //visitorData.IpAddress = visitorData.IpAddress + "." + new Random().Next(0, 4).ToString("0000");
+                        if (visitorData.CalledFrom != "attempt Register")
+                        {
+                            addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
+                            addVisitorModel.Success = "existing Ip";
+                            return addVisitorModel;
+                        }
                     }
-
                     var newVisitor = new Visitor()
                     {
-                        VisitorId = visitorData.VisitorId,
+                        VisitorId = addVisitorModel.VisitorId,
                         InitialPage = visitorData.InitialPage,
                         City = visitorData.City,
                         Country = visitorData.Country,

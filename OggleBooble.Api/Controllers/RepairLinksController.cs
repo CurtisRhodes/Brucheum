@@ -184,6 +184,7 @@ namespace OggleBooble.Api.Controllers
                             ImageFileInfo imageFileInfo = GetImageFileInfo(newFileName);
                             if (imageFileInfo.Size == 0)
                             {
+
                                 if (FtpUtilies.DeleteFile(ftpPath + "/" + dbFolderImageFile.FileName) == "ok")
                                 {
                                     db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == dbFolderImageFile.Id).ToList());
@@ -231,11 +232,27 @@ namespace OggleBooble.Api.Controllers
                             }
                             else if (dbFolderImageFile.FolderId != folderId)
                             {
-                                ftpSuccess = FtpUtilies.DeleteFile(ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg");
-                                if (ftpSuccess == "ok")
-                                    repairReport.ImageFilesRemoved++;
+                                List<CategoryImageLink> links = db.CategoryImageLinks.Where(l => l.ImageLinkId == dbFolderImageFile.Id).ToList();
+                                if (links.Count() > 0)
+                                {
+                                    dbFolderImageFile.FolderId = folderId;
+                                    db.SaveChanges();
+                                    repairReport.NoLinkImageFiles++;                                }
                                 else
-                                    repairReport.Errors.Add("for: " + imageFolderName + "_" + pflinkId + "ftp delete failed: " + ftpSuccess);
+                                {
+                                    string imageFileToRemove = ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg";
+                                    rejectFolder = ftpHost + "/archive.OggleBooble.com/rejects/" + imageFolderName + "_" + pflinkId + ".jpg";
+                                    ftpSuccess = FtpUtilies.MoveFile(imageFileToRemove, rejectFolder);
+                                    //.DeleteFile(ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg");
+                                    //ftpSuccess = FtpUtilies.DeleteFile(ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg");
+                                    if (ftpSuccess == "ok")
+                                    {
+                                        repairReport.ImageFilesRemoved++;
+                                        repairReport.Errors.Add("I moved a file to rejects : " + imageFolderName + "_" + pflinkId);
+                                    }
+                                    else
+                                        repairReport.Errors.Add("I wanted to delete : " + imageFolderName + "_" + pflinkId);
+                                }
                             }
                         }
                     }

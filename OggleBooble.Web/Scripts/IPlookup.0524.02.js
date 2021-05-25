@@ -1,4 +1,4 @@
-﻿let lastIpHitVisitorId;
+﻿
 function tryAddNewIP(folderId, calledFrom) {
     let visitorId = getCookieValue("VisitorId");
     setTimeout(function () {
@@ -12,6 +12,7 @@ function tryAddNewIP(folderId, calledFrom) {
                 }
                 else {
                     if (success == "not found") {
+                        console.log("callining Ip lookup: " + visitorId);
                         logActivity("IP0", folderId, "trytoGetIp/" + calledFrom);
                         uniqueVisIdlookup(folderId, calledFrom);
                     }
@@ -29,14 +30,6 @@ function tryAddNewIP(folderId, calledFrom) {
 }
 
 function uniqueVisIdlookup(folderId, calledFrom) {
-
-    //if (visitorId == lastIpHitVisitorId) {
-    //    logError("PH1", folderId, "VisitorId: " + visitorId + ", IpAddress: " + ipAddress, "log IpHit");
-    //    return;
-    //}
-    //lastIpHitVisitorId = visitorId;
-
-
     // 1  geoplugin
     geoplugin(folderId, calledFrom);
     // 2  tryApiDbIpFree
@@ -53,13 +46,13 @@ function geoplugin(folderId, calledFrom) {
         else {
             ip1Busy = true;
             logActivity("IP1", folderId, "geoplugin/" + calledFrom);
-            let ipCallReturned = false;
+            let ipCall1Returned = false;
             $.ajax({
                 type: "GET",
                 url: "http://www.geoplugin.net/json.gp",
                 dataType: "JSON",
                 success: function (ipResponse) {
-                    ipCallReturned = true;
+                    ipCall1Returned = true;
                     if (data.geoplugin_status == 200) {
                         logActivity("IP2", folderId, "geoplugin");
                         console.log("calling addVisitor from: geoplugin");
@@ -76,29 +69,33 @@ function geoplugin(folderId, calledFrom) {
                         );
                     }
                     else {
-                        logError("IPF", 5466, ipApiData.status, "geoplugin");
-                        logActivity("IP6", 43337, "geoplugin");
+                        logError("IPF", folderId, ipApiData.status, "geoplugin");
+                        logActivity("IP9", folderId, "geoplugin");
                         tryApiDbIpFree(folderId, calledFrom); // try something else
                         ip1Busy = false;
                     }
                     ip1Busy = false;
                 },
                 error: function (jqXHR) {
+                    ipCall1Returned = true;
                     let errMsg = getXHRErrorDetails(jqXHR);
                     if (errMsg.indexOf("Rate limit exceeded") > 0) {
                         logActivity("IP5", folderId, "geoplugin");
                     }
                     else {
-                        logActivity("IF3", folderId, "geoplugin/" + calledFrom); // ipfy XHR fail
-                        if (!checkFor404(errMsg, folderId, "logStaticPageHit"))
+                        if (!checkFor404(errMsg, folderId, "geoplugin"))
                             logError("XHR", folderId, errMsg, "geoplugin/" + calledFrom);
+                        else {
+                            logActivity("IP3", folderId, "geoplugin/" + calledFrom); // ipfy XHR fail
+                            logError("IP3", folderId, errMsg, "geoplugin/" + calledFrom);
+                        }
                     }
                     tryApiDbIpFree(folderId, calledFrom); // try something else
                     ip1Busy = false;
                 }
             });
             setTimeout(function () {
-                if (!ipCallReturned) {
+                if (!ipCall1Returned) {
                     logActivity("IP4", folderId, "geoplugin");
                     tryApiDbIpFree(folderId, calledFrom); // try something else
                 }
@@ -120,14 +117,14 @@ function tryApiDbIpFree(folderId, calledFrom) {
         }
         else {
             ip2Busy = true;
-            let ipCallReturned = false;
+            let ipCall2Returned = false;
             logActivity("IP1", folderId, "apiDbIpFree/" + calledFrom); // attempting ipfy lookup
             $.ajax({
                 type: "GET",
                 url: "https://api.db-ip.com/v2/free/self",
                 dataType: "JSON",
                 success: function (ipResponse) {
-                    ipCallReturned = true;
+                    ipCall2Returned = true;
                     if (!isNullorUndefined(ipResponse.ipAddress)) {
                         if (isNullorUndefined(ipResponse.countryCode)) {
                             ipResponse.countryCode = "GG";
@@ -146,26 +143,33 @@ function tryApiDbIpFree(folderId, calledFrom) {
                         ip2Busy = false;
                     }
                     else {
+                        logError("IPF", folderId, JSON.stringify(ipResponse, null, 2), "apiDbIpFree/" + calledFrom);
                         logActivity("IP9", folderId, "apiDbIpFree/" + calledFrom);
                         ipapico(folderId, calledFrom); // try something else
                     }
                 },
                 error: function (jqXHR) {
+                    ipCall2Returned = true;
                     let errMsg = getXHRErrorDetails(jqXHR);
                     if (errMsg.indexOf("Rate limit exceeded") > 0) {
                         logActivity("IP5", folderId, "apiDbIpFree");
                     }
                     else {
-                        logActivity("IP3", folderId, "apiDbIpFree/" + calledFrom); // ipfy XHR fail
-                        if (!checkFor404(errMsg, folderId, "apiDbIpFree"))
+                        if (!checkFor404(errMsg, folderId, "apiDbIpFree")) {
                             logError("XHR", folderId, errMsg, "apiDbIpFree/" + calledFrom);
+                            logActivity("IP6", folderId, "apiDbIpFree/" + calledFrom); // ipfy XHR fail
+                        }
+                        else {
+                            logActivity("IP3", folderId, "apiDbIpFree/" + calledFrom); // ipfy XHR fail
+                            logError("IP3", folderId, errMsg, "apiDbIpFree/" + calledFrom); // ipfy XHR fail
+                        }
                     }
                     ipapico(folderId, calledFrom); // try something else
                     ip2Busy = false;
                 }
             });
             setTimeout(function () {
-                if (!ipCallReturned) {
+                if (!ipCall2Returned) {
                     logActivity("IP4", folderId, "apiDbIpFree");
                     ipapico(folderId, calledFrom); // try something else
                 }
@@ -189,12 +193,13 @@ function ipapico(folderId, calledFrom) {
         else {
             ip3Busy = true;
             logActivity("IP1", folderId, "ip-api.com/" + calledFrom);
-            let ipCallReturned = false;
+            let ipCall3Returned = false;
             $.ajax({
                 type: "GET",
                 url: "http://ip-api.com/json",
                 dataType: "JSON",
                 success: function (ipResponse) {
+                    ipCall3Returned = true;
                     if (ipResponse.status == "success") {
                         logActivity("IP2", folderId, "ip-api.com");
                         addVisitor(
@@ -208,32 +213,34 @@ function ipapico(folderId, calledFrom) {
                                 CalledFrom: "ip-api.com"
                             }
                         );
-                        ip3Busy = false;
                     }
                     else {
-                        //logError("IPF", folderId, ipApiData.status, "ip-api.com");
-                        logActivity("IP6", folderId, "ip-api.com");
+                        logError("IPF", folderId, ipResponse.status, "ip-api.com");
+                        logActivity("IP9", folderId, "ip-api.com");
                         addBadIpVisitorId(folderId, calledFrom);
                         //getIpInfo(folderId, calledFrom); // try something else 4
                     }
                 },
                 error: function (jqXHR) {
+                    ipCall3Returned = true;
                     let errMsg = getXHRErrorDetails(jqXHR);
                     if (errMsg.indexOf("Rate limit exceeded") > 0) {
                         logActivity("IP5", folderId, "ip-api.com/" + calledFrom);
                     }
                     else {
-                        logActivity("IP3", folderId, "ip-api.com/" + calledFrom); // XHR error
-                        if (!checkFor404(errMsg, folderId, "ip-api.com"))
+                        if (!checkFor404(errMsg, folderId, "ip-api.com")) {
                             logError("XHR", folderId, errMsg, "ip-api.com/" + calledFrom);
+                            logActivity("IP6", folderId, "ip-api.com/" + calledFrom); // XHR error
+                        }
+                        else {
+                            logActivity("IP3", folderId, "ip-api.com/" + calledFrom); // XHR error
+                            logError("IP3", folderId, errMsg, "ip-api.com/" + calledFrom);
+                        }
                     }
-                    addBadIpVisitorId(folderId, calledFrom);
-                    //getIpInfo(folderId, calledFrom); // try something else 4
-                    ip3Busy = false;
                 }
             });
             setTimeout(function () {
-                if (!ipCallReturned) {
+                if (!ipCall3Returned) {
                     logActivity("IP4", folderId, "ip-api.com");
                     addBadIpVisitorId(folderId, calledFrom);
                     //getIpInfo(folderId, calledFrom); // try something else 4
@@ -257,13 +264,13 @@ function XXgetIpInfo(folderId, calledFrom) {
             return;
         }
         ip4Busy = true;
-        let ipCallReturned = false;
+        let ipCall0Returned = false;
         $.ajax({
             type: "GET",
             url: "https://ipinfo.io?token=ac5da086206dc4",
             dataType: "JSON",
             success: function (ipResponse) {
-                ipCallReturned = true;
+                ipCall0Returned = true;
                 if (ipResponse.status=="ok") {
                     logActivity("IP6", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but came back with no ip
                     logError("BUG", folderId, "ipInfo came back with no ip. Bad visitorId added: ", "get IpInfo/" + calledFrom);
@@ -285,20 +292,27 @@ function XXgetIpInfo(folderId, calledFrom) {
                 ip4Busy = false;
             },
             error: function (jqXHR) {
+                ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
                     logActivity("IP5", folderId, "get IpInfo/" + calledFrom);
                 }
                 else {
-                    logActivity("IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
-                    logError("XHR", visitorData.FolderId, errMsg, "try Add Visitor");
+                    if (!checkFor404(errMsg, folderId, "get IpInfo")) {
+                        logError("XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
+                        logActivity("IP6", folderId, "get IpInfo/" + calledFrom); // XHR error
+                    }
+                    else {
+                        logActivity("IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
+                        logError("IP3", folderId, errMsg, "get IpInfo/" + calledFrom); 
+                    }
                 }
-                addBadIpVisitorId(folderId, calledFrom);
+                //addBadIpVisitorId(folderId, calledFrom);
                 ip4Busy = false;
             }
         });
         setTimeout(function () {
-            if (!ipCallReturned) {
+            if (!ipCall0Returned) {
                 logActivity("IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
                 addBadIpVisitorId(folderId, calledFrom);
             }

@@ -12,7 +12,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
 
             if (visitorId == "not found") {
                 logActivity("VV2", folderId, "log ImageHit");
-                tryAddNewIP(folderId, "log ImageHit");
+                //tryAddNewIP(folderId, "log ImageHit");
                 return;
             }
 
@@ -70,8 +70,8 @@ function logPageHit(folderId) {
 
             if (visitorId == "not found") {
                 logActivity("VV2", folderId, "log PageHit");
-                tryAddNewIP(folderId, "log PageHit");
-                return;
+                //tryAddNewIP(folderId, "log PageHit");
+                //return;
             }
 
             $.ajax({
@@ -130,19 +130,8 @@ function logVisit(folderId, calledFrom) {
                 }
                 else {
                     if (logVisitSuccessModel.Success == "VisitorId not found") {
-                        if (visitorId.length == 36) {
-                            logActivity("LV3", folderId, "log Visit");  // visitorId not found
-                            //logError("LV3", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
-
-                            if (calledFrom == "verify visitor") {
-                                if (document.domain == "localhost") alert("calling getIpInfo from log visit");
-                                tryAddNewIP(folderId, "log Visit");
-                            }
-                            else
-                                tryAddNewIP(folderId, "log Visit");
-                        }
-                        else
-                            logError("LV5", folderId, "visitorId: " + visitorId, "logVisit");
+                        logActivity("LV3", folderId, "log Visit");  // visitorId not found
+                        //logError("LV3", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
                     }
                     else {
                         logActivity("LV4", folderId, "logVisit/" + calledFrom);  // Log Visit fail

@@ -351,9 +351,13 @@ namespace OggleBooble.Api.Controllers
 
                                 var oldLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
                                 sortOrder = oldLink.SortOrder;
-                                db.CategoryImageLinks.Remove(oldLink);
-                                db.SaveChanges();
-                                db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
+                                if (moveManyModel.Context == "move")
+                                {
+                                    db.CategoryImageLinks.Remove(oldLink);
+                                    db.SaveChanges();
+                                }
+
+                                db.CategoryImageLinks.Add(new CategoryImageLink()
                                 {
                                     ImageCategoryId = dbDestFolder.Id,
                                     ImageLinkId = linkId,

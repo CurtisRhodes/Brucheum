@@ -20,6 +20,7 @@ function getCookieValue(itemName) {
             if (!isNullorUndefined(localStorage[itemName])) {
                 console.log("localStorage[" + itemName + "] set to: " + localStorage[itemName] + " and cookie not found");
                 setCookieValue(itemName, localStorage[itemName]);
+                returnValue = localStorage[itemName];
             }
         }
     } catch (e) {

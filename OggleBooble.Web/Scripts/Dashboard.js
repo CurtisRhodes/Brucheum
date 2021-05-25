@@ -189,6 +189,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showRenameFolderDialog()'>Rename Folder</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(1);'>Move Many</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(2);'>Copy Many</div>\n" +
+                "<div class='clickable' onclick='showMoveManyTool(3);'>Archive Many</div>\n" +
                 "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf</div>\n"+
                 "<div class='clickable' onclick='DupeCheck();'>Dupe Check</div>\n" +
                 "<div class='clickable' onclick='showAutoIncrimentDialog();'>Auto Incriment</div>\n" +
@@ -688,9 +689,13 @@ function showMoveManyTool(cx) {
         $('#moveManyTitle').html("Copy Many");
         $('#moveManyButton').html("Copy");
     }
-    else {
+    if (cx == 2) {
         $('#moveManyTitle').html("Move Many");
         $('#moveManyButton').html("Move");
+    }
+    if (cx == 3) {
+        $('#moveManyTitle').html("Archive Many");
+        $('#moveManyButton').html("Archive");
     }
     mmSourceFolderId = pSelectedTreeId;
     mmSelectedTreeFolderPath = pSelectedTreeFolderPath;
@@ -748,6 +753,8 @@ function moveCheckedImages() {
     let mmContext = "move";
     if ($('#moveManyTitle').html() == "Copy Many")
         mmContext = "copy";
+    if ($('#moveManyTitle').html() == "Archive Many")
+        mmContext = "archive";
 
     //let lblMoveManyDestination = $('#txtMoveManyDestination').val().replace(".OGGLEBOOBLE.COM", "").replace("/Root/", "").replace(/%20/g, " ");
     let lblMoveManyDestination = $('#txtMoveManyDestination').val().replace(/%20/g, " ");

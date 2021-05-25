@@ -44,10 +44,10 @@ function checkConnection(folderId, calledFrom) {
                 else {
                     dots += ". ";
                     $('#dots').html(dots);
-                    if (verifyConnectionAvailable) {
+                    $('#headerMessage').html(++verifyConnectionCount);
+                    //if (verifyConnectionAvailable)
+                    {
                         verifyConnectionAvailable = false;
-                        verifyConnectionCount++;
-                        $('#dots').html(dots);
                         if (!connectingToServerImgShowing && verifyConnectionCount > 8) {
                             $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
                             $('#customMessageContainer').css("top", 200);
