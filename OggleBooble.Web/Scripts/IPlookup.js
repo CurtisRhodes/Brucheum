@@ -30,11 +30,82 @@ function tryAddNewIP(folderId, calledFrom) {
 }
 
 function uniqueVisIdlookup(folderId, calledFrom) {
-    // 1  geoplugin
+    // 0 getIpInfo(folderId, calledFrom);
+    // 1  
     geoplugin(folderId, calledFrom);
     // 2  tryApiDbIpFree
     // 3  ipapico
 }
+
+let ip0Busy = false;
+function getIpInfo(folderId, calledFrom) {
+    try {
+        if (ip0Busy) {
+            logActivity("IP8", folderId, "get IpInfo/" + calledFrom);
+            geoplugin(folderId, calledFrom);  // try something else
+            return;
+        }
+        ip0Busy = true;
+        let ipCall0Returned = false;
+        $.ajax({
+            type: "GET",
+            url: "https://ipinfo.io?token=ac5da086206dc4",
+            dataType: "JSON",
+            success: function (ipResponse) {
+                ipCall0Returned = true;
+                if (isNullorUndefined(ipResponse.ip)) {
+                    logActivity("IP6", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but came back with no ip
+                    geoplugin(folderId, calledFrom);  // try something else
+                    //logError("BUG", folderId, "ipInfo came back with no ip. Bad visitorId added: ", "get IpInfo/" + calledFrom);
+                }
+                else {
+                    logActivity("IP2", folderId, "get IpInfo/" + calledFrom);
+                    addVisitor(
+                        {
+                            IpAddress: ipResponse.ip,
+                            City: ipResponse.city,
+                            Country: ipResponse.country,
+                            Region: ipResponse.region,
+                            GeoCode: "get IpInfo", //ipResponse.loc,
+                            InitialPage: folderId,
+                            CalledFrom: "get IpInfo"
+                        }
+                    );
+                }
+                ip0Busy = false;
+            },
+            error: function (jqXHR) {
+                ipCall0Returned = true;
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (errMsg.indexOf("Rate limit exceeded") > 0) {
+                    logActivity("IP5", folderId, "get IpInfo/" + calledFrom);
+                }
+                else {
+                    if (!checkFor404(errMsg, folderId, "get IpInfo")) {
+                        logError("XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
+                        logActivity("IP6", folderId, "get IpInfo/" + calledFrom); // XHR error
+                    }
+                    else {
+                        logActivity("IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
+                        logError("IP3", folderId, errMsg, "get IpInfo/" + calledFrom);
+                    }
+                }
+                geoplugin(folderId, calledFrom);  // try something else
+                ip0Busy = false;
+            }
+        });
+        setTimeout(function () {
+            if (!ipCall0Returned) {
+                logActivity("IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
+                geoplugin(folderId, calledFrom);  // try something else
+            }
+            ip0Busy = false;
+        }, 855);
+    } catch (e) {
+        logActivity("IP7", folderId, "get IpInfo")
+        logError("CAT", folderId, e, "get IpInfo");
+    }
+} // 0 ipinfo.io?token=ac5da086206dc4
 
 let ip1Busy = false;
 function geoplugin(folderId, calledFrom) {
@@ -87,7 +158,7 @@ function geoplugin(folderId, calledFrom) {
                             logError("XHR", folderId, errMsg, "geoplugin/" + calledFrom);
                         else {
                             logActivity("IP3", folderId, "geoplugin/" + calledFrom); // ipfy XHR fail
-                            logError("IP3", folderId, errMsg, "geoplugin/" + calledFrom);
+                            logError("IP3", folderId, JSON.stringify(ipResponse, null, 2), "geoplugin/" + calledFrom);
                         }
                     }
                     tryApiDbIpFree(folderId, calledFrom); // try something else
@@ -143,8 +214,13 @@ function tryApiDbIpFree(folderId, calledFrom) {
                         ip2Busy = false;
                     }
                     else {
-                        logError("IPF", folderId, JSON.stringify(ipResponse, null, 2), "apiDbIpFree/" + calledFrom);
-                        logActivity("IP9", folderId, "apiDbIpFree/" + calledFrom);
+                        if (ipResponse.errorCode == "OVER_QUERY_LIMIT") {
+                            logActivity("IP5", folderId, "apiDbIpFree/" + calledFrom);
+                        }
+                        else {
+                            logError("IPF", folderId, JSON.stringify(ipResponse, null, 2), "apiDbIpFree/" + calledFrom);
+                            logActivity("IP9", folderId, "apiDbIpFree/" + calledFrom);
+                        }
                         ipapico(folderId, calledFrom); // try something else
                     }
                 },
@@ -254,75 +330,6 @@ function ipapico(folderId, calledFrom) {
         logError("CAT", folderId, e, "ip-api.com");
     }
 } // 3 ip-api.com/json
-
-let ip4Busy = false;
-function XXgetIpInfo(folderId, calledFrom) {
-    try {
-        if (ip4Busy) {
-            logActivity("IP8", folderId, "get IpInfo/" + calledFrom);
-            //addBadIpVisitorId(folderId, calledFrom);
-            return;
-        }
-        ip4Busy = true;
-        let ipCall0Returned = false;
-        $.ajax({
-            type: "GET",
-            url: "https://ipinfo.io?token=ac5da086206dc4",
-            dataType: "JSON",
-            success: function (ipResponse) {
-                ipCall0Returned = true;
-                if (ipResponse.status=="ok") {
-                    logActivity("IP6", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but came back with no ip
-                    logError("BUG", folderId, "ipInfo came back with no ip. Bad visitorId added: ", "get IpInfo/" + calledFrom);
-                }
-                else {
-                    logActivity("IP2", folderId, "get IpInfo/" + calledFrom);
-                    addVisitor(
-                        {
-                            IpAddress: ipResponse.ip,
-                            City: ipResponse.city,
-                            Country: ipResponse.country,
-                            Region: ipResponse.region,
-                            GeoCode: "get IpInfo", //ipResponse.loc,
-                            InitialPage: folderId,
-                            CalledFrom: "get IpInfo"
-                        }
-                    );
-                }
-                ip4Busy = false;
-            },
-            error: function (jqXHR) {
-                ipCall0Returned = true;
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (errMsg.indexOf("Rate limit exceeded") > 0) {
-                    logActivity("IP5", folderId, "get IpInfo/" + calledFrom);
-                }
-                else {
-                    if (!checkFor404(errMsg, folderId, "get IpInfo")) {
-                        logError("XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
-                        logActivity("IP6", folderId, "get IpInfo/" + calledFrom); // XHR error
-                    }
-                    else {
-                        logActivity("IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
-                        logError("IP3", folderId, errMsg, "get IpInfo/" + calledFrom); 
-                    }
-                }
-                //addBadIpVisitorId(folderId, calledFrom);
-                ip4Busy = false;
-            }
-        });
-        setTimeout(function () {
-            if (!ipCall0Returned) {
-                logActivity("IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
-                //addBadIpVisitorId(folderId, calledFrom);
-            }
-            ip4Busy = false;
-        }, 855);
-    } catch (e) {
-        logActivity("IP7", folderId, "get IpInfo")
-        logError("CAT", folderId, e, "get IpInfo");
-    }
-} // 4 ipinfo.io?token=ac5da086206dc4
 
 function addBadIpVisitorId(folderId, calledFrom) {
     try {

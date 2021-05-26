@@ -62,7 +62,7 @@ function dashboardHtml() {
         "   <div id='moveManySection' class='fullScreenSection'>" +
         "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
         "           <div class='workAreaHeaderArea'>\n" +
-        "               <div id='moveManyTitle' class='workAreaHeaderTitle'>Move Many</div>\n" +
+        "               <div id='moveManyTitle' class='workAreaHeaderTitle'></div>\n" +
         "               <div class='workAreaHeaderDetailRow'>\n" +
         "                   <div class='moveManyHeaderLabel'>source</div><input id='txtMoveManySource' class='roundedInput' style='width:65%' readonly='readonly'></input><br />" +
         "                   <div class='moveManyHeaderLabel'>destination</div><input id='txtMoveManyDestination' class='roundedInput' style='width:65%' readonly='readonly'></input>" +
@@ -685,13 +685,13 @@ function showMoveManyTool(cx) {
         alert("select a folder");
         return;
     }
+    if (cx == 1) {
+        $('#moveManyTitle').html("Move Many");
+        $('#moveManyButton').html("Move");
+    }
     if (cx == 2) {
         $('#moveManyTitle').html("Copy Many");
         $('#moveManyButton').html("Copy");
-    }
-    if (cx == 2) {
-        $('#moveManyTitle').html("Move Many");
-        $('#moveManyButton').html("Move");
     }
     if (cx == 3) {
         $('#moveManyTitle').html("Archive Many");
@@ -750,7 +750,9 @@ function moveCheckedImages() {
         }
     });
 
-    let mmContext = "move";
+    let mmContext;
+    if ($('#moveManyTitle').html() == "Move Many")
+        mmContext = "move";
     if ($('#moveManyTitle').html() == "Copy Many")
         mmContext = "copy";
     if ($('#moveManyTitle').html() == "Archive Many")
@@ -851,11 +853,11 @@ function loadSortImages() {
                 $('#dashBoardLoadingGif').hide();
                 $('#dataifyInfo').html(daInfoMessage + " done");
             }
-            else { logError("AJX", pSelectedTreeId, imgLinks.Success, "loadSortImages"); }
+            else { logError("AJX", pSelectedTreeId, imgLinks.Success, "load SortImages"); }
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, pSelectedTreeId, "loadSortImages")) logError("XHR", pSelectedTreeId, errMsg, "loadSortImages");
+            if (!checkFor404(errMsg, pSelectedTreeId, "load SortImages")) logError("XHR", pSelectedTreeId, errMsg, "load SortImages");
         }
     });
 }
@@ -873,12 +875,12 @@ function updateSortOrder() {
         });
         $('#dataifyInfo').show().html("sorting array: " + autoI);
     });
-    saveSortChanges(sortOrderArray);
+    saveSortChanges(sortOrderArray, "sort");
 }
 function autoIncrimentSortOrder() {
     if (confirm("reset all sort orders")) {
         $('#dashBoardLoadingGif').show();
-        $('#dataifyInfo').show().html("sorting array");
+        $('#dataifyInfo').show().html("auto incrimenting array");
         var sortOrderArray = [];
         let autoI = 0;
 
@@ -891,12 +893,12 @@ function autoIncrimentSortOrder() {
                 SortOrder: autoI += 2
             });
         });
-        saveSortChanges(sortOrderArray);
+        saveSortChanges(sortOrderArray, "incrimenting");
     }
 }
 
-function saveSortChanges(sortOrderArray) {
-    $('#dataifyInfo').html("Updating sort order");
+function saveSortChanges(sortOrderArray, calledFrom) {
+    $('#dataifyInfo').html("saving " + calledFrom + " changes");
     let sStart = Date.now();
     $.ajax({
         type: "PUT",
@@ -905,27 +907,26 @@ function saveSortChanges(sortOrderArray) {
         data: JSON.stringify(sortOrderArray),
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
-            if (success === "ok")
-            {
+            if (success === "ok") {
                 let delta = (Date.now() - sStart);
-                if (delta < 1000)
+                if (delta < 1500)
                     $('#dataifyInfo').hide();
-                else 
-                    $('#dataifyInfo').html("Updating sort order took: " + (delta / 1000).toFixed(3));
+                else
+                    $('#dataifyInfo').html("saving changes took: " + (delta / 1000).toFixed(3));
 
                 loadSortImages();
             }
             else {
                 $('#dashBoardLoadingGif').hide();
                 alert(success);
-                logError("AJX", mmSourceFolderId, success, "moveCheckedImages");
+                logError("AJX", mmSourceFolderId, success, "UpdateSortOrder");
             }
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             alert("XHR: " + errMsg);
-            if (!checkFor404(errMsg, pSelectedTreeId, "saveSortChanges")) logError("XHR", pSelectedTreeId, errMsg, "saveSortChanges");
+            if (!checkFor404(errMsg, pSelectedTreeId, "save SortChanges")) logError("XHR", pSelectedTreeId, errMsg, "save SortChanges");
         }
     });
 }

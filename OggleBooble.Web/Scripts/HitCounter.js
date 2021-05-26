@@ -58,39 +58,45 @@ function logImageHit(linkId, folderId, isInitialHit) {
     }
 }
 
+let lastPageHitFolderId, lastPageHitVisitorId;
 function logPageHit(folderId) {
     try {
         if (isNullorUndefined(folderId)) {
             logError("PHF", folderId, "folderId undefined: " + folderId, "logPageHit");
             return;
         }
-
         let visitorId = getCookieValue("VisitorId");
-        setTimeout(function () {
 
-            if (visitorId == "not found") {
-                logActivity("VV2", folderId, "log PageHit");
-                //tryAddNewIP(folderId, "log PageHit");
-                //return;
-            }
+        if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
+            //logError("DUP",folderId,"")
+            logActivity("DUP", folderId, "log PageHit");
+            return;
+        }
+        lastPageHitVisitorId = visitorId;
+        lastPageHitVisitorId = folderId;
 
-            $.ajax({
-                type: "POST",
-                url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
-                success: function (pageHitSuccess) {
-                    if (pageHitSuccess.Success === "ok") {
-                        //logVisit(folderId, "logPageHit");
-                    }
-                    else {
-                        logError("AJX", folderId, pageHitSuccess.Success, "logPageHit");
-                    }
-                },
-                error: function (jqXHR) {
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg, folderId, "logPageHit")) logError("XHR", folderId, errMsg, "logPageHit");
+        if (visitorId == "not found") {
+            logActivity("VV2", folderId, "log PageHit");
+            //tryAddNewIP(folderId, "log PageHit");
+            //return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
+            success: function (pageHitSuccess) {
+                if (pageHitSuccess.Success === "ok") {
+                    //logVisit(folderId, "logPageHit");
                 }
-            });
-        }, 777);
+                else {
+                    logError("AJX", folderId, pageHitSuccess.Success, "logPageHit");
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "logPageHit")) logError("XHR", folderId, errMsg, "logPageHit");
+            }
+        });
     } catch (e) {
         logError("CAT", folderId, e, "logPageHIt");
     }
