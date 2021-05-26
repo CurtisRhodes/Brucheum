@@ -1,32 +1,33 @@
 ﻿
 function tryAddNewIP(folderId, calledFrom) {
     let visitorId = getCookieValue("VisitorId");
-    setTimeout(function () {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
-            success: function (success) {
-                if (success == "ok") {
-                    console.log("asked to lookup user with good visitorId cookie: " + visitorId);
-                    logError("DVA", folderId, visitorId, "trytoGetIp/" + calledFrom);
-                }
-                else {
-                    if (success == "not found") {
-                        console.log("callining Ip lookup: " + visitorId);
-                        logActivity("IP0", folderId, "trytoGetIp/" + calledFrom);
-                        uniqueVisIdlookup(folderId, calledFrom);
-                    }
-                    else
-                        logError("AJX", folderId, success, "trytoGetIp/" + calledFrom);
-                }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "trytoGetIp"))
-                    logError("XHR", 666, errMsg, "trytoGetIp");
+
+    console.log("tryAddNewIP. visitorId: " + visitorId);
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
+        success: function (success) {
+            if (success == "ok") {
+                console.log("asked to lookup user with good visitorId cookie: " + visitorId);
+                logError("DVA", folderId, visitorId, "trytoGetIp/" + calledFrom);
             }
-        });
-    }, 400);
+            else {
+                if (success == "not found") {
+                    console.log("callining Ip lookup: " + visitorId);
+                    logActivity("IP0", folderId, "trytoGetIp/" + calledFrom);
+                    uniqueVisIdlookup(folderId, calledFrom);
+                }
+                else
+                    logError("AJX", folderId, success, "trytoGetIp/" + calledFrom);
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, folderId, "trytoGetIp"))
+                logError("XHR", 666, errMsg, "trytoGetIp");
+        }
+    });
 }
 
 function uniqueVisIdlookup(folderId, calledFrom) {
@@ -115,6 +116,7 @@ function geoplugin(folderId, calledFrom) {
             tryApiDbIpFree(folderId, calledFrom); // try something else
         }
         else {
+            console.log("getIpInfo  1");
             ip1Busy = true;
             logActivity("IP1", folderId, "geoplugin/" + calledFrom);
             let ipCall1Returned = false;
@@ -124,7 +126,9 @@ function geoplugin(folderId, calledFrom) {
                 dataType: "JSON",
                 success: function (ipResponse) {
                     ipCall1Returned = true;
-                    if (data.geoplugin_status == 200) {
+                    console.log("getIpInfo  data.geoplugin_status: " + ipResponse.geoplugin_status);
+
+                    if (ipResponse.geoplugin_status == 200) {
                         logActivity("IP2", folderId, "geoplugin");
                         console.log("calling addVisitor from: geoplugin");
                         addVisitor(

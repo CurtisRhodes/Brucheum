@@ -41,6 +41,7 @@ function checkConnection(folderId, calledFrom) {
                     $('#dots').html('');
                     tryHitStats();
                     console.log("connection verified after: " + verifyConnectionCount);
+                    $('#headerMessage').html("");
                 }
                 else {
                     dots += ". ";
@@ -120,9 +121,9 @@ function tryHitStats() {
     _Hasync.push(['Histats.track_hits', '']);
     (function () {
         var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
-        hs.src = ('//s10.histats.com/js15_as.js');
-        //hs.src = ('https://10.histats.com/js15_as.js');
-        //(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+        hs.src = ('https://10.histats.com/js15_as.js');
+        //hs.src = ('//s10.histats.com/js15_as.js');
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
     })();
 }
 

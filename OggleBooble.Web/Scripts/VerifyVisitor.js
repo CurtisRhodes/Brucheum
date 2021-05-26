@@ -2,60 +2,62 @@
     try {
 
         //if (document.domain === 'localhost') setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+        //if (document.domain === 'localhost') 
 
         let visitorId = getCookieValue("VisitorId");
-        setTimeout(function () {  //  maybe a pause is needed for cookie to come back
+        // setTimeout(function () {  //  maybe a pause is needed for cookie to come back
 
-            //if (isNullorUndefined(visitorId)) {
-            //    logActivity("VV2", 13, "undefined verify Visitor");
-            //    tryAddNewIP(13, "verify Visitor");
-            //    return;
-            //}
-            //if (visitorId == "not found") {
-            //    logActivity("VV2", 15, "not found verify Visitor");
-            //    tryAddNewIP(15, "verify Visitor");
-            //    return;
-            //}
-            //if (localStorage["VisitorId"] == "unset") {
-            //    logActivity("VV2", 16, "unset verify Visitor");
-            //    tryAddNewIP(16, "verify Visitor");
-            //    return;
-            //}
+        if (isNullorUndefined(visitorId)) {
+            logActivity("VV2", 13, "undefined verify Visitor");
+            tryAddNewIP(13, "verify Visitor");
+            return;
+        }
+        if (visitorId == "not found") {
+            logActivity("VV2", 15, "not found verify Visitor");
+            tryAddNewIP(15, "verify Visitor");
+            return;
+        }
+        //if (localStorage["VisitorId"] == "unset") {
+        //    logActivity("VV2", 16, "unset verify Visitor");
+        //    tryAddNewIP(16, "verify Visitor");
+        //    return;
+        //}
 
-            if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
-                $('#headerMessage').html("new session started");
-                sessionStorage["VisitorVerified"] = true;
-                console.log("verifying visitor: " + visitorId);
-                $.ajax({
-                    type: "GET",
-                    url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
-                    success: function (success) {
-                        if (success == "ok") {
-                            logActivity("VV1", 22, "verify Visitor");
-                            loadUserProfile("verify Visitor");
-                            logVisit(222, "verify visitor");
-                            console.log("visitor verified: " + visitorId);
-                            sessionStorage["VisitorVerified"] = "true";
-                        }
-                        else {  // visitorId not found
-                            logActivity("VV7", 77, "verify Visitor");
-                            //logError("BUG", 77, "visitorId not found: " + visitorId, "verify Visitor");
-                            console.log("visitorId not found: " + visitorId + "  calling getIpInfo");
-                            if (document.domain == "localhost") alert("visitorId not found: " + visitorId + "  calling getIpInfo");
-                            tryAddNewIP(17, "verify Visitor");
-                        }
-                    },
-                    error: function (jqXHR) {
-                        let errMsg = getXHRErrorDetails(jqXHR);
-                        //if (!checkFor404(errMsg, 215519, "getIpInfo/" + calledFrom)) {
-                        logActivity("VV6", 666, "verify Visitor");
-                        logError("XHR", 666, errMsg, "verify Visitor");
+        console.log("entering verifyVisitor. visitorId: " + visitorId);
+        if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
+            $('#headerMessage').html("new session started");
+            sessionStorage["VisitorVerified"] = true;
+            console.log("verifying visitor: " + visitorId);
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
+                success: function (success) {
+                    if (success == "ok") {
+                        logActivity("VV1", 22, "verify Visitor");
+                        loadUserProfile("verify Visitor");
+                        logVisit(222, "verify visitor");
+                        console.log("visitor verified: " + visitorId);
+                        sessionStorage["VisitorVerified"] = "true";
                     }
-                });
-            }
-            else
-                console.log("visitor verified: " + sessionStorage["VisitorVerified"] + " visitorId: " + visitorId);
-        }, 2500);
+                    else {  // visitorId not found
+                        logActivity("VV7", 77, "verify Visitor");
+                        //logError("BUG", 77, "visitorId not found: " + visitorId, "verify Visitor");
+                        console.log("visitorId not found: " + visitorId + "  calling getIpInfo");
+                        if (document.domain == "localhost") alert("visitorId not found: " + visitorId + "  calling getIpInfo");
+                        tryAddNewIP(17, "verify Visitor");
+                    }
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    //if (!checkFor404(errMsg, 215519, "getIpInfo/" + calledFrom)) {
+                    logActivity("VV6", 666, "verify Visitor");
+                    logError("XHR", 666, errMsg, "verify Visitor");
+                }
+            });
+        }
+        else
+            console.log("visitor verified: " + sessionStorage["VisitorVerified"] + " visitorId: " + visitorId);
+        // }, 2500);
     }
     catch (e) {
         logActivity("VV5", 255, "verify Visitor");
@@ -75,16 +77,17 @@ function addVisitor(visitorData) {
             url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
             data: visitorData,
             success: function (avSuccess) {
+                console.log("avSuccess.Success: " + avSuccess.Success);
                 if (avSuccess.Success == "ok") {
-                    logActivity("AV3", 215519, "add visitor"); // new visitor added
-                    console.log("new visitor added");
+                    setCookieValue("VisitorId", avSuccess.VisitorId);
 
-                    setCookieValue("VisitorId", visitorData.VisitorId);
+                    logActivity("AV3", visitorData.InitialPage, "add visitor"); // new visitor added
+                    console.log("new visitor added");
                     loadUserProfile("add new visitor");
-                    logIpHit(visitorData.VisitorId, visitorData.IpAddress, 215519);
+                    logIpHit(avSuccess.VisitorId, visitorData.IpAddress, visitorData.InitialPage);
 
                     if (visitorData.CalledFrom.endsWith("logStatic PageHit")) {
-                        logStaticPageHit(215519, "add visitor");
+                        logStaticPageHit(visitorData.InitialPage, "add visitor");
                     }                   
 
                     if (visitorData.CalledFrom == "attempt Register") {
@@ -102,21 +105,23 @@ function addVisitor(visitorData) {
                 }
                 if (avSuccess.Success == "existing Ip") {
                     logActivity("AV5", 215519, "add Visitor");  // existing IP visitorId used
-                    console.log("wasted Ip call : " + visitorData.VisitorId);
-                    setCookieValue("VisitorId", visitorData.VisitorId);
-                    logIpHit(visitorData.VisitorId, visitorData.IpAddress, 215519);
+                    console.log("wasted Ip call : " + avSuccess.VisitorId);
+                    setCookieValue("VisitorId", avSuccess.VisitorId);
+                    logIpHit(avSuccess.VisitorId, visitorData.IpAddress, visitorData.InitialPage);
+                    logVisit(visitorData.InitialPage, "add Visitor");
+                    loadUserProfile("recall existing Ip");
 
                     if (visitorData.CalledFrom.endsWith("logStatic PageHit"))
-                        logStaticPageHit(215519, "add Visitor");
+                        logStaticPageHit(visitorData.InitialPage, "add Visitor");
 
                 }
                 if (avSuccess.Success.indexOf("Duplicate entry") > 0) {
-                    logActivity("AV9", 666, "addVisitor"); // Duplicate. Attempt to add new visitorId
-                    logError("DVA", 656, avSuccess.Success, "addVisitor");
+                    logActivity("AV9", visitorData.InitialPage, "addVisitor"); // Duplicate. Attempt to add new visitorId
+                    logError("DVA", visitorData.InitialPage, avSuccess.Success, "addVisitor");
                 }
                 if (avSuccess.Success.indexOf("ERROR:") > -1) {
-                    logActivity("AV4", 215519, avSuccess.Success);
-                    logError("AJ7", 215519, avSuccess.Success, "addVisitor/" + visitorData.CalledFrom);
+                    logActivity("AV4", visitorData.InitialPage, "addVisitor/" + visitorData.CalledFrom);
+                    logError("AJ7", visitorData.InitialPage, avSuccess.Success, "addVisitor/" + visitorData.CalledFrom);
                 }
             },
             error: function (jqXHR) {

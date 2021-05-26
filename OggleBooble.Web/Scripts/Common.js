@@ -16,6 +16,7 @@ function loadOggleSettings() {
             $(settingsXml).find('setting').each(function () {
                 settingsArray[$(this).attr('name')] = $(this).attr('value');
             });
+            //alert("settings loaded");
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
