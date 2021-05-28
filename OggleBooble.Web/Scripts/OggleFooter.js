@@ -28,6 +28,7 @@
             "       </div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +  // column 6
+            "   <div id='histats_counter'></div>\n" +
             "       <div id='footerCol6' class='footerColCustContainer'>\n" +
             "       </div >\n" +
             "    </div>\n" +
@@ -42,7 +43,17 @@
             "       <div id='footerMessage2'></div>\n" +
             "       <div id='copyright'>&copy; 2020 - <a href='https://curtisrhodes.com/IntelDsgn'>Intelligent Design SoftWare</a></div>\n" +
             "   </div>\n" +
-            "</div>\n"
+            "</div>\n" +
+            "   <!-- Histats.com  START  (aync)-->\n" +
+            "   <script type='text/javascript'>var _Hasync= _Hasync|| [];\n" +
+            "   _Hasync.push(['Histats.start', '1,4458214,4,30,130,80,00010101']);\n" +
+            "   _Hasync.push(['Histats.fasi', '1']);\n" +
+            "   _Hasync.push(['Histats.track_hits', '']);\n" +
+            "   (function() {\n" +
+            "   var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;\n" +
+            "   hs.src = ('//s10.histats.com/js15_as.js');\n" +
+            "   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);\n" +
+            "   })();</script>\n"
         );
 
         switch (rootFolder) {
@@ -142,20 +153,6 @@
                     "<div class='clickable' onclick='rtpe(\"FLC\",\"rejects\",\"rejects\"," + folderId + ")'>Rejects</div>\n" +
                     "<div class='clickable' onclick='rtpe(\"FLC\",\"videos\",\"videos\"," + folderId + ")'>Videos</div>\n");
 
-                $('#footerCol6').html(`<!-- Histats.com  (div with counter) --><div id="histats_counter"></div>
-                <!-- Histats.com  START  (aync)-->
-                <script type="text/javascript">var _Hasync= _Hasync|| [];
-                _Hasync.push(['Histats.start', '1,4458214,4,30,130,80,00010101']);
-                _Hasync.push(['Histats.fasi', '1']);
-                _Hasync.push(['Histats.track_hits', '']);
-                (function() {
-                var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
-                hs.src = ('//s10.histats.com/js15_as.js');
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
-                })();</script>
-                <noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?4458214&101" alt="page hit counter" border="0"></a></noscript>
-                <!-- Histats.com  END  -->`
-                );
                 break;
             }
             default: {

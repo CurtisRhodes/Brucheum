@@ -2,10 +2,12 @@
     try {
 
         //if (document.domain === 'localhost') setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-        //if (document.domain === 'localhost') 
+
+        //console.log("testing uniqueVisIdlookup");
+        //uniqueVisIdlookup(555, "555");
+        //return;
 
         let visitorId = getCookieValue("VisitorId");
-        // setTimeout(function () {  //  maybe a pause is needed for cookie to come back
 
         if (isNullorUndefined(visitorId)) {
             logActivity("VV2", 13, "undefined verify Visitor");
@@ -17,11 +19,6 @@
             tryAddNewIP(15, "verify Visitor");
             return;
         }
-        //if (localStorage["VisitorId"] == "unset") {
-        //    logActivity("VV2", 16, "unset verify Visitor");
-        //    tryAddNewIP(16, "verify Visitor");
-        //    return;
-        //}
 
         console.log("entering verifyVisitor. visitorId: " + visitorId);
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
