@@ -356,7 +356,7 @@ function removeDupeIps() {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/RepairLinks/RemoveDuplicateIps",
+            url: settingsArray.ApiServer + "api/RepairLinks/RemoveDuplicateStaticPageHits",
             success: function (repairReport) {
                 $('#dashBoardLoadingGif').hide();
                 $("#centeredDialogContents").fadeOut();

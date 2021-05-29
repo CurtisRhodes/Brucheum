@@ -46,6 +46,7 @@ function getIpInfo(folderId, calledFrom) {
             return;
         }
         ip0Busy = true;
+        logActivity("IP1", folderId, "get IpInfo/" + calledFrom);
         let ipCall0Returned = false;
         $.ajax({
             type: "GET",
@@ -101,8 +102,14 @@ function getIpInfo(folderId, calledFrom) {
                         logActivity("IP6", folderId, "get IpInfo/" + calledFrom); // XHR error
                     }
                     else {
-                        logActivity("IP3", folderId, "get IpInfo");
-                        logError("IP3", folderId, errMsg, "get IpInfo");
+                        if ((visitorId == "not found") && (folderId == 15) && (errMsg = ""))
+                        {
+                            logActivity("IPW", errMsg.indexOf("Not connect"), errMsg);
+                        }
+                        else {
+                            logActivity("IP3", folderId, "get IpInfo");
+                            logError("IP3", folderId, errMsg, "get IpInfo");
+                        }
                     }
                 }
                 //geoplugin(folderId, calledFrom);  // try something else
@@ -379,6 +386,7 @@ function ipapico(folderId, calledFrom) {
 function addBadIpVisitorId(folderId, calledFrom) {
     try {
         console.debug("calling addVisitor from: addBadIp");
+        logActivity("IP1", folderId, "addBadIpVisitorId/" + calledFrom);
         addVisitor(
             {
                 IpAddress: create_UUID().replace("-","").substr(0,11),
@@ -394,6 +402,43 @@ function addBadIpVisitorId(folderId, calledFrom) {
         logError("CAT", folderId, e, "add BadIpVisitorId");
     }
 } // 5 add BadIpVisitorId
+
+function repairBadIp() {
+    // getvisitorInfo
+    let visitorId = getCookieValue("VisitorId");
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + visitorId,
+            success: function (visitorInfo) {
+                if (visitorInfo.Success == "ok") {
+
+
+
+
+                    uniqueVisIdlookup(folderId, "repairBadIp");
+
+                }
+                else {
+                    if (visitorInfo.Success == "not found") {
+                        //logError("EVT", 470, "Ip:", "load UserProfile");  // VisitorId not found                    
+                    }
+                    else {
+                        logError("AJX", 0, visitorInfo.Success, "load UserProfile");
+                        if (document.domain == "localhost") alert("load UserProfile: " + visitorInfo.Success);
+                    }
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "load UserProfile")) logError("XHR", 0, errMsg, "load UserProfile");
+            }
+        });
+    } catch (e) {
+        logError("CAT", 12440, e, "load UserProfile");
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 

@@ -251,7 +251,19 @@ function runPageHitReport() {
                     kludge += "<tr><td class='clickable' onclick='showUserDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
                     kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
                     kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
-                    kludge += "<td>" + obj.RootFolder + "</td>";
+                    switch (obj.RootFolder) {
+                        case "boobs":
+                            kludge += "<td><span style='color:#966211'>" + obj.RootFolder + "</span></td>";
+                            break;
+                        case "archive":
+                            kludge += "<td><span style='color:#ed18ef'>" + obj.RootFolder + "</span></td>";
+                            break;
+                        case "porn":
+                            kludge += "<td><span style='color:red'>" + obj.RootFolder + "</span></td>";
+                            break;
+                        default:
+                            kludge += "<td>" + obj.RootFolder + "</td>";
+                    }
                     // kludge += "<td>" + obj.ImageHits + "</td>";
                     kludge += "<td>" + obj.HitTime + "</td></tr>";
                 });

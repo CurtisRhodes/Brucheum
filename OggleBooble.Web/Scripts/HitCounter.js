@@ -76,8 +76,8 @@ function logPageHit(folderId) {
         lastPageHitVisitorId = folderId;
 
         if (visitorId == "not found") {
-            logActivity("VV2", folderId, "log PageHit");
-            //tryAddNewIP(folderId, "log PageHit");
+            //logActivity("VV2", folderId, "log PageHit");
+            tryAddNewIP(folderId, "log PageHit");
             //return;
         }
 
