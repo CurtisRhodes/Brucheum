@@ -798,6 +798,15 @@ namespace OggleBooble.Api.Controllers
 
         private string DetermineStrategy(PlayboyPlusDupe dupe0, CategoryFolder dbCatFolder0, PlayboyPlusDupe dupe1, CategoryFolder dbCatFolder1)
         {
+            if (dupe0.FSize == dupe1.FSize)
+            {
+                int[] namedFolders = { 3048, 3049, 3050, 3051, 3052, 3053, 3054, 3055, 3056, 3057, 3058, 3059 };
+                if (namedFolders.Contains(dupe0.FolderId))
+                    return "remove1";
+                else
+                    return "remove0";
+            }
+
             if (dupe0.FileId == dupe1.FileId) 
                 return "local issue";
 
@@ -903,11 +912,11 @@ namespace OggleBooble.Api.Controllers
                     CategoryFolder dbCatFolder0, dbCatFolder1, dbCatFolderP;
                     ImageFile dbImageFile0, dbImageFile1;
                     List<PlayboyPlusDupe> dupGroup = null;
-
-                    PlayboyPlusDupe maxImageSizeItem = null;
-                    ImageFile dbLargerImageFile = null;
                     List<PlayboyPlusDupe> playboyPlusDupesToRemove = new List<PlayboyPlusDupe>();
-                    CategoryFolder dbCategoryFolderSmallerImage = null;
+
+                    //PlayboyPlusDupe maxImageSizeItem = null;
+                    //ImageFile dbLargerImageFile = null;
+                    //CategoryFolder dbCategoryFolderSmallerImage = null;
 
                     while (pGroup < MaxPGroup)
                     {
@@ -1352,52 +1361,53 @@ namespace OggleBooble.Api.Controllers
                         if (dupGroup.Count > 2)
                         {
                             dupeCheckModel.BigGroup++;
-                            maxImageSizeItem = dupGroup.Aggregate((i1, i2) => i1.FSize > i2.FSize ? i1 : i2);
-                            dbLargerImageFile = db.ImageFiles.Where(i => i.Id == maxImageSizeItem.FileId).FirstOrDefault();
-                            localSuccess = "xx";
-                            foreach (PlayboyPlusDupe smallerDupeImage in dupGroup)
-                            {
-                                if (smallerDupeImage.Pk != maxImageSizeItem.Pk)
-                                {
 
-                                    dbCategoryFolderSmallerImage = db.CategoryFolders.Where(f => f.Id == smallerDupeImage.FolderId).FirstOrDefault();
-                                    dbImageFile0 = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault();
-                                    if (dbImageFile0 != null)
-                                    {
-                                        ext0 = dbImageFile0.FileName.Substring(dbImageFile0.FileName.LastIndexOf("."));
-                                        dbCatFolder0 = db.CategoryFolders.Where(f => f.Id == smallerDupeImage.FolderId).FirstOrDefault();
-                                        if (dbCategoryFolderSmallerImage.FolderType == "singleChild")
-                                        {
-                                            dbCatFolder0 = db.CategoryFolders.Where(f => f.Id == dbCategoryFolderSmallerImage.Parent).FirstOrDefault();
-                                            fileName0 = dbCatFolder0.FolderPath.Substring(dbCatFolder0.FolderPath.LastIndexOf("/") + 1) + "_" + smallerDupeImage.FileId + ext0;
-                                        }
-                                        else
-                                            fileName0 = dbCatFolder0.FolderPath.Substring(dbCatFolder0.FolderPath.LastIndexOf("/") + 1) + "_" + smallerDupeImage.FileId + ext0;
+                            //maxImageSizeItem = dupGroup.Aggregate((i1, i2) => i1.FSize > i2.FSize ? i1 : i2);
+                            //dbLargerImageFile = db.ImageFiles.Where(i => i.Id == maxImageSizeItem.FileId).FirstOrDefault();
+                            //localSuccess = "xx";
+                            //foreach (PlayboyPlusDupe smallerDupeImage in dupGroup)
+                            //{
+                            //    if (smallerDupeImage.Pk != maxImageSizeItem.Pk)
+                            //    {
 
-                                        ftpIimage0 = ftpHost + "img.Ogglebooble.com/" + dbCatFolder0.FolderPath + "/" + fileName0;
-                                        ftpSuccess = RemoveImage(smallerDupeImage.FolderId, smallerDupeImage.FileId, ftpIimage0);
-                                        if (ftpSuccess == "ok")
-                                            dupeCheckModel.ServerFilesDeleted++;
-                                        else
-                                            LogDupeError(maxImageSizeItem.FolderId, "server error: " + ftpSuccess, ftpIimage0);
+                            //        dbCategoryFolderSmallerImage = db.CategoryFolders.Where(f => f.Id == smallerDupeImage.FolderId).FirstOrDefault();
+                            //        dbImageFile0 = db.ImageFiles.Where(i => i.Id == smallerDupeImage.FileId).FirstOrDefault();
+                            //        if (dbImageFile0 != null)
+                            //        {
+                            //            ext0 = dbImageFile0.FileName.Substring(dbImageFile0.FileName.LastIndexOf("."));
+                            //            dbCatFolder0 = db.CategoryFolders.Where(f => f.Id == smallerDupeImage.FolderId).FirstOrDefault();
+                            //            if (dbCategoryFolderSmallerImage.FolderType == "singleChild")
+                            //            {
+                            //                dbCatFolder0 = db.CategoryFolders.Where(f => f.Id == dbCategoryFolderSmallerImage.Parent).FirstOrDefault();
+                            //                fileName0 = dbCatFolder0.FolderPath.Substring(dbCatFolder0.FolderPath.LastIndexOf("/") + 1) + "_" + smallerDupeImage.FileId + ext0;
+                            //            }
+                            //            else
+                            //                fileName0 = dbCatFolder0.FolderPath.Substring(dbCatFolder0.FolderPath.LastIndexOf("/") + 1) + "_" + smallerDupeImage.FileId + ext0;
 
-                                        localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
-                                        if (localSuccess == "ok")
-                                            dupeCheckModel.LocalFilesDeleted++;
-                                        else
-                                        {
-                                            LogDupeError(dupGroup[1].FolderId, "local delete fail: " + localSuccess, fileName0);
-                                            dupeCheckModel.Errors++;
-                                        }
-                                    }
-                                }
-                            }
-                            if (localSuccess == "ok")
-                            {
-                                db.PlayboyPlusDupes.RemoveRange(dupGroup);
-                                db.SaveChanges();
-                                dupeCheckModel.LocalIssue++;
-                            }
+                            //            ftpIimage0 = ftpHost + "img.Ogglebooble.com/" + dbCatFolder0.FolderPath + "/" + fileName0;
+                            //            ftpSuccess = RemoveImage(smallerDupeImage.FolderId, smallerDupeImage.FileId, ftpIimage0);
+                            //            if (ftpSuccess == "ok")
+                            //                dupeCheckModel.ServerFilesDeleted++;
+                            //            else
+                            //                LogDupeError(maxImageSizeItem.FolderId, "server error: " + ftpSuccess, ftpIimage0);
+
+                            //            localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
+                            //            if (localSuccess == "ok")
+                            //                dupeCheckModel.LocalFilesDeleted++;
+                            //            else
+                            //            {
+                            //                LogDupeError(dupGroup[1].FolderId, "local delete fail: " + localSuccess, fileName0);
+                            //                dupeCheckModel.Errors++;
+                            //            }
+                            //        }
+                            //    }
+                            //}
+                            //if (localSuccess == "ok")
+                            //{
+                            //    db.PlayboyPlusDupes.RemoveRange(dupGroup);
+                            //    db.SaveChanges();
+                            //    dupeCheckModel.LocalIssue++;
+                            //}
                         }
                         if (dupGroup.Count == 1)
                             dupeCheckModel.SingleMemberGroup++;
