@@ -84,7 +84,7 @@
         //$(document).ready(function () {
         //console.log("Index $(document).ready");
         params = getParams();
-        if (isNullorUndefined(params.spa)) 
+        if (isNullorUndefined(params.spa))
             spaPageId = 3908;
         else
             spaPageId = params.spa;
@@ -107,7 +107,6 @@
                     if (connectionVerified) {
                         clearInterval(connectionVerifiedLoop);
                         displaySpaPage(spaPageId);
-                        tryHitStats();
                         verifyVisitor();
                     }
                 }, 300);

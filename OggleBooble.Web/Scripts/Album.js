@@ -327,6 +327,29 @@ function getAlbumPageInfo(folderId) {
                 }
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
+                pleaseLogIn();
+            }
+            else {
+                if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {
+                    logError("MIS", folderId, albumInfo.Success, "getAlbumImages");
+                    window.location.href = "Index.html";
+                }
+                logError("AJX", folderId, albumInfo.Success, "getAlbumPageInfo");
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, folderId, "getAlbumPageInfo")) logError("XHR", folderId, errMsg, "getAlbumPageInfo");
+        }
+    });
+}
+
+function pleaseLogIn() {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?folderId=" + folderId,
+        success: function (albumInfo) {
+            if (albumInfo.Success === "ok") {
             }
             else {
                 if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {

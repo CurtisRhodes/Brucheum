@@ -149,6 +149,7 @@
                             verifyVisitor();
 
                             if (!isNullorUndefined(params.tic)) {
+                                params.tic = null;
                                 logStaticPageHit(albumParamFolderId, "Album.html");
                                 window.location.href = "album.html?folder=" + albumParamFolderId;
                             }

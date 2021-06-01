@@ -30,11 +30,14 @@ namespace OggleBooble.Api.Controllers
                     db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
                     db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
                     db.SaveChanges();
+                }
+                using (var db = new OggleBoobleMySqlContext())
+                {
                     DateTime maxReportDay = db.DailyPerformances.Max(p => p.ReportDay);
                     int dd = Math.Max(1, (int)DateTime.Today.Subtract(maxReportDay).TotalDays);
-                    db.Database.ExecuteSqlCommand("call spPerformance(" + dd + ")");                                       
-                    var sevenDaysAgo =  DateTime.Today.AddDays(-14);
-                    var performanceRows = db.DailyPerformances.Where(p => p.ReportDay > sevenDaysAgo).OrderByDescending(p=>p.ReportDay).ToList();
+                    db.Database.ExecuteSqlCommand("call spPerformance(" + dd + ")");
+                    var sevenDaysAgo = DateTime.Today.AddDays(-14);
+                    var performanceRows = db.DailyPerformances.Where(p => p.ReportDay > sevenDaysAgo).OrderByDescending(p => p.ReportDay).ToList();
                     foreach (DailyPerformance pRow in performanceRows)
                     {
                         rslts.mRows.Add(new MatrixModel()
@@ -355,7 +358,7 @@ namespace OggleBooble.Api.Controllers
                     //List<VwPageHit> vwPageHits = db.VwPageHits.Take(500).ToList();
 
                     List<VwPageHit> vwPageHits = db.VwPageHits.ToList();
-                    pageHitReportModel.HitCount = db.PageHits.Count();
+                    pageHitReportModel.HitCount = vwPageHits.Count();
 
                     foreach (VwPageHit item in vwPageHits)
                     {

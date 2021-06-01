@@ -527,7 +527,55 @@ namespace OggleBooble.Api.Controllers
                                 repairReport.VisitorRowsRemoved++;
                             }
                         }
+                        duplicateIps.Remove(firstVisitor);
                         db.Visitors.RemoveRange(duplicateIps);
+                        db.SaveChanges();
+                    }
+                    repairReport.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                repairReport.Success = Helpers.ErrorDetails(ex);
+            }
+            return repairReport;
+        }
+
+        public class DupeStaticPageGroup
+        {
+            public string VisitorId { get; set; }
+            public int FolderId { get; set; }
+            public string Occured { get; set; }
+            public int Count { get; set; }
+        }
+        [HttpGet]
+        [Route("api/RepairLinks/RemoveDuplicateStaticPageHits")]
+        public DupeIpRepairReportModel RemoveDuplicateStaticPageHits()
+        {
+            DupeIpRepairReportModel repairReport = new DupeIpRepairReportModel();
+            try
+            {
+                string dupeDay;
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    List<DupeStaticPageGroup> dupGroups = db.Database.SqlQuery<DupeStaticPageGroup>("select VisitorId, FolderId, " +
+                        "date_format(Occured,'%Y-%m-%d') 'Occured', count(*) 'Count' from StaticPageHit " +
+                        "group by VisitorId, FolderId, date_format(Occured,'%Y-%m-%d') having count(*) > 1").ToList();
+
+                    foreach (DupeStaticPageGroup dupGroup in dupGroups)
+                    {
+                        repairReport.PageHitsUpdated++;
+                        dupeDay = dupGroup.Occured;
+                        List<StaticPageHit> duplicateStaticPages = db.StaticPageHits.
+                            Where(sph => sph.VisitorId == dupGroup.VisitorId
+                            && sph.FolderId == dupGroup.FolderId && dupGroup.Occured == dupeDay).ToList();
+                        //StaticPageHit firstVisitor = duplicateStaticPages[0];
+                        for (int i = 0; i < duplicateStaticPages.Count; i++) {
+                            if (i > 0) {
+                                db.StaticPageHits.Remove(duplicateStaticPages[i]);
+                                repairReport.VisitorRowsRemoved++;
+                            }
+                        }
                         db.SaveChanges();
                     }
                     repairReport.Success = "ok";

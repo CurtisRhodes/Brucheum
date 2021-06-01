@@ -153,6 +153,8 @@ function toggleDirTree(id) {
 }
 
 function showFolderImage(link) {
+    event.preventDefault();
+    window.event.returnValue = false;
     $('.dirTreeImageContainer').css("top", event.clientY - 100);
     $('.dirTreeImageContainer').css("left", event.clientX + 10);
     $('.dirTreeImage').attr("src", link);
