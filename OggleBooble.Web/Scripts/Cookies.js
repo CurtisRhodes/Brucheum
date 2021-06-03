@@ -18,13 +18,22 @@ function getCookieValue(itemName) {
         }
         if (returnValue == "not found") {
             if (!isNullorUndefined(localStorage[itemName])) {
+                logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
                 console.log("localStorage[" + itemName + "] set to: " + localStorage[itemName] + " and cookie not found");
                 setCookieValue(itemName, localStorage[itemName]);
                 returnValue = localStorage[itemName];
+                if (!navigator.cookieEnabled) {
+                    logError2(create_UUID(), "UNC", 62716, "local storage bypass: success", "get cookie");
+                }
+            }
+            else {
+                if (!navigator.cookieEnabled) {
+                    logError2(create_UUID(), "UNC", 62716, "local storage bypass: fail", "get cookie");
+                }
             }
         }
     } catch (e) {
-
+        logError2(create_UUID(), "CAT", 62725, e, "get cookie");
     }
     return returnValue;
 }
@@ -38,7 +47,7 @@ function setCookieValue(elementToSet, newValue) {
         console.log("calling setCookieValue.  set:" + elementToSet + " to: " + newValue);
     } catch (e) {
         alert("setcookie CATCH Error: " + e);
-        logError("CAT", 111, e, "setCookieValue");
+        logError2(create_UUID(), "CAT", 65745, e, "setCookieValue");
     }
 }
 

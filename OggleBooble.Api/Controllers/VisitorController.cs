@@ -107,7 +107,11 @@ namespace OggleBooble.Api.Controllers
                         success = "not found";
                     else
                     {
-                        success= "ok";
+                        var waistedIPs = db.ActivityLogs.Where(a => a.ActivityCode == "WIP" && a.VisitorId == visitorId).FirstOrDefault();
+                        if (waistedIPs == null)
+                            success = "ok";
+                        else
+                            success = "badVisitor";
                     }
                 }
             }

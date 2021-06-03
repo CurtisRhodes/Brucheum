@@ -197,6 +197,10 @@ function create_UUID() {
 }
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
+    logError2(getCookieValue("VisitorId"), errorCode, folderId, errorMessage, calledFrom);
+}
+
+function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
     if (document.domain === 'localhost') {
         console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
@@ -207,7 +211,7 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
                 type: "POST",
                 url: settingsArray.ApiServer + "api/Common/LogError",
                 data: {
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: visitorId,
                     ErrorCode: errorCode,
                     FolderId: folderId,
                     ErrorMessage: errorMessage,
@@ -270,7 +274,11 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     }
 }
 
-function logActivity(activityCode, folderId, calledFrom) {
+function logActivity(activityCode, folderId, calledFrom) {    
+    logActivity2(getCookieValue("VisitorId"), activityCode, folderId, calledFrom);
+}
+
+function logActivity2(visitorId, activityCode, folderId, calledFrom) {
     //alert("logActivity(" + activityCode + "," + folderId + ")");
     $.ajax({
         type: "POST",
@@ -279,7 +287,7 @@ function logActivity(activityCode, folderId, calledFrom) {
             ActivityCode: activityCode,
             FolderId: folderId,
             CalledFrom: calledFrom,
-            VisitorId: getCookieValue("VisitorId"),
+            VisitorId: visitorId,
         },
         success: function (success) {
             if (success === "ok") {
@@ -287,9 +295,9 @@ function logActivity(activityCode, folderId, calledFrom) {
             }
             else {
                 if (success.indexOf("Duplicate entry") > 0)
-                    logError("DUP", folderId, "Duplicate entry: " + activityCode, "log activity/" + calledFrom);
+                    logError2(visitorId, "DUP", folderId, "Duplicate entry: " + activityCode, "log activity/" + calledFrom);
                 else
-                    logError("AJX", folderId, activityCode + ": " + success, "log activity/" + calledFrom);
+                    logError2(visitorId, "AJX", folderId, activityCode + ": " + success, "log activity/" + calledFrom);
             }
         },
         error: function (jqXHR) {
@@ -297,7 +305,7 @@ function logActivity(activityCode, folderId, calledFrom) {
 
             let errMsg = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errMsg, folderId, "log Activity"))
-                logError("XHR", folderId, errMsg, "log Activity");
+                logError2(visitorId, "XHR", folderId, errMsg, "log Activity");
         }
     });
 }

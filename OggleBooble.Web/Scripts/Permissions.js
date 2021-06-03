@@ -20,7 +20,7 @@
             return true;
     }
     catch (e) {
-        logError("CAT", 39048, e, "isInRole");
+        logError2(create_UUID(), "CAT", 602537, e, "is InRole");
         return false;
     }
 }

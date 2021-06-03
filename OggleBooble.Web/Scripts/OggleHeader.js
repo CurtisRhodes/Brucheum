@@ -59,6 +59,8 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
         case "root":
         case "index":
+            $('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
+            $('#hdrBtmRowSec3').append(addPgLinkButton(5233, "softcore"));
         case "archive": {
             changeFavoriteIcon("redBallon");
             $('#oggleHeader').switchClass('playboyHeader', 'boobsHeader');
@@ -66,8 +68,6 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#oggleHeaderTitle').html("OggleBooble");
             $('#topRowRightContainer').html(addRankerButton("010000000", "big naturals ranker"));
             $('#hdrBtmRowSec3').append(addSpaButton(72, "every Playboy Centefold"));
-            $('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
-            $('#hdrBtmRowSec3').append(addPgLinkButton(5233, "softcore"));
             setHeaderMenu("boobs");
             break;
         }
@@ -77,8 +77,9 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
             $('#oggleHeaderTitle').html("<span style='color:#fff;'>every playboy centerfold</span>");
             $('#topRowRightContainer').append(addRankerButton("001000000", "centerfold ranker"));
-            $('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
-            $('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
+            $('#hdrBtmRowSec3').append(addSpaButton(3908, "back to OggleBooble"));
+            //$('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
+            //$('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
             setHeaderMenu("playboyIndex");
             break;
         case "playboy":

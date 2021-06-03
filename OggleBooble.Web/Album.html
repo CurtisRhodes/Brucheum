@@ -33,8 +33,8 @@
     <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.7/signalr.min.js"></script>-->
 
-    <script src="Scripts/Cookies.js"></script>
     <script src="Scripts/Common.js"></script>
+    <script src="Scripts/Cookies.js"></script>
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/IPlookup.js"></script>
     <script src="Scripts/VerifyVisitor.js"></script>
@@ -146,7 +146,7 @@
                             $('#dots').html('');
 
                             changeFavoriteIcon("redBallon");
-                            verifyVisitor();
+                            verifyVisitor(albumParamFolderId);
 
                             if (!isNullorUndefined(params.tic)) {
                                 params.tic = null;

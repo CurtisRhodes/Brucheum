@@ -11,9 +11,9 @@ function logImageHit(linkId, folderId, isInitialHit) {
         setTimeout(function () {
 
             if (visitorId == "not found") {
-                logActivity("VV2", folderId, "log ImageHit");
+                logError2(visitorId,  "IHE", folderId, "using visitorId bypass logError","log ImageHit"); // visitorId came into logImageHit null or undefined
                 //tryAddNewIP(folderId, "log ImageHit");
-                return;
+                //return;
             }
 
             $.ajax({
@@ -68,7 +68,6 @@ function logPageHit(folderId) {
         let visitorId = getCookieValue("VisitorId");
 
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
-            //logError("DUP",folderId,"")
             logActivity("DUP", folderId, "log PageHit");
             return;
         }
@@ -76,9 +75,8 @@ function logPageHit(folderId) {
         lastPageHitVisitorId = folderId;
 
         if (visitorId == "not found") {
-            //logActivity("VV2", folderId, "log PageHit");
+            logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
             tryAddNewIP(folderId, "log PageHit");
-            //return;
         }
 
         $.ajax({
@@ -105,13 +103,8 @@ function logPageHit(folderId) {
 function logVisit(folderId, calledFrom) {
     try {
         let visitorId = getCookieValue("VisitorId");
-        if (visitorId.length != 36) {
-            logActivity("LV5", folderId, calledFrom + "/logVisit");
-            logError("LV5", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
-            return;
-        }
+        //logActivity("LV0", folderId, "logVisit");
 
-        logActivity("LV0", folderId, "logVisit");
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
