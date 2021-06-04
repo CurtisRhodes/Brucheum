@@ -1,4 +1,6 @@
-﻿function setOggleHeader(headerContext) {
+﻿
+
+function setOggleHeader(headerContext) {
 
     $('#oggleHeader').html(headerHtml());
 
@@ -46,6 +48,30 @@
     //mediaSavyHdrResize();
     //window.addEventListener("resize", mediaSavyHdrResize);
 }
+
+function setFavoriteIcon(rootFolder) {
+    switch (rootFolder) {
+        case "root":
+        case "dashboard":
+        case "index":
+        case "blog":
+        case "album":
+        case "ranker":
+        case "loading":
+            changeFavoriteIcon("redBallon");
+            break;
+        case "playboyIndex":
+            changeFavoriteIcon("centerfold");
+            break;
+        case "porn":
+            changeFavoriteIcon("porn");
+            break;
+        default:
+            alert("headerContext " + headerContext + " not handled");
+            changeFavoriteIcon("redBallon");
+            break;
+    }
+} 
 
 let hdrFolderId, hdrRootFolder;
 function resetOggleHeader(folderId, rootFolder) {

@@ -18,7 +18,7 @@
     <!--<script src="http s://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.9/signalr.min.js"></script>-->
 
     <script src="Scripts/Common.js"></script>
-    <script src="Scripts/Cookies.js"></script>
+    <!--<script src="Scripts/Cookies.js"></script>-->
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/IPlookup.js"></script>
     <script src="Scripts/VerifyVisitor.js"></script>
@@ -80,40 +80,40 @@
     <div class="footer"></div>
 
     <script>
-        let spaPageId, dots = "";
-        //$(document).ready(function () {
-        //console.log("Index $(document).ready");
-        params = getParams();
-        if (isNullorUndefined(params.spa))
-            spaPageId = 3908;
-        else
-            spaPageId = params.spa;
+        $(document).ready(function () {
+            let spaPageId, dots = "";
+            params = getParams();
+            if (isNullorUndefined(params.spa))
+                spaPageId = 3908;
+            else
+                spaPageId = params.spa;
 
-        setOggleHeader("loading");
+            setOggleHeader("loading");
 
-        loadOggleSettings();
-        connectionVerified = false;
-        var settingsWaiter = setInterval(function () {
-            if (settingsArray.ApiServer === undefined) {
-                dots += "~ ";
-                $('#dots').html(dots);
-            }
-            else {
-                clearInterval(settingsWaiter);
-                document.title = "connecting : OggleBooble";
-                $('#mainMenuContainer').html("connecting");
-                checkConnection(spaPageId, "Index.html");
-                let connectionVerifiedLoop = setInterval(function () {
-                    if (connectionVerified) {
-                        clearInterval(connectionVerifiedLoop);
-                        displaySpaPage(spaPageId);
-                        verifyVisitor(spaPageId);
-                    }
-                }, 300);
-            }
+            loadOggleSettings();
+            connectionVerified = false;
+            var settingsWaiter = setInterval(function () {
+                if (settingsArray.ApiServer === undefined) {
+                    dots += "~ ";
+                    $('#dots').html(dots);
+                }
+                else {
+                    clearInterval(settingsWaiter);
+                    document.title = "connecting : OggleBooble";
+                    $('#mainMenuContainer').html("connecting");
+                    checkConnection(spaPageId, "Index.html");
+                    let connectionVerifiedLoop = setInterval(function () {
+                        if (connectionVerified) {
+                            clearInterval(connectionVerifiedLoop);
+                            displaySpaPage(spaPageId);
+                            verifyVisitor(spaPageId);
+                        }
+                    }, 300);
+                }
+            });
+            window.addEventListener("resize", resizeIndexPage);
+            resizeIndexPage();
         });
-        window.addEventListener("resize", resizeIndexPage);
-        resizeIndexPage();
     </script>
 </body>
 </html>

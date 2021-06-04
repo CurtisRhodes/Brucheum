@@ -294,8 +294,10 @@ function logActivity2(visitorId, activityCode, folderId, calledFrom) {
                 //  displayStatusMessage("ok", "activity" + changeLogModel.Activity + " logged");
             }
             else {
-                if (success.indexOf("Duplicate entry") > 0)
-                    logError2(visitorId, "DUP", folderId, "Duplicate entry: " + activityCode, "log activity/" + calledFrom);
+                if (success.indexOf("Duplicate entry") > 0) {
+                    logActivity("DAE", folderId, "log activity/" + calledFrom);
+                    //logError2(visitorId, "DUP", folderId, "Duplicate entry: " + activityCode, "log activity/" + calledFrom);
+                }
                 else
                     logError2(visitorId, "AJX", folderId, activityCode + ": " + success, "log activity/" + calledFrom);
             }
@@ -556,5 +558,86 @@ function showMyAlert(title, message) {
     //$('#centeredDialogContainer').css("top", 33 + $(window).scrollTop());
     $('#centeredDialog').css("top", $('#oggleHeader').height() + 120);
     $('#centeredDialogContainer').draggable().fadeIn();
+}
+
+function getCookieValue(itemName) {
+    let returnValue = "not found";
+    try {
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let cookieElements = decodedCookie.split(";");
+        let cookieItem, cookieItemName, cookieItemValue;
+        for (var i = 0; i < cookieElements.length; i++) {
+            cookieItem = cookieElements[i].split(":");
+            cookieItemName = cookieItem[0].trim();
+            cookieItemValue = cookieItem[1];
+            if (cookieItemName === itemName) {
+                //alert("cookie value FOUND. " + itemName + " = " + cookieItemValue);
+                localStorage[itemName] = cookieItemValue;
+                returnValue = cookieItemValue;
+                break;
+            }
+        }
+        if (returnValue == "not found") {
+            if (!isNullorUndefined(localStorage[itemName])) {
+                logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
+                console.log("localStorage[" + itemName + "] set to: " + localStorage[itemName] + " and cookie not found");
+                setCookieValue(itemName, localStorage[itemName]);
+                returnValue = localStorage[itemName];
+                if (!navigator.cookieEnabled) {
+                    logError("UNC", 62716, "local storage bypass: success", "get cookie");
+                }
+            }
+            else {
+                if (!navigator.cookieEnabled) {
+                    logError("UNC", 62716, "local storage bypass: fail", "get cookie");
+                }
+            }
+        }
+    }
+    catch (e) {
+        logError2(create_UUID(), "CAT", 63637, e, "get cookie");
+    }
+    return returnValue;
+}
+
+function setCookieValue(elementToSet, newValue) {
+    try {
+        localStorage[elementToSet] = newValue;
+        let cookieString = elementToSet + ":" + newValue;
+        document.cookie = cookieString;
+        console.log("calling setCookieValue.  set:" + elementToSet + " to: " + newValue);
+    } catch (e) {
+        alert("setcookie CATCH Error: " + e);
+        logError2(create_UUID(), "CAT", 65745, e, "setCookieValue");
+    }
+}
+
+function createCookie(visitorId) {
+    try {
+        console.log("createCookie");
+        //alert("createCookie");
+        //cookies.remove("document.cookie");
+        document.cookie = "expires=Thu, 01 Jan 1970 00: 00: 00 UTC; path =/;";
+
+        alert("deleted decoded cookie: " + decodeURIComponent(document.cookie));
+
+        expirydate = new Date();
+
+        expirydate.setMonth(expirydate.getMonth() + 9);
+        let cookiestring = ";VisitorId=" + visitorId + ";UserName=" + localStorage["UserName"] +
+            "VisitorVerified=true;Isloggedin=" + localStorage["IsLoggedIn"] + ";expires=" + expirydate.toUTCString();
+        document.cookie = cookiestring;
+
+
+        var test1 = getCookieValue("Visitorid", "boogers");
+
+        //alert("cookieTest1: " + test1);
+
+
+        //alert("decoded cookie: " + decodeURIComponent(document.cookie));
+
+    } catch (e) {
+        console.log("createCookie CATCH " + e);
+    }
 }
 

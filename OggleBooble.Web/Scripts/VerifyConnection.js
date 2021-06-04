@@ -4,7 +4,7 @@ function checkFor404(errMsg, folderId, calledFrom) {
     try {
         //if (document.domain == "localhost") alert("XHR error: " + errMsg + " caught: " + errMsg.indexOf("Verify Network") > 0);
         if (errMsg.indexOf("Not connect") > -1) {
-            logError("CKE", folderId, errMsg, calledFrom);
+            //logError("CKE", folderId, errMsg, calledFrom);
             checkConnection(folderId, calledFrom);
             return true;
         }
@@ -33,8 +33,6 @@ function checkConnection(folderId, calledFrom) {
             let connectingToServerImgShowing = false, canIgetaConnectionImgShowing = false;
             document.title = "connecting : OggleBooble";
             connectionVerified = false;
-
-
             let verifyConnectionWaiter = setInterval(function () {
                 if (connectionVerified) {
                     clearInterval(verifyConnectionWaiter);

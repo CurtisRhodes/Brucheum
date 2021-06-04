@@ -1,33 +1,14 @@
 ﻿function verifyVisitor(folderId) {
     try {
-
-        //if (document.domain === 'localhost') setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
-
-        //console.log("testing uniqueVisIdlookup");
-        //uniqueVisIdlookup(555, "555");
-        //return;
-
         let visitorId = getCookieValue("VisitorId");
-
-        //if (isNullorUndefined(visitorId)) {
-        //    logActivity("VV2", 13, "undefined verify Visitor");
-        //    tryAddNewIP(13, "verify Visitor");
-        //    return;
-        //}
-        //if (visitorId == "not found") {
-        //    //logActivity("VV2", 15, "not found verify Visitor");
-        //    tryAddNewIP(15, "verify Visitor");
-        //    return;
-        //}
 
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
             logActivity("VV0", folderId, "verify Visitor"); // new session started
             $('#headerMessage').html("new session started");
             sessionStorage["VisitorVerified"] = true;
             if (visitorId == "not found") {
-                //console.log("verifying visitor: " + visitorId);
                 logActivity("VV2", folderId, "verify Visitor"); // verify visitorId undefined
-                tryAddNewIP(folderId, "verify Visitor");
+                //tryAddNewIP(folderId, "verify Visitor");
             }
             else {
                 $.ajax({
@@ -38,15 +19,10 @@
                             logActivity("VV1", folderId, "verify Visitor"); // visitor verified ok
                             loadUserProfile("verify Visitor");
                             logVisit(folderId, "verify visitor");
-                            //console.log("visitor verified: " + visitorId);
-                            //sessionStorage["VisitorVerified"] = "true";
                         }
                         else {  // visitorId not found
                             logActivity("VV7", folderId, "verify Visitor"); // verify visitor VisitorId not found
-                            //logError("BUG", 77, "visitorId not found: " + visitorId, "verify Visitor");
-                            //console.log("visitorId not found: " + visitorId + "  calling getIpInfo");
-                            //if (document.domain == "localhost") alert("visitorId not found: " + visitorId + "  calling getIpInfo");
-                            //tryAddNewIP(folderId, "verify Visitor");
+                            tryAddNewIP(folderId, "verify Visitor");
                         }
                     },
                     error: function (jqXHR) {
@@ -58,13 +34,14 @@
                 });
             }
         }
-        else
+        else {
+            logActivity("VV3", folderId, "verify Visitor"); // active session new page
             console.log("visitor session verified: " + sessionStorage["VisitorVerified"] + " visitorId: " + visitorId);
-        // }, 2500);
+        }
     }
     catch (e) {
         logActivity2(create_UUID(), "VV5", folderId, "verify Visitor"); // verify visitor CATCH error
-        logError2(create_UUID(), "CAT", folderId, e, "verify Visitor");
+        logError("CAT", folderId, e, "verify Visitor");
         if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
     }
 }
@@ -92,7 +69,6 @@ function addVisitor(visitorData) {
                     if (visitorData.CalledFrom == "attempt Register") {
                         //logEvent("LOG", 0, "Successfull log in: " + localStorage["UserName"]);
                         //displayStatusMessage("ok", "thanks for Registering " + localStorage["UserName"]);
-
                         //localStorage["IsLoggedIn"] = true;
                         //$('#optionLoggedIn').show();
                         //$('#optionNotLoggedIn').hide();
@@ -103,17 +79,22 @@ function addVisitor(visitorData) {
                     }
                 }
                 if (avSuccess.Success == "existing Ip") {
-                    setCookieValue("VisitorId", avSuccess.VisitorId);
-                    logActivity("AV5", visitorData.InitialPage, "add Visitor");  // existing IP visitorId used
-                    let isLooping = (lastNewVisitor == avSuccess.VisitorId);
-                    logError("WIP", visitorData.InitialPage, "isLooping: " + isLooping, "addVisitor/" + visitorData.CalledFrom); // wasted Ip call
-                    if (!isLooping) {
-                        //accepts cookies
+                    if (avSuccess.VisitorId == "not found") {
+                        logActivity("AV6", visitorData.InitialPage, "add Visitor");  // tried to ass Not Found to WIP
+                    }
+                    else {
+                        setCookieValue("VisitorId", avSuccess.VisitorId);
+                        logActivity("AV5", visitorData.InitialPage, "add Visitor");  // existing IP visitorId used
 
-                        lastNewVisitor = avSuccess.VisitorId;
-                        loadUserProfile("recall existing Ip");
-                        //logIpHit(avSuccess.VisitorId, visitorData.IpAddress, visitorData.InitialPage);
-                        logVisit(visitorData.InitialPage, "add Visitor");
+                        let isLooping = (lastNewVisitor == avSuccess.VisitorId);
+                        logError("WIP", visitorData.InitialPage, "isLooping: " + isLooping, "addVisitor/" + visitorData.CalledFrom); // wasted Ip call
+                        if (!isLooping) {
+                            //accepts cookies
+                            lastNewVisitor = avSuccess.VisitorId;
+                            loadUserProfile("recall existing Ip");
+                            //logIpHit(avSuccess.VisitorId, visitorData.IpAddress, visitorData.InitialPage);
+                            logVisit(visitorData.InitialPage, "add Visitor");
+                        }
                     }
                 }
                 if (avSuccess.Success.indexOf("Duplicate entry") > 0) {

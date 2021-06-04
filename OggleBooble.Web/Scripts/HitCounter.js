@@ -7,52 +7,47 @@ function logImageHit(linkId, folderId, isInitialHit) {
             return;
         }
 
-        let visitorId = getCookieValue("VisitorId");
-        setTimeout(function () {
+        //let visitorId = getCookieValue("VisitorId");
 
-            if (visitorId == "not found") {
-                logError2(visitorId,  "IHE", folderId, "using visitorId bypass logError","log ImageHit"); // visitorId came into logImageHit null or undefined
-                //tryAddNewIP(folderId, "log ImageHit");
-                //return;
-            }
+        //if (visitorId == "not found") {
+        //    logError2(visitorId, "IHE", folderId, "using visitorId bypass logError", "log ImageHit"); // visitorId came into logImageHit null or undefined
+        //    //tryAddNewIP(folderId, "log ImageHit");
+        //    //return;
+        //}
 
-            $.ajax({
-                type: "POST",
-                url: settingsArray.ApiServer + "api/Common/LogImageHit",
-                data: {
-                    VisitorId: visitorId,
-                    FolderId: folderId,
-                    LinkId: linkId,
-                    IsInitialHit: isInitialHit
-                },
-                success: function (imageHitSuccessModel) {
-                    if (imageHitSuccessModel.Success == "ok") {
-                        userPageHits = imageHitSuccessModel.UserPageHits;
-                        userImageHits = imageHitSuccessModel.UserImageHits;
-                        //checkForHitLimit("images", folderId, userPageHits, userImageHits);
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogImageHit",
+            data: {
+                VisitorId: getCookieValue("VisitorId"),
+                FolderId: folderId,
+                LinkId: linkId,
+                IsInitialHit: isInitialHit
+            },
+            success: function (imageHitSuccessModel) {
+                if (imageHitSuccessModel.Success == "ok") {
+                    userPageHits = imageHitSuccessModel.UserPageHits;
+                    userImageHits = imageHitSuccessModel.UserImageHits;
+                    //checkForHitLimit("images", folderId, userPageHits, userImageHits);
+                }
+                else {
+                    if (imageHitSuccessModel.Success.indexOf("Duplicate entry") > 0) {
+                        //logError("AJX", folderId, imageHitSuccessModel.Success, "logcImageHit");
                     }
                     else {
-                        if (imageHitSuccessModel.Success.indexOf("Duplicate entry") > 0) {
-                            //logError("AJX", folderId, imageHitSuccessModel.Success, "logcImageHit");
-                        }
-                        else {
-                            // ERROR: Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.
-                            // Entity of type "ImageHit" in state "Added" has the following validation errors: - 
-                            // Property: "VisitorId", Error: "The VisitorId field is required."
-                            if (document.domain == 'localhost') alert(imageHitSuccessModel.Success);
-                            logError("AJX", folderId, imageHitSuccessModel.Success, "log ImageHit");
-                        }
+                        // ERROR: Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.
+                        // Entity of type "ImageHit" in state "Added" has the following validation errors: - 
+                        // Property: "VisitorId", Error: "The VisitorId field is required."
+                        if (document.domain == 'localhost') alert(imageHitSuccessModel.Success);
+                        logError("AJX", folderId, imageHitSuccessModel.Success, "log ImageHit");
                     }
-                },
-                error: function (jqXHR) {
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg, folderId, "log ImageHit")) logError("XHR", folderId, errMsg, "log ImageHit");
                 }
-            });
-
-        }, 777);
-
-
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "log ImageHit")) logError("XHR", folderId, errMsg, "log ImageHit");
+            }
+        });
     } catch (e) {
         logError("CAT", folderId, e, "log ImageHit");
     }
@@ -68,14 +63,14 @@ function logPageHit(folderId) {
         let visitorId = getCookieValue("VisitorId");
 
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
-            logActivity("DUP", folderId, "log PageHit");
+            logActivity("PHD", folderId, "log PageHit");
             return;
         }
         lastPageHitVisitorId = visitorId;
-        lastPageHitVisitorId = folderId;
+        lastPageHitFolderId = folderId;
 
         if (visitorId == "not found") {
-            logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
+            //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
             tryAddNewIP(folderId, "log PageHit");
         }
 
