@@ -160,7 +160,7 @@ function tryApiDbIpFree(folderId, calledFrom) {
         if (ip2Busy) {
             console.debug("tryApiDbIpFree busy");
             logActivity("IP8", folderId, "apiDbIpFree");
-            //ipapico(folderId, calledFrom); // try something else
+            tryCloudflareTrace(folderId, calledFrom);
         }
         else {
             if (getCookieValue("VisitorId") != "not found") {
@@ -168,7 +168,6 @@ function tryApiDbIpFree(folderId, calledFrom) {
                 logError("DVA", folderId, visitorId, "tryApiDbIpFree/" + calledFrom);
             }
             else {
-                console.debug("tryApiDbIpFree 1");
                 ip2Busy = true;
                 let ipCall2Returned = false;
                 logActivity("IP1", folderId, "apiDbIpFree/" + calledFrom); // attempting apiDbIpFree lookup
@@ -199,7 +198,7 @@ function tryApiDbIpFree(folderId, calledFrom) {
                             if (ipResponse.errorCode == "OVER_QUERY_LIMIT") {
                                 console.debug("tryApiDbIpFree OVER_QUERY_LIMIT");
                                 logActivity("IP5", folderId, "apiDbIpFree/" + calledFrom);
-                                addBadIpVisitorId(folderId, calledFrom);
+                                tryCloudflareTrace(folderId, calledFrom); // try something else
                             }
                             else {
                                 console.debug("tryApiDbIpFree 6 " + JSON.stringify(ipResponse, null, 2));
@@ -214,7 +213,8 @@ function tryApiDbIpFree(folderId, calledFrom) {
                         console.debug("tryApiDbIpFree XHR");
                         let errMsg = getXHRErrorDetails(jqXHR);
                         if (errMsg.indexOf("Rate limit exceeded") > 0) {
-                            //logActivity("IP5", folderId, "apiDbIpFree");
+                            logActivity("IP5", folderId, "apiDbIpFree XHR");
+                            tryCloudflareTrace(folderId, calledFrom); // try something else
                         }
                         else {
                             if (!checkFor404(errMsg, folderId, "apiDbIpFree")) {
@@ -223,6 +223,7 @@ function tryApiDbIpFree(folderId, calledFrom) {
                             }
                             else {
                                 logActivity("IP3", folderId, "apiDbIpFree");
+                                tryCloudflareTrace(folderId, calledFrom); // try something else
                             }
                         }
                         ip2Busy = false;
@@ -232,7 +233,7 @@ function tryApiDbIpFree(folderId, calledFrom) {
                     if (!ipCall2Returned) {
                         console.debug("tryApiDbIpFree timeout");
                         logActivity("IPG", folderId, "apiDbIpFree");
-                        //ipapico(folderId, calledFrom); // try something else
+                        tryCloudflareTrace(folderId, calledFrom); // try something else
                     }
                     ip2Busy = false;
                 }, 2000);
@@ -243,6 +244,111 @@ function tryApiDbIpFree(folderId, calledFrom) {
         logActivity("IP7", folderId, "apiDbIpFree");
     }
 } // 2 api.db-ip.com/v2/free/self
+
+let ip3Busy = false;
+function tryCloudflareTrace(folderId, calledFrom) {
+    try {
+        if (ip3Busy) {
+            console.debug("tryCloudflareTrace busy");
+            logActivity("IP8", folderId, "tryCloudflareTrace");
+            addBadIpVisitorId(folderId, calledFrom);
+       }
+        else {
+            if (getCookieValue("VisitorId") != "not found") {
+                console.log("asked to RE lookup user with good visitorId cookie: " + visitorId);
+                logError("DVA", folderId, visitorId, "tryCloudflareTrace/" + calledFrom);
+            }
+            else {
+                ip3Busy = true;
+                let ipCall3Returned = false;
+                logActivity("IP1", folderId, "tryCloudflareTrace/" + calledFrom); // attempting tryCloudflareTrace lookup
+                $.ajax({
+                    type: "GET",
+                    url: "https://www.cloudflare.com/cdn-cgi/trace",
+                    dataType: "JSON",
+                    success: function (ipResponse) {
+                        ipCall3Returned = true;
+                        if (!isNullorUndefined(ipResponse.ipAddress)) {
+                            if (isNullorUndefined(ipResponse.countryCode)) {
+                                ipResponse.countryCode = "GG";
+                            }
+                            logActivity("IP2", folderId, "tryCloudflareTrace/" + calledFrom);
+                            addVisitor({
+                                IpAddress: ipResponse.ip,
+                                City: "?",
+                                Country: ipResponse.countryCode,
+                                Region: ipResponse.loc,
+                                GeoCode: "cloudflare",
+                                InitialPage: folderId,
+                                CalledFrom: "cloudflare/" + calledFrom
+                            });
+
+                            //fl = 15f393
+                            //h = www.cloudflare.com
+
+                            //ip = 2603: 8080: a703: 4e4d: 21a3: c672: f581: 5168
+
+
+                            //ts = 1622811185.625
+                            //visit_scheme = https
+                            //uag = Mozilla / 5.0(Windows NT 10.0; Win64; x64) AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 91.0.4472.77 Safari / 537.36
+                            //colo = DFW
+                            //http = http / 2
+                            //loc = US
+                            //tls = TLSv1.3
+                            //sni = plaintext
+                            //warp = off
+                            //gateway = off
+
+                        }
+                        else {
+                            if (ipResponse.errorCode == "OVER_QUERY_LIMIT") {
+                                console.debug("tryApiDbIpFree OVER_QUERY_LIMIT");
+                                logActivity("IP5", folderId, "tryCloudflareTrace/" + calledFrom);
+                                addBadIpVisitorId(folderId, calledFrom);
+                            }
+                            else {
+                                console.debug("tryCloudflareTrace 6 " + JSON.stringify(ipResponse, null, 2));
+                                logError("200", folderId, JSON.stringify(ipResponse, null, 2), "tryCloudflareTrace/" + calledFrom); // Json response code
+                                logActivity("IP9", folderId, "tryCloudflareTrace/" + calledFrom);
+                                addBadIpVisitorId(folderId, calledFrom);
+                            }
+                        }
+                        ip3Busy = false;
+                    },
+                    error: function (jqXHR) {
+                        ipCall3Returned = true;
+                        let errMsg = getXHRErrorDetails(jqXHR);
+                        if (errMsg.indexOf("Rate limit exceeded") > 0) {
+                            logActivity("IP5", folderId, "tryCloudflareTrace");
+                            addBadIpVisitorId(folderId, calledFrom);
+                        }
+                        else {
+                            if (!checkFor404(errMsg, folderId, "tryCloudflareTrace")) {
+                                logError("XHR", folderId, errMsg, "tryCloudflareTrace/" + calledFrom);
+                                logActivity("IP6", folderId, "tryCloudflareTrace");
+                            }
+                            else {
+                                logActivity("IP3", folderId, "tryCloudflareTrace");
+                            }
+                        }
+                        ip3Busy = false;
+                    }
+                });
+                setTimeout(function () {
+                    if (!ipCall3Returned) {
+                        logActivity("IPG", folderId, "tryCloudflareTrace");
+                        addBadIpVisitorId(folderId, calledFrom);
+                    }
+                    ip3Busy = false;
+                }, 2000);
+            }
+        }
+    } catch (e) {
+        logError("CAT", folderId, e, "tryCloudflareTrace");
+        logActivity("IP7", folderId, "tryCloudflareTrace");
+    }
+} // 3 www.cloudflare.com/cdn-cgi/trace
 
 function addBadIpVisitorId(folderId, calledFrom) {
     try {

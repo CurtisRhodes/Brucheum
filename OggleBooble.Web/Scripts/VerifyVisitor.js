@@ -117,7 +117,7 @@ function addVisitor(visitorData) {
     } catch (e) {
         //alert("AddVisitor CATCH: " + e);
         logActivity("AV2", 555, "addVisitor"); // add vis catch error
-        logError("CAT", 555, e, "addVisitor");
+        logError2("CAT", 555, e, "addVisitor");
     }
 }
 
