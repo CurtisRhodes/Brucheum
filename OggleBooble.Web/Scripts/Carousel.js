@@ -16,8 +16,7 @@ function launchCarousel(startRoot) {
     let carouselSkip = 0;
     imageIndex = 0;
     let lastStep = "o";
-    try
-    {
+    try {
         //loadCarouselSettingsIntoLocalStorage();
         //jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
         window.addEventListener("resize", resizeCarousel);
@@ -87,24 +86,26 @@ function launchCarousel(startRoot) {
 
         refreshCache(startRoot);
     }
-    catch (e)
-    {
-        if (lastStep == "boobs") {
-            localStorage.removeItem("carouselCache");
-            launchCarousel("boobs");
+    catch (e) {
+        if (e.IndexOf("SyntaxError: Unexpected token u in JSON at position 1") > -1) {
+            if (lastStep == "boobs") {
+                localStorage.removeItem("carouselCache");
+                launchCarousel("boobs");
+            }
+            if (lastStep == "porn") {
+                localStorage.removeItem("pornCache");
+                launchCarousel("porn");
+            }
+            if (lastStep == "centerfold") {
+                localStorage.removeItem("centerfoldCache");
+                launchCarousel("centerfold");
+            }
+            //logError("CAT", startRoot, "lastStep:" + lastStep + "  e: " + e, "launchCarousel");
         }
-        if (lastStep == "porn") {
-            localStorage.removeItem("pornCache");
-            launchCarousel("porn");
+        else {
+            logError("CAT", 3910, e, "launchCarousel");
         }
-        if (lastStep == "centerfold") {
-            localStorage.removeItem("centerfoldCache");
-            launchCarousel("centerfold");
-        }
-
-        // SyntaxError: Unexpected token u in JSON at position 
         if (document.domain == "localHost") alert("launchCarousel CATCH: lastStep: " + lastStep + " e: " + e);
-        logError("CAT", startRoot, "lastStep:" + lastStep + "  e: " + e, "launchCarousel");
     }
 }
 

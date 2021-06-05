@@ -41,7 +41,7 @@
     }
     catch (e) {
         logActivity2(create_UUID(), "VV5", folderId, "verify Visitor"); // verify visitor CATCH error
-        logError("CAT", folderId, e, "verify Visitor");
+        logError2(create_UUID(), "CAT", folderId, e, "verify Visitor");
         if (document.domain === 'localhost') alert("Catch error in verifyVisitorId!!: " + e);
     }
 }
@@ -66,16 +66,9 @@ function addVisitor(visitorData) {
                     loadUserProfile("add new visitor");
                     //logIpHit(avSuccess.VisitorId, visitorData.IpAddress, visitorData.InitialPage);
                     logVisit(visitorData.InitialPage, "add Visitor");
-                    if (visitorData.CalledFrom == "attempt Register") {
-                        //logEvent("LOG", 0, "Successfull log in: " + localStorage["UserName"]);
-                        //displayStatusMessage("ok", "thanks for Registering " + localStorage["UserName"]);
-                        //localStorage["IsLoggedIn"] = true;
-                        //$('#optionLoggedIn').show();
-                        //$('#optionNotLoggedIn').hide();
-                        //dragableDialogClose();
-                        //displayStatusMessage("ok", "thanks for Registering" + userName);
-                        //console.log("update RegisteredUser IsLoggedIn: " + localStorage["IsLoggedIn"] +
-                        //    " UserName: " + localStorage["UserName"] + " UserRole: " + localStorage["UserRole"]);
+                    if (visitorData.CalledFrom == "verify Visitor") {
+                        // repair all references (would need to know bad visitorId)
+                        logActivity("IPB", folderId, "trytoGetIp/" + calledFrom); // repairing bad visitorId
                     }
                 }
                 if (avSuccess.Success == "existing Ip") {
@@ -122,62 +115,73 @@ function addVisitor(visitorData) {
 }
 
 function loadUserProfile(calledFrom) {
-    let visitorId = getCookieValue("VisitorId");
-    try {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + visitorId,
-            success: function (visitorInfo) {
-                if (visitorInfo.Success == "ok") {
-                    if (visitorInfo.IsRegisteredUser) {
-                        localStorage["IsLoggedIn"] = visitorInfo.RegisteredUser.IsLoggedIn;
-                        localStorage["UserName"] = visitorInfo.RegisteredUser.UserName;
-                        localStorage["UserRole"] = visitorInfo.RegisteredUser.UserRole;
-                        
-                        if (localStorage["IsLoggedIn"] == true) {
+    if (calledFrom == "add new visitor") {
+        localStorage["IsLoggedIn"] = false;
+        localStorage["UserName"] = "not registered";
+        localStorage["UserRole"] = "not registered";
+        $('#spnUserName').html(localStorage["UserName"]);
+        $('#optionNotLoggedIn').show();
+        $('#optionLoggedIn').hide();
+        $('#footerCol5').hide();
+    }
+    else {
+        let visitorId = getCookieValue("VisitorId");
+        try {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + visitorId,
+                success: function (visitorInfo) {
+                    if (visitorInfo.Success == "ok") {
+                        if (visitorInfo.IsRegisteredUser) {
+                            localStorage["IsLoggedIn"] = visitorInfo.RegisteredUser.IsLoggedIn;
+                            localStorage["UserName"] = visitorInfo.RegisteredUser.UserName;
+                            localStorage["UserRole"] = visitorInfo.RegisteredUser.UserRole;
+
+                            if (localStorage["IsLoggedIn"] == true) {
+                                $('#spnUserName').html(localStorage["UserName"]);
+                                $('#optionNotLoggedIn').hide();
+                                $('#optionLoggedIn').show();
+                                $('#footerCol5').show();
+                            }
+
+                            if (calledFrom == "show UserProfileDialog") {
+                                $('#txtUserProfileName').val(visitorInfo.RegisteredUser.UserName);
+                                $('#txtUserProfileFirstName').val(visitorInfo.RegisteredUser.FirstName);
+                                $('#txtUserProfileLastName').val(visitorInfo.RegisteredUser.LastName);
+                                $('#txtUserProfileEmail').val(visitorInfo.RegisteredUser.Email);
+                            }
+                        }
+                        else {
+                            localStorage["IsLoggedIn"] = false;
+                            localStorage["UserName"] = "not registered";
+                            localStorage["UserRole"] = "not registered";
                             $('#spnUserName').html(localStorage["UserName"]);
-                            $('#optionNotLoggedIn').hide();
-                            $('#optionLoggedIn').show();
-                            $('#footerCol5').show();
+                            $('#optionNotLoggedIn').show();
+                            $('#optionLoggedIn').hide();
+                            $('#footerCol5').hide();
                         }
 
-                        if (calledFrom == "show UserProfileDialog") {
-                            $('#txtUserProfileName').val(visitorInfo.RegisteredUser.UserName);
-                            $('#txtUserProfileFirstName').val(visitorInfo.RegisteredUser.FirstName);
-                            $('#txtUserProfileLastName').val(visitorInfo.RegisteredUser.LastName);
-                            $('#txtUserProfileEmail').val(visitorInfo.RegisteredUser.Email);
+                        console.log("load UserProfile  IsLoggedIn: " + localStorage["IsLoggedIn"] +
+                            " UserName: " + localStorage["UserName"] +
+                            " UserRole: " + localStorage["UserRole"]);
+                    }
+                    else {
+                        if (visitorInfo.Success == "not found") {
+                            //logError("EVT", 470, "Ip:", "load UserProfile");  // VisitorId not found                    
+                        }
+                        else {
+                            logError("AJX", 0, visitorInfo.Success, "load UserProfile");
+                            if (document.domain == "localhost") alert("load UserProfile: " + visitorInfo.Success);
                         }
                     }
-                    else {
-                        localStorage["IsLoggedIn"] = false;
-                        localStorage["UserName"] = "not registered";
-                        localStorage["UserRole"] = "not registered";
-                        $('#spnUserName').html(localStorage["UserName"]);
-                        $('#optionNotLoggedIn').show();
-                        $('#optionLoggedIn').hide();
-                        $('#footerCol5').hide();
-                    }
-
-                    console.log("load UserProfile  IsLoggedIn: " + localStorage["IsLoggedIn"] +
-                        " UserName: " + localStorage["UserName"] +
-                        " UserRole: " + localStorage["UserRole"]);
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg, folderId, "load UserProfile")) logError("XHR", 0, errMsg, "load UserProfile");
                 }
-                else {
-                    if (visitorInfo.Success == "not found") {
-                        //logError("EVT", 470, "Ip:", "load UserProfile");  // VisitorId not found                    
-                    }
-                    else {
-                        logError("AJX", 0, visitorInfo.Success, "load UserProfile");
-                        if (document.domain == "localhost") alert("load UserProfile: " + visitorInfo.Success);
-                    }
-                }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "load UserProfile")) logError("XHR", 0, errMsg, "load UserProfile");
-            }
-        });
-    } catch (e) {
-        logError("CAT", 12440, e, "load UserProfile");
+            });
+        } catch (e) {
+            logError("CAT", 12440, e, "load UserProfile");
+        }
     }
 }

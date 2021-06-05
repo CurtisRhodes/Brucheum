@@ -19,11 +19,12 @@ function tryAddNewIP(folderId, calledFrom) {
                 }
                 else {
                     if (success = "badVisitor") {
-                        if (getCookieValue("VisitorId") == "not found")
+                        if (calledFrom == "verify Visitor") {
+                            logActivity("IPA", folderId, "trytoGetIp/" + calledFrom); // repairing bad visitorId
                             uniqueVisIdlookup(folderId, calledFrom);
+                        }
                         else {
                             logError("IH2", folderId, "", "trytoGetIp/" + calledFrom); // bad visitor already failed
-                            logActivity("IPH", folderId, "trytoGetIp/" + calledFrom);
                         }
                     }
                     else {
@@ -63,7 +64,7 @@ function getIpInfo(folderId, calledFrom) {
             return;
         }
         ip0Busy = true;
-        logActivity("IP1", folderId, "get IpInfo/" + calledFrom);
+        //logActivity("IP1", folderId, "get IpInfo/" + calledFrom);
         let ipCall0Returned = false;
         $.ajax({
             type: "GET",
@@ -71,7 +72,7 @@ function getIpInfo(folderId, calledFrom) {
             dataType: "JSON",
             statusCode: {
                 429: function () {
-                    logActivity("IP5", folderId, "get IpInfo/" + calledFrom);
+                    logActivity("IP5", folderId, "get IpInfo/" + calledFrom); // lookup limit exceeded
                     ipCall0Returned = true;
                     console.debug("getIpInfo Rate limit exceeded");
                     tryApiDbIpFree(folderId, calledFrom);
@@ -82,16 +83,11 @@ function getIpInfo(folderId, calledFrom) {
                 if (isNullorUndefined(ipResponse.ip)) {
                     console.debug("getIpInfo null ip");
                     console.debug("getIpInfo ipResponse.ip: " + JSON.stringify(ipResponse, null, 2));
-                    logActivity("IP6", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but came back with no ip
+                    logActivity("IP9", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but came back with no ip
                     logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
                 }
                 else
                 {
-                    if (ipResponse.ip == "not found") {
-                        logActivity("IP9", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but came back with no ip
-                        //tryApiDbIpFree(folderId, calledFrom);
-                    }
-                    else {
                         console.debug("getIpInfo success");
                         logActivity("IP2", folderId, "get IpInfo/" + calledFrom);
                         addVisitor(
@@ -102,40 +98,25 @@ function getIpInfo(folderId, calledFrom) {
                                 Region: ipResponse.region,
                                 GeoCode: ipResponse.loc,
                                 InitialPage: folderId,
-                                CalledFrom: "get IpInfo"
+                                CalledFrom: calledFrom
                             }
                         );
-                    }
                 }
                 ip0Busy = false;
             },
             error: function (jqXHR) {
+                logActivity("IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
-                    console.debug("still calling error function");
-                //    alert("still calling error function");
-                //    logActivity("IP5", folderId, "get IpInfo/" + calledFrom);
-                //    console.debug("getIpInfo Rate limit exceeded");
-                //    tryApiDbIpFree(folderId, calledFrom);
+                    logActivity("IP5", folderId, "IpInfo XHR/" + calledFrom); // lookup limit exceeded
+                    tryApiDbIpFree(folderId, calledFrom);
                 }
                 else {
-                    console.debug("getIpInfo XHR: " + errMsg);
                     if (!checkFor404(errMsg, folderId, "get IpInfo")) {
                         logError("XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
-                        logActivity("IP6", folderId, "get IpInfo/" + calledFrom); // XHR error
-                    }
-                    else {
-                        if ((visitorId == "not found") && (folderId == 15) && (errMsg = ""))
-                        {
-                            logActivity("IPW", errMsg.indexOf("Not connect"), errMsg);
-                        }
-                        else {
-                            logActivity("IP3", folderId, "get IpInfo");
-                        }
                     }
                 }
-                //geoplugin(folderId, calledFrom);  // try something else
                 ip0Busy = false;
             }
         });
@@ -197,7 +178,7 @@ function tryApiDbIpFree(folderId, calledFrom) {
                         else {
                             if (ipResponse.errorCode == "OVER_QUERY_LIMIT") {
                                 console.debug("tryApiDbIpFree OVER_QUERY_LIMIT");
-                                logActivity("IP5", folderId, "apiDbIpFree/" + calledFrom);
+                                logActivity("IP5", folderId, "apiDbIpFree/" + calledFrom); // lookup limit exceeded
                                 tryCloudflareTrace(folderId, calledFrom); // try something else
                             }
                             else {
@@ -213,7 +194,7 @@ function tryApiDbIpFree(folderId, calledFrom) {
                         console.debug("tryApiDbIpFree XHR");
                         let errMsg = getXHRErrorDetails(jqXHR);
                         if (errMsg.indexOf("Rate limit exceeded") > 0) {
-                            logActivity("IP5", folderId, "apiDbIpFree XHR");
+                            logActivity("IP5", folderId, "apiDbIpFree XHR");  // lookup limit exceeded
                             tryCloudflareTrace(folderId, calledFrom); // try something else
                         }
                         else {
@@ -304,7 +285,7 @@ function tryCloudflareTrace(folderId, calledFrom) {
                         else {
                             if (ipResponse.errorCode == "OVER_QUERY_LIMIT") {
                                 console.debug("tryApiDbIpFree OVER_QUERY_LIMIT");
-                                logActivity("IP5", folderId, "tryCloudflareTrace/" + calledFrom);
+                                logActivity("IP5", folderId, "tryCloudflareTrace/" + calledFrom); // lookup limit exceeded
                                 addBadIpVisitorId(folderId, calledFrom);
                             }
                             else {
@@ -320,7 +301,7 @@ function tryCloudflareTrace(folderId, calledFrom) {
                         ipCall3Returned = true;
                         let errMsg = getXHRErrorDetails(jqXHR);
                         if (errMsg.indexOf("Rate limit exceeded") > 0) {
-                            logActivity("IP5", folderId, "tryCloudflareTrace");
+                            logActivity("IP5", folderId, "tryCloudflareTrace"); // lookup limit exceeded
                             addBadIpVisitorId(folderId, calledFrom);
                         }
                         else {
@@ -492,7 +473,7 @@ function geoplugin(folderId, calledFrom) {
                     let errMsg = getXHRErrorDetails(jqXHR);
                     if (errMsg.indexOf("Rate limit exceeded") > 0) {
                         console.debug("geoplugin Rate limit exceeded");
-                        logActivity("IP5", folderId, "geoplugin");
+                        logActivity("IP5", folderId, "geoplugin");  // lookup limit exceeded
                         tryApiDbIpFree(folderId, calledFrom); // try something else
                     }
                     else {

@@ -104,18 +104,13 @@ function logVisit(folderId, calledFrom) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
             success: function (logVisitSuccessModel) {
-                //  public string VisitorId { get; set; }
-                //  public bool IsNewVisitor { get; set; }
-                //  public bool VisitAdded { get; set; }
-                //  public string WelcomeMessage { get; set; }
-                //  public string Success { get; set; }
                 if (logVisitSuccessModel.Success === "ok") {
                     if (logVisitSuccessModel.VisitAdded) {
 
                         $('#headerMessage').html(logVisitSuccessModel.WelcomeMessage);
 
                         if (logVisitSuccessModel.IsNewVisitor) {
-                            logActivity("LV1", folderId, "logVisit/" + calledFrom);
+                            logActivity("LV1", folderId, "logVisit/" + calledFrom); // new visitor visit added
                         }
                         else {
                             logActivity("LV2", folderId, "logVisit/" + calledFrom);  // Return Vist Recorded
@@ -124,7 +119,7 @@ function logVisit(folderId, calledFrom) {
                 }
                 else {
                     if (logVisitSuccessModel.Success == "VisitorId not found") {
-                        logActivity("LV3", folderId, "log Visit");  // visitorId not found
+                        logActivity("LV3", folderId, "logVisit/" + calledFrom);  // visitorId not found
                         //logError("LV3", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
                     }
                     else {
