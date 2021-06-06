@@ -86,21 +86,21 @@ function getIpInfo(folderId, calledFrom) {
                     logActivity("IP9", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but came back with no ip
                     logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
                 }
-                else
-                {
-                        console.debug("getIpInfo success");
-                        logActivity("IP2", folderId, "get IpInfo/" + calledFrom);
-                        addVisitor(
-                            {
-                                IpAddress: ipResponse.ip,
-                                City: ipResponse.city,
-                                Country: ipResponse.country,
-                                Region: ipResponse.region,
-                                GeoCode: ipResponse.loc,
-                                InitialPage: folderId,
-                                CalledFrom: calledFrom
-                            }
-                        );
+                else {
+                    logActivity("IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
+
+                    if (calledFrom == "verify Visitor") 
+                        logActivity("IPB", folderId, "get IpInfo/" + calledFrom);
+
+                    addVisitor({
+                        IpAddress: ipResponse.ip,
+                        City: ipResponse.city,
+                        Country: ipResponse.country,
+                        Region: ipResponse.region,
+                        GeoCode: ipResponse.loc,
+                        InitialPage: folderId,
+                        CalledFrom: calledFrom
+                    });
                 }
                 ip0Busy = false;
             },

@@ -46,7 +46,6 @@
     }
 }
 
-let lastNewVisitor = "htww";
 function addVisitor(visitorData) {
     try
     {
@@ -68,26 +67,23 @@ function addVisitor(visitorData) {
                     logVisit(visitorData.InitialPage, "add Visitor");
                     if (visitorData.CalledFrom == "verify Visitor") {
                         // repair all references (would need to know bad visitorId)
-                        logActivity("IPB", folderId, "trytoGetIp/" + calledFrom); // repairing bad visitorId
+                        logActivity("IPC", folderId, "trytoGetIp/" + calledFrom); // repair bad visitorId succeeded
                     }
                 }
                 if (avSuccess.Success == "existing Ip") {
+                    if (visitorData.CalledFrom == "verify Visitor") {
+                        logActivity("IPC", folderId, "trytoGetIp/" + calledFrom); // repair bad visitorId succeeded
+                    }
+
                     if (avSuccess.VisitorId == "not found") {
                         logActivity("AV6", visitorData.InitialPage, "add Visitor");  // tried to ass Not Found to WIP
                     }
                     else {
                         setCookieValue("VisitorId", avSuccess.VisitorId);
                         logActivity("AV5", visitorData.InitialPage, "add Visitor");  // existing IP visitorId used
-
-                        let isLooping = (lastNewVisitor == avSuccess.VisitorId);
-                        logError("WIP", visitorData.InitialPage, "isLooping: " + isLooping, "addVisitor/" + visitorData.CalledFrom); // wasted Ip call
-                        if (!isLooping) {
-                            //accepts cookies
-                            lastNewVisitor = avSuccess.VisitorId;
-                            loadUserProfile("recall existing Ip");
-                            //logIpHit(avSuccess.VisitorId, visitorData.IpAddress, visitorData.InitialPage);
-                            logVisit(visitorData.InitialPage, "add Visitor");
-                        }
+                        loadUserProfile("recall existing Ip");
+                        //logIpHit(avSuccess.VisitorId, visitorData.IpAddress, visitorData.InitialPage);
+                        logVisit(visitorData.InitialPage, "add Visitor");
                     }
                 }
                 if (avSuccess.Success.indexOf("Duplicate entry") > 0) {

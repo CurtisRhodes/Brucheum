@@ -981,382 +981,383 @@ namespace OggleBooble.Api.Controllers
                                         else
                                         {
                                             fileName1 = dbCatFolder1.FolderPath.Substring(dbCatFolder1.FolderPath.LastIndexOf("/") + 1) + "_" + imageId1 + ext1;
-                                            ftpIimage1 = ftpHost + "img.Ogglebooble.com/" + dbCatFolder1.FolderPath + "/" + fileName1;
-                                            strategy = DetermineStrategy(dupGroup[0], dbCatFolder0, dupGroup[1], dbCatFolder1);
+                                        }
+                                        ftpIimage1 = ftpHost + "img.Ogglebooble.com/" + dbCatFolder1.FolderPath + "/" + fileName1;
+                                        strategy = DetermineStrategy(dupGroup[0], dbCatFolder0, dupGroup[1], dbCatFolder1);
 
-                                            switch (strategy)
-                                            {
-                                                case "remove1":
+                                        switch (strategy)
+                                        {
+                                            case "remove1":
+                                                {
+                                                    ftpSuccess = RemoveImage(dupeFolderId1, imageId1, ftpIimage1);
+                                                    if (ftpSuccess == "ok")
                                                     {
-                                                        ftpSuccess = RemoveImage(dupeFolderId1, imageId1, ftpIimage1);
-                                                        if (ftpSuccess == "ok")
-                                                        {
-                                                            dupeCheckModel.ImageFilesRemoved++;
-                                                            localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
+                                                        dupeCheckModel.ImageFilesRemoved++;
+                                                        localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
 
-                                                            if (localSuccess == "ok")
-                                                            {
-                                                                dupeCheckModel.LocalFilesDeleted++;
-                                                                db.PlayboyPlusDupes.RemoveRange(dupGroup);
-                                                                db.SaveChanges();
-                                                            }
-                                                            else
-                                                            {
-                                                                LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName1);
-                                                                dupeCheckModel.Errors++;
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            LogDupeError(dupeFolderId0, "ftp fail: " + ftpSuccess, fileName0);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-                                                        break;
-                                                    }
-                                                case "remove0":
-                                                    {
-                                                        ftpSuccess = RemoveImage(dupeFolderId0, imageId1, ftpIimage0);
-                                                        if (ftpSuccess == "ok")
-                                                        {
-                                                            dupeCheckModel.ImageFilesRemoved++;
-                                                            localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
-
-                                                            if (localSuccess == "ok")
-                                                            {
-                                                                dupeCheckModel.LocalFilesDeleted++;
-                                                                db.PlayboyPlusDupes.RemoveRange(dupGroup);
-                                                                db.SaveChanges();
-                                                            }
-                                                            else
-                                                            {
-                                                                LogDupeError(dupeFolderId0, "local delete fail: " + localSuccess, fileName0);
-                                                                dupeCheckModel.Errors++;
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            LogDupeError(dupeFolderId0, "ftp fail: " + ftpSuccess, fileName0);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-                                                        //dupeCheckModel.Copy0remove1++;
-                                                        break;
-                                                    }
-                                                case "local issue":
-                                                    {
-                                                        localSuccess = "xx";
-                                                        if (dupGroup[0].FolderId != dbImageFile0.FolderId)
-                                                        {
-                                                            if (dbCatFolder0.FolderType == "singleChild")
-                                                            {
-                                                                dbCatFolder0 = db.CategoryFolders.Where(f => f.Id == dbCatFolder1.Parent).FirstOrDefault();
-                                                                fileName0 = dbCatFolder0.FolderPath.Substring(dbCatFolder0.FolderPath.LastIndexOf("/") + 1) + "_" + imageId0 + ext1;
-                                                            }
-                                                            else
-                                                                fileName0 = dbCatFolder1.FolderPath.Substring(dbCatFolder1.FolderPath.LastIndexOf("/") + 1) + "_" + imageId0 + ext1;
-
-                                                            localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
-                                                            if (localSuccess == "ok")
-                                                                dupeCheckModel.LocalFilesDeleted++;
-                                                            else
-                                                            {
-                                                                LogDupeError(dupGroup[1].FolderId, "local delete fail: " + localSuccess, fileName0);
-                                                                dupeCheckModel.Errors++;
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            if (dupGroup[1].FolderId != dbImageFile1.FolderId)
-                                                            {
-                                                                if (dbCatFolder1.FolderType == "singleChild")
-                                                                {
-                                                                    dbCatFolderP = db.CategoryFolders.Where(f => f.Id == dbCatFolder1.Parent).FirstOrDefault();
-                                                                    fileName1 = dbCatFolderP.FolderPath.Substring(dbCatFolderP.FolderPath.LastIndexOf("/") + 1) + "_" + imageId1 + ext1;
-                                                                }
-                                                                else
-                                                                    fileName1 = dbCatFolder1.FolderPath.Substring(dbCatFolder1.FolderPath.LastIndexOf("/") + 1) + "_" + imageId1 + ext1;
-
-                                                                localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
-                                                                if (localSuccess == "ok")
-                                                                    dupeCheckModel.LocalFilesDeleted++;
-                                                                else
-                                                                {
-                                                                    LogDupeError(dupGroup[0].FolderId, "local delete fail: " + localSuccess, fileName1);
-                                                                    dupeCheckModel.Errors++;
-                                                                }
-                                                            }
-                                                        }
                                                         if (localSuccess == "ok")
                                                         {
+                                                            dupeCheckModel.LocalFilesDeleted++;
                                                             db.PlayboyPlusDupes.RemoveRange(dupGroup);
                                                             db.SaveChanges();
-                                                            dupeCheckModel.LocalIssue++;
                                                         }
-                                                        break;
+                                                        else
+                                                        {
+                                                            LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName1);
+                                                            dupeCheckModel.Errors++;
+                                                        }
                                                     }
-                                                case "copy0remove1":
+                                                    else
                                                     {
-                                                        ftpSuccess = "xx";
+                                                        LogDupeError(dupeFolderId0, "ftp fail: " + ftpSuccess, fileName0);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    break;
+                                                }
+                                            case "remove0":
+                                                {
+                                                    ftpSuccess = RemoveImage(dupeFolderId0, imageId1, ftpIimage0);
+                                                    if (ftpSuccess == "ok")
+                                                    {
+                                                        dupeCheckModel.ImageFilesRemoved++;
+                                                        localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
+
+                                                        if (localSuccess == "ok")
+                                                        {
+                                                            dupeCheckModel.LocalFilesDeleted++;
+                                                            db.PlayboyPlusDupes.RemoveRange(dupGroup);
+                                                            db.SaveChanges();
+                                                        }
+                                                        else
+                                                        {
+                                                            LogDupeError(dupeFolderId0, "local delete fail: " + localSuccess, fileName0);
+                                                            dupeCheckModel.Errors++;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId0, "ftp fail: " + ftpSuccess, fileName0);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    //dupeCheckModel.Copy0remove1++;
+                                                    break;
+                                                }
+                                            case "local issue":
+                                                {
+                                                    localSuccess = "xx";
+                                                    if (dupGroup[0].FolderId != dbImageFile0.FolderId)
+                                                    {
+                                                        if (dbCatFolder0.FolderType == "singleChild")
+                                                        {
+                                                            dbCatFolder0 = db.CategoryFolders.Where(f => f.Id == dbCatFolder1.Parent).FirstOrDefault();
+                                                            fileName0 = dbCatFolder0.FolderPath.Substring(dbCatFolder0.FolderPath.LastIndexOf("/") + 1) + "_" + imageId0 + ext1;
+                                                        }
+                                                        else
+                                                            fileName0 = dbCatFolder1.FolderPath.Substring(dbCatFolder1.FolderPath.LastIndexOf("/") + 1) + "_" + imageId0 + ext1;
+
+                                                        localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
+                                                        if (localSuccess == "ok")
+                                                            dupeCheckModel.LocalFilesDeleted++;
+                                                        else
+                                                        {
+                                                            LogDupeError(dupGroup[1].FolderId, "local delete fail: " + localSuccess, fileName0);
+                                                            dupeCheckModel.Errors++;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (dupGroup[1].FolderId != dbImageFile1.FolderId)
+                                                        {
+                                                            if (dbCatFolder1.FolderType == "singleChild")
+                                                            {
+                                                                dbCatFolderP = db.CategoryFolders.Where(f => f.Id == dbCatFolder1.Parent).FirstOrDefault();
+                                                                fileName1 = dbCatFolderP.FolderPath.Substring(dbCatFolderP.FolderPath.LastIndexOf("/") + 1) + "_" + imageId1 + ext1;
+                                                            }
+                                                            else
+                                                                fileName1 = dbCatFolder1.FolderPath.Substring(dbCatFolder1.FolderPath.LastIndexOf("/") + 1) + "_" + imageId1 + ext1;
+
+                                                            localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
+                                                            if (localSuccess == "ok")
+                                                                dupeCheckModel.LocalFilesDeleted++;
+                                                            else
+                                                            {
+                                                                LogDupeError(dupGroup[0].FolderId, "local delete fail: " + localSuccess, fileName1);
+                                                                dupeCheckModel.Errors++;
+                                                            }
+                                                        }
+                                                    }
+                                                    if (localSuccess == "ok")
+                                                    {
+                                                        db.PlayboyPlusDupes.RemoveRange(dupGroup);
+                                                        db.SaveChanges();
+                                                        dupeCheckModel.LocalIssue++;
+                                                    }
+                                                    break;
+                                                }
+                                            case "copy0remove1":
+                                                {
+                                                    ftpSuccess = "xx";
+                                                    ftpSuccess = FtpUtilies.DeleteFile(ftpIimage1);
+                                                    if (ftpSuccess == "ok")
+                                                    {
+                                                        dupeCheckModel.ServerFilesDeleted++;
+
+                                                        var dbCategoryImageLinks = db.CategoryImageLinks.
+                                                            Where(l => l.ImageCategoryId == dupeFolderId1
+                                                            && l.ImageLinkId == imageId1).ToList();
+                                                        db.CategoryImageLinks.RemoveRange(dbCategoryImageLinks);
+                                                        db.SaveChanges();
+                                                        dupeCheckModel.LinksRemoved++;
+
+                                                        db.ImageFiles.Remove(dbImageFile1);
+                                                        db.SaveChanges();
+                                                        dupeCheckModel.ImageFilesRemoved++;
+
+                                                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                                                        {
+                                                            ImageCategoryId = dupeFolderId1,
+                                                            ImageLinkId = imageId0,
+                                                            SortOrder = 174000
+                                                        });
+                                                        db.SaveChanges();
+                                                        dupeCheckModel.LinksAdded++;
+
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId1, "server error: " + ftpSuccess, ftpIimage1);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
+
+                                                    if (localSuccess == "ok")
+                                                    {
+                                                        dupeCheckModel.LocalFilesDeleted++;
+                                                        db.PlayboyPlusDupes.RemoveRange(dupGroup);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName0);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    dupeCheckModel.Copy0remove1++;
+                                                    break;
+                                                }
+                                            case "move0remove1":
+                                                {
+                                                    ftpSuccess = "m0r1";
+                                                    // MOVE 0 TO 
+                                                    var newfilename = ftpHost + "img.Ogglebooble.com/" + dbCatFolder1.FolderPath + "/" + dbCatFolder1.FolderName + "_" + imageId0 + ext1;
+                                                    ftpSuccess = FtpUtilies.MoveFile(ftpIimage0, newfilename);
+                                                    if (ftpSuccess != "ok")
+                                                    {
+                                                        //ftpSuccess = FtpUtilies.MoveFile(ftpIimage0, dbCatFolder1.FolderPath);
+                                                        LogDupeError(dupeFolderId0, "server Move error: " + ftpSuccess, dbCatFolder1.FolderPath);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    else
+                                                    {
+                                                        dupeCheckModel.ImageFilesMoved++;
+                                                        // CHANGE DBASE TO TO POINT TO DESTINATION FOLDER
+                                                        dbImageFile0.FileName = dbCatFolder1.FolderName + "_" + imageId0 + ext1;
+                                                        dbImageFile0.FolderId = dbCatFolder1.Id;
+                                                        db.SaveChanges();
+
+                                                        // ADD LINK TO DESTINATION FOLDER
+                                                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                                                        {
+                                                            ImageCategoryId = dupeFolderId1,
+                                                            ImageLinkId = imageId0,
+                                                            SortOrder = 1011098
+                                                        });
+                                                        db.SaveChanges();
+                                                        dupeCheckModel.LinksAdded++;
+
+                                                        //    // DELETE CURRENT IMAGE IN DESTIATION FOLDER
                                                         ftpSuccess = FtpUtilies.DeleteFile(ftpIimage1);
                                                         if (ftpSuccess == "ok")
                                                         {
                                                             dupeCheckModel.ServerFilesDeleted++;
-
-                                                            var dbCategoryImageLinks = db.CategoryImageLinks.
-                                                                Where(l => l.ImageCategoryId == dupeFolderId1
-                                                                && l.ImageLinkId == imageId1).ToList();
+                                                            // REMOVE LINK(S)
+                                                            var dbCategoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dupeFolderId1
+                                                            && l.ImageLinkId == imageId1).ToList();
                                                             db.CategoryImageLinks.RemoveRange(dbCategoryImageLinks);
                                                             db.SaveChanges();
                                                             dupeCheckModel.LinksRemoved++;
 
+                                                            // REMOVE IMAGE FILE ROW
                                                             db.ImageFiles.Remove(dbImageFile1);
                                                             db.SaveChanges();
                                                             dupeCheckModel.ImageFilesRemoved++;
-
-                                                            db.CategoryImageLinks.Add(new CategoryImageLink()
-                                                            {
-                                                                ImageCategoryId = dupeFolderId1,
-                                                                ImageLinkId = imageId0,
-                                                                SortOrder = 174000
-                                                            });
-                                                            db.SaveChanges();
-                                                            dupeCheckModel.LinksAdded++;
-
                                                         }
                                                         else
                                                         {
                                                             LogDupeError(dupeFolderId1, "server error: " + ftpSuccess, ftpIimage1);
                                                             dupeCheckModel.Errors++;
                                                         }
-                                                        localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
-
-                                                        if (localSuccess == "ok")
-                                                        {
-                                                            dupeCheckModel.LocalFilesDeleted++;
-                                                            db.PlayboyPlusDupes.RemoveRange(dupGroup);
-                                                            db.SaveChanges();
-                                                        }
-                                                        else
-                                                        {
-                                                            LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName0);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-                                                        dupeCheckModel.Copy0remove1++;
-                                                        break;
                                                     }
-                                                case "move0remove1":
+
+                                                    localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
+                                                    if (localSuccess == "ok")
                                                     {
-                                                        ftpSuccess = "m0r1";
-                                                        // MOVE 0 TO 
-                                                        var newfilename = ftpHost + "img.Ogglebooble.com/" + dbCatFolder1.FolderPath + "/" + dbCatFolder1.FolderName + "_" + imageId0 + ext1;
-                                                        ftpSuccess = FtpUtilies.MoveFile(ftpIimage0, newfilename);
-                                                        if (ftpSuccess != "ok")
-                                                        {
-                                                            //ftpSuccess = FtpUtilies.MoveFile(ftpIimage0, dbCatFolder1.FolderPath);
-                                                            LogDupeError(dupeFolderId0, "server Move error: " + ftpSuccess, dbCatFolder1.FolderPath);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-                                                        else
-                                                        {
-                                                            dupeCheckModel.ImageFilesMoved++;
-                                                            // CHANGE DBASE TO TO POINT TO DESTINATION FOLDER
-                                                            dbImageFile0.FileName = dbCatFolder1.FolderName + "_" + imageId0 + ext1;
-                                                            dbImageFile0.FolderId = dbCatFolder1.Id;
-                                                            db.SaveChanges();
-
-                                                            // ADD LINK TO DESTINATION FOLDER
-                                                            db.CategoryImageLinks.Add(new CategoryImageLink()
-                                                            {
-                                                                ImageCategoryId = dupeFolderId1,
-                                                                ImageLinkId = imageId0,
-                                                                SortOrder = 1011098
-                                                            });
-                                                            db.SaveChanges();
-                                                            dupeCheckModel.LinksAdded++;
-
-                                                            //    // DELETE CURRENT IMAGE IN DESTIATION FOLDER
-                                                            ftpSuccess = FtpUtilies.DeleteFile(ftpIimage1);
-                                                            if (ftpSuccess == "ok")
-                                                            {
-                                                                dupeCheckModel.ServerFilesDeleted++;
-                                                                // REMOVE LINK(S)
-                                                                var dbCategoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dupeFolderId1
-                                                                && l.ImageLinkId == imageId1).ToList();
-                                                                db.CategoryImageLinks.RemoveRange(dbCategoryImageLinks);
-                                                                db.SaveChanges();
-                                                                dupeCheckModel.LinksRemoved++;
-
-                                                                // REMOVE IMAGE FILE ROW
-                                                                db.ImageFiles.Remove(dbImageFile1);
-                                                                db.SaveChanges();
-                                                                dupeCheckModel.ImageFilesRemoved++;
-                                                            }
-                                                            else
-                                                            {
-                                                                LogDupeError(dupeFolderId1, "server error: " + ftpSuccess, ftpIimage1);
-                                                                dupeCheckModel.Errors++;
-                                                            }
-                                                        }
-
-                                                        localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
-                                                        if (localSuccess == "ok")
-                                                        {
-                                                            dupeCheckModel.LocalFilesDeleted++;
-                                                        }
-                                                        else
-                                                        {
-                                                            LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName1);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-
-                                                        localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
-                                                        if (localSuccess == "ok")
-                                                        {
-                                                            dupeCheckModel.LocalFilesDeleted++;
-                                                            db.PlayboyPlusDupes.RemoveRange(dupGroup);
-                                                            db.SaveChanges();
-                                                        }
-                                                        else
-                                                        {
-                                                            LogDupeError(dupeFolderId0, "local delete fail: " + localSuccess, fileName0);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-                                                        dupeCheckModel.Move0remove1++;
-                                                        break;
+                                                        dupeCheckModel.LocalFilesDeleted++;
                                                     }
-                                                case "move1remove0":
+                                                    else
                                                     {
-                                                        ftpSuccess = "m1r0";
-                                                        // MOVE 0 TO 
-                                                        var newfilename = ftpHost + "img.Ogglebooble.com/" + dbCatFolder0.FolderPath + "/" + dbCatFolder0.FolderName + "_" + imageId1 + ext1;
-                                                        ftpSuccess = FtpUtilies.MoveFile(ftpIimage1, newfilename);
-                                                        if (ftpSuccess != "ok")
-                                                        {
-                                                            //ftpSuccess = FtpUtilies.MoveFile(ftpIimage0, dbCatFolder1.FolderPath);
-                                                            LogDupeError(dupeFolderId0, "server Move error: " + ftpSuccess, dbCatFolder1.FolderPath);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-                                                        else
-                                                        {
-                                                            dupeCheckModel.ImageFilesMoved++;
-                                                            // CHANGE DBASE TO TO POINT TO DESTINATION FOLDER
-                                                            dbImageFile1.FileName = dbCatFolder0.FolderName + "_" + imageId1 + ext1;
-                                                            dbImageFile1.FolderId = dbCatFolder0.Id;
-                                                            db.SaveChanges();
-
-                                                            // ADD LINK TO DESTINATION FOLDER
-                                                            db.CategoryImageLinks.Add(new CategoryImageLink()
-                                                            {
-                                                                ImageCategoryId = dupeFolderId0,
-                                                                ImageLinkId = imageId1,
-                                                                SortOrder = 1011093
-                                                            });
-                                                            db.SaveChanges();
-                                                            dupeCheckModel.LinksAdded++;
-
-                                                            //    // DELETE CURRENT IMAGE IN DESTIATION FOLDER
-                                                            ftpSuccess = FtpUtilies.DeleteFile(ftpIimage0);
-                                                            if (ftpSuccess == "ok")
-                                                            {
-                                                                dupeCheckModel.ServerFilesDeleted++;
-                                                                // REMOVE LINK(S)
-                                                                var dbCategoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dupeFolderId0
-                                                                && l.ImageLinkId == imageId0).ToList();
-                                                                db.CategoryImageLinks.RemoveRange(dbCategoryImageLinks);
-                                                                db.SaveChanges();
-                                                                dupeCheckModel.LinksRemoved++;
-
-                                                                // REMOVE IMAGE FILE ROW
-                                                                db.ImageFiles.Remove(dbImageFile0);
-                                                                db.SaveChanges();
-                                                                dupeCheckModel.ImageFilesRemoved++;
-                                                            }
-                                                            else
-                                                            {
-                                                                LogDupeError(dupeFolderId0, "server error: " + ftpSuccess, ftpIimage0);
-                                                                dupeCheckModel.Errors++;
-                                                            }
-                                                        }
-                                                        localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
-                                                        if (localSuccess == "ok")
-                                                        {
-                                                            dupeCheckModel.LocalFilesDeleted++;
-                                                        }
-                                                        else
-                                                        {
-                                                            LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName1);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-
-                                                        localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
-                                                        if (localSuccess == "ok")
-                                                        {
-                                                            dupeCheckModel.LocalFilesDeleted++;
-                                                            db.PlayboyPlusDupes.RemoveRange(dupGroup);
-                                                            db.SaveChanges();
-                                                        }
-                                                        else
-                                                        {
-                                                            LogDupeError(dupeFolderId0, "local delete fail: " + localSuccess, fileName0);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-                                                        dupeCheckModel.Move0remove1++;
-                                                        dupeCheckModel.Move1remove0++;
-                                                        break;
+                                                        LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName1);
+                                                        dupeCheckModel.Errors++;
                                                     }
-                                                case "copy1remove0":
+
+                                                    localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
+                                                    if (localSuccess == "ok")
                                                     {
-                                                        ftpSuccess = "c1r0";
+                                                        dupeCheckModel.LocalFilesDeleted++;
+                                                        db.PlayboyPlusDupes.RemoveRange(dupGroup);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId0, "local delete fail: " + localSuccess, fileName0);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    dupeCheckModel.Move0remove1++;
+                                                    break;
+                                                }
+                                            case "move1remove0":
+                                                {
+                                                    ftpSuccess = "m1r0";
+                                                    // MOVE 0 TO 
+                                                    var newfilename = ftpHost + "img.Ogglebooble.com/" + dbCatFolder0.FolderPath + "/" + dbCatFolder0.FolderName + "_" + imageId1 + ext1;
+                                                    ftpSuccess = FtpUtilies.MoveFile(ftpIimage1, newfilename);
+                                                    if (ftpSuccess != "ok")
+                                                    {
+                                                        //ftpSuccess = FtpUtilies.MoveFile(ftpIimage0, dbCatFolder1.FolderPath);
+                                                        LogDupeError(dupeFolderId0, "server Move error: " + ftpSuccess, dbCatFolder1.FolderPath);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    else
+                                                    {
+                                                        dupeCheckModel.ImageFilesMoved++;
+                                                        // CHANGE DBASE TO TO POINT TO DESTINATION FOLDER
+                                                        dbImageFile1.FileName = dbCatFolder0.FolderName + "_" + imageId1 + ext1;
+                                                        dbImageFile1.FolderId = dbCatFolder0.Id;
+                                                        db.SaveChanges();
+
+                                                        // ADD LINK TO DESTINATION FOLDER
+                                                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                                                        {
+                                                            ImageCategoryId = dupeFolderId0,
+                                                            ImageLinkId = imageId1,
+                                                            SortOrder = 1011093
+                                                        });
+                                                        db.SaveChanges();
+                                                        dupeCheckModel.LinksAdded++;
+
+                                                        //    // DELETE CURRENT IMAGE IN DESTIATION FOLDER
                                                         ftpSuccess = FtpUtilies.DeleteFile(ftpIimage0);
                                                         if (ftpSuccess == "ok")
                                                         {
                                                             dupeCheckModel.ServerFilesDeleted++;
-
-                                                            var dbCategoryImageLinks = db.CategoryImageLinks.
-                                                                Where(l => l.ImageCategoryId == dupeFolderId0
-                                                                && l.ImageLinkId == imageId0).ToList();
+                                                            // REMOVE LINK(S)
+                                                            var dbCategoryImageLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dupeFolderId0
+                                                            && l.ImageLinkId == imageId0).ToList();
                                                             db.CategoryImageLinks.RemoveRange(dbCategoryImageLinks);
                                                             db.SaveChanges();
                                                             dupeCheckModel.LinksRemoved++;
 
+                                                            // REMOVE IMAGE FILE ROW
                                                             db.ImageFiles.Remove(dbImageFile0);
                                                             db.SaveChanges();
                                                             dupeCheckModel.ImageFilesRemoved++;
-
-                                                            db.CategoryImageLinks.Add(new CategoryImageLink()
-                                                            {
-                                                                ImageCategoryId = dupeFolderId0,
-                                                                ImageLinkId = imageId1,
-                                                                SortOrder = 174004
-                                                            });
-                                                            db.SaveChanges();
-                                                            dupeCheckModel.LinksAdded++;
                                                         }
                                                         else
                                                         {
-                                                            LogDupeError(dupeFolderId1, "server error: " + ftpSuccess, ftpIimage1);
+                                                            LogDupeError(dupeFolderId0, "server error: " + ftpSuccess, ftpIimage0);
                                                             dupeCheckModel.Errors++;
                                                         }
-                                                        localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
-
-                                                        if (localSuccess == "ok")
-                                                        {
-                                                            dupeCheckModel.LocalFilesDeleted++;
-                                                            db.PlayboyPlusDupes.RemoveRange(dupGroup);
-                                                            db.SaveChanges();
-                                                        }
-                                                        else
-                                                        {
-                                                            LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName1);
-                                                            dupeCheckModel.Errors++;
-                                                        }
-                                                        dupeCheckModel.Copy0remove1++;
-                                                        break;
                                                     }
-                                                default:
-                                                    dupeCheckModel.Unhandled++;
+                                                    localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
+                                                    if (localSuccess == "ok")
+                                                    {
+                                                        dupeCheckModel.LocalFilesDeleted++;
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName1);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+
+                                                    localSuccess = LocalRemove(dbCatFolder0.FolderPath, fileName0);
+                                                    if (localSuccess == "ok")
+                                                    {
+                                                        dupeCheckModel.LocalFilesDeleted++;
+                                                        db.PlayboyPlusDupes.RemoveRange(dupGroup);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId0, "local delete fail: " + localSuccess, fileName0);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    dupeCheckModel.Move0remove1++;
+                                                    dupeCheckModel.Move1remove0++;
                                                     break;
-                                            }
+                                                }
+                                            case "copy1remove0":
+                                                {
+                                                    ftpSuccess = "c1r0";
+                                                    ftpSuccess = FtpUtilies.DeleteFile(ftpIimage0);
+                                                    if (ftpSuccess == "ok")
+                                                    {
+                                                        dupeCheckModel.ServerFilesDeleted++;
+
+                                                        var dbCategoryImageLinks = db.CategoryImageLinks.
+                                                            Where(l => l.ImageCategoryId == dupeFolderId0
+                                                            && l.ImageLinkId == imageId0).ToList();
+                                                        db.CategoryImageLinks.RemoveRange(dbCategoryImageLinks);
+                                                        db.SaveChanges();
+                                                        dupeCheckModel.LinksRemoved++;
+
+                                                        db.ImageFiles.Remove(dbImageFile0);
+                                                        db.SaveChanges();
+                                                        dupeCheckModel.ImageFilesRemoved++;
+
+                                                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                                                        {
+                                                            ImageCategoryId = dupeFolderId0,
+                                                            ImageLinkId = imageId1,
+                                                            SortOrder = 174004
+                                                        });
+                                                        db.SaveChanges();
+                                                        dupeCheckModel.LinksAdded++;
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId1, "server error: " + ftpSuccess, ftpIimage1);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    localSuccess = LocalRemove(dbCatFolder1.FolderPath, fileName1);
+
+                                                    if (localSuccess == "ok")
+                                                    {
+                                                        dupeCheckModel.LocalFilesDeleted++;
+                                                        db.PlayboyPlusDupes.RemoveRange(dupGroup);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        LogDupeError(dupeFolderId1, "local delete fail: " + localSuccess, fileName1);
+                                                        dupeCheckModel.Errors++;
+                                                    }
+                                                    dupeCheckModel.Copy0remove1++;
+                                                    break;
+                                                }
+                                            default:
+                                                dupeCheckModel.Unhandled++;
+                                                break;
                                         }
+
                                     }
                                 }
                             }
