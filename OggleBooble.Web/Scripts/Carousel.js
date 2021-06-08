@@ -12,7 +12,7 @@ function launchCarousel(startRoot) {
     imgSrc = "Images/redballon.png";
     $('#carouselContainer').html(carouselHtml());
     $('#pauseButton').html("||");
-    carouselTake = 777;
+    carouselTake = 45;
     let carouselSkip = 0;
     imageIndex = 0;
     let lastStep = "o";
@@ -37,6 +37,7 @@ function launchCarousel(startRoot) {
                 }
                 else {
                     if (document.domain == "localhost") alert("no " + startRoot + " cache found");
+                    carouselTake = 10;
                     console.log("no " + startRoot + " cache found");
                 }
                 break;
@@ -53,6 +54,7 @@ function launchCarousel(startRoot) {
                     startCarousel("big naturals cache");
                 }
                 else
+                    carouselTake = 10;
                     console.log("no " + startRoot + " cache found");
                 break;
             case "porn":
@@ -68,6 +70,7 @@ function launchCarousel(startRoot) {
                     console.log("loaded " + carouselItemArray.length + " from porn cache");
                 }
                 else
+                    carouselTake = 10;
                     console.log("no " + startRoot + " cache found");
                 break;
             default:
@@ -142,6 +145,7 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
 
                     if (carouselInfo.Links.length === carouselTake) {
                         carouselSkip += carouselTake;
+                        carouselTake = 500;
                         $('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
                             " total items: " + carouselItemArray.length.toLocaleString());
                         loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
@@ -206,8 +210,8 @@ function refreshCache(rootFolder) {
 
                     let jsnObj = "[";  //new JSONArray();
                     for (i = 0; i < cacheSize; i++) {
-                        let ix = Math.floor(Math.random() * carouselItemArray.length);
-                        jsnObj += (JSON.stringify(carouselItemArray[ix])) + ",";
+                        //let ix = Math.floor(Math.random() * cacheArray.length);
+                        jsnObj += (JSON.stringify(cacheArray[i])) + ",";
                     }
                     switch (rootFolder) {
                         case "porn":
