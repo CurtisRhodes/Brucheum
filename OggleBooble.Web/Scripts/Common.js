@@ -443,15 +443,17 @@ function showCustomMessage(blogId, allowClickAnywhere) {
     }
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/OggleBlog/GetBlogComment?blogId=" + blogId + "&userId=kluge",
+        url: settingsArray.ApiServer + "api/OggleBlog/GetBlogItem?blogId=" + blogId,
         success: function (entry) {
             if (entry.Success === "ok") {
 
                 $('#centeredDialogTitle').html(entry.CommentTitle);
                 $('#centeredDialogContents').html(entry.CommentText);
                 $("#centeredDialogContainer").draggable().fadeIn();
-                //$('#centeredDialogContainer').css("top", 200);
-                //$('#centeredDialogContainer').css("left", (window.innerWidth - $('#centeredDialog').width()) * .5);
+                $('#centeredDialogContainer').css("top", 200);
+                $('#centeredDialogContainer').css("left", -100);
+
+                //$('#centeredDialogContainer').css("left", (window.innerWidth / 2) - 200);
 
                 if (allowClickAnywhere) {
                     $('#centeredDialogCloseButton').prop('title', 'click anywhere on dialog to close');
@@ -468,7 +470,7 @@ function showCustomMessage(blogId, allowClickAnywhere) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "showCustomMessage")) logError("XHR", 311, errMsg, "showCustomMessage");
+            if (!checkFor404(errMsg, 999, "showCustomMessage")) logError("XHR", 311, errMsg, "showCustomMessage");
         }
     });
 }

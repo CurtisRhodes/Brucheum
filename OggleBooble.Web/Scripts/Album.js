@@ -247,11 +247,11 @@ function getAlbumImages(folderId) {
     }
 }
 
-function getAlbumPageInfo(folderId) {
+function getAlbumPageInfo(folderId, isLargeLoad) {
     var infoStart = Date.now();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?folderId=" + folderId + "&visitorId=" + getCookieValue("VisitorId"),
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
                 apFolderName = albumInfo.FolderName;
@@ -327,7 +327,7 @@ function getAlbumPageInfo(folderId) {
                 }
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
-                pleaseLogIn(folderId);
+                checkLoginStatus(albumInfo);
             }
             else {
                 if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {
@@ -344,28 +344,36 @@ function getAlbumPageInfo(folderId) {
     });
 }
 
-function pleaseLogIn(folderId) {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetUserInfo?folderId=" + folderId,
-        success: function (albumInfo) {
-            if (albumInfo.Success === "ok") {
-
-            }
-            else {
-                if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {
-                    logError("MIS", folderId, albumInfo.Success, "getAlbumImages");
-                    window.location.href = "Index.html";
+function checkLoginStatus(albumInfo) {
+    //alert()
+    if (!isLoggedIn()) {
+        if (albumInfo.FolderType == "singleChild") {
+            if (albumInfo.RootFolder == "centerfold") {
+                if (albumInfo.UserPageHits > 100) {
+                    showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
+                    $("#vailShell").fadeIn();
+                    logActivity("LGR", albumInfo.FolderId,"checkLoginStatus"); // login required
                 }
-                logError("AJX", folderId, albumInfo.Success, "getAlbumPageInfo");
             }
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "getAlbumPageInfo")) logError("XHR", folderId, errMsg, "getAlbumPageInfo");
         }
-    });
+    }
 }
+//    $.ajax({
+//        type: "GET",
+//        url: settingsArray.ApiServer + "api/GalleryPage/GetUserInfo?folderId=" + folderId,
+//        success: function (albumInfo) {
+//            if (albumInfo.Success === "ok") {
+//            }
+//            else {
+//                logError("AJX", folderId, albumInfo.Success, "getAlbumPageInfo");
+//            }
+//        },
+//        error: function (jqXHR) {
+//            let errMsg = getXHRErrorDetails(jqXHR);
+//            if (!checkFor404(errMsg, folderId, "getAlbumPageInfo")) logError("XHR", folderId, errMsg, "getAlbumPageInfo");
+//        }
+//    });
+
 
 function getDeepFolderCounts(folderId) { 
     $('#spanDeepCount').html("?");

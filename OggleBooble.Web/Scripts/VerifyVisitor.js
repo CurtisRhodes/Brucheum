@@ -59,7 +59,7 @@ function checkForRepeatBadVisitorId(folderId, visitorId) {
                         if (!navigator.cookieEnabled) {  // user does not accept cookies
                             logError("UNC", folderId, "xx", "CheckForRepeatBadVisitorId");
                         }
-                        logError("AJX", folderId, "visitorId: " + visitorId, "checkForRepeatBadVisitorId");
+                        logError("RBV", folderId, "visitorId: " + visitorId, "checkForRepeatBadVisitorId");
                     }
                 }
                 else {

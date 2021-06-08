@@ -90,7 +90,7 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/GalleryPage/GetAlbumPageInfo")]
-        public AlbumInfoModel GetAlbumPageInfo(int folderId)
+        public AlbumInfoModel GetAlbumPageInfo(int folderId, string visitorId)
         {
             var albumInfo = new AlbumInfoModel();
             try
@@ -107,6 +107,8 @@ namespace OggleBooble.Api.Controllers
                     albumInfo.TotalSubFolders = dbCategoryFolder.TotalSubFolders;
                     //albumInfo.FileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
                     //albumInfo.FolderCount = db.CategoryFolders.Where(f => f.Parent == folderId).Count();
+                    albumInfo.UserPageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
+
 
                     int curFileCount = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count();
                     if (albumInfo.FileCount != curFileCount)
