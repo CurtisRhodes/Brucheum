@@ -49,10 +49,10 @@ function attemptLogin() {
                     $("#centeredDialogContainer").hide();
 
                     //setCookieValue("UserName", userName);
-                    setCookieValue("IsLoggedIn", true);
+                    setCookieValue("IsLoggedIn", "true");
                     setCookieValue("VisitorId", loginSuccess.VisitorId);
 
-                    localStorage["IsLoggedIn"] = true;
+                    localStorage["IsLoggedIn"] = "true";
                     localStorage["UserName"] = loginSuccess.UserName;
                     localStorage["UserRole"] = loginSuccess.UserRole;
 
@@ -97,9 +97,9 @@ function onLogoutClick(pageId) {
         //setCookieValue("IsLoggedIn", "false");
         updateRegisteredUser({
             VisitorId: getCookieValue("VisitorId"),
-            IsLoggedIn: false
+            IsLoggedIn: "false"
         });
-        localStorage["IsLoggedIn"] = false;
+        localStorage["IsLoggedIn"] = "false";
         localStorage["UserName"] = "not registered";
         localStorage["UserRole"] = "not registered";
         $('#optionLoggedIn').hide();
@@ -136,7 +136,7 @@ function updateRegisteredUser(userInfo) {
                     localStorage["UserName"] = userInfo.UserName;
                     localStorage["UserRole"] = userInfo.UserRole;
 
-                    if (localStorage["IsLoggedIn"] == true) {
+                    if (localStorage["IsLoggedIn"] == "true") {
                         $('#spnUserName').html(localStorage["UserName"]);
                         $('#optionNotLoggedIn').hide();
                         $('#optionLoggedIn').show();
@@ -265,7 +265,7 @@ function attemptRegister() {
                         $("#centeredDialogContainer").hide();
 
                         //setCookieValue("VisitorId")
-                        localStorage["IsLoggedIn"] = true;
+                        localStorage["IsLoggedIn"] = "true";
                         localStorage["UserName"] = userInfo.UserName;
                         localStorage["UserRole"] = userInfo.UserRole;
 

@@ -1,8 +1,9 @@
 ﻿function isInRole(roleName) {
     try {
 
-        if (isNullorUndefined(localStorage["IsLoggedIn"]))
+        if (isNullorUndefined(localStorage["IsLoggedIn"])) {
             loadUserProfile("isInRole");
+        }
 
         if (!localStorage["UserName"] == "unregistered") {
             return false;

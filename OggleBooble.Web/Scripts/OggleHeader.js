@@ -204,6 +204,11 @@ function resetOggleHeader(folderId, rootFolder) {
 
     //console.log("header says IsLoggedIn = " + localStorage["IsLoggedIn"]);
     if (isNullorUndefined(localStorage["IsLoggedIn"])) {
+
+        localStorage["IsLoggedIn"] = "false";
+        $('#optionLoggedIn').hide();
+        $('#optionNotLoggedIn').show();
+        $('#footerCol5').hide();
         logError("LSH", folderId, "rootFolder: " + rootFolder, "resetOggleHeader");  // localStorage isLoggedIn Undefined in header
         loadUserProfile("resetOggleHeader");
     }

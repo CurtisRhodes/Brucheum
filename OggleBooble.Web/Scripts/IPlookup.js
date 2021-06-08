@@ -1,8 +1,6 @@
 ﻿
 function tryAddNewIP(folderId, calledFrom) {
     let visitorId = getCookieValue("VisitorId");
-    //console.log("tryAddNewIP. visitorId: " + visitorId);
-
     if (getCookieValue("VisitorId") == "not found") {
         logActivity("IP0", folderId, "trytoGetIp/" + calledFrom);
         uniqueVisIdlookup(folderId, calledFrom);
@@ -11,7 +9,7 @@ function tryAddNewIP(folderId, calledFrom) {
     {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + getCookieValue("VisitorId"),
+            url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
             success: function (success) {
                 if (success == "ok") {
                     //console.log("asked to lookup user with good visitorId cookie: " + visitorId);
@@ -89,9 +87,6 @@ function getIpInfo(folderId, calledFrom) {
                 else {
                     logActivity("IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
 
-                    if (calledFrom == "verify Visitor") 
-                        logActivity("IPB", folderId, "get IpInfo/" + calledFrom);
-
                     addVisitor({
                         IpAddress: ipResponse.ip,
                         City: ipResponse.city,
@@ -105,9 +100,16 @@ function getIpInfo(folderId, calledFrom) {
                 ip0Busy = false;
             },
             error: function (jqXHR) {
-                logActivity("IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
+
+                logActivity("IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
+                logError("XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
+
+                if (!isNullorUndefined(ipResponse))
+                    logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
+
+
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
                     logActivity("IP5", folderId, "IpInfo XHR/" + calledFrom); // lookup limit exceeded
                     tryApiDbIpFree(folderId, calledFrom);

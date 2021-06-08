@@ -145,6 +145,9 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                         $('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
                             " total items: " + carouselItemArray.length.toLocaleString());
                         loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
+
+
+
                     }
                     else {
                         let delta = (Date.now() - startTime) / 1000;
@@ -174,64 +177,60 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
 function refreshCache(rootFolder) {
     try {
         let startTime = Date.now();
+        let cacheSize = 11;
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Carousel/RefreshCache?root=" + rootFolder + "&cacheCount=" + cacheCount,
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
                     let cacheArray = [];
-                    let isAlreadyInArray = false;
-                    $.each(carouselInfo.Links, function (idx, obj) {
-                        isAlreadyInArray = false;
-                        for (i = 0; i < carouselInfo.length; i++) {
-                            if (obj.Id === carouselInfo[i].Id) {
-                                if (carouselDebugMode) alert(obj.Id + " already in carouselItemArray: " + carouselItemArray.find(item => { item.Id == obj.Id }));
-                                console.log(obj.Id + " already in carouselItemArray");
-                                isAlreadyInArray = true;
-                            }
-                        }
-                        if (!isAlreadyInArray) {
-                            //if (carouselItemArray.find(item => { item.Id == obj.Id }) != undefined) {
-                            cacheArray.push(obj);
-                        }
+                    //let isAlreadyInArray = false;
+                    for (i = 0; i < cacheSize; i++) {
+                        cacheArray.push(carouselInfo.Links[i]);
+                    };
 
-                        let jsnObj = "[";  //new JSONArray();
-                        for (i = 0; i < cacheArray.length; i++) {
-                            let ix = Math.floor(Math.random() * carouselItemArray.length);
-                            jsnObj += (JSON.stringify(carouselItemArray[ix])) + ",";
-                        }
-                        switch (rootFolder) {
-                            case "porn":
-                                window.localStorage.removeItem["pornCache"];
-                                window.localStorage["pornCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
-                                break;
-                            case "centerfold":
-                                window.localStorage.removeItem["centerfoldCache"];
-                                window.localStorage["centerfoldCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
-                                break;
-                            case "boobs":
-                                try {
-                                    window.localStorage.removeItem["carouselCache"];
-                                    window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
-                                }
-                                catch (e)
-                                {
-                                    window.localStorage.removeItem["pornCache"];
-                                    window.localStorage.removeItem["carouselCache"];
-                                    window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
-                              }
-                                break;
-                            default:
-                                logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refreshCache");
-                        }
-                    });
+                    //$.each(carouselInfo.Links, function (idx, obj) {
+                    //    isAlreadyInArray = false;
+                    //    for (i = 0; i < carouselInfo.length; i++) {
+                    //        if (obj.Id === carouselInfo[i].Id) {
+                    //            if (carouselDebugMode) alert(obj.Id + " already in carouselItemArray: " + carouselItemArray.find(item => { item.Id == obj.Id }));
+                    //            console.log(obj.Id + " already in carouselItemArray");
+                    //            isAlreadyInArray = true;
+                    //        }
+                    //    }
+                    //    if (!isAlreadyInArray) {
+                    //        //if (carouselItemArray.find(item => { item.Id == obj.Id }) != undefined) {
+                    //        cacheArray.push(obj);
+                    //    }
+                    //});
+
+                    let jsnObj = "[";  //new JSONArray();
+                    for (i = 0; i < cacheSize; i++) {
+                        let ix = Math.floor(Math.random() * carouselItemArray.length);
+                        jsnObj += (JSON.stringify(carouselItemArray[ix])) + ",";
+                    }
+                    switch (rootFolder) {
+                        case "porn":
+                            window.localStorage.removeItem["pornCache"];
+                            window.localStorage["pornCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                            break;
+                        case "centerfold":
+                            window.localStorage.removeItem["centerfoldCache"];
+                            window.localStorage["centerfoldCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                            break;
+                        case "boobs":
+                            window.localStorage.removeItem["carouselCache"];
+                            window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                            break;
+                        default:
+                            logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refreshCache");
+                    }
 
                     let delta = (Date.now() - startTime) / 1000;
                     console.log("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3));
                     $('#footerMessage2').html("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3) + "  size: " + cacheArray.length);
-
                     //if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache");
-                    //if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache.  \nTook: " + delta.toFixed(3) + "  size: " + cacheArray.length);
+                   // if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache.  \nTook: " + delta.toFixed(3) + "  size: " + cacheArray.length);
                 }
                 else {
                     logError("AJX", 77508, carouselInfo.Success, "refreshCache");
