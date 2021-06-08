@@ -78,6 +78,24 @@ namespace OggleBooble.Api.Controllers
             }
             return carouselInfo;
         }
+
+        [HttpPut]
+        public CarouselInfoModel LoadCache(string cacheName)
+        {
+            CarouselInfoModel carouselInfo = new CarouselInfoModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                }
+                carouselInfo.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                carouselInfo.Success = Helpers.ErrorDetails(ex);
+            }
+            return carouselInfo;
+        }
     }
 
     [EnableCors("*", "*", "*")]

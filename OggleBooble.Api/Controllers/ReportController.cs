@@ -168,6 +168,30 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
+        [Route("api/Report/MostImageHitsxt")]
+        public MostPopularPagesReportModel UserViewsDailyImage()
+        {
+            var MostImageHits = new MostPopularPagesReportModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    // select * from OggleBooble.vwImageHitsForToday;
+
+                    MostImageHits.Items = db.Database.SqlQuery<MostPopularPagesReportItem>(
+                        "select FolderName PageName, f.Id FolderId, count(*) PageHits " +
+                        "from OggleBooble.ImageHit h " +
+                        "join OggleBooble.CategoryFolder f on h.PageId = f.Id " +
+                        "where HitDateTime between date_add(current_date(), interval - 1 day) and current_date() " +
+                        "group by PageId order by PageHits desc").ToList();
+                }
+                MostImageHits.Success = "ok";
+            }
+            catch (Exception ex) { MostImageHits.Success = Helpers.ErrorDetails(ex); }
+            return MostImageHits;
+        }
+
+        [HttpGet]
         [Route("api/Report/MostImageHitsReport")]
         public MostPopularPagesReportModel MostImageHitsReport()
         {

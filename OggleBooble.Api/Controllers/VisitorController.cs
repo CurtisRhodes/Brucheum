@@ -150,6 +150,33 @@ namespace OggleBooble.Api.Controllers
             }
             return successModel;
         }
+
+        [HttpGet]
+        [Route("api/Visitor/CheckForRepeatBadVisitorId")]
+        public SuccessModel CheckForRepeatBadVisitorId(string visitorId)
+        {
+            SuccessModel successModel = new SuccessModel();
+            try
+            {
+                //select* from ActivityLog where ActivityCode = "VV7" and Occured > curdate() order by Occured desc;
+                //checkForRepeatBadVisitorId(visitorId);
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var repeatOffender = db.ActivityLogs.Where(a => a.ActivityCode == "VV7" && a.VisitorId == visitorId).FirstOrDefault();
+                    if (repeatOffender == null)
+                        successModel.ReturnValue = "ok";
+                    else
+                        successModel.ReturnValue = "repeatOffender";
+
+                    successModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                successModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return successModel;
+        }
     }
 
     [EnableCors("*", "*", "*")]

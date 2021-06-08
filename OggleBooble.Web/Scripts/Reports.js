@@ -154,10 +154,10 @@ function runMostImageHits() {
         success: function (mostImageHits) {
             $('#dashBoardLoadingGif').hide();
             if (mostImageHits.Success === "ok") {
-                $("#mostImageHitsContainer").html("<div>Most Image Hits" + todayString() + "</div>");
+                $("#mostImageHitsContainer").html("<div>Pages with Most Image Hits " + todayString() + "</div>");
                 $.each(mostImageHits.Items, function (idx, obj) {
                     $("#mostImageHitsContainer").append("<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
-                        obj.PageName + "</a>" + obj.PageHits + "</div>");
+                        obj.PageName + "</a><span class='clickable' onclick='imgHits(" + obj.FolderId + ")'>" + obj.PageHits + "</span></div>");
                 });
             }
             else {
@@ -169,6 +169,10 @@ function runMostImageHits() {
             if (!checkFor404(errMsg, folderId, "runMostImageHits")) logError("XHR", 3907, errMsg, "runMostImageHits");
         }
     });
+}
+
+function imgHits(folderId) {
+    alert("imgHits: " + folderId);
 }
 
 function runMostVisitedPages() {

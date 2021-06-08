@@ -28,6 +28,9 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes();
             resetOggleHeader(3908, "boobs");
             //setTimeout(function () { launchPromoMessages(); }, 3000);
+            
+            $('#badgesContainer').html("badgesContainer");
+
             break;
         case 3909: // porn
             spaType = "porn";

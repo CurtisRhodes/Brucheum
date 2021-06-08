@@ -327,7 +327,7 @@ function getAlbumPageInfo(folderId) {
                 }
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
-                pleaseLogIn();
+                pleaseLogIn(folderId);
             }
             else {
                 if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {
@@ -344,12 +344,13 @@ function getAlbumPageInfo(folderId) {
     });
 }
 
-function pleaseLogIn() {
+function pleaseLogIn(folderId) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?folderId=" + folderId,
+        url: settingsArray.ApiServer + "api/GalleryPage/GetUserInfo?folderId=" + folderId,
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
+
             }
             else {
                 if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {

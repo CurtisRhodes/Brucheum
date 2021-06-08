@@ -50,7 +50,6 @@ function launchCarousel(startRoot) {
                         carouselItemArray.push(obj);
                     });
                     carouselSkip = carouselItemArray.length;
-                    carouselSkip = carouselItemArray.length;
                     startCarousel("big naturals cache");
                 }
                 else
@@ -137,26 +136,24 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                     if (!vCarouselInterval) {
                         //if (document.domain == "localhost") alert("starting carousel from after ajax");
                         console.log("starting carousel from after ajax");
+                        logError("LSC", 67659, "rootFolder: " + rootFolder, "Carousel loadImages");
                         startCarousel("ajax");
                     }
 
-                    //if ((carouselItemArray.length > (carouselSkip * 2)) && (carouselItemArray.length < (carouselSkip * 3)))
-
                     if (carouselInfo.Links.length === carouselTake) {
-                        //console.log("loadImages. " + rootFolder + " take: " + carouselTake);
-                        //$('#footerMessage2').html("loadImages. " + rootFolder + " take: " + carouselTake);
                         carouselSkip += carouselTake;
-
                         $('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
                             " total items: " + carouselItemArray.length.toLocaleString());
                         loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
                     }
                     else {
                         let delta = (Date.now() - startTime) / 1000;
-                        console.log(rootFolder + "done.  took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                        $('#footerMessage2').html(rootFolder + ": skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake + "  took: " + delta.toFixed(3) + "  total items: " + carouselItemArray.length.toLocaleString());
+                        //console.log(rootFolder + "done.  took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                        //$('#footerMessage2').html(rootFolder + ": skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake + "  took: " + delta.toFixed(3) + "  total items: " + carouselItemArray.length.toLocaleString());
                         //if (document.domain == "localhost") alert("done: " + carouselItemArray.length);
                         //if (carouselDebugMode) $('#badgesContainer').html(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                        $('#footerMessage2').html("");
+                        $('#footerMessage').html("done loading. total items: " + carouselItemArray.length.toLocaleString() + "  took: " + delta.toFixed(3));
                     }
                 }
                 else {
@@ -257,11 +254,15 @@ function startCarousel(calledFrom) {
         if (carouselItemArray.length > 10) {
             $('#footerMessage').html("started carousel from: " + calledFrom);
             resizeCarousel();
+            // 
             intervalBody();
             vCarouselInterval = setInterval(function () {
                 intervalBody();
             }, rotationSpeed);
             console.log("started carousel from: " + calledFrom);
+
+            setTimeout(function () { launchPromoMessages(); }, 3000);
+
         }
         else {
             if (document.domain == "localhost") alert("failed to start carousel. carouselItemArray.length: " + carouselItemArray.length);

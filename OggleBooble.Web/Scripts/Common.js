@@ -197,7 +197,8 @@ function create_UUID() {
 }
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
-    logError2(getCookieValue("VisitorId"), errorCode, folderId, errorMessage, calledFrom);
+    if (errorCode != "404")
+        logError2(getCookieValue("VisitorId"), errorCode, folderId, errorMessage, calledFrom);
 }
 
 function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
@@ -571,37 +572,33 @@ function getCookieValue(itemName) {
             cookieItemName = cookieItem[0].trim();
             cookieItemValue = cookieItem[1];
             if (cookieItemName === itemName) {
-                //alert("cookie value FOUND. " + itemName + " = " + cookieItemValue);
-                localStorage[itemName] = cookieItemValue;
                 returnValue = cookieItemValue;
+                if (isNullorUndefined(window.localStorage))
+                    logError2(create_UUID(), "BUG", 65445, "localStorage Null or Undefined", "get CookieValue");
+
+                window.localStorage[itemName] = cookieItemValue;
                 break;
             }
         }
         if (returnValue == "not found") {
-            if (isNullorUndefined(localStorage)) {
-                logError2(create_UUID(), "BUG", 65445, "localStorage Null or Undefined", "get CookieValue");
+            if (isNullorUndefined(localStorage[itemName])) {
+                //logError2(create_UUID(), "BUG", 65445, "localStorage[" + itemName + "] Null or Undefined", "get CookieValue");
+                return "not found";
+            }
+            else
+                returnValue = localStorage[itemName];
+
+            if (!navigator.cookieEnabled) {  // user does not accept cookies
+                logError2(create_UUID(), "UNC", 62716, "itemName:" + itemName + "  returnValue: " + returnValue, "get cookie");
             }
             else {
-                if (!isNullorUndefined(localStorage[itemName])) {
-                    logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
-                    console.log("localStorage[" + itemName + "] set to: " + localStorage[itemName] + " and cookie not found");
-                    setCookieValue(itemName, localStorage[itemName]);
-                    returnValue = localStorage[itemName];
-
-                    if (!navigator.cookieEnabled) {
-                        logError2(create_UUID(), "UNC", 62716, "itemName:" + itemName + "  returnValue: " + returnValue, "get cookie");
-                    }
-                }
-                else {
-                    if (!navigator.cookieEnabled) {
-                        logError2(create_UUID(), "UNC", 65449, "local storage bypass: fail", "get cookie");
-                    }
-                }
+                setCookieValue(itemName, localStorage[itemName]);
+                logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
             }
         }
     }
     catch (e) {
-        logError2(create_UUID(), "CAT", 65442, e, "get CookieValue");
+        logError2(create_UUID(), "CAT", 671156, e, "get CookieValue");
     }
     return returnValue;
 }
