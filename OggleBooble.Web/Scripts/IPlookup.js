@@ -1,47 +1,47 @@
 ﻿
 function tryAddNewIP(folderId, calledFrom) {
+
+    if (calledFrom == "not found in Visitor table") {
+        uniqueVisIdlookup(folderId, calledFrom);
+        return;
+    }
+
     let visitorId = getCookieValue("VisitorId");
     if (getCookieValue("VisitorId") == "not found") {
         logActivity("IP0", folderId, "trytoGetIp/" + calledFrom);
         uniqueVisIdlookup(folderId, calledFrom);
+        return;
     }
-    else
-    {
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
-            success: function (success) {
-                if (success == "ok") {
-                    //console.log("asked to lookup user with good visitorId cookie: " + visitorId);
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
+        success: function (successModel) {
+            if (successModel.Success == "ok") {
+                if (successModel.Success == "ok") {
                     logError("DVA", folderId, visitorId, "trytoGetIp/" + calledFrom);
                 }
-                else {
-                    if (success = "badVisitor") {
-                        if (calledFrom == "verify Visitor") {
-                            logActivity("IPA", folderId, "trytoGetIp/" + calledFrom); // repairing bad visitorId
-                            uniqueVisIdlookup(folderId, calledFrom);
-                        }
-                        else {
-                            logError("IH2", folderId, "", "trytoGetIp/" + calledFrom); // bad visitor already failed
-                        }
-                    }
-                    else {
-                        if (success == "not found") {
-                            console.log("callining Ip lookup: " + visitorId);
-                            uniqueVisIdlookup(folderId, calledFrom);
-                        }
-                        else
-                            logError("AJX", folderId, success, "trytoGetIp/" + calledFrom);
-                    }
+
+                if (successModel.Success == "not found in Visitor table") {
+                    //logError("IH2", folderId, "", "trytoGetIp/" + calledFrom); // bad visitor already failed
+                    checkForRepeatBadVisitorId(folderId, visitorId);
                 }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "trytoGetIp"))
-                    logError("XHR", 666, errMsg, "trytoGetIp");
+
+                if (successModel.Success == "not found") {
+                    logError("BUG", folderId, "not found not caught", "try AddNewIP");
+                    logActivity("IP0", folderId, "trytoGetIp/" + calledFrom);
+                    uniqueVisIdlookup(folderId, calledFrom);
+                }
             }
-        });
-    }
+            else {
+                logError("AJX", folderId, successModel.Success, "try AddNewIP");
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, folderId, "try AddNewIP"))
+                logError("XHR", 666, errMsg, "try AddNewIP");
+        }
+    });
 }
 
 function uniqueVisIdlookup(folderId, calledFrom) {

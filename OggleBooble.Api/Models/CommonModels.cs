@@ -148,7 +148,8 @@ namespace OggleBooble.Api.Models
 
     public class AddVisitorSuccessModel 
     {
-        public string VisitorId { get; set; }
+        public string NewVisitorId { get; set; }
+        public string RetunValue { get; set; }
         public string Success { get; set; }
     }
 

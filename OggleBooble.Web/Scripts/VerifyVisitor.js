@@ -18,21 +18,34 @@ function verifyVisitor(folderId) {
                 $.ajax({
                     type: "GET",
                     url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
-                    success: function (success) {
-                        if (success == "ok") {
-                            logActivity("VV1", folderId, "verify Visitor"); // visitor verified ok
-                            loadUserProfile("verify Visitor");
-                            logVisit(folderId, "verify visitor");
+                    success: function (successModel) {
+                        if (successModel.Success == "ok") {
+                            if (successModel.Success == "ok") {
+                                logActivity("VV1", folderId, "verify Visitor"); // visitor verified ok
+                                loadUserProfile("verify Visitor");
+                                logVisit(folderId, "verify visitor");
+                            }
+
+                            if (successModel.Success == "not found in Visitor table") {
+                                checkForRepeatBadVisitorId(folderId, visitorId);
+                            }
+
+                            if (successModel.Success == "not found") {
+                                logError("BUG", folderId, "not found visitorId sent to Verify Visitor", "verify Visitor");
+                                tryAddNewIP(folderId, "not found in Visitor table");
+                            }
                         }
-                        else {  // visitorId not found
-                            checkForRepeatBadVisitorId(folderId, visitorId);
+                        else {
+                            logActivity("VV4", folderId, "verify Visitor"); // verify visitor AJX error
+                            logError("AJX", folderId, successModel.Success, "verify Visitor");
                         }
                     },
                     error: function (jqXHR) {
-                        logActivity("VV6", folderId, "verify Visitor"); // visitor verified ok
+                        logActivity("VV6", folderId, "verify Visitor"); // verify visitor XHR error
                         let errMsg = getXHRErrorDetails(jqXHR);
-                        //if (!checkFor404(errMsg, 215519, "getIpInfo/" + calledFrom)) {
-                        logError("XHR", folderId, errMsg, "verify Visitor");
+                        if (!checkFor404(errMsg, folderId, "verify Visitor")) {
+                            logError("XHR", folderId, errMsg, "verify Visitor");
+                        }
                     }
                 });
             }
@@ -52,41 +65,41 @@ function checkForRepeatBadVisitorId(folderId, visitorId) {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Visitor/CheckForRepeatBadVisitorId?visitorId=" + getCookieValue("VisitorId"),
+            url: settingsArray.ApiServer + "api/Visitor/CheckForRepeatBadVisitorId?visitorId=" + visitorId,
             success: function (SuccessModel) {
                 if (SuccessModel.Success == "ok") {
                     if (SuccessModel.ReturnValue == "ok") {
                         logActivity("VV7", folderId, "verify Visitor"); // verify visitor VisitorId came back not found
-                        tryAddNewIP(folderId, "verify Visitor");
+                        tryAddNewIP(folderId, "not found in Visitor table");
                     }
-                    else {
+                    if (SuccessModel.ReturnValue == "repeatOffender") {
                         if (!navigator.cookieEnabled) {  // user does not accept cookies
-                            logError("UNC", folderId, "xx", "CheckForRepeatBadVisitorId");
+                            logError("UNC", folderId, "xx", "Check for RepeatBadVisitorId");
                         }
-                        logError("RBV", folderId, "visitorId: " + visitorId, "checkForRepeatBadVisitorId");
+                        logError("RBV", folderId, "visitorId: " + visitorId, "check for RepeatBadVisitorId");
                     }
                 }
                 else {
-                    logError("AJX", folderId, SuccessModel.Success, "checkForRepeatBadVisitorId");
+                    logError("AJX", folderId, SuccessModel.Success, "check For RepeatBadVisitorId");
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, 215519, "checkForRepeatBadVisitorId")) {
-                    logError("XHR", folderId, errMsg, "checkForRepeatBadVisitorId");
+                if (!checkFor404(errMsg, 215519, "RepeatBadVisitorId")) {
+                    logError("XHR", folderId, errMsg, "RepeatBadVisitorId");
                 }
             }
         });
     } catch (e) {
-        logError("CAT", folderId, e, "checkForRepeatBadVisitorId");
+        logError("CAT", folderId, e, "repeatBadVisitorId");
     }
 }
 
 function addVisitor(visitorData) {
     try
     {
-        if (visitorData.CalledFrom == "verify Visitor")
-            logActivity("IPB", folderId, "get IpInfo/" + calledFrom);
+        if (visitorData.CalledFrom == "not found in Visitor table")
+            logActivity("IPB", visitorData.InitialPage, "get IpInfo/" + calledFrom);
 
         //visitorData.VisitorId = create_UUID();
         logActivity("AV0", visitorData.FolderId, "addVisitor"); // entering Add Visitor 
@@ -95,43 +108,38 @@ function addVisitor(visitorData) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
             data: visitorData,
-            success: function (avSuccess) {
-                console.log("avSuccess.Success: " + avSuccess.Success);
-                if (avSuccess.Success == "ok") {
-                    setCookieValue("VisitorId", avSuccess.VisitorId);
-                    logActivity("AV3", visitorData.InitialPage, "add visitor"); // new visitor added
-                    console.log("new visitor added");
-                    loadUserProfile("add new visitor");
-                    //logIpHit(avSuccess.VisitorId, visitorData.IpAddress, visitorData.InitialPage);
-                    //logVisit(visitorData.InitialPage, "add Visitor");
-                    if (visitorData.CalledFrom == "verify Visitor") {
+            success: function (avSuccessModel) {
+                console.log("avSuccess.Success: " + avSuccessModel.Success);
+                if (avSuccessModel.Success == "ok") {
+                    setCookieValue("VisitorId", avSuccessModel.VisitorId);
+
+                    if (avSuccessModel.RetunValue = "new visitor added") {
+
+                        logActivity("AV2", visitorData.InitialPage, "add visitor"); // new visitor added
+                        console.log("new visitor added");
+                        loadUserProfile("add new visitor");
+
+                    }
+                    if (avSuccessModel.RetunValue = "existing Ip") {
+                        logActivity("AV2", visitorData.InitialPage, "add Visitor");  // existing IP visitorId used
+                        loadUserProfile("recall existing Ip");
+                    }
+                    if (visitorData.CalledFrom == "not found in Visitor table") {
                         // repair all references (would need to know bad visitorId)
                         logActivity("IPC", folderId, "trytoGetIp/" + calledFrom); // repair bad visitorId succeeded
                     }
-                }
-                if (avSuccess.Success == "existing Ip") {
-                    if (visitorData.CalledFrom == "verify Visitor") {
-                        logActivity("IPC", folderId, "trytoGetIp/" + calledFrom); // repair bad visitorId succeeded
-                    }
 
-                    if (avSuccess.VisitorId == "not found") {
-                        logActivity("AV6", visitorData.InitialPage, "add Visitor");  // tried to ass Not Found to WIP
+                }
+                else {
+                    logActivity("AV3", visitorData.InitialPage, "addVisitor/" + visitorData.CalledFrom);
+
+                    if (avSuccessModel.Success.indexOf("Duplicate entry") > 0) {
+                        logActivity("AV9", visitorData.InitialPage, "addVisitor"); // Duplicate. Attempt to add new visitorId
+                        logError("DVA", visitorData.InitialPage, avSuccessModel.Success, "addVisitor");
                     }
                     else {
-                        setCookieValue("VisitorId", avSuccess.VisitorId);
-                        logActivity("AV5", visitorData.InitialPage, "add Visitor");  // existing IP visitorId used
-                        loadUserProfile("recall existing Ip");
-                        //logIpHit(avSuccess.VisitorId, visitorData.IpAddress, visitorData.InitialPage);
-                        //logVisit(visitorData.InitialPage, "add Visitor");
+                        logError("AJ7", visitorData.InitialPage, avSuccessModel.Success, "addVisitor/" + visitorData.CalledFrom);
                     }
-                }
-                if (avSuccess.Success.indexOf("Duplicate entry") > 0) {
-                    logActivity("AV9", visitorData.InitialPage, "addVisitor"); // Duplicate. Attempt to add new visitorId
-                    logError("DVA", visitorData.InitialPage, avSuccess.Success, "addVisitor");
-                }
-                if (avSuccess.Success.indexOf("ERROR:") > -1) {
-                    logActivity("AV4", visitorData.InitialPage, "addVisitor/" + visitorData.CalledFrom);
-                    logError("AJ7", visitorData.InitialPage, avSuccess.Success, "addVisitor/" + visitorData.CalledFrom);
                 }
             },
             error: function (jqXHR) {
@@ -141,11 +149,10 @@ function addVisitor(visitorData) {
                     logError("XHR", 999, errMsg, "addVisitor");
             }
         });
-
     } catch (e) {
         //alert("AddVisitor CATCH: " + e);
-        logActivity("AV2", 555, "addVisitor"); // add vis catch error
-        logError2("CAT", 555, e, "addVisitor");
+        logActivity("AV6", visitorData.InitialPage, "addVisitor"); // add vis catch error
+        logError("CAT", visitorData.InitialPage, e, "addVisitor");
     }
 }
 

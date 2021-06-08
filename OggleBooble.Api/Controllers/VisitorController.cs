@@ -21,32 +21,35 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                    if (dbExistingIpVisitor == null)
-                        addVisitorModel.VisitorId = Guid.NewGuid().ToString();
-                    else
+                    bool okToAdd = true;
+                    if (visitorData.CalledFrom != "attempt Register")
                     {
-                        //visitorData.IpAddress = visitorData.IpAddress + "." + new Random().Next(0, 4).ToString("0000");
-                        if (visitorData.CalledFrom != "attempt Register")
+                        var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                        if (dbExistingIpVisitor != null)
                         {
-                            addVisitorModel.VisitorId = dbExistingIpVisitor.VisitorId;
-                            addVisitorModel.Success = "existing Ip";
-                            return addVisitorModel;
+                            addVisitorModel.NewVisitorId = dbExistingIpVisitor.VisitorId;
+                            addVisitorModel.RetunValue = "existing Ip";
+                            okToAdd = false;
                         }
                     }
-                    var newVisitor = new Visitor()
+                    if(okToAdd)
                     {
-                        VisitorId = addVisitorModel.VisitorId,
-                        InitialPage = visitorData.InitialPage,
-                        City = visitorData.City,
-                        Country = visitorData.Country,
-                        GeoCode = visitorData.GeoCode,
-                        Region = visitorData.Region,
-                        InitialVisit = DateTime.Now,
-                        IpAddress = visitorData.IpAddress
-                    };
-                    db.Visitors.Add(newVisitor);
-                    db.SaveChanges();
+                        addVisitorModel.NewVisitorId = Guid.NewGuid().ToString();
+                        var newVisitor = new Visitor()
+                        {
+                            VisitorId = addVisitorModel.NewVisitorId,
+                            InitialPage = visitorData.InitialPage,
+                            City = visitorData.City,
+                            Country = visitorData.Country,
+                            GeoCode = visitorData.GeoCode,
+                            Region = visitorData.Region,
+                            InitialVisit = DateTime.Now,
+                            IpAddress = visitorData.IpAddress
+                        };
+                        db.Visitors.Add(newVisitor);
+                        db.SaveChanges();
+                        addVisitorModel.RetunValue = "new visitor added";
+                    }
                     addVisitorModel.Success = "ok";
                 }
             }
@@ -95,31 +98,30 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/Visitor/VerifyVisitor")]
-        public string VerifyVisitor(string visitorId)
+        public SuccessModel VerifyVisitor(string visitorId)
         {
-            string success;
+            SuccessModel successModel = new SuccessModel();
             try
             {
-                using (var db = new OggleBoobleMySqlContext())
+                if (visitorId == "not found")
                 {
-                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                    if (dbVisitor == null)
-                        success = "not found";
-                    else
+                    successModel.ReturnValue = "not found";
+                }
+                else
+                {
+                    using (var db = new OggleBoobleMySqlContext())
                     {
-                        var waistedIPs = db.ActivityLogs.Where(a => a.ActivityCode == "WIP" && a.VisitorId == visitorId).FirstOrDefault();
-                        if (waistedIPs == null)
-                            success = "ok";
+                        Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                        if (dbVisitor == null)
+                            successModel.ReturnValue = "not found in Visitor table";
                         else
-                            success = "badVisitor";
+                            successModel.ReturnValue = "ok";
                     }
                 }
+                successModel.Success = "ok";
             }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
-            return success;
+            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
+            return successModel;
         }
 
         [HttpGet]
