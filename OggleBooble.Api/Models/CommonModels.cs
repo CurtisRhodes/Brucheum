@@ -162,6 +162,7 @@ namespace OggleBooble.Api.Models
         public RegisteredUser RegisteredUser { get; set; }
         public string IpAddress { get; set; }
         public string VisitorId { get; set; }
+        public string City { get; set; }
         public string Success { get; set; }
     }
 

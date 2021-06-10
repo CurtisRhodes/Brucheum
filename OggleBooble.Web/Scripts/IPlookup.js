@@ -1,4 +1,8 @@
 ﻿
+function specialIpLookup() {
+
+}
+
 function tryAddNewIP(folderId, calledFrom) {
 
     if (calledFrom == "not found in Visitor table") {
@@ -7,7 +11,7 @@ function tryAddNewIP(folderId, calledFrom) {
     }
 
     let visitorId = getCookieValue("VisitorId");
-    if (getCookieValue("VisitorId") == "not found") {
+    if (visitorId == "cookie not found") {
         logActivity("IP0", folderId, "trytoGetIp/" + calledFrom);
         uniqueVisIdlookup(folderId, calledFrom);
         return;
@@ -62,6 +66,13 @@ function getIpInfo(folderId, calledFrom) {
             return;
         }
         ip0Busy = true;
+
+        let badVisitorId;
+        if (calledFrom == "BadIp") {
+            badVisitorId = getCookieValue("VisitorId");
+            logActivity("IPA", folderId, calledFrom);
+        }
+
         //logActivity("IP1", folderId, "get IpInfo/" + calledFrom);
         let ipCall0Returned = false;
         $.ajax({
@@ -126,11 +137,13 @@ function getIpInfo(folderId, calledFrom) {
             if (!ipCall0Returned) {
                 console.debug("getIpInfo timeout");
                 logActivity("IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
-                logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
+                if (!isNullorUndefined(ipResponse)) {
+                    logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
+                }
                 tryApiDbIpFree(folderId, calledFrom);  // try something else
             }
             ip0Busy = false;
-        }, 855);
+        }, 1855);
     } catch (e) {
         logActivity("IP7", folderId, "get IpInfo")
         logError("CAT", folderId, e, "get IpInfo");
@@ -146,11 +159,12 @@ function tryApiDbIpFree(folderId, calledFrom) {
             tryCloudflareTrace(folderId, calledFrom);
         }
         else {
-            if (getCookieValue("VisitorId") != "not found") {
+            if (getCookieValue("VisitorId") != "cookie not found") {
                 console.log("asked to RE lookup user with good visitorId cookie: " + visitorId);
                 logError("DVA", folderId, visitorId, "tryApiDbIpFree/" + calledFrom);
             }
             else {
+                logActivity("IP1", folderId, "apiDbIpFree");
                 ip2Busy = true;
                 let ipCall2Returned = false;
                 logActivity("IP1", folderId, "apiDbIpFree/" + calledFrom); // attempting apiDbIpFree lookup
@@ -185,7 +199,7 @@ function tryApiDbIpFree(folderId, calledFrom) {
                             }
                             else {
                                 console.debug("tryApiDbIpFree 6 " + JSON.stringify(ipResponse, null, 2));
-                                logError("200", folderId, JSON.stringify(ipResponse, null, 2), "apiDbIpFree/" + calledFrom); // Json response code
+                                //logError("200", folderId, JSON.stringify(ipResponse, null, 2), "apiDbIpFree/" + calledFrom); // Json response code
                                 logActivity("IP9", folderId, "apiDbIpFree/" + calledFrom);
                             }
                         }
@@ -237,7 +251,7 @@ function tryCloudflareTrace(folderId, calledFrom) {
             addBadIpVisitorId(folderId, calledFrom);
        }
         else {
-            if (getCookieValue("VisitorId") != "not found") {
+            if (getCookieValue("VisitorId") != "cookie not found") {
                 console.log("asked to RE lookup user with good visitorId cookie: " + visitorId);
                 logError("DVA", folderId, visitorId, "tryCloudflareTrace/" + calledFrom);
             }

@@ -345,35 +345,28 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
 }
 
 function checkLoginStatus(albumInfo) {
-    //alert()
-    if (!isLoggedIn()) {
-        if (albumInfo.FolderType == "singleChild") {
-            if (albumInfo.RootFolder == "centerfold") {
-                if (albumInfo.UserPageHits > 100) {
-                    showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
-                    $("#vailShell").fadeIn();
-                    logActivity("LGR", albumInfo.FolderId,"checkLoginStatus"); // login required
+    try {
+        if (!isLoggedIn()) {
+            if (albumInfo.FolderType == "singleChild") {
+                if (albumInfo.RootFolder == "centerfold") {
+                    if (albumInfo.UserPageHits > 100) {
+                        let visitorId = getCookieValue("VisitorId");
+                        if ((visitorId == "cookie not found") || (visitorId == "user does not accept cookies")) {
+                            logError2(visitorId, "BUG", albumInfo.FolderId, "bad visitorId coming in", "checkLoginStatus");
+                        }
+                        else {
+                            showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
+                            $("#vailShell").fadeIn();
+                            logActivity2(visitorId, "LGR", albumInfo.FolderId, "checkLoginStatus"); // login required
+                        }
+                    }
                 }
             }
         }
+    } catch (e) {
+        logError("CAT", 61011, e, "checkLoginStatus");
     }
 }
-//    $.ajax({
-//        type: "GET",
-//        url: settingsArray.ApiServer + "api/GalleryPage/GetUserInfo?folderId=" + folderId,
-//        success: function (albumInfo) {
-//            if (albumInfo.Success === "ok") {
-//            }
-//            else {
-//                logError("AJX", folderId, albumInfo.Success, "getAlbumPageInfo");
-//            }
-//        },
-//        error: function (jqXHR) {
-//            let errMsg = getXHRErrorDetails(jqXHR);
-//            if (!checkFor404(errMsg, folderId, "getAlbumPageInfo")) logError("XHR", folderId, errMsg, "getAlbumPageInfo");
-//        }
-//    });
-
 
 function getDeepFolderCounts(folderId) { 
     $('#spanDeepCount').html("?");

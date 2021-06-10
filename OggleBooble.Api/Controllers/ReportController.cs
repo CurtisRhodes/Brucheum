@@ -58,39 +58,40 @@ namespace OggleBooble.Api.Controllers
             return rslts;
         }
 
-        [HttpGet]
-        [Route("api/Report/MetricMatrixReport")]
-        public MatrixResultsModel MetricsMatrixReport()
-        {
-            var rslts = new MatrixResultsModel();
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
-                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
-                    db.SaveChanges();
-                    db.Database.ExecuteSqlCommand("call OggleBooble.spDailyVisits()");
-                    var performanceRows = db.Performances.ToList();
-                    foreach (Performance pRow in performanceRows)
-                    {
-                        rslts.mRows.Add(new MatrixModel()
-                        {
-                            ReportDay = pRow.ReportDay,
-                            DayofWeek = pRow.ReportDay.DayOfWeek.ToString(),
-                            DateString = pRow.DayString,
-                            NewVisitors = pRow.NewVisitors,
-                            Visits = pRow.Visits,
-                            PageHits = pRow.PageHits,
-                            ImageHits = pRow.ImageHits
-                        });
-                    }
-                    rslts.Success = "ok";
-                }
-            }
-            catch (Exception ex) { rslts.Success = Helpers.ErrorDetails(ex); }
-            return rslts;
-        }
+        //public MatrixResultsModel MetricsMatrixReport()
+        //{
+        //    var rslts = new MatrixResultsModel();
+        //    try
+        //    {
+        //        using (var db = new OggleBoobleMySqlContext())
+        //        {
+        //            db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
+        //            db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
+        //            db.SaveChanges();
+        //        };
+        //        using (var db = new OggleBoobleMySqlContext())
+        //        {
+        //            db.Database.ExecuteSqlCommand("call OggleBooble.spDailyVisits()");
+        //            var performanceRows = db.Performances.ToList();
+        //            foreach (Performance pRow in performanceRows)
+        //            {
+        //                rslts.mRows.Add(new MatrixModel()
+        //                {
+        //                    ReportDay = pRow.ReportDay,
+        //                    DayofWeek = pRow.ReportDay.DayOfWeek.ToString(),
+        //                    DateString = pRow.DayString,
+        //                    NewVisitors = pRow.NewVisitors,
+        //                    Visits = pRow.Visits,
+        //                    PageHits = pRow.PageHits,
+        //                    ImageHits = pRow.ImageHits
+        //                });
+        //            }
+        //            rslts.Success = "ok";
+        //        }
+        //    }
+        //    catch (Exception ex) { rslts.Success = Helpers.ErrorDetails(ex); }
+        //    return rslts;
+        //}
 
         [HttpGet]
         [Route("api/Report/ReferralsReport")]

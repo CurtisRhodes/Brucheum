@@ -127,6 +127,12 @@
     border-bottom: var(--oggleHeaderBoarderBottom);
 }
 
+
+.bigMessageContainer {
+    height: 666px;
+    width: 1111px;
+}
+
 .oggleDialogContainer {
     position: absolute;
     z-index: 25;

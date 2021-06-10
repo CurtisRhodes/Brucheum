@@ -446,23 +446,21 @@ function showCustomMessage(blogId, allowClickAnywhere) {
         url: settingsArray.ApiServer + "api/OggleBlog/GetBlogItem?blogId=" + blogId,
         success: function (entry) {
             if (entry.Success === "ok") {
+                $('#customMessage').html(entry.CommentText);
 
-                $('#centeredDialogTitle').html(entry.CommentTitle);
-                $('#centeredDialogContents').html(entry.CommentText);
-                $("#centeredDialogContainer").draggable().fadeIn();
-                $('#centeredDialogContainer').css("top", 200);
-                $('#centeredDialogContainer').css("left", -100);
+
+                //$("#customMessageContainer").draggable().fadeIn();
 
                 //$('#centeredDialogContainer').css("left", (window.innerWidth / 2) - 200);
 
-                if (allowClickAnywhere) {
-                    $('#centeredDialogCloseButton').prop('title', 'click anywhere on dialog to close');
-                    $('#centeredDialogContents').click(function () { dragableDialogClose(); });
-                }
-                else {
-                    $('#centeredDialogContents').prop("onclick", null).off("click");
-                    $('#centeredDialogCloseButton').removeProp('title');
-                }
+                //    if (allowClickAnywhere) {
+                //        $('#centeredDialogCloseButton').prop('title', 'click anywhere on dialog to close');
+                //        $('#centeredDialogContents').click(function () { dragableDialogClose(); });
+                //    }
+                //    else {
+                //        $('#centeredDialogContents').prop("onclick", null).off("click");
+                //        $('#centeredDialogCloseButton').removeProp('title');
+                //    }
             }
             else {
                 logError("AJX", 3111, "error: " + entry.Success, "showCustomMessage");
@@ -563,8 +561,17 @@ function showMyAlert(title, message) {
     $('#centeredDialogContainer').draggable().fadeIn();
 }
 
+function weDemandCookies() {
+    //alert("weDemandCookies");
+
+    showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
+    $("#vailShell").fadeIn();
+    $('#customMessageContainer').css("top", 200);
+    $('#customMessageContainer').css("left", -100);
+}
+
 function getCookieValue(itemName) {
-    let returnValue = "not found";
+    let returnValue = "cookie not found";
     try {
         let decodedCookie = decodeURIComponent(document.cookie);
         let cookieElements = decodedCookie.split(";");
@@ -582,20 +589,22 @@ function getCookieValue(itemName) {
                 break;
             }
         }
-        if (returnValue == "not found") {
+        if (returnValue == "cookie not found") {
             if (isNullorUndefined(localStorage[itemName])) {
-                //logError2(create_UUID(), "BUG", 65445, "localStorage[" + itemName + "] Null or Undefined", "get CookieValue");
-                return "not found";
-            }
-            else
-                returnValue = localStorage[itemName];
-
-            if (!navigator.cookieEnabled) {  // user does not accept cookies
-                logError2(create_UUID(), "UNC", 62716, "itemName:" + itemName + "  returnValue: " + returnValue, "get cookie");
+                if (!navigator.cookieEnabled) {  // 
+                    returnValue = "user does not accept cookies";
+                    logError2(create_UUID(), "UNC", 62716, "itemName:" + itemName, "get cookie");
+                }
+                else {
+                    logError2(create_UUID(), "BUG", 65445, "cookie: " + itemName + "not found and not in localStorage either", "get CookieValue");
+                }
             }
             else {
-                setCookieValue(itemName, localStorage[itemName]);
+                if (!navigator.cookieEnabled) {  // user does not accept cookies
+                    logError2(create_UUID(), "UNC", 62716, "but " + itemName + " found in localStorange. value: " + returnValue, "get cookie");
+                }
                 logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
+                returnValue = localStorage[itemName];
             }
         }
     }

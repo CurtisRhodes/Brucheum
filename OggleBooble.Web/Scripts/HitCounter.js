@@ -69,9 +69,13 @@ function logPageHit(folderId) {
         lastPageHitVisitorId = visitorId;
         lastPageHitFolderId = folderId;
 
-        if (visitorId == "not found") {
+        if (visitorId == "cookie not found") {
             //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
             tryAddNewIP(folderId, "log PageHit");
+        }
+
+        if (visitorId == "user does not accept cookies") {
+            //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
         }
 
         $.ajax({
@@ -98,7 +102,7 @@ function logPageHit(folderId) {
 function logVisit(folderId, calledFrom) {
     try {
         let visitorId = getCookieValue("VisitorId");
-        //logActivity("LV0", folderId, "logVisit");
+        logActivity("LV0", folderId, calledFrom);
 
         $.ajax({
             type: "POST",
@@ -209,13 +213,6 @@ function myMsgTest() {
     wipMessage += "<div class='robotWarning'><input type='checkbox'> I am not a robot.</input></div>";
 
     showMyAlert(wipTitle, wipMessage);
-}
-
-function weDemandCookies() {
-
-    alert("weDemandCookies");
-    //showCustomMessage(1233, false);
-
 }
 
 function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {

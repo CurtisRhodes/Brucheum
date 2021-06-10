@@ -9,7 +9,7 @@ function verifyVisitor(folderId) {
             $('#headerMessage').html("new session started");
             sessionStorage["VisitorVerified"] = true;
 
-            if (visitorId == "not found") {
+            if ((visitorId == "cookie not found") || (visitorId == "user does not accept cookies")) {
                 logActivity("VV2", folderId, "verify Visitor"); // verify visitorId not found (new user?)
                 //tryAddNewIP(folderId, "verify Visitor");
             }
@@ -22,17 +22,12 @@ function verifyVisitor(folderId) {
                         if (successModel.Success == "ok") {
                             if (successModel.Success == "ok") {
                                 logActivity("VV1", folderId, "verify Visitor"); // visitor verified ok
-                                loadUserProfile("verify Visitor");
+                                loadUserProfile(folderId, "verify Visitor");
                                 logVisit(folderId, "verify visitor");
                             }
 
                             if (successModel.Success == "not found in Visitor table") {
                                 checkForRepeatBadVisitorId(folderId, visitorId);
-                            }
-
-                            if (successModel.Success == "not found") {
-                                logError("BUG", folderId, "not found visitorId sent to Verify Visitor", "verify Visitor");
-                                tryAddNewIP(folderId, "not found in Visitor table");
                             }
                         }
                         else {
@@ -98,8 +93,8 @@ function checkForRepeatBadVisitorId(folderId, visitorId) {
 function addVisitor(visitorData) {
     try
     {
-        if (visitorData.CalledFrom == "not found in Visitor table")
-            logActivity("IPB", visitorData.InitialPage, "get IpInfo/" + calledFrom);
+        if (visitorData.CalledFrom == "BadIp")
+            logActivity("IPB", visitorData.InitialPage, "addVisitor/" + visitorData.CalledFrom); // repair vis made it to AddVis
 
         //visitorData.VisitorId = create_UUID();
         logActivity("AV0", visitorData.FolderId, "addVisitor"); // entering Add Visitor 
@@ -111,42 +106,37 @@ function addVisitor(visitorData) {
             success: function (avSuccessModel) {
                 console.log("avSuccess.Success: " + avSuccessModel.Success);
                 if (avSuccessModel.Success == "ok") {
+
+                    if (visitorData.CalledFrom == "BadIp") {
+                        let badVisitorId = getCookieValue("VisitorId");
+                        let newVisitorId = avSuccessModel.VisitorId;
+                        moveStatsToNewVisitorId(badVisitorId, newVisitorId);
+                        logActivity("IPC", visitorData.FolderId, "add visitor"); // repair bad visitorId succeeded
+                    }
+
                     setCookieValue("VisitorId", avSuccessModel.VisitorId);
 
-                    if (avSuccessModel.RetunValue = "new visitor added") {
-
+                    if (avSuccessModel.RetunValue == "new visitor added") {
                         logActivity("AV2", visitorData.InitialPage, "add visitor"); // new visitor added
-                        console.log("new visitor added");
                         loadUserProfile("add new visitor");
 
                     }
-                    if (avSuccessModel.RetunValue = "existing Ip") {
+                    if (avSuccessModel.RetunValue == "existing Ip") {
                         logActivity("AV2", visitorData.InitialPage, "add Visitor");  // existing IP visitorId used
                         loadUserProfile("recall existing Ip");
                     }
-                    if (visitorData.CalledFrom == "not found in Visitor table") {
-                        // repair all references (would need to know bad visitorId)
-                        logActivity("IPC", folderId, "trytoGetIp/" + calledFrom); // repair bad visitorId succeeded
-                    }
-
+                    logVisit(visitorData.FolderId, "add Visitor");
                 }
                 else {
-                    logActivity("AV3", visitorData.InitialPage, "addVisitor/" + visitorData.CalledFrom);
-
-                    if (avSuccessModel.Success.indexOf("Duplicate entry") > 0) {
-                        logActivity("AV9", visitorData.InitialPage, "addVisitor"); // Duplicate. Attempt to add new visitorId
-                        logError("DVA", visitorData.InitialPage, avSuccessModel.Success, "addVisitor");
-                    }
-                    else {
-                        logError("AJ7", visitorData.InitialPage, avSuccessModel.Success, "addVisitor/" + visitorData.CalledFrom);
-                    }
+                    logActivity("AV3", visitorData.InitialPage, "add Visitor/" + visitorData.CalledFrom); // AddVisitor Success not ok
+                    logError("AJ7", visitorData.InitialPage, avSuccessModel.Success, "addVisitor/" + visitorData.CalledFrom);
                 }
             },
             error: function (jqXHR) {
-                logActivity("AV8", 555, "addVisitor"); // XHR error
+                logActivity("AV8", visitorData.InitialPage, "add Visitor/" + visitorData.CalledFrom); // AddVisitor XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, 215519, "addVisitor"))
-                    logError("XHR", 999, errMsg, "addVisitor");
+                if (!checkFor404(errMsg, visitorData.InitialPage, "add Visitor/" + visitorData.CalledFrom))
+                    logError("XHR", visitorData.InitialPage, errMsg, "add Visitor/" + visitorData.CalledFrom);
             }
         });
     } catch (e) {
@@ -168,7 +158,7 @@ function loadUserProfile(calledFrom) {
         }
         else {
             let visitorId = getCookieValue("VisitorId");
-            if (visitorId == "not found") {
+            if (visitorId == "cookie not found") {
                 localStorage["IsLoggedIn"] = "false";
                 localStorage["UserName"] = "not registered";
                 localStorage["UserRole"] = "not registered";
@@ -182,6 +172,11 @@ function loadUserProfile(calledFrom) {
                     url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + visitorId,
                     success: function (visitorInfo) {
                         if (visitorInfo.Success == "ok") {
+
+                            if (visitorInfo.City == "BadIp") {
+                                tryAddNewIP(610700, "BadIp");
+                            }
+
                             if (visitorInfo.IsRegisteredUser) {
 
                                 localStorage["IsLoggedIn"] = "true";
@@ -239,4 +234,12 @@ function loadUserProfile(calledFrom) {
     } catch (e) {
         logError("CAT", 12440, e, "load UserProfile/" + calledFrom);
     }
+}
+
+function moveStatsToNewVisitorId(badVisitorId, newVisitorId) {
+    //$.ajax({
+
+    //});
+    logActivity("IPD", visitorData.FolderId, "add visitor"); // ToDo: move Stats To New VisitorId
+
 }

@@ -2,7 +2,7 @@
     try {
 
         if (isNullorUndefined(localStorage["IsLoggedIn"])) {
-            loadUserProfile("isInRole");
+            loadUserProfile(61071, "isInRole");
         }
 
         if (!localStorage["UserName"] == "unregistered") {

@@ -627,8 +627,8 @@ function showAddStepChildFolderDialog() {
     let cfSsorceFolderId = pSelectedTreeId;  // captured before 
     $('#dashboardDialogTitle').html("Create Stepchild Folder");
     $('#dashboardDialogContents').html(
-        "    <div><span>parent folder</span><input id='txtStepParent' class='txtLinkPath roundedInput' readonly='readonly'></input></div>\n" +
-        "    <div><span>child folder</span><input id='txtscSourceFolderName' class='roundedInput' readonly='readonly'></input>\n" +
+        "    <div><span>child folder</span><input id='txtStepParent' class='txtLinkPath roundedInput' readonly='readonly'></input></div>\n" +
+        "    <div><span>new parent folder</span><input id='txtscSourceFolderName' class='roundedInput' readonly='readonly'></input>\n" +
         "       <img class='dialogDirTreeButton' src='/Images/caretDown.png' onclick='$(\"#scDirTreeContainer\").toggle()'/></div>\n" +
         "    <div><span>new name</span><input id='txtscNewFolderName' class='roundedInput'></input></div>\n" +
         "    <div><span>new link</span><input id='txtCustomFolderLink' class='roundedInput'></input></div>\n" +

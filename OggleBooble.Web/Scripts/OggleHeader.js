@@ -87,13 +87,14 @@ function resetOggleHeader(folderId, rootFolder) {
         case "index":
             $('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
             $('#hdrBtmRowSec3').append(addPgLinkButton(5233, "softcore"));
+            $('#hdrBtmRowSec3').append(addPgLinkButton(846, "Gent Archive"));
+            $('#hdrBtmRowSec3').append(addSpaButton(72, "every playboy centerfold"));
         case "archive": {
             changeFavoriteIcon("redBallon");
             $('#oggleHeader').switchClass('playboyHeader', 'boobsHeader');
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#oggleHeaderTitle').html("OggleBooble");
             $('#topRowRightContainer').html(addRankerButton("010000000", "big naturals ranker"));
-            $('#hdrBtmRowSec3').append(addSpaButton(72, "every Playboy Centefold"));
             setHeaderMenu("boobs");
             break;
         }
@@ -204,13 +205,14 @@ function resetOggleHeader(folderId, rootFolder) {
 
     //console.log("header says IsLoggedIn = " + localStorage["IsLoggedIn"]);
     if (isNullorUndefined(localStorage["IsLoggedIn"])) {
-
         localStorage["IsLoggedIn"] = "false";
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         $('#footerCol5').hide();
+
         logError("LSH", folderId, "rootFolder: " + rootFolder, "resetOggleHeader");  // localStorage isLoggedIn Undefined in header
-        loadUserProfile("resetOggleHeader");
+        loadUserProfile(folderId, "resetOggleHeader");
+
     }
     else {
         if (localStorage["IsLoggedIn"] == "true") {
@@ -394,7 +396,7 @@ function headerTitleClick() {
 
 function headerHtml() {
     return "<div class='siteLogoContainer' onclick='topLogoClick()' >" +
-        "       <img id='divSiteLogo' class='siteLogo' src='/Images/redballon.png'/>" +
+        "       <img id='divSiteLogo' title='home' class='siteLogo' src='/Images/redballon.png'/>" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +
         "       <div class='headerTopRow'>\n" +
@@ -428,15 +430,14 @@ function headerHtml() {
         "   </div>\n" +
 
         "<div id='indexCatTreeContainer' class='oggleDialogContainer'></div>\n" +
-        "<div id='customMessageContainer' class='centeringOuterShell'>\n" +
-        "   <div class='centeringInnerShell'>\n" +
-        "       <div id='customMessage' class='customMessageContainer' ></div>\n" +
-        "   </div>\n" +
+
+        "<div id='customMessageContainer' class='oggleDialogContainer'>\n" +
+        "    <div id='customMessage' class='customMessageContainer' ></div>\n" +
         "</div>\n" +
 
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
-        "      <div id='centeredDialogContainer' class='oggleDialogContainer'>\n" +    // draggableDialog
+        "      <div id='centeredDialogContainer' class='oggleDialogContainer'>\n" +
         "           <div id='centeredDialogHeader'class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
         "               <div id='centeredDialogTitle' class='oggleDialogTitle'></div>" +
         "               <div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
