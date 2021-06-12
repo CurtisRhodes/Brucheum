@@ -446,13 +446,14 @@ function showCustomMessage(blogId, allowClickAnywhere) {
         url: settingsArray.ApiServer + "api/OggleBlog/GetBlogItem?blogId=" + blogId,
         success: function (entry) {
             if (entry.Success === "ok") {
-                $('#customMessage').html(entry.CommentText);
+
+                $("#vailShell").fadeIn();
+                $('#customMessage').html(entry.CommentText).show();
+                $("#customMessageContainer").draggable().fadeIn();
 
 
-                //$("#customMessageContainer").draggable().fadeIn();
-
-                //$('#centeredDialogContainer').css("left", (window.innerWidth / 2) - 200);
-
+                //top: 255;
+                //left: 522;
                 //    if (allowClickAnywhere) {
                 //        $('#centeredDialogCloseButton').prop('title', 'click anywhere on dialog to close');
                 //        $('#centeredDialogContents').click(function () { dragableDialogClose(); });
@@ -589,22 +590,47 @@ function getCookieValue(itemName) {
                 break;
             }
         }
+
         if (returnValue == "cookie not found") {
             if (isNullorUndefined(localStorage[itemName])) {
                 if (!navigator.cookieEnabled) {  // 
                     returnValue = "user does not accept cookies";
-                    logError2(create_UUID(), "UNC", 62716, "itemName:" + itemName, "get cookie");
+                    logError2(create_UUID(), "UNC", 61016, "itemName:" + itemName, "get cookie");
                 }
-                else {
-                    logError2(create_UUID(), "BUG", 65445, "cookie: " + itemName + "not found and not in localStorage either", "get CookieValue");
-                }
+                localStorage[itemName] = "COOKIE1" + create_UUID().substr(7);
+                logError2(create_UUID(), "CL1", 61044, "cookie: " + itemName, "get CookieValue"); // not in localStorage either
             }
             else {
-                if (!navigator.cookieEnabled) {  // user does not accept cookies
-                    logError2(create_UUID(), "UNC", 62716, "but " + itemName + " found in localStorange. value: " + returnValue, "get cookie");
+                if (localStorage[itemName].indexOf("COOKIE") > -1) {
+                    if (localStorage[itemName].indexOf("COOKIE1") > -1) {
+                        localStorage[itemName] = "COOKIE2" + create_UUID().substr(7);
+                        logError2(create_UUID(), "CL2", 65445, "cookie bug still", "get CookieValue");  // localStorage ok but cookie still not found
+                        return;
+                    }
+                    if (localStorage[itemName].indexOf("COOKIE2") > -1) {
+                        localStorage[itemName] = "COOKIE3" + create_UUID().substr(7);
+                        logError2(create_UUID(), "CL3", 65445, "cookie bug still", "get CookieValue");  // cookie not found a third time
+                        return;
+                    }
+                    if (localStorage[itemName].indexOf("COOKIE3") > -1) {
+                        if (navigator.cookieEnabled) {  // user does not accept cookies
+                            logError2(create_UUID(), "CL4", 61017, "", "get cookie"); // finally calling add new IP from getCookie
+                            uniqueVisIdlookup(61093, "get CookieValue");
+                        }
+                        else {
+                            logError2(create_UUID(), "CL5", 61017, "", "get cookie"); // user does not accept cookies AND cookie still not found
+                            showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
+                            $('#customMessageContainer').css("top", 250);
+                            $('#customMessageContainer').css("left", 400);
+                        }
+                        return;
+                    }
                 }
-                logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
-                returnValue = localStorage[itemName];
+                else {
+                    logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
+                    returnValue = localStorage[itemName];
+                    setCookieValue(itemName, returnValue);
+                }
             }
         }
     }
@@ -616,10 +642,14 @@ function getCookieValue(itemName) {
 
 function setCookieValue(elementToSet, newValue) {
     try {
+
         localStorage[elementToSet] = newValue;
         let cookieString = elementToSet + ":" + newValue;
         document.cookie = cookieString;
-        console.log("calling setCookieValue.  set:" + elementToSet + " to: " + newValue);
+
+        //alert("document.cookie:\n\n" + JSON.stringify(document.cookie, null, 2));
+
+        console.log("setCookieValue.  set:" + elementToSet + " to: " + newValue);
     } catch (e) {
         alert("setcookie CATCH Error: " + e);
         logError2(create_UUID(), "CAT", 65745, e, "setCookieValue");
@@ -654,4 +684,3 @@ function createCookie(visitorId) {
         console.log("createCookie CATCH " + e);
     }
 }
-

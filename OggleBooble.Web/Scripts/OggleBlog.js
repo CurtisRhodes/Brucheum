@@ -2,6 +2,7 @@
 
 function blogStartup() {
     setOggleHeader("blog");
+
     setOggleFooter(3911, "blog", "blog");
     document.title = "blog : OggleBooble";
 

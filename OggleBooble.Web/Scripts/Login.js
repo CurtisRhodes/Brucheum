@@ -121,7 +121,7 @@ function cancelLogin() {
 function transferToRegisterPopup() {
     //$('#loginDialog').dialog('close');
     //$('#loginDialog').hide();
-    showRegisterDialog("transfer");
+    showRegisterDialog(true);
 }
 
 function updateRegisteredUser(userInfo) {
@@ -216,14 +216,16 @@ function checkFaceBookLoginState() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function showRegisterDialog(calledFrom) {
+function showRegisterDialog(showCloseButton) {
     if (typeof pause === 'function') pause();
-    $('#centeredDialogTitle').html("Register and Login to OggleBooble");
-    $('#centeredDialogContents').html(registerDialogHtml());
     $("#vailShell").fadeIn();
-    $("#centeredDialogContainer").draggable().fadeIn();
+    //$('#centeredDialogTitle').html("Register and Login to OggleBooble");
+    $('#customMessage').html(registerDialogHtml(showCloseButton));
+    $("#vailShell").fadeIn();
+    $("#customMessageContainer").draggable().fadeIn();
+    $('#customMessageContainer').css("top", 126);
+    $('#customMessageContainer').css("left", 663);
     $('.validationError').hide();
-    // $("#centeredDialogContainer").css("width", "400");
     logEvent("RDO", 0, "YESS!!!");
 }
 
@@ -349,8 +351,16 @@ function validateRegister() {
     return true;
 }
 
-function registerDialogHtml() {
-    return "   <div id='registerValidationSummary' class='validationError'></div>\n" +
+function registerDialogHtml(showCloseButton) {
+
+    let htmlString = "<div class='dialogContainer1'>\n" +
+        "<div id='centeredDialogHeader'class='oggleDialogHeader'>" +
+        "   <div id='centeredDialogTitle' class='oggleDialogTitle'>Register and Login to OggleBooble</div>";
+    if (showCloseButton) {
+        htmlString += "<div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
+            "<img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n";
+    }
+    htmlString += "</div>\n<div id='registerValidationSummary' class='validationError'></div>\n" +
         "   <div id='errRegisterUserName' class='validationError'>Required</div>\n" +
         "   <label style='white-space:nowrap;'>user name</label><span class='requiredField' title='required'>  *</span><br>\n" +
         "   <input id='txtRegisterUserName' type='text' class='roundedInput' placeholder='your go by name'></input><br>\n" +
@@ -369,7 +379,8 @@ function registerDialogHtml() {
         "   <div id='errRegisterEmail' class='validationError'>Email Required</div>\n" +
         "   <label>Email</label>\n" +
         "   <input id='txtRegisterEmail' type='email' class='roundedInput' placeholder='you@example.org'></input><br>\n" +
-        "   <button class='roundendButton submitButton' onclick='attemptRegister()'>Submit</button>\n";
+        "   <button class='roundendButton submitButton' onclick='attemptRegister()'>Submit</button></div>\n";
+    return htmlString;
 }
 
 var registerEmail;

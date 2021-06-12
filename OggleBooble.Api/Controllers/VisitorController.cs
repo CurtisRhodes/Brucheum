@@ -46,6 +46,7 @@ namespace OggleBooble.Api.Controllers
                             InitialVisit = DateTime.Now,
                             IpAddress = visitorData.IpAddress
                         };
+
                         db.Visitors.Add(newVisitor);
                         db.SaveChanges();
                         addVisitorModel.RetunValue = "new visitor added";
@@ -186,9 +187,10 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpPost]
         [Route("api/Common/LogVisit")]
-        public LogVisitSuccessModel LogVisit(string visitorId)
+        public SuccessModel LogVisit(string visitorId)
         {
-            LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false, IsNewVisitor = false };
+            //LogVisitSuccessModel visitSuccessModel = new LogVisitSuccessModel() { VisitAdded = false, IsNewVisitor = false };
+            SuccessModel successModel = new SuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -196,56 +198,44 @@ namespace OggleBooble.Api.Controllers
                     var dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
                     {
-                        visitSuccessModel.Success = "VisitorId not found";
-                        return visitSuccessModel;
-                    }
-
-                    //  { VisitAdded = false, IsNewVisitor = false }
-                    DateTime lastVisitDate = DateTime.MinValue;
-                    List<Visit> visitorVisits = db.Visits.Where(v => v.VisitorId == visitorId).ToList();
-                    if (visitorVisits.Count() > 0)
-                    {
-                        visitSuccessModel.IsNewVisitor = false;
-                        lastVisitDate = db.Visits.Where(v => v.VisitorId == visitorId).OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
+                        successModel.ReturnValue = "VisitorId not found";
                     }
                     else
-                        visitSuccessModel.IsNewVisitor = true;
-
-                    if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
                     {
-                        db.Visits.Add(new Visit()
+                        //  { VisitAdded = false, IsNewVisitor = false }
+                        DateTime lastVisitDate = DateTime.MinValue;
+                        List<Visit> visitorVisits = db.Visits.Where(v => v.VisitorId == visitorId).ToList();
+                        if (visitorVisits.Count() > 0)
                         {
-                            VisitorId = visitorId,
-                            VisitDate = DateTime.Now
-                        });
-                        db.SaveChanges();
-                        visitSuccessModel.VisitAdded = true;
-                    }
-
-                    if (visitSuccessModel.VisitAdded)
-                    {
-                        var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-                        if (registeredUser != null)
-                        {
-                            visitSuccessModel.WelcomeMessage = "Welcome back " + registeredUser.UserName;
+                            lastVisitDate = visitorVisits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
                         }
                         else
                         {
-                            if (visitSuccessModel.IsNewVisitor)
-                                visitSuccessModel.WelcomeMessage = "Welcome new visitor. Please log in";
+                            if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
+                            {
+                                db.Visits.Add(new Visit()
+                                {
+                                    VisitorId = visitorId,
+                                    VisitDate = DateTime.Now
+                                });
+                                db.SaveChanges();
+                                if (visitorVisits.Count() == 0)
+                                    successModel.ReturnValue = "new visitor logged";
+                                else
+                                    successModel.ReturnValue = "return visit logged";
+                            }
                             else
-                                visitSuccessModel.WelcomeMessage = "Welcome back. Please log in";
+                                successModel.ReturnValue = "no visit recorded";
                         }
                     }
+                    successModel.Success = "ok";
                 }
-                visitSuccessModel.Success = "ok";
-
             }
             catch (Exception ex)
             {
-                visitSuccessModel.Success = Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
-            return visitSuccessModel;
+            return successModel;
         }
     }
 }

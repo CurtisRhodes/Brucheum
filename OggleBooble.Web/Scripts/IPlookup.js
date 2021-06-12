@@ -1,8 +1,4 @@
 ﻿
-function specialIpLookup() {
-
-}
-
 function tryAddNewIP(folderId, calledFrom) {
 
     if (calledFrom == "not found in Visitor table") {
@@ -89,14 +85,17 @@ function getIpInfo(folderId, calledFrom) {
             },
             success: function (ipResponse) {
                 ipCall0Returned = true;
-                if (isNullorUndefined(ipResponse.ip)) {
-                    console.debug("getIpInfo null ip");
-                    console.debug("getIpInfo ipResponse.ip: " + JSON.stringify(ipResponse, null, 2));
+                if (isNullorUndefined(ipResponse)) {
+                    logActivity("IP9", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but ipResponse null
+                    //logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
+                }
+
+                if ((isNullorUndefined(ipResponse.ip)) || (ipResponse.ip == 'undefined') || (ipResponse.ip == 'undefined=')) {
                     logActivity("IP9", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but came back with no ip
                     logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
                 }
                 else {
-                    logActivity("IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
+                    logActivity2(ipResponse.ip, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
 
                     addVisitor({
                         IpAddress: ipResponse.ip,

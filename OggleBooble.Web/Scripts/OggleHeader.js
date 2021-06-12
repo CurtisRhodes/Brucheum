@@ -35,6 +35,7 @@ function setOggleHeader(headerContext) {
         case "blog": {
             // <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
             $('#headerMessage').html("blog");
+            changeFavoriteIcon("redBallon");
             break;
         }
         case "ranker": {
@@ -422,7 +423,7 @@ function headerHtml() {
         "                   <div class='hoverTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
         "               </div>\n" +
         "               <div id='optionNotLoggedIn' class='displayHidden'>\n" +
-        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog(\"header\")'>Register</a></div>\n" +
+        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog(\"true\")'>Register</a></div>\n" +
         "                   <div id='btnLayoutLogin' class='hoverTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
         "               </div>\n" +
         "           </div>\n" +

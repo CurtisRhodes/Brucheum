@@ -76,6 +76,7 @@ function logPageHit(folderId) {
 
         if (visitorId == "user does not accept cookies") {
             //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
+            tryAddNewIP(folderId, "user does not accept cookies");
         }
 
         $.ajax({
@@ -104,32 +105,37 @@ function logVisit(folderId, calledFrom) {
         let visitorId = getCookieValue("VisitorId");
         logActivity("LV0", folderId, calledFrom);
 
+        //if (visitSuccessModel.VisitAdded) {
+        //    var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
+        //    if (registeredUser != null) {
+        //        visitSuccessModel.WelcomeMessage = "Welcome back " + registeredUser.UserName;
+        //    }
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
             success: function (logVisitSuccessModel) {
                 if (logVisitSuccessModel.Success === "ok") {
-                    if (logVisitSuccessModel.VisitAdded) {
-
-                        $('#headerMessage').html(logVisitSuccessModel.WelcomeMessage);
-
-                        if (logVisitSuccessModel.IsNewVisitor) {
-                            logActivity("LV1", folderId, "logVisit/" + calledFrom); // new visitor visit added
-                        }
-                        else {
-                            logActivity("LV2", folderId, "logVisit/" + calledFrom);  // Return Vist Recorded
-                        }
+                    if (successModel.ReturnValue == "new visitor logged") {
+                        logActivity("LV1", folderId, "logVisit/" + calledFrom); // new visitor visit added
+                        $('#headerMessage').html("Welcome new visitor. Please log in");
                     }
+                    if (successModel.ReturnValue == "return visit logged") {
+                        logActivity("LV2", folderId, "logVisit/" + calledFrom);  // Return Vist Recorded
+                        if (isLoggedIn())
+                            $('#headerMessage').html("Welcome back " + localStorage["UserName"]);
+                        else
+                            $('#headerMessage').html("Welcome back. Please log in");
+                    }
+                    if (successModel.ReturnValue == "no visit recorded")
+                        logActivity("LV5", folderId, "logVisit/" + calledFrom); // no visit recorded
+
+                    if (successModel.ReturnValue == "VisitorId not found")
+                        logActivity2("LV3", folderId, "logVisit/" + calledFrom);  // visitorId not found
+
                 }
                 else {
-                    if (logVisitSuccessModel.Success == "VisitorId not found") {
-                        logActivity("LV3", folderId, "logVisit/" + calledFrom);  // visitorId not found
-                        //logError("LV3", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
-                    }
-                    else {
-                        logActivity("LV4", folderId, "logVisit/" + calledFrom);  // Log Visit fail
-                        logError("AJX", folderId, logVisitSuccessModel.Success, "logVisit/" + calledFrom);
-                    }
+                    logActivity("LV4", folderId, "logVisit/" + calledFrom);  // Log Visit fail
+                    logError("AJX", folderId, logVisitSuccessModel.Success, "logVisit/" + calledFrom);
                 }
             },
             error: function (jqXHR) {

@@ -348,16 +348,23 @@ function checkLoginStatus(albumInfo) {
     try {
         if (!isLoggedIn()) {
             if (albumInfo.FolderType == "singleChild") {
-                if (albumInfo.RootFolder == "centerfold") {
+                if ((albumInfo.RootFolder == "centerfold") || (albumInfo.RootFolder == "muses")) {
                     if (albumInfo.UserPageHits > 100) {
                         let visitorId = getCookieValue("VisitorId");
                         if ((visitorId == "cookie not found") || (visitorId == "user does not accept cookies")) {
-                            logError2(visitorId, "BUG", albumInfo.FolderId, "bad visitorId coming in", "checkLoginStatus");
+                            if (visitorId == "user does not accept cookies") {
+                                showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
+                                $('#customMessageContainer').css("top", 250);
+                                $('#customMessageContainer').css("left", 400);
+                                logActivity2(create_UUID(), "LG2", albumInfo.FolderId, "checkLoginStatus"); // cookies required
+                            }s
                         }
                         else {
+
                             showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
-                            $("#vailShell").fadeIn();
-                            logActivity2(visitorId, "LGR", albumInfo.FolderId, "checkLoginStatus"); // login required
+                            $('#customMessageContainer').css("top", 255);
+                            $('#customMessageContainer').css("left", 522);
+                            logActivity2(create_UUID(), "LG1", albumInfo.FolderId, "checkLoginStatus"); // asked please to login
                         }
                     }
                 }

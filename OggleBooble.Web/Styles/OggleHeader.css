@@ -128,9 +128,47 @@
 }
 
 
+.dialogContainer1 {
+    padding: 10px;
+    color: black;
+    font-size: 18px;
+    border: solid 4px var(--oggleBorderColor);
+    background-color: var(--oggleBackgroundColor);
+}
+
 .bigMessageContainer {
+    /*    
+    top: 255;
+    left: 522;
     height: 666px;
     width: 1111px;
+*/
+    padding: 0 70px 70px 70px;
+    color: black;
+    font-size: 18px;
+    border-left: solid 12px var(--oggleBorderColor);
+    border-bottom: solid 12px var(--oggleBorderColor);
+    border-right: solid 12px var(--oggleBorderColor);
+    background-color: var(--oggleBackgroundColor);
+}
+
+.bigMessageContainerTitle {
+    height: 44px;
+    padding-top: 5px;
+    background-color: var(--oggleBorderColor);
+    color: #fff;
+    font-size: 28px;
+    text-align: center;
+}
+
+.pleaseRegisterButton {
+    display: inline;
+    background-color: #c48ca2;
+    border: solid .5px red;
+    padding: 4px;
+    font-size: 21px;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 .oggleDialogContainer {

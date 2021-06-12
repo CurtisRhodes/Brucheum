@@ -22,9 +22,6 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
         else {
             $('#' + container + '').html(window.localStorage["dirTree"]);
         }
-        if (typeof onDirTreeComplete === 'function') {
-            onDirTreeComplete();
-        }
     }
     else {
         if (!forceRebuild && isNullorUndefined(window.localStorage["dirTree"])) {
@@ -56,15 +53,14 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
                     }
                 }
                 else {
-                    //$('#dashBoardLoadingGif').hide();
+                    $('#dashBoardLoadingGif').hide();
                     logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
                 }
             },
             error: function (jqXHR) {
-                //$('#dashBoardLoadingGif').hide();
+                $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
+                if (!checkFor404(errMsg, folderId, "load DirectoryTree")) logError("XHR", folderId, errMsg, "load DirectoryTree");
             }
         });
     }
@@ -180,41 +176,6 @@ function showDirTreeContextMenu(vwDirId) {
 function showFolderStats(folderId) {
     alert("showFolderStats\nFolderId: " + folderId + "\npSelectedTreeId: " + pSelectedTreeId);
 }
-
-//function xxrefreshDirTree(startNode) {
-//    alert("refreshDirTree");
-//    $.ajax({
-//        type: "GET",
-//        url: settingsArray.ApiServer + "api/Links/BuildCatTree?root=" + startNode,
-//        success: function (dirTreeModel) {
-//            if (dirTreeModel.Success === "ok") {
-//                //console.log("load dirTree data took: " + dataLoadTime.toFixed(3));
-//                $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
-//                start = Date.now();
-//                buildDirTreeRecurr(dirTreeModel);
-//                if (startNode === 1) {
-//                    window.localStorage["dirTree"] = strdirTree;
-//                }
-//                //$('#' + container + '').html(strdirTree);
-//                var htmlBuildTime = (Date.now() - start) / 1000;
-//                $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
-//                console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
-//                if (typeof onDirTreeComplete === 'function') {
-//                    onDirTreeComplete();
-//                }
-//            }
-//            else {
-//                logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
-//            }
-//        },
-//        error: function (jqXHR) {
-//            $('#dashBoardLoadingGif').hide();
-//            let errMsg = getXHRErrorDetails(jqXHR);
-//            let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-//            if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", folderId, errMsg, functionName);
-//        }
-//    });
-//}
 
 function dirTreeSuccess() {
     alert("dirTreeSuccess");

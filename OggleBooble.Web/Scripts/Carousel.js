@@ -86,6 +86,7 @@ function launchCarousel(startRoot) {
         //else
         loadImages(startRoot, carouselSkip, carouselTake, true, false);
 
+        if (document.domain == "localHost") alert("launchCarousel CATCH: lastStep: " + lastStep + " e: " + e);
         refreshCache(startRoot);
     }
     catch (e) {
