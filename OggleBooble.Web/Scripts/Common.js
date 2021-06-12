@@ -613,15 +613,20 @@ function getCookieValue(itemName) {
                         return;
                     }
                     if (localStorage[itemName].indexOf("COOKIE3") > -1) {
-                        if (navigator.cookieEnabled) {  // user does not accept cookies
+                        if (navigator.cookieEnabled) {  // user accepts cookies
                             logError2(create_UUID(), "CL4", 61017, "", "get cookie"); // finally calling add new IP from getCookie
-                            uniqueVisIdlookup(61093, "get CookieValue");
+                           // uniqueVisIdlookup(61093, "get CookieValue");
+                            showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
+                            $('#customMessageContainer').css("top", 255);
+                            $('#customMessageContainer').css("left", 522);
+                            logActivity2(create_UUID(), "LG1", albumInfo.FolderId, "checkLoginStatus"); // asked please to login
                         }
-                        else {
+                        else {  // user does NOT accept cookies
                             logError2(create_UUID(), "CL5", 61017, "", "get cookie"); // user does not accept cookies AND cookie still not found
                             showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
                             $('#customMessageContainer').css("top", 250);
                             $('#customMessageContainer').css("left", 400);
+                            logActivity2(create_UUID(), "LG2", 33445, "get cookie"); // cookies required
                         }
                         return;
                     }

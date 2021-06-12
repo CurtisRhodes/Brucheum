@@ -150,9 +150,6 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                         $('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
                             " total items: " + carouselItemArray.length.toLocaleString());
                         loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
-
-
-
                     }
                     else {
                         let delta = (Date.now() - startTime) / 1000;
@@ -279,8 +276,8 @@ let firstTime = true;
 let intervalReady = true;
 function intervalBody() {
     if (intervalReady) {
-        intervalReady = false;
         if ($('#pauseButton').html() == "||") {
+            intervalReady = false;
             //$('#testMessage1').html("|");
             imageIndex = Math.floor(Math.random() * carouselItemArray.length);
             //$('#testMessage1').html("||");
@@ -466,15 +463,11 @@ function togglePause() {
     }
 }
 function pause() {
-    clearInterval(vCarouselInterval);
-    vCarouselInterval = null;
     $('#pauseButton').html(">");
 }
 function resume() {
     $('#pauseButton').html("||");
     backArrowClicks = 0;
-    clearInterval(vCarouselInterval);
-    vCarouselInterval = null;
     startCarousel("resume");
 }
 
@@ -579,8 +572,7 @@ function clickViewGallery(labelClick) {
     //);
     //console.log("clickViewGallery email sent");
 
-    clearInterval(vCarouselInterval);
-    vCarouselInterval = null;
+    pause();
     window.location.href = "/album.html?folder=" + clickFolderId;  //  open page in same window
 } 
 

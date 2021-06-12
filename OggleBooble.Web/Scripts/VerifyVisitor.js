@@ -2,12 +2,18 @@
 function verifyVisitor(folderId) {
     try {
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
+
+            if (window.domain == "localhost") {
+                setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
+                alert("VisitorId set to: " + getCookieValue("VisitorId"));
+            }
+
             let visitorId = getCookieValue("VisitorId");
+
             logActivity("VV0", folderId, "verify Visitor"); // new session started
             $('#headerMessage').html("new session started");
             sessionStorage["VisitorVerified"] = true;
 
-            setCookieValue("VisitorId", visitorId);
             visitorId = getCookieValue("VisitorId");
 
             if ((visitorId == "cookie not found") || (visitorId == "user does not accept cookies")) {
@@ -107,8 +113,8 @@ function addVisitor(visitorData) {
             success: function (avSuccessModel) {
                 if (avSuccessModel.Success == "ok") {
 
-                    if (avSuccessModel.NewVisitorId == "undefined") {
-
+                    if (avSuccessModel.NewVisitorId.IndexOf("undefined">-1)) {
+                        logActivity("AV9", visitorData.InitialPage, "add visitor"); // VisitorId undefined
                     }
 
                     //if (visitorData.CalledFrom == "BadIp") {
@@ -251,13 +257,14 @@ function loadUserProfile(calledFrom) {
                     },
                     error: function (jqXHR) {
                         let errMsg = getXHRErrorDetails(jqXHR);
-                        if (!checkFor404(errMsg, folderId, "load UserProfile")) logError("XHR", 0, errMsg, "load UserProfile");
+                        if (!checkFor404(errMsg, folderId, "load UserProfile"))
+                            logError2(create_UUID(), "XHR", 612270, errMsg, "load UserProfile");
                     }
                 });
             }
         }
     } catch (e) {
-        logError("CAT", 12440, e, "load UserProfile/" + calledFrom);
+        logError2(create_UUID(), "CAT", 12440, e, "load UserProfile/" + calledFrom);
     }
 }
 

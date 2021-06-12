@@ -113,8 +113,8 @@ function logVisit(folderId, calledFrom) {
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
-            success: function (logVisitSuccessModel) {
-                if (logVisitSuccessModel.Success === "ok") {
+            success: function (successModel) {
+                if (successModel.Success === "ok") {
                     if (successModel.ReturnValue == "new visitor logged") {
                         logActivity("LV1", folderId, "logVisit/" + calledFrom); // new visitor visit added
                         $('#headerMessage').html("Welcome new visitor. Please log in");
@@ -135,7 +135,7 @@ function logVisit(folderId, calledFrom) {
                 }
                 else {
                     logActivity("LV4", folderId, "logVisit/" + calledFrom);  // Log Visit fail
-                    logError("AJX", folderId, logVisitSuccessModel.Success, "logVisit/" + calledFrom);
+                    logError("AJX", folderId, successModel.Success, "logVisit/" + calledFrom);
                 }
             },
             error: function (jqXHR) {

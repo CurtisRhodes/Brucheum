@@ -236,6 +236,7 @@ function tryApiDbIpFree(folderId, calledFrom) {
             }
         }
     } catch (e) {
+        ip2Busy = false;
         logError("CAT", folderId, e, "apiDbIpFree");
         logActivity("IP7", folderId, "apiDbIpFree");
     }
