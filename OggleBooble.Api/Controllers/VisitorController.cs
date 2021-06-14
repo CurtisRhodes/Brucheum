@@ -87,19 +87,16 @@ namespace OggleBooble.Api.Controllers
             SuccessModel successModel = new SuccessModel();
             try
             {
-                if (visitorId == "not found")
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    successModel.ReturnValue = "not found";
-                }
-                else
-                {
-                    using (var db = new OggleBoobleMySqlContext())
+                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (dbVisitor == null)
+                        successModel.ReturnValue = "not found";
+                    else
                     {
-                        Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                        if (dbVisitor == null)
-                            successModel.ReturnValue = "not found in Visitor table";
-                        else
-                            successModel.ReturnValue = "ok";
+                        successModel.ReturnValue = "visitorId ok";
+                        if (dbVisitor.Country == "ZZ")
+                            successModel.ReturnValue = "unknown country";
                     }
                 }
                 successModel.Success = "ok";

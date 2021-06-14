@@ -71,12 +71,12 @@ function logPageHit(folderId) {
 
         if (visitorId == "cookie not found") {
             //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
-            tryAddNewIP(folderId, "log PageHit");
+            tryAddNewIP(folderId, "PHNF" + create_UUID().substr(4), "log PageHit")
         }
 
         if (visitorId == "user does not accept cookies") {
             //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
-            tryAddNewIP(folderId, "user does not accept cookies");
+            tryAddNewIP(folderId, "PHUNC" + create_UUID().substr(5), "user does not accept cookies");
         }
 
         $.ajax({
@@ -103,13 +103,7 @@ function logPageHit(folderId) {
 function logVisit(folderId, calledFrom) {
     try {
         let visitorId = getCookieValue("VisitorId");
-        logActivity("LV0", folderId, calledFrom);
-
-        //if (visitSuccessModel.VisitAdded) {
-        //    var registeredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
-        //    if (registeredUser != null) {
-        //        visitSuccessModel.WelcomeMessage = "Welcome back " + registeredUser.UserName;
-        //    }
+        logActivity2(, visitorId, "LV0", folderId, calledFrom);
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
@@ -131,7 +125,6 @@ function logVisit(folderId, calledFrom) {
 
                     if (successModel.ReturnValue == "VisitorId not found")
                         logActivity2("LV3", folderId, "logVisit/" + calledFrom);  // visitorId not found
-
                 }
                 else {
                     logActivity("LV4", folderId, "logVisit/" + calledFrom);  // Log Visit fail
