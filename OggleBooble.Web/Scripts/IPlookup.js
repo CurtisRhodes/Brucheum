@@ -114,11 +114,13 @@ function getIpInfo(folderId, calledFrom) {
                 let errMsg = getXHRErrorDetails(jqXHR);
 
                 logActivity("IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
-                logError("XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
+                if (errMsg.indexOf("Not connect.") == -1) {
+                    logError("XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
+                    tryApiDbIpFree(folderId, calledFrom); // try something else
+                }
 
                 if (!isNullorUndefined(ipResponse))
                     logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
-
 
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
                     logActivity("IP5", folderId, "IpInfo XHR/" + calledFrom); // lookup limit exceeded

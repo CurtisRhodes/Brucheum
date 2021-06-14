@@ -272,7 +272,9 @@ function attemptRegister() {
 
                         if (registerdUserSuccessModel.RegisterStatus == "visitorId already registered") {
                             logError2(visitorId, "BUG", 5454, "visitorId already registered", "attempt Register");
-                            alert("visitorId: " + visitorId + " already registered");
+                            // alert("visitorId: " + visitorId + " already registered");
+                            $("#vailShell").hide();
+                            $("#customMessageContainer").hide();
                             return;
                         }
 
@@ -286,7 +288,6 @@ function attemptRegister() {
                         if (typeof resume === 'function') resume();
                         $("#vailShell").hide();
                         $("#customMessageContainer").hide();
-
 
                         //setCookieValue("VisitorId")
                         localStorage["IsLoggedIn"] = "true";

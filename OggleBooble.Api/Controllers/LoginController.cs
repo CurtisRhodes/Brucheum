@@ -58,21 +58,22 @@ namespace OggleBooble.Api.Controllers
         [Route("api/Login/AddRegisterUser")]
         public AddRegisterdUserSuccessModel AddRegisterUser(RegisteredUser newRegisteredUserModel)
         {
-            var successModel = new AddRegisterdUserSuccessModel();
+            var registerdUserSuccessModel = new AddRegisterdUserSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    successModel.RegisterStatus = "user successfully registered";
+                    registerdUserSuccessModel.RegisterStatus = "user successfully registered";
                     var dbRegisteredUserUserName = db.RegisteredUsers.Where(u => u.UserName == newRegisteredUserModel.UserName).FirstOrDefault();
                     if (dbRegisteredUserUserName != null)
                     {
-                        successModel.RegisterStatus = "user name already exists";
-                        successModel.NewVisitorId = newRegisteredUserModel.VisitorId;
-                        successModel.Success = "ok";
-                        return successModel;
+                        registerdUserSuccessModel.RegisterStatus = "user name already exists";
+                        registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
+                        registerdUserSuccessModel.Success = "ok";
+                        return registerdUserSuccessModel;
                     }
 
+                    // check for troubled visitorId
                     if ((newRegisteredUserModel.VisitorId == null) ||
                         (newRegisteredUserModel.VisitorId.IndexOf("cookie not found") > -1) ||
                         (newRegisteredUserModel.VisitorId.IndexOf("user does not accept cookies") > -1) ||
@@ -80,30 +81,28 @@ namespace OggleBooble.Api.Controllers
                         (newRegisteredUserModel.VisitorId == "unknown"))
                     { 
                         newRegisteredUserModel.VisitorId = Guid.NewGuid().ToString();
-
                         Visitor newVisitor = new Visitor()
                         {
                             VisitorId = newRegisteredUserModel.VisitorId,
-                            IpAddress = "unknown",
+                            IpAddress = "00.00.00",
                             City = "unknown",
-                            Region = "unknown",
-                            Country = "unknown",
+                            Region = "register",
+                            Country = "ZZ",
                             GeoCode = "unknown",
-                            InitialPage = 0,
-                            InitialVisit = DateTime.Now
+                            InitialPage = 0
                         };
                         db.Visitors.Add(newVisitor);
                         db.SaveChanges();
-                        successModel.NewVisitorId = newRegisteredUserModel.VisitorId;
-                        successModel.RegisterStatus = "new VisitorId created";
+                        registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
+                        registerdUserSuccessModel.RegisterStatus = "new VisitorId created";
                     }
                     else {
                         Visitor visitor = db.Visitors.Where(v => v.VisitorId == newRegisteredUserModel.VisitorId).FirstOrDefault();
                         if (visitor == null) {
-                            successModel.RegisterStatus = "VisitorId not found";
-                            successModel.NewVisitorId = newRegisteredUserModel.VisitorId;
-                            successModel.Success = "ok";
-                            return successModel;
+                            registerdUserSuccessModel.RegisterStatus = "VisitorId not found";
+                            registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
+                            registerdUserSuccessModel.Success = "ok";
+                            return registerdUserSuccessModel;
                         }
                     }
 
@@ -112,16 +111,16 @@ namespace OggleBooble.Api.Controllers
                     {
                         if (dbUserVisitorId.UserRole == "admin")
                         {
-                            successModel.RegisterStatus = "admin override";
+                            registerdUserSuccessModel.RegisterStatus = "admin override";
                             newRegisteredUserModel.VisitorId = Guid.NewGuid().ToString();
-                            successModel.NewVisitorId = newRegisteredUserModel.VisitorId;
+                            registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
                         }
                         else
                         {
-                            successModel.RegisterStatus = "visitorId already registered";
-                            successModel.NewVisitorId = newRegisteredUserModel.VisitorId;
-                            successModel.Success = "ok";
-                            return successModel;
+                            registerdUserSuccessModel.RegisterStatus = "visitorId already registered";
+                            registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
+                            registerdUserSuccessModel.Success = "ok";
+                            return registerdUserSuccessModel;
                         }
                     }
                     var newRegisteredUser = new RegisteredUser()
@@ -141,11 +140,11 @@ namespace OggleBooble.Api.Controllers
 
                     db.RegisteredUsers.Add(newRegisteredUser);
                     db.SaveChanges();
-                    successModel.Success = "ok";
+                    registerdUserSuccessModel.Success = "ok";
                 }
             }
-            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
-            return successModel;
+            catch (Exception ex) { registerdUserSuccessModel.Success = Helpers.ErrorDetails(ex); }
+            return registerdUserSuccessModel;
         }
 
         [HttpPut]

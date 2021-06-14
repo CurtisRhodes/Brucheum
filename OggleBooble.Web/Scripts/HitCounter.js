@@ -210,15 +210,21 @@ function logIpHit(visitorId, ipAddress, folderId) {
 //////////////////////////////////////////////////////////////////
 
 function myMsgTest() {
-    let wipTitle = "data tracking error";
-    let wipMessage = "problem storing your IpAddress";
-    wipMessage += "<br/>Unable to store a cookie";
-    wipMessage += "<br/>This site requires cookies enabled";
-    wipMessage += "<br/>You may be asked to login on every page until you leave.";
-    wipMessage += "<br/>you must <a href=''>Register</a> or <a href=''>login</a> to continue";
-    wipMessage += "<div class='robotWarning'><input type='checkbox'> I am not a robot.</input></div>";
 
-    showMyAlert(wipTitle, wipMessage);
+    showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
+    $('#customMessageContainer').css("top", 250);
+    $('#customMessageContainer').css("left", 400);
+
+
+
+//    let wipTitle = "data tracking error";
+//    let wipMessage = "problem storing your IpAddress";
+//    wipMessage += "<br/>Unable to store a cookie";
+//    wipMessage += "<br/>This site requires cookies enabled";
+//    wipMessage += "<br/>You may be asked to login on every page until you leave.";
+//    wipMessage += "<br/>you must <a href=''>Register</a> or <a href=''>login</a> to continue";
+//    wipMessage += "<div class='robotWarning'><input type='checkbox'> I am not a robot.</input></div>";
+//    showMyAlert(wipTitle, wipMessage);
 }
 
 function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {

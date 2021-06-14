@@ -15,15 +15,14 @@ function launchCarousel(startRoot) {
     carouselTake = 45;
     let carouselSkip = 0;
     imageIndex = 0;
-    let lastStep = "o";
     try {
         //loadCarouselSettingsIntoLocalStorage();
         //jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-        window.addEventListener("resize", resizeCarousel);
+
+        //if (e.IndexOf("SyntaxError: Unexpected token u in JSON at position 1") > -1) {
 
         switch (startRoot) {
             case "centerfold":
-                lastStep = "centerfold";
                 if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
                     //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
                     console.log("loading centerfold from centerfold cache");
@@ -42,10 +41,7 @@ function launchCarousel(startRoot) {
                 }
                 break;
             case "boobs":
-                lastStep = "boobs";
                 if (!isNullorUndefined(localStorage["carouselCache"])) {
-                    //alert("localStorage[carouselCache]: " + localStorage["carouselCache"]);
-                    //localStorage.removeItem("carouselCache");
                     let carouselCacheArray = JSON.parse(localStorage["carouselCache"]);
                     $.each(carouselCacheArray, function (idx, obj) {
                         carouselItemArray.push(obj);
@@ -55,10 +51,9 @@ function launchCarousel(startRoot) {
                 }
                 else
                     carouselTake = 10;
-                    console.log("no " + startRoot + " cache found");
+                console.log("no " + startRoot + " cache found");
                 break;
             case "porn":
-                lastStep = "porn";
                 if (!isNullorUndefined(window.localStorage["pornCache"])) {
                     console.log("loading porn from centerfold cache");
                     let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
@@ -71,44 +66,25 @@ function launchCarousel(startRoot) {
                 }
                 else
                     carouselTake = 10;
-                    console.log("no " + startRoot + " cache found");
+                console.log("no " + startRoot + " cache found");
                 break;
             default:
-                lastStep = "SWT";
                 logError("SWT", 222, startRoot, "launchCarousel");
         }
-        lastStep = "jsCarouselSettings";
         //if (isNullorUndefined(jsCarouselSettings)) {
         //    //alert("jsCarouselSettings NullorUndefined");
         //    loadImages(startRoot, carouselSkip, carouselTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
         //    logError("BUG", startRoot, "jsCarouselSettings", "launchCarousel");
         //}
         //else
-        loadImages(startRoot, carouselSkip, carouselTake, true, false);
-
-        if (document.domain == "localHost") alert("launchCarousel CATCH: lastStep: " + lastStep + " e: " + e);
-        refreshCache(startRoot);
     }
     catch (e) {
-        if (e.IndexOf("SyntaxError: Unexpected token u in JSON at position 1") > -1) {
-            if (lastStep == "boobs") {
-                localStorage.removeItem("carouselCache");
-                launchCarousel("boobs");
-            }
-            if (lastStep == "porn") {
-                localStorage.removeItem("pornCache");
-                launchCarousel("porn");
-            }
-            if (lastStep == "centerfold") {
-                localStorage.removeItem("centerfoldCache");
-                launchCarousel("centerfold");
-            }
-            //logError("CAT", startRoot, "lastStep:" + lastStep + "  e: " + e, "launchCarousel");
-        }
-        else {
-            logError("CAT", 3910, e, "launchCarousel");
-        }
-        if (document.domain == "localHost") alert("launchCarousel CATCH: lastStep: " + lastStep + " e: " + e);
+        logError2(create_UUID(), "CAT", 3910, e, "launchCarousel");
+    }
+    finally {
+        window.addEventListener("resize", resizeCarousel);
+        loadImages(startRoot, carouselSkip, carouselTake, true, false);
+        refreshCache(startRoot);
     }
 }
 
@@ -138,8 +114,8 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                     });
 
                     if (!vCarouselInterval) {
-                        //if (document.domain == "localhost") alert("starting carousel from after ajax");
                         console.log("starting carousel from after ajax");
+                        handleTroubledAccount("Carousel loadImages")
                         logError("LSC", 67659, "rootFolder: " + rootFolder, "Carousel loadImages");
                         startCarousel("ajax");
                     }

@@ -14,51 +14,34 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpPost]
         [Route("api/Visitor/AddVisitor")]
-        public AddVisitorSuccessModel AddVisitor(AddVisitorModel visitorData)
+        public string AddVisitor(AddVisitorModel visitorData)
         {
-            var addVisitorModel = new AddVisitorSuccessModel() { Success = "ono" };
+            string success;
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    bool okToAdd = true;
-                    if (visitorData.CalledFrom != "attempt Register")
+                    var newVisitor = new Visitor()
                     {
-                        var dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                        if (dbExistingIpVisitor != null)
-                        {
-                            addVisitorModel.NewVisitorId = dbExistingIpVisitor.VisitorId;
-                            addVisitorModel.RetunValue = "existing Ip";
-                            okToAdd = false;
-                        }
-                    }
-                    if(okToAdd)
-                    {
-                        addVisitorModel.NewVisitorId = Guid.NewGuid().ToString();
-                        var newVisitor = new Visitor()
-                        {
-                            VisitorId = addVisitorModel.NewVisitorId,
-                            InitialPage = visitorData.InitialPage,
-                            City = visitorData.City,
-                            Country = visitorData.Country,
-                            GeoCode = visitorData.GeoCode,
-                            Region = visitorData.Region,
-                            InitialVisit = DateTime.Now,
-                            IpAddress = visitorData.IpAddress
-                        };
-
-                        db.Visitors.Add(newVisitor);
-                        db.SaveChanges();
-                        addVisitorModel.RetunValue = "new visitor added";
-                    }
-                    addVisitorModel.Success = "ok";
+                        VisitorId = visitorData.VisitorId,
+                        IpAddress = visitorData.IpAddress,
+                        City = visitorData.City,
+                        Country = visitorData.Country,
+                        GeoCode = visitorData.GeoCode,
+                        Region = visitorData.Region,
+                        InitialPage = visitorData.InitialPage,
+                        InitialVisit = DateTime.Now
+                    };
+                    db.Visitors.Add(newVisitor);
+                    db.SaveChanges();
+                    success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                addVisitorModel.Success = Helpers.ErrorDetails(ex);
+                success = Helpers.ErrorDetails(ex);
             }
-            return addVisitorModel;
+            return success;
         }
 
         [HttpGet]

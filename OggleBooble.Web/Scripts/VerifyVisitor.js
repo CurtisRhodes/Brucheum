@@ -100,12 +100,7 @@ function checkForRepeatBadVisitorId(folderId, visitorId) {
 function addVisitor(visitorData) {
     try
     {
-        if (visitorData.CalledFrom == "BadIp")
-            logActivity("IPB", visitorData.InitialPage, "addVisitor/" + visitorData.CalledFrom); // repair vis made it to AddVis
-
-        // visitorData.VisitorId = create_UUID();
         logActivity("AV0", visitorData.FolderId, "addVisitor"); // entering Add Visitor 
-        // console.log("attempting to addVisitor");
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
@@ -116,14 +111,6 @@ function addVisitor(visitorData) {
                     if (avSuccessModel.NewVisitorId.IndexOf("undefined">-1)) {
                         logActivity("AV9", visitorData.InitialPage, "add visitor"); // VisitorId undefined
                     }
-
-                    //if (visitorData.CalledFrom == "BadIp") {
-                    //    let badVisitorId = getCookieValue("VisitorId");
-                    //    let newVisitorId = avSuccessModel.VisitorId;
-                    //    moveStatsToNewVisitorId(badVisitorId, newVisitorId);
-                    //    logActivity("IPC", visitorData.FolderId, "add visitor"); // repair bad visitorId succeeded
-                    //}
-
                     if (avSuccessModel.RetunValue == "new visitor added") {
                         logActivity("AV1", visitorData.InitialPage, "add visitor"); // new visitor added
                         loadUserProfile("add new visitor");
@@ -132,7 +119,6 @@ function addVisitor(visitorData) {
                         logActivity("AV2", visitorData.InitialPage, "add Visitor");  // existing IP visitorId used
                         loadUserProfile("recall existing Ip");
                     }
-
                     setCookieValue("VisitorId", avSuccessModel.NewVisitorId);
                     if (getCookieValue("VisitorId") == avSuccessModel.NewVisitorId) {
                         logActivity("AV4", visitorData.InitialPage, "add Visitor"); // Calling LogVisit
