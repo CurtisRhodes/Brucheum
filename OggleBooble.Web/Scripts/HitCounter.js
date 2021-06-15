@@ -103,7 +103,7 @@ function logPageHit(folderId) {
 function logVisit(folderId, calledFrom) {
     try {
         let visitorId = getCookieValue("VisitorId");
-        logActivity2(, visitorId, "LV0", folderId, calledFrom);
+        logActivity2(visitorId, "LV0", folderId, calledFrom);
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,

@@ -2,7 +2,14 @@
 function tryAddNewIP(folderId, visitorId, calledFrom) {
 
     //let visitorId = getCookieValue("VisitorId");
-    //if (visitorId == "cookie not found") {
+    if (visitorId == "cookie not found") {
+        visitorId = create_UUID();
+        logError2(visitorId, "BUG", "cookie not found made it to tryAddNewIP", calledFrom);
+    }
+    if (visitorId == "user does not accept cookies") {
+        visitorId = create_UUID();
+        logError2(visitorId, "BUG", "user does not accept cookies made it to tryAddNewIP", calledFrom);
+    }
     logActivity2(visitorId, "IP0", folderId, calledFrom);
     getIpInfo(folderId, visitorId, calledFrom);
     // 1 geoplugin(folderId, calledFrom);
@@ -200,7 +207,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
         else {
             ip3Busy = true;
             let ipCall3Returned = false;
-            logActivity2(visitorId, "IP1", folderId, "CloudflareTrace/" + calledFrom); // attempting CloudflareTrace lookup
+            //logActivity2(visitorId, "IP1", folderId, "CloudflareTrace/" + calledFrom); // attempting CloudflareTrace lookup
             $.ajax({
                 type: "GET",
                 url: "https://www.cloudflare.com/cdn-cgi/trace",
@@ -261,22 +268,34 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                     let errMsg = getXHRErrorDetails(jqXHR);
 
                     if (errMsg.indexOf("Uncaught Error") > -1) {
-                        logActivity2(visitorId, "IP9", folderId, "cloudflareTrace");
-                        logError("200", folderId, JSON.stringify(errMsg, null, 2), "cloudflareTrace/" + calledFrom); // Json response code
-                        //        Uncaught Error.
-                        //            fl = 14f604
-                        //        h = www.cloudflare.com
-                        //        ip = 23.249.34.220
-                        //        ts = 1623704044.737
-                        //        visit_scheme = https
-                        //        uag = Mozilla / 5.0(Windows NT 10.0; Win64; x64) AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 91.0.4472.77 Safari / 537.36
-                        //colo = ORD
-                        //http = http / 2
-                        //loc = US
-                        //tls = TLSv1.3
-                        //sni = plaintext
-                        //warp = off
-                        //gateway = off
+
+                        let visitorInfo = {
+                            VisitorId: visitorId,
+                            City: "Cloudflare",
+                            InitialPage: folderId,
+                            CalledFrom: "cloudflare/" + calledFrom
+                        };
+
+                        let item, itemName, itemValue;
+                        for (var i = 0; i < errMsg.length; i++) {
+                            item = cookieElements2[i].split("\n");
+                            itemName = cookieItem[0].trim();
+                            itemValue = cookieItem[1];
+                            if (itemName === "ip") {
+                                visitorInfo.IpAddress = itemValue;
+                            }
+                            if (itemName === "ts") {
+                                visitorInfo.GeoCode = itemValue;
+                            }
+                            if (itemName === "loc") {
+                                visitorInfo.Country = itemValue;
+                            }
+                        }
+                        addVisitor(visitorInfo);
+                        //    Region: ipResponse.loc,
+                        logActivity2(visitorId, "IP2", folderId, "CloudflareTrace/" + calledFrom);
+                        //logActivity2(visitorId, "IP9", folderId, "cloudflareTrace");
+                        //logError("200", folderId, JSON.stringify(errMsg, null, 2), "cloudflareTrace/" + calledFrom); // Json response code
                     }
                     else {
                         if (errMsg.indexOf("Rate limit exceeded") > 0) {
@@ -304,7 +323,6 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                 }
                 ip3Busy = false;
             }, 2000);
-
         }
     } catch (e) {
         logError2(visitorId, "CAT", folderId, e, "cloudflareTrace");

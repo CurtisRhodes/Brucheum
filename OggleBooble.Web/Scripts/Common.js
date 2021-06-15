@@ -177,7 +177,7 @@ function isNullorUndefined(val) {
         return true;
     if (val === undefined)
         return true;
-    if (val === "undefined")
+    if (val.indexOf("undefined") > -1)
         return true;
     return false;
 }
@@ -582,15 +582,27 @@ function getCookieValue(itemName) {
             cookieItemName = cookieItem[0].trim();
             cookieItemValue = cookieItem[1];
             if (cookieItemName === itemName) {
-                returnValue = cookieItemValue;
-                if (localStorage[itemName] != cookieItemValue) {
-                    localStorage[itemName] = cookieItemValue;
-                    logError2(cookieItemValue, "BUG", 613310, "localStorage did not match cookie", "get CookieValue");
+                if (isNullorUndefined(cookieItemValue) {
+                    logError2(cookieItemValue, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue");
+                }
+                else {
+                    returnValue = cookieItemValue;
+                    if (localStorage[itemName] != cookieItemValue) {
+
+                        logError2(cookieItemValue, "CK1", 614737, "localStorage[itemName]: " + localStorage[itemName], "get CookieValue");
+
+                        localStorage[itemName] = cookieItemValue;
+                    }
                 }
                 break;
             }
         }
         if (returnValue == "cookie not found") {
+            if (!isNullorUndefined(localStorage[itemName])) {
+                returnValue = localStorage[itemName];
+                setCookieValue(itemName, returnValue);
+                logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
+            }
             //if (isNullorUndefined(localStorage[itemName])) {
             //    localStorage[itemName] = "COOKIE1" + create_UUID().substr(7);
             //    logError2(create_UUID(), "CL1", 61044, "cookie: " + itemName, "get CookieValue"); // not in localStorage either
@@ -626,11 +638,6 @@ function getCookieValue(itemName) {
             //        }
             //    }
             //    else {
-            if (!isNullorUndefined(localStorage[itemName])) {
-                returnValue = localStorage[itemName];
-                setCookieValue(itemName, returnValue);
-                logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
-            }
         }
     }
     catch (e) {
@@ -687,44 +694,9 @@ function createCookie(visitorId) {
 function handleTroubledAccount(calledFrom) {
     let visitorId = getCookieValue("VisitorId");
 
-    logActivity2(visitorId, "HT0", 614521, calledFrom);
 
-    if (visitorId.indexOf(" not ") > 0) {
-        setCookieValue("VisitorId", offendingUserId);
-        let visitorId = getCookieValue("VisitorId");
-        if (visitorId == offendingUserId) {
-            logActivity2(visitorId, "HT1", 614521, calledFrom);
-            // ok at least we have a proper VisitorId
-            $.ajax({
-                type: "POST",
-                url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
-                data: {
-                    VisitorId: offendingUserId,
-                    IpAddress: "11.11",
-                    City: "unknown",
-                    Country: "ZZ",
-                    Region: calledFrom,
-                    GeoCode: "unknown",
-                    InitialPage: 0
-                },
-                success: function (success) {
-                    if (success == "ok") {
-                        logActivity2(create_UUID(), "AV2", 555, "add Visitor"); // AddVisitor Success not ok
-                    }
-                    else {
-                        logActivity2(create_UUID(), "AV3", 555, "add Visitor"); // AddVisitor Success not ok
-                        logError2(create_UUID(), "AJ7", 555, success, "addVisitor");
-                    }
-                },
-                error: function (jqXHR) {
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg, 555, "add Visitor"))
-                        logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
-                }
-            });
-        }
-    }
-    let offendingUserId = localStorage[itemName];
+    //logActivity2(visitorId, "HT0", 614521, calledFrom);
+    //let offendingUserId = localStorage[itemName];
     //showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
     //$('#customMessageContainer').css("top", 255);
     //$('#customMessageContainer').css("left", 522);
