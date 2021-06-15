@@ -1,20 +1,28 @@
 ﻿
 function tryAddNewIP(folderId, visitorId, calledFrom) {
-
-    //let visitorId = getCookieValue("VisitorId");
-    if (visitorId == "cookie not found") {
-        visitorId = create_UUID();
-        logError2(visitorId, "BUG", "cookie not found made it to tryAddNewIP", calledFrom);
+    try {
+        //let visitorId = getCookieValue("VisitorId");
+        if (visitorId == "cookie not found") {
+            visitorId = create_UUID();
+            logError2(visitorId, "BUG", "cookie not found made it to tryAddNewIP", calledFrom);
+        }
+        if (visitorId == "user does not accept cookies") {
+            visitorId = create_UUID();
+            logError2(visitorId, "BUG", "user does not accept cookies made it to tryAddNewIP", calledFrom);
+        }
+        if (visitorId == null) {
+            logActivity("IP1", folderId, "tryAddNewIP/" + calledFrom);
+        }
+        else {
+            logActivity2(visitorId, "IP0", folderId, "tryAddNewIP/" + calledFrom);
+            //getIpInfo(folderId, visitorId, calledFrom);
+        }
+        // 1 geoplugin(folderId, calledFrom);
+        // 2 tryApiDbIpFree(folderId, calledFrom);
+        // 3 ipapico(folderId, calledFrom);
+    } catch (e) {
+        logError2(create_UUID, "CAT", "666", e, "tryAddNewIP");
     }
-    if (visitorId == "user does not accept cookies") {
-        visitorId = create_UUID();
-        logError2(visitorId, "BUG", "user does not accept cookies made it to tryAddNewIP", calledFrom);
-    }
-    logActivity2(visitorId, "IP0", folderId, calledFrom);
-    getIpInfo(folderId, visitorId, calledFrom);
-    // 1 geoplugin(folderId, calledFrom);
-    // 2 tryApiDbIpFree(folderId, calledFrom);
-    // 3 ipapico(folderId, calledFrom);
 }
 
 let ip0Busy = false;
@@ -54,6 +62,8 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 }
                 else {
                     logActivity2(ipResponse.ip, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
+
+
                     addVisitor({
                         VisitorId: visitorId,
                         IpAddress: ipResponse.ip,
@@ -118,7 +128,7 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
             tryCloudflareTrace(folderId, visitorId, calledFrom);
         }
         else {
-            logActivity2(visitorId, "IP1", folderId, "apiDbIpFree");
+            //logActivity2(visitorId, "IP1", folderId, "apiDbIpFree");
             ip2Busy = true;
             let ipCall2Returned = false;
             $.ajax({

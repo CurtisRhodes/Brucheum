@@ -177,7 +177,7 @@ function isNullorUndefined(val) {
         return true;
     if (val === undefined)
         return true;
-    if (val.indexOf("undefined") > -1)
+    if (val == "undefined")
         return true;
     return false;
 }
@@ -582,16 +582,21 @@ function getCookieValue(itemName) {
             cookieItemName = cookieItem[0].trim();
             cookieItemValue = cookieItem[1];
             if (cookieItemName === itemName) {
-                if (isNullorUndefined(cookieItemValue) {
+                if (isNullorUndefined(cookieItemValue)) {
                     logError2(cookieItemValue, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue");
                 }
                 else {
                     returnValue = cookieItemValue;
                     if (localStorage[itemName] != cookieItemValue) {
-
-                        logError2(cookieItemValue, "CK1", 614737, "localStorage[itemName]: " + localStorage[itemName], "get CookieValue");
-
-                        localStorage[itemName] = cookieItemValue;
+                        if (itemName == "VisitorId") {
+                            if (localStorage[itemName].indexOf("=") > 0) {
+                                localStorage[itemName] = cookieItemValue.substr(36);
+                            }
+                        }
+                        else {
+                            logError2(cookieItemValue, "CK1", 614737, "localStorage[itemName]: " + localStorage[itemName], "get CookieValue");
+                            localStorage[itemName] = cookieItemValue;
+                        }
                     }
                 }
                 break;
@@ -603,41 +608,6 @@ function getCookieValue(itemName) {
                 setCookieValue(itemName, returnValue);
                 logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
             }
-            //if (isNullorUndefined(localStorage[itemName])) {
-            //    localStorage[itemName] = "COOKIE1" + create_UUID().substr(7);
-            //    logError2(create_UUID(), "CL1", 61044, "cookie: " + itemName, "get CookieValue"); // not in localStorage either
-            //}
-            //else {
-            //    if (localStorage[itemName].indexOf("COOKIE") > -1) {
-            //        if (localStorage[itemName].indexOf("COOKIE1") > -1) {
-            //            localStorage[itemName] = "COOKIE2" + create_UUID().substr(7);
-            //            logError2(create_UUID(), "CL2", 65445, "cookie bug still", "get CookieValue");  // localStorage ok but cookie still not found
-            //            return;
-            //        }
-            //        if (localStorage[itemName].indexOf("COOKIE2") > -1) {
-            //            localStorage[itemName] = "COOKIE3" + create_UUID().substr(7);
-            //            logError2(create_UUID(), "CL3", 65445, "cookie bug still", "get CookieValue");  // cookie not found a third time
-            //            return;
-            //        }
-            //        if (localStorage[itemName].indexOf("COOKIE3") > -1) {
-            //            if (navigator.cookieEnabled) {  // user accepts cookies
-            //                logError2(create_UUID(), "CL4", 61017, "k3: " + localStorage[itemName], "get cookie"); // finally calling add new IP from getCookie
-            //                //handleTroubledAccount("get cookie");
-            //                //logActivity2(create_UUID(), "LG1", 61300, "checkLoginStatus"); // asked please to login
-            //            }
-            //            else {  // user does NOT accept cookies
-            //                returnValue = localStorage[itemName] = "UNC" + create_UUID().substr(3);
-            //                logError2(returnValue, "UNC", 61016, "itemName:" + itemName, "get cookie");
-            //                //logError2(returnValue, "CL5", 61017, "", "get cookie"); // user does not accept cookies AND cookie still not found
-            //                //showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
-            //                //$('#customMessageContainer').css("top", 250);
-            //                //$('#customMessageContainer').css("left", 400);
-            //                //logActivity2(create_UUID(), "LG2", 33445, "get cookie"); // cookies required
-            //            }
-            //            return;
-            //        }
-            //    }
-            //    else {
         }
     }
     catch (e) {

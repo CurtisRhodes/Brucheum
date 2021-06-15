@@ -116,7 +116,9 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                     if (!vCarouselInterval) {
                         console.log("starting carousel from after ajax");
                         refreshCache(rootFolder);
-                        logError2(visitorId, "LSC", 67659, "rootFolder: " + rootFolder, "Carousel loadImages");
+                        //let visId = getCookieValue("VisitorId");
+                        logError2(create_UUID(), "LSC", 67659, "rootFolder: " + rootFolder, "Carousel loadImages");
+                        //logError2(create_UUID(), "LSC", 67659, "rootFolder: " + rootFolder, "Carousel loadImages");
                         //handleTroubledAccount("Carousel loadImages")
                         startCarousel("ajax");
                     }
