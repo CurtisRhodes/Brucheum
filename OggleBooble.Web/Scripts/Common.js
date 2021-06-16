@@ -582,6 +582,7 @@ function getCookieValue(itemName) {
             cookieItemName = cookieItem[0].trim();
             cookieItemValue = cookieItem[1];
             if (cookieItemName === itemName) {
+
                 if (isNullorUndefined(cookieItemValue)) {
                     if (!navigator.cookieEnabled) {  // user accepts cookies
                         //showCookiesRequiredMessage();
@@ -589,19 +590,36 @@ function getCookieValue(itemName) {
                     }
                     else {
                         logError2(cookieItemValue, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
+                        visitorId = create_UUID();
+                        setCookieValue("VisitorId", visitorId);
+                        addVisitor({
+                            VisitorId: visitorId,
+                            IpAddress: '00.11.00',
+                            City: "undefined",
+                            Country: "ZZ",
+                            Region: "undefined",
+                            GeoCode: "get CookieValue"
+                        });
+                        returnValue = visitorId;
                     }
                 }
                 else {
                     returnValue = cookieItemValue;
-                    if (localStorage[itemName] != cookieItemValue) {
-                        if (itemName == "VisitorId") {
-                            if (localStorage[itemName].indexOf("=") > 0) {
-                                localStorage[itemName] = cookieItemValue.substr(36);
+                    if (isNullorUndefined(localStorage[itemName])) {
+                        localStorage[itemName] = cookieItemValue;
+                    }
+                    else {
+                        if (localStorage[itemName] != cookieItemValue) {
+                            if (itemName == "VisitorId") {
+                                if (localStorage[itemName].indexOf("=") > 0) {
+                                    localStorage[itemName] = cookieItemValue.substr(36);
+                                    logError2(returnValue, "CK7", 616307, "get cookie"); // localStorage ends with an =
+                                }
                             }
-                        }
-                        else {
-                            logError2(cookieItemValue, "CK1", 614737, "localStorage[itemName]: " + localStorage[itemName], "get CookieValue");
-                            localStorage[itemName] = cookieItemValue;
+                            else {
+                                logError2(cookieItemValue, "CK1", 614737, "localStorage[itemName]: " + localStorage[itemName], "get CookieValue");
+                                localStorage[itemName] = cookieItemValue;
+                            }
                         }
                     }
                 }
@@ -609,20 +627,21 @@ function getCookieValue(itemName) {
             }
         }
 
-
         if (returnValue == "cookie not found") {
             if (!isNullorUndefined(localStorage[itemName])) {
                 returnValue = localStorage[itemName];
-                setCookieValue(itemName, returnValue);
-                logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
+                if (navigator.cookieEnabled) {  // user accepts cookies
+                    setCookieValue(itemName, returnValue);
+                    logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
+                }
+                else {
+                    logError2(returnValue, "CK4", 616307, "get cookie"); // localStorage bypass cookies not enabled
+                }
             }
-            //    if (!navigator.cookieEnabled) {  // user accepts cookies
-            //        showCookiesRequiredMessage();
-            //    }
         }
     }
     catch (e) {
-        logError2(create_UUID(), "CAT", 671156, e, "get CookieValue");
+        logError2(create_UUID(), "CAT", 616329, e, "get CookieValue");
     }
     return returnValue;
 }
@@ -641,7 +660,7 @@ function setCookieValue(elementToSet, newValue) {
         console.log("setCookieValue.  set:" + elementToSet + " to: " + newValue);
     } catch (e) {
         //alert("setcookie CATCH Error: " + e);
-        logError2(create_UUID(), "CAT", 65745, e, "setCookieValue");
+        logError2(create_UUID(), "CAT", 616415, e, "setCookieValue");
     }
 }
 

@@ -61,19 +61,10 @@ function logPageHit(folderId) {
             return;
         }
         let visitorId = getCookieValue("VisitorId");
-
-        if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
-            logActivity("PH5", folderId, "log PageHit"); // duplicate page hit
-            return;
-        }
-        lastPageHitVisitorId = visitorId;
-        lastPageHitFolderId = folderId;
-
         if (visitorId == "cookie not found") {
-            logActivity(visitorId, "PH3", "log pageHit"); // cookie not found
-            logError2(create_UUID(), "BUG", folderId, "visitorId came back not found", "log PageHit");
-            //tryAddNewIP(folderId, create_UUID(), "log PageHit");
             visitorId = create_UUID();
+            //logError2(create_UUID(), "BUG", folderId, "visitorId came back not found", "log PageHit");
+            //tryAddNewIP(folderId, create_UUID(), "log PageHit");
             setCookieValue("VisitorId", visitorId);
             addVisitor({
                 VisitorId: visitorId,
@@ -83,7 +74,15 @@ function logPageHit(folderId) {
                 Region: "cookie not found",
                 GeoCode: "cookie not found"
             });
+            logActivity("PH3", "log pageHit"); // cookie not found
         }
+
+        if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
+            logActivity("PH5", folderId, "log PageHit"); // duplicate page hit
+            return;
+        }
+        lastPageHitVisitorId = visitorId;
+        lastPageHitFolderId = folderId;
 
         $.ajax({
             type: "POST",
@@ -116,8 +115,13 @@ function logPageHit(folderId) {
 
 function logVisit(folderId, calledFrom) {
     try {
-        let visitorId = getCookieValue("VisitorId");
         logActivity2(visitorId, "LV0", folderId, calledFrom);
+        let visitorId = getCookieValue("VisitorId");
+        if (visitorId == "cookie not found") {
+            logActivity2(visitorId, "LV4", folderId, calledFrom);
+            logError2(create_UUID(), "VNF", folderId, "visitorId came back cookie not found", "log visit");
+            return;
+        }
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
@@ -137,12 +141,14 @@ function logVisit(folderId, calledFrom) {
                     if (successModel.ReturnValue == "no visit recorded")
                         logActivity("LV5", folderId, "logVisit/" + calledFrom); // no visit recorded
 
-                    if (successModel.ReturnValue == "VisitorId not found")
-                        logActivity2("LV3", folderId, "logVisit/" + calledFrom);  // visitorId not found
+                    if (successModel.ReturnValue == "VisitorId not found") {
+                        logActivity("LV3", folderId, "logVisit/" + calledFrom);  // visitorId not found
+                        logError("BUG", folderId, "VisitorId not found", "log visit");
+                    }
                 }
                 else {
-                    logActivity("LV4", folderId, "logVisit/" + calledFrom);  // Log Visit fail
-                    logError("AJX", folderId, successModel.Success, "logVisit/" + calledFrom);
+                    logActivity2(visitorId, "LV0", folderId, "logVisit/" + calledFrom);  // 
+                    logError2(visitorId, "AJX", folderId, successModel.Success, "logVisit/" + calledFrom);
                 }
             },
             error: function (jqXHR) {

@@ -432,13 +432,22 @@ function userProfileHtml() {
 }
 
 function callUpdateUserProfile() {
-    let userProfileData = {
-        UserName: $('#txtUserProfileName').val(),
-        FirstName: $('#txtUserProfileFirstName').val(),
-        LastName: $('#txtUserProfileLastName').val(),
-        Email: $('#txtUserProfileEmail').val()
-    };
-    updateRegisteredUser(userProfileData);
+
+    let visitorId = getCookieValue("VisitorId");
+    if (visitorId == "cookie not found") {
+        logError2(create_UUID(), "BUG", 616356, "cookie not found", "call Update UserProfile");
+        alert("Sorry\nprogram error\please report by sending feedback");
+    }
+    else {
+        let userProfileData = {
+            VisitorId: visitorId,
+            UserName: $('#txtUserProfileName').val(),
+            FirstName: $('#txtUserProfileFirstName').val(),
+            LastName: $('#txtUserProfileLastName').val(),
+            Email: $('#txtUserProfileEmail').val()
+        };
+        updateRegisteredUser(userProfileData);
+    }
 }
 
 function updateRegisteredUser(userProfileData) {

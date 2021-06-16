@@ -36,9 +36,11 @@ function verifySession(folderId) {
             let visitorId = getCookieValue("VisitorId");
             if (isNullorUndefined(visitorId)) {
                 returnVisit = false;
+                visitorId = create_UUID();
+                sessionStorage["VisitorId"] = visitorId;
                 logActivity2(visitorId, "VS7", folderId, "verify session"); // visitorId null or undefined
                 addVisitor({
-                    VisitorId: create_UUID(),
+                    VisitorId: visitorId,
                     IpAddress: '00.00.00',
                     City: "undefined",
                     Country: "ZZ",
@@ -48,10 +50,12 @@ function verifySession(folderId) {
             }
 
             if (visitorId == "cookie not found") {
+                visitorId = create_UUID();
+                sessionStorage["VisitorId"] = visitorId;
                 logActivity2(visitorId, "VS2", folderId, "verify session"); // verify visitorId not found (new user?)
                 returnVisit = false;
                 addVisitor({
-                    VisitorId: create_UUID(),
+                    VisitorId: visitorId,
                     IpAddress: '00.00.00',
                     City: "unknown",
                     Country: "ZZ",
@@ -84,7 +88,7 @@ function verifyVisitorId(folderId, calledFrom) {
 
         if (visitorId.indexOf("cookie not found") > -1) {
             logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom);
-            logError2(create_UUID(), "BUG", folderId, "cookie not found made it too far", "verify visitor");
+            logError2(create_UUID(), "BUG", folderId, "cookie not found made it too far", "verify visitorId");
             //tryAddNewIP(folderId, visitorId, "troubled account");
             return;
         }
@@ -102,7 +106,7 @@ function verifyVisitorId(folderId, calledFrom) {
                         }
                         if (successModel.ReturnValue == "not found") {
                             logActivity("VV3", folderId, "verify Visitor"); // visitorId came back not found
-                            logError2(create_UUID(), "BUG", folderId, "visitorId came back not found", "verify visitor");
+                            logError2(create_UUID(), "BUG", folderId, "visitorId came back not found", "verify visitorId");
                         }
                         if (successModel.ReturnValue == "unknown country") {
                             logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // unknown country
@@ -110,14 +114,14 @@ function verifyVisitorId(folderId, calledFrom) {
                     }
                     else {
                         logActivity("VV4", folderId, "verify Visitor"); // verify visitor AJX error
-                        logError("AJX", folderId, successModel.Success, "verify Visitor");
+                        logError("AJX", folderId, successModel.Success, "verify VisitorId");
                     }
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
                     logActivity("VV6", folderId, errMsg); // verify visitor XHR error
-                    if (!checkFor404(errMsg, folderId, "verify Visitor")) {
-                        logError("XHR", folderId, errMsg, "verify Visitor");
+                    if (!checkFor404(errMsg, folderId, "verify VisitorId")) {
+                        logError("XHR", folderId, errMsg, "verify VisitorId");
                     }
                 }
             });
@@ -126,7 +130,7 @@ function verifyVisitorId(folderId, calledFrom) {
     catch (e) {
         sessionStorage["VisitorVerified"] = true;
         logActivity("VV5", folderId, e); // verify visitor CATCH error
-        logError2(visitorId, "CAT", folderId, e, "verify visitor");
+        logError2(visitorId, "CAT", folderId, e, "verify visitorId");
     }
 }
 
@@ -139,7 +143,7 @@ function addVisitor(visitorData) {
             return;
         }
 
-        logActivity("AV0", visitorData.FolderId, "addVisitor"); // entering Add Visitor 
+        logActivity("AV0", visitorData.FolderId, "add Visitor"); // entering Add Visitor 
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
@@ -148,12 +152,16 @@ function addVisitor(visitorData) {
                 if (success == "ok") {
                     logActivity("AV1", visitorData.InitialPage, "add visitor"); // new visitor added
                     setCookieValue("VisitorId", visitorData.VisitorId);
-                    logVisit(visitorData.InitialPage, visitorData.CalledFrom);
+                    logVisit(visitorData.InitialPage,"add Visitor");
                 }
                 else {
-                    //logActivity2(visitorData.VisitorId, "AV3", visitorData.InitialPage, success); // AddVisitor Success not ok
-                    logActivity2(visitorData.VisitorId, "AV7", visitorData.InitialPage, success); // ajax error from Add Visitor
-                    logError2(visitorData.VisitorId, "AJ7", visitorData.InitialPage, success, "addVisitor");
+                    if (success.indexOf("Duplicate entry") > 0) {
+                        logActivity2(visitorData.VisitorId, "AV3", visitorData.InitialPage, success); // duplicate key violation
+
+                    } else {
+                        logActivity2(visitorData.VisitorId, "AV7", visitorData.InitialPage, success); // ajax error from Add Visitor
+                        logError2(visitorData.VisitorId, "AJ7", visitorData.InitialPage, success, "add Visitor");
+                    }
                 }
             },
             error: function (jqXHR) {
@@ -172,7 +180,7 @@ function addVisitor(visitorData) {
 function loadUserProfile(calledFrom) {
     try {
         let visitorId = getCookieValue("VisitorId");
-        if ((visitorId.indexOf("cookie not found") > -1) || (visitorId.indexOf("user does not accept cookies") > -1)) {
+        if (visitorId.indexOf("cookie not found") > -1) {
             localStorage["IsLoggedIn"] = "false";
             localStorage["UserName"] = "not registered";
             localStorage["UserRole"] = "not registered";

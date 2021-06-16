@@ -116,11 +116,21 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                     if (!vCarouselInterval) {
                         console.log("starting carousel from after ajax");
                         refreshCache(rootFolder);
-                        //let visId = getCookieValue("VisitorId");
-                        logError2(create_UUID(), "LSC", 67659, "rootFolder: " + rootFolder, "Carousel loadImages");
-                        //logError2(create_UUID(), "LSC", 67659, "rootFolder: " + rootFolder, "Carousel loadImages");
-                        //handleTroubledAccount("Carousel loadImages")
                         startCarousel("ajax");
+
+                        //handleTroubledAccount("Carousel loadImages")
+                        let visitorId = getCookieValue("VisitorId");
+                        if (visitorId == "cookie not found") {
+                            if (navigator.cookieEnabled) {  // user accepts cookies
+                                logError2(create_UUID(), "LSC", 67659, "cookie not found. rootFolder: " + rootFolder, "Carousel loadImages");
+                            }
+                            else {
+                                logError2(create_UUID(), "LSC", 67659, "cookie not found cookies not enabled.  rootFolder: " + rootFolder, "Carousel loadImages");
+                            }
+                        }
+                        else {
+                            logError("LSC", 67659, "rootFolder: " + rootFolder, "Carousel loadImages");
+                        }
                     }
 
                     if (carouselInfo.Links.length === carouselTake) {
@@ -142,7 +152,11 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                 }
                 else {
                     if (document.domain == "localhost") alert("carouselInfo error " + carouselInfo.Success);
-                    logError("AJX", 3908, carouselInfo.Success, "loadImages");
+                    if (carouselInfo.Success.indexOf("A connection attempt failed") > 0) {
+                        checkFor404("Not connect", 616425, "carousel loadImages");
+                    }
+                    else
+                        logError("AJX", 3908, carouselInfo.Success, "carousel loadImages");
                 }
             },
             error: function (jqXHR) {
@@ -214,12 +228,16 @@ function refreshCache(rootFolder) {
                    // if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache.  \nTook: " + delta.toFixed(3) + "  size: " + cacheArray.length);
                 }
                 else {
-                    logError("AJX", 77508, carouselInfo.Success, "refreshCache");
+                    if (carouselInfo.Success.indexOf("A connection attempt failed") > 0) {
+                        checkFor404("Not connect", 616425, "carousel refreshCache");
+                    }
+                    else
+                        logError("AJX", 77508, carouselInfo.Success, "refresh Cache");
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, 366, "refreshCache")) logError("XHR", 366, errMsg, "refreshCache");
+                if (!checkFor404(errMsg, 366, "refreshCache")) logError("XHR", 366, errMsg, "refresh Cache");
             }
         });
     } catch (e) {
@@ -241,7 +259,7 @@ function startCarousel(calledFrom) {
             }, rotationSpeed);
             console.log("started carousel from: " + calledFrom);
 
-            setTimeout(function () { launchPromoMessages(); }, 3000);
+            //setTimeout(function () { launchPromoMessages(); }, 3000);
 
         }
         else {
