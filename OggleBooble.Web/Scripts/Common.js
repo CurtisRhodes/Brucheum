@@ -583,7 +583,13 @@ function getCookieValue(itemName) {
             cookieItemValue = cookieItem[1];
             if (cookieItemName === itemName) {
                 if (isNullorUndefined(cookieItemValue)) {
-                    logError2(cookieItemValue, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue");
+                    if (!navigator.cookieEnabled) {  // user accepts cookies
+                        showCookiesRequiredMessage();
+                        logError2(cookieItemValue, "CK3", 615112, "cookieItemValue == undefined", "get CookieValue");
+                    }
+                    else {
+                        logError2(cookieItemValue, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue");
+                    }
                 }
                 else {
                     returnValue = cookieItemValue;
@@ -602,12 +608,17 @@ function getCookieValue(itemName) {
                 break;
             }
         }
+
+
         if (returnValue == "cookie not found") {
             if (!isNullorUndefined(localStorage[itemName])) {
                 returnValue = localStorage[itemName];
                 setCookieValue(itemName, returnValue);
                 logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
             }
+            //    if (!navigator.cookieEnabled) {  // user accepts cookies
+            //        showCookiesRequiredMessage();
+            //    }
         }
     }
     catch (e) {
@@ -618,7 +629,9 @@ function getCookieValue(itemName) {
 
 function setCookieValue(elementToSet, newValue) {
     try {
-
+        if (navigator.cookieEnabled) {  // user accepts cookies
+            showCookiesRequiredMessage();
+        }
         localStorage[elementToSet] = newValue;
         let cookieString = elementToSet + ":" + newValue;
         document.cookie = cookieString;

@@ -16,7 +16,7 @@ namespace OggleBooble.Api.Controllers
         [Route("api/Visitor/AddVisitor")]
         public string AddVisitor(AddVisitorModel visitorData)
         {
-            string success;
+            string success = "ono";
             try
             {
                 using (var db = new OggleBoobleMySqlContext())

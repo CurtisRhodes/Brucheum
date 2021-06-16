@@ -71,12 +71,16 @@ function logPageHit(folderId) {
 
         if (visitorId == "cookie not found") {
             //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
-            tryAddNewIP(folderId, "PHNF" + create_UUID().substr(4), "log PageHit")
+            visitorId = create_UUID();
+            setCookieValue("VisitorId", visitorId);
+            tryAddNewIP(folderId, create_UUID(), "log PageHit");
         }
 
         if (visitorId == "user does not accept cookies") {
             //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
-            tryAddNewIP(folderId, "PHUNC" + create_UUID().substr(5), "user does not accept cookies");
+            visitorId = "UNC" + create_UUID().substr(3);
+            setCookieValue("VisitorId", visitorId);
+            tryAddNewIP(folderId, visitorId, "log PageHit");
         }
 
         $.ajax({

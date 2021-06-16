@@ -63,7 +63,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 else {
                     logActivity2(ipResponse.ip, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
 
-
                     addVisitor({
                         VisitorId: visitorId,
                         IpAddress: ipResponse.ip,

@@ -8,18 +8,59 @@ function verifySession(folderId) {
             //    alert("VisitorId set to: " + getCookieValue("VisitorId"));
             //}
 
-            logActivity("VV0", folderId, "verify session"); // new session started
+            logActivity("VS0", folderId, "verify session"); // new session started
             $('#headerMessage').html("new session started");
             sessionStorage["VisitorVerified"] = true;
+            let returnVisit = true;
+
+            if (!navigator.cookieEnabled) {  // user accepts cookies
+                logActivity2(visitorId, "VS5", folderId, "verify session"); // user does not accept cookies
+                let visitorId = sessionStorage["VisitorId"];
+                if (isNullorUndefined(visitorId)) {
+                    returnVisit = false;
+                    //showCookiesRequiredMessage();
+                    visitorId = create_UUID();
+                    sessionStorage["VisitorId"] = visitorId;
+                    addVisitor({
+                        VisitorId: visitorId,
+                        IpAddress: '00.00.00',
+                        City: "cookies not enabled",
+                        Country: "ZZ",
+                        Region: "cookies not enabled",
+                        GeoCode: "cookies not enabled"
+                    });
+                }
+                //logError2(cookieItemValue, "CK3", 615112, "cookieItemValue == undefined", "get CookieValue");
+            }
 
             let visitorId = getCookieValue("VisitorId");
-
-            if ((visitorId.indexOf("undefined") > -1) || (visitorId.indexOf("cookie not found") > -1)) {
-                visitorId = create_UUID();
-                logActivity2(visitorId, "VV2", folderId, "verify session"); // verify visitorId not found (new user?)
-                tryAddNewIP(folderId, visitorId, "verify session");
+            if (isNullorUndefined(visitorId)) {
+                returnVisit = false;
+                logActivity2(visitorId, "VS7", folderId, "verify session"); // visitorId null or undefined
+                addVisitor({
+                    VisitorId: create_UUID(),
+                    IpAddress: '00.00.00',
+                    City: "undefined",
+                    Country: "ZZ",
+                    Region: "undefined",
+                    GeoCode: "undefined"
+                });
             }
-            else {
+
+            if (visitorId == "cookie not found") {
+                logActivity2(visitorId, "VS2", folderId, "verify session"); // verify visitorId not found (new user?)
+                returnVisit = false;
+                addVisitor({
+                    VisitorId: create_UUID(),
+                    IpAddress: '00.00.00',
+                    City: "unknown",
+                    Country: "ZZ",
+                    Region: "unknown",
+                    GeoCode: "unknown"
+                });
+            }
+            if (returnVisit) {
+                logActivity2(visitorId, "VS1", folderId, "verify session"); // visitor verified ok
                 verifyVisitorId(folderId, "verify session");
             }
         }
@@ -37,32 +78,15 @@ function verifySession(folderId) {
 function verifyVisitorId(folderId, calledFrom) {
     try {
 
+        logActivity("VV0", folderId, "verify Visitor"); // attempting to verify visitor
+
         let visitorId = getCookieValue("VisitorId");
 
-        if (visitorId.indexOf("undefined") > -1) {
-            if (visitorId.substr(0, 2) == "UDF") {
-                logError2(visitorId, "RBV", folderId, "troubled account", calledFrom);
-                addVisitor({
-                    VisitorId: visitorId,
-                    IpAddress: "11.11",
-                    City: "unknown",
-                    Country: "ZZ",
-                    Region: "troubled account",
-                    GeoCode: "unknown",
-                    InitialPage: folderId
-                });
-            }
-            else {
-                visitorId = "UDF" + create_UUID().substr(3);
-                tryAddNewIP(folderId, visitorId, "troubled account");
-            }
-        }
-
         if (visitorId.indexOf("cookie not found") > -1) {
-            visitorId = "CNF" + create_UUID().substr(3);
-            localStorage["VisitorId"] = visitorId;
-            logError("BUG", folderId, "cookie not found made it too far", "verify visitor");
+            logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom);
+            logError2(create_UUID(), "BUG", folderId, "cookie not found made it too far", "verify visitor");
             //tryAddNewIP(folderId, visitorId, "troubled account");
+            return;
         }
 
         else {
@@ -77,42 +101,11 @@ function verifyVisitorId(folderId, calledFrom) {
                             logVisit(folderId, "verify visitor");
                         }
                         if (successModel.ReturnValue == "not found") {
-                            logActivity("AV3", folderId, "verify Visitor"); // visitorId not found
-                            if (visitorId.substr(0, 2) == "BV") {
-                                logError2(visitorId, "RBV", folderId, "successModel.ReturnValue == not found", "verify Visitor");
-                                addVisitor({
-                                    VisitorId: visitorId,
-                                    IpAddress: "11.11",
-                                    City: "unknown",
-                                    Country: "ZZ",
-                                    Region: "repeat bad visitor",
-                                    GeoCode: "unknown",
-                                    InitialPage: folderId
-                                });
-                            }
-                            else {
-                                visitorId = "BV" + create_UUID().substr(2);
-                                tryAddNewIP(folderId, visitorId, "not found");
-                            }
+                            logActivity("VV3", folderId, "verify Visitor"); // visitorId came back not found
+                            logError2(create_UUID(), "BUG", folderId, "visitorId came back not found", "verify visitor");
                         }
                         if (successModel.Success == "unknown country") {
-                            logActivity("AV7", folderId, "verify Visitor"); // visitorId not found
-                            if (visitorId.substr(0, 2) == "ZZ") {
-                                logError2(visitorId, "RBV", folderId, "successModel.ReturnValue == unknown country", "verify Visitor");
-                                addVisitor({
-                                    VisitorId: visitorId,
-                                    IpAddress: "11.11",
-                                    City: "unknown",
-                                    Country: "XX",
-                                    Region: "repeat bad visitor",
-                                    GeoCode: "unknown",
-                                    InitialPage: folderId
-                                });
-                            }
-                            else {
-                                visitorId = "ZZ" + create_UUID().substr(2);
-                                tryAddNewIP(folderId, visitorId, "unknown country");
-                            }
+                            logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // unknown country
                         }
                     }
                     else {
@@ -139,6 +132,13 @@ function verifyVisitorId(folderId, calledFrom) {
 
 function addVisitor(visitorData) {
     try {
+
+        if(isNullorUndefined( visitorData.VisitorId)) {
+            logActivity2(visitorData.VisitorId, "AV9", 555, "add Visitor"); // VisitorId undefined
+            logError(create_UUID(), "BUG", visitorData.FolderId, "visitorId came in null", "add visitor");
+            return;
+        }
+
         logActivity("AV0", visitorData.FolderId, "addVisitor"); // entering Add Visitor 
         $.ajax({
             type: "POST",
@@ -151,7 +151,8 @@ function addVisitor(visitorData) {
                     logVisit(visitorData.InitialPage, visitorData.CalledFrom);
                 }
                 else {
-                    logActivity2(visitorData.VisitorId, "AV3", visitorData.InitialPage, success); // AddVisitor Success not ok
+                    //logActivity2(visitorData.VisitorId, "AV3", visitorData.InitialPage, success); // AddVisitor Success not ok
+                    logActivity2(visitorData.VisitorId, "AV7", visitorData.InitialPage, success); // ajax error from Add Visitor
                     logError2(visitorData.VisitorId, "AJ7", visitorData.InitialPage, success, "addVisitor");
                 }
             },
@@ -163,9 +164,8 @@ function addVisitor(visitorData) {
             }
         });
     } catch (e) {
-        //alert("AddVisitor CATCH: " + e);
-        logActivity2(visitorData.VisitorId, "AV6", 555, "addVisitor"); // add vis catch error
-        logError2(visitorData.VisitorId, "CAT", 555, e, "addVisitor");
+        logActivity2(create_UUID(), "AV6", 555, "addVisitor"); // add vis catch error
+        logError2(create_UUID(), "CAT", 555, e, "addVisitor");
     }
 }
 
@@ -258,42 +258,45 @@ function loadUserProfile(calledFrom) {
                         $('#optionLoggedIn').hide();
                         $('#optionNotLoggedIn').show();
                         $('#footerCol5').hide();
+                        logError2(visitorId, "BUG", "VisitorId not found in Visitor table", "loadUserProfile/" + calledFrom);
                     }
-                    if (visitorInfo.Success == "ok") {
-                        if (visitorInfo.IsRegisteredUser) {
-                            localStorage["IsLoggedIn"] = "true";
-                            if (visitorInfo.RegisteredUser.IsLoggedIn == 0)
-                                localStorage["IsLoggedIn"] = "false";
-                            localStorage["UserName"] = visitorInfo.RegisteredUser.UserName;
-                            localStorage["UserRole"] = visitorInfo.RegisteredUser.UserRole;
+                    else {
+                        if (visitorInfo.Success == "ok") {
+                            if (visitorInfo.IsRegisteredUser) {
+                                localStorage["IsLoggedIn"] = "true";
+                                if (visitorInfo.RegisteredUser.IsLoggedIn == 0)
+                                    localStorage["IsLoggedIn"] = "false";
+                                localStorage["UserName"] = visitorInfo.RegisteredUser.UserName;
+                                localStorage["UserRole"] = visitorInfo.RegisteredUser.UserRole;
 
-                            if (localStorage["IsLoggedIn"] == "true") {
-                                $('#spnUserName').html(localStorage["UserName"]);
-                                $('#optionNotLoggedIn').hide();
-                                $('#optionLoggedIn').show();
-                                $('#footerCol5').show();
+                                if (localStorage["IsLoggedIn"] == "true") {
+                                    $('#spnUserName').html(localStorage["UserName"]);
+                                    $('#optionNotLoggedIn').hide();
+                                    $('#optionLoggedIn').show();
+                                    $('#footerCol5').show();
+                                }
+
+                                if (calledFrom == "show UserProfileDialog") {
+                                    $('#txtUserProfileName').val(visitorInfo.RegisteredUser.UserName);
+                                    $('#txtUserProfileFirstName').val(visitorInfo.RegisteredUser.FirstName);
+                                    $('#txtUserProfileLastName').val(visitorInfo.RegisteredUser.LastName);
+                                    $('#txtUserProfileEmail').val(visitorInfo.RegisteredUser.Email);
+                                }
                             }
-
-                            if (calledFrom == "show UserProfileDialog") {
-                                $('#txtUserProfileName').val(visitorInfo.RegisteredUser.UserName);
-                                $('#txtUserProfileFirstName').val(visitorInfo.RegisteredUser.FirstName);
-                                $('#txtUserProfileLastName').val(visitorInfo.RegisteredUser.LastName);
-                                $('#txtUserProfileEmail').val(visitorInfo.RegisteredUser.Email);
+                            else {
+                                localStorage["IsLoggedIn"] = "false";
+                                localStorage["UserName"] = "not registered";
+                                localStorage["UserRole"] = "not registered";
+                                $('#spnUserName').html(localStorage["UserName"]);
+                                $('#optionNotLoggedIn').show();
+                                $('#optionLoggedIn').hide();
+                                $('#footerCol5').hide();
                             }
                         }
                         else {
-                            localStorage["IsLoggedIn"] = "false";
-                            localStorage["UserName"] = "not registered";
-                            localStorage["UserRole"] = "not registered";
-                            $('#spnUserName').html(localStorage["UserName"]);
-                            $('#optionNotLoggedIn').show();
-                            $('#optionLoggedIn').hide();
-                            $('#footerCol5').hide();
+                            logError("AJX", 614859, visitorInfo.Success, "load UserProfile");
+                            if (document.domain == "localhost") alert("load UserProfile: " + visitorInfo.Success);
                         }
-                    }
-                    else {
-                        logError("AJX", 614859, visitorInfo.Success, "load UserProfile");
-                        if (document.domain == "localhost") alert("load UserProfile: " + visitorInfo.Success);
                     }
                 },
                 error: function (jqXHR) {
