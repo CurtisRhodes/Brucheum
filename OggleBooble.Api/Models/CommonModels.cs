@@ -58,6 +58,7 @@ namespace OggleBooble.Api.Models
         public int PageHits { get; set; }
         public int UserImageHits { get; set; }
         public int UserPageHits { get; set; }
+        public string VisitorCountry { get; set; }
         public string PageName { get; set; }
         public string ParentName { get; set; }
         public string RootFolder { get; set; }

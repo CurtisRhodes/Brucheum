@@ -63,24 +63,26 @@ function logPageHit(folderId) {
         let visitorId = getCookieValue("VisitorId");
 
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
-            logActivity("PHD", folderId, "log PageHit");
+            logActivity("PH5", folderId, "log PageHit"); // duplicate page hit
             return;
         }
         lastPageHitVisitorId = visitorId;
         lastPageHitFolderId = folderId;
 
         if (visitorId == "cookie not found") {
-            //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
+            logActivity(visitorId, "PH3", "log pageHit"); // cookie not found
+            logError2(create_UUID(), "BUG", folderId, "visitorId came back not found", "log PageHit");
+            //tryAddNewIP(folderId, create_UUID(), "log PageHit");
             visitorId = create_UUID();
             setCookieValue("VisitorId", visitorId);
-            tryAddNewIP(folderId, create_UUID(), "log PageHit");
-        }
-
-        if (visitorId == "user does not accept cookies") {
-            //logError2(visitorId, "PHV", folderId, "visitorId bypass calling tryAddNewIP", "log PageHit"); //log page hit called with bad visitorId
-            visitorId = "UNC" + create_UUID().substr(3);
-            setCookieValue("VisitorId", visitorId);
-            tryAddNewIP(folderId, visitorId, "log PageHit");
+            addVisitor({
+                VisitorId: visitorId,
+                IpAddress: '00.00.00',
+                City: "log PageHit",
+                Country: "ZZ",
+                Region: "cookie not found",
+                GeoCode: "cookie not found"
+            });
         }
 
         $.ajax({
@@ -88,18 +90,26 @@ function logPageHit(folderId) {
             url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
             success: function (pageHitSuccess) {
                 if (pageHitSuccess.Success === "ok") {
+
+                    if ((pageHitSuccess.PageHits > 10) && (pageHitSuccess.VisitorCountry=="ZZ")) {
+                        logActivity(visitorId, "PH4", "log pageHit"); // pageHits > 10 and country=="ZZ"
+                     //   tryAddNewIP(folderId, visitorId, "log pageHit");
+                    }
                     //logVisit(folderId, "logPageHit");
                 }
                 else {
+                    logActivity(visitorId, "PH8", "log pageHit");  // page hit ajax error
                     logError("AJX", folderId, pageHitSuccess.Success, "logPageHit");
                 }
             },
             error: function (jqXHR) {
+                logActivity(visitorId, "PH7", "log pageHit");  // page hit XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errMsg, folderId, "logPageHit")) logError("XHR", folderId, errMsg, "logPageHit");
             }
         });
     } catch (e) {
+        logActivity(visitorId, "PH9", "log pageHit");  // page hit catch error
         logError("CAT", folderId, e, "logPageHIt");
     }
 }

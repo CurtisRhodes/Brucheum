@@ -584,11 +584,11 @@ function getCookieValue(itemName) {
             if (cookieItemName === itemName) {
                 if (isNullorUndefined(cookieItemValue)) {
                     if (!navigator.cookieEnabled) {  // user accepts cookies
-                        showCookiesRequiredMessage();
-                        logError2(cookieItemValue, "CK3", 615112, "cookieItemValue == undefined", "get CookieValue");
+                        //showCookiesRequiredMessage();
+                        logError2(cookieItemValue, "CK3", 615112, "need a fix", "get CookieValue"); // undefined and cookies not enabled
                     }
                     else {
-                        logError2(cookieItemValue, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue");
+                        logError2(cookieItemValue, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
                     }
                 }
                 else {
@@ -629,8 +629,8 @@ function getCookieValue(itemName) {
 
 function setCookieValue(elementToSet, newValue) {
     try {
-        if (navigator.cookieEnabled) {  // user accepts cookies
-            showCookiesRequiredMessage();
+        if (!navigator.cookieEnabled) {  // user accepts cookies
+            //showCookiesRequiredMessage();
         }
         localStorage[elementToSet] = newValue;
         let cookieString = elementToSet + ":" + newValue;

@@ -83,6 +83,7 @@ namespace OggleBooble.Api.Controllers
                     }
                     pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
                     pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
+                    pageHitSuccessModel.VisitorCountry = db.Visitors.Where(v => v.VisitorId == visitorId).Select(v => v.Country).FirstOrDefault();
 
                     CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
                     if (categoryFolder != null)

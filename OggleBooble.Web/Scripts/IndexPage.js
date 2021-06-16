@@ -141,7 +141,7 @@ function launchPromoMessages() {
                         CommentText: blogComment.CommentText
                     });
                 });
-                showPromoMessages(promoMessagesArray);
+                //showPromoMessages(promoMessagesArray);
             }
             else {
                 alert("launchPromoMessages: " + blogCommentsContainer.Success);

@@ -104,7 +104,7 @@ function verifyVisitorId(folderId, calledFrom) {
                             logActivity("VV3", folderId, "verify Visitor"); // visitorId came back not found
                             logError2(create_UUID(), "BUG", folderId, "visitorId came back not found", "verify visitor");
                         }
-                        if (successModel.Success == "unknown country") {
+                        if (successModel.ReturnValue == "unknown country") {
                             logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // unknown country
                         }
                     }
@@ -164,72 +164,6 @@ function addVisitor(visitorData) {
             }
         });
     } catch (e) {
-        logActivity2(create_UUID(), "AV6", 555, "addVisitor"); // add vis catch error
-        logError2(create_UUID(), "CAT", 555, e, "addVisitor");
-    }
-}
-
-function addVisitor2(visitorData) {
-    try
-    {
-        logActivity("AV0", visitorData.FolderId, "addVisitor"); // entering Add Visitor 
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
-            data: visitorData,
-            success: function (avSuccessModel) {
-                if (avSuccessModel.Success == "ok") {
-
-                    if (avSuccessModel.NewVisitorId.IndexOf("undefined">-1)) {
-                        logActivity("AV9", visitorData.InitialPage, "add visitor"); // VisitorId undefined
-                    }
-                    if (avSuccessModel.RetunValue == "new visitor added") {
-                        logActivity("AV1", visitorData.InitialPage, "add visitor"); // new visitor added
-                        loadUserProfile("add new visitor");
-                    }
-                    if (avSuccessModel.RetunValue == "existing Ip") {
-                        logActivity("AV2", visitorData.InitialPage, "add Visitor");  // existing IP visitorId used
-                        loadUserProfile("recall existing Ip");
-                    }
-                    setCookieValue("VisitorId", avSuccessModel.NewVisitorId);
-                    if (getCookieValue("VisitorId") == avSuccessModel.NewVisitorId) {
-                        logActivity("AV4", visitorData.InitialPage, "add Visitor"); // Calling LogVisit
-                        logVisit(visitorData.FolderId, "add Visitor");
-                    }
-                    else {
-                        let avTimerLoop = setInterval(function () {
-                            if (getCookieValue("VisitorId") == avSuccessModel.NewVisitorId) {
-                                clearInterval(avTimerLoop);
-                                logActivity("AV4", visitorData.InitialPage, "add Visitor"); // Calling LogVisit
-                                logVisit(visitorData.FolderId, "add Visitor");
-                            }
-                            else {
-                                logActivity("AV5", visitorData.InitialPage, "loop:" + avTimerLoopCount++); // Calling LogVisit
-                                setCookieValue("VisitorId", avSuccessModel.VisitorId);
-                                if (avTimerLoopCount > 10) {
-                                    clearInterval(avTimerLoop);
-                                    logError("BVI", visitorData.InitialPage,
-                                        "avSuccess.VisitorId: " + avSuccessModel.VisitorId + " cookie: " + getCookieValue("VisitorId"), "add Visitor");
-                                }
-                            }
-                        }, 800);
-                    }
-                }
-                else
-                {
-                    logActivity2(create_UUID(), "AV3", 555, "add Visitor"); // AddVisitor Success not ok
-                    logError2(create_UUID(), "AJ7", 555, avSuccessModel.Success, "addVisitor");
-                }
-            },
-            error: function (jqXHR) {
-                logActivity2(create_UUID(),"AV8", 555, "add Visitor"); // AddVisitor XHR error
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, 555, "add Visitor"))
-                    logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
-            }
-        });
-    } catch (e) {
-        //alert("AddVisitor CATCH: " + e);
         logActivity2(create_UUID(), "AV6", 555, "addVisitor"); // add vis catch error
         logError2(create_UUID(), "CAT", 555, e, "addVisitor");
     }
