@@ -88,11 +88,10 @@ function verifyVisitorId(folderId, calledFrom) {
 
         if (visitorId.indexOf("cookie not found") > -1) {
             logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom);
-            logError2(create_UUID(), "BUG", folderId, "cookie not found made it too far", "verify visitorId");
+            //logError2(create_UUID(), "BUG", folderId, "cookie not found made it too far", "verify visitorId");
             //tryAddNewIP(folderId, visitorId, "troubled account");
             return;
         }
-
         else {
             $.ajax({
                 type: "GET",
@@ -100,13 +99,13 @@ function verifyVisitorId(folderId, calledFrom) {
                 success: function (successModel) {
                     if (successModel.Success == "ok") {
                         if (successModel.ReturnValue == "visitorId ok") {
-                            logActivity("VV1", folderId, "verify Visitor"); // visitor verified ok
-                            loadUserProfile(folderId, "verify Visitor");
-                            logVisit(folderId, "verify visitor");
+                            logActivity("VV1", folderId, "verify VisitorId"); // visitor verified ok
+                            loadUserProfile(folderId, "verify VisitorId");
+                            logVisit(folderId, "verify visitorId");
                         }
                         if (successModel.ReturnValue == "not found") {
                             logActivity("VV3", folderId, "verify Visitor"); // visitorId came back not found
-                            logError2(create_UUID(), "BUG", folderId, "visitorId came back not found", "verify visitorId");
+                            logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify visitorId");
                         }
                         if (successModel.ReturnValue == "unknown country") {
                             logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // unknown country

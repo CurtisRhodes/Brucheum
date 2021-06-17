@@ -119,7 +119,7 @@ function logVisit(folderId, calledFrom) {
         let visitorId = getCookieValue("VisitorId");
         if (visitorId == "cookie not found") {
             logActivity2(visitorId, "LV4", folderId, calledFrom);
-            logError2(create_UUID(), "VNF", folderId, "visitorId came back cookie not found", "log visit");
+            logError2(create_UUID(), "VNF", folderId, " ", "log visit"); // visitorId came back cookie not found
             return;
         }
         $.ajax({

@@ -389,7 +389,7 @@ namespace OggleBooble.Api.Controllers
                     {
                         pageHitReportModel.Items.Add(new PageHitReportModelItem()
                         {
-                            IpAddress = item.IpAddress,
+                            VisitorId = item.VisitorId,
                             City = item.City,
                             Region = item.Region,
                             Country = item.Country,
@@ -464,19 +464,20 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/Report/UserDetails")]
-        public UserReportSuccessModel UserDetails(string ipAddress)
+        public UserReportSuccessModel UserDetails(string visitorId)
         {
             var userReportSuccessModel = new UserReportSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    userReportSuccessModel.UserReport = db.Database.SqlQuery<UserReportModel>("select IpAddress, City, Region, Country, convert(date(InitialVisit), char) 'InitialVisit'," +
+                    userReportSuccessModel.UserReport = db.Database.SqlQuery<UserReportModel>(
+                        "select IpAddress, City, Region, Country, convert(date(InitialVisit), char) 'InitialVisit'," +
                     "(select count(*) from OggleBooble.Visit where VisitorId = v.VisitorId) 'Visits'," +
                     "(select count(*) from OggleBooble.PageHit where VisitorId = v.VisitorId) 'PageHits'," +
                     "(select count(*) from OggleBooble.ImageHit where VisitorId = v.VisitorId) 'ImageHits', r.UserName " +
                     "from OggleBooble.Visitor v left join OggleBooble.RegisteredUser r on v.VisitorId = r.VisitorId " +
-                    " where IpAddress = @ipAddress;", new MySql.Data.MySqlClient.MySqlParameter("@ipAddress", ipAddress)).First<UserReportModel>();
+                    " where v.VisitorId = @visitorId;", new MySql.Data.MySqlClient.MySqlParameter("@visitorId", visitorId)).First<UserReportModel>();
                     userReportSuccessModel.Success = "ok";
                 }
             }

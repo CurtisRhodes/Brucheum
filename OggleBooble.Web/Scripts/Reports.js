@@ -252,7 +252,7 @@ function runPageHitReport() {
                 //kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>&nbsp;images hit</th><th>hit time</th></tr>";
                 kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>hit time</th></tr>";
                 $.each(pageHitReportModel.Items, function (idx, obj) {
-                    kludge += "<tr><td class='clickable' onclick='showUserDetail(\"" + obj.IpAddress + "\")'>" + obj.IpAddress + "</td>";
+                    kludge += "<tr><td class='clickable' onclick='showUserDetail(\"" + obj.VisitorId + "\")'>" + obj.VisitorId.substr(9) + "</td>";
                     kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
                     kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
                     switch (obj.RootFolder) {
@@ -287,15 +287,15 @@ function runPageHitReport() {
     });
 }
 
-function showUserDetail(ipAddress) {
+function showUserDetail(visitorId) {
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Report/UserDetails?ipAddress=" + ipAddress,
+        url: settingsArray.ApiServer + "api/Report/UserDetails?visitorId=" + visitorId,
         success: function (userReportSuccessModel) {
             $('#dashBoardLoadingGif').hide();
             if (userReportSuccessModel.Success === "ok") {
                 let obj = userReportSuccessModel.UserReport;
-                $('#dashboardDialogTitle').html("user details for: " + ipAddress);
+                $('#dashboardDialogTitle').html("user details for: " + visitorId);
                 let kludge = "<div>";
                 kludge += "<div>from: " + obj.City + ", " + obj.Region + ", " + obj.Country + "</div>";
                 kludge += "<div>initial visit: " + obj.InitialVisit + "</div>";

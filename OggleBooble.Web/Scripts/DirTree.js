@@ -11,6 +11,8 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
 
     if (!forceRebuild && !isNullorUndefined(window.localStorage["dirTree"])) {
         console.log("dir tree cache bypass");
+        $('#dashBoardLoadingGif').hide();
+        $('#dataifyInfo').hide();
 
         if (container == "scDirTreeContainer") {
             //str = str.replace(/abc/g, '');
