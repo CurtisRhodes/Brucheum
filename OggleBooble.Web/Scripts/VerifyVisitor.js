@@ -99,28 +99,36 @@ function verifyVisitorId(folderId, calledFrom) {
                 success: function (successModel) {
                     if (successModel.Success == "ok") {
                         if (successModel.ReturnValue == "visitorId ok") {
-                            logActivity("VV1", folderId, "verify VisitorId"); // visitor verified ok
+                            logActivity2(visitorId, "VV1", folderId, "verify VisitorId"); // visitor verified ok
                             loadUserProfile(folderId, "verify VisitorId");
-                            logVisit(folderId, "verify visitorId");
+                            logVisit2(visitorId, folderId, "verify visitorId");
                         }
                         if (successModel.ReturnValue == "not found") {
-                            logActivity("VV3", folderId, "verify Visitor"); // visitorId came back not found
+                            logActivity2(visitorId, "VV3", folderId, "verify Visitor"); // visitorId came back not found
                             logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify visitorId");
+                            addVisitor({
+                                VisitorId: visitorId,
+                                IpAddress: '00.11.11',
+                                City: "not found",
+                                Country: "ZZ",
+                                Region: "unknown",
+                                GeoCode: "unknown"
+                            });
                         }
                         if (successModel.ReturnValue == "unknown country") {
                             logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // unknown country
                         }
                     }
                     else {
-                        logActivity("VV4", folderId, "verify Visitor"); // verify visitor AJX error
-                        logError("AJX", folderId, successModel.Success, "verify VisitorId");
+                        logActivity2(visitorId, "VV4", folderId, "verify Visitor"); // verify visitor AJX error
+                        logError2(visitorId, "AJX", folderId, successModel.Success, "verify VisitorId");
                     }
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    logActivity("VV6", folderId, errMsg); // verify visitor XHR error
+                    logActivity2(visitorId, "VV6", folderId, errMsg); // verify visitor XHR error
                     if (!checkFor404(errMsg, folderId, "verify VisitorId")) {
-                        logError("XHR", folderId, errMsg, "verify VisitorId");
+                        logError2(visitorId, "XHR", folderId, errMsg, "verify VisitorId");
                     }
                 }
             });
@@ -128,8 +136,8 @@ function verifyVisitorId(folderId, calledFrom) {
     }
     catch (e) {
         sessionStorage["VisitorVerified"] = true;
-        logActivity("VV5", folderId, e); // verify visitor CATCH error
-        logError2(visitorId, "CAT", folderId, e, "verify visitorId");
+        logActivity2(create_UUID(), "VV5", folderId, e); // verify visitor CATCH error
+        logError2(create_UUID(), "CAT", folderId, e, "verify visitorId");
     }
 }
 

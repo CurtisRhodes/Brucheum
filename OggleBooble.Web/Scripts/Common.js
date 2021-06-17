@@ -584,13 +584,13 @@ function getCookieValue(itemName) {
             if (cookieItemName === itemName) {
 
                 if (isNullorUndefined(cookieItemValue)) {
+                    visitorId = create_UUID();
                     if (!navigator.cookieEnabled) {  // user accepts cookies
-                        //showCookiesRequiredMessage();
-                        logError2(cookieItemValue, "CK3", 615112, "need a fix", "get CookieValue"); // undefined and cookies not enabled
+                        localStorage[itemName] = visitorId;
+                        logError2(visitorId, "CK3", 615112, "need a fix", "get CookieValue"); // undefined and cookies not enabled
                     }
                     else {
-                        logError2(cookieItemValue, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
-                        visitorId = create_UUID();
+                        logError2(visitorId, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
                         setCookieValue("VisitorId", visitorId);
                         addVisitor({
                             VisitorId: visitorId,
