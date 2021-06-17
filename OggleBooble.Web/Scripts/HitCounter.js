@@ -116,7 +116,9 @@ function logPageHit(folderId) {
 function logVisit(folderId, calledFrom) {
     try {
         logActivity2(visitorId, "LV0", folderId, calledFrom);
+
         let visitorId = getCookieValue("VisitorId");
+
         if (visitorId == "cookie not found") {
             logActivity2(visitorId, "LV4", folderId, calledFrom);
             logError2(create_UUID(), "VNF", folderId, " ", "log visit"); // visitorId came back cookie not found
@@ -128,22 +130,22 @@ function logVisit(folderId, calledFrom) {
             success: function (successModel) {
                 if (successModel.Success === "ok") {
                     if (successModel.ReturnValue == "new visitor logged") {
-                        logActivity("LV1", folderId, "logVisit/" + calledFrom); // new visitor visit added
+                        logActivity2(visitorId, "LV1", folderId, "logVisit/" + calledFrom); // new visitor visit added
                         $('#headerMessage').html("Welcome new visitor. Please log in");
                     }
                     if (successModel.ReturnValue == "return visit logged") {
-                        logActivity("LV2", folderId, "logVisit/" + calledFrom);  // Return Vist Recorded
+                        logActivity2(visitorId, "LV2", folderId, "logVisit/" + calledFrom);  // Return Vist Recorded
                         if (isLoggedIn())
                             $('#headerMessage').html("Welcome back " + localStorage["UserName"]);
                         else
                             $('#headerMessage').html("Welcome back. Please log in");
                     }
                     if (successModel.ReturnValue == "no visit recorded")
-                        logActivity("LV5", folderId, "logVisit/" + calledFrom); // no visit recorded
+                        logActivity2(visitorId, "LV5", folderId, "logVisit/" + calledFrom); // no visit recorded
 
                     if (successModel.ReturnValue == "VisitorId not found") {
-                        logActivity("LV3", folderId, "logVisit/" + calledFrom);  // visitorId not found
-                        logError("BUG", folderId, "VisitorId not found", "log visit");
+                        logActivity2(visitorId, "LV3", folderId, "logVisit/" + calledFrom);  // visitorId not found
+                        logError2(visitorId, "BUG", folderId, "VisitorId not found", "log visit");
                     }
                 }
                 else {
@@ -152,15 +154,15 @@ function logVisit(folderId, calledFrom) {
                 }
             },
             error: function (jqXHR) {
-                logError("LV6", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
+                logError2(visitorId, "LV6", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
                 let errMsg = getXHRErrorDetails(jqXHR);
                 //if (!checkFor404(errMsg, folderId, "logVisit/" + calledFrom))
-                logError("XHR", folderId, errMsg, calledFrom + "/logVisit");
+                logError2(visitorId, "XHR", folderId, errMsg, calledFrom + "/logVisit");
             }
         });
     } catch (e) {
-        logError("LV7", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
-        logError("CAT", folderId, e, calledFrom);
+        logError2(visitorId, "LV7", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
+        logError2(visitorId, "CAT", folderId, e, calledFrom);
     }
 }
 

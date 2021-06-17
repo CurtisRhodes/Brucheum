@@ -189,24 +189,21 @@ namespace OggleBooble.Api.Controllers
                         {
                             lastVisitDate = visitorVisits.OrderByDescending(v => v.VisitDate).FirstOrDefault().VisitDate;
                         }
-                        else
+                        if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
                         {
-                            if ((lastVisitDate == DateTime.MinValue) || ((DateTime.Now - lastVisitDate).TotalHours > 12))
+                            db.Visits.Add(new Visit()
                             {
-                                db.Visits.Add(new Visit()
-                                {
-                                    VisitorId = visitorId,
-                                    VisitDate = DateTime.Now
-                                });
-                                db.SaveChanges();
-                                if (visitorVisits.Count() == 0)
-                                    successModel.ReturnValue = "new visitor logged";
-                                else
-                                    successModel.ReturnValue = "return visit logged";
-                            }
+                                VisitorId = visitorId,
+                                VisitDate = DateTime.Now
+                            });
+                            db.SaveChanges();
+                            if (visitorVisits.Count() == 0)
+                                successModel.ReturnValue = "new visitor logged";
                             else
-                                successModel.ReturnValue = "no visit recorded";
+                                successModel.ReturnValue = "return visit logged";
                         }
+                        else
+                            successModel.ReturnValue = "no visit recorded";
                     }
                     successModel.Success = "ok";
                 }
