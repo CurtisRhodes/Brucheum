@@ -15,6 +15,8 @@ function verifySession(folderId) {
 
             if (!navigator.cookieEnabled) {  // user accepts cookies
                 logActivity2(visitorId, "VS5", folderId, "verify session"); // user does not accept cookies
+
+
                 let visitorId = sessionStorage["VisitorId"];
                 if (isNullorUndefined(visitorId)) {
                     returnVisit = false;
@@ -49,11 +51,11 @@ function verifySession(folderId) {
                 });
             }
 
-            if (visitorId == "cookie not found") {
+            if (visitorId.indexOf("cookie not found") > -1) {
+                returnVisit = false;
                 visitorId = create_UUID();
                 sessionStorage["VisitorId"] = visitorId;
                 logActivity2(visitorId, "VS2", folderId, "verify session"); // verify visitorId not found (new user?)
-                returnVisit = false;
                 addVisitor({
                     VisitorId: visitorId,
                     IpAddress: '00.00.00',
@@ -63,9 +65,11 @@ function verifySession(folderId) {
                     GeoCode: "unknown"
                 });
             }
+
             if (returnVisit) {
                 logActivity2(visitorId, "VS1", folderId, "verify session"); // visitor verified ok
                 verifyVisitorId(folderId, "verify session");
+                logVisit(visitorId, folderId, "verify session");
             }
         }
         //    else {
@@ -105,7 +109,7 @@ function verifyVisitorId(folderId, calledFrom) {
                         }
                         if (successModel.ReturnValue == "not found") {
                             logActivity2(visitorId, "VV3", folderId, "verify Visitor"); // visitorId came back not found
-                            logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify visitorId");
+                            //logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify visitorId");
                             addVisitor({
                                 VisitorId: visitorId,
                                 IpAddress: '00.11.11',
@@ -159,7 +163,7 @@ function addVisitor(visitorData) {
                 if (success == "ok") {
                     logActivity("AV1", visitorData.InitialPage, "add visitor"); // new visitor added
                     setCookieValue("VisitorId", visitorData.VisitorId);
-                    logVisit(visitorData.InitialPage,"add Visitor");
+                    logVisit(visitorData.VisitorId, visitorData.InitialPage,"add Visitor");
                 }
                 else {
                     if (success.indexOf("Duplicate entry") > 0) {
@@ -172,10 +176,10 @@ function addVisitor(visitorData) {
                 }
             },
             error: function (jqXHR) {
-                logActivity2(visitorData.VisitorId, "AV8", 555, "add Visitor"); // AddVisitor XHR error
+                logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errMsg, 555, "add Visitor"))
-                    logError2(visitorData.VisitorId, "XHR", 55, errMsg, "add Visitor");
+                    logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
             }
         });
     } catch (e) {

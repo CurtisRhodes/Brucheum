@@ -56,19 +56,15 @@ function logImageHit(linkId, folderId, isInitialHit) {
 let lastPageHitFolderId, lastPageHitVisitorId;
 function logPageHit(folderId) {
     try {
-        if (isNullorUndefined(folderId)) {
-            logError("PHF", folderId, "folderId undefined: " + folderId, "logPageHit");
-            return;
-        }
+        logActivity2(create_UUID(), "PH0", folderId, "log pageHit");  // entering log page hit
+
         let visitorId = getCookieValue("VisitorId");
-        if (visitorId == "cookie not found") {
+        if (visitorId.indexOf("cookie not found") > -1) {
             visitorId = create_UUID();
-            //logError2(create_UUID(), "BUG", folderId, "visitorId came back not found", "log PageHit");
-            //tryAddNewIP(folderId, create_UUID(), "log PageHit");
             setCookieValue("VisitorId", visitorId);
             addVisitor({
                 VisitorId: visitorId,
-                IpAddress: '00.00.00',
+                IpAddress: '00.08.00',
                 City: "log PageHit",
                 Country: "ZZ",
                 Region: "cookie not found",
@@ -78,7 +74,7 @@ function logPageHit(folderId) {
         }
 
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
-            logActivity("PH5", folderId, "log PageHit"); // duplicate page hit
+            logActivity2(visitorId, "PH6", folderId, "log PageHit"); // looping page hit
             return;
         }
         lastPageHitVisitorId = visitorId;
@@ -89,16 +85,22 @@ function logPageHit(folderId) {
             url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
             success: function (pageHitSuccess) {
                 if (pageHitSuccess.Success === "ok") {
+                    logActivity2(visitorId, "PH1",  folderId, "log pageHit");  // page hit success
 
-                    if ((pageHitSuccess.PageHits > 10) && (pageHitSuccess.VisitorCountry=="ZZ")) {
-                        logActivity(visitorId, "PH4", "log pageHit"); // pageHits > 10 and country=="ZZ"
-                     //   tryAddNewIP(folderId, visitorId, "log pageHit");
+                    if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
+                        logActivity2(visitorId, "PH4", "log pageHit"); // pageHits > 3 and country=="ZZ"
+                        tryAddNewIP(folderId, visitorId, "log pageHit");
                     }
-                    //logVisit(folderId, "logPageHit");
+                    // logVisit(visitorId, folderId, "logPageHit");
                 }
                 else {
-                    logActivity(visitorId, "PH8", "log pageHit");  // page hit ajax error
-                    logError("AJX", folderId, pageHitSuccess.Success, "logPageHit");
+                    if (pageHitSuccess.Success = "duplicate hit") {
+                        logActivity2(visitorId, "PH5", folderId, "log pageHit");  // duplicate page hit
+                    }
+                    else {
+                        logActivity2(visitorId, "PH8", folderId, "log pageHit");  // page hit ajax error
+                        logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "logPageHit");
+                    }
                 }
             },
             error: function (jqXHR) {
@@ -113,12 +115,10 @@ function logPageHit(folderId) {
     }
 }
 
-function logVisit(folderId, calledFrom) {
+function logVisit(visitorId, folderId, calledFrom) {
     try {
         logActivity2(visitorId, "LV0", folderId, calledFrom);
-
-        let visitorId = getCookieValue("VisitorId");
-
+        //let visitorId = getCookieValue("VisitorId");
         if (visitorId == "cookie not found") {
             logActivity2(visitorId, "LV4", folderId, calledFrom);
             logError2(create_UUID(), "VNF", folderId, " ", "log visit"); // visitorId came back cookie not found
@@ -130,38 +130,46 @@ function logVisit(folderId, calledFrom) {
             success: function (successModel) {
                 if (successModel.Success === "ok") {
                     if (successModel.ReturnValue == "new visitor logged") {
-                        logActivity2(visitorId, "LV1", folderId, "logVisit/" + calledFrom); // new visitor visit added
+                        logActivity2(visitorId, "LV1", folderId, "log visit/" + calledFrom); // new visitor visit added
                         $('#headerMessage').html("Welcome new visitor. Please log in");
                     }
                     if (successModel.ReturnValue == "return visit logged") {
-                        logActivity2(visitorId, "LV2", folderId, "logVisit/" + calledFrom);  // Return Vist Recorded
+                        logActivity2(visitorId, "LV2", folderId, "log visit/" + calledFrom);  // Return Vist Recorded
                         if (isLoggedIn())
                             $('#headerMessage').html("Welcome back " + localStorage["UserName"]);
                         else
                             $('#headerMessage').html("Welcome back. Please log in");
                     }
                     if (successModel.ReturnValue == "no visit recorded")
-                        logActivity2(visitorId, "LV5", folderId, "logVisit/" + calledFrom); // no visit recorded
+                        logActivity2(visitorId, "LV5", folderId, "log visit/" + calledFrom); // no visit recorded
 
                     if (successModel.ReturnValue == "VisitorId not found") {
-                        logActivity2(visitorId, "LV3", folderId, "logVisit/" + calledFrom);  // visitorId not found
-                        logError2(visitorId, "BUG", folderId, "VisitorId not found", "log visit");
+                        addVisitor({
+                            VisitorId: visitorId,
+                            IpAddress: '22.11.11',
+                            City: "log Visit",
+                            Country: "ZZ",
+                            Region: "visitor not found",
+                            GeoCode: "visitor not found"
+                        });
+                        logActivity2(visitorId, "LV3", folderId, "log visit/" + calledFrom);  // visitorId not found
+                        //logError2(visitorId, "BUG", folderId, "visitorId not found new vis rec added", "log visit");
                     }
                 }
                 else {
-                    logActivity2(visitorId, "LV0", folderId, "logVisit/" + calledFrom);  // 
-                    logError2(visitorId, "AJX", folderId, successModel.Success, "logVisit/" + calledFrom);
+                    logActivity2(visitorId, "LV7", folderId, "log visit/" + calledFrom);  // 
+                    logError2(visitorId, "AJX", folderId, successModel.Success, "log visit/" + calledFrom);
                 }
             },
             error: function (jqXHR) {
-                logError2(visitorId, "LV6", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
+                logError2(visitorId, "LV6", folderId, "visitorId: " + visitorId, calledFrom + "/log visit");
                 let errMsg = getXHRErrorDetails(jqXHR);
-                //if (!checkFor404(errMsg, folderId, "logVisit/" + calledFrom))
-                logError2(visitorId, "XHR", folderId, errMsg, calledFrom + "/logVisit");
+                //if (!checkFor404(errMsg, folderId, "log visit/" + calledFrom))
+                logError2(visitorId, "XHR", folderId, errMsg, calledFrom + "/log visit");
             }
         });
     } catch (e) {
-        logError2(visitorId, "LV7", folderId, "visitorId: " + visitorId, calledFrom + "/logVisit");
+        logError2(visitorId, "LV7", folderId, "visitorId: " + visitorId, calledFrom + "/log visit");
         logError2(visitorId, "CAT", folderId, e, calledFrom);
     }
 }

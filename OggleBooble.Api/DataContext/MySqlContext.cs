@@ -505,6 +505,14 @@ namespace OggleBooble.Api.MySqlDataContext
         [Column(Order = 2)]
         public int PageId { get; set; }
     }
+//    create table PageHitD(
+//      VisitorId char(36),
+//  FolderId int,
+//  Occured datetime,
+//  OccuredDate date,
+//  primary key(VisitorId, FolderId, OccuredDate)
+//);  -- 1,102,477
+
 
     [Table("OggleBooble.PageHit")]
     public partial class PageHit
@@ -514,8 +522,11 @@ namespace OggleBooble.Api.MySqlDataContext
         public string VisitorId { get; set; }
         [Key]
         [Column(Order = 1)]
-        public DateTime Occured { get; set; }
         public int PageId { get; set; }
+        //[Key]
+        //[Column(Order = 2)]
+        //public string OccuredDate { get; set; }
+        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.StepChild")]

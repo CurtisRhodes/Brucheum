@@ -44,6 +44,39 @@ namespace OggleBooble.Api.Controllers
             return success;
         }
 
+        [HttpPut]
+        [Route("api/Visitor/UpdateVisitor")]
+        public string UpdateVisitor(AddVisitorModel visitorData)
+        {
+            string success = "ono";
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
+                    if (visitor == null)
+                        success = "VisitorId not found";
+                    else
+                    {
+                        visitor.IpAddress = visitorData.IpAddress;
+                        visitor.City = visitorData.City;
+                        visitor.Country = visitorData.Country;
+                        visitor.GeoCode = visitorData.GeoCode;
+                        visitor.Region = visitorData.Region;
+
+                        db.SaveChanges();
+                        success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
+
         [HttpGet]
         [Route("api/Visitor/GetVisitorInfo")]
         public VisitorInfoSuccessModel GetVisitorInfo(string visitorId)

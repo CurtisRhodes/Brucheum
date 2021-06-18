@@ -61,20 +61,26 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
-                {
-                    var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
+                { 
+                    //var OccuredDate = DateTime.Today.ToString("yyyyMMdd");
+                    var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
 
-                    var lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > twoMinutesAgo).FirstOrDefault();
+                    var lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
                     if (lastHit == null)
                     {
                         db.PageHits.Add(new PageHit()
                         {
                             VisitorId = visitorId,
                             PageId = folderId,
+                            //OccuredDate = DateTime.Today.ToShortDateString(),
                             Occured = DateTime.Now  //.AddMilliseconds(getrandom.Next())
                         });
                         db.SaveChanges();
+                        pageHitSuccessModel.Success = "ok";
                     }
+                    else
+                        pageHitSuccessModel.Success = "duplicate hit";
+
                     pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == folderId).Count();
                     var dbPageHitTotals = db.PageHitTotal.Where(h => h.PageId == folderId).FirstOrDefault();
                     if (dbPageHitTotals != null)
@@ -105,7 +111,6 @@ namespace OggleBooble.Api.Controllers
                     else
                         pageHitSuccessModel.PageName = "Not Found";
                 }
-                pageHitSuccessModel.Success = "ok";
             }
             catch (Exception ex)
             {
