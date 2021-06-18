@@ -98,9 +98,10 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 ip0Busy = false;
             },
             error: function (jqXHR) {
-                logActivity2(visitorId, "IP3", folderId, "get IpInfo/" + calledFrom); // XHR error
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
+
+                logActivity2(visitorId, "IP3", folderId, errMsg); // XHR error
 
                 if (errMsg.indexOf("Not connect.") == -1) {
                     logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
@@ -358,11 +359,39 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                                 visitorInfo.Country = itemValue;
                             }
                         }
-                        addVisitor(visitorInfo);
-                        //    Region: ipResponse.loc,
                         logActivity2(visitorId, "IP2", folderId, "CloudflareTrace/" + calledFrom);
-                        //logActivity2(visitorId, "IP9", folderId, "cloudflareTrace");
-                        //logError("200", folderId, JSON.stringify(errMsg, null, 2), "cloudflareTrace/" + calledFrom); // Json response code
+                        $.ajax({
+                            type: "PUT",
+                            url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
+                            data: {
+                                VisitorId: visitorId,
+                                IpAddress: visitorInfo.IpAddress,
+                                City: "CloudflareTrace",
+                                Country: visitorInfo.Country,
+                                Region: "CloudflareTrace",
+                                GeoCode: visitorInfo.GeoCode
+                            },
+                            success: function (success) {
+                                if (success == "ok") {
+                                    logActivity2(visitorId, "IPA", folderId, "update Visitor"); // visitor successfully updated
+                                    logVisit(visitorId, folderId, "add Visitor");
+                                }
+                                else {
+                                    if (success == "VisitorId not found") {
+                                        logActivity2(visitorId, "IPB", folderId, "update Visitor"); // update failed. VisitorId not found
+                                    } else {
+                                        logActivity2(visitorId, "IPC", folderId, success); // update failed. ajax error
+                                        logError2(visitorId, "AJX", folderId, success, "update Visitor");
+                                    }
+                                }
+                            },
+                            error: function (jqXHR) {
+                                logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
+                                let errMsg = getXHRErrorDetails(jqXHR);
+                                if (!checkFor404(errMsg, 555, "add Visitor"))
+                                    logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
+                            }
+                        });
                     }
                     else {
                         if (errMsg.indexOf("Rate limit exceeded") > 0) {

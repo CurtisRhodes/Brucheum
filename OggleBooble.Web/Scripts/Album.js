@@ -249,9 +249,12 @@ function getAlbumImages(folderId) {
 
 function getAlbumPageInfo(folderId, isLargeLoad) {
     var infoStart = Date.now();
+
+    let visitorId = getCookieValue("VisitorId");
+
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?folderId=" + folderId + "&visitorId=" + getCookieValue("VisitorId"),
+        url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?folderId=" + folderId + "&visitorId=" +visitorId,
         success: function (albumInfo) {
             if (albumInfo.Success === "ok") {
                 apFolderName = albumInfo.FolderName;
@@ -327,7 +330,7 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
                 }
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
-                checkLoginStatus(albumInfo);
+                checkLoginStatus(folderId, visitorId, albumInfo);
             }
             else {
                 if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {
@@ -344,7 +347,7 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
     });
 }
 
-function checkLoginStatus(albumInfo) {
+function checkLoginStatus(folderId, visitorId, albumInfo) {
     try {
         if (!isLoggedIn()) {
             if (albumInfo.FolderType == "singleChild") {
@@ -356,22 +359,21 @@ function checkLoginStatus(albumInfo) {
                                 showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
                                 $('#customMessageContainer').css("top", 250);
                                 $('#customMessageContainer').css("left", 400);
-                                logActivity2(create_UUID(), "LG2", albumInfo.FolderId, "checkLoginStatus"); // cookies required
+                                logActivity2(visitorId, "LG2", folderId, "checkLoginStatus"); // cookies required
                             }s
                         }
                         else {
-
                             showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
                             $('#customMessageContainer').css("top", 255);
                             $('#customMessageContainer').css("left", 522);
-                            logActivity2(create_UUID(), "LG1", albumInfo.FolderId, "checkLoginStatus"); // asked please to login
+                            logActivity2(visitorId, "LG1", folderId, "check LoginStatus"); // asked please to login
                         }
                     }
                 }
             }
         }
     } catch (e) {
-        logError("CAT", 61011, e, "checkLoginStatus");
+        logError2(visitorId, "CAT", folderId, e, "checkLoginStatus");
     }
 }
 

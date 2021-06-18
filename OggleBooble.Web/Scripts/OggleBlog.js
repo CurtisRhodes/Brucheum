@@ -99,6 +99,8 @@ function loadSingleBlogEntry(editMode) {
                         $('#txtPosted').val(model.Pdate); //.datepicker();
                         $('#txtLink').val(model.ImageLink);
                         $('#summernoteContainer').summernote('code', model.CommentText);
+                        
+                        $('#txtBlogId').val(blogObject.Id);
 
                         $('#btnAddEdit').html("Update");
                         $('#btnNewCancel').html("Cancel");
@@ -403,6 +405,7 @@ function loadBlogHtmlBody() {
         "           <div class='oggleBlogFooterArea'>\n" +
         "               <div id='btnAddEdit' class='roundendButton' onclick='saveBlogEntry()'>Add</div>\n" +
         "               <div id='btnNewCancel' class='roundendButton' onclick='btnNewCancelAction()'>New</div>\n" +
+        "               <div style='display:inline;'><input id='txtBlogId'></input></div>\n" +
         "           </div>\n" +
         "       </div>\n" +
         "       <div class='blogEditAreaColumn2'>\n" +

@@ -28,7 +28,9 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes();
             resetOggleHeader(3908, "boobs");
             //setTimeout(function () { launchPromoMessages(); }, 3000);
-            
+
+            $('#testFunctionClick').hide();
+
             //$('#badgesContainer').html("badgesContainer");
 
             break;
@@ -126,6 +128,30 @@ function latestGalleryImageError(folderId, thisItemSrc) {
         }
     }, 600);
 }
+
+function testFunction() {
+
+    // time to log in
+    showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b');
+    $('#customMessageContainer').css("top", 250);
+    $('#customMessageContainer').css("left", 400);
+
+    //// this site requires cookies
+    //showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
+    //$('#customMessageContainer').css("top", 250);
+    //$('#customMessageContainer').css("left", 400);
+
+    //    let wipTitle = "data tracking error";
+    //    let wipMessage = "problem storing your IpAddress";
+    //    wipMessage += "<br/>Unable to store a cookie";
+    //    wipMessage += "<br/>This site requires cookies enabled";
+    //    wipMessage += "<br/>You may be asked to login on every page until you leave.";
+    //    wipMessage += "<br/>you must <a href=''>Register</a> or <a href=''>login</a> to continue";
+    //    wipMessage += "<div class='robotWarning'><input type='checkbox'> I am not a robot.</input></div>";
+    //    showMyAlert(wipTitle, wipMessage);
+}
+
+
 
 function launchPromoMessages() {
     $.ajax({
@@ -247,7 +273,7 @@ function indexPageHTML() {
         "       <div id='promoContainer' class='promoContainer' >my promo message</div>\n" +
         "       <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
-        //"    <div class='clickable sectionLabel' onclick='myMsgTest()'>showMyAlert test</div>\n" +
+        "    <div id='testFunctionClick' class='clickable sectionLabel' style='margin-bottom: 6px;' onclick='testFunction()'>test function</div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +
         "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +

@@ -29,7 +29,8 @@ function verifySession(folderId) {
                         City: "cookies not enabled",
                         Country: "ZZ",
                         Region: "cookies not enabled",
-                        GeoCode: "cookies not enabled"
+                        GeoCode: "cookies not enabled",
+                        InitialPage: folderId
                     });
                 }
                 //logError2(cookieItemValue, "CK3", 615112, "cookieItemValue == undefined", "get CookieValue");
@@ -47,7 +48,8 @@ function verifySession(folderId) {
                     City: "undefined",
                     Country: "ZZ",
                     Region: "undefined",
-                    GeoCode: "undefined"
+                    GeoCode: "undefined",
+                    InitialPage: folderId
                 });
             }
 
@@ -62,7 +64,8 @@ function verifySession(folderId) {
                     City: "unknown",
                     Country: "ZZ",
                     Region: "unknown",
-                    GeoCode: "unknown"
+                    GeoCode: "unknown",
+                    InitialPage: folderId
                 });
             }
 
@@ -116,7 +119,8 @@ function verifyVisitorId(folderId, calledFrom) {
                                 City: "not found",
                                 Country: "ZZ",
                                 Region: "unknown",
-                                GeoCode: "unknown"
+                                GeoCode: "unknown",
+                                InitialPage: folderId
                             });
                         }
                         if (successModel.ReturnValue == "unknown country") {
@@ -183,8 +187,8 @@ function addVisitor(visitorData) {
             }
         });
     } catch (e) {
-        logActivity2(create_UUID(), "AV6", 555, "addVisitor"); // add vis catch error
-        logError2(create_UUID(), "CAT", 555, e, "addVisitor");
+        logActivity2(create_UUID(), "AV6", 555, "add Visitor"); // add vis catch error
+        logError2(create_UUID(), "CAT", 555, e, "add Visitor");
     }
 }
 

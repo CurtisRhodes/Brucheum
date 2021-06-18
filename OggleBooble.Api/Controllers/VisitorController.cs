@@ -63,7 +63,8 @@ namespace OggleBooble.Api.Controllers
                         visitor.Country = visitorData.Country;
                         visitor.GeoCode = visitorData.GeoCode;
                         visitor.Region = visitorData.Region;
-
+                        if (visitor.InitialPage == 0)
+                            visitor.InitialPage = visitorData.InitialPage;
                         db.SaveChanges();
                         success = "ok";
                     }

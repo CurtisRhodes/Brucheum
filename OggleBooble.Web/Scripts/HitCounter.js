@@ -68,7 +68,8 @@ function logPageHit(folderId) {
                 City: "log PageHit",
                 Country: "ZZ",
                 Region: "cookie not found",
-                GeoCode: "cookie not found"
+                GeoCode: "cookie not found",
+                InitialPage: folderId
             });
             logActivity("PH3", "log pageHit"); // cookie not found
         }
@@ -150,7 +151,8 @@ function logVisit(visitorId, folderId, calledFrom) {
                             City: "log Visit",
                             Country: "ZZ",
                             Region: "visitor not found",
-                            GeoCode: "visitor not found"
+                            GeoCode: "visitor not found",
+                            InitialPage: folderId
                         });
                         logActivity2(visitorId, "LV3", folderId, "log visit/" + calledFrom);  // visitorId not found
                         //logError2(visitorId, "BUG", folderId, "visitorId not found new vis rec added", "log visit");
@@ -162,10 +164,10 @@ function logVisit(visitorId, folderId, calledFrom) {
                 }
             },
             error: function (jqXHR) {
-                logError2(visitorId, "LV6", folderId, "visitorId: " + visitorId, calledFrom + "/log visit");
                 let errMsg = getXHRErrorDetails(jqXHR);
-                //if (!checkFor404(errMsg, folderId, "log visit/" + calledFrom))
-                logError2(visitorId, "XHR", folderId, errMsg, calledFrom + "/log visit");
+                logActivity2(visitorId, "LV6", folderId, errMsg);
+                if (!checkFor404(errMsg, folderId, "log visit/" + calledFrom))
+                    logError2(visitorId, "XHR", folderId, errMsg, calledFrom + "/log visit");
             }
         });
     } catch (e) {
@@ -231,24 +233,6 @@ function logIpHit(visitorId, ipAddress, folderId) {
 }
 
 //////////////////////////////////////////////////////////////////
-
-function myMsgTest() {
-
-    showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
-    $('#customMessageContainer').css("top", 250);
-    $('#customMessageContainer').css("left", 400);
-
-
-
-//    let wipTitle = "data tracking error";
-//    let wipMessage = "problem storing your IpAddress";
-//    wipMessage += "<br/>Unable to store a cookie";
-//    wipMessage += "<br/>This site requires cookies enabled";
-//    wipMessage += "<br/>You may be asked to login on every page until you leave.";
-//    wipMessage += "<br/>you must <a href=''>Register</a> or <a href=''>login</a> to continue";
-//    wipMessage += "<div class='robotWarning'><input type='checkbox'> I am not a robot.</input></div>";
-//    showMyAlert(wipTitle, wipMessage);
-}
 
 function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {
     if (localStorage["IsLoggedIn"] == "true") { }
