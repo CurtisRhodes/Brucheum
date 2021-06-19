@@ -245,7 +245,7 @@ function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
 
 function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     //if (document.domain === 'localhost')
-    //    alert("logEvent. eventCode: " + eventCode + "  folderId: " + folderId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
+    //    alert("log Event. eventCode: " + eventCode + "  folderId: " + folderId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
     //else
     {
         $.ajax({
@@ -261,15 +261,15 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
             success: function (success) {
                 if (success !== "ok") {
                     if (success.indexOf("Duplicate entry") > 0) {
-                       // logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/logEvent");
+                        // logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/log Event");
                     }
                     else
-                        logError("AJE", folderId, eventCode + ": " + success, calledFrom + "/logEvent");
+                        logError("AJE", folderId, eventCode + ": " + success, "log Event/" + calledFrom);
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "logEvent")) logError("XHR", folderId, errMsg, "logEvent");
+                if (!checkFor404(errMsg, folderId, "log Event")) logError("XHR", folderId, errMsg, "log Event");
             }
         });
     }
@@ -574,6 +574,10 @@ function weDemandCookies() {
 function getCookieValue(itemName) {
     let returnValue = "cookie not found";
     try {
+        if (isNullorUndefined(itemName)) {
+            logError2(create_UUID(), "BUG", 618429, "isNullorUndefined(itemName)", "get CookieValue");
+            return returnValue;
+        }
         let decodedCookie = decodeURIComponent(document.cookie);
         let cookieElements = decodedCookie.split(";");
         let cookieItem, cookieItemName, cookieItemValue;
@@ -582,9 +586,8 @@ function getCookieValue(itemName) {
             cookieItemName = cookieItem[0].trim();
             cookieItemValue = cookieItem[1];
             if (cookieItemName === itemName) {
-
                 if (isNullorUndefined(cookieItemValue)) {
-                    visitorId = create_UUID();
+                    let visitorId = create_UUID();
                     if (!navigator.cookieEnabled) {  // user accepts cookies
                         localStorage[itemName] = visitorId;
                         logError2(visitorId, "CK3", 615112, "need a fix", "get CookieValue"); // undefined and cookies not enabled
@@ -628,6 +631,12 @@ function getCookieValue(itemName) {
         }
 
         if (returnValue == "cookie not found") {
+            if (isNullorUndefined(window.localStorage)) {
+                window.localStorage["IsLoggedIn"] = "false";
+                logError("BUG", 602537, "entire concept of window.localStorage fail", "get cookie value");
+                return returnValue;
+            }
+
             if (!isNullorUndefined(localStorage[itemName])) {
                 returnValue = localStorage[itemName];
                 if (navigator.cookieEnabled) {  // user accepts cookies

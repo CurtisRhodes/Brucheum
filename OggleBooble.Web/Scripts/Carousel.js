@@ -18,68 +18,69 @@ function launchCarousel(startRoot) {
     try {
         //loadCarouselSettingsIntoLocalStorage();
         //jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-
-        //if (e.IndexOf("SyntaxError: Unexpected token u in JSON at position 1") > -1) {
-
-        switch (startRoot) {
-            case "centerfold":
-                if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
-                    //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
-                    console.log("loading centerfold from centerfold cache");
-                    let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
-                    $.each(carouselCacheArray, function (idx, obj) {
-                        carouselItemArray.push(obj);
-                    });
-                    carouselSkip = carouselItemArray.length;
-                    startCarousel("centefold cache");
-                    console.log("loaded " + carouselItemArray.length + " from centerfold cache");
-                }
-                else {
-                    if (document.domain == "localhost") alert("no " + startRoot + " cache found");
-                    carouselTake = 10;
-                    console.log("no " + startRoot + " cache found");
-                }
-                break;
-            case "boobs":
-                if (!isNullorUndefined(localStorage["carouselCache"])) {
-                    let carouselCacheArray = JSON.parse(localStorage["carouselCache"]);
-                    $.each(carouselCacheArray, function (idx, obj) {
-                        carouselItemArray.push(obj);
-                    });
-                    carouselSkip = carouselItemArray.length;
-                    startCarousel("big naturals cache");
-                }
-                else
-                    carouselTake = 10;
-                console.log("no " + startRoot + " cache found");
-                break;
-            case "porn":
-                if (!isNullorUndefined(window.localStorage["pornCache"])) {
-                    console.log("loading porn from centerfold cache");
-                    let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
-                    $.each(carouselCacheArray, function (idx, obj) {
-                        carouselItemArray.push(obj);
-                    });
-                    carouselSkip = carouselItemArray.length;
-                    startCarousel("porn cache");
-                    console.log("loaded " + carouselItemArray.length + " from porn cache");
-                }
-                else
-                    carouselTake = 10;
-                console.log("no " + startRoot + " cache found");
-                break;
-            default:
-                logError("SWT", 222, startRoot, "launchCarousel");
+        if (isNullorUndefined(window.localStorage)) {
+            window.localStorage["IsLoggedIn"] = "false";
+            logError("BUG", 602537, "entire concept of window.localStorage fail", "launch Carousel");
+            carouselTake = 10;
         }
-        //if (isNullorUndefined(jsCarouselSettings)) {
-        //    //alert("jsCarouselSettings NullorUndefined");
-        //    loadImages(startRoot, carouselSkip, carouselTake, jsCarouselSettings.includeLandscape, jsCarouselSettings.includePortrait);
-        //    logError("BUG", startRoot, "jsCarouselSettings", "launchCarousel");
-        //}
-        //else
+        else {
+            switch (startRoot) {
+                case "centerfold":
+                    if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
+                        //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
+                        console.log("loading centerfold from centerfold cache");
+                        let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
+                        $.each(carouselCacheArray, function (idx, obj) {
+                            carouselItemArray.push(obj);
+                        });
+                        carouselSkip = carouselItemArray.length;
+                        startCarousel("centefold cache");
+                        console.log("loaded " + carouselItemArray.length + " from centerfold cache");
+                    }
+                    else {
+                        if (document.domain == "localhost") alert("no " + startRoot + " cache found");
+                        carouselTake = 10;
+                        console.log("no " + startRoot + " cache found");
+                        //logError("CR1", 618407, "no " + startRoot + " cache found");
+                    }
+                    break;
+                case "boobs":
+                    if (!isNullorUndefined(localStorage["carouselCache"])) {
+                        let carouselCacheArray = JSON.parse(localStorage["carouselCache"]);
+                        $.each(carouselCacheArray, function (idx, obj) {
+                            carouselItemArray.push(obj);
+                        });
+                        carouselSkip = carouselItemArray.length;
+                        startCarousel("big naturals cache");
+                    }
+                    else
+                        carouselTake = 10;
+                    console.log("no " + startRoot + " cache found");
+                    break;
+                case "porn":
+                    if (!isNullorUndefined(window.localStorage["pornCache"])) {
+                        console.log("loading porn from centerfold cache");
+                        let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
+                        $.each(carouselCacheArray, function (idx, obj) {
+                            carouselItemArray.push(obj);
+                        });
+                        carouselSkip = carouselItemArray.length;
+                        startCarousel("porn cache");
+                        console.log("loaded " + carouselItemArray.length + " from porn cache");
+                    }
+                    else
+                        carouselTake = 10;
+                    console.log("no " + startRoot + " cache found");
+                    break;
+                default:
+                    logError("SWT", 222, startRoot, "launchCarousel");
+            }
+        }
     }
     catch (e) {
-        logError2(create_UUID(), "CAT", 3910, e, "launchCarousel");
+        // TypeError: localStorage is null
+        //if (e.IndexOf("SyntaxError: Unexpected token u in JSON at position 1") > -1) {
+        logError2(create_UUID(), "CAT", 3910, e, "launch Carousel");
     }
     finally {
         window.addEventListener("resize", resizeCarousel);
@@ -122,14 +123,15 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                         let visitorId = getCookieValue("VisitorId");
                         if (visitorId == "cookie not found") {
                             if (navigator.cookieEnabled) {  // user accepts cookies
-                                logError2(create_UUID(), "LSC", 67659, "cookie not found. rootFolder: " + rootFolder, "Carousel loadImages");
+                                logError("LSC", 67659, "cookie not found. rootFolder: " + rootFolder, "Carousel loadImages");
                             }
                             else {
                                 logError2(create_UUID(), "LSC", 67659, "cookie not found cookies not enabled.  rootFolder: " + rootFolder, "Carousel loadImages");
                             }
                         }
                         else {
-                            logError("LSC", 67659, "rootFolder: " + rootFolder, "Carousel loadImages");
+                            logActivity2(create_UUID(), "RC1", 618518, "refresh Cache"); // starting carousel from after ajax
+                            //logError("LSC", 618359, "rootFolder: " + rootFolder + " take: " + carouselTake, "Carousel loadImages");
                         }
                     }
 
@@ -184,38 +186,24 @@ function refreshCache(rootFolder) {
                         cacheArray.push(carouselInfo.Links[i]);
                     };
 
-                    //$.each(carouselInfo.Links, function (idx, obj) {
-                    //    isAlreadyInArray = false;
-                    //    for (i = 0; i < carouselInfo.length; i++) {
-                    //        if (obj.Id === carouselInfo[i].Id) {
-                    //            if (carouselDebugMode) alert(obj.Id + " already in carouselItemArray: " + carouselItemArray.find(item => { item.Id == obj.Id }));
-                    //            console.log(obj.Id + " already in carouselItemArray");
-                    //            isAlreadyInArray = true;
-                    //        }
-                    //    }
-                    //    if (!isAlreadyInArray) {
-                    //        //if (carouselItemArray.find(item => { item.Id == obj.Id }) != undefined) {
-                    //        cacheArray.push(obj);
-                    //    }
-                    //});
+                    //let jsnObj = "[";  //new JSONArray();
+                    //for (i = 0; i < cacheSize; i++) {
+                    //    jsnObj += (JSON.stringify(cacheArray[i])) + ",";
+                    //}
+                    //jsnObj.substring(0, jsnObj.length - 1) + "]";
 
-                    let jsnObj = "[";  //new JSONArray();
-                    for (i = 0; i < cacheSize; i++) {
-                        //let ix = Math.floor(Math.random() * cacheArray.length);
-                        jsnObj += (JSON.stringify(cacheArray[i])) + ",";
-                    }
                     switch (rootFolder) {
                         case "porn":
-                            window.localStorage.removeItem["pornCache"];
-                            window.localStorage["pornCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                            //window.localStorage.removeItem["pornCache"];
+                            window.localStorage["pornCache"] = JSON.stringify(cacheArray);
                             break;
                         case "centerfold":
-                            window.localStorage.removeItem["centerfoldCache"];
-                            window.localStorage["centerfoldCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                            //window.localStorage.removeItem["centerfoldCache"];
+                            window.localStorage["centerfoldCache"] = JSON.stringify(cacheArray);
                             break;
                         case "boobs":
-                            window.localStorage.removeItem["carouselCache"];
-                            window.localStorage["carouselCache"] = jsnObj.substring(0, jsnObj.length - 1) + "]";
+                            //window.localStorage.removeItem["carouselCache"];
+                            window.localStorage["carouselCache"] = JSON.stringify(cacheArray);
                             break;
                         default:
                             logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refreshCache");
@@ -224,30 +212,38 @@ function refreshCache(rootFolder) {
                     let delta = (Date.now() - startTime) / 1000;
                     console.log("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3));
                     $('#footerMessage2').html("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3) + "  size: " + cacheArray.length);
-                    //if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache");
-                   // if (document.domain == "localhost") alert("refreshed " + rootFolder + " cache.  \nTook: " + delta.toFixed(3) + "  size: " + cacheArray.length);
+                    logActivity2(create_UUID(), "RC0", 618518,
+                        "cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length); // refresh cache success
                 }
                 else {
                     if (carouselInfo.Success.indexOf("A connection attempt failed") > 0) {
+                        logActivity2(create_UUID(), "RC6", 618518, "refresh Cache"); // connection attempt failed
                         checkFor404("Not connect", 616425, "carousel refreshCache");
                     }
-                    else
-                        logError("AJX", 77508, carouselInfo.Success, "refresh Cache");
+                    else {
+                        logError2(create_UUID(), "AJX", 77508, carouselInfo.Success, "refresh Cache");
+                        logActivity2(create_UUID(), "RC3", 618518, "refresh Cache"); // refresh cache Ajax error
+                    }
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, 366, "refreshCache")) logError("XHR", 366, errMsg, "refresh Cache");
+                logActivity2(create_UUID(), "RC4", 618518, "refresh Cache"); // refresh cache XHR error
+                if (!checkFor404(errMsg, 366, "refreshCache"))
+                    logError2(create_UUID(), "XHR", 366, errMsg, "refresh Cache");
             }
         });
     } catch (e) {
-        logError("CAT", 3908, e, "refreshCache");
+        logActivity2(create_UUID(), "RC5", 618518, "refresh Cache"); // refresh cache CATCH error
+        logError2(create_UUID(),  "CAT", 3908, e, "refreshCache");
     }
 }
 
 function startCarousel(calledFrom) {
-    if (vCarouselInterval)
-        console.log("carousel interval already started. Called from: " + calledFrom);
+    if (vCarouselInterval) {
+        logError("BUG", 618510, "carousel interval already started. Called from: " + calledFrom, "start Carousel");
+        //console.log("carousel interval already started. Called from: " + calledFrom);
+    }
     else {
         if (carouselItemArray.length > 10) {
             $('#footerMessage').html("started carousel from: " + calledFrom);
@@ -258,9 +254,7 @@ function startCarousel(calledFrom) {
                 intervalBody();
             }, rotationSpeed);
             console.log("started carousel from: " + calledFrom);
-
             //setTimeout(function () { launchPromoMessages(); }, 3000);
-
         }
         else {
             if (document.domain == "localhost") alert("failed to start carousel. carouselItemArray.length: " + carouselItemArray.length);
@@ -449,7 +443,7 @@ function clickSpeed(speed) {
         rotationSpeed += 800;
     clearInterval(vCarouselInterval);
     vCarouselInterval = null;
-    startCarousel("speed");
+    //startCarousel("speed");
 }
 
 function togglePause() {
@@ -464,8 +458,8 @@ function pause() {
 }
 function resume() {
     $('#pauseButton').html("||");
-    backArrowClicks = 0;
-    startCarousel("resume");
+    // backArrowClicks = 0;
+    // startCarousel("resume");
 }
 
 function showCarouelSettingsDialog() {

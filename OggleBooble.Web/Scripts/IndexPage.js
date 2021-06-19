@@ -108,7 +108,7 @@ function loadUpdatedGalleriesBoxes() {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "load Updated Galleries Boxes")) logError("XHR", subdomain, errMsg, "load Updated Galleries Boxes");
+            if (!checkFor404(errMsg, 619845, "load Updated Galleries Boxes")) logError("XHR", 619846, errMsg, "load Updated Galleries Boxes");
         }
     });
 }

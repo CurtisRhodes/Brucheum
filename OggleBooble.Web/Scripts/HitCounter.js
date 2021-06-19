@@ -71,7 +71,7 @@ function logPageHit(folderId) {
                 GeoCode: "cookie not found",
                 InitialPage: folderId
             });
-            logActivity("PH3", "log pageHit"); // cookie not found
+            logActivity2(create_UUID(), "PH3", folderId, "log pageHit"); // cookie not found
         }
 
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
@@ -167,12 +167,12 @@ function logVisit(visitorId, folderId, calledFrom) {
                 let errMsg = getXHRErrorDetails(jqXHR);
                 logActivity2(visitorId, "LV6", folderId, errMsg);
                 if (!checkFor404(errMsg, folderId, "log visit/" + calledFrom))
-                    logError2(visitorId, "XHR", folderId, errMsg, calledFrom + "/log visit");
+                    logError2(visitorId, "XHR", folderId, errMsg, "log visit/" + calledFrom);
             }
         });
     } catch (e) {
-        logError2(visitorId, "LV7", folderId, "visitorId: " + visitorId, calledFrom + "/log visit");
-        logError2(visitorId, "CAT", folderId, e, calledFrom);
+        logError2(visitorId, "LV7", folderId, "visitorId: " + visitorId, "log visit/" + calledFrom);
+        logError2(visitorId, "CAT", folderId, e, "log visit/" + calledFrom);
     }
 }
 
@@ -188,7 +188,7 @@ function logStaticPageHit(folderId, calledFrom) {
             logActivity("SP4", folderId, success); // static page hit return
             if (success == "ok") {
                 logActivity("SP1", folderId, calledFrom); // static page hit success
-                logEvent("SPH", folderId, "logStatic PageHit/" + calledFrom, "");
+                //logEvent("SPH", folderId, "logStatic PageHit/" + calledFrom, "");
             }
             else {
                 logActivity("SP2", folderId, calledFrom); // static page hit ajax error

@@ -34,6 +34,11 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             tryApiDbIpFree(folderId, visitorId, calledFrom);
             return;
         }
+        if (visitorId.indexOf("XLX") > -1) {
+            logActivity2(visitorId, "IP9", folderId, calledFrom); // blocked looping ip-lookup attempt
+            return;
+        }
+
         ip0Busy = true;
         logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         let ipCall0Returned = false;
@@ -100,9 +105,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             error: function (jqXHR) {
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
-
-                logActivity2(visitorId, "IP3", folderId, errMsg); // XHR error
-
                 if (errMsg.indexOf("Not connect.") == -1) {
                     logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
@@ -118,6 +120,12 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 else {
                     if (!checkFor404(errMsg, folderId, "get IpInfo")) {
                         logError2(visitorId, "XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
+                    }
+                    else {
+                        visitorId = "XLX" + visitorId.substr(3);
+                        setCookieValue("VisitorId", visitorId);
+                        //logActivity2(visitorId, "IP3", folderId, errMsg); // XHR error
+                        logActivity("IP3", folderId, errMsg); // XHR error
                     }
                 }
                 ip0Busy = false;

@@ -1,20 +1,27 @@
 ﻿function isInRole(roleName) {
     try {
 
-        if (isNullorUndefined(localStorage["IsLoggedIn"])) {
-            loadUserProfile(61071, "isInRole");
-        }
-
-        if (!localStorage["UserName"] == "unregistered") {
+        if (isNullorUndefined(window.localStorage)) {
+            window.localStorage["IsLoggedIn"] = "false";
+            // 602537  TypeError: Cannot read property 'IsLoggedIn' of null
+            logError("BUG", 602537, "entire concept of window.localStorage fail", "is InRole");
             return false;
         }
 
-        if (!localStorage["IsLoggedIn"] == "false") {
+        if (isNullorUndefined(window.localStorage["IsLoggedIn"])) {
+            loadUserProfile(61071, "is InRole");
+        }
+
+        if (!window.localStorage["UserName"] == "unregistered") {
+            return false;
+        }
+
+        if (!window.localStorage["IsLoggedIn"] == "false") {
             //logError("BUG", 30578, "bool false THIS WORKED  localStorage[IsLoggedIn]:" + localStorage["IsLoggedIn"], "isInRole/" + calledFrom);
             return false;
         }
 
-        if (localStorage["UserRole"] == "admin")
+        if (window.localStorage["UserRole"] == "admin")
             return true;
 
         if (window.localStorage["UserRole"] == roleName)

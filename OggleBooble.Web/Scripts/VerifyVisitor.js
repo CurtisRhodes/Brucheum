@@ -81,14 +81,13 @@ function verifySession(folderId) {
     }
     catch (e) {
         sessionStorage["VisitorVerified"] = true;
-        logActivity("VV5", folderId, e); // verify visitor CATCH error
+        logActivity2(create_UUID(), "VS8", folderId, e); // verify session CATCH error
         logError2(visitorId, "CAT", folderId, e, "verify session");
     }
 }
 
 function verifyVisitorId(folderId, calledFrom) {
     try {
-
         logActivity("VV0", folderId, "verify Visitor"); // attempting to verify visitor
 
         let visitorId = getCookieValue("VisitorId");
@@ -108,7 +107,7 @@ function verifyVisitorId(folderId, calledFrom) {
                         if (successModel.ReturnValue == "visitorId ok") {
                             logActivity2(visitorId, "VV1", folderId, "verify VisitorId"); // visitor verified ok
                             loadUserProfile(folderId, "verify VisitorId");
-                            logVisit2(visitorId, folderId, "verify visitorId");
+                            logVisit(visitorId, folderId, "verify visitorId");
                         }
                         if (successModel.ReturnValue == "not found") {
                             logActivity2(visitorId, "VV3", folderId, "verify Visitor"); // visitorId came back not found
