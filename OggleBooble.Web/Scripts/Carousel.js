@@ -228,7 +228,7 @@ function refreshCache(rootFolder) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity2(create_UUID(), "RC4", 618518, "refresh Cache"); // refresh cache XHR error
+                logActivity2(create_UUID(), "RC4", 618518, errMsg); // refresh cache XHR error
                 if (!checkFor404(errMsg, 366, "refreshCache"))
                     logError2(create_UUID(), "XHR", 366, errMsg, "refresh Cache");
             }

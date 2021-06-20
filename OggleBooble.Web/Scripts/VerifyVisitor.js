@@ -93,9 +93,7 @@ function verifyVisitorId(folderId, calledFrom) {
         let visitorId = getCookieValue("VisitorId");
 
         if (visitorId.indexOf("cookie not found") > -1) {
-            logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom);
-            //logError2(create_UUID(), "BUG", folderId, "cookie not found made it too far", "verify visitorId");
-            //tryAddNewIP(folderId, visitorId, "troubled account");
+            logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom); // cookie not found made it too far
             return;
         }
         else {
@@ -111,7 +109,6 @@ function verifyVisitorId(folderId, calledFrom) {
                         }
                         if (successModel.ReturnValue == "not found") {
                             logActivity2(visitorId, "VV3", folderId, "verify Visitor"); // visitorId came back not found
-                            //logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify visitorId");
                             addVisitor({
                                 VisitorId: visitorId,
                                 IpAddress: '00.11.11',
@@ -179,8 +176,8 @@ function addVisitor(visitorData) {
                 }
             },
             error: function (jqXHR) {
-                logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
+                logActivity2(create_UUID(), "AV8", 555, errMsg); // AddVisitor XHR error
                 if (!checkFor404(errMsg, 555, "add Visitor"))
                     logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
             }

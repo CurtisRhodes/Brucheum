@@ -56,7 +56,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
 let lastPageHitFolderId, lastPageHitVisitorId;
 function logPageHit(folderId) {
     try {
-        logActivity2(create_UUID(), "PH0", folderId, "log pageHit");  // entering log page hit
+        //logActivity2(create_UUID(), "PH0", folderId, "log pageHit");  // entering log page hit
 
         let visitorId = getCookieValue("VisitorId");
         if (visitorId.indexOf("cookie not found") > -1) {
@@ -86,10 +86,10 @@ function logPageHit(folderId) {
             url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
             success: function (pageHitSuccess) {
                 if (pageHitSuccess.Success === "ok") {
-                    logActivity2(visitorId, "PH1",  folderId, "log pageHit");  // page hit success
+                    //logActivity2(visitorId, "PH1",  folderId, "log pageHit");  // page hit success
 
                     if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
-                        logActivity2(visitorId, "PH4", "log pageHit"); // pageHits > 3 and country=="ZZ"
+                        logActivity2(visitorId, "PH4", folderId, "log pageHit"); // pageHits > 3 and country=="ZZ"
                         tryAddNewIP(folderId, visitorId, "log pageHit");
                     }
                     // logVisit(visitorId, folderId, "logPageHit");

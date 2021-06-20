@@ -122,10 +122,12 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                         logError2(visitorId, "XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
                     }
                     else {
-                        visitorId = "XLX" + visitorId.substr(3);
-                        setCookieValue("VisitorId", visitorId);
-                        //logActivity2(visitorId, "IP3", folderId, errMsg); // XHR error
-                        logActivity("IP3", folderId, errMsg); // XHR error
+                        let XLXvisitorId = "XLX" + visitorId.substr(3);
+                        setCookieValue("VisitorId", XLXvisitorId);
+                        if (getCookieValue("VisitorId") == XLXvisitorId)
+                            logActivity("IP3", folderId, "get IpInfo " + errMsg); // XHR error
+                        else
+                            logActivity2(visitorId, "IP7", folderId, "get IpInfo"); // juneteenth setCookie problem
                     }
                 }
                 ip0Busy = false;
@@ -143,8 +145,8 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             ip0Busy = false;
         }, 1855);
     } catch (e) {
-        logActivity2(visitorId, "IP7", folderId, "get IpInfo");
-        logError2(visitorId, "CAT", folderId, e, "get IpInfo");
+        logActivity2(create_UUID(), "IPK", folderId, "get IpInfo"); // IP catch error
+        logError2(create_UUID(), "CAT", folderId, e, "get IpInfo");
         ip0Busy = false;
     }
 } // 0 ipinfo.io?token=ac5da086206dc4
