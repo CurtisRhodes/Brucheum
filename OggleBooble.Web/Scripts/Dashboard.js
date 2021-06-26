@@ -246,6 +246,13 @@ function loadDashboardDirTree(forceRefresh) {
     loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
 }
 
+function showHtmlDirTree() {
+
+    $("dashboardRightColumn").html();
+
+}
+
+
 function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
     resizeDashboardPage();

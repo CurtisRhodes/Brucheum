@@ -15,6 +15,14 @@
         text-decoration: underline;
     }
 
+.testFunctionLabel {
+    white-space: nowrap;
+    display: inline-block;
+    display: none;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
 .loadingImage {
     height: 233px;
 }

@@ -26,6 +26,31 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OggleBooble.Web", "..\Oggle
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OggleBooble.Api", "..\OggleBooble.Api\OggleBooble.Api.csproj", "{A651CC29-F321-42CA-A440-17C368F16516}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OggleBooble.Api.Core", "..\OggleBooble.Api.Core\OggleBooble.Api.Core.csproj", "{3A687C20-A987-4E3A-9B68-79CDB50EEA3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brucheum.Api", "..\Brucheum.Api\Brucheum.Api.csproj", "{C241263B-3943-4363-9FE2-04BF88BC8722}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BruchHtml", "..\BruchHtml\", "{E711B224-21F8-48EE-BCCA-3647A40B350D}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_52356"
+		Debug.AspNetCompiler.PhysicalPath = "..\BruchHtml\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_52356\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_52356"
+		Release.AspNetCompiler.PhysicalPath = "..\BruchHtml\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_52356\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "52356"
+		SlnRelativePath = "..\BruchHtml\"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +65,18 @@ Global
 		{A651CC29-F321-42CA-A440-17C368F16516}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A651CC29-F321-42CA-A440-17C368F16516}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A651CC29-F321-42CA-A440-17C368F16516}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A687C20-A987-4E3A-9B68-79CDB50EEA3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A687C20-A987-4E3A-9B68-79CDB50EEA3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A687C20-A987-4E3A-9B68-79CDB50EEA3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A687C20-A987-4E3A-9B68-79CDB50EEA3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C241263B-3943-4363-9FE2-04BF88BC8722}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C241263B-3943-4363-9FE2-04BF88BC8722}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C241263B-3943-4363-9FE2-04BF88BC8722}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C241263B-3943-4363-9FE2-04BF88BC8722}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E711B224-21F8-48EE-BCCA-3647A40B350D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E711B224-21F8-48EE-BCCA-3647A40B350D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E711B224-21F8-48EE-BCCA-3647A40B350D}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{E711B224-21F8-48EE-BCCA-3647A40B350D}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

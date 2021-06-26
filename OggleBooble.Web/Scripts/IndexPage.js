@@ -31,8 +31,6 @@ function displaySpaPage(spaPageId) {
 
             $('#testFunctionClick').hide();
 
-            //$('#badgesContainer').html("badgesContainer");
-
             break;
         case 3909: // porn
             spaType = "porn";
@@ -273,7 +271,7 @@ function indexPageHTML() {
         "       <div id='promoContainer' class='promoContainer' >my promo message</div>\n" +
         "       <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
-        "    <div id='testFunctionClick' class='clickable sectionLabel' style='margin-bottom: 6px;' onclick='testFunction()'>test function</div>\n" +
+        "    <div id='testFunctionClick' class='testFunctionLabel' onclick='testFunction()'>reformat hard drive</div>\n" +
         "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +
         "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +

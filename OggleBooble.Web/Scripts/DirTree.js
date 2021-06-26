@@ -36,6 +36,12 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
             success: function (dirTreeModel) {
                 if (dirTreeModel.Success === "ok") {
                     buildDirTreeRecurr(dirTreeModel);
+
+
+
+
+
+
                     strdirTree += "<div id='dirTreeCtxMenu'></div>";
                     $('#' + container + '').html(strdirTree);
 

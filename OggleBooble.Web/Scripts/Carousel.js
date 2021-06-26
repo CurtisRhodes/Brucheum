@@ -53,9 +53,10 @@ function launchCarousel(startRoot) {
                         carouselSkip = carouselItemArray.length;
                         startCarousel("big naturals cache");
                     }
-                    else
+                    else {
                         carouselTake = 10;
-                    console.log("no " + startRoot + " cache found");
+                        console.log("no " + startRoot + " cache found");
+                    }
                     break;
                 case "porn":
                     if (!isNullorUndefined(window.localStorage["pornCache"])) {
@@ -68,9 +69,10 @@ function launchCarousel(startRoot) {
                         startCarousel("porn cache");
                         console.log("loaded " + carouselItemArray.length + " from porn cache");
                     }
-                    else
+                    else {
                         carouselTake = 10;
-                    console.log("no " + startRoot + " cache found");
+                        console.log("no " + startRoot + " cache found");
+                    }
                     break;
                 default:
                     logError("SWT", 222, startRoot, "launchCarousel");
@@ -114,9 +116,10 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                         }
                     });
 
+
                     if (!vCarouselInterval) {
-                        console.log("starting carousel from after ajax");
-                        refreshCache(rootFolder);
+                        console.log("starting carousel from after ajax. take: " + carouselTake);
+                        //refreshCache(rootFolder);
                         startCarousel("ajax");
 
                         //handleTroubledAccount("Carousel loadImages")
@@ -130,6 +133,7 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                             }
                         }
                         else {
+                            logError("LSC", 625131, "take: " + carouselTake);
                             logActivity2(create_UUID(), "RC1", 618518, "refresh Cache"); // starting carousel from after ajax
                             //logError("LSC", 618359, "rootFolder: " + rootFolder + " take: " + carouselTake, "Carousel loadImages");
                         }
@@ -191,29 +195,30 @@ function refreshCache(rootFolder) {
                     //    jsnObj += (JSON.stringify(cacheArray[i])) + ",";
                     //}
                     //jsnObj.substring(0, jsnObj.length - 1) + "]";
-
+                    let cacheName = "carouselCache";
                     switch (rootFolder) {
-                        case "porn":
-                            //window.localStorage.removeItem["pornCache"];
-                            window.localStorage["pornCache"] = JSON.stringify(cacheArray);
-                            break;
-                        case "centerfold":
-                            //window.localStorage.removeItem["centerfoldCache"];
-                            window.localStorage["centerfoldCache"] = JSON.stringify(cacheArray);
-                            break;
-                        case "boobs":
-                            //window.localStorage.removeItem["carouselCache"];
-                            window.localStorage["carouselCache"] = JSON.stringify(cacheArray);
-                            break;
-                        default:
-                            logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refreshCache");
+                        case "porn": cacheName = "pornCache"; break;
+                        case "centerfold": cacheName = "centerfoldCache"; break;
+                        case "boobs": cacheName = "carouselCache"; break;
+                        default: logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refreshCache");
+                    }
+                    try {
+                        window.localStorage.removeItem[cacheName];
+                        window.localStorage[cacheName] = JSON.stringify(cacheArray);
+                    } catch (e) {
+                        try {
+                            window.localStorage.clear();
+                            window.localStorage[cacheName] = JSON.stringify(cacheArray);
+                        } catch (e) {
+                            logError2(create_UUID(), "BUG", 444, cacheName + " " + e, "Carosel refreshCache");
+                        }
                     }
 
                     let delta = (Date.now() - startTime) / 1000;
                     console.log("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3));
                     $('#footerMessage2').html("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3) + "  size: " + cacheArray.length);
                     logActivity2(create_UUID(), "RC0", 618518,
-                        "cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length); // refresh cache success
+                        "cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length, "refresh cache success"); // refresh cache success
                 }
                 else {
                     if (carouselInfo.Success.indexOf("A connection attempt failed") > 0) {

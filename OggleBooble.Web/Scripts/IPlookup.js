@@ -39,9 +39,9 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             return;
         }
 
+        let ipCall0Returned = false;
         ip0Busy = true;
         logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
-        let ipCall0Returned = false;
         $.ajax({
             type: "GET",
             url: "https://ipinfo.io?token=ac5da086206dc4",
@@ -55,56 +55,46 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             },
             success: function (ipResponse) {
                 ipCall0Returned = true;
-                if (isNullorUndefined(ipResponse)) {
-                    logActivity2(visitorId, "IP9", folderId, "get IpInfo/" + calledFrom);  // ipInfo success but ipResponse null
-                    tryApiDbIpFree(folderId, visitorId, calledFrom);
-                }
-
-                if ((isNullorUndefined(ipResponse.ip)) || (ipResponse.ip == 'undefined') || (ipResponse.ip == 'undefined=')) {
-                    logActivity2(visitorId, "IP9", folderId, "get IpInfo");  // ipInfo success but came back with no ip
-                    tryApiDbIpFree(folderId, visitorId, calledFrom);
-                    //logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
-                }
-                else {
-                    logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
-                    $.ajax({
-                        type: "PUT",
-                        url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
-                        data: {
-                            VisitorId: visitorId,
-                            IpAddress: ipResponse.ip,
-                            City: ipResponse.city,
-                            Country: ipResponse.country,
-                            Region: ipResponse.region,
-                            GeoCode: ipResponse.loc
-                        },
-                        success: function (success) {
-                            if (success == "ok") {
-                                logActivity2(visitorId, "IPA", folderId, "update Visitor"); // visitor successfully updated
-                                logVisit(visitorId, folderId, "add Visitor");
-                            }
-                            else {
-                                if (success == "VisitorId not found") {
-                                    logActivity2(visitorId, "IPB", folderId, "update Visitor"); // update failed. VisitorId not found
-                                } else {
-                                    logActivity2(visitorId, "IPC", folderId, success); // update failed. ajax error
-                                    logError2(visitorId, "AJX", folderId, success, "update Visitor");
-                                }
-                            }
-                        },
-                        error: function (jqXHR) {
-                            logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
-                            let errMsg = getXHRErrorDetails(jqXHR);
-                            if (!checkFor404(errMsg, 555, "add Visitor"))
-                                logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
+                logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
+                logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
+                $.ajax({
+                    type: "PUT",
+                    url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
+                    data: {
+                        VisitorId: visitorId,
+                        IpAddress: ipResponse.ip,
+                        City: ipResponse.city,
+                        Country: ipResponse.country,
+                        Region: ipResponse.region,
+                        GeoCode: ipResponse.loc
+                    },
+                    success: function (success) {
+                        if (success == "ok") {
+                            logActivity2(visitorId, "IPA", folderId, "update Visitor"); // visitor successfully updated
+                            logVisit(visitorId, folderId, "add Visitor");
                         }
-                    });
-                }
+                        else {
+                            if (success == "VisitorId not found") {
+                                logActivity2(visitorId, "IPB", folderId, "update Visitor"); // update failed. VisitorId not found
+                            } else {
+                                logActivity2(visitorId, "IPC", folderId, success); // update failed. ajax error
+                                logError2(visitorId, "AJX", folderId, success, "update Visitor");
+                            }
+                        }
+                    },
+                    error: function (jqXHR) {
+                        logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
+                        let errMsg = getXHRErrorDetails(jqXHR);
+                        if (!checkFor404(errMsg, 555, "add Visitor"))
+                            logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
+                    }
+                });
                 ip0Busy = false;
             },
             error: function (jqXHR) {
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
+                logActivity2(create_UUID(), "IP6", folderId, errMsg);
                 if (errMsg.indexOf("Not connect.") == -1) {
                     logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
@@ -135,18 +125,57 @@ function getIpInfo(folderId, visitorId, calledFrom) {
         });
         setTimeout(function () {
             if (!ipCall0Returned) {
-                console.debug("getIpInfo timeout");
-                logActivity2(visitorId, "IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
-                if (!isNullorUndefined(ipResponse)) {
-                    logError2(visitorId, "200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
+                if (isNullorUndefined(ipResponse.ip)) {
+                    logActivity2(create_UUID(), "IP9", 621237, "folderId: " + folderId + " visitorId: " + visitorId); // ipInfo failed to respond
+                    logActivity2(create_UUID(), "IP4", 621328, "get IpInfo/" + calledFrom); // ipInfo failed to respond
+                    tryApiDbIpFree(folderId, visitorId, calledFrom);  // try something else
                 }
-                tryApiDbIpFree(folderId, visitorId, calledFrom);  // try something else
+                else {
+                    logActivity2(create_UUID(), "IP7", 621239, "timeout but info"); // timeout but info
+                    //logActivity2(visitorId, "IP2", folderId, "timeout"); // well it worked
+                    $.ajax({
+                        type: "PUT",
+                        url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
+                        data: {
+                            VisitorId: visitorId,
+                            IpAddress: ipResponse.ip,
+                            City: ipResponse.city,
+                            Country: ipResponse.country,
+                            Region: ipResponse.region,
+                            GeoCode: ipResponse.loc
+                        },
+                        success: function (success) {
+                            if (success == "ok") {
+                                logActivity2(visitorId, "IPA", folderId, "timeout"); // visitor successfully updated
+                                logVisit(visitorId, folderId, "add Visitor");
+                            }
+                            else {
+                                if (success == "VisitorId not found") {
+                                    logActivity2(visitorId, "IPB", folderId, "timeout"); // update failed. VisitorId not found
+                                } else {
+                                    logActivity2(visitorId, "IPC", folderId, success); // update failed. ajax error
+                                    logError2(visitorId, "AJX", folderId, success, "timeout");
+                                }
+                            }
+                        },
+                        error: function (jqXHR) {
+                            logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
+                            let errMsg = getXHRErrorDetails(jqXHR);
+                            if (!checkFor404(errMsg, 555, "add Visitor"))
+                                logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
+                        }
+                    });
+
+                    logError2(create_UUID(), "200", folderId, JSON.stringify(ipResponse, null, 2), "ip info timeout"); // Json response code
+                }
             }
             ip0Busy = false;
         }, 1855);
-    } catch (e) {
-        logActivity2(create_UUID(), "IPK", folderId, "get IpInfo"); // IP catch error
-        logError2(create_UUID(), "CAT", folderId, e, "get IpInfo");
+    }
+    catch (e)
+    {
+        logActivity2(create_UUID(), "IPK", 621240, "get IpInfo"); // IP catch error
+        logError2(create_UUID(), "CAT", 621241, e, "get IpInfo");
         ip0Busy = false;
     }
 } // 0 ipinfo.io?token=ac5da086206dc4
