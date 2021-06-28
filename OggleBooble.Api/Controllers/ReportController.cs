@@ -827,14 +827,14 @@ namespace OggleBooble.Api.Controllers
 
         private string DetermineStrategy(PlayboyPlusDupe dupe0, CategoryFolder dbCatFolder0, PlayboyPlusDupe dupe1, CategoryFolder dbCatFolder1)
         {
-            if (dupe0.FSize == dupe1.FSize)
-            {
-                int[] namedFolders = { 3048, 3049, 3050, 3051, 3052, 3053, 3054, 3055, 3056, 3057, 3058, 3059 };
-                if (namedFolders.Contains(dupe0.FolderId))
-                    return "remove1";
-                else
-                    return "remove0";
-            }
+            //if (dupe0.FSize == dupe1.FSize)
+            //{
+            //    //3085	hef/muses/Carlie Christine
+            //    if (dupe0.FolderId == 3075)
+            //        return "remove1";
+            //    else
+            //        return "remove0";
+            //}
 
             if (dupe0.FileId == dupe1.FileId) 
                 return "local issue";
@@ -1482,7 +1482,6 @@ namespace OggleBooble.Api.Controllers
             }
             return success;
         }
-
 
         [HttpPut]
         public DupeCheckModel RegularDupeCheck()

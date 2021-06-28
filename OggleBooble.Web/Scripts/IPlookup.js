@@ -55,7 +55,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             },
             success: function (ipResponse) {
                 ipCall0Returned = true;
-                logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
+                //logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
                 logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
                 $.ajax({
                     type: "PUT",
