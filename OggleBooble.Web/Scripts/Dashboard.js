@@ -23,7 +23,7 @@
     loadHeaderTabs(localStorage["UserRole"]);
     setLeftMenu(localStorage["UserRole"]);
     resizeDashboardPage();
-    loadDashboardDirTree(false);
+    loadDashboardDirTree(false);    //showHtmlDirTree();
     window.addEventListener("resize", resizeDashboardPage);
 }
 
@@ -194,7 +194,9 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='DupeCheck();'>Dupe Check</div>\n" +
                 "<div class='clickable' onclick='showAutoIncrimentDialog();'>Auto Incriment</div>\n" +
                 "<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" +
-                "<div class='clickable' onclick='buildHtmlPage()'>Build Html Page</div>"
+                "<div class='clickable' onclick='buildHtmlPage()'>Build Html Page</div>" +
+                "<div class='clickable' onclick='createHtmlDirTree()'>ReCreate DirTree Html</div>" +
+                "<div class='clickable' onclick='showHtmlDirTree()'>showHtmlDirTree()</div>" 
             );
             //"<div class='clickable' onclick='HardcoreFilecounts();'>HardcoreFilecounts()</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
@@ -247,11 +249,76 @@ function loadDashboardDirTree(forceRefresh) {
 }
 
 function showHtmlDirTree() {
+    //$("dashboardRightColumn").html("<div>Yello</div>");
 
-    $("dashboardRightColumn").html();
+    //var file = "https://ogglebooble.com/data/dirTree.txt";
+    var fileName = "ogglebooble/data/dirTree.txt";
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/DirTree/GetTextFile?fileName=" + fileName,
+        success: function (data) {
+            $("#dashboardRightColumn").html(data);
+            alert("dashboardRightColumn loaded? " + data);
+
+
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            let errMsg = getXHRErrorDetails(jqXHR);
+            alert("??" + errMsg);
+            if (!checkFor404(errMsg, 444, "create HtmlDirTree")) logError("XHR", 627922, errMsg, "create HtmlDirTree");
+        }
+    });
+
+
+    //$.ajax({
+    //    url: file,
+    //    //headers: { 'Access-Control-Allow-Origin': '*' },
+    //    success: function (data) {
+    //        $("dashboardRightColumn").html(data);
+    //    },
+    //    error: function () { alert('Failed!'); },
+    //    beforeSend: function (xhr) {
+    //        xhr.setRequestHeader("Access-Control-Allow-Origin");
+    //    }
+    //});
+
+            //public string GetTextFile(string fileName)
+
+
+    //let response = await fetch(file);
+
+    //console.log(response.status); // 200
+    //console.log(response.statusText); // OK
+
+    //if (response.status === 200) {
+    //    let data = await response.text();
+    //    $("dashboardRightColumn").html(data);
+    //    // handle data
+    //}
+    //var reader = new FileReader();
+    //reader.onload = function (e) {
+    //    var contents = e.target.result;
+    //    displayContents(contents);
+    //};
+    //reader.readAsText(file);
+
+
+    //var rawFile = new XMLHttpRequest();
+    //rawFile.open("GET", file, false);
+    //rawFile.onreadystatechange = function () {
+    //    if (rawFile.readyState === 4) {
+    //        if (rawFile.status === 200 || rawFile.status == 0) {
+    //            var allText = rawFile.responseText;
+    //            //fileDisplayArea.innerText = allText
+    //            $("dashboardRightColumn").html(allText);
+    //        }
+    //    }
+    //}
+    //rawFile.send(null);
 
 }
-
 
 function onDirTreeComplete() {
     $('#dashBoardLoadingGif').hide();
@@ -264,7 +331,35 @@ function onDirTreeComplete() {
         //$('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toFixed(3));
         //$('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toLocaleString());
         //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
-    }
+    }    
+}
+
+function createHtmlDirTree() {
+    $('#dashBoardLoadingGif').show();
+    $('#dataifyInfo').html("rebuilding directory tree txt file").show();
+    let createHtmlDirTreeStart = Date.now();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/DirTree/BuildHtmlDirTree?root=1",
+        dataType: "JSON",
+        success: function (success) {
+            $('#dashBoardLoadingGif').hide();
+            if (success === "ok") {
+                let delta = (Date.now() - createHtmlDirTreeStart);
+                $('#dataifyInfo').html("directory tree rebuild took: " + (delta / 1000).toFixed(3));
+            }
+            else {
+                logError("AJX", 5522, success, "create HtmlDirTree");
+                alert("??" + success);
+            }
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            let errMsg = getXHRErrorDetails(jqXHR);
+            alert("??" + errMsg);
+            if (!checkFor404(errMsg, 444, "create HtmlDirTree")) logError("XHR", 627922, errMsg, "create HtmlDirTree");
+        }
+    });
 }
 
 // REPAIR FUNCTIONS

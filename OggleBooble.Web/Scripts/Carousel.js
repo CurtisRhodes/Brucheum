@@ -3,7 +3,7 @@ let imageIndex = 0, numImages = 0, numFolders = 0, backArrowClicks = 0,
     carouselItemArray = [], imageHistory = [], absolueStartTime,
     carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
-    imgSrc, jsCarouselSettings, arryItemsShownCount = 0, carouselRoot, cacheCount = 55;
+    imgSrc, jsCarouselSettings, arryItemsShownCount = 0, carouselRoot, cacheSize = 11;
 
 function launchCarousel(startRoot) {
     settingsImgRepo = settingsArray.ImageRepo;
@@ -178,10 +178,9 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
 function refreshCache(rootFolder) {
     try {
         let startTime = Date.now();
-        let cacheSize = 11;
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Carousel/RefreshCache?root=" + rootFolder + "&cacheCount=" + cacheCount,
+            url: settingsArray.ApiServer + "api/Carousel/RefreshCache?root=" + rootFolder + "&cacheCount=" + cacheSize,
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
                     let cacheArray = [];
@@ -217,8 +216,8 @@ function refreshCache(rootFolder) {
                     let delta = (Date.now() - startTime) / 1000;
                     console.log("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3));
                     $('#footerMessage2').html("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3) + "  size: " + cacheArray.length);
-                    logActivity2(create_UUID(), "RC0", 618518,
-                        "cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length, "refresh cache success"); // refresh cache success
+                    logActivity2(create_UUID(), "RC0", 618518, "rootFolder");
+                        //"cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length, "refresh cache success"); // refresh cache success
                 }
                 else {
                     if (carouselInfo.Success.indexOf("A connection attempt failed") > 0) {

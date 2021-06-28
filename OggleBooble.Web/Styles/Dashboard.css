@@ -32,8 +32,10 @@
     float: left;
     overflow: auto;
     display: inline-block;
-    /*border: solid thin #111;*/
-    box-sizing: padding-box;
+    /*
+        border: solid thin #111;
+       box-sizing: padding-box;
+    */
     background-color: var(--oggleBackgroundColor);
 }
 

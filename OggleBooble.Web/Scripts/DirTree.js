@@ -35,26 +35,22 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
             url: settingsArray.ApiServer + "api/DirTree/BuildDirTree?root=" + startNode,
             success: function (dirTreeModel) {
                 if (dirTreeModel.Success === "ok") {
+
                     buildDirTreeRecurr(dirTreeModel);
-
-
-
-
-
 
                     strdirTree += "<div id='dirTreeCtxMenu'></div>";
                     $('#' + container + '').html(strdirTree);
 
-                    if (startNode === 1) {
-                        try {
-                            localStorage.removeItem("dirTree");
-                            window.localStorage["dirTree"] = strdirTree;
-                        } catch (e) {
-                            localStorage.clear();
-                            window.localStorage["dirTree"] = strdirTree;
-                            alert(e);
-                        }
-                    }
+                    //if (startNode === 1) {
+                    //    try {
+                    //        localStorage.removeItem("dirTree");
+                    //        window.localStorage["dirTree"] = strdirTree;
+                    //    } catch (e) {
+                    //        //localStorage.clear();
+                    //        //window.localStorage["dirTree"] = strdirTree;
+                    //        alert(e);
+                    //    }
+                    //}
 
                     if (typeof onDirTreeComplete === 'function') {
                         onDirTreeComplete();
@@ -63,16 +59,27 @@ function loadDirectoryTree(startNode, container, forceRebuild) {
                 else {
                     $('#dashBoardLoadingGif').hide();
                     logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
+                    alert("??" + dirTreeModel.Success);
+                    if (typeof onDirTreeComplete === 'function') {
+                        onDirTreeComplete();
+                    }
                 }
             },
             error: function (jqXHR) {
                 $('#dashBoardLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errMsg, folderId, "load DirectoryTree")) logError("XHR", folderId, errMsg, "load DirectoryTree");
+
+                alert("??" + errMsg);
+                if (typeof onDirTreeComplete === 'function') {
+                    onDirTreeComplete();
+                }
+
             }
         });
     }
 }
+
 
 function buildDirTreeRecurr(parentNode) {
     dirTreeTab += dirTreeTabIndent;

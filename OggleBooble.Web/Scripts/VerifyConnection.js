@@ -49,7 +49,7 @@ function checkConnection(folderId, calledFrom) {
                         verifyConnectionAvailable = false;
                         if (!connectingToServerImgShowing && verifyConnectionCount > 8) {
                             $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
-                            $('#customMessageContainer').css("top", 200);
+                            $('#customMessageContainer').css("top", 200).css("left", 500).show();
                             console.log("showing connectingToServerGif");
                             connectingToServerImgShowing = true;
                         }
