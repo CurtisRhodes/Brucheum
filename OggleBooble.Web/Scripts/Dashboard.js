@@ -251,7 +251,7 @@ function loadDashboardDirTree(forceRefresh) {
 function showHtmlDirTree() {
     let showHtmlDirTreeStart = Date.now();
     $('#dashBoardLoadingGif').show();
-    $('#dataifyInfo').append("loading directory tree from file");
+    $('#dataifyInfo').append(" loading directory tree from file");
 
     var fileName = "ogglebooble/data/dirTree.txt";
 
@@ -263,15 +263,6 @@ function showHtmlDirTree() {
             let delta = (Date.now() - showHtmlDirTreeStart);
             $('#dataifyInfo').html("len: " + data.length.toLocaleString() + ".  load directory tree from txt took: " + (delta / 1000).toFixed(3));
             $('#dashBoardLoadingGif').hide();
-
-        //    let dataLen = data.length;
-        //    console.log("data length: " + dataLen);
-        //    let x = 0;
-        //    while (x < dataLen) {
-        //        $("#dashboardRightColumn").html(data.substring(x, 500));
-        //        x += 500;
-        //    }
-        //    console.log("data loaded: " + $("#dashboardRightColumn").html().length);
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
@@ -294,6 +285,8 @@ function onDirTreeComplete(success) {
     //}    
     if (success != "ok")
         $('#dataifyInfo').append("  error: " + success);
+
+    createHtmlDirTree();
 }
 
 function createHtmlDirTree() {
@@ -309,6 +302,8 @@ function createHtmlDirTree() {
             if (success === "ok") {
                 let delta = (Date.now() - createHtmlDirTreeStart);
                 $('#dataifyInfo').html("directory tree rebuild took: " + (delta / 1000).toFixed(3));
+
+                //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
             }
             else {
                 logError("AJX", 5522, success, "create HtmlDirTree");

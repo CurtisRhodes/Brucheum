@@ -2,7 +2,6 @@
 let totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
 
 function loadDirectoryTree(startNode, container, forceRebuild) {
-    totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
     settingsImgRepo = settingsArray.ImageRepo;
     if (!forceRebuild) {
         if (!isNullorUndefined(window.localStorage["dirTree"])) {
@@ -174,7 +173,6 @@ function showFolderImage(link) {
 function showDirTreeContextMenu(vwDirId) {
     event.preventDefault();
     window.event.returnValue = false;
-
     $('#dirTreeCtxMenu').html(
         "<div id='dashboardContextMenu' class='ogContextMenu' onmouseleave='$(this).fadeOut()'>\n" +
         "    <div onclick='window.open(\"/album.html?folder=" + vwDirId + "\", \"_blank\")'>Open Folder</div>\n" +
@@ -184,6 +182,9 @@ function showDirTreeContextMenu(vwDirId) {
     $('#dashboardContextMenu').css("top", event.clientY + 5);
     $('#dashboardContextMenu').css("left", event.clientX);
     $('#dashboardContextMenu').fadeIn();
+
+    //alert("showDirTreeContextMenu(" + vwDirId + ")");
+
 }
 
 function showFolderStats(folderId) {

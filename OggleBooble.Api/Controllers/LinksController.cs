@@ -76,9 +76,10 @@ namespace OggleBooble.Api.Controllers
             }
         }
 
-        int dirTreeTab = 0, dirTreeTabIndent = 12, expandDepth = 2;
+        int dirTreeTab = 0, dirTreeTabIndent = 2;
+        private readonly int expandDepth = 1;
         string expandMode, randomId, treeNodeClass;
-        StringBuilder sbDirTree = new StringBuilder();
+        private StringBuilder sbDirTree = new StringBuilder();
 
         [HttpGet]
         public string BuildHtmlDirTree(int root)
@@ -87,35 +88,25 @@ namespace OggleBooble.Api.Controllers
             DirTreeSuccessModel dirTreeModel = new DirTreeSuccessModel();
             try
             {
-                var timer = new System.Diagnostics.Stopwatch();
-                timer.Start();
                 IEnumerable<VwDirTree> VwDirTrees = new List<VwDirTree>();
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     // wow did this speed things up
                     VwDirTrees = db.VwDirTrees.ToList().OrderBy(v => v.Id);
                 }
+
                 var vRootNode = VwDirTrees.Where(v => v.Id == root).First();
                 DirTreeModelNode rootNode = new DirTreeModelNode() { ThisNode = vRootNode };
-                dirTreeModel.SubDirs.Add(rootNode);
+                DirTreeModelNode startNode = new DirTreeModelNode();
+                dirTreeModel.SubDirs.Add(startNode);
+                startNode.SubDirs.Add(rootNode);
                 GetDirTreeChildNodes(dirTreeModel, rootNode, VwDirTrees, "");
 
-                //VwDirTree vwDirTreeNode = VwDirTrees.Where(v => v.Id == parentNode.ThisNode.Id).FirstOrDefault();
-                ////List<VwDirTree> vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.ThisNode.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
-                //dirTreeTab += dirTreeTabIndent;
-                //strDirTree.Append(AddHtmlNode(vwDirTreeNode, parentNode));
-
-                HtmlDirTreeRecurr(rootNode);
+                HtmlDirTreeRecurr(startNode);
+                sbDirTree.Append("<div id='dirTreeCtxMenu'></div>");
 
                 WriteFileToDisk(sbDirTree.ToString());
 
-                //dirTreeModel.SubDirs.Add(rootNode);
-                //GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees);
-                //GetDirTreeChildNodes(dirTreeModel, rootNode, VwDirTrees, "");
-
-                timer.Stop();
-                //dirTreeModel.TimeTook = timer.Elapsed;
-                System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
                 success = "ok";
             }
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
