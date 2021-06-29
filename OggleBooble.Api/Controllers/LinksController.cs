@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -76,9 +77,12 @@ namespace OggleBooble.Api.Controllers
         }
 
         int dirTreeTab = 0, dirTreeTabIndent = 12, expandDepth = 2;
-        System.Text.StringBuilder strDirTree;
+        string expandMode, randomId, treeNodeClass;
+        StringBuilder sbDirTree = new StringBuilder();
+
         [HttpGet]
-        public string BuildHtmlDirTree(int root) {
+        public string BuildHtmlDirTree(int root)
+        {
             string success;
             DirTreeSuccessModel dirTreeModel = new DirTreeSuccessModel();
             try
@@ -96,10 +100,15 @@ namespace OggleBooble.Api.Controllers
                 dirTreeModel.SubDirs.Add(rootNode);
                 GetDirTreeChildNodes(dirTreeModel, rootNode, VwDirTrees, "");
 
+                //VwDirTree vwDirTreeNode = VwDirTrees.Where(v => v.Id == parentNode.ThisNode.Id).FirstOrDefault();
+                ////List<VwDirTree> vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.ThisNode.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
+                //dirTreeTab += dirTreeTabIndent;
+                //strDirTree.Append(AddHtmlNode(vwDirTreeNode, parentNode));
 
-                HtmlDirTreeRecurr(dirTreeModel, rootNode, VwDirTrees, ""); 
-                
-                WriteFileToDisk(strDirTree.ToString());
+                HtmlDirTreeRecurr(rootNode);
+
+                WriteFileToDisk(sbDirTree.ToString());
+
                 //dirTreeModel.SubDirs.Add(rootNode);
                 //GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees);
                 //GetDirTreeChildNodes(dirTreeModel, rootNode, VwDirTrees, "");
@@ -109,89 +118,72 @@ namespace OggleBooble.Api.Controllers
                 System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
                 success = "ok";
             }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
 
-        private void HtmlDirTreeRecurr(DirTreeSuccessModel dirTreeModel, DirTreeModelNode parentNode, IEnumerable<VwDirTree> VwDirTrees, string dPath)
+        private void HtmlDirTreeRecurr(DirTreeModelNode parentNode)
         {
-            VwDirTree vwDirTreeNode = VwDirTrees.Where(v => v.Id == parentNode.ThisNode.Id).FirstOrDefault();
-            //List<VwDirTree> vwDirTreeNodes = VwDirTrees.Where(v => v.Parent == parentNode.ThisNode.Id).OrderBy(f => f.SortOrder).ThenBy(f => f.FolderName).ToList();
             dirTreeTab += dirTreeTabIndent;
-            strDirTree.Append(AddHtmlNode(vwDirTreeNode, parentNode));
-            foreach (DirTreeModelNode thisNode in parentNode.SubDirs)
-            {  //$.each(parentNode.SubDirs, function(idx, thisNode) {
-                VwDirTree vwDir = thisNode.ThisNode;
-                AddHtmlNode(vwDir, thisNode);
-                dirTreeTabIndent = 22;
-                if (vwDir.IsStepChild == 0)
-                    HtmlDirTreeRecurr(dirTreeModel, thisNode, VwDirTrees, (dPath + "/" + vwDir.FolderName).Replace(" ", "%20"));
-            }
-            dirTreeTab -= dirTreeTabIndent;
-        }
+            string txtFileCount = "", expandClass = "", folderImage = "";
+            foreach (DirTreeModelNode vwDir in parentNode.SubDirs) {
+                //, function(idx, thisNode) {
 
-        private string AddHtmlNode(VwDirTree vwDir, DirTreeModelNode thisNode)
-        {
-            string folderImage = "";
-            if (vwDir.FolderImage == null)
-                folderImage = "Images/redballon.png";
-            else
-                folderImage = settingsImgRepo + vwDir.FolderImage;
+                if (vwDir.ThisNode.FolderImage == null)
+                    folderImage = "Images/redballon.png";
+                else
+                    folderImage = settingsImgRepo + vwDir.ThisNode.FolderImage;
 
-            string expandClass = "", expandMode = "-";
-            if (dirTreeTab / dirTreeTabIndent > expandDepth)
-            {
-                expandClass = "displayHidden";
-                if (thisNode.SubDirs == null)    //!isNullorUndefined(thisNode.SubDirs))
+                expandMode = "-";
+                expandClass = "";
+                if (dirTreeTab / dirTreeTabIndent > expandDepth)
                 {
-                    if (thisNode.SubDirs.Count > 0)
+                    expandClass = "displayHidden";
+                    if (vwDir.SubDirs.Count > 0)
                         expandMode = "+";
                 }
-            }
-            string txtFileCount = "";
-            if (vwDir.SubFolderCount > 0)
-            {
-                //txtFileCount = "(" + parentNode.SubDirs.length + ")";
-                if (vwDir.FileCount > 0)
-                    txtFileCount = "[" + vwDir.SubFolderCount.ToString("0") + "] (" + vwDir.TotalChildFiles.ToString("0") + ")" +
-                        " {" + vwDir.FileCount + "}";
-                else
+                if (vwDir.ThisNode.SubFolderCount > 0)
                 {
-                    if (thisNode.SubDirs.Count == vwDir.SubFolderCount)
-                        txtFileCount = thisNode.SubDirs.Count + " (" + vwDir.TotalChildFiles.ToString("0") + ")";
+                    //txtFileCount = "(" + parentNode.SubDirs.length + ")";
+                    if (vwDir.ThisNode.FileCount > 0)
+                        txtFileCount = "[" + vwDir.ThisNode.SubFolderCount + "] (" + vwDir.ThisNode.TotalChildFiles + ") {" + vwDir.ThisNode.FileCount + "}";
                     else
-                        txtFileCount = thisNode.SubDirs.Count + " [" + vwDir.SubFolderCount.ToString("0") + " / " +
-                            vwDir.TotalChildFiles.ToString("0") + "]";
+                    {
+                        if (vwDir.SubDirs.Count == vwDir.ThisNode.SubFolderCount)
+                            txtFileCount = vwDir.SubDirs.Count + " (" + vwDir.ThisNode.TotalChildFiles + ")";
+                        else
+                            txtFileCount = vwDir.SubDirs.Count + " [" + vwDir.ThisNode.SubFolderCount + " / " + vwDir.ThisNode.TotalChildFiles + "]";
+                    }
                 }
+                else
+                    txtFileCount = "(" + vwDir.ThisNode.FileCount + ")";
+
+                randomId = Guid.NewGuid().ToString();
+
+                treeNodeClass = "treeLabelDiv";
+                if (vwDir.ThisNode.IsStepChild == 1)
+                    treeNodeClass = "stepchildTreeLabel";
+
+                if (vwDir.ThisNode.FolderName == null)
+                    vwDir.ThisNode.FolderName = "unknown";
+
+                sbDirTree.Append(
+                    "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
+                    + "<span id='DQ33" + randomId + "' onclick='toggleDirTree(\"" + randomId + "\")' >[" + expandMode + "] </span>"
+                    + "<div id='" + randomId + "aq' class='" + treeNodeClass + "' "
+                    + "onclick=commonDirTreeClick('" + vwDir.DanniPath + "'," + vwDir.ThisNode.Id + ") "
+                    + "oncontextmenu=showDirTreeContextMenu(" + vwDir.ThisNode.Id + ") "
+                    + "onmouseover=showFolderImage('" + folderImage + "') onmouseout=$('.dirTreeImageContainer').hide()>"
+                    + vwDir.ThisNode.FolderName + "</div><span class='fileCount'>  : "
+                    + txtFileCount + "</span></div>" + "\n<div class='" + expandClass + "' id='Q88" + randomId + "'>");
+
+                dirTreeTabIndent = 22;
+                HtmlDirTreeRecurr(vwDir);
+                sbDirTree.Append("</div>");
+                dirTreeTab -= dirTreeTabIndent;
             }
-            else
-                txtFileCount = "(" + vwDir.FileCount + ")";
-
-            string randomId = Guid.NewGuid().ToString();
-
-            string treeNodeClass = "treeLabelDiv";
-            if (vwDir.IsStepChild == 1)
-                treeNodeClass = "stepchildTreeLabel";
-
-            if (vwDir.FolderName == null)
-                vwDir.FolderName = "unknown";
-
-            string dirTreeNode =
-                "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
-                + "<span id='DQ33" + randomId + "' onclick='toggleDirTree(\"" + randomId + "\")' >[" + expandMode + "] </span>"
-                + "<div id='" + randomId + "aq' class='" + treeNodeClass + "' "
-                + "onclick=commonDirTreeClick('" + thisNode.DanniPath + "'," + vwDir.Id + ") "
-                + "oncontextmenu=showDirTreeContextMenu(" + vwDir.Id + ") "
-                + "onmouseover=showFolderImage('encodeURI(" + folderImage + ")') onmouseout=$('.dirTreeImageContainer').hide()>"
-                + vwDir.FolderName + "</div><span class='fileCount'>  : "
-                + txtFileCount + "</span></div>" + "\n<div class='" + expandClass + "' id='Q88" + randomId + "'>\n";
-            return dirTreeNode;
         }
-
-
+        
         private string WriteFileToDisk(string staticContent)
         {
             string success;
@@ -237,9 +229,7 @@ namespace OggleBooble.Api.Controllers
             WebClient webRequest = new WebClient();
             string fileString;
             //string url = ftpHost + fileName;
-
             webRequest.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
-
             try
             {
                 byte[] newFileData = webRequest.DownloadData(new Uri(ftpHost) + fileName);
@@ -251,7 +241,6 @@ namespace OggleBooble.Api.Controllers
             }
             return fileString;
         }
-
     }
 
     [EnableCors("*", "*", "*")]

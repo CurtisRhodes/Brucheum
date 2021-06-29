@@ -1,85 +1,83 @@
 ﻿// DIRECTORY TREE
-//var tabIndent = 22;
-//var tab = 0;
-//var totalPics = 0;
 let totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
-let dataLoadTime;
 
 function loadDirectoryTree(startNode, container, forceRebuild) {
     totalFolders = 0, dirTreeTab = 0, dirTreeTabIndent = 2, totalFiles = 0, expandDepth = 2, strdirTree = "";
     settingsImgRepo = settingsArray.ImageRepo;
-
-    if (!forceRebuild && !isNullorUndefined(window.localStorage["dirTree"])) {
-        console.log("dir tree cache bypass");
-        $('#dashBoardLoadingGif').hide();
-        $('#dataifyInfo').hide();
-
-        if (container == "scDirTreeContainer") {
-            //str = str.replace(/abc/g, '');
-            var rawDirTree = window.localStorage["dirTree"];
-            rawDirTree = rawDirTree.replaceAll("DQ33", "S");
-            rawDirTree = rawDirTree.replaceAll("Q88", "SS");
-            $('#' + container + '').html(rawDirTree);
+    if (!forceRebuild) {
+        if (!isNullorUndefined(window.localStorage["dirTree"])) {
+            console.log("dir tree cache bypass");
+            $('#dashBoardLoadingGif').hide();
+            $('#dataifyInfo').hide();
+            if (container == "scDirTreeContainer") {
+                //str = str.replace(/abc/g, '');
+                var rawDirTree = window.localStorage["dirTree"];
+                rawDirTree = rawDirTree.replaceAll("DQ33", "S");
+                rawDirTree = rawDirTree.replaceAll("Q88", "SS");
+                $('#' + container + '').html(rawDirTree);
+            }
+            else {
+                $('#' + container + '').html(window.localStorage["dirTree"]);
+            }
+            return;
         }
         else {
-            $('#' + container + '').html(window.localStorage["dirTree"]);
+            $('#dataifyInfo').html("localStorage not found. Using txt file").show();
+            showHtmlDirTree();
+            return;
         }
     }
-    else {
-        if (!forceRebuild && isNullorUndefined(window.localStorage["dirTree"])) {
-            console.log("localStorage not found");
-            alert("localStorage not found");
-        }
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiServer + "api/DirTree/BuildDirTree?root=" + startNode,
-            success: function (dirTreeModel) {
-                if (dirTreeModel.Success === "ok") {
 
-                    buildDirTreeRecurr(dirTreeModel);
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/DirTree/BuildDirTree?root=" + startNode,
+        success: function (dirTreeModel) {
+            if (dirTreeModel.Success === "ok") {
 
-                    strdirTree += "<div id='dirTreeCtxMenu'></div>";
-                    $('#' + container + '').html(strdirTree);
+                buildDirTreeRecurr(dirTreeModel);
 
-                    //if (startNode === 1) {
-                    //    try {
-                    //        localStorage.removeItem("dirTree");
-                    //        window.localStorage["dirTree"] = strdirTree;
-                    //    } catch (e) {
-                    //        //localStorage.clear();
-                    //        //window.localStorage["dirTree"] = strdirTree;
-                    //        alert(e);
-                    //    }
-                    //}
+                strdirTree += "<div id='dirTreeCtxMenu'></div>";
+                $('#' + container + '').html(strdirTree);
 
-                    if (typeof onDirTreeComplete === 'function') {
-                        onDirTreeComplete();
+                let strdirTreeLen = strdirTree.length;
+                if (startNode === 1) {
+                    try {
+                        localStorage.removeItem("dirTree");
+                        window.localStorage["dirTree"] = strdirTree;
+                    } catch (e) {
+                        //localStorage.clear();
+                        //window.localStorage["dirTree"] = strdirTree;
+                        dirTreeModel.Success = e + " len: " + strdirTreeLen.toLocaleString();
+                        //alert(e);
                     }
                 }
-                else {
-                    $('#dashBoardLoadingGif').hide();
-                    logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
-                    alert("??" + dirTreeModel.Success);
-                    if (typeof onDirTreeComplete === 'function') {
-                        onDirTreeComplete();
-                    }
-                }
-            },
-            error: function (jqXHR) {
-                $('#dashBoardLoadingGif').hide();
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "load DirectoryTree")) logError("XHR", folderId, errMsg, "load DirectoryTree");
 
-                alert("??" + errMsg);
                 if (typeof onDirTreeComplete === 'function') {
-                    onDirTreeComplete();
+                    onDirTreeComplete(dirTreeModel.Success);
                 }
-
             }
-        });
-    }
-}
+            else {
+                $('#dashBoardLoadingGif').hide();
+                logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
+                alert("??" + dirTreeModel.Success);
+                if (typeof onDirTreeComplete === 'function') {
+                    onDirTreeComplete(dirTreeModel.Success);
+                }
+            }
+        },
+        error: function (jqXHR) {
+            $('#dashBoardLoadingGif').hide();
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, folderId, "load DirectoryTree"))
+                logError("XHR", folderId, errMsg, "load DirectoryTree");
 
+            if (typeof onDirTreeComplete === 'function') 
+                onDirTreeComplete(errMsg);
+            else
+                alert("??" + errMsg);
+        }
+    });
+}
 
 function buildDirTreeRecurr(parentNode) {
     dirTreeTab += dirTreeTabIndent;
@@ -191,23 +189,3 @@ function showDirTreeContextMenu(vwDirId) {
 function showFolderStats(folderId) {
     alert("showFolderStats\nFolderId: " + folderId + "\npSelectedTreeId: " + pSelectedTreeId);
 }
-
-function dirTreeSuccess() {
-    alert("dirTreeSuccess");
-    $('#dataifyInfo').show().html("loading directory tree took: " + dataLoadTime.toFixed(3));
-    start = Date.now();
-
-    if (startNode === 1) {
-        window.localStorage["dirTree"] = strdirTree;
-    }
-    //$('#' + container + '').html(strdirTree);
-
-    var htmlBuildTime = (Date.now() - start) / 1000;
-    $('#dataifyInfo').append("   html took: " + htmlBuildTime.toFixed(3));
-    console.log("build dirTree html: " + htmlBuildTime.toFixed(3));
-
-    if (typeof onDirTreeComplete === 'function') {
-        onDirTreeComplete();
-    }
-}
-

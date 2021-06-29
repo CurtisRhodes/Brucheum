@@ -249,9 +249,10 @@ function loadDashboardDirTree(forceRefresh) {
 }
 
 function showHtmlDirTree() {
-    //$("dashboardRightColumn").html("<div>Yello</div>");
+    let showHtmlDirTreeStart = Date.now();
+    $('#dashBoardLoadingGif').show();
+    $('#dataifyInfo').append("loading directory tree from file");
 
-    //var file = "https://ogglebooble.com/data/dirTree.txt";
     var fileName = "ogglebooble/data/dirTree.txt";
 
     $.ajax({
@@ -259,9 +260,18 @@ function showHtmlDirTree() {
         url: settingsArray.ApiServer + "api/DirTree/GetTextFile?fileName=" + fileName,
         success: function (data) {
             $("#dashboardRightColumn").html(data);
-            alert("dashboardRightColumn loaded? " + data);
+            let delta = (Date.now() - showHtmlDirTreeStart);
+            $('#dataifyInfo').html("len: " + data.length.toLocaleString() + ".  load directory tree from txt took: " + (delta / 1000).toFixed(3));
+            $('#dashBoardLoadingGif').hide();
 
-
+        //    let dataLen = data.length;
+        //    console.log("data length: " + dataLen);
+        //    let x = 0;
+        //    while (x < dataLen) {
+        //        $("#dashboardRightColumn").html(data.substring(x, 500));
+        //        x += 500;
+        //    }
+        //    console.log("data loaded: " + $("#dashboardRightColumn").html().length);
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
@@ -270,68 +280,20 @@ function showHtmlDirTree() {
             if (!checkFor404(errMsg, 444, "create HtmlDirTree")) logError("XHR", 627922, errMsg, "create HtmlDirTree");
         }
     });
-
-
-    //$.ajax({
-    //    url: file,
-    //    //headers: { 'Access-Control-Allow-Origin': '*' },
-    //    success: function (data) {
-    //        $("dashboardRightColumn").html(data);
-    //    },
-    //    error: function () { alert('Failed!'); },
-    //    beforeSend: function (xhr) {
-    //        xhr.setRequestHeader("Access-Control-Allow-Origin");
-    //    }
-    //});
-
-            //public string GetTextFile(string fileName)
-
-
-    //let response = await fetch(file);
-
-    //console.log(response.status); // 200
-    //console.log(response.statusText); // OK
-
-    //if (response.status === 200) {
-    //    let data = await response.text();
-    //    $("dashboardRightColumn").html(data);
-    //    // handle data
-    //}
-    //var reader = new FileReader();
-    //reader.onload = function (e) {
-    //    var contents = e.target.result;
-    //    displayContents(contents);
-    //};
-    //reader.readAsText(file);
-
-
-    //var rawFile = new XMLHttpRequest();
-    //rawFile.open("GET", file, false);
-    //rawFile.onreadystatechange = function () {
-    //    if (rawFile.readyState === 4) {
-    //        if (rawFile.status === 200 || rawFile.status == 0) {
-    //            var allText = rawFile.responseText;
-    //            //fileDisplayArea.innerText = allText
-    //            $("dashboardRightColumn").html(allText);
-    //        }
-    //    }
-    //}
-    //rawFile.send(null);
-
 }
 
-function onDirTreeComplete() {
+function onDirTreeComplete(success) {
     $('#dashBoardLoadingGif').hide();
     resizeDashboardPage();
     let delta = (Date.now() - infoStart);
-    if (delta < 1000)
-        $('#dataifyInfo').hide();
-    else {
-        $('#dataifyInfo').html("directory tree rebuild took: " + (delta / 1000).toFixed(3));
-        //$('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toFixed(3));
-        //$('#dataifyInfo').show().html("rebuilding directory tree took: " + delta.toLocaleString());
-        //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
-    }    
+    //if (delta < 1000)
+    //    $('#dataifyInfo').hide();
+    //else {
+    $('#dataifyInfo').html("directory tree rebuild took: " + (delta / 1000).toFixed(3));
+    //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
+    //}    
+    if (success != "ok")
+        $('#dataifyInfo').append("  error: " + success);
 }
 
 function createHtmlDirTree() {
