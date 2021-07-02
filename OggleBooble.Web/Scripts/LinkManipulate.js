@@ -29,7 +29,8 @@ function showDirTreeDialog(imgSrc, menuType, title) {
 
     activeDirTree = "linkManipulateDirTree";
     if (isNullorUndefined($('#linkManipulateDirTree').val())) {
-        loadDirectoryTree(1, "linkManipulateDirTree", false);
+        showHtmlDirTree("linkManipulateDirTree");
+        //loadDirectoryTree(1, "linkManipulateDirTree", false);
     }
     //var winH = $(window).height();
     //var dlgH = $('#centeredDialog').height();

@@ -29,7 +29,7 @@ function displaySpaPage(spaPageId) {
             resetOggleHeader(3908, "boobs");
             //setTimeout(function () { launchPromoMessages(); }, 3000);
 
-            $('#testFunctionClick').hide();
+            $('#testFunctionClick').show();
 
             break;
         case 3909: // porn
@@ -130,9 +130,9 @@ function latestGalleryImageError(folderId, thisItemSrc) {
 function testFunction() {
 
     // time to log in
-    showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b');
-    $('#customMessageContainer').css("top", 250);
-    $('#customMessageContainer').css("left", 400);
+    showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
+    $('#customMessageContainer').css("top", 255);
+    $('#customMessageContainer').css("left", 522);
 
     //// this site requires cookies
     //showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');

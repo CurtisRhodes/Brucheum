@@ -23,7 +23,8 @@
     loadHeaderTabs(localStorage["UserRole"]);
     setLeftMenu(localStorage["UserRole"]);
     resizeDashboardPage();
-    loadDashboardDirTree(false);    //showHtmlDirTree();
+    //loadDashboardDirTree(false);    //
+    showHtmlDirTree("dashboardRightColumn");
     window.addEventListener("resize", resizeDashboardPage);
 }
 
@@ -59,6 +60,7 @@ function dashboardHtml() {
         "      </div>\n" +
         "      <div id='dashboardRightColumn' class='dashboardContainerColumn'></div>\n" +
         "   </div>\n" +
+
         "   <div id='moveManySection' class='fullScreenSection'>" +
         "       <div id='moveManyHeader' class='workAreaHeader'>\n" +
         "           <div class='workAreaHeaderArea'>\n" +
@@ -80,6 +82,7 @@ function dashboardHtml() {
         "           <div id='moveManyCountContainer' class='floatRight'></div>" +
         "       </div>\n" +
         "   </div>\n" +
+
         "   <div id='sortToolSection' class='fullScreenSection'>" +
         "       <div id='sortToolHeader' class='workAreaHeader'>\n" +
         "           <div id='sortTableHeader' class='workAreaHeaderTitle'></div>\n" +
@@ -94,6 +97,7 @@ function dashboardHtml() {
         "           </div>\n" +
         "       </div>\n" +
         "   </div>\n" +
+
         "   <div id='reportsSection' class='fullScreenSection flexbox'>\n" +
         "      <div id='reportsLeftColumn' class='dashboardContainerColumn'>\n" +
         "          <div id='reportsLeftMenu' class='oggleVerticalMenu' ></div>\n" +
@@ -113,6 +117,7 @@ function dashboardHtml() {
         "       </div>\n" +
         "   </div>\n" +
         "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
+
         "   <div id='dashboardDialog' class='oggleDialogContainer displayHidden'>\n" +
         "      <div class='oggleDialogHeader'>" +
         "          <div id='dashboardDialogTitle' class='oggleDialogTitle'></div>" +
@@ -177,11 +182,10 @@ function setLeftMenu(role) {
             break;
         case "admin":
             document.title = "dashboard : OggleBooble";
-            $('#dashboardLeftMenu').html("<div class='clickable' onclick='loadDashboardDirTree(true)'>ReBuild Dir Tree</div>\n" +
+            $('#dashboardLeftMenu').html("<div class='clickable' onclick='createHtmlDirTree(\"dashboardRightColumn\")'>ReBuild Dir Tree</div>\n" +
                 "<div class='clickable' onclick='showDefaultWorkArea()'>Add Image Link</div>\n" +
                 "<div class='clickable' onclick='showCreateStaticPagesDialog()'>Create Static Pages</div>\n" +
                 "<div class='clickable' onclick='showRepairLinksDialog()'>Repair Links</div>\n" +
-                "<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>\n" +
                 "<div class='clickable' onclick='showSortTool()'>Sort Tool</div>\n" +
                 "<div class='clickable' onclick='showCreateNewFolderDialog(" + pSelectedTreeId + ")';\">Create New Folder</div>\n" +
                 "<div class='clickable' onclick='showMoveFolderDialog()'>Move Folder</div>\n" +
@@ -190,14 +194,12 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showMoveManyTool(1);'>Move Many</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(2);'>Copy Many</div>\n" +
                 "<div class='clickable' onclick='showMoveManyTool(3);'>Archive Many</div>\n" +
-                "<div class='clickable' onclick='showRipPdfDialog();'>ripPdf</div>\n"+
+                "<div class='clickable' onclick='showRipPdfDialog();'>Rip Pdf</div>\n"+
                 "<div class='clickable' onclick='DupeCheck();'>Dupe Check</div>\n" +
-                "<div class='clickable' onclick='showAutoIncrimentDialog();'>Auto Incriment</div>\n" +
-                "<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" +
-                "<div class='clickable' onclick='buildHtmlPage()'>Build Html Page</div>" +
-                "<div class='clickable' onclick='createHtmlDirTree()'>ReCreate DirTree Html</div>" +
-                "<div class='clickable' onclick='showHtmlDirTree()'>showHtmlDirTree()</div>" 
+                "<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>\n" +
+                "<div class='clickable' onclick='showAutoIncrimentDialog();'>Auto Incriment</div>\n"
             );
+            //"<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" 
             //"<div class='clickable' onclick='HardcoreFilecounts();'>HardcoreFilecounts()</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
@@ -239,57 +241,30 @@ function showReportsSection() {
 }
 
 // RELOAD DIR TREE
-let infoStart;
-function loadDashboardDirTree(forceRefresh) {
-    infoStart = Date.now();
-    activeDirTree = "dashboard";
-    $('#dashBoardLoadingGif').show();
-    $('#dataifyInfo').show().html("rebuilding directory tree");
-    loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
-}
+//let infoStart;
+//function loadDashboardDirTree(forceRefresh) {
+//    infoStart = Date.now();
+//    activeDirTree = "dashboard";
+//    $('#dashBoardLoadingGif').show();
+//    $('#dataifyInfo').show().html("rebuilding directory tree");
+//    loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
+//}
 
-function showHtmlDirTree() {
-    let showHtmlDirTreeStart = Date.now();
-    $('#dashBoardLoadingGif').show();
-    $('#dataifyInfo').append(" loading directory tree from file");
+//function onDirTreeComplete(success) {
+//    $('#dashBoardLoadingGif').hide();
+//    resizeDashboardPage();
+//    let delta = (Date.now() - infoStart);
+//    //if (delta < 1000)
+//    //    $('#dataifyInfo').hide();
+//    //else {
+//    $('#dataifyInfo').html("directory tree rebuild took: " + (delta / 1000).toFixed(3));
+//    //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
+//    //}    
+//    if (success != "ok")
+//        $('#dataifyInfo').append("  error: " + success);
+//}
 
-    var fileName = "ogglebooble/data/dirTree.txt";
-
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/DirTree/GetTextFile?fileName=" + fileName,
-        success: function (data) {
-            $("#dashboardRightColumn").html(data);
-            let delta = (Date.now() - showHtmlDirTreeStart);
-            $('#dataifyInfo').html("len: " + data.length.toLocaleString() + ".  load directory tree from txt took: " + (delta / 1000).toFixed(3));
-            $('#dashBoardLoadingGif').hide();
-        },
-        error: function (jqXHR) {
-            $('#dashBoardLoadingGif').hide();
-            let errMsg = getXHRErrorDetails(jqXHR);
-            alert("??" + errMsg);
-            if (!checkFor404(errMsg, 444, "create HtmlDirTree")) logError("XHR", 627922, errMsg, "create HtmlDirTree");
-        }
-    });
-}
-
-function onDirTreeComplete(success) {
-    $('#dashBoardLoadingGif').hide();
-    resizeDashboardPage();
-    let delta = (Date.now() - infoStart);
-    //if (delta < 1000)
-    //    $('#dataifyInfo').hide();
-    //else {
-    $('#dataifyInfo').html("directory tree rebuild took: " + (delta / 1000).toFixed(3));
-    //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
-    //}    
-    if (success != "ok")
-        $('#dataifyInfo').append("  error: " + success);
-
-    createHtmlDirTree();
-}
-
-function createHtmlDirTree() {
+function createHtmlDirTree(container) {
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').html("rebuilding directory tree txt file").show();
     let createHtmlDirTreeStart = Date.now();
@@ -302,8 +277,7 @@ function createHtmlDirTree() {
             if (success === "ok") {
                 let delta = (Date.now() - createHtmlDirTreeStart);
                 $('#dataifyInfo').html("directory tree rebuild took: " + (delta / 1000).toFixed(3));
-
-                //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
+                showHtmlDirTree(container);
             }
             else {
                 logError("AJX", 5522, success, "create HtmlDirTree");
@@ -645,7 +619,8 @@ function showMoveFolderDialog() {
 
     $("#txtMoveFolderParent").val(pSelectedTreeFolderPath);
     activeDirTree = "moveFolder";
-    loadDirectoryTree(1, "moveFolderDirTreeContainer", false);
+    //loadDirectoryTree(1, "moveFolderDirTreeContainer", false);
+    showHtmlDirTree("moveFolderDirTreeContainer");
     $('#dashboardDialog').fadeIn();
 }
 function performMoveFolder() {
@@ -695,7 +670,8 @@ function showAddStepChildFolderDialog() {
         "       <div id='scDirTreeContainer' class='floatingDirTreeContainer'></div>\n");
     $("#txtStepParent").val(pSelectedTreeFolderPath);
     activeDirTree = "stepchild";
-    loadDirectoryTree(1, "scDirTreeContainer", false);
+    showHtmlDirTree("scDirTreeContainer");
+    //loadDirectoryTree(1, "scDirTreeContainer", false);
     $('#dashboardDialog').fadeIn();
 }
 function perfomAddStepChildFolder(cfSsorceFolderId) {
@@ -763,7 +739,8 @@ function showMoveManyTool(cx) {
     $('#txtMoveManySource').val(mmSelectedTreeFolderPath);
     $('#moveManyImageArea').css("height", $('#dashboardContainer').height() - $('#moveManyHeader').height());
     activeDirTree = "moveMany";
-    loadDirectoryTree(1, "mmDirTreeContainer", true);
+    //loadDirectoryTree(1, "mmDirTreeContainer", true);
+    showHtmlDirTree("mmDirTreeContainer");
     loadMMcheckboxes();
 }
 function loadMMcheckboxes() {

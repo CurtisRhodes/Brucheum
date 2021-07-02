@@ -411,7 +411,8 @@ function showCatListDialog(root) {
         "           <div id='dtDialogContents' class='oggleDialogContents'></div>\n" +
         "      </div>\n");
     activeDirTree = "catListDialog";
-    loadDirectoryTree(root, "dtDialogContents", false);
+    //loadDirectoryTree(root, "dtDialogContents", false);
+    showHtmlDirTree("dtDialogContents");
 
     switch (root) {
         case 2: $('#dtDialogTitle').html("boob categories"); break;
