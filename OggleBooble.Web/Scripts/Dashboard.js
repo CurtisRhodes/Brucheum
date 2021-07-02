@@ -241,29 +241,6 @@ function showReportsSection() {
 }
 
 // RELOAD DIR TREE
-//let infoStart;
-//function loadDashboardDirTree(forceRefresh) {
-//    infoStart = Date.now();
-//    activeDirTree = "dashboard";
-//    $('#dashBoardLoadingGif').show();
-//    $('#dataifyInfo').show().html("rebuilding directory tree");
-//    loadDirectoryTree(1, "dashboardRightColumn", forceRefresh);
-//}
-
-//function onDirTreeComplete(success) {
-//    $('#dashBoardLoadingGif').hide();
-//    resizeDashboardPage();
-//    let delta = (Date.now() - infoStart);
-//    //if (delta < 1000)
-//    //    $('#dataifyInfo').hide();
-//    //else {
-//    $('#dataifyInfo').html("directory tree rebuild took: " + (delta / 1000).toFixed(3));
-//    //setTimeout(function () { $('#dataifyInfo').hide() }, 4000);
-//    //}    
-//    if (success != "ok")
-//        $('#dataifyInfo').append("  error: " + success);
-//}
-
 function createHtmlDirTree(container) {
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').html("rebuilding directory tree txt file").show();
@@ -875,6 +852,7 @@ function loadSortImages() {
     $('#dashBoardLoadingGif').fadeIn();
     var daInfoMessage = $('#dataifyInfo').html();
     $('#dataifyInfo').append(" reloading sorted images");
+    let settingsImgRepo = settingsArray.ImageRepo;
     $.ajax({
         url: settingsArray.ApiServer + "api/Links/GetImageLinks?folderId=" + pSelectedTreeId,
         success: function (imgLinks) {
