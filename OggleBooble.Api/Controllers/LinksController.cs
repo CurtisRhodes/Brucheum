@@ -43,20 +43,13 @@ namespace OggleBooble.Api.Controllers
                 DirTreeModelNode rootNode = new DirTreeModelNode() { ThisNode = vRootNode };
                 dirTreeModel.SubDirs.Add(rootNode);
 
-                //GetDirTreeChildNodes(dirTreeModel, rootNode, vwDirTrees);
                 GetDirTreeChildNodes(dirTreeModel, rootNode, VwDirTrees, "");
                 timer.Stop();
                 dirTreeModel.TimeTook = timer.Elapsed;
                 System.Diagnostics.Debug.WriteLine("RebuildCatTree took: " + timer.Elapsed);
-
-                //BuildHtmlDirTree(rootNode);
-
                 dirTreeModel.Success = "ok";
             }
-            catch (Exception ex)
-            {
-                dirTreeModel.Success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { dirTreeModel.Success = Helpers.ErrorDetails(ex); }
             return dirTreeModel;
         }
 
@@ -118,8 +111,6 @@ namespace OggleBooble.Api.Controllers
             dirTreeTab += dirTreeTabIndent;
             string txtFileCount = "", expandClass = "", folderImage = "";
             foreach (DirTreeModelNode vwDir in parentNode.SubDirs) {
-                //, function(idx, thisNode) {
-
                 if (vwDir.ThisNode.FolderImage == null)
                     folderImage = "Images/redballon.png";
                 else
@@ -162,9 +153,9 @@ namespace OggleBooble.Api.Controllers
                     "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
                     + "<span id='DQ33" + randomId + "' onclick='toggleDirTree(\"" + randomId + "\")' >[" + expandMode + "] </span>"
                     + "<div id='" + randomId + "aq' class='" + treeNodeClass + "' "
-                    + "onclick=commonDirTreeClick('" + vwDir.DanniPath + "'," + vwDir.ThisNode.Id + ") "
-                    + "oncontextmenu=showDirTreeContextMenu(" + vwDir.ThisNode.Id + ") "
-                    + "onmouseover=showFolderImage('" + folderImage + "') onmouseout=$('.dirTreeImageContainer').hide()>"
+                    + "onclick='commonDirTreeClick(\"" + vwDir.DanniPath + "\"," + vwDir.ThisNode.Id + ")' "
+                    + "oncontextmenu='showDirTreeContextMenu(" + vwDir.ThisNode.Id + ")' "
+                    + "onmouseover='showFolderImage(\"" + folderImage + "\")' onmouseout='hideFolderImage()'>"
                     + vwDir.ThisNode.FolderName + "</div><span class='fileCount'>  : "
                     + txtFileCount + "</span></div>" + "\n<div class='" + expandClass + "' id='Q88" + randomId + "'>");
 

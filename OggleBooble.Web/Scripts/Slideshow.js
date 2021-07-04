@@ -163,7 +163,7 @@ function slide(direction) {
         // TypeError: undefined is not an object(evaluating 'imageViewerArray[imageViewerIndex].FileName')
         // TypeError: Cannot read property 'FileName' of undefined
         if (isNullorUndefined(imageViewerArray[imageViewerIndex]))
-            logError("SLA", albumFolderId, "imageViewerArray[imageViewerIndex]: " + imageViewerArray[imageViewerIndex], "slideshow.slide");
+            logError("SLA", albumFolderId, "", "slideshow.slide");
         else {
             $('#copycatDiv').hide();
             let showLoadingGif = true;

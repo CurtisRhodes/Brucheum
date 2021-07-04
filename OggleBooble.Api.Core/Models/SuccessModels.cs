@@ -18,4 +18,14 @@ namespace OggleBooble.Api.Core
         public string City { get; set; }
         public string Success { get; set; }
     }
+    public class CarouselSuccessModel
+    {
+        public CarouselSuccessModel()
+        {
+            Links = new List<VwCarouselItem>();
+        }
+        public List<VwCarouselItem> Links { get; set; }
+        public string Success { get; set; }
+    }
+
 }

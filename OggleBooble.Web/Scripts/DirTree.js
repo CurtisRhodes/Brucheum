@@ -15,145 +15,18 @@ function showHtmlDirTree(container) {
 
             $('#' + container + '').html(data);
 
-            //$("#dashboardRightColumn").html(data);
             let delta = (Date.now() - showHtmlDirTreeStart);
-            $('#dataifyInfo').html("len: " + data.length.toLocaleString() + ".  load directory tree from txt took: " + (delta / 1000).toFixed(3));
+            $('#dataifyInfo').append(". len: " + data.length.toLocaleString() + ".  load directory tree from txt took: " + (delta / 1000).toFixed(3));
             $('#dashBoardLoadingGif').hide();
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
             alert("??" + errMsg);
-            if (!checkFor404(errMsg, 444, "create HtmlDirTree")) logError("XHR", 627922, errMsg, "create HtmlDirTree");
+            if (!checkFor404(errMsg, 444, "show HtmlDirTree")) logError("XHR", 627922, errMsg, "show HtmlDirTree");
         }
     });
 }
-
-//function loadDirectoryTree(startNode, container, forceRebuild) {
-//    settingsImgRepo = settingsArray.ImageRepo;
-//    if (forceRebuild) {
-//        $.ajax({
-//            type: "GET",
-//            url: settingsArray.ApiServer + "api/DirTree/BuildDirTree?root=" + startNode,
-//            success: function (dirTreeModel) {
-//                if (dirTreeModel.Success === "ok") {
-
-//                    buildDirTreeRecurr(dirTreeModel);
-
-//                    strdirTree += "<div id='dirTreeCtxMenu'></div>";
-//                    $('#' + container + '').html(strdirTree);
-
-//                    let strdirTreeLen = strdirTree.length;
-//                    if (startNode === 1) {
-//                        try {
-//                            localStorage.removeItem("dirTree");
-//                            window.localStorage["dirTree"] = strdirTree;
-//                        } catch (e) {
-//                            //localStorage.clear();
-//                            //window.localStorage["dirTree"] = strdirTree;
-//                            dirTreeModel.Success = e + " len: " + strdirTreeLen.toLocaleString();
-//                            //alert(e);
-//                        }
-//                    }
-
-//                    if (typeof onDirTreeComplete === 'function') {
-//                        onDirTreeComplete(dirTreeModel.Success);
-//                    }
-//                }
-//                else {
-//                    $('#dashBoardLoadingGif').hide();
-//                    logError("AJX", startNode, dirTreeModel.Success, "BuildCatTree");
-//                    alert("??" + dirTreeModel.Success);
-//                    if (typeof onDirTreeComplete === 'function') {
-//                        onDirTreeComplete(dirTreeModel.Success);
-//                    }
-//                }
-//            },
-//            error: function (jqXHR) {
-//                $('#dashBoardLoadingGif').hide();
-//                let errMsg = getXHRErrorDetails(jqXHR);
-//                if (!checkFor404(errMsg, folderId, "load DirectoryTree"))
-//                    logError("XHR", folderId, errMsg, "load DirectoryTree");
-
-//                if (typeof onDirTreeComplete === 'function')
-//                    onDirTreeComplete(errMsg);
-//                else
-//                    alert("??" + errMsg);
-//            }
-//        });
-//    }
-//    else {
-//        showHtmlDirTree(container);
-//    }
-    //    if (!isNullorUndefined(window.localStorage["dirTree"])) {
-    //        console.log("dir tree cache bypass");
-    //        $('#dashBoardLoadingGif').hide();
-    //        $('#dataifyInfo').hide();
-
-    //        if (container == "scDirTreeContainer") {
-    //            //str = str.replace(/abc/g, '');
-    //            var rawDirTree = window.localStorage["dirTree"];
-    //            rawDirTree = rawDirTree.replaceAll("DQ33", "S");
-    //            rawDirTree = rawDirTree.replaceAll("Q88", "SS");
-    //            $('#' + container + '').html(rawDirTree);
-    //        }
-    //        else {
-    //            $('#' + container + '').html(window.localStorage["dirTree"]);
-    //        }
-    //        return;
-    //    }
-    //    else {
-    //        $('#dataifyInfo').html("localStorage not found. Using txt file").show();
-    //        showHtmlDirTree();
-    //        return;
-    //    }
-//}
-
-//function buildDirTreeRecurr(parentNode) {
-//    dirTreeTab += dirTreeTabIndent;
-//    let txtFileCount = "";
-//    let expandClass = "";
-//    let folderImage = "";
-//    $.each(parentNode.SubDirs, function (idx, thisNode) {
-//        let vwDir = thisNode.ThisNode;
-
-//        if (isNullorUndefined(vwDir.FolderImage))
-//            folderImage = "Images/redballon.png";
-//        else
-//            folderImage = settingsImgRepo + vwDir.FolderImage;
-//        expandMode = "-";
-//        expandClass = "";
-//        if (dirTreeTab / dirTreeTabIndent > expandDepth) {
-//            expandClass = "displayHidden";
-//            if (!isNullorUndefined(thisNode.SubDirs)) {
-//                if (thisNode.SubDirs.length > 0)
-//                    expandMode = "+";
-//            }
-//        }
-//        if (vwDir.SubFolderCount > 0) {
-//            //txtFileCount = "(" + parentNode.SubDirs.length + ")";
-//            if (vwDir.FileCount > 0)
-//                txtFileCount = "[" + vwDir.SubFolderCount.toLocaleString() + "] (" + vwDir.TotalChildFiles.toLocaleString() + ") {" + vwDir.FileCount + "}";
-//            else {
-//                if (thisNode.SubDirs.length == vwDir.SubFolderCount)
-//                    txtFileCount = thisNode.SubDirs.length + " (" + vwDir.TotalChildFiles.toLocaleString() + ")";
-//                else
-//                    txtFileCount = thisNode.SubDirs.length + " [" + vwDir.SubFolderCount.toLocaleString() + " / " + vwDir.TotalChildFiles.toLocaleString() + "]";
-//            }
-//        }
-//        else
-//            txtFileCount = "(" + vwDir.FileCount + ")";
-
-//        let randomId = create_UUID();
-
-//        let treeNodeClass = "treeLabelDiv";
-//        if (vwDir.IsStepChild == 1) {
-//            treeNodeClass = "stepchildTreeLabel";
-//        }
-
-//        if (isNullorUndefined(vwDir.FolderName)) {
-//            vwDir.FolderName = "unknown";
-//        }
 
 //        strdirTree +=
 //            "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
@@ -164,13 +37,16 @@ function showHtmlDirTree(container) {
 //            + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') onmouseout=$('.dirTreeImageContainer').hide()>"
 //            + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
 //            + txtFileCount + "</span></div>" + "\n<div class='" + expandClass + "' id='Q88" + randomId + "'>";
-
 //        dirTreeTabIndent = 22;
 //        buildDirTreeRecurr(thisNode);
 //        strdirTree += "</div>";
 //        dirTreeTab -= dirTreeTabIndent;
 //    });
 //}
+
+function hideFolderImage() {
+    $('.dirTreeImageContainer').hide();
+}
 
 function toggleDirTree(id) {
 
@@ -192,12 +68,17 @@ function toggleDirTree(id) {
 }
 
 function showFolderImage(link) {
-    event.preventDefault();
-    window.event.returnValue = false;
-    $('.dirTreeImageContainer').css("top", event.clientY - 100);
-    $('.dirTreeImageContainer').css("left", event.clientX + 10);
-    $('.dirTreeImage').attr("src", link);
-    $('.dirTreeImageContainer').show();
+    try {
+        event.preventDefault();
+        window.event.returnValue = false;
+        $('.dirTreeImageContainer').css("top", event.clientY - 100);
+        $('.dirTreeImageContainer').css("left", event.clientX + 10);
+        $('.dirTreeImage').attr("src", link);
+        $('.dirTreeImageContainer').show();
+
+    } catch (e) {
+        alert(e);
+    }
     //$('#footerMessage').html(link);
 }
 

@@ -585,34 +585,39 @@ function performCreateNewFolder() {
 
 // MOVE FOLDER
 function showMoveFolderDialog() {
+    let mfSorceFolderId = pSelectedTreeId;  // captured before 
     $('#dashboardDialogTitle').html("Move Folder");
     $('#dashboardDialogContents').html(
         "       <div><span>folder to move</span><input id='txtMoveFolderParent' class='txtLinkPath inlineInput roundedInput' readonly='readonly'></input></div>\n" +
         "       <div><span>destiation</span><input id='txtNewMoveDestiation' class='inlineInput roundedInput'></input>" +
         "           <img class='dialogDirTreeButton' src='/Images/caretDown.png' onclick='$(\"#moveFolderDirTreeContainer\").toggle()'/>\n" +
         "       </div>\n" +
-        "       <div class='roundendButton' onclick='performMoveFolder()'>move</div>\n" +
+        "       <div class='roundendButton' onclick='performMoveFolder(" + mfSorceFolderId + ")'>move</div>\n" +
         "       <div id='moveFolderDirTreeContainer' class='floatingDirTreeContainer'></div>\n");
 
     $("#txtMoveFolderParent").val(pSelectedTreeFolderPath);
     activeDirTree = "moveFolder";
+
     //loadDirectoryTree(1, "moveFolderDirTreeContainer", false);
     showHtmlDirTree("moveFolderDirTreeContainer");
     $('#dashboardDialog').fadeIn();
 }
-function performMoveFolder() {
-    //$('#dataifyInfo').show().html("Preparing to Move Folder");
+function performMoveFolder(mfSorceFolderId) {
+    activeDirTree = "dashboard";
     $('#dataifyInfo').show().html("Moving Folder");
     //$('#progressBar').show();
     $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "PUT",
-        url: settingsArray.ApiServer + "api/CatFolder/Move?folderId=" + pSelectedTreeId + "&newParent=" + pSelectedTreeId,
+        url: settingsArray.ApiServer + "api/CatFolder/MoveFolder?folderId=" + mfSorceFolderId + "&newParent=" + dSelectedTreeId,
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (success === "ok") {
-                displayStatusMessage("ok", "folder " + pSelectedTreeFolderPath + " moved to " + $('#txtNewMoveDestiation').val());
-                loadDashboardDirTree(true);
+                $('#dataifyInfo').hide();
+                $('#dashboardDialog').fadeOut();
+
+                createHtmlDirTree("dashboardRightColumn");
+
                 logDataActivity({
                     VisitorId: getCookieValue("VisitorId"),
                     ActivityCode: "LKM",
@@ -620,6 +625,7 @@ function performMoveFolder() {
                     //PageName: $('.txtPartialDirTreePath').val(),
                     Details: "folder moved from:" + $('#txtNewFolderParent').val() + " to: " + $('#txtMoveFolderDest').val()
                 });
+                displayStatusMessage("ok", "folder " + pSelectedTreeFolderPath + " moved to " + $('#txtNewMoveDestiation').val());
             }
             else
                 logError("AJX", pSelectedTreeId, success, "dashboard.js movefolder");

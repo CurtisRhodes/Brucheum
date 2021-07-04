@@ -1,6 +1,6 @@
 ﻿let verbosity = 5, freeVisitorHitsAllowed = 7500, settingsArray = {}, userRoles = [], settingsImgRepo, userProfileData = {},
     viewerShowing = false, waitingForReportThenPerformEvent = true, forgetShowingCustomMessage = true,
-    debugMode = false, pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree;
+    debugMode = false, pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree, dSelectedTreeId;
 
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -202,6 +202,9 @@ function logError(errorCode, folderId, errorMessage, calledFrom) {
 }
 
 function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
+    if (isNullorUndefined(calledFrom))
+        calledFrom = "unknown";
+
     if (document.domain === 'localhost') {
         console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
@@ -383,7 +386,10 @@ function commonDirTreeClick(danniPath, folderId) {
             case "linkManipulateDirTree":
                 $('#dirTreeResults').html(pSelectedTreeFolderPath); break;
             case "moveFolder":
-                $('#txtNewMoveDestiation').val(pSelectedTreeFolderPath); break
+                dSelectedTreeId = folderId;
+                $('#txtNewMoveDestiation').val(danniPath);
+                $('#moveFolderDirTreeContainer').fadeOut();
+                break;
             case "moveMany":
                 $('#txtMoveManyDestination').val(pSelectedTreeFolderPath);
                 $('#mmDirTreeContainer').fadeOut();

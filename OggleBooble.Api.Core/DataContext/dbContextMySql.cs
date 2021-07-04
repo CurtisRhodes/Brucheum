@@ -19,7 +19,7 @@ namespace OggleBooble.Api.Core
         // views
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<VwSlideshowItem> VwSlideshowItems { get; set; }
-
+        public virtual DbSet<VwCarouselItem> VwCarouselItems { get; set; }
 
         // Visitor tables
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }

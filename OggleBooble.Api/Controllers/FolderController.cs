@@ -111,8 +111,8 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpPut]
-        [Route("api/CatFolder/Move")]
-        public string Move(int folderId, int newParent)
+        [Route("api/CatFolder/MoveFolder")]
+        public string MoveFolder(int folderId, int newParent)
         {
             string success = "";
             try
