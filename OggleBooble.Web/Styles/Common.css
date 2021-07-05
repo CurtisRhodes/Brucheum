@@ -179,6 +179,11 @@ body {
     z-index: 5;
 }
 
+.moveManyDirTreeContainer {
+    right: 450px;
+}
+
+
 .footer {
     margin-top: 4px;
     border-top: solid 4px #feb236;

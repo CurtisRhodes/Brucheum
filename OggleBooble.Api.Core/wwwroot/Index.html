@@ -5,7 +5,7 @@
     <title>OggleBooble.Api</title>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <!--<link href="Styles/bootstrap.min.css" rel="stylesheet" />-->
-    <link href="bsExtract.css" rel="stylesheet" />  
+    <link href="bootstrapExtract.css" rel="stylesheet" />  
     <style>
         body {
             margin: 0 30px;
@@ -48,7 +48,7 @@
       <script>
           $(document).ready(function () {
               $.ajax({
-                  url: "local/GetBuildInfo",
+                  url: "Local/GetBuildInfo",
                   success: function (lastBuild) {
                       $('#divLastBuild').html("Last build: " + lastBuild);
                   },
@@ -59,10 +59,9 @@
           });
 
           function runVerifyConnection() {
+              //alert("yellow");
               $.ajax({
-                  type: "GET",
-                  //headers: { 'Access-Control-Allow-Origin': 'https://ogglebooble.com/' },
-                  url: "api/Common/VerifyConnection",
+                  url: "Common/VerifyConnection",
                   success: function (successModel) {
                       //console.log("GET VerifyConnection: " + verifyConnectionCount);
                       if (successModel.Success == "ok") {

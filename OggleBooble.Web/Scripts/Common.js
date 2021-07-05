@@ -667,14 +667,19 @@ function setCookieValue(elementToSet, newValue) {
     try {
         if (!navigator.cookieEnabled) {  // user accepts cookies
             //showCookiesRequiredMessage();
+            logError2(create_UUID(), "UNC", 73734, "elementToSet: " + elementToSet, "set CookieValue");
         }
-        localStorage[elementToSet] = newValue;
+        try {
+            localStorage[elementToSet] = newValue;
+        } catch (e) {
+            logError2(create_UUID(), "CAT", 73729, e, "set CookieValue/ local storage");
+        }
+
         let cookieString = elementToSet + ":" + newValue;
         document.cookie = cookieString;
 
         //alert("document.cookie:\n\n" + JSON.stringify(document.cookie, null, 2));
-
-        console.log("setCookieValue.  set:" + elementToSet + " to: " + newValue);
+        //console.log("setCookieValue.  set:" + elementToSet + " to: " + newValue);
     } catch (e) {
         //alert("setcookie CATCH Error: " + e);
         logError2(create_UUID(), "CAT", 616415, e, "setCookieValue");

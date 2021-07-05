@@ -13,6 +13,11 @@ function showHtmlDirTree(container) {
         url: settingsArray.ApiServer + "api/DirTree/GetTextFile?fileName=" + fileName,
         success: function (data) {
 
+            if (container != "dashboardRightColumn") {
+                data = data.replaceAll("DQ33", "S");
+                data = data.replaceAll("Q88", "SS");
+            }
+
             $('#' + container + '').html(data);
 
             let delta = (Date.now() - showHtmlDirTreeStart);
@@ -49,22 +54,21 @@ function hideFolderImage() {
 }
 
 function toggleDirTree(id) {
-
-    //if (activeDirTree == "stepchild") {
-    //    //alert("toggleDirTree: " + activeDirTree);
-    //    if ($('#' + id + '').css("display") === "none")
-    //        $('#S' + id + '').html("[-] ");
-    //    else
-    //        $('#S' + id + '').html("[+] ");
-    //    $('#SS' + id + '').toggle();
-    //}
-    //else {
-    if ($('#Q88' + id + '').css("display") === "none")
-        $('#DQ33' + id + '').html("[-] ");
-    else
-        $('#DQ33' + id + '').html("[+] ");
-    $('#Q88' + id + '').toggle();
-    //}
+    if (activeDirTree != "dashboard") {
+        //alert("toggleDirTree: " + activeDirTree);
+        if ($('#' + id + '').css("display") === "none")
+            $('#S' + id + '').html("[-] ");
+        else
+            $('#S' + id + '').html("[+] ");
+        $('#SS' + id + '').toggle();
+    }
+    else {
+        if ($('#Q88' + id + '').css("display") === "none")
+            $('#DQ33' + id + '').html("[-] ");
+        else
+            $('#DQ33' + id + '').html("[+] ");
+        $('#Q88' + id + '').toggle();
+    }
 }
 
 function showFolderImage(link) {

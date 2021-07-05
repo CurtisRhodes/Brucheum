@@ -5,6 +5,11 @@ using System.Threading.Tasks;
 
 namespace OggleBooble.Api.Core
 {
+    public class VerifyConnectionSuccessModel
+    {
+        public bool ConnectionVerified { get; set; }
+        public string Success { get; set; }
+    }
     public class VisitorInfoSuccessModel
     {
         public VisitorInfoSuccessModel()

@@ -75,7 +75,7 @@ function dashboardHtml() {
         "           </div>\n" +
         "           <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='showDefaultWorkArea()'></div>\n" +
         "       </div>\n" +
-        "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer'></div>\n" +
+        "       <div id='mmDirTreeContainer' class='floatingDirTreeContainer moveManyDirTreeContainer'></div>\n" +
         "       <div id='moveManyImageArea' class='workAreaDisplayContainer'></div>\n" +
         "       <div id='moveManyFooter' class='workareaFooter'>\n" +
         "           <button id='moveManyButton' onclick='moveCheckedImages(" + mmSourceFolderId + ")'>Move</button>\n" +
