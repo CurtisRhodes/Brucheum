@@ -651,6 +651,7 @@ function getCookieValue(itemName) {
                     logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
                 }
                 else {
+
                     logError2(returnValue, "CK4", 616307, "get cookie"); // localStorage bypass cookies not enabled
                 }
             }

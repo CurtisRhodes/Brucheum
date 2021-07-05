@@ -413,7 +413,7 @@ function showUserProfileDialog() {
     $('#centeredDialogContents').html(userProfileHtml());
     $("#vailShell").fadeIn();
     $("#centeredDialogContainer").draggable().fadeIn();
-    loadUserProfile("show UserProfileDialog");
+    loadUserProfile(741050, "show UserProfileDialog");
 }
 
 function userProfileHtml() {

@@ -94,7 +94,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             error: function (jqXHR) {
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity2(create_UUID(), "IP6", folderId, errMsg);
+                logActivity2(visitorId, "IP6", folderId, "XHR:" + errMsg);
                 if (errMsg.indexOf("Not connect.") == -1) {
                     logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else

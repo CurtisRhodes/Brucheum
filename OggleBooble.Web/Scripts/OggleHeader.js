@@ -261,6 +261,7 @@ function setHeaderMenu(menu) {
                 "<span onclick='headerMenuClick(\"centerfold\",6368)'>plus, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",6076)'>specials, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",3393)'>lingerie, </span>\n" +
+                "<span onclick='headerMenuClick(\"centerfold\",3128)'>international, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",1986)'>magazine covers, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",6095)'>muses, </span>\n" +
                 "<span onclick='headerMenuClick(\"centerfold\",3796)'>cybergirls</span>\n"
@@ -272,6 +273,7 @@ function setHeaderMenu(menu) {
                 "<span onclick='headerMenuClick(\"playboyIndex\",2601)'>extras, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>plus, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",3128)'>international, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",6076)'>specials, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",3393)'>lingerie, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls </span>\n"

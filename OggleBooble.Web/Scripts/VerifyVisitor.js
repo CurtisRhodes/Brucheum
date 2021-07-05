@@ -188,7 +188,7 @@ function addVisitor(visitorData) {
     }
 }
 
-function loadUserProfile(calledFrom) {
+function loadUserProfile(folderId, calledFrom) {
     try {
         let visitorId = getCookieValue("VisitorId");
         if (visitorId.indexOf("cookie not found") > -1) {
@@ -247,7 +247,7 @@ function loadUserProfile(calledFrom) {
                             }
                         }
                         else {
-                            logError("AJX", 614859, visitorInfo.Success, "load UserProfile");
+                            logError("AJX", folderId, visitorInfo.Success, "load UserProfile");
                             if (document.domain == "localhost") alert("load UserProfile: " + visitorInfo.Success);
                         }
                     }
@@ -255,12 +255,12 @@ function loadUserProfile(calledFrom) {
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
                     if (!checkFor404(errMsg, folderId, "load UserProfile"))
-                        logError2(visitorId, "XHR", 612270, errMsg, "load UserProfile");
+                        logError2(visitorId, "XHR", folderId, errMsg, "load UserProfile");
                 }
             });
         }
     } catch (e) {
-        logError2(create_UUID(), "CAT", 12440, e, "load UserProfile/" + calledFrom);
+        logError2(create_UUID(), "CAT", folderId, e, "load UserProfile/" + calledFrom);
     }
 }
 
