@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace OggleBooble.Api.Core
 {
-    [EnableCors("*")]
-    [ApiController]
-    public class CaroselController : ControllerBase
+    //[EnableCors("*")]
+    public class CaroselController : Controller
     {
         private readonly MySqlDataContext myDbContext;
         public CaroselController(MySqlDataContext context)
@@ -21,6 +20,7 @@ namespace OggleBooble.Api.Core
 
         [HttpGet]
         [Route("Carosel/GetImages")]
+        //[EnableCors("*")]
         public CarouselSuccessModel GetImages(string root, int skip, int take, bool includeLandscape, bool includePortrait)
         {
             var carouselInfo = new CarouselSuccessModel();

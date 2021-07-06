@@ -96,8 +96,13 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
+            url: settingsArray.ApiCoreServer + "Carousel/GetImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
                 "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
+            // crossDomain: true,
+            // dataType: 'jsonp',
+            // headers: { 'Access-Control-Allow-Origin': 'Accept' },
+            //url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
+            //    "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
                     let isAlreadyInArray = false;
@@ -115,7 +120,6 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                             carouselItemArray.push(obj);
                         }
                     });
-
 
                     if (!vCarouselInterval) {
                         console.log("starting carousel from after ajax. take: " + carouselTake);

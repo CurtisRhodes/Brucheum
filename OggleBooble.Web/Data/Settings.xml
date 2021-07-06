@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <settings>
- 
+  <setting name="ApiCoreServer" value="http://localhost:44334/"></setting>
   <setting name="ApiServer" value="http://localhost:50058/"></setting>
   <setting name="ImageRepo" value="https://img.ogglebooble.com/"></setting>
   <setting name="LocalImgRepo" value="C:\temp\img\"></setting>
