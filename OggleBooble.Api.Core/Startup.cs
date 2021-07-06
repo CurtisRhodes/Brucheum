@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 //using Pomelo.EntityFrameworkCore.MySql;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 
 namespace OggleBooble.Api.Core
 {
@@ -24,9 +25,29 @@ namespace OggleBooble.Api.Core
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        //readonly string OggleBoobleOrigins = "_oggleBoobleOrigins";
         public void ConfigureServices(IServiceCollection services)
         {
+
+            //services.AddCors(o => o.AddPolicy("AllowAnyPolicy", builder =>
+            //{
+            //    builder.AllowAnyOrigin()
+            //           .AllowAnyMethod()
+            //           .AllowAnyHeader();
+            //}));
+
+
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy(name: OggleBoobleOrigins,
+            //    builder =>
+            //    {
+            //        builder.WithOrigins("https://OggleBooble.com",
+            //                            "http://localhost:60457")
+            //        .AllowAnyHeader().AllowAnyMethod();
+            //    });
+            //});
+
             //OggleBooble.Api.Core.Startup.ConfigureServices.AnonymousMethod__0(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder) in Startup.cs
             string mySqlConnectionStr = Configuration.GetConnectionString("GoDaddyMySql");
             services.AddDbContextPool<MySqlDataContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
@@ -47,6 +68,10 @@ namespace OggleBooble.Api.Core
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //app.UseCors("AllowAnyPolicy");
+            
+            //app.UseCors(OggleBoobleOrigins);
 
             app.UseAuthorization();
 

@@ -24,5 +24,14 @@ namespace OggleBooble.Api.Core
         // Visitor tables
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CategoryImageLink>()
+            .HasIndex(p => new { p.ImageLinkId, p.ImageCategoryId }).IsUnique();
+
+            modelBuilder.Entity<VwDirTree>()
+            .HasIndex(p => new { p.Id, p.Parent }).IsUnique();
+        }
     }
 }

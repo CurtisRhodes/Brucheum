@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>OggleBooble.Api</title>
+    <title>OggleBooble.Core.Api</title>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <!--<link href="Styles/bootstrap.min.css" rel="stylesheet" />-->
     <link href="bootstrapExtract.css" rel="stylesheet" />  
@@ -61,29 +61,20 @@
           function runVerifyConnection() {
               //alert("yellow");
               $.ajax({
+                  type: "GET",
                   url: "Common/VerifyConnection",
                   success: function (successModel) {
-                      //console.log("GET VerifyConnection: " + verifyConnectionCount);
-                      if (successModel.Success == "ok") {
-                          if (successModel.ConnectionVerified) {
-                              $('#msgArea').html("Connection Verified");
-                          }
-                          else {
-                              $('#msgArea').html("success but no verify: " + successModel.Success);
-                          }
+                      if (successModel.success == "ok") {
+                          $('#msgArea').html("Connection Verified: " + successModel.connectionVerified);
                       }
                       else {
-                          $('#msgArea').html("Error: " + successModel.Success);
+                          $('#msgArea').html("Error: " + successModel.success);
                       }
                   },
                   error: function (jqXHR) {
                       $('#msgArea').html("jqXHR error: " + getXHRErrorDetails(jqXHR));
-
                   }
               });
-
-
-
           }
          
           function runMYtest() {

@@ -8,37 +8,25 @@ using System.Threading.Tasks;
 
 namespace OggleBooble.Api.Core.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
     public class EventController : Controller
     {
         private readonly MySqlDataContext myDbContext;
-        private readonly IHostEnvironment _env;
-
-        public EventController(MySqlDataContext context, IHostEnvironment env)
+        public EventController(MySqlDataContext context)
         {
             myDbContext = context;
-            _env = env;
         }
 
         [HttpGet]
         [Route("Common/VerifyConnection")]
         public VerifyConnectionSuccessModel VerifyConnection()
         {
-            var timer = new System.Diagnostics.Stopwatch();
-            timer.Start();
             VerifyConnectionSuccessModel successModel = new VerifyConnectionSuccessModel() { ConnectionVerified = false };
+            //string success = "onon";
             try
             {
-                //using (var db = new OggleBoobleMSSqlContext())
-                //using (var db = new myDbContext)
-                {
-                    var dbTest = myDbContext.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
-                    successModel.ConnectionVerified = (dbTest != null);
-                }
-                timer.Stop();
-                //successModel.ReturnValue = timer.Elapsed.ToString();
-                System.Diagnostics.Debug.WriteLine("VerifyConnection took: " + timer.Elapsed);
+                var dbTest = myDbContext.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
+                if (dbTest != null)
+                    successModel.ConnectionVerified = true;
                 successModel.Success = "ok";
             }
             catch (Exception ex)
@@ -47,7 +35,5 @@ namespace OggleBooble.Api.Core.Controllers
             }
             return successModel;
         }
-
-
     }
 }

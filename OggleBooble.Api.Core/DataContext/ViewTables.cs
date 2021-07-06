@@ -7,10 +7,7 @@ namespace OggleBooble.Api.Core
     public partial class VwDirTree
     {
         [Key]
-        [Column(Order = 0)]
         public int Id { get; set; }
-        [Key]
-        [Column(Order = 1)]
         public int Parent { get; set; }
         public string FolderName { get; set; }
         public string RootFolder { get; set; }

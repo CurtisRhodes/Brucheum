@@ -44,10 +44,7 @@ namespace OggleBooble.Api.Core
     public partial class CategoryImageLink
     {
         [Key]
-        [Column(Order = 0)]
         public int ImageCategoryId { get; set; }
-        [Key]
-        [Column(Order = 1)]
         public string ImageLinkId { get; set; }
         public int SortOrder { get; set; }
     }
