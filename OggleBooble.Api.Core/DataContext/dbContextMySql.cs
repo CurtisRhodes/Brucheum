@@ -1,15 +1,16 @@
-﻿// using EFCoreMySQL.Models;  
-using Microsoft.EntityFrameworkCore;  
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
+using Microsoft.EntityFrameworkCore;
+//using MySql.EntityFrameworkCore.Extensions;
 
 namespace OggleBooble.Api.Core
 {
-    public class MySqlDataContext : DbContext
+    public class OggleMySqlDbContext : DbContext
     {
-        public MySqlDataContext(DbContextOptions<MySqlDataContext> options) : base(options) { }
+        //public MySqlDataContext(DbContextOptions<MySqlDataContext> options) : base(options) { }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseMySQL("data source=50.62.209.107; port=3306; initial catalog=OggleBooble; user id=OggleUser;password=R@quel77;");
+        }        
 
         // main tables
         public virtual DbSet<CategoryFolder> CategoryFolders { get; set; }

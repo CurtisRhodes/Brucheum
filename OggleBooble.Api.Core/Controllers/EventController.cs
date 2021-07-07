@@ -10,11 +10,11 @@ namespace OggleBooble.Api.Core.Controllers
 {
     public class EventController : Controller
     {
-        private readonly MySqlDataContext myDbContext;
-        public EventController(MySqlDataContext context)
-        {
-            myDbContext = context;
-        }
+        //private readonly MySqlDataContext myDbContext;
+        //public EventController(MySqlDataContext context)
+        //{
+        //    myDbContext = context;
+        //}
 
         [HttpGet]
         [Route("Common/VerifyConnection")]
@@ -24,10 +24,13 @@ namespace OggleBooble.Api.Core.Controllers
             //string success = "onon";
             try
             {
-                var dbTest = myDbContext.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
-                if (dbTest != null)
-                    successModel.ConnectionVerified = true;
-                successModel.Success = "ok";
+                using (var db = new OggleMySqlDbContext())
+                {
+                    var dbTest = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
+                    if (dbTest != null)
+                        successModel.ConnectionVerified = true;
+                    successModel.Success = "ok";
+                }
             }
             catch (Exception ex)
             {

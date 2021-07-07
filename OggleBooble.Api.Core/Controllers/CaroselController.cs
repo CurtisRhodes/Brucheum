@@ -12,11 +12,11 @@ namespace OggleBooble.Api.Core
     //[EnableCors("*")]
     public class CaroselController : Controller
     {
-        private readonly MySqlDataContext myDbContext;
-        public CaroselController(MySqlDataContext context)
-        {
-            myDbContext = context;
-        }
+        //private readonly MySqlDataContext myDbContext;
+        //public CaroselController(MySqlDataContext context)
+        //{
+        //    myDbContext = context;
+        //}
 
         [HttpGet]
         [Route("Carosel/GetImages")]
@@ -26,17 +26,20 @@ namespace OggleBooble.Api.Core
             var carouselInfo = new CarouselSuccessModel();
             try
             {
-                if (includeLandscape)
+                using (var db = new OggleMySqlDbContext())
                 {
-                    carouselInfo.Links.AddRange(myDbContext.VwCarouselItems.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
-                        .Where(v => v.Width > v.Height)
-                        .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
-                }
-                if (includePortrait)
-                {
-                    carouselInfo.Links.AddRange(myDbContext.VwCarouselItems.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
-                        .Where(v => v.Height >= v.Width)
-                        .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
+                    if (includeLandscape)
+                    {
+                        carouselInfo.Links.AddRange(db.VwCarouselItems.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
+                            .Where(v => v.Width > v.Height)
+                            .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
+                    }
+                    if (includePortrait)
+                    {
+                        carouselInfo.Links.AddRange(db.VwCarouselItems.Where(v => v.RootFolder == root).Where(v => v.Height < v.Width)
+                            .Where(v => v.Height >= v.Width)
+                            .OrderBy(v => v.LinkId).Skip(skip).Take(take).ToList());
+                    }
                 }
                 carouselInfo.Success = "ok";
             }

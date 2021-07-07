@@ -30,8 +30,8 @@ namespace OggleBooble.Api.Core
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string mySqlConnectionStr = Configuration.GetConnectionString("GoDaddyMySql");
-            services.AddDbContextPool<MySqlDataContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
+            //string mySqlConnectionStr = Configuration.GetConnectionString("GoDaddyMySql");
+            //services.AddDbContextPool<MySqlDataContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
 
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             {

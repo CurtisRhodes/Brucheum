@@ -10,12 +10,11 @@ namespace OggleBooble.Api.Core
 {
     public class HomeController : Controller
     {
-        private readonly MySqlDataContext myDbContext;
+        //private readonly MySqlDataContext myDbContext;
         private readonly IHostEnvironment _env;
 
-        public HomeController(MySqlDataContext context, IHostEnvironment env)
+        public HomeController(IHostEnvironment env)
         {
-            myDbContext = context;
             _env = env;
         }
 
@@ -94,9 +93,9 @@ namespace OggleBooble.Api.Core
         public TestResults MySqlTest(int parent)
         {
             var testResults = new TestResults();
-            //using (var db = new MySqlDataContext())
+            using (var db = new OggleMySqlDbContext())
             {
-                List<CategoryFolder> categoryFolders = myDbContext.CategoryFolders.Where(f => f.Parent == parent).ToList();
+                List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
                 foreach (var categoryFolder in categoryFolders)
                 {
                     testResults.Items.Add(new TestResultsItem() { Id = categoryFolder.Id, FolderName = categoryFolder.FolderName });
