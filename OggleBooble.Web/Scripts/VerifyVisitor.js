@@ -211,7 +211,7 @@ function loadUserProfile(folderId, calledFrom) {
                         $('#optionLoggedIn').hide();
                         $('#optionNotLoggedIn').show();
                         $('#footerCol5').hide();
-                        logError2(visitorId, "BUG", "VisitorId not found in Visitor table", "loadUserProfile/" + calledFrom);
+                        logError2(visitorId, "BUG", folderId, "VisitorId not found in Visitor table", "loadUserProfile/" + calledFrom);
                     }
                     else {
                         if (visitorInfo.Success == "ok") {

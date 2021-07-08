@@ -9,15 +9,9 @@ using System.Threading.Tasks;
 
 namespace OggleBooble.Api.Core
 {
-    //[EnableCors("*")]
+    [EnableCors("CorsPolicy")]
     public class CaroselController : Controller
     {
-        //private readonly MySqlDataContext myDbContext;
-        //public CaroselController(MySqlDataContext context)
-        //{
-        //    myDbContext = context;
-        //}
-
         [HttpGet]
         [Route("Carosel/GetImages")]
         //[EnableCors("*")]

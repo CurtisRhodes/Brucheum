@@ -33,27 +33,27 @@ namespace OggleBooble.Api.Core
             //string mySqlConnectionStr = Configuration.GetConnectionString("GoDaddyMySql");
             //services.AddDbContextPool<MySqlDataContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
 
-            services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
-                    .WithHeaders(HeaderNames.AccessControlAllowOrigin, HeaderNames.Accept)
-                    .SetIsOriginAllowedToAllowWildcardSubdomains();
-            }));
-
-            //services.AddCors(options =>
+            //services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             //{
-            //    options.AddPolicy(name: CorsPolicy,
-            //    builder =>
-            //    {
-            //        builder.WithOrigins("https://OggleBooble.com",
-            //                            "http://localhost:60457")
-            //        .AllowAnyOrigin()
-            //        .AllowAnyHeader()
+            //    builder.AllowAnyOrigin()
+            //        .AllowAnyMethod()
+            //        .WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
+            //        .WithHeaders(HeaderNames.AccessControlAllowOrigin, HeaderNames.Accept)
             //        .SetIsOriginAllowedToAllowWildcardSubdomains();
-            //    });
-            //});
+            //}));
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: CorsPolicy,
+                builder =>
+                {
+                    builder.WithOrigins("https://OggleBooble.com",
+                                        "http://localhost:60457")
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowedToAllowWildcardSubdomains();
+                });
+            });
 
             //services.AddMvc();
             //services.Configure<MvcOptions>(options =>
@@ -81,8 +81,6 @@ namespace OggleBooble.Api.Core
             app.UseRouting();
 
             app.UseCors(CorsPolicy);
-
-            //app.UseCors(OggleBoobleOrigins);
 
             app.UseAuthorization();
 
