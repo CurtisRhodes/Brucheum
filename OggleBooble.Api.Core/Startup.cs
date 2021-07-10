@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,33 +25,37 @@ namespace OggleBooble.Api.Core
             Configuration = configuration;
         }
 
-        readonly string CorsPolicy = "CorsPolicy";
+        readonly string CorsPolicy = "-ono";
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
             //string mySqlConnectionStr = Configuration.GetConnectionString("GoDaddyMySql");
-            //services.AddDbContextPool<OggleMySqlDbContext>(options => options.UseMySQL(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
+            //services.AddDbContextPool<MySqlDataContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
 
-            services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
-                    .WithHeaders(HeaderNames.AccessControlAllowOrigin, HeaderNames.Accept)
-                    .SetIsOriginAllowedToAllowWildcardSubdomains();
-            }));
-
-            //services.AddCors(options =>
+            //services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             //{
-            //    options.AddPolicy(name: CorsPolicy,
-            //    builder =>
-            //    {
-            //        builder.WithOrigins("https://OggleBooble.com",
-            //                            "http://localhost:60457");
-            //    });
-            //});
+            //    builder.AllowAnyOrigin()
+            //        .AllowAnyMethod()
+            //        .WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
+            //        .WithHeaders(HeaderNames.AccessControlAllowOrigin, HeaderNames.Accept)
+            //        .SetIsOriginAllowedToAllowWildcardSubdomains();
+            //}));
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: CorsPolicy,
+                builder =>
+                {
+                    builder.WithOrigins("https://OggleBooble.com",
+                                        "http://localhost:60457")
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowedToAllowWildcardSubdomains();
+                });
+            });
+
+            //services.AddMvc();
             //services.Configure<MvcOptions>(options =>
             //{
             //    options.Filters.Add(new CorsAuthorizationFilterFactory("MyPolicy"));
@@ -64,16 +68,19 @@ namespace OggleBooble.Api.Core
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors(CorsPolicy);
 
             app.UseAuthorization();
 
