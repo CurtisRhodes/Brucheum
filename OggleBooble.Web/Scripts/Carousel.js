@@ -94,15 +94,22 @@ function launchCarousel(startRoot) {
 function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait) {
     let startTime = Date.now();
     try {
+
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiCoreServer + "Carousel/GetImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
-                "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
+            url: settingsArray.ApiCoreServer + "Home/Test",
+            success: function (rtn) { alert(rtn) }
+        });
+
+        $.ajax({
+            type: "GET",
+            //url: settingsArray.ApiCoreServer + "Carousel/GetImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
+            //    "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
             // crossDomain: true,
             // dataType: 'jsonp',
             // headers: { 'Access-Control-Allow-Origin': 'Accept' },
-            //url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
-            //    "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
+            url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
+                "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
                     let isAlreadyInArray = false;
@@ -142,6 +149,7 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                             //logError("LSC", 618359, "rootFolder: " + rootFolder + " take: " + carouselTake, "Carousel loadImages");
                         }
                     }
+
 
                     if (carouselInfo.Links.length === carouselTake) {
                         carouselSkip += carouselTake;

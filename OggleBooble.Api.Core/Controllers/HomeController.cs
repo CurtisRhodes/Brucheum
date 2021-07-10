@@ -23,6 +23,17 @@ namespace OggleBooble.Api.Core
             return View();
         }
 
+
+        [HttpGet]
+        [Route("Home/Test")]
+        public string TestMethod()
+        {
+            return "yello gorgeous";
+        }
+
+
+
+
         [HttpGet]
         [Route("Local/GetBuildInfo")]
         public string GetBuildInfo()

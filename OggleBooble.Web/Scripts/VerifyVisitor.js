@@ -61,7 +61,7 @@ function verifySession(folderId) {
                 addVisitor({
                     VisitorId: visitorId,
                     IpAddress: '00.00.00',
-                    City: "unknown",
+                    City: "new visitor?",
                     Country: "ZZ",
                     Region: "unknown",
                     GeoCode: "unknown",
@@ -109,6 +109,7 @@ function verifyVisitorId(folderId, calledFrom) {
                         }
                         if (successModel.ReturnValue == "not found") {
                             logActivity2(visitorId, "VV3", folderId, "verify Visitor"); // visitorId came back not found
+                            //doubleCheckVisitorId(visitorId, folderId);
                             addVisitor({
                                 VisitorId: visitorId,
                                 IpAddress: '00.11.11',
@@ -210,8 +211,10 @@ function loadUserProfile(folderId, calledFrom) {
                         localStorage["UserRole"] = "not registered";
                         $('#optionLoggedIn').hide();
                         $('#optionNotLoggedIn').show();
-                        $('#footerCol5').hide();
-                        logError2(visitorId, "BUG", "VisitorId not found in Visitor table", "loadUserProfile/" + calledFrom);
+                        $('#footerCol5').hide
+
+                        doubleCheckVisitorId(visitorId, folderId);
+                        //logError2(visitorId, "BUG", "VisitorId not found in Visitor table", "loadUserProfile/" + calledFrom);
                     }
                     else {
                         if (visitorInfo.Success == "ok") {
@@ -261,6 +264,41 @@ function loadUserProfile(folderId, calledFrom) {
         }
     } catch (e) {
         logError2(create_UUID(), "CAT", folderId, e, "load UserProfile/" + calledFrom);
+    }
+}
+
+function doubleCheckVisitorId(visitorId, folderId) {
+    try {
+            $.ajax({
+                type: "GET",
+                url: settingsArray.ApiServer + "api/Visitor/DoubleCheckVisitorId?visitorId=" + visitorId,
+                success: function (successModel) {
+                    if (successModel.Success == "ok") {
+                        if (successModel.ReturnValue == "readded") {
+                            logActivity("VV2", folderId, "doubleCheck VisitorId");
+                            tryAddNewIP(folderId, visitorId, "doubleCheck readded");
+                        }
+                        if (successModel.ReturnValue == "inalready") {
+                            logActivity("VVb", folderId, "doubleCheck VisitorId"); // false flag
+                        }
+                        if (successModel.ReturnValue == "repeatOffender") {
+                            logActivity("VVa", folderId, "doubleCheck VisitorId"); // repeatOffender
+                        }
+                    }
+                    else {
+                        logActivity("VV4", folderId, "doubleCheck VisitorId");
+                        logError("AJX", folderId, successModel.success, "doubleCheck VisitorId");
+                    }
+                },
+                error: function (jqXHR) {
+                    logActivity("VV6", folderId, "doubleCheck VisitorId");
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg, folderId, "load UserProfile"))
+                        logError2(visitorId, "XHR", 79955, errMsg, "doubleCheck VisitorId");
+                }
+            });
+    } catch (e) {
+        logError2(create_UUID(), "CAT", folderId, e, "doubleCheck VisitorId");
     }
 }
 

@@ -92,32 +92,30 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 ip0Busy = false;
             },
             error: function (jqXHR) {
-                ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity2(visitorId, "IP6", folderId, "XHR:" + errMsg);
                 if (errMsg.indexOf("Not connect.") == -1) {
+                    ipCall0Returned = true;
+                    logActivity2(visitorId, "IP6", folderId, "XHR:" + errMsg); // connection problem
                     logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
                 }
 
-                if (!isNullorUndefined(ipResponse))
+                if (!isNullorUndefined(ipResponse)) {
+                    ipCall0Returned = true;
+                    logActivity2(visitorId, "IP7", folderId, "get IpInfo"); // juneteenth setCookie problem
                     logError2(visitorId, "200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
+                }
 
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
+                    ipCall0Returned = true;
                     logActivity2(visitorId, "IP5", folderId, "IpInfo XHR/" + calledFrom); // lookup limit exceeded
                     tryApiDbIpFree(folderId, visitorId, calledFrom);
                 }
-                else {
+                if (!ipCall0Returned) {
+                    ipCall0Returned = true;
                     if (!checkFor404(errMsg, folderId, "get IpInfo")) {
+                        logActivity2(visitorId, "IP3", folderId, "get IpInfo " + errMsg); // XHR error
                         logError2(visitorId, "XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
-                    }
-                    else {
-                        let XLXvisitorId = "XLX" + visitorId.substr(3);
-                        setCookieValue("VisitorId", XLXvisitorId);
-                        if (getCookieValue("VisitorId") == XLXvisitorId)
-                            logActivity("IP3", folderId, "get IpInfo " + errMsg); // XHR error
-                        else
-                            logActivity2(visitorId, "IP7", folderId, "get IpInfo"); // juneteenth setCookie problem
                     }
                 }
                 ip0Busy = false;

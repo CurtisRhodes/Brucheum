@@ -169,22 +169,44 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Visitor/CheckForRepeatBadVisitorId")]
-        public SuccessModel CheckForRepeatBadVisitorId(string visitorId)
+        [Route("api/Visitor/DoubleCheckVisitorId")]
+        public SuccessModel DoubleCheckVisitorId(string visitorId)
         {
             SuccessModel successModel = new SuccessModel();
             try
             {
-                //select* from ActivityLog where ActivityCode = "VV7" and Occured > curdate() order by Occured desc;
-                //checkForRepeatBadVisitorId(visitorId);
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var repeatOffender = db.ActivityLogs.Where(a => a.ActivityCode == "VV7" && a.VisitorId == visitorId).FirstOrDefault();
-                    if (repeatOffender == null)
-                        successModel.ReturnValue = "ok";
+                    var dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (dbVisitor == null)
+                    {
+                        Visitor unkVisitor = new Visitor()
+                        {
+                            VisitorId = visitorId,
+                            IpAddress = "00.00.00",
+                            City = "readded",
+                            Country = "ZZ",
+                            Region = "readded",
+                            GeoCode = "readded",
+                            //InitialPage: folderId
+                        };
+                        db.SaveChanges();
+                        successModel.ReturnValue = "readded";
+                    }
                     else
-                        successModel.ReturnValue = "repeatOffender";
-
+                    {
+                        if (dbVisitor.Region == "readded")
+                        {
+                            successModel.ReturnValue = "repeatOffender";
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            dbVisitor.Region = "repeatOffender";
+                            db.SaveChanges();
+                            successModel.ReturnValue = "inalready";
+                        }
+                    }
                     successModel.Success = "ok";
                 }
             }
