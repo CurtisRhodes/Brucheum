@@ -360,7 +360,7 @@ function checkLoginStatus(folderId, visitorId, albumInfo) {
                                 $('#customMessageContainer').css("top", 250);
                                 $('#customMessageContainer').css("left", 400);
                                 logActivity2(visitorId, "LG2", folderId, "checkLoginStatus"); // cookies required
-                            }s
+                            }
                         }
                         else {
                             showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);

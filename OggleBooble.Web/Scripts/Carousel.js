@@ -35,12 +35,12 @@ function launchCarousel(startRoot) {
                         });
                         carouselSkip = carouselItemArray.length;
                         startCarousel("centefold cache");
-                        console.log("loaded " + carouselItemArray.length + " from centerfold cache");
+                        //console.log("loaded " + carouselItemArray.length + " from centerfold cache");
                     }
                     else {
                         if (document.domain == "localhost") alert("no " + startRoot + " cache found");
                         carouselTake = 10;
-                        console.log("no " + startRoot + " cache found");
+                        //console.log("no " + startRoot + " cache found");
                         //logError("CR1", 618407, "no " + startRoot + " cache found");
                     }
                     break;
@@ -94,13 +94,6 @@ function launchCarousel(startRoot) {
 function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait) {
     let startTime = Date.now();
     try {
-
-        $.ajax({
-            type: "GET",
-            url: settingsArray.ApiCoreServer + "Home/Test",
-            success: function (rtn) { alert(rtn) }
-        });
-
         $.ajax({
             type: "GET",
             //url: settingsArray.ApiCoreServer + "Carousel/GetImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
@@ -130,26 +123,10 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
 
                     if (!vCarouselInterval) {
                         console.log("starting carousel from after ajax. take: " + carouselTake);
-                        //refreshCache(rootFolder);
+                        //logError("LSC", 625131, "take: " + carouselTake);
+                        //logActivity("LSC", 618518, "carousel loadImages"); // starting carousel from after ajax
                         startCarousel("ajax");
-
-                        //handleTroubledAccount("Carousel loadImages")
-                        let visitorId = getCookieValue("VisitorId");
-                        if (visitorId == "cookie not found") {
-                            if (navigator.cookieEnabled) {  // user accepts cookies
-                                logError("LSC", 67659, "cookie not found. rootFolder: " + rootFolder, "Carousel loadImages");
-                            }
-                            else {
-                                logError2(create_UUID(), "LSC", 67659, "cookie not found cookies not enabled.  rootFolder: " + rootFolder, "Carousel loadImages");
-                            }
-                        }
-                        else {
-                            logError("LSC", 625131, "take: " + carouselTake);
-                            logActivity2(create_UUID(), "RC1", 618518, "refresh Cache"); // starting carousel from after ajax
-                            //logError("LSC", 618359, "rootFolder: " + rootFolder + " take: " + carouselTake, "Carousel loadImages");
-                        }
                     }
-
 
                     if (carouselInfo.Links.length === carouselTake) {
                         carouselSkip += carouselTake;
