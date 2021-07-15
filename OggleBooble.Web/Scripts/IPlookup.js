@@ -55,7 +55,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             },
             success: function (ipResponse) {
                 ipCall0Returned = true;
-                //logError("200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
                 logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
                 $.ajax({
                     type: "PUT",
@@ -92,16 +91,17 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 ip0Busy = false;
             },
             error: function (jqXHR) {
+                ipCall0Returned = true;
+                logActivity2(visitorId, "IP3", folderId, "get IpInfo"); // XHR error
+
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (errMsg.indexOf("Not connect.") == -1) {
-                    ipCall0Returned = true;
                     logActivity2(visitorId, "IP6", folderId, "XHR:" + errMsg); // connection problem
                     logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
                 }
 
                 if (!isNullorUndefined(ipResponse)) {
-                    ipCall0Returned = true;
                     logActivity2(visitorId, "IP7", folderId, "get IpInfo"); // juneteenth setCookie problem
                     logError2(visitorId, "200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
                 }
@@ -123,9 +123,9 @@ function getIpInfo(folderId, visitorId, calledFrom) {
         });
         setTimeout(function () {
             if (!ipCall0Returned) {
+                logActivity2(visitorId, "IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
                 if (isNullorUndefined(ipResponse.ip)) {
                     logActivity2(create_UUID(), "IP9", 621237, "folderId: " + folderId + " visitorId: " + visitorId); // ipInfo failed to respond
-                    logActivity2(create_UUID(), "IP4", 621328, "get IpInfo/" + calledFrom); // ipInfo failed to respond
                     tryApiDbIpFree(folderId, visitorId, calledFrom);  // try something else
                 }
                 else {

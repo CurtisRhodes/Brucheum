@@ -29,7 +29,7 @@ function displaySpaPage(spaPageId) {
             resetOggleHeader(3908, "boobs");
             //setTimeout(function () { launchPromoMessages(); }, 3000);
 
-            //$('#testFunctionClick').show();
+            $('#testFunctionClick').show();
 
             break;
         case 3909: // porn

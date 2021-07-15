@@ -28,9 +28,17 @@ function showDirTreeDialog(imgSrc, menuType, title) {
     }
 
     activeDirTree = "linkManipulateDirTree";
-    if (isNullorUndefined($('#linkManipulateDirTree').val())) {
+
+    if (isNullorUndefined(tempDirTree)) {
         showHtmlDirTree("linkManipulateDirTree");
+        tempDirTree = $("linkManipulateDirTree").html();
         //loadDirectoryTree(1, "linkManipulateDirTree", false);
+    }
+    else {
+        $('#dashBoardLoadingGif').show();
+        $("linkManipulateDirTree").html(tempDirTree);
+        $('#dashBoardLoadingGif').hide();
+        console.log("loaded linkManipulateDirTree from temp");
     }
     //var winH = $(window).height();
     //var dlgH = $('#centeredDialog').height();
