@@ -226,7 +226,11 @@ function showRegisterDialog(showCloseButton) {
     $('#customMessageContainer').css("top", 126);
     $('#customMessageContainer').css("left", 663);
     $('.validationError').hide();
-    logEvent("RDO", 0, "YESS!!!");
+    if(showCloseButton)
+        logActivity("LG0", 713650, "show register dialog"); // Register dialog opened
+    else
+        logActivity("LG3", 713654, "show register dialog"); // Register dialog opened from request warning
+    //logEvent("RDO", 0, "YESS!!!");
 }
 
 function attemptRegister() {
@@ -252,9 +256,9 @@ function attemptRegister() {
                 url: settingsArray.ApiServer + "/api/Login/AddRegisterUser",
                 data: userInfo,
                 success: function (registerdUserSuccessModel) {
-                    console.log("registerdUserSuccessModel.Success: " + registerdUserSuccessModel.Success);
+                    //console.log("registerdUserSuccessModel.Success: " + registerdUserSuccessModel.Success);
                     if (registerdUserSuccessModel.Success == "ok") {
-                        console.log("registerdUserSuccessModel.RegisterStatus: " + registerdUserSuccessModel.RegisterStatus);
+                        //console.log("registerdUserSuccessModel.RegisterStatus: " + registerdUserSuccessModel.RegisterStatus);
 
                         if (registerdUserSuccessModel.RegisterStatus == "user name already exists") {
                            $('#errRegisterUserName').html("user name already exists").show();
@@ -300,10 +304,13 @@ function attemptRegister() {
                         $('#footerCol5').show();
                         let visid = getCookieValue("VisitorId");
 
+                        logActivity("LG4", 713654, registerdUserSuccessModel.RegisterStatus); // Someone Registerd !!!
                         sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
-                            "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visid);
+                            "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visid +
+                            "<br/>" + registerdUserSuccessModel.RegisterStatus);
                     }
                     else {
+                        logActivity("LGX", 713703, "attempt Login");
                         logError("AJX", 0, registerdUserSuccessModel.Success, "attempt Login");
                     }
                 },

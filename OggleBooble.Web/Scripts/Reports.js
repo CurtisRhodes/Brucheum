@@ -29,10 +29,10 @@ function runMetricsMatrixReport() {
                         "</div>");
                     $("#dailyActivityReportContainer").html("<div id='fxShell' class='flexbox'>");
                     $("#fxShell").html("<div><div>&nbsp;</div><div>&nbsp;</div>" +
-                        "<div>NewVisitors</div>" +
-                        "<div>Visits</div>" +
-                        "<div>PageHits</div>" +
-                        "<div>ImageHits</div></div>"
+                        "<div>new visitors</div>" +
+                        "<div>return Visits</div>" +
+                        "<div>page hits</div>" +
+                        "<div>image hits</div></div>"
                     );
 
                     for (let i = 0; i < rslts.mRows.length; i++) {

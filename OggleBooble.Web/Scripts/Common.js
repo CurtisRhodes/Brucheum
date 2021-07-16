@@ -207,7 +207,7 @@ function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
 
     if (document.domain === 'localhost') {
         console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
-        alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+        //alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
     }
     else {
         try {
@@ -249,34 +249,38 @@ function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
 function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     //if (document.domain === 'localhost')
     //    alert("log Event. eventCode: " + eventCode + "  folderId: " + folderId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
-    //else
-    {
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/Common/LogEvent",
-            data: {
-                VisitorId: getCookieValue("VisitorId"),
-                EventCode: eventCode,
-                EventDetail: eventDetails,
-                CalledFrom: calledFrom,
-                FolderId: folderId
-            },
-            success: function (success) {
-                if (success !== "ok") {
-                    if (success.indexOf("Duplicate entry") > 0) {
-                        // logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/log Event");
-                    }
-                    else
-                        logError("AJE", folderId, eventCode + ": " + success, "log Event/" + calledFrom);
-                }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "log Event")) logError("XHR", folderId, errMsg, "log Event");
-            }
-        });
+    if (isNullorUndefined(calledFrom)) {
+        if (document.domain === 'localhost')
+            alert("log Event. eventCode: " + eventCode + "  folderId: " + folderId + "\neventDetails: " + eventDetails);
+        logError("BUG", folderId, "calledFrom isNullorUndefined. event code: " + eventCode, "logEvent");
+        calledFrom = "undefined";
     }
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "api/Common/LogEvent",
+        data: {
+            VisitorId: getCookieValue("VisitorId"),
+            EventCode: eventCode,
+            EventDetail: eventDetails,
+            CalledFrom: calledFrom,
+            FolderId: folderId
+        },
+        success: function (success) {
+            if (success !== "ok") {
+                if (success.indexOf("Duplicate entry") > 0) {
+                    // logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/log Event");
+                }
+                else
+                    logError("AJE", folderId, eventCode + ": " + success, "log Event/" + calledFrom);
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, folderId, "log Event")) logError("XHR", folderId, errMsg, "log Event");
+        }
+    });
 }
+
 
 function logActivity(activityCode, folderId, calledFrom) {    
     logActivity2(getCookieValue("VisitorId"), activityCode, folderId, calledFrom);
@@ -608,7 +612,7 @@ function getCookieValue(itemName) {
                             City: "undefined",
                             Country: "ZZ",
                             Region: "undefined",
-                            GeoCode: "undefined"
+                            GeoCode: "get CookieValue"
                         }, "get CookieValue");
                         returnValue = visitorId;
                     }
@@ -651,8 +655,8 @@ function getCookieValue(itemName) {
                     logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
                 }
                 else {
-
-                    logError2(returnValue, "CK4", 616307, "get cookie"); // localStorage bypass cookies not enabled
+                    ///TODO do something about this
+                    // logError2(returnValue, "CK4", 616307, "get cookie"); // localStorage bypass cookies not enabled
                 }
             }
         }

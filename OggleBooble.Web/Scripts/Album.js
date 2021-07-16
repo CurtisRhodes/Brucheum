@@ -1,5 +1,6 @@
 ﻿let apFolderName, apFolderRoot, apFolderId = 0, isLargeLoad = false;
 const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
+let tempDirTree = null;
 
 function loadLargeAlbum(folderId) {
     setOggleHeader("album");
@@ -330,7 +331,7 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
                 }
                 var delta = (Date.now() - infoStart) / 1000;
                 console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
-                checkLoginStatus(folderId, visitorId, albumInfo);
+                checkRegistrationStatus(folderId, visitorId, albumInfo);
             }
             else {
                 if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {
@@ -347,11 +348,13 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
     });
 }
 
-function checkLoginStatus(folderId, visitorId, albumInfo) {
+function checkRegistrationStatus(folderId, visitorId, albumInfo) {
     try {
         if (!isLoggedIn()) {
             if (albumInfo.FolderType == "singleChild") {
-                if ((albumInfo.RootFolder == "centerfold") || (albumInfo.RootFolder == "muses")) {
+                if ((albumInfo.RootFolder == "centerfold") || (albumInfo.RootFolder == "muses")
+                    || (albumInfo.RootFolder == "cybergirl") || (albumInfo.RootFolder == "playboy"))
+                {
                     if (albumInfo.UserPageHits > 100) {
                         let visitorId = getCookieValue("VisitorId");
                         if ((visitorId == "cookie not found") || (visitorId == "user does not accept cookies")) {
@@ -359,21 +362,21 @@ function checkLoginStatus(folderId, visitorId, albumInfo) {
                                 showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
                                 $('#customMessageContainer').css("top", 250);
                                 $('#customMessageContainer').css("left", 400);
-                                logActivity2(visitorId, "LG2", folderId, "checkLoginStatus"); // cookies required
-                            }s
+                                logActivity2(visitorId, "LG2", folderId, "check registration status"); // cookies required
+                            }
                         }
                         else {
                             showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
                             $('#customMessageContainer').css("top", 255);
                             $('#customMessageContainer').css("left", 522);
-                            logActivity2(visitorId, "LG1", folderId, "check LoginStatus"); // asked please to login
+                            logActivity2(visitorId, "LG1", folderId, "check registration status"); // asked please to login
                         }
                     }
                 }
             }
         }
     } catch (e) {
-        logError2(visitorId, "CAT", folderId, e, "checkLoginStatus");
+        logError2(visitorId, "CAT", folderId, e, "check registration status");
     }
 }
 
