@@ -70,15 +70,23 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     },
                     success: function (success) {
                         if (success == "ok") {
-                            logActivity2(visitorId, "IPA", folderId, "update Visitor"); // visitor successfully updated
-                            logVisit(visitorId, folderId, "add Visitor");
+                            logActivity2(visitorId, "IPA", folderId, "get IpInfo/" + calledFrom); // visitor successfully updated
+                            logVisit(visitorId, folderId, "get IpInfo/" + calledFrom);
                         }
                         else {
                             if (success == "VisitorId not found") {
-                                logActivity2(visitorId, "IPB", folderId, "update Visitor"); // update failed. VisitorId not found
+                                logActivity2(visitorId, "IPB", folderId, "get IpInfo/updateVisitor/" + calledFrom); // update failed. VisitorId not found
+                                addVisitor({
+                                    visitorId: visitorId,
+                                    IpAddress: ipResponse.ip,
+                                    City: ipResponse.city,
+                                    Country: ipResponse.country,
+                                    Region: ipResponse.region,
+                                    GeoCode: ipResponse.loc
+                                }, "get IpInfo/" + calledFrom);
                             } else {
                                 logActivity2(visitorId, "IPC", folderId, success); // update failed. ajax error
-                                logError2(visitorId, "AJX", folderId, success, "update Visitor");
+                                logError2(visitorId, "AJX", folderId, success, "get IpInfo/" + calledFrom);
                             }
                         }
                     },

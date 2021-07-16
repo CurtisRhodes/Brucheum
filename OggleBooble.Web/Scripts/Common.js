@@ -608,8 +608,8 @@ function getCookieValue(itemName) {
                             City: "undefined",
                             Country: "ZZ",
                             Region: "undefined",
-                            GeoCode: "get CookieValue"
-                        });
+                            GeoCode: "undefined"
+                        }, "get CookieValue");
                         returnValue = visitorId;
                     }
                 }

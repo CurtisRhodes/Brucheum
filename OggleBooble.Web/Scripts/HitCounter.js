@@ -70,7 +70,7 @@ function logPageHit(folderId) {
                 Region: "cookie not found",
                 GeoCode: "cookie not found",
                 InitialPage: folderId
-            });
+            }, "log pageHit");
             logActivity2(create_UUID(), "PH3", folderId, "log pageHit"); // cookie not found
         }
 
@@ -153,7 +153,7 @@ function logVisit(visitorId, folderId, calledFrom) {
                             Region: "visitor not found",
                             GeoCode: "visitor not found",
                             InitialPage: folderId
-                        });
+                        }, "log visit/" + calledFrom);
                         logActivity2(visitorId, "LV3", folderId, "log visit/" + calledFrom);  // visitorId not found
                         //logError2(visitorId, "BUG", folderId, "visitorId not found new vis rec added", "log visit");
                     }
