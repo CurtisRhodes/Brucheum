@@ -54,10 +54,8 @@ function bind(response) {
 
         $('#txtTitle').val(response.Title);
         $('#ddCategory').val(response.CategoryRef);
-        //alert("$('#ddCategory').val(): " + $('#ddCategory').val());
-        //alert("BylineRef: " + response.ByLineRef)
         $('#ddAvatars').val(response.ByLineRef);
-        $('#txtUpdated').val(response.LastUpdated);
+        $('#txtUpdated').val(response.Updated);
         $('#articleSummaryEditor').summernote('code', response.Summary);
         $('#articleContentEditor').summernote('code', response.Contents);
         article.ImageName = response.ImageName;
@@ -149,7 +147,7 @@ function updateArticle(view) {
         unBind();
         $.ajax({
             type: "PUT",
-            url: settingsArray.ApiServer + "/api/Article",
+            url: settingsArray.ApiServer + "/api/Article/UpdateArticle",
             //async: "false",
             //dataType: "json",
             data: article,
@@ -160,7 +158,7 @@ function updateArticle(view) {
                     else
                         displayStatusMessage("ok", "updated");
                 else
-                    displayStatusMessage("ok", "updateArticle: " + success);
+                    displayStatusMessage("error", "updateArticle: " + success);
                 $('#updateArticleSpinner').hide();
             },
             error: function (jqXHR, exception) {
@@ -174,13 +172,11 @@ function updateArticle(view) {
 
 function getCategories() {
     $.ajax({
-        url: settingsArray.ApiServer + "/api/Ref/Get?refType=CAT",
+        url: settingsArray.ApiServer + "/api/Ref/GetRefsForRefType?refType=CAT",
         type: "get",
-        dataType: "json",
-        success: function (response) {
+        success: function (refModel) {
             $('#ddCategory').html("<option class= 'ddOption' value ='0'>-- select category --</option >");
-            $.each(response, function (idx, obj) {
-                //obj = obj.split(",");
+            $.each(refModel.RefItems, function (idx, obj) {
                 $('#ddCategory').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
             });
         },
@@ -192,12 +188,11 @@ function getCategories() {
 
 function getAvatars() {
     $.ajax({
-        url: settingsArray.ApiServer + "/api/Ref/Get?refType=AVT",
+        url: settingsArray.ApiServer + "/api/Ref/GetRefsForRefType?refType=AVT",
         type: "get",
-        dataType: "json",
         success: function (response) {
             $('#ddAvatars').html("<option class= 'ddOption' value ='0'>-- select avatar --</option >");
-            $.each(response, function (idx, obj) {
+            $.each(response.RefItems, function (idx, obj) {
                 //obj = obj.split(",");
                 $('#ddAvatars').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
             });
@@ -217,13 +212,10 @@ $('#txtMetaTag').blur(function () {
 });
 
 function loadImage(imageFullFileName) {
-    //article.ImageName = postImage($('#uplImage').val());
-    //alert("article.ImageName: " + article.ImageName)
-    //$('#imgArticleJog').attr("src", settingsArray.ApiServer + "/App_Data/Images/" + article.ImageName);
-    //setTimeout(function () { adjust() }, 1000);
-    let url = settingsArray.ApiServer + "api/Images/AddImage?imageFullFileName=" + imageFullFileName;
+    let url = settingsArray.ApiServer + "/api/Image/AddImage?articleId=" + article.Id + "&imageFullFileName=" + imageFullFileName;
+    alert("url: " + url);
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: url,
         success: function (response) {
             if (response.Success === "ok") {
@@ -239,9 +231,6 @@ function loadImage(imageFullFileName) {
             alert("loadImage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
-
-
-
 }
 
 function adjust() {

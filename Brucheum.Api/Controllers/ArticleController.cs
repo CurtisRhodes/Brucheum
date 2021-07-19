@@ -78,7 +78,9 @@ namespace Bruchem.Api
                     {                 
                         articleModel.Title = dbArticle.Title;
                         articleModel.ByLine = dbArticle.ByLine;
+                        articleModel.ByLineRef = dbArticle.ByLineRef;
                         articleModel.Category = dbArticle.Category;
+                        articleModel.CategoryRef = dbArticle.CategoryRef;
                         articleModel.SubCategory = dbArticle.SubCategory;
                         articleModel.Contents = dbArticle.Content;
                         articleModel.Summary = dbArticle.Summary;
@@ -140,7 +142,7 @@ namespace Bruchem.Api
         }
 
         [HttpPut]
-        public string Put(ArticleModel editArticle)
+        public string UpdateArticle(ArticleModel editArticle)
         {
             var success = "";
             try
@@ -309,9 +311,9 @@ namespace Bruchem.Api
     public class RefController : ApiController
     {
         [HttpGet]
-        public RefModel Get(string refType)
+        public RefModel GetRefsForRefType(string refType)
         {
-            var refs = new RefModel();
+            var refModel = new RefModel();
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
@@ -319,47 +321,20 @@ namespace Bruchem.Api
                     IList<Ref> dbrefs = db.Refs.Where(r => r.RefType == refType).OrderBy(r => r.RefDescription).ToList();
                     foreach (Ref r in dbrefs)
                     {
-                        refs.RefItems.Add(new RefItem()
+                        refModel.RefItems.Add(new RefModelItem()
                         {
                             RefCode = r.RefCode,
-                            RefType = r.RefType,
                             RefDescription = r.RefDescription
                         });
                     }
-                    refs.Success = "ok";
+                    refModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                refs.Success = Helpers.ErrorDetails(ex);
+                refModel.Success = Helpers.ErrorDetails(ex);
             }
-            return refs;
-        }
-
-        [HttpGet]
-        public RefItem Get(string refCode, string refType)
-        {
-            var refItem = new RefItem();
-            try
-            {
-                using (WebSiteContext db = new WebSiteContext())
-                {
-                    Ref dbref = db.Refs.Where(r => r.RefType == refType && r.RefCode == refCode).FirstOrDefault();
-                    if (dbref == null)
-                        refItem.Success = "ref not found";
-                    else
-                    {
-                        refItem.RefCode = dbref.RefCode;
-                        refItem.RefDescription = dbref.RefDescription;
-                        refItem.Success = "ok";
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                refItem.Success = Helpers.ErrorDetails(ex);
-            }
-            return refItem;
+            return refModel;
         }
 
         [HttpPost]
@@ -443,7 +418,7 @@ namespace Bruchem.Api
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
         private readonly string imagesPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Images");
 
-        [HttpPost]
+        [HttpGet]
         public LoadImageSuccessModel AddImage(string articleId, string imageFullFileName)
         {
             var imageModel = new LoadImageSuccessModel();

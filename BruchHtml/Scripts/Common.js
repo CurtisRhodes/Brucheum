@@ -53,23 +53,48 @@ function getParams() {
     }
     return params;
 }
+
 function loadSettings() {
-    console.log("entering loadSettings");
+    document.title = "loading settings : OggleBooble";
     $.ajax({
         type: "GET",
-        url: "Data/Settings.xml",
+        url: "/Data/Settings.xml",
         dataType: "xml",
-        success: function (xml) {
-            console.log("loadSettings success");
-            $(xml).find('setting').each(function () {
+        success: function (settingsXml) {
+            $(settingsXml).find('setting').each(function () {
                 settingsArray[$(this).attr('name')] = $(this).attr('value');
             });
         },
-        error: function (jqXHR, exception) {
-            alert("getSettings jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, 444, "loadOggleSettings")) logError("XHR", 444, errMsg, "loadOggleSettings");
         }
     });
 }
+
+function changeFavoriteIcon(icon) {
+    try {
+        let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        switch (icon) {
+            case "centerfold": link.href = 'https://ogglebooble.com/images/playboyballon.png'; break;
+            case "porn": link.href = 'https://ogglebooble.com/images/cslips03.png'; break;
+            case "soft": link.href = 'https://ogglebooble.com/images/redwoman.ico'; break;
+            case "loading":
+                link.href = "https://ogglebooble.com/images/loader.gif";
+                link.type = 'image/gif';
+                //link = "<link rel='icon' href='https://ogglebooble.com/images/loader.gif' type='image/gif' />";
+                break;
+            case "redBallon": link.href = 'Images/favicon.png'; break;
+            default: link.href = 'Images/Brucheum.ico'; break;
+        }
+        document.getElementsByTagName('head')[0].appendChild(link);
+    } catch (e) {
+        logError("CAT", 3992, e, "changeFavoriteIcon");
+    }
+}
+
 function displayStatusMessage(msgCode, message) {
 
     var severityClassName;
@@ -148,9 +173,6 @@ function logActivity(changeLogModel) {
         }
     });
 }
-
-
-
 
 // HITCOUNTER
 function logVisit() {

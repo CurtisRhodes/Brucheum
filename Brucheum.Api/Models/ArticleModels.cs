@@ -56,11 +56,17 @@ namespace Bruchem.Api
     {
         public RefModel()
         {
-            RefItems = new List<RefItem>();
+            RefItems = new List<RefModelItem>();
         }
-        public List<RefItem> RefItems { get; set; }
+        public List<RefModelItem> RefItems { get; set; }
         public string Success { get; set; }
     }
+    public class RefModelItem
+    {
+        public string RefCode { get; set; }
+        public string RefDescription { get; set; }
+    }
+
     public class RefItem
     {
         public string RefType { get; set; }
