@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using System.IO;
 using System.Configuration;
+using System.Drawing;
 
 namespace Bruchem.Api
 {
@@ -418,34 +419,57 @@ namespace Bruchem.Api
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
         private readonly string imagesPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Images");
 
-        [HttpGet]
-        public LoadImageSuccessModel AddImage(string articleId, string imageFullFileName)
+
+        public class ImageData
+        {
+            public string ArticleId { get; set; }
+            public string FileName { get; set; }
+            public object Data { get; set; }
+        }
+
+        [HttpPut]
+        public LoadImageSuccessModel AddImage(ImageData data)
         {
             var imageModel = new LoadImageSuccessModel();
             try
             {
-                string fullPathImageFileName = Path.Combine(imagesPath, imageFullFileName);
-                Byte[] byteArray = Request.Content.ReadAsByteArrayAsync().Result;
-                File.WriteAllBytes(fullPathImageFileName, byteArray);
+                // data:image/jpeg;base64,
+                string imageFullFileName = Path.Combine(imagesPath, data.FileName);
+
+                string trimData = data.Data.ToString().Substring(23);
+
+                byte[] byteArray = Convert.FromBase64String(trimData);
+                //Byte[] byteArray = data.Data.ReadAsByteArrayAsync().Result;
+                File.WriteAllBytes(imageFullFileName, byteArray);
 
                 // USE WEBREQUEST TO UPLOAD THE FILE
                 FtpWebRequest webRequest = null;
-                    string destPath = ftpHost + articleImagesFolder;
+                string destPath = ftpHost + articleImagesFolder;
 
-                    if (!FtpUtilies.DirectoryExists(destPath))
-                        FtpUtilies.CreateDirectory(destPath);
+                if (!FtpUtilies.DirectoryExists(destPath))
+                    FtpUtilies.CreateDirectory(destPath);
 
-                    webRequest = (FtpWebRequest)WebRequest.Create(destPath + "/" + imageFullFileName);
-                    webRequest.Credentials = networkCredentials;
-                    webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                webRequest = (FtpWebRequest)WebRequest.Create(destPath + "/" + data.FileName);
+                webRequest.Credentials = networkCredentials;
+                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
+                using (Stream requestStream = webRequest.GetRequestStream())
+                {
+                    byte[] fileContents = System.IO.File.ReadAllBytes(imageFullFileName);
+                    webRequest.ContentLength = fileContents.Length;
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+
 
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    Article article = db.Articles.Where(a => a.Id == articleId).FirstOrDefault();
-                    article.ImageName = imageFullFileName;
+                    Article article = db.Articles.Where(a => a.Id == data.ArticleId).FirstOrDefault();
+                    article.ImageName = data.FileName;
                     db.SaveChanges();
                 }
-    
+
                 imageModel.Success = "ok";
             }
             catch (Exception ex)

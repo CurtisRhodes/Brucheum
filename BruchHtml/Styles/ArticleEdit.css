@@ -221,6 +221,10 @@ Matching lines: 8 Matching files: 8 Total files searched: 158*/
 .imageUpload {
     height: 32px;
     width: 100%;
+    border: solid thin black;
+    border-radius: 5px;
+    padding: 3px;
+    margin-right:14px;
 }
 
 .btnRow {
