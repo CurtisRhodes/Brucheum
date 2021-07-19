@@ -1,4 +1,4 @@
-namespace Bruchem.Api
+namespace Bruchueum.Api
 {
     using System;
     using System.Data.Entity;

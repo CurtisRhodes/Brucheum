@@ -55,7 +55,7 @@ function getParams() {
 }
 
 function loadSettings() {
-    document.title = "loading settings : OggleBooble";
+    document.title = "loading settings : Brucheum";
     $.ajax({
         type: "GET",
         url: "/Data/Settings.xml",
@@ -64,6 +64,7 @@ function loadSettings() {
             $(settingsXml).find('setting').each(function () {
                 settingsArray[$(this).attr('name')] = $(this).attr('value');
             });
+            document.title = "welcome : Brucheum";
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);

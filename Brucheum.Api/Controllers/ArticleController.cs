@@ -9,13 +9,14 @@ using System.IO;
 using System.Configuration;
 using System.Drawing;
 
-namespace Bruchem.Api
+namespace Bruchueum.Api
 {
     [EnableCors("*", "*", "*")]
     public class ArticleController : ApiController
     {
+        private readonly string articleImagesFolder = ConfigurationManager.AppSettings["ImageRepository"];
+
         [HttpGet]
-        //let url = settingsArray.ApiServer + "api/Article/GetArticleList?pageLen=" + numArticles + "&page=1&filterType=null&filter=null";
         public ArticlesModel GetArticleList(int pageLen, int page, string filterType, string filter)
         {
             var articleModel = new ArticlesModel();
@@ -45,7 +46,7 @@ namespace Bruchem.Api
                             Contents = vwArticle.Content,
                             ByLine = vwArticle.ByLine,
                             ByLineRef = vwArticle.ByLineRef,
-                            ImageName = vwArticle.ImageName,
+                            ImageName = articleImagesFolder + vwArticle.ImageName,
                             Updated = vwArticle.LastUpdated.ToShortDateString(),
                             Created = vwArticle.Created,
                             LastUpdated = vwArticle.LastUpdated,

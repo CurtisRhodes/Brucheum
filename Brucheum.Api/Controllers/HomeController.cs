@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
-namespace Bruchem.Api
+namespace Bruchueum.Api
 {
     [EnableCors("*", "*", "*")]
     public class HomeController : ApiController

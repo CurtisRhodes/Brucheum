@@ -28,10 +28,9 @@ function getArticleList(filterType, filter) {
 
         if (filterType === "latest")
             $('#divlistHeader').html("Latest Articles");
-        else {
-            getListHeader(filterType);
-        }
-
+        //else {
+        //    getListHeader(filterType);
+        //}
 
         if (showMore === false)
             $('#articleList').html('');
@@ -39,27 +38,60 @@ function getArticleList(filterType, filter) {
             page += pageLen;
 
         $.ajax({
-            url: settingsArray.ApiServer + "/api/DbArticle?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
+            url: settingsArray.ApiServer + "/api/Article/GetArticleList?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
             type: "get",
-            success: function (list) {
-                $('#loadingGif').hide();
+            success: function (articles) {
+                if (articles.Success == "ok") {
+                    //var webService = "https://api.curtisrhodes.com";
+                    articleCount = 0;
+                    $.each(articles.ArticleList, function (idx, article) {
+                        try {
+                            //var imgSrc = webService + "/App_Data/Images/" + article.ImageName;
+                            var articleHref = "Article.html?ArticleViewId=" + article.Id;
+                            $('#articleListContainer').append("<div class='articleListItem'>\n" +
+                                "<div id='divImg'><a href=" + articleHref + "><img src=https://" + article.ImageName + "></a></div>\n" +
+                                "<div class='articleDetail'>\n" +
+                                "<div class='articleTopRow'>\n" +
+                                "<div class='articleRowItemLeft'><a href=Article.html?ArticleList=Category&filter=" + article.CategoryLabel +
+                                "&filterType=Category&filter=" + article.CategoryRef + ">" + article.Category + "</a></div>\n" +
+                                "<div class='articleRowItemCenter'><a href=" + articleHref + ">" + article.Title + "</a></div>\n" +
+                                "<div class='articleRowItemRight'>" + article.Updated + "</div>\n" +
+                                "</div>\n" +  // top row
+                                "<a href=" + articleHref + "><div class='articleSummary'>" + article.Summary + "</div></a>\n" +
+                                "<div class='articleBottomRow'>\n" +
+                                "<div class='articleRowItemLeft'> By: <a href=Article.html?ArticleList=Byline&filter=" + article.ByLineLabel +
+                                "&filterType=Byline&filter=" + article.ByLineRef + ">" + article.ByLine + "</a></div>\n" +
+                                "<div class='articleRowItemRight'><a href=Article.html?ArticleEditId=" + article.Id + ">edit</a></div>\n" +
+                                "</div>\n" +  // bottom row
+                                "</div>\n" +  // article detail
+                                "</div>"  // article listItem
+                            );
+                            articleCount++;
+                        } catch (e) {
+                            alert("formatArticleJog error: " + e);
+                        }
+                    });
+                    $('#loadingGif').hide();
+                    //list.forEach(formatArticleJog);
 
-                articleCount = 0;
-                list.forEach(formatArticleJog);
 
-                if (articleCount < pageLen)
-                    $('#divMoreButton').hide();
+
+                    if (articleCount < pageLen)
+                        $('#divMoreButton').hide();
+                    else
+                        $('#divMoreButton').show();
+
+                    $('#hrefAddNew').show();
+                    $('#divBookPannel').show();
+
+                    //if (showMore) {
+                    //    //var mch = $('#middleColumn').height();
+                    //}
+
+                    $('#articleListContainer').css('height', parseInt($('#middleColumn').css('height')) - 100);
+                }
                 else
-                    $('#divMoreButton').show();
-
-                $('#hrefAddNew').show();
-                $('#divBookPannel').show();
-
-                //if (showMore) {
-                //    //var mch = $('#middleColumn').height();
-                //}
-
-                $('#articleListContainer').css('height', parseInt($('#middleColumn').css('height')) - 100);
+                    alert("getArticleList: " + articles.Success);
             },
             error: function (jqXHR, exception) {
                 alert("getArticleList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -76,7 +108,8 @@ function getArticleList(filterType, filter) {
             //    }
             //}
         });
-    } catch (e) {
+    }
+    catch (e) {
         $('#loadingGif').hide();
         displayStatusMessage("error", "tERROR" + e);
         alert("getArticleList catch: " + e);
