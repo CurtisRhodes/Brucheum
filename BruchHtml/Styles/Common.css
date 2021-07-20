@@ -1,6 +1,6 @@
 :root {
     --brucheumBlue: #74bac3;
-    --brucheumBackgroundColor: #fef; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
+    --brucheumBackgroundColor: #eeddbb; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
     --oggleContainerBackgroundColor: #fefefe; /*  #f8e8e8 */
     --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
     --ogglePurple: #79078f;
@@ -22,9 +22,34 @@ body {
     font-size: var(--normalFont);
 }
 
+.caveImage {
+    border: solid #444;
+    background-image: url("/Images/caveStairsWide.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: none;
+}
+
+.vMenu {
+    padding-top: 33px;
+    padding-left: 33px;
+    display: none;
+}
+
+.tabvMenuItem {
+    padding: 13px;
+}
+
+    .tabvMenuItem img {
+        width: 166px;
+        height: 62px;
+        cursor: pointer;
+    }
+
 .threeColumnLayout {
     width: 100%;
-    display: flex;    
+    display: flex;  
+    border-left:dashed red 3px;
 }
 .threeColumnLayout #leftColumn {
     float: left;
@@ -107,7 +132,7 @@ body {
     position: absolute;
     left: 150px;
     top: 140px;
-    height: 110px;
+    height: 25px;
     z-index: 31;
 }
 

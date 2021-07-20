@@ -1,4 +1,28 @@
-﻿#divMyBooks {
+﻿.crudContainer {
+    width: 48%;
+}
+
+#txtChapterOrder {
+    width: 50px;
+}
+
+#txtChapterTitle {
+    width: 70%;
+}
+
+#chapterList {
+    height: 47%;
+    overflow-y: auto;
+    margin-top: 4px;
+}
+
+#klude123 {
+    height: 100%;
+}
+
+
+
+#divMyBooks {
     margin-top: 55px;
     width: 100%;
     display: flex;
@@ -11,8 +35,8 @@
     margin-right: 70px;
 }
 .pageTitle {
-    margin-top: 44px;
-    font-size: 34px;
+    margin-top: 14px;
+    font-size: 33px;
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
@@ -201,6 +225,8 @@
     height: 666px;
     overflow-y: auto;
 }
+
+
 
 
 

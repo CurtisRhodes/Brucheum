@@ -1,4 +1,8 @@
-﻿function showBooks() {
+﻿let bjsBookId = 0; bjschapterId = 0, pageIndex = 0;
+let chapterArray = [], pages = [];
+let chapterObject = {};
+
+function showBooks() {
     $("#tanBlue").hide();
     $("#middleColumn").html(`
         <div class="pageTitle" id = "divBooksWriting" > Books I am writing</div>
@@ -24,7 +28,7 @@ function showChapterTree(bookId) {
             <div id="bookTitle" class="pageTitle" onclick='javascript:goRead(0,0,0)'></div>
             <div>
                 <div id="divToC" class="toCcontainer">
-                    <div id="tocLoadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
+                    <div id="tocLoadingGif"><img class="loadingGif" src="Images/loader.gif" /></div>
                 </div>
             </div>`
         );
@@ -70,9 +74,43 @@ function showChapterTree(bookId) {
     }
 }
 
+function goRead(bookId, chapterId) {
+    bjsBookId = bookId;
+    bjschapterId = chapterId;
+    //window.location.href = "/BookDb/read?b=" + bookId + "&c=" + chapterId + "&t=" + type + "&id=" + sectionId;
+    //kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='
+    //goRead(" + bookId + ", " + chapter.Id + ", 0)'>" + chapter.ChapterOrder + ". " + chapter.ChapterTitle + "</div>";
+    switch (bookId) {
+        case 1: // the blond jew
+            $("#middleColumn").html(pauapStyle());
+            loadBookIntoChapterArray();
+            //showPages();
+            //if (User.IsInRole("Book Editor"))
+            $("#middleColumn").append("<div id='tocEdit'><a href='javascript:editBook(" + bjsBookId + ")'>Edit</a></div>");
+            break;
+        default:
+            alert("bookId: " + bjsBookId);
+    }
+    resizeBookPage();
+    $(window).resize(function () {
+        resizeBookPage();
+    });
+}
+
+
 function showPage(pageNumber) {
+    pageIndex = 0;
+    if (bjsBookId == 1) {
+        $('#bookLeftContent').html(pages[pageIndex++]);
+        $('#bookRightContent').html(pages[pageIndex++]);
+    }
+    if (bjsBookId == 3) {
 
+        alert("pages.length: " + pages.length)
 
+        $('#twoPageBookStyleLeftContent').html(pages[pageIndex++]);
+        $('#twoPageBookStyleRightContent').html(pages[pageIndex++]);
+    }
 }
 
 function setStyle() {
@@ -121,38 +159,35 @@ function toggleTocSection(id) {
 
 function redirectToEdit() {
     //window.location.href = "/BookDb/Edit?book=" + bookId;
-    window.location.href = "/BookDb/Write?book=" + bookId;
+    //window.location.href = "/BookDb/Write?book=" + bookId;
 }
 
-let bjsBookId = 0; bjschapterId = 0, pageIndex = 0;
-let chapterArray = [], pages = [];
-let chapterObject = {};
-function goRead(bookId, chapterId, sectionId) {
-    bjsBookId = bookId;
-    bjschapterId = chapterId;
-    //window.location.href = "/BookDb/read?b=" + bookId + "&c=" + chapterId + "&t=" + type + "&id=" + sectionId;
-    //kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='
-    //goRead(" + bookId + ", " + chapter.Id + ", 0)'>" + chapter.ChapterOrder + ". " + chapter.ChapterTitle + "</div>";
-    switch (bookId) {
-        case 1: // the blond jew
-            $("#middleColumn").html(pauapStyle());
-            loadBookIntoChapterArray(bookId, chapterId);
-            //if (User.IsInRole("Book Editor"))
-                $("#middleColumn").append("<div id='tocEdit'><a href='redirectToEdit()'>Edit</a></div>");
-            break;
-        default:
-            alert("bookId: " + bookId);
-    }
+function resizeBookPage() {
+    // set page width
+    var winW = $(window).width();
+    var lcW = $('#leftColumn').width();
+    var rcW = $('#rightColumn').width();
+    $('#middleColumn').width(winW - lcW - rcW);
+
+    //set page height
+    var winH = $(window).height();
+    var headerH = $('header').height();
+    $('#middleColumn').css("height", winH - headerH - 5);
+    $('#bookLeftContent').css('height', winH - headerH - 288);
+
+    $('#testMsg1').html("mch: " + $('#middleColumn').height());
+    $('#testMsg2').html("bcc: " + $('#bookLeftContent').height());
+    $('#testMsg3').html("3cl: " + $('.threeColumnLayout').height());
 }
 
-function loadBookIntoChapterArray(bookId, chapterId) {
+function loadBookIntoChapterArray() {
     try {
         chapterArray = [];
         var contents;
         $('#bookContentsLoadingGif').show();
         $.ajax({
             type: "get",
-            url: settingsArray.ApiServer + "/api/BookDb/GetChapterTree?bookId=" + bookId,
+            url: settingsArray.ApiServer + "/api/BookDb/GetChapterTree?bookId=" + bjsBookId,
             success: function (book) {
                 if (book.success != "ok")
                     alert("loadBook: " + book.success);
@@ -190,7 +225,7 @@ function loadBookIntoChapterArray(bookId, chapterId) {
 
                     //alert("pages.length: " + pages.length + "   pages[0].len: " + pages[0].length + "  pages[1].len: " + pages[1].length);
                     //alert("breakChapterIntoPages(" + chapterId + ")");
-                    breakChapterIntoPages(bookId, chapterId, chapterObject);
+                    breakChapterIntoPages();
                 }
             },
             error: function (jqXHR, exception) {
@@ -202,9 +237,9 @@ function loadBookIntoChapterArray(bookId, chapterId) {
     }
 }
 
-function breakChapterIntoPages(chapterIndex) {
+function breakChapterIntoPages() {
     //alert("breakChapterIntoPages  chapterId: " + chapterIndex +"  chapterArray.length: " + chapterArray.length)
-    let chapterObject = chapterArray[chapterIndex];
+    let chapterObject = chapterArray[];
 
     $('#paupaChapterTitle').html("Chapter " + chapterObject.ChapterOrder + " " + chapterObject.ChapterTitle);
 
@@ -221,20 +256,21 @@ function breakChapterIntoPages(chapterIndex) {
         pageEnd += 1;
         pageStart = pageEnd;
         pageEnd += pageCharCount;
+        //if (bjschapterId == 11) { }
     }
 
-    pageIndex = 0;
-    if (bjsBookId == 1) {
-        $('#bookLeftContent').html(pages[pageIndex++]);
-        $('#bookRightContent').html(pages[pageIndex++]);
-    }
-    if (bjsBookId == 3) {
+    //pageIndex = 0;
+    //if (bjsBookId == 1) {
+    //    $('#bookLeftContent').html(pages[pageIndex++]);
+    //    $('#bookRightContent').html(pages[pageIndex++]);
+    //}
+    //if (bjsBookId == 3) {
 
-        alert("pages.length: " + pages.length)
+    //    alert("pages.length: " + pages.length)
 
-        $('#twoPageBookStyleLeftContent').html(pages[pageIndex++]);
-        $('#twoPageBookStyleRightContent').html(pages[pageIndex++]);
-    }
+    //    $('#twoPageBookStyleLeftContent').html(pages[pageIndex++]);
+    //    $('#twoPageBookStyleRightContent').html(pages[pageIndex++]);
+    //}
 
     //<div id="twoPageBookStyle" class="hiddenContainer">
     //    <div class="flexContainer">
@@ -249,54 +285,36 @@ function breakChapterIntoPages(chapterIndex) {
 
 function pauapStyle() {
     return `
-    <div class="threeColumnArray">
-        <div id="leftColumn"></div>
-        <div id="middleColumn">
-            <div id="bookTitle" class="pageTitle" onclick="redirectToToC()">
-                <div id="bookContentsLoadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
-            </div>
-            <div id="bookContentsContainer" class="block">
-                <div id="paupaStyleContainer" class="paupaStyle">
-                    <div class="flexContainer">
-                        <img class="floatLeft" src="Images/PaupaBook/book-cornertopleft.png" />
-                        <div class="paupaBorderContainer">
-                            <img class="floatLeft full" src="Images/PaupaBook/book-topLeft.png" />
-                            <div id="paupaChapterTitle" class="absTitle"></div>
-                        </div>
-                        <img class="floatLeft" src="Images/PaupaBook/book-innerspinetop.png" />
-                        <img class="floatLeft paupaBorderContainer" src="Images/PaupaBook/book-topRight.png" />
-                        <img class="floatLeft" src="Images/PaupaBook/book-cornertopright.png" />
+        <div id="bookTitle" class="pageTitle clickable" onclick="redirectToToC()">
+            <div id="bookContentsLoadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
+        </div>
+        <div id="bookContentsContainer" class="block">
+            <div id="paupaStyleContainer" class="paupaStyle">
+                <div class="flexContainer">
+                    <img class="floatLeft" src="Images/PaupaBook/book-cornertopleft.png" />
+                    <div class="paupaBorderContainer">
+                        <img class="floatLeft full" src="Images/PaupaBook/book-topLeft.png" />
+                        <div id="paupaChapterTitle" class="absTitle"></div>
                     </div>
-                    <div class="flexContainer paupaPageColor">
-                        <img class="floatLeft" src="Images/PaupaBook/book-left.png" />
-                        <div class="floatLeft paupaPage" id="bookLeftContent"></div>
-                        <img class="floatLeft" src="Images/PaupaBook/book-innerspine.jpg" />
-                        <div class="floatLeft paupaPage" id="bookRightContent"></div>
-                        <img class="floatLeft" src="Images/PaupaBook/book-right.png" />
-                    </div>
-                    <div class="flexContainer">
-                        <img class="floatLeft" src="Images/PaupaBook/book-cornerbleft.png" />
-                        <img class="floatLeft paupaBorderContainer clickable" id="bookBottomLeft" src="Images/PaupaBook/book-bottomleft.png" onclick="javascritpt:pagePrevious()" />
-                        <img class="floatLeft" src="Images/PaupaBook/book-innerspinebottom.png" />
-
-                        <img class="floatLeft paupaBorderContainer clickable" id="bookBottomRight" src="Images/PaupaBook/book-bottomright.png" 
-                            onclick="pageNext()" />
-                        <img class="floatLeft" src="Images/PaupaBook/book-cornerbright.png" />
-                    </div>
+                    <img class="floatLeft" src="Images/PaupaBook/book-innerspinetop.png" />
+                    <img class="floatLeft paupaBorderContainer" src="Images/PaupaBook/book-topRight.png" />
+                    <img class="floatLeft" src="Images/PaupaBook/book-cornertopright.png" />
                 </div>
-
-                <div id="twoPageBookStyle" class="hiddenContainer">
-                    <div class="flexContainer">
-                        <div class="floatLeft  " id="twoPageBookStyleLeftContent"></div>
-                    </div>
-                    <div class="flexContainer">
-                        <div class="floatLeft" id="twoPageBookStyleRightContent"></div>
-                    </div>
+                <div class="flexContainer paupaPageColor">
+                    <img class="floatLeft" src="Images/PaupaBook/book-left.png" />
+                    <div class="floatLeft paupaPage" id="bookLeftContent"></div>
+                    <img class="floatLeft" src="Images/PaupaBook/book-innerspine.jpg" />
+                    <div class="floatLeft paupaPage" id="bookRightContent"></div>
+                    <img class="floatLeft" src="Images/PaupaBook/book-right.png" />
                 </div>
-
-                <div id="fullBookStyleContainer" class="hiddenContainer">
-                    <div id="fullBookStyleContents" class="cosmic01">
-                    </div>
+                <div class="flexContainer">
+                    <img class="floatLeft" src="Images/PaupaBook/book-cornerbleft.png" />
+                    <img class="floatLeft paupaBorderContainer clickable" id="bookBottomLeft" src="Images/PaupaBook/book-bottomleft.png" 
+                        onclick="pagePrevious()" />
+                    <img class="floatLeft" src="Images/PaupaBook/book-innerspinebottom.png" />
+                    <img class="floatLeft paupaBorderContainer clickable" id="bookBottomRight" src="Images/PaupaBook/book-bottomright.png" 
+                        onclick="pageNext()" />
+                    <img class="floatLeft" src="Images/PaupaBook/book-cornerbright.png" />
                 </div>
             </div>
         </div>`;
@@ -365,10 +383,10 @@ function calcPageCharCount() {
 }
 
 function redirectToEdit() {
-
+    $("#middleColumn").html(editContainer());
     //window.location.href = "/BookDb/Write?book=" + bookId;
 }
 
 function redirectToToC() {
-    window.location.href = "/BookDb/ToC?book=" + bookId;
+    //window.location.href = "/BookDb/ToC?book=" + bookId;
 }

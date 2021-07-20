@@ -12,14 +12,16 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
 
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/VerifyConnection.js"></script>
     <script src="Scripts/Headers.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/Logging.js"></script>
+    <script src="Scripts/Footer.js"></script>
     <script src="Scripts/Books.js"></script>
-    <script src="Scripts/Snippets.js"></script>
+    <script src="Scripts/BookEdit.js"></script>
 
     <link href="Styles/Carousel.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet">
@@ -29,31 +31,6 @@
     <link href="Styles/Footer.css" rel="stylesheet">
 </head>
 <body>
-    <style>
-        body {
-            background-color: #eeddbb;
-        }
-
-        .caveImage {
-            border: solid #444;
-            background-image: url("Images/caveStairsWide.jpg");
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-        .vMenu {
-            padding-top: 33px;
-            padding-left: 33px;
-        }
-        .tabvMenuItem {
-            padding: 13px;
-        }
-        .tabvMenuItem img {
-            width: 166px;
-            height: 62px;
-            cursor: pointer;
-        }
-
-    </style>
     <header></header>
     <div class="threeColumnLayout">
         <div id="leftColumn">
@@ -82,7 +59,7 @@
             </div>
         </div>
         <div id="middleColumn">
-            <div id="bruchLanding" class="caveImage">
+            <div id="bruchCaveImage" class="caveImage">
                 <div id="customMessage" class="displayHidden customMessageContainer"></div>
                 <div id="divStatusMessage"></div>
                 <div id="dots" style="color:white"></div>
@@ -103,17 +80,17 @@
         </div>
         <div id="rightColumn"></div>
     </div>
-    <div w3-include-html="Snippets/Footer.html"></div>
+    <footer></footer>
     <script>
         var subdomain;
         var permissionsSet = false;
         $(document).ready(function () {
             $('#carosuelContainer').hide();
-            includeHTML();
+            displayFooter();
 
             params = getParams();
             if (params.spa == undefined)
-                subdomain = "bruch";
+                subdomain = "Brucheum";
             else
                 subdomain = params.spa;
             setHeader(subdomain);
@@ -130,13 +107,9 @@
                         if (connectionVerified) {
                             clearInterval(connectionVerifiedLoop);
                             $('#dots').html('');
-                            if (subdomain == "bruch") {
-                                loadAndStartCarousel();
-                                $('#rightColumn').append(showBookPanel());
-                            }
-                            else
-                                displaySpaPage(subdomain);
-                            //    verifySession(spaPageId);
+
+                            displaySpaPage(subdomain);
+                            //verifySession(spaPageId);
                             //logVisit();
                             //setUserPermissions();
                         }
@@ -152,6 +125,12 @@
 
         function displaySpaPage(subdomain) {
             switch (subdomain) {
+                case "Brucheum":
+                    $('#bruchCaveImage').show();                    
+                    $('#tanBlue').show();
+                    loadAndStartCarousel();
+                    $('#rightColumn').append(showBookPanel());
+                    break;
                 case "Books":
                     showBooks();
                     break;

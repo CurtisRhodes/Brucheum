@@ -176,7 +176,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 }
             }
             ip0Busy = false;
-        }, 1855);
+        }, 4000);
     }
     catch (e)
     {
