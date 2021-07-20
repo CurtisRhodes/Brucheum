@@ -210,7 +210,7 @@ function getAlbumImages(folderId) {
 
                             if (isNullorUndefined(folder.FolderImage)) {
                                 imgSrc = "/Images/binaryCodeRain.gif";
-                                logError("FIM", folder.FolderId, "FolderImage missing", "getAlbumImages");
+                                logError("FIM", folder.FolderId, "FolderImage missing", "get AlbumImages");
                             }
                             else
                                 imgSrc = settingsImgRepo + folder.FolderImage;
@@ -230,21 +230,21 @@ function getAlbumImages(folderId) {
                     //$('#footerMessage').html(": " + imagesModel.Files.length);
                     $('#folderCommentButton').fadeIn();
                     let delta = (Date.now() - getImagesStart) / 1000;
-                    console.log("GetAlbumImages took: " + delta.toFixed(3));
+                    console.log("Get albumImages took: " + delta.toFixed(3));
                     $('.footer').show();
                 }
                 else {
-                    logError("AJX", folderId, albumImageInfo.Success, "getAlbumImages");
+                    logError("AJX", folderId, albumImageInfo.Success, "get albumImages");
                 }
             },
             error: function (jqXHR) {
                 $('#albumPageLoadingGif').hide();
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "getAlbumImages")) logError("XHR", folderId, errMsg, "getAlbumImages");
+                if (!checkFor404(errMsg, folderId, "get albumImages")) logError("XHR", folderId, errMsg, "get albumImages");
             }
         });
     } catch (e) {
-        logError("CAT",folderId, e, "getAlbumImages");
+        logError("CAT", folderId, e, "get albumImages");
     }
 }
 
@@ -335,10 +335,10 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
             }
             else {
                 if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {
-                    logError("MIS", folderId, albumInfo.Success, "getAlbumImages");
+                    logError("MIS", folderId, albumInfo.Success, "get albumImages");
                     window.location.href = "Index.html";
                 }
-                logError("AJX", folderId, albumInfo.Success, "getAlbumPageInfo");
+                logError("AJX", folderId, albumInfo.Success, "get albumImages");
             }
         },
         error: function (jqXHR) {

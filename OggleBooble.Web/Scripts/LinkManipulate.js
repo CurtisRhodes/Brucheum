@@ -85,8 +85,13 @@ function perfomCopyLink(linkId) {
 }
 
 function showMoveLinkDialog(linkId, folderId, menuType, imgSrc) {
-    showDirTreeDialog(imgSrc, menuType, "Move Link");
-    $('#linkManipulateClick').html("<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\"," + folderId + ")'>Move</div>");
+    if (isNullorUndefined(folderId)) {
+        alert("folderId undefined:")
+    }
+    else {
+        showDirTreeDialog(imgSrc, menuType, "Move Link");
+        $('#linkManipulateClick').html("<div class='roundendButton' onclick='moveFile(\"MOV\",\"" + linkId + "\"," + folderId + ")'>Move</div>");
+    }
 }
 
 function showArchiveLinkDialog(linkId, folderId, imgSrc, menuType) {
