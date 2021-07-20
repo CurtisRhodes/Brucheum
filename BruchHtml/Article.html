@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Get a Gig</title>
+    <title>Brucheum</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='shortcut icon' href='Images/Brucheum.ico' type='image/x-icon' />
 
@@ -128,7 +128,9 @@
                             <div class="editArticleRow">
                                 <div class="editArticleLabel">Image:</div>
                                 <div class="editArticleInput">
-                                    <input id="uplImage" type="file" class="imageUpload" onchange="loadImage($(this).val())" /></div>
+                                    <input id="uplImage" type="file" class="displayHidden" onchange="loadImage($(this).val())" />
+                                    <label for="uplImage"><span class="imageUpload">select</span><span id="chosenImageName"></span></label>
+                                </div>
                             </div>
                             <div class="editArticleRow">
                                 <div class="editArticleLabel">Meta Tag:</div>

@@ -1,11 +1,11 @@
+using System;
+using System.Data.Entity;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 namespace WebApi.AspNet.DataContext
 {
-    using System;
-    using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-    using System.ComponentModel.DataAnnotations;
-    using System.Collections.Generic;
 
     public partial class AspNetContext : DbContext
     {

@@ -54,12 +54,11 @@ function bind(response) {
 
         $('#txtTitle').val(response.Title);
         $('#ddCategory').val(response.CategoryRef);
-        //alert("$('#ddCategory').val(): " + $('#ddCategory').val());
-        //alert("BylineRef: " + response.ByLineRef)
         $('#ddAvatars').val(response.ByLineRef);
-        $('#txtUpdated').val(response.LastUpdated);
+        $('#txtUpdated').val(response.Updated);
         $('#articleSummaryEditor').summernote('code', response.Summary);
         $('#articleContentEditor').summernote('code', response.Contents);
+        $('#chosenImageName').text(response.ImageName);
         article.ImageName = response.ImageName;
         $('#imgArticleJog').attr("src", settingsArray.ImageArchive + response.ImageName);
 
@@ -149,7 +148,7 @@ function updateArticle(view) {
         unBind();
         $.ajax({
             type: "PUT",
-            url: settingsArray.ApiServer + "/api/Article",
+            url: settingsArray.ApiServer + "/api/Article/UpdateArticle",
             //async: "false",
             //dataType: "json",
             data: article,
@@ -160,7 +159,7 @@ function updateArticle(view) {
                     else
                         displayStatusMessage("ok", "updated");
                 else
-                    displayStatusMessage("ok", "updateArticle: " + success);
+                    displayStatusMessage("error", "updateArticle: " + success);
                 $('#updateArticleSpinner').hide();
             },
             error: function (jqXHR, exception) {
@@ -174,13 +173,11 @@ function updateArticle(view) {
 
 function getCategories() {
     $.ajax({
-        url: settingsArray.ApiServer + "/api/Ref/Get?refType=CAT",
+        url: settingsArray.ApiServer + "/api/Ref/GetRefsForRefType?refType=CAT",
         type: "get",
-        dataType: "json",
-        success: function (response) {
+        success: function (refModel) {
             $('#ddCategory').html("<option class= 'ddOption' value ='0'>-- select category --</option >");
-            $.each(response, function (idx, obj) {
-                //obj = obj.split(",");
+            $.each(refModel.RefItems, function (idx, obj) {
                 $('#ddCategory').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
             });
         },
@@ -192,12 +189,11 @@ function getCategories() {
 
 function getAvatars() {
     $.ajax({
-        url: settingsArray.ApiServer + "/api/Ref/Get?refType=AVT",
+        url: settingsArray.ApiServer + "/api/Ref/GetRefsForRefType?refType=AVT",
         type: "get",
-        dataType: "json",
         success: function (response) {
             $('#ddAvatars').html("<option class= 'ddOption' value ='0'>-- select avatar --</option >");
-            $.each(response, function (idx, obj) {
+            $.each(response.RefItems, function (idx, obj) {
                 //obj = obj.split(",");
                 $('#ddAvatars').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
             });
@@ -217,31 +213,38 @@ $('#txtMetaTag').blur(function () {
 });
 
 function loadImage(imageFullFileName) {
-    //article.ImageName = postImage($('#uplImage').val());
-    //alert("article.ImageName: " + article.ImageName)
-    //$('#imgArticleJog').attr("src", settingsArray.ApiServer + "/App_Data/Images/" + article.ImageName);
-    //setTimeout(function () { adjust() }, 1000);
-    let url = settingsArray.ApiServer + "api/Images/AddImage?imageFullFileName=" + imageFullFileName;
-    $.ajax({
-        type: "POST",
-        url: url,
-        success: function (response) {
-            if (response.Success === "ok") {
-                bind(response);
-                article.ImageName = response.ImageName;
-                $('#btnSave').text("Update");
-                //setTimeout(function () { adjust() }, 1000);
+
+    var input = document.getElementById("uplImage");
+    var fReader = new FileReader();
+    fReader.readAsDataURL(input.files[0]);
+    fReader.onloadend = function (event) {
+       let img = document.getElementById("imgArticleJog");
+        img.src = event.target.result;
+
+        let url = settingsArray.ApiServer + "/api/Image/AddImage";
+        $.ajax({
+            type: "PUT",
+            data: {
+                ArticleId: article.Id,
+                FileName : input.files[0].name,
+                Data: img.src
+            },
+            url: url,
+            success: function (response) {
+                if (response.Success === "ok") {
+                    //bind(response);
+                    //article.ImageName = response.ImageName;
+                    //$('#btnSave').text("Update");
+                    //setTimeout(function () { adjust() }, 1000);
+                }
+                else
+                    alert("getArticle: " + response.Success);
+            },
+            error: function (jqXHR, exception) {
+                alert("loadImage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
-            else
-                alert("getArticle: " + response.Success);
-        },
-        error: function (jqXHR, exception) {
-            alert("loadImage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-        }
-    });
-
-
-
+        });
+    }
 }
 
 function adjust() {

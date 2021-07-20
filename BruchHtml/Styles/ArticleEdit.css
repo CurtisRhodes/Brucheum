@@ -175,8 +175,9 @@ Matching lines: 8 Matching files: 8 Total files searched: 158*/
     /*height: 28px;
     margin: 6px;*/
     padding: 3px 6px;
-    color: #555;
+    /*color: #555;
     background-color: #ddd;
+        */
     border: 1px solid #ccc;
     border-radius: 3px;
 }
@@ -220,6 +221,10 @@ Matching lines: 8 Matching files: 8 Total files searched: 158*/
 .imageUpload {
     height: 32px;
     width: 100%;
+    border: solid thin black;
+    border-radius: 5px;
+    padding: 3px;
+    margin-right:14px;
 }
 
 .btnRow {

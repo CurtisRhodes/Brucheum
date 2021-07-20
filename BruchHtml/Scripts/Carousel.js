@@ -92,7 +92,8 @@ function displayCarouselItem() {
     $('#articleTitle').html(carouselArrayItem.Title);
     //$('#articleCat').html(carouselArrayItem.CategoryLabel.trim());
     $('#articleCat').html(carouselArrayItem.CategoryLabel);
-    $('#carouselImage').attr('src', settingsArray.ImageArchive + carouselArrayItem.ImageName).fadeIn(500, resizeAddRotator());
+    $('#carouselImage').attr('src', "https://" + carouselArrayItem.ImageName).fadeIn(500, resizeAddRotator());
+    //$('#carouselImage').attr('src', settingsArray.ImageArchive + carouselArrayItem.ImageName).fadeIn(500, resizeAddRotator());
     $('#carouselImage').css('z-index', 1000);
 }
 

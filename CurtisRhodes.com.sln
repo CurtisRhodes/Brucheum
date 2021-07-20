@@ -3,32 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{A3E37359-E55B-43EE-BCC4-39857F900173}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetaGig", "GetaGig\GetaGig.csproj", "{B72B77E3-655D-4C71-B5F4-6E9E932E40C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntelDesign", "IntelDesign\IntelDesign.csproj", "{1B7441BF-C313-45A2-8AB8-8AE5DFFB7FEE}"
-EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OggleHtml", "OggleHtml\", "{04550DB9-B937-4AB8-83C2-DE40719BB7CD}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_56437"
-		Debug.AspNetCompiler.PhysicalPath = "OggleHtml\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_56437\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_56437"
-		Release.AspNetCompiler.PhysicalPath = "OggleHtml\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_56437\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "56437"
-		SlnRelativePath = "OggleHtml\"
-	EndProjectSection
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BruchHtml", "BruchHtml\", "{5787F365-E98B-482F-A9D3-0702D363B9D0}"
 	ProjectSection(WebsiteProperties) = preProject
@@ -51,8 +28,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BruchHtml", "BruchHtml\", "
 		SlnRelativePath = "BruchHtml\"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brucheum", "Brucheum\Brucheum.csproj", "{B1281210-87B4-485B-B161-2DF8EF5A4EDC}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0497EF20-745F-47B6-BFE9-B2DDDDB27C72}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -66,10 +41,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A3E37359-E55B-43EE-BCC4-39857F900173}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3E37359-E55B-43EE-BCC4-39857F900173}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3E37359-E55B-43EE-BCC4-39857F900173}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3E37359-E55B-43EE-BCC4-39857F900173}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B72B77E3-655D-4C71-B5F4-6E9E932E40C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B72B77E3-655D-4C71-B5F4-6E9E932E40C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B72B77E3-655D-4C71-B5F4-6E9E932E40C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -78,18 +49,10 @@ Global
 		{1B7441BF-C313-45A2-8AB8-8AE5DFFB7FEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B7441BF-C313-45A2-8AB8-8AE5DFFB7FEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B7441BF-C313-45A2-8AB8-8AE5DFFB7FEE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{04550DB9-B937-4AB8-83C2-DE40719BB7CD}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{5787F365-E98B-482F-A9D3-0702D363B9D0}.Release|Any CPU.Build.0 = Debug|Any CPU
-		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1281210-87B4-485B-B161-2DF8EF5A4EDC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C241263B-3943-4363-9FE2-04BF88BC8722}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C241263B-3943-4363-9FE2-04BF88BC8722}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C241263B-3943-4363-9FE2-04BF88BC8722}.Release|Any CPU.ActiveCfg = Release|Any CPU

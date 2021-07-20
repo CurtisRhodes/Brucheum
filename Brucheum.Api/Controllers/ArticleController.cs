@@ -7,14 +7,16 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using System.IO;
 using System.Configuration;
+using System.Drawing;
 
-namespace Bruchem.Api
+namespace Bruchueum.Api
 {
     [EnableCors("*", "*", "*")]
     public class ArticleController : ApiController
     {
+        private readonly string articleImagesFolder = ConfigurationManager.AppSettings["ImageRepository"];
+
         [HttpGet]
-        //let url = settingsArray.ApiServer + "api/Article/GetArticleList?pageLen=" + numArticles + "&page=1&filterType=null&filter=null";
         public ArticlesModel GetArticleList(int pageLen, int page, string filterType, string filter)
         {
             var articleModel = new ArticlesModel();
@@ -44,7 +46,7 @@ namespace Bruchem.Api
                             Contents = vwArticle.Content,
                             ByLine = vwArticle.ByLine,
                             ByLineRef = vwArticle.ByLineRef,
-                            ImageName = vwArticle.ImageName,
+                            ImageName = articleImagesFolder + vwArticle.ImageName,
                             Updated = vwArticle.LastUpdated.ToShortDateString(),
                             Created = vwArticle.Created,
                             LastUpdated = vwArticle.LastUpdated,
@@ -78,7 +80,9 @@ namespace Bruchem.Api
                     {                 
                         articleModel.Title = dbArticle.Title;
                         articleModel.ByLine = dbArticle.ByLine;
+                        articleModel.ByLineRef = dbArticle.ByLineRef;
                         articleModel.Category = dbArticle.Category;
+                        articleModel.CategoryRef = dbArticle.CategoryRef;
                         articleModel.SubCategory = dbArticle.SubCategory;
                         articleModel.Contents = dbArticle.Content;
                         articleModel.Summary = dbArticle.Summary;
@@ -140,7 +144,7 @@ namespace Bruchem.Api
         }
 
         [HttpPut]
-        public string Put(ArticleModel editArticle)
+        public string UpdateArticle(ArticleModel editArticle)
         {
             var success = "";
             try
@@ -309,9 +313,9 @@ namespace Bruchem.Api
     public class RefController : ApiController
     {
         [HttpGet]
-        public RefModel Get(string refType)
+        public RefModel GetRefsForRefType(string refType)
         {
-            var refs = new RefModel();
+            var refModel = new RefModel();
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
@@ -319,47 +323,20 @@ namespace Bruchem.Api
                     IList<Ref> dbrefs = db.Refs.Where(r => r.RefType == refType).OrderBy(r => r.RefDescription).ToList();
                     foreach (Ref r in dbrefs)
                     {
-                        refs.RefItems.Add(new RefItem()
+                        refModel.RefItems.Add(new RefModelItem()
                         {
                             RefCode = r.RefCode,
-                            RefType = r.RefType,
                             RefDescription = r.RefDescription
                         });
                     }
-                    refs.Success = "ok";
+                    refModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                refs.Success = Helpers.ErrorDetails(ex);
+                refModel.Success = Helpers.ErrorDetails(ex);
             }
-            return refs;
-        }
-
-        [HttpGet]
-        public RefItem Get(string refCode, string refType)
-        {
-            var refItem = new RefItem();
-            try
-            {
-                using (WebSiteContext db = new WebSiteContext())
-                {
-                    Ref dbref = db.Refs.Where(r => r.RefType == refType && r.RefCode == refCode).FirstOrDefault();
-                    if (dbref == null)
-                        refItem.Success = "ref not found";
-                    else
-                    {
-                        refItem.RefCode = dbref.RefCode;
-                        refItem.RefDescription = dbref.RefDescription;
-                        refItem.Success = "ok";
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                refItem.Success = Helpers.ErrorDetails(ex);
-            }
-            return refItem;
+            return refModel;
         }
 
         [HttpPost]
@@ -443,34 +420,57 @@ namespace Bruchem.Api
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
         private readonly string imagesPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Images");
 
-        [HttpPost]
-        public LoadImageSuccessModel AddImage(string articleId, string imageFullFileName)
+
+        public class ImageData
+        {
+            public string ArticleId { get; set; }
+            public string FileName { get; set; }
+            public object Data { get; set; }
+        }
+
+        [HttpPut]
+        public LoadImageSuccessModel AddImage(ImageData data)
         {
             var imageModel = new LoadImageSuccessModel();
             try
             {
-                string fullPathImageFileName = Path.Combine(imagesPath, imageFullFileName);
-                Byte[] byteArray = Request.Content.ReadAsByteArrayAsync().Result;
-                File.WriteAllBytes(fullPathImageFileName, byteArray);
+                // data:image/jpeg;base64,
+                string imageFullFileName = Path.Combine(imagesPath, data.FileName);
+
+                string trimData = data.Data.ToString().Substring(23);
+
+                byte[] byteArray = Convert.FromBase64String(trimData);
+                //Byte[] byteArray = data.Data.ReadAsByteArrayAsync().Result;
+                File.WriteAllBytes(imageFullFileName, byteArray);
 
                 // USE WEBREQUEST TO UPLOAD THE FILE
                 FtpWebRequest webRequest = null;
-                    string destPath = ftpHost + articleImagesFolder;
+                string destPath = ftpHost + articleImagesFolder;
 
-                    if (!FtpUtilies.DirectoryExists(destPath))
-                        FtpUtilies.CreateDirectory(destPath);
+                if (!FtpUtilies.DirectoryExists(destPath))
+                    FtpUtilies.CreateDirectory(destPath);
 
-                    webRequest = (FtpWebRequest)WebRequest.Create(destPath + "/" + imageFullFileName);
-                    webRequest.Credentials = networkCredentials;
-                    webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                webRequest = (FtpWebRequest)WebRequest.Create(destPath + "/" + data.FileName);
+                webRequest.Credentials = networkCredentials;
+                webRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
+                using (Stream requestStream = webRequest.GetRequestStream())
+                {
+                    byte[] fileContents = System.IO.File.ReadAllBytes(imageFullFileName);
+                    webRequest.ContentLength = fileContents.Length;
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+
 
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    Article article = db.Articles.Where(a => a.Id == articleId).FirstOrDefault();
-                    article.ImageName = imageFullFileName;
+                    Article article = db.Articles.Where(a => a.Id == data.ArticleId).FirstOrDefault();
+                    article.ImageName = data.FileName;
                     db.SaveChanges();
                 }
-    
+
                 imageModel.Success = "ok";
             }
             catch (Exception ex)
