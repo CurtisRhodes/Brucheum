@@ -34,10 +34,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             tryApiDbIpFree(folderId, visitorId, calledFrom);
             return;
         }
-        if (visitorId.indexOf("XLX") > -1) {
-            logActivity2(visitorId, "IP9", folderId, calledFrom); // blocked looping ip-lookup attempt
-            return;
-        }
 
         let ipCall0Returned = false;
         ip0Busy = true;
@@ -69,13 +65,22 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     },
                     success: function (success) {
                         if (success == "ok") {
-                            logActivity2(visitorId, "IPA", folderId, "update Visitor"); // visitor successfully updated
+                            logActivity2(visitorId, "IPA", folderId, "get IpInfo/" + calledFrom); // visitor successfully updated
                             logVisit(visitorId, folderId, "add Visitor");
                         }
                         else {
                             if (success == "VisitorId not found") {
-                                logActivity2(visitorId, "IPB", folderId, "update Visitor"); // update failed. VisitorId not found
-                            } else {
+                                logActivity2(visitorId, "IPB", folderId, "get IpInfo/" + calledFrom); // attempting to add new visitor
+                                addVisitor({
+                                    VisitorId: visitorId,
+                                    IpAddress: ipResponse.ip,
+                                    City: ipResponse.city,
+                                    Country: ipResponse.country,
+                                    Region: ipResponse.region,
+                                    GeoCode: ipResponse.loc
+                                }, "get IpInfo/" + calledFrom);
+                            }
+                            else {
                                 logActivity2(visitorId, "IPC", folderId, success); // update failed. ajax error
                                 logError2(visitorId, "AJX", folderId, success, "update Visitor");
                             }
@@ -92,39 +97,35 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             },
             error: function (jqXHR) {
                 ipCall0Returned = true;
-                logActivity2(visitorId, "IP3", folderId, "get IpInfo"); // XHR error
-
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (errMsg.indexOf("Not connect.") == -1) {
+                if (errMsg.indexOf("Not connect.") > -1) {
                     logActivity2(visitorId, "IP6", folderId, "XHR:" + errMsg); // connection problem
-                    logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
+                    //logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
                 }
-
-                if (!isNullorUndefined(ipResponse)) {
-                    logActivity2(visitorId, "IP7", folderId, "get IpInfo"); // juneteenth setCookie problem
-                    logError2(visitorId, "200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
-                }
-
-                if (errMsg.indexOf("Rate limit exceeded") > 0) {
-                    ipCall0Returned = true;
-                    logActivity2(visitorId, "IP5", folderId, "IpInfo XHR/" + calledFrom); // lookup limit exceeded
-                    tryApiDbIpFree(folderId, visitorId, calledFrom);
-                }
-                if (!ipCall0Returned) {
-                    ipCall0Returned = true;
+                else {
+                    if (!isNullorUndefined(ipResponse)) {
+                        logActivity2(visitorId, "IP7", folderId, "get IpInfo"); // juneteenth setCookie problem
+                        logError2(visitorId, "200", folderId, JSON.stringify(ipResponse, null, 2), "IpInfo/" + calledFrom); // Json response code
+                    }
+                    if (errMsg.indexOf("Rate limit exceeded") > 0) {
+                        ipCall0Returned = true;
+                        logActivity2(visitorId, "IP5", folderId, "IpInfo XHR/" + calledFrom); // lookup limit exceeded
+                        tryApiDbIpFree(folderId, visitorId, calledFrom);
+                    }
                     if (!checkFor404(errMsg, folderId, "get IpInfo")) {
-                        logActivity2(visitorId, "IP3", folderId, "get IpInfo " + errMsg); // XHR error
+                        logActivity2(visitorId, "IP3", folderId, errMsg); // XHR error
                         logError2(visitorId, "XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
                     }
                 }
                 ip0Busy = false;
             }
         });
+
         setTimeout(function () {
             if (!ipCall0Returned) {
                 logActivity2(visitorId, "IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
-                if (isNullorUndefined(ipResponse.ip)) {
+                if (isNullorUndefined(ipResponse)) {
                     logActivity2(create_UUID(), "IP9", 621237, "folderId: " + folderId + " visitorId: " + visitorId); // ipInfo failed to respond
                     tryApiDbIpFree(folderId, visitorId, calledFrom);  // try something else
                 }
@@ -168,7 +169,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 }
             }
             ip0Busy = false;
-        }, 1855);
+        }, 2255);
     }
     catch (e)
     {
@@ -288,7 +289,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
         if (ip3Busy) {
             console.debug("CloudflareTrace busy");
             logActivity2(visitorId, "IP8", folderId, "CloudflareTrace");
-            addBadIpVisitorId(folderId, visitorId, calledFrom);
+            //addBadIpVisitorId(folderId, visitorId, calledFrom);
         }
         else {
             ip3Busy = true;
@@ -433,13 +434,13 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                     else {
                         if (errMsg.indexOf("Rate limit exceeded") > 0) {
                             logActivity2(visitorId, "IP5", folderId, "cloudflareTrace"); // lookup limit exceeded
-                            addBadIpVisitorId(folderId, visitorId, calledFrom);
+                            //addBadIpVisitorId(folderId, visitorId, calledFrom);
                         }
                         else {
                             if (!checkFor404(errMsg, folderId, "tryCloudflareTrace")) {
                                 logError2(visitorId, "XHR", folderId, errMsg, "cloudflareTrace/" + calledFrom);
                                 logActivity2(visitorId, "IP6", folderId, "cloudflareTrace");
-                                addBadIpVisitorId(folderId, visitorId, calledFrom);
+                                //addBadIpVisitorId(folderId, visitorId, calledFrom);
                             }
                             else {
                                 logActivity2(visitorId, "IP3", folderId, "cloudflareTrace");
@@ -452,7 +453,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
             setTimeout(function () {
                 if (!ipCall3Returned) {
                     logActivity2(visitorId, "IPG", folderId, "cloudflareTrace");
-                    addBadIpVisitorId(folderId, visitorId, calledFrom);
+                    //addBadIpVisitorId(folderId, visitorId, calledFrom);
                 }
                 ip3Busy = false;
             }, 2000);
