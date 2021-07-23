@@ -1,7 +1,7 @@
 ﻿
 let edtBookId;
-let bookModel = {};
-let chapterModel = {};
+//let bookModel = {};
+//let chapterModel = {};
 function editBook(bookId) {
     edtBookId = bookId;
     setUpSummerNoteEditors();

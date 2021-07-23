@@ -27,7 +27,7 @@ body {
     background-image: url("/Images/caveStairsWide.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    display: none;
+    height: 100%;
 }
 
 .vMenu {
@@ -130,10 +130,11 @@ body {
 }
 .loadingGif {
     position: absolute;
-    left: 150px;
-    top: 140px;
-    height: 25px;
-    z-index: 31;
+    left: 120px;
+    top: 155px;
+    height: 30px;
+    z-index: 10;
+    display: none;
 }
 
 .btnSpinner {

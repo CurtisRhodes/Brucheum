@@ -191,7 +191,10 @@ function addVisitor(visitorData, calledFrom) {
 function loadUserProfile(folderId, calledFrom) {
     try {
         let visitorId = getCookieValue("VisitorId");
-        if (visitorId.indexOf("cookie not found") > -1) {
+
+        if ((isNullorUndefined(visitorId)) || (visitorId.indexOf("cookie not found") > -1)) {
+
+
             localStorage["IsLoggedIn"] = "false";
             localStorage["UserName"] = "not registered";
             localStorage["UserRole"] = "not registered";
@@ -275,7 +278,7 @@ function doubleCheckVisitorId(visitorId, folderId) {
                     if (successModel.Success == "ok") {
                         if (successModel.ReturnValue == "readded") {
                             logActivity("VV2", folderId, "doubleCheck VisitorId");
-                            tryAddNewIP(folderId, visitorId, "doubleCheck readded");
+                            //tryAddNewIP(folderId, visitorId, "doubleCheck readded");
                         }
                         if (successModel.ReturnValue == "inalready") {
                             logActivity("VVb", folderId, "doubleCheck VisitorId"); // false flag

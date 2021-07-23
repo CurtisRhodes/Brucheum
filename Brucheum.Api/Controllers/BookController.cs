@@ -33,7 +33,7 @@ namespace Bruchueum.Api
             return books;
         }
         [HttpGet]
-        public DbBookModel GetChapterTree(int bookId)
+        public DbBookModel GetBook(int bookId)
         {
             DbBookModel bookModel = new DbBookModel();
             ChapterModel chapterModel = null;
@@ -56,15 +56,14 @@ namespace Bruchueum.Api
                     chapterModel.ChapterOrder = dbChapter.ChapterOrder;
                     chapterModel.Preface = dbChapter.Preface;
 
-                    var chapterSections = dbChapter.Sections.OrderBy(s => s.SectionOrder).ToList();
-
+                    List<BookSection> chapterSections = dbChapter.Sections.OrderBy(s => s.SectionOrder).ToList();
                     foreach (BookSection dbSection in chapterSections)
                     {
                         sectionModel = new BookSectionModel();
                         sectionModel.Id = dbSection.Id;
                         sectionModel.SectionTitle = dbSection.SectionTitle;
                         sectionModel.SectionOrder = dbSection.SectionOrder;
-                        //sectionModel.SectionContents = dbSection.SectionContents;
+                        sectionModel.SectionContents = dbSection.SectionContents;
                         var subSections = dbSection.SubSections.OrderBy(ss => ss.SubSectionOrder).ToList();
                         foreach (SubSection dbSubSection in subSections)
                         {
@@ -80,12 +79,12 @@ namespace Bruchueum.Api
                     }
                     bookModel.Chapters.Add(chapterModel);
                 }
-                bookModel.success = "ok";
+                bookModel.Success = "ok";
             }
             return bookModel;
         }
         [HttpPost]
-        public string Post(DbBookModel bookModel)
+        public string AddBook(DbBookModel bookModel)
         {
             string success = "";
             using (var db = new BookDbContext())
@@ -102,7 +101,7 @@ namespace Bruchueum.Api
             return success;
         }
         [HttpPut]
-        public string Put(DbBookModel bookModel)
+        public string UpdateBook(DbBookModel bookModel)
         {
             string success = "";
             try
@@ -126,13 +125,9 @@ namespace Bruchueum.Api
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
-    }
 
-    [EnableCors("*", "*", "*")]
-    public class ChapterController : ApiController
-    {
-        [HttpPatch]
-        public ChapterModel Patch(int chapterId)
+        [HttpGet]
+        public ChapterModel GetChapter(int chapterId)
         {
             var chapter = new ChapterModel();
             using (var db = new BookDbContext())
@@ -145,14 +140,12 @@ namespace Bruchueum.Api
                     chapter.ChapterOrder = dbChapter.ChapterOrder;
                     chapter.Preface = dbChapter.Preface;
                     chapter.BookTitle = dbChapter.Book.BookTitle;
-                    chapter.BookId = dbChapter.BookId.Value;
-                    chapter.success = "ok";
                 }
             }
             return chapter;
         }
         [HttpGet]
-        public IList<ChapterModel> Get(int bookId)
+        public IList<ChapterModel> GetChapters(int bookId)
         {
             var chapters = new List<ChapterModel>();
             using (var db = new BookDbContext())
@@ -162,26 +155,23 @@ namespace Bruchueum.Api
                 {
                     chapters.Add(new ChapterModel()
                     {
-                        Book = bookId,
                         Id = chapter.Id,
                         ChapterTitle = chapter.ChapterTitle,
                         ChapterOrder = chapter.ChapterOrder,
-                        Preface = chapter.Preface,
-                        success = "ok"
+                        Preface = chapter.Preface
                     });
                 }
             }
             return chapters;
         }
         [HttpPost]
-        public int Post(ChapterModel chapterModel)
+        public int AddChapter(ChapterModel chapterModel)
         {
             int success = 0;
             using (var db = new BookDbContext())
             {
                 var chapter = new BookChapter()
                 {
-                    BookId = chapterModel.BookId,
                     ChapterTitle = chapterModel.ChapterTitle,
                     ChapterOrder = chapterModel.ChapterOrder,
                     Preface = chapterModel.Preface
@@ -193,7 +183,7 @@ namespace Bruchueum.Api
             return success;
         }
         [HttpPut]
-        public string Put(ChapterModel chapterModel)
+        public string UpdateChapter(ChapterModel chapterModel)
         {
             string success = "";
             using (var db = new BookDbContext())
@@ -212,13 +202,9 @@ namespace Bruchueum.Api
             }
             return success;
         }
-    }
 
-    [EnableCors("*", "*", "*")]
-    public class BookSectionController : ApiController
-    {
-        [HttpPatch]
-        public BookSectionModel Patch(int sectionId)
+        [HttpGet]
+        public BookSectionModel GetSection(int sectionId)
         {
             var sectionModel = new BookSectionModel();
             using (var db = new BookDbContext())
@@ -227,55 +213,21 @@ namespace Bruchueum.Api
                 if (dbSection != null)
                 {
                     sectionModel.Id = dbSection.Id;
-                    sectionModel.ChapterOrder = dbSection.Chapter.ChapterOrder;
-                    sectionModel.ChapterTitle = dbSection.Chapter.ChapterTitle;
                     sectionModel.SectionTitle = dbSection.SectionTitle;
                     sectionModel.SectionOrder = dbSection.SectionOrder;
                     sectionModel.SectionContents = dbSection.SectionContents;
-                    sectionModel.success = "ok";
                 }
             }
             return sectionModel;
         }
-        [HttpGet]
-        public IList<BookSectionModel> Get(int chapterId)
-        {
-            var sections = new List<BookSectionModel>();
-            BookSectionModel section = null;
-            using (var db = new BookDbContext())
-            {
-                var dbSections = db.Sections.Where(s => s.ChapterId == chapterId).ToList();
-                foreach (BookSection dbSection in dbSections)
-                {
-                    section = new BookSectionModel();
-                    section.Id = dbSection.Id;
-                    section.SectionTitle = dbSection.SectionTitle;
-                    section.SectionOrder = dbSection.SectionOrder;
-                    section.SectionContents = dbSection.SectionContents;
-                    foreach (SubSection dbSubSection in dbSection.SubSections)
-                    {
-                        section.SubSections.Add(new SubSectionModel()
-                        {
-                            Id = dbSubSection.Id,
-                            SubSectionContents = dbSubSection.SubSectionContents,
-                            SubSectionTitle = dbSubSection.SubSectionTitle,
-                            SubSectionOrder = dbSubSection.SubSectionOrder
-                        });
-                    }
-                    sections.Add(section);
-                }
-            }
-            return sections;
-        }
         [HttpPost]
-        public int Post(BookSectionModel bookSectionModel)
+        public int AddSection(BookSectionModel bookSectionModel)
         {
             int success = 0;
             using (var db = new BookDbContext())
             {
                 var bookSection = new BookSection()
                 {
-                    ChapterId = bookSectionModel.ChapterId,
                     SectionTitle = bookSectionModel.SectionTitle,
                     SectionOrder = bookSectionModel.SectionOrder,
                     SectionContents = bookSectionModel.SectionContents
@@ -287,7 +239,7 @@ namespace Bruchueum.Api
             return success;
         }
         [HttpPut]
-        public string Put(BookSectionModel bookSectionModel)
+        public string UpdateSection(BookSectionModel bookSectionModel)
         {
             string success = "";
             using (var db = new BookDbContext())
@@ -306,13 +258,9 @@ namespace Bruchueum.Api
             }
             return success;
         }
-    }
 
-    [EnableCors("*", "*", "*")]
-    public class SubSectionController : ApiController
-    {
-        [HttpPatch]
-        public SubSectionModel Patch(int subSectionId)
+        [HttpGet]
+        public SubSectionModel GetSubSection(int subSectionId)
         {
             var subSectionModel = new SubSectionModel();
             using (var db = new BookDbContext())
@@ -324,42 +272,12 @@ namespace Bruchueum.Api
                     subSectionModel.SubSectionTitle = dbSubSection.SubSectionTitle;
                     subSectionModel.SubSectionOrder = dbSubSection.SubSectionOrder;
                     subSectionModel.SubSectionContents = dbSubSection.SubSectionContents;
-
-                    //subSection.v
-                    subSectionModel.SectionTitle = dbSubSection.BookSection.SectionTitle;
-                    subSectionModel.SectionOrder = dbSubSection.BookSection.SectionOrder;
-                    subSectionModel.ChapterTitle = dbSubSection.BookSection.Chapter.ChapterTitle;
-                    subSectionModel.ChapterOrder = dbSubSection.BookSection.Chapter.ChapterOrder;
-
-                    subSectionModel.SectionId = dbSubSection.SectionId.Value;
-                    subSectionModel.success = "ok";
                 }
             }
             return subSectionModel;
         }
-        [HttpGet]
-        public IList<SubSectionModel> Get(int sectionId)
-        {
-            var subSections = new List<SubSectionModel>();
-            using (var db = new BookDbContext())
-            {
-                var dbSubSections = db.SubSections.Where(c => c.Id == sectionId).ToList();
-                foreach (SubSection dbSubSection in dbSubSections)
-                {
-                    subSections.Add(new SubSectionModel()
-                    {
-                        Id = dbSubSection.Id,
-                        SubSectionTitle = dbSubSection.SubSectionTitle,
-                        SubSectionOrder = dbSubSection.SubSectionOrder,
-                        SubSectionContents = dbSubSection.SubSectionContents
-                    });
-                }
-            }
-            return subSections;
-        }
-
         [HttpPost]
-        public string Post(SubSectionModel subSectionModel)
+        public string AddSubSection(SubSectionModel subSectionModel)
         {
             string success = "";
             try
@@ -368,7 +286,6 @@ namespace Bruchueum.Api
                 {
                     var bookSubSection = new SubSection()
                     {
-                        SectionId = subSectionModel.SectionId,
                         Id = subSectionModel.Id,
                         SubSectionTitle = subSectionModel.SubSectionTitle,
                         SubSectionOrder = subSectionModel.SubSectionOrder,
@@ -382,9 +299,8 @@ namespace Bruchueum.Api
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
-
         [HttpPut]
-        public string Put(SubSectionModel subSectionModel)
+        public string UpdateSubSection(SubSectionModel subSectionModel)
         {
             string success = "";
             try

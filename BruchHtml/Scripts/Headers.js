@@ -1,28 +1,37 @@
 function setHeader(headerContext) {
-
     $('header').html(headerHtml());
     switch (headerContext) {
-        case "bruch":
-            $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft'><a href='Article.html?ArticleList=Latest Articles'>Latest Articles</a></div>\n
-                <div class='menuTab floatLeft'><a href='Index.html?spa=Books'>Books</a></div>\n
-                <div class='menuTab floatLeft'><a href='~/Home/Apps'>Apps</a></div>\n
-                <div class='menuTab floatLeft'><a href='/IntelDsgn/Index'>Intelligent Design</a></div>\n`);
-            break;
-        case "Books":
+        case "Brucheum":
             $("#bannerTitle").html("The Brucheum");
             $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft'><a href='Article.html?ArticleList=Latest Articles'>I gotta pee</a></div>\n
-                <div class='menuTab floatLeft'><a href='Index.html?spa=Books'>Books</a></div>\n
-                <div class='menuTab floatLeft'><a href='~/Home/Apps'>Apps</a></div>\n
-                <div class='menuTab floatLeft'><a href='/IntelDsgn/Index'>Intelligent Design</a></div>\n`);
+                <div class='menuTab floatLeft' onclick='displaySpaPage(\"ArticleList\")'>Latest Articles</div>\n
+                <div class='menuTab floatLeft' onclick='displaySpaPage(\"Books\")'>Books</div>\n
+                <div class='menuTab floatLeft'>Apps</div>\n
+                <div class='menuTab floatLeft'>Intelligent Design</div>\n`);
+            break;
+        case "Books":
+            $("#bannerTitle").html("Curtis Rhodes.com : Books");
+            $("#breadcrumbContainer").html(`
+                <div class='menuTab floatLeft'>Latest Articles'</div>\n
+                <div class='menuTab floatLeft'>Books</div>\n
+                <div class='menuTab floatLeft'>Apps</div>\n
+                <div class='menuTab floatLeft'>Intelligent Design</div>\n`);
+            break;
+        case "Articles":
+            $("#bannerTitle").html("Curtis Rhodes.com : Articles");
+            $("#breadcrumbContainer").html(`
+                <div class='menuTab floatLeft'>Latest Articles'</div>\n
+                <div class='menuTab floatLeft'>Books</div>\n
+                <div class='menuTab floatLeft'>Apps</div>\n
+                <div class='menuTab floatLeft'>Intelligent Design</div>\n`);
             break;
         default:
+            $("#bannerTitle").html("whaa whooo");
             $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft'><a href='Article.html?ArticleList=Latest Articles'>hey booboo</a></div>\n
-                <div class='menuTab floatLeft'><a href='Index.html?spa=Books'>Books</a></div>\n
-                <div class='menuTab floatLeft'><a href='~/Home/Apps'>Apps</a></div>\n
-                <div class='menuTab floatLeft'><a href='/IntelDsgn/Index'>Intelligent Design</a></div>\n`);
+                <div class='menuTab floatLeft'>Latest Articles'</div>\n
+                <div class='menuTab floatLeft'>Books</div>\n
+                <div class='menuTab floatLeft'>Apps</div>\n
+                <div class='menuTab floatLeft'>Intelligent Design</div>\n`);
             break;
     }
 }
@@ -30,7 +39,7 @@ function setHeader(headerContext) {
 //"   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
 
 function headerHtml() {
-    return "<div class='siteLogoContainer' onclick='window.location=index.html' >" +
+    return "<div class='siteLogoContainer' onclick='displaySpaPage(\"Brucheum\")'>" +
         "       <img id='divSiteLogo' title='home' class='bannerImage' src='Images/house.gif' />" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +
@@ -96,9 +105,7 @@ function headerHtml() {
         "</div>\n";
 }
 
-
-
-function getHeader(subdomain) {
+function XXgetHeader(subdomain) {
     var headerHtml;
     if (subdomain === "bruch" || subdomain === "playmates") {
         headerHtml =

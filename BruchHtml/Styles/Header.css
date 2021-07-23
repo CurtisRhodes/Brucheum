@@ -64,33 +64,30 @@
         header .headerBodyContainer .headerBottomRow {
             width: 100%;
         }
-                header .headerBodyContainer .headerBottomRow .menuTab {
-                    margin-top: 4px;
-                    border-radius: 5px;
-                }
 
-                    header .headerBodyContainer .headerBottomRow .menuTab a {
-                        cursor: pointer;
-                        color: black;
-                        padding: 8px 20px;
-                        margin-right: 20px;
-                        text-decoration: none;
-                        padding: 5px 5px;
-                        border-radius: 1px;
-                    }
-            header .headerBodyContainer .headerBottomRow .breadCrumbArea {
-                float: left;
-                color: var(--ogglgeSubTitleColor);
-                font-family: Verdana;
-                font-size: 24px;
-                margin-left: 20px;
-            }
-
-    .menuTab a:hover {
+.menuTab {
+    margin-top: 4px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    margin-right: 20px;
+}
+    .menuTab :hover {
+        font-family: Britannic;
         text-decoration: underline;
         background-color: #fef;
     }
 
+
+.breadCrumbArea {
+    float: left;
+    color: var(--ogglgeSubTitleColor);
+    font-family: Verdana;
+    font-size: 24px;
+    margin-left: 20px;
+}
+
+ 
 .activeBreadCrumb {
     margin-left: 20px;
     cursor: pointer;
@@ -155,12 +152,11 @@
     float: right;
 }
 
-
 .breadCrumbArea {
-    float: left;
     display: inline-block;
     margin-right: 7px;
-    margin-top: 5px;
+    font-size: 10px;
+    margin-top: 1px;
 }
 
 .headerBannerButton {

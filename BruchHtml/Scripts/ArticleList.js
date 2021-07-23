@@ -1,9 +1,41 @@
 ﻿//var isArticeEditor = '@User.IsInRole("Article Editor")';
 var page = 1;
-var pageLen = 5;
+var articlePageLimit = 5;
 var articleCount;
 var showMore = false;
 var thisfilterType = "Latest Articles";
+
+function showArticleList() {
+
+    $('#middleColumn').html(`
+        <div id="divArticleList">
+            <div id="divlistHeader" class="articleListHeader"></div>
+            <div id="articleListContainer" class="articleListContainer"></div>
+            <div id="divMoreButton" class="roundendButton" onclick="showMoreButtonClick()">More</div>
+        </div>`
+    );
+
+//    $('#middleColumn').html(`
+//        <div class="pollybox">
+//            <div class="divTopLine">
+//                <div id="divArticleDate" class="floatLeft"></div>
+//                <div id="divCategory" class="floatRightDiv"></div>
+//            </div>
+//            <div id="divTitle" class='articleTitle'></div>
+//            <div class="flexContainer">
+//                <div id="divByline" class="byline"></div>
+//                <div class="floatRightDivEdit clickable" onclick="gotoArticleEdit()">edit</div>
+//            </div>
+//        </div>
+//        <img id="divImage" class="articleCenterImage" />
+//        <div id="contentArea">
+//            <div id="divSummary" class="summaryText"></div>
+//            <div id="divContent" class="articleContent"></div>
+//            <div id="divCommentsButton" class="roundendButton">comments</div>
+//        </div>
+//        <div id="divCommentsSection"></div>`
+//    );
+}
 
 
 function getListHeader(refCode) {
@@ -17,12 +49,12 @@ function getListHeader(refCode) {
             alert("getArticleList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
         }
     });
-
 }
 
 function getArticleList(filterType, filter) {
     try {
         $('#loadingGif').show();
+
         if (filterType !== undefined)
             thisfilterType = filterType;
 
@@ -35,10 +67,10 @@ function getArticleList(filterType, filter) {
         if (showMore === false)
             $('#articleList').html('');
         else
-            page += pageLen;
+            page += articlePageLimit;
 
         $.ajax({
-            url: settingsArray.ApiServer + "/api/Article/GetArticleList?pageLen=" + pageLen + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
+            url: settingsArray.ApiServer + "/api/Article/GetArticleList?pageLen=" + articlePageLimit + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
             type: "get",
             success: function (articles) {
                 if (articles.Success == "ok") {
@@ -76,7 +108,7 @@ function getArticleList(filterType, filter) {
 
 
 
-                    if (articleCount < pageLen)
+                    if (articleCount < articlePageLimit)
                         $('#divMoreButton').hide();
                     else
                         $('#divMoreButton').show();

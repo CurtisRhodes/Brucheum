@@ -22,6 +22,9 @@
     <script src="Scripts/Footer.js"></script>
     <script src="Scripts/Books.js"></script>
     <script src="Scripts/BookEdit.js"></script>
+    <script src="Scripts/ArticleList.js"></script>
+    <script src="Scripts/ArticleView.js"></script>
+    <script src="Scripts/ArticleEdit.js"></script>
 
     <link href="Styles/Carousel.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet">
@@ -29,6 +32,9 @@
     <link href="Styles/Books.css" rel="stylesheet" />
     <link href="Styles/Header.css" rel="stylesheet">
     <link href="Styles/Footer.css" rel="stylesheet">
+    <link href="Styles/ArticleList.css" rel="stylesheet" />
+    <link href="Styles/ArticleView.css" rel="stylesheet">
+    <link href="Styles/ArticleEdit.css" rel="stylesheet" />
 </head>
 <body>
     <header></header>
@@ -82,18 +88,18 @@
     </div>
     <footer></footer>
     <script>
-        var subdomain;
-        var permissionsSet = false;
         $(document).ready(function () {
+            let permissionsSet = false;
+            let spaPage = "Brucheum";
             $('#carosuelContainer').hide();
             displayFooter();
 
             params = getParams();
-            if (params.spa == undefined)
-                subdomain = "Brucheum";
-            else
-                subdomain = params.spa;
-            setHeader(subdomain);
+            if (params.spa != undefined) {
+                spaPage = params.spa;
+            }
+
+            setHeader(spaPage);
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -102,13 +108,12 @@
                 }
                 else {
                     clearInterval(waiter);
-                    checkConnection(subdomain, "Index.html");
+                    checkConnection(spaPage, "Index.html");
                     let connectionVerifiedLoop = setInterval(function () {
                         if (connectionVerified) {
                             clearInterval(connectionVerifiedLoop);
                             $('#dots').html('');
-
-                            displaySpaPage(subdomain);
+                            displaySpaPage(spaPage);
                             //verifySession(spaPageId);
                             //logVisit();
                             //setUserPermissions();
@@ -132,15 +137,19 @@
                     $('#rightColumn').append(showBookPanel());
                     break;
                 case "Books":
+                    $('#divBookPannel').hide();
                     showBooks();
                     break;
+                case "ArticleList":
+                    showArticleList();
+                    getArticleList("latest", params.filter);
+                    $('#divBookPannel').show();
+                    break;
                 default:
-                    alert("subdomain: " + subdomain)
+                    alert("subdomain not found: " + subdomain)
                     //logError("SPA", subdomain, "case not handled", "display SpaPage");
             }
         }
-
-
 
     </script>
 </body>
