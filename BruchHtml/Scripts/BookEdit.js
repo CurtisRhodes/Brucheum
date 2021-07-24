@@ -1,41 +1,62 @@
 ﻿
-let edtBookId;
-//let bookModel = {};
-//let chapterModel = {};
-function editBook(bookId) {
-    edtBookId = bookId;
+//let edtBookModel = {};
+//let curChapter = {};
+function editBook(bookId, chapter, section, subSection) {
     setUpSummerNoteEditors();
-    loadBookEditor();
-    getChapters();
+    loadBookEditor(bookId, chapter, section, subSection);
     $('#chaptersCrudArea').height($('#bookCrudArea').height());
     $("#btnContinue").hide();
 }
 
-function loadBookEditor() {
+function loadBookEditor(bookId, chapter, section, subSection) {
+
+    $("#middleColumn").html(bookEditContainer());
+    //alert("loadBookEditor(chapter: " + chapter + ", section: " + section + ", subSection: " + subSection);
+
     try {
-        $.ajax({
-            type: "get",
-            url: settingsArray.ApiServer + "/api/BookDb/GetChapterTree?bookId=" + edtBookId,
-            success: function (book) {
-                if (book.success === "ok") {
-                    $('#bookTitle').html(book.BookTitle);
-                    bookModel.BookTitle = book.BookTitle;
-                    bookModel.Id = edtBookId;
-                    $('#introEditor').summernote('code', book.Introduction);
-                    $('#prefaceEditor').summernote('code', book.Preface);
-                }
-                else
-                    alert("getBook: " + book.success);
-            },
-            error: function (jqXHR, exception) {
-                alert("getBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
+        //    $.ajax({
+        //        type: "get",
+        //        url: settingsArray.ApiServer + "/api/BookDb/GetBook?bookId=" + bookId + "&chapterId=" + chapter,
+        //        success: function (dbBookModel) {
+        //          if (dbBookModel.success === "ok") {
+        //              bookModel = dbBookModel;
+        $('#bookTitle').html(bookModel.BookTitle);
+
+        curChapter = bookModel.Chapters[chapter];
+
+        $('#txtChapterTitle').val(curChapter.ChapterTitle);
+        $('#txtChapterOrder').val(curChapter.ChapterOrder);
+        $('#introEditor').summernote('code', bookModel.Introduction);
+        $('#prefaceEditor').summernote('code', bookModel.Preface);
+        $('#chapterPrefaceEditor').summernote('code', curChapter.Preface);
+
+        $.each(bookModel.Chapters, function (idx, chapter) {
+            $('#chapterList').append("<div id=" + chapter.Id + " class='crudListItem' >" + chapter.ChapterOrder + " | " + chapter.ChapterTitle + "</div>");
+        })
+        $('.crudListItem').click(function () {
+
+            $('#btnAddUpdate').html("Update");
+            $('#btnNewCancel').html("New");
+        })
+
+
+        $("#btnAddUpdate").html("Update")
+        $('#btnNewCancel').html("New Chapter");
+        $("#btnContinue").show();
+
+        //let curSection = curChapter.Sections[section];
+        //            }
+        //            else
+        //                alert("getBook: " + book.success);
+        //        },
+        //        error: function (jqXHR, exception) {
+        //            alert("getBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
+        //        }
+        //    });
     } catch (e) {
-        alert("getBook CATCH: " + e);
+        alert("loadBookEditor CATCH: " + e);
     }
 }
-
 
 function setUpSummerNoteEditors() {
     $('#prefaceEditor').summernote({
@@ -87,7 +108,7 @@ function updateBook() {
         bookModel.Preface = $('#prefaceEditor').summernote('code');
         $.ajax({
             type: "Put",
-            url: service + "/api/BookDb/?bookId=" + edtBookId,
+            url: service + "/api/BookDb/?bookId=" + bookModel.BookId,
             data: bookModel,
             success: function (success) {
                 if (success === "ok") {
@@ -160,56 +181,56 @@ function updateChapter() {
     }
 }
 
-function getChapters() {
-    try {
-        $.ajax({
-            type: "get",
-            url: service + "/api/Chapter/?bookId=" + edtBookId,
-            success: function (chapters) {
-                $('#chapterList').html("");
-                $('#btnChapterUpdate').hide();
-                $.each(chapters, function (idx, obj) {
-                    $('#chapterList').append("<div id=" + obj.Id + " class='crudListItem' >" + obj.ChapterOrder + " | " + obj.ChapterTitle + "</div>");
-                })
-                $('.crudListItem').click(function () {
-                    loadChapter($(this).attr('id'));
-                    $('#btnAddUpdate').html("Update");
-                    $('#btnNewCancel').html("New");
-                })
-            },
-            error: function (jqXHR, exception) {
-                alert("getBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
-    } catch (e) {
-        alert("getBook CATCH: " + e);
-    }
-}
+//function getChapters() {
+//    try {
+//        $.ajax({
+//            type: "get",
+//            url: service + "/api/Chapter/?bookId=" + edtBookId,
+//            success: function (chapters) {
+//                $('#chapterList').html("");
+//                $('#btnChapterUpdate').hide();
+//                $.each(chapters, function (idx, obj) {
+//                    $('#chapterList').append("<div id=" + obj.Id + " class='crudListItem' >" + obj.ChapterOrder + " | " + obj.ChapterTitle + "</div>");
+//                })
+//                $('.crudListItem').click(function () {
+//                    loadChapter($(this).attr('id'));
+//                    $('#btnAddUpdate').html("Update");
+//                    $('#btnNewCancel').html("New");
+//                })
+//            },
+//            error: function (jqXHR, exception) {
+//                alert("getBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
+//            }
+//        });
+//    } catch (e) {
+//        alert("getBook CATCH: " + e);
+//    }
+//}
 
-function loadChapter(chapterId) {
-    try {
-        $.ajax({
-            type: "PATCH",
-            url: service + "/api/Chapter/?chapterId=" + chapterId,
-            success: function (chapter) {
-                chapterModel.Id = chapterId;
-                $('#txtChapterTitle').val(chapter.ChapterTitle);
-                $('#txtChapterOrder').val(chapter.ChapterOrder);
-                $('#chapterPrefaceEditor').summernote('code', chapter.Preface);
+//function loadChapter(chapterId) {
+//    try {
+//        $.ajax({
+//            type: "PATCH",
+//            url: service + "/api/Chapter/?chapterId=" + chapterId,
+//            success: function (chapter) {
+//                chapterModel.Id = chapterId;
+//                $('#txtChapterTitle').val(chapter.ChapterTitle);
+//                $('#txtChapterOrder').val(chapter.ChapterOrder);
+//                $('#chapterPrefaceEditor').summernote('code', chapter.Preface);
 
-                $("#btnAddUpdate").html("Update")
-                $('#btnNewCancel').html("New Chapter");
-                $("#btnContinue").show();
+//                $("#btnAddUpdate").html("Update")
+//                $('#btnNewCancel').html("New Chapter");
+//                $("#btnContinue").show();
 
-            },
-            error: function (jqXHR, exception) {
-                alert("loadChapter XHR error: " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
-    } catch (e) {
-        alert("loadChapter CATCH: " + e);
-    }
-}
+//            },
+//            error: function (jqXHR, exception) {
+//                alert("loadChapter XHR error: " + getXHRErrorDetails(jqXHR, exception));
+//            }
+//        });
+//    } catch (e) {
+//        alert("loadChapter CATCH: " + e);
+//    }
+//}
 
 function redirectToToC() {
     //window.location.href = "/BookDb/ToC?book=" + bookId;

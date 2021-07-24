@@ -20,8 +20,6 @@
     height: 100%;
 }
 
-
-
 #divMyBooks {
     margin-top: 55px;
     width: 100%;
@@ -34,7 +32,7 @@
     float: left;
     margin-right: 70px;
 }
-.pageTitle {
+.bookTitle {
     margin-top: 14px;
     font-size: 33px;
     font-family: Georgia, 'Times New Roman', Times, serif;
@@ -144,10 +142,16 @@
 .paupaBorderContainer {
     width: 48%;
     height: 50px;
+    background-color: rgb(247,240,214);
 }
 
 .full {
     width: 100%;
+}
+
+.inlineRelative {
+    display: inline;
+    position: relative;
 }
 
 .paupaPageColor {
@@ -187,7 +191,7 @@
     font-weight: bold;
 }
 
-.chapterTitle {
+.chapterHeader {
     clear: left !important;
     font-size: 28px;
     margin-left: 44px;
@@ -195,14 +199,14 @@
     width: 100%;
 }
 
-.sectionTitle {
+.sectionHeader {
     clear: left !important;
     font-size: 24px;
     margin-left: 88px;
     padding: 6px;
 }
 
-.subsectionTitle {
+.subSectionHeader {
     font-size: 22px;
     margin-left: 114px;
     padding-top: 6px;
@@ -225,8 +229,3 @@
     height: 666px;
     overflow-y: auto;
 }
-
-
-
-
-
