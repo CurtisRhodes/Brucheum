@@ -1,11 +1,14 @@
-﻿let bjsBookId = 0; bjschapterId = 0, pageIndex = 0;
+﻿let bjschapterId = 0, pageIndex = 0;
 let bookModel = {}, bookPages = [];
 let pageNumber = 0, bookPageLen = 2600;
 let curChapterId = 0; curSectionId = 0; // curSubSectionId = 0;
 let curChapterNode = {}, curSectionNode = {};
 
-function showBooks() {
+function showMyBooksPage() {
     $("#tanBlue").hide();
+    clearInterval(Carousel);
+    clearInterval(CarouselRotatorInterval);
+    $('#divBookPannel').hide();
     $("#middleColumn").html(`
         <div id="tocLoadingGif"><img class="loadingGif" src="Images/loader.gif" /></div>
         <div class="pageTitle" id = "divBooksWriting" > Books I am writing</div>
@@ -26,13 +29,12 @@ function showBooks() {
 }
 
 function showBook(bookId) {
-    bjsBookId = bookId;
     switch (bookId) {
         case 1: // the blond jew
-            loadBookAndShowToC();
+            loadBookAndShowToC(bookId);
             break;
         default:
-            alert("bookId: " + bjsBookId);
+            alert("bookId: " + bookId);
     }
     resizeBookPage();
     $(window).resize(function () {
@@ -40,8 +42,10 @@ function showBook(bookId) {
     });
 }
 
-function loadBookAndShowToC() {
+function loadBookAndShowToC(bookId) {
     try {
+        $('#divBookPannel').hide();
+        $('#tanBlue').hide();
         $("#middleColumn").html(`
             <div><img id="tocLoadingGif" class="loadingGif" src="Images/loader.gif" /></div>
             <div id="tocBookTitle" class="bookTitle" onclick='showPage(1,1,1)'></div>
@@ -50,15 +54,15 @@ function loadBookAndShowToC() {
         $('#tocLoadingGif').show();
         $.ajax({
             type: "get",
-            url: settingsArray.ApiServer + "/api/BookDb/GetBook?bookId=" + bjsBookId,
-            success: function (book) {                
-                if (book.Success != "ok") {
+            url: settingsArray.ApiServer + "/api/BookDb/GetBook?bookId=" + bookId,
+            success: function (bookSuccessModel) {                
+                if (bookSuccessModel.Success != "ok") {
                     $('#tocLoadingGif').hide();
-                    alert("loadBookAndShowToC: " + book.Success);
+                    alert("loadBookAndShowToC: " + bookSuccessModel.Success);
                 }
                 else {
-                    bookModel = book;
-                    showToC();
+                    bookModel = bookSuccessModel;
+                    showToC(bookId);
                     breakBookIntoPages();
                     $('#tocLoadingGif').hide();
                 }
@@ -74,34 +78,36 @@ function loadBookAndShowToC() {
     }
 }
 
-function showToC() {
+function showToC(bookId) {
     $("#middleColumn").html(`
-            <div id="tocBookTitle" class="bookTitle" onclick='showPage(1,1,1)'></div>
+            <div id="tocBookTitle" class="bookTitle" onclick='showPage(`+ bookId + `,1,1,1)'></div>
             <div id="divToC" class="toCcontainer"></div>`
     );
     $('#tocBookTitle').html(bookModel.BookTitle);
     $.each(bookModel.Chapters, function (idx, chapter) {
         // kludge String To Prevent Jquery .append() from auto closing divs
         var kludge = "<div class='chapterContainer'>";
-        kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='showPage(\"" + chapter.Id + "\",1,0)'>" + chapter.ChapterOrder + ": " + chapter.ChapterTitle + "</div>";
+        kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='showPage(\"" + bookId + "," + chapter.Id + "\",1,0)'>" + chapter.ChapterOrder + ": " + chapter.ChapterTitle + "</div>";
         kludge += "<div class='dots' onclick='toggleTocSection(" + chapter.Id + ")'></div>";
         kludge += "<div class='divCaret'><img id=img" + chapter.Id + " onclick='toggleTocSection(" + chapter.Id + ")' src='/Images/caretDown.png'></div></div>";
         kludge += "</div>";
         kludge += "<div id=st" + chapter.Id + " class='tocSectionContainer'>";
         $.each(chapter.Sections, function (idx, section) {
-            kludge += "<div id=sc" + section.Id + " class='divSection' onclick='showPage(" + chapter.Id + "," + section.Id + ",0)'>" + section.SectionOrder + ": " + section.SectionTitle + "</div>";
+            kludge += "<div id=sc" + section.Id + " class='divSection' onclick='showPage(";
+            kludge += bookId + "," + chapter.Id + "," + section.Id + ",0)'>" + section.SectionOrder + ": " + section.SectionTitle + "</div>";
             kludge += "<div class='divSubsections'>";
             $.each(section.SubSections, function (idx, subSection) {
-                kludge += "<div class='divSubSection' onclick='showPage(" + chapter.Id + "," + section.Id + "," + subSection.SubSectionId + ")'>" + subSection.SubSectionOrder + ": " + subSection.SubSectionTitle + "</div>";
+                kludge += "<div class='divSubSection' onclick='showPage(" + bookId + "," + chapter.Id + ",";
+                kludge += section.Id + "," + subSection.SubSectionId + ")'>" + subSection.SubSectionOrder + ": " + subSection.SubSectionTitle + "</div>";
             })
             kludge += "</div>";
-        })
+        });
         kludge += "</div>";
         $('#divToC').append(kludge);
     })
 }
 
-function showPage(chapterId, sectionId, subSectionId) {
+function showPage(bookId, chapterId, sectionId, subSectionId) {
 
     let pageArrayItem = bookPages.filter(obj => {
         return obj.Chapter == chapterId && obj.Section == sectionId && obj.SubSection == subSectionId
@@ -114,14 +120,14 @@ function showPage(chapterId, sectionId, subSectionId) {
 
     console.log("show page: " + pageIndex);
 
-    if (bjsBookId == 1) {
+    if (bookId == 1) {
         $("#middleColumn").html(pauapStyle());
         $('#bookLeftContent').html(bookPages[pageIndex].PageContents);
         $('#pgNumLeft').html(pageIndex);
         $('#bookRightContent').html(bookPages[++pageIndex].PageContents);
         $('#pgNumRight').html(pageIndex);
     }
-    if (bjsBookId == 3) {
+    if (bookId == 3) {
         //alert("pages.length: " + bookPages.length)
         $('#twoPageBookStyleLeftContent').html(bookPages[pageIndex]);
         $('#twoPageBookStyleRightContent').html(bookPages[++pageIndex]);
@@ -250,6 +256,7 @@ function loadPaupaEditForm() {
 
     $("#middleColumn").html(`
     <div id="bookContentsContainer" class="block">
+        <div id="divStatusMessage"></div>
         <div id="paupaStyleContainer" class="paupaStyle">
             <div class="flexContainer">
                 <img class="floatLeft" src="Images/PaupaBook/book-cornertopleft.png" />
@@ -277,6 +284,8 @@ function loadPaupaEditForm() {
             </div>
         </div>
     </div>`);
+
+    $("#rightColumn").html("<img class='dirtyStatusImage' src='Images/ok-icon-9.jpg'/>");
 }
 
 function pauapEdit() {
@@ -546,62 +555,3 @@ function resizeBookPage() {
 }
 
 ////////////////////////////////////////////////////////
-
-function XXloadBookIntoChapterArray() {
-    try {
-        chapterArray = [];
-        var contents;
-        $('#bookContentsLoadingGif').show();
-        $.ajax({
-            type: "get",
-            url: settingsArray.ApiServer + "/api/BookDb/GetChapterTree?bookId=" + bjsBookId,
-            success: function (bookModel) {
-                if (bookModel.success != "ok")
-                    alert("loadBook: " + bookModel.success);
-                else {
-                    $('#bookTitle').html(bookModel.BookTitle);
-                    //contents = "<div id=bk" + book.Id + " class='bookTitle'>" + book.BookTitle + "</div>";
-                    //contents += "<div class='bookCenterTitle'>Preface</div>"
-                    //contents += "<div class='bookPreface'>" + book.Preface + "</div>";
-                    //contents += "<div class='bookCenterTitle'>Introduction</div>";
-                    //contents += "<div class='sectionContents'>" + book.Introduction + "</div>";
-                    chapterObject = {}, pageObject = {};;
-                    chapterObject.ChapterOrder = 0;
-                    chapterObject.ChapterTitle = book.BookTitle; // intro
-                    chapterObject.Content = contents;
-                    chapterArray.push(chapterObject);
-
-                    $.each(bookModel.Chapters, function (idx, objChapter) {
-                        contents = "<div id=ct" + objChapter.Id + " class='chapterTitle'>" + objChapter.ChapterTitle + "</div>";
-                        contents += "<div class='bookPreface'>" + objChapter.Preface + "</div>";
-                        $.each(objChapter.Sections, function (idx, obj) {
-                            contents += "<div id=sc" + obj.Id + " class='sectionTitle'>" + obj.SectionTitle + "</div>";
-                            contents += "<div class='sectionContents'>" + obj.SectionContents + "</div>";
-                            $.each(obj.SubSections, function (idx, obj) {
-                                contents += "<div id=ssc" + obj.Id + " class='subsectionTitle'>" + obj.SubSectionTitle + "</div>";
-                                contents += "<div class='sectionContents'>" + obj.SubSectionContents + "</div>";
-                            });
-                        });
-                        //chapterArray.push(contents);
-                        let chapterObject = {};
-                        chapterObject.ChapterOrder = objChapter.ChapterOrder;
-                        chapterObject.ChapterTitle = objChapter.ChapterTitle;
-                        chapterObject.Content = contents;
-                        chapterArray.push(chapterObject);
-                    });
-
-
-
-                    //alert("pages.length: " + pages.length + "   pages[0].len: " + pages[0].length + "  pages[1].len: " + pages[1].length);
-                    //alert("breakChapterIntoPages(" + chapterId + ")");
-                    breakChapterIntoPages();
-                }
-            },
-            error: function (jqXHR, exception) {
-                alert("loadBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
-    } catch (e) {
-        alert("loadBook CATCH: " + e);
-    }
-}

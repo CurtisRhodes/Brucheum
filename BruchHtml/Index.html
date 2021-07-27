@@ -44,7 +44,7 @@
                 <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='/IntelDsgn/'">
                     <img src="Images/TanBlue/IntelligentDesignTan.png" onmouseover="this.src='Images/TanBlue/IntelligentDesignBlue.png'" onmouseout="this.src='Images/TanBlue/IntelligentDesignTan.png'" />
                 </div>
-                <div id="itemBlondJew" class="tabvMenuItem" onclick="window.location.href='/BookDb/ToC?book=1'">
+                <div id="itemBlondJew" class="tabvMenuItem" onclick="loadBookAndShowToC(1)">
                     <img src="Images/TanBlue/BlondJewTan.png" onmouseover="this.src='Images/TanBlue/BlondJewBlue.png'" onmouseout="this.src='Images/TanBlue/BlondJewTan.png'" />
                 </div>
                 <div class="tabvMenuItem">
@@ -137,8 +137,7 @@
                     $('#rightColumn').append(showBookPanel());
                     break;
                 case "Books":
-                    $('#divBookPannel').hide();
-                    showBooks();
+                    showMyBooksPage();
                     break;
                 case "ArticleList":
                     showArticleList();

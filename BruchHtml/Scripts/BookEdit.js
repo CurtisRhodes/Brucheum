@@ -14,12 +14,6 @@ function loadBookEditor(bookId, chapter, section, subSection) {
     //alert("loadBookEditor(chapter: " + chapter + ", section: " + section + ", subSection: " + subSection);
 
     try {
-        //    $.ajax({
-        //        type: "get",
-        //        url: settingsArray.ApiServer + "/api/BookDb/GetBook?bookId=" + bookId + "&chapterId=" + chapter,
-        //        success: function (dbBookModel) {
-        //          if (dbBookModel.success === "ok") {
-        //              bookModel = dbBookModel;
         $('#bookTitle').html(bookModel.BookTitle);
 
         curChapter = bookModel.Chapters[chapter];
@@ -39,20 +33,6 @@ function loadBookEditor(bookId, chapter, section, subSection) {
             $('#btnNewCancel').html("New");
         })
 
-
-        $("#btnAddUpdate").html("Update")
-        $('#btnNewCancel').html("New Chapter");
-        $("#btnContinue").show();
-
-        //let curSection = curChapter.Sections[section];
-        //            }
-        //            else
-        //                alert("getBook: " + book.success);
-        //        },
-        //        error: function (jqXHR, exception) {
-        //            alert("getBook XHR error: " + getXHRErrorDetails(jqXHR, exception));
-        //        }
-        //    });
     } catch (e) {
         alert("loadBookEditor CATCH: " + e);
     }

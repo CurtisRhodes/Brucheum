@@ -180,6 +180,11 @@
         margin-bottom: 12px;
     }
 
+.dirtyStatusImage {
+    margin-top: 100px;
+    height: 25px;
+}
+
 .bookTitle {
     font-size: 32px;
     font-weight: bold;
