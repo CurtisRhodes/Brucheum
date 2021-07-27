@@ -135,8 +135,6 @@
     font-family: 'Georgia';
     margin-top: 15px;
     background-color: #ddd69f;
-    /*height: 660px;*/
-    overflow-y: auto;
 }
 
 .paupaBorderContainer {
@@ -166,6 +164,21 @@
     width: 48%;
     height: 100%;
 }
+.paupaInnerEditorContainer {
+    display: block;
+    border: solid thick black;
+    overflow-y: auto;
+}
+.paupaLeftColumnButtonContainer {    
+    margin-top: 66px;
+    margin-left: 26px;
+}
+    .paupaLeftColumnButtonContainer div {
+        display: block;
+        cursor: pointer;
+        text-decoration: underline;
+        margin-bottom: 12px;
+    }
 
 .bookTitle {
     font-size: 32px;
@@ -218,8 +231,9 @@
     font-size: 18px;
 }
 
-.absTitle {
+.inlineLabel {
     position: absolute;
+    display: inline;
     margin-top: 15px;
     font-size: 18px;
 }

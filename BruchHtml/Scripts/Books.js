@@ -1,7 +1,9 @@
 ﻿let bjsBookId = 0; bjschapterId = 0, pageIndex = 0;
 let bookModel = {}, bookPages = [];
 let pageNumber = 0, bookPageLen = 2600;
-let curChapter = 0; curSection = 0; curSubSection = 0;
+let curChapterId = 0; curSectionId = 0; // curSubSectionId = 0;
+let curChapterNode = {}, curSectionNode = {};
+
 function showBooks() {
     $("#tanBlue").hide();
     $("#middleColumn").html(`
@@ -42,7 +44,7 @@ function loadBookAndShowToC() {
     try {
         $("#middleColumn").html(`
             <div><img id="tocLoadingGif" class="loadingGif" src="Images/loader.gif" /></div>
-            <div id="tocBookTitle" class="bookTitle" onclick='showPage(0,0,0)'></div>
+            <div id="tocBookTitle" class="bookTitle" onclick='showPage(1,1,1)'></div>
             <div id="divToC" class="toCcontainer"></div>`
         );
         $('#tocLoadingGif').show();
@@ -73,21 +75,24 @@ function loadBookAndShowToC() {
 }
 
 function showToC() {
+    $("#middleColumn").html(`
+            <div id="tocBookTitle" class="bookTitle" onclick='showPage(1,1,1)'></div>
+            <div id="divToC" class="toCcontainer"></div>`
+    );
     $('#tocBookTitle').html(bookModel.BookTitle);
-    $('#divToC').html("");
     $.each(bookModel.Chapters, function (idx, chapter) {
         // kludge String To Prevent Jquery .append() from auto closing divs
         var kludge = "<div class='chapterContainer'>";
-        kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='showPage(\"" + chapter.Id + "\",0,0)'>" + chapter.ChapterOrder + ". " + chapter.ChapterTitle + "</div>";
+        kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='showPage(\"" + chapter.Id + "\",1,0)'>" + chapter.ChapterOrder + ": " + chapter.ChapterTitle + "</div>";
         kludge += "<div class='dots' onclick='toggleTocSection(" + chapter.Id + ")'></div>";
         kludge += "<div class='divCaret'><img id=img" + chapter.Id + " onclick='toggleTocSection(" + chapter.Id + ")' src='/Images/caretDown.png'></div></div>";
         kludge += "</div>";
         kludge += "<div id=st" + chapter.Id + " class='tocSectionContainer'>";
         $.each(chapter.Sections, function (idx, section) {
-            kludge += "<div id=sc" + section.Id + " class='divSection' onclick='showPage(" + chapter.Id + "," + section.Id + ",0)'>" + section.SectionTitle + "</div>";
+            kludge += "<div id=sc" + section.Id + " class='divSection' onclick='showPage(" + chapter.Id + "," + section.Id + ",0)'>" + section.SectionOrder + ": " + section.SectionTitle + "</div>";
             kludge += "<div class='divSubsections'>";
             $.each(section.SubSections, function (idx, subSection) {
-                kludge += "<div class='divSubSection' onclick='showPage(" + chapter.Id + "," + section.Id + "," + subSection.Id + ")'>" + subSection.SubSectionTitle + "</div>";
+                kludge += "<div class='divSubSection' onclick='showPage(" + chapter.Id + "," + section.Id + "," + subSection.SubSectionId + ")'>" + subSection.SubSectionOrder + ": " + subSection.SubSectionTitle + "</div>";
             })
             kludge += "</div>";
         })
@@ -96,12 +101,19 @@ function showToC() {
     })
 }
 
-function showPage(chapter, section, subSection) {
+function showPage(chapterId, sectionId, subSectionId) {
+
     let pageArrayItem = bookPages.filter(obj => {
-        return obj.Chapter == chapter && obj.Section == section && obj.SubSection == subSection
+        return obj.Chapter == chapterId && obj.Section == sectionId && obj.SubSection == subSectionId
     });
-    pageIndex = pageArrayItem[0].Page;
+    if (pageArrayItem.length == 0) {
+        alert("pageArrayItem.length == 0\nchapter: " + chapterId + ", section: " + sectionId + ", subSection: " + subSectionId + "  Not Found");
+    }
+    else
+        pageIndex = pageArrayItem[0].Page;
+
     console.log("show page: " + pageIndex);
+
     if (bjsBookId == 1) {
         $("#middleColumn").html(pauapStyle());
         $('#bookLeftContent').html(bookPages[pageIndex].PageContents);
@@ -115,11 +127,13 @@ function showPage(chapter, section, subSection) {
         $('#twoPageBookStyleRightContent').html(bookPages[++pageIndex]);
     }
     //if (User.IsInRole("Book Editor"))
-    curChapter = chapter;
-    curSection = section;
-    curSubSection = subSection;
-    //$("#middleColumn").append("<div id='tocEdit'><a href='javascript:editBook(" + bjsBookId + "," + curChapter + "," + curSection + "," + curSubSection + ")'>Edit</a></div>");
     $("#middleColumn").append("<div id='tocEdit'><a href='javascript:pauapEdit()'>Edit</a></div>");
+
+    curChapterId = chapterId;
+    curSectionId = sectionId;
+    //curSubSectionId = subSectionId;
+    //alert("curChapterId: " + curChapterId + " curSectionId: " + curSectionId);
+
     resizeBookPage();
 }
 
@@ -222,29 +236,35 @@ function pauapStyle() {
             <div id="pgNumRight" class="inlineRelative" style="bottom:43px; left:1200px"  >PAGE</div>
         </div>`;
 }
-function paupaEditStyle() {
-    return `
+
+function loadPaupaEditForm() {
+
+    $("#leftColumn").html(`
+    <div class='paupaLeftColumnButtonContainer'>
+        <div onclick="pauapUpdate()">Update</div>
+        <div onclick="showToC()">Back</div>
+        <div onclick="mediateNewCancelbtn()">Add Chapter</div>
+        <div onclick="mediateNewCancelbtn()">Add Section</div>
+        <div onclick="mediateNewCancelbtn()">Add Sub Section</div>
+    </div>`);
+
+    $("#middleColumn").html(`
     <div id="bookContentsContainer" class="block">
         <div id="paupaStyleContainer" class="paupaStyle">
             <div class="flexContainer">
                 <img class="floatLeft" src="Images/PaupaBook/book-cornertopleft.png" />
-                <div class="paupaBorderContainer">
+                <div id="paupaTopLeftBorder" class="paupaBorderContainer">
                     <img class="floatLeft full" src="Images/PaupaBook/book-topLeft.png" />
-                    <div id="paupaChapterTitle" class="absTitle"></div>
+                    <div id="paupaChapterTitle" class="inlineLabel">PAUPA CHAPTER TITLE</div>
                 </div>
                 <img class="floatLeft" src="Images/PaupaBook/book-innerspinetop.png" />
                 <img class="floatLeft paupaBorderContainer" src="Images/PaupaBook/book-topRight.png" />
                 <img class="floatLeft" src="Images/PaupaBook/book-cornertopright.png" />
             </div>
-            <div class="flexContainer paupaPageColor">
+            <div class="flexContainer">
                 <img class="floatLeft" src="Images/PaupaBook/book-left.png" />
-                <div>
-                    <div id="pauapEditor" class="editorContainer"></div>
-                </div>
-                <div class="crudRow">
-                    <button id="btnAddUpdate" class="roundendButton" onclick="mediateAddUpdateBtn()">Add</button>
-                    <button id="btnNewCancel" class="roundendButton" onclick="mediateNewCancelbtn()">Cancel</button>
-                    <button id="btnContinue" class="roundendButton" onclick="redirectToWrite()">Write Some</button>
+                <div id="pauapEditorContainer" class="paupaInnerEditorContainer">
+                    <div id="pauapEditor"></div>
                 </div>
                 <img class="floatLeft" src="Images/PaupaBook/book-right.png" />
             </div>
@@ -256,82 +276,124 @@ function paupaEditStyle() {
                 <img class="floatLeft" src="Images/PaupaBook/book-cornerbright.png" />
             </div>
         </div>
-        <div id="edtTxtChapter" style="position:absolute; top:135px; left:200px">CHAPTER</div>
-        <div id="edtTxtSection" style="position:absolute; top:135px; left:450px">SECTION</div>
-    </div>`;
-    //    <div id="pgNumLeft" class="inlineRelative" style="bottom:43px; left:250px"  >PAGE</div>
-    //    <div id="pgNumRight" class="inlineRelative" style="bottom:43px; left:1200px"  >PAGE</div>
+    </div>`);
 }
 
 function pauapEdit() {
-    $("#middleColumn").html(paupaEditStyle());
-
-    let tclHeight = $('#visableArea').height() - 250;
-    let tclWidth = $('#visableArea').width() - 100;
-
+    loadPaupaEditForm();
+    $('#pauapEditorContainer').css("width", $('#middleColumn').width());
+    //$('#pauapEditorContainer').css("height", $('#middleColumn').height() - 230);
     $('#pauapEditor').summernote({
-        height: tclHeight,
-        width: tclWidth,
-        backcolor: "#ddd69f",
         codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+        height: '100%',
         toolbar: [
             ['codeview'],
             ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
         ]
     });
-    //$("#pauapEditor").summernote("backColor", "rgb(247,240,214)");
-
-    if (isNullorUndefined(bookModel.Chapters[curChapter].Sections[curSection])) {
-        txtSection = "undef";
-    }
-    else {
-        let txtSection = bookModel.Chapters[curChapter].Sections[curSection].SectionContents;
-        $('#pauapEditor').summernote('code', txtSection);
-    }
-    $("#edtTxtChapter").html(bookModel.Chapters[curChapter].ChapterTitle);
-    $("#edtTxtSection").html(bookModel.Chapters[curChapter].Sections[curSection].SectionTitle);
+    $("#pauapEditor").summernote("backColor", "#ddd69f");
+    $("#paupaChapterTitle").css("left", $("#pauapEditorContainer").offset().left);
+    
+    showPaupaChapter();
 
     //<div id="chapterList" class="crudList">
     //    chapter list
     //</div>
 }
 
+function showPaupaChapter() {
+    try {
+        $.each(bookModel.Chapters, function (idx, chapter) {
+            if (chapter.Id == curChapterId) {
+                curChapterNode = chapter;
+                $.each(chapter.Sections, function (idx, section) {
+                    if (section.Id == curSectionId) {
+                        $('#pauapEditor').summernote('code', section.SectionContents);
+                        $("#paupaChapterTitle").html("Chapter: " + chapter.ChapterOrder + " " + chapter.ChapterTitle +
+                            " Section: " + section.SectionOrder + " " + section.SectionTitle);
+                        curSectionNode = section;
+                    }
+                });
+            }
+        })
+    } catch (e) {
+        alert("SHOW PAUPA CHAPTER\ncurChapterId: " + curChapterId + " curSectionId: " + curSectionId + "  e:" + e);
+    }
+}
+
 function editPrevious() {
-    if (curSection ==0) {
-        if (curChapter < bookModel.Chapters) {
-            alert("top");
+    try {
+        let prevSectionOrder = curSectionNode.SectionOrder - 1;
+        if (prevSectionOrder < 1) {
+            let prevChapterOrder = curChapterNode.ChapterOrder - 1;
+            if (prevSectionOrder < 0) {
+                alert("you are at the beginning");
+            }
+            else {
+                $.each(bookModel.Chapters, function (idx, chapter) {
+                    if (chapter.ChapterOrder == prevChapterOrder) {
+                        curChapterNode = chapter;
+                        curChapterId = chapter.Id;
+                        return false;
+                    }
+                });
+
+                $.each(curChapterNode.Sections, function (idx, section) {
+                    if (section.SectionOrder == 1) {
+                        curSectionNode = section;
+                        curSectionId = section.Id;
+                        return false;
+                    }
+                });
+            }
         }
         else {
-            curChapter--;
-            curSection = bookModel.Chapters[curChapter].Sections.length;
+            $.each(curChapterNode.Sections, function (idx, section) {
+                if (section.SectionOrder == prevSectionOrder) {
+                    curSectionNode = section;
+                    curSectionId = section.Id;
+                    return false;
+                }
+            });
         }
+        showPaupaChapter();
+    } catch (e) {
+        alert("EDIT PREVIOUS\ncurChapterId: " + curChapterId + " curSectionId: " + curSectionId + "  e:" + e);
     }
-    else {
-        curSection--;
-    }
-    let txtSection = bookModel.Chapters[curChapter].Sections[curSection].SectionContents;
-    $('#pauapEditor').summernote('code', txtSection);
 }
 
 function editNext() {
-    //alert("pageNext  pageIndex: " + pageIndex + "   pages.length: " + pages.length);
-    if (curSection >= bookModel.Chapters[curChapter].Sections.length) {
-        if (curChapter >= bookModel.Chapters) {
-            alert("the end");
+    try {
+        let nextSectionOrder = curSectionNode.SectionOrder + 1;
+        if (nextSectionOrder > curChapterNode.Sections.length) {
+            let nextChapterOrder = curChapterNode.ChapterOrder + 1;
+            if (nextChapterOrder > bookModel.Chapters.length) {
+                alert("the end");
+            }
+            else {
+                $.each(bookModel.Chapters, function (idx, chapter) {
+                    if (chapter.ChapterOrder == nextChapterOrder) {
+                        curChapterNode = chapter;
+                        curChapterId = curChapterNode.Id;
+                        curSectionNode = chapter.Sections[0];
+                        curSectionId = curSectionNode.Id;
+                    }
+                });
+            }
         }
         else {
-            curChapter++;
-            curSection = 0;
-            //curSection = bookModel.Chapters[curChapter].Sections.length;
+            $.each(curChapterNode.Sections, function (idx, section) {
+                if (section.SectionOrder == nextSectionOrder) {
+                    curSectionId = section.Id;
+                    curSectionNode = section;
+                }
+            });
         }
+        showPaupaChapter();
+    } catch (e) {
+        //console.error("EDIT NEXT\ncurChapterId: " + curChapterId + "curSectionId: " + curSectionId + "  e:" + e);
+        alert("EDIT NEXT\ncurChapterId: " + curChapterId + "curSectionId: " + curSectionId + "  e:" + e);
     }
-    else {
-        curSection++;
-    }
-    let txtSection = bookModel.Chapters[curChapter].Sections[curSection].SectionContents;
-    $('#pauapEditor').summernote('code', txtSection);
-    $("#edtTxtChapter").html(bookModel.Chapters[curChapter].ChapterTitle);
-    $("#edtTxtSection").html(bookModel.Chapters[curChapter].Sections[curSection].SectionTitle);
 }
 
 function pageNext() {
@@ -353,9 +415,45 @@ function pageNext() {
             $('#bookRightContent').html("");
         }
     }
-    curChapter = bookPages[pageIndex].Chapter;
-    curSection = bookPages[pageIndex].Section;
-    curSubSection = bookPages[pageIndex].SubSection;
+    curChapterId = bookPages[pageIndex].Chapter;
+    curSectionId = bookPages[pageIndex].Section;
+    //curSubSectionId = bookPages[pageIndex].SubSection;
+
+    console.log("pageNext. curChapterId: " + curChapterId + " curSectionId: " + curSectionId);
+}
+
+function pauapUpdate() {
+    try {
+        $('#tocLoadingGif').show();
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "/api/BookDb/UpdateSection",
+            data: {
+                BookId: bookModel.Id,
+                ChapterId: curChapterId,
+                SectionId: curSectionId,
+                SectionTitle: curSectionNode.SectionTitle,
+                SectionContents: $('#pauapEditor').summernote('code')
+            },
+            success: function (success) {
+                if (success != "ok") {
+                    $('#tocLoadingGif').hide();
+                    alert("PAUAP UPDATE AJAX\n: " + success);
+                }
+                else {
+                    displayStatusMessage("ok", "section updated");
+                    $('#tocLoadingGif').hide();
+                }
+            },
+            error: function (jqXHR, exception) {
+                $('#tocLoadingGif').hide();
+                alert("loadBookAndShowToC XHR error: " + getXHRErrorDetails(jqXHR, exception));
+            }
+        });
+    } catch (e) {
+        $('#tocLoadingGif').hide();
+        alert("PAUAP UPDATE CATCH\n" + e);
+    }
 }
 
 function pagePrevious() {
@@ -369,9 +467,9 @@ function pagePrevious() {
             alert("top");
         }
     }
-    curChapter = bookPages[pageIndex].Chapter;
-    curSection = bookPages[pageIndex].Section;
-    curSubSection = bookPages[pageIndex].SubSection;
+    curChapterId = bookPages[pageIndex].Chapter;
+    curSectionId = bookPages[pageIndex].Section;
+    //curSubSectionId = bookPages[pageIndex].SubSection;
 }
 
 function redirectToToC() {
@@ -439,10 +537,12 @@ function resizeBookPage() {
     var headerH = $('header').height();
     $('#middleColumn').css("height", winH - headerH - 5);
     $('#bookLeftContent').css('height', winH - headerH - 288);
+    $('#pauapEditorContainer').css("width", $('#middleColumn').width());
+    $('#pauapEditorContainer').css("height", $('#middleColumn').height() - 222);
 
     $('#testMsg1').html("mch: " + $('#middleColumn').height());
     $('#testMsg2').html("bcc: " + $('#bookLeftContent').height());
-    $('#testMsg3').html("3cl: " + $('.threeColumnLayout').height());
+    $('#testMsg3').html("3clH: " + $('.threeColumnLayout').height());
 }
 
 ////////////////////////////////////////////////////////

@@ -26,7 +26,6 @@ namespace Bruchueum.Api
             Sections = new List<BookSectionModel>();
         }
         public int Id { get; set; }
-        public string BookTitle { get; set; }
         public string ChapterTitle { get; set; }
         public int ChapterOrder { get; set; }
         public string Preface { get; set; }
@@ -47,8 +46,21 @@ namespace Bruchueum.Api
     public class SubSectionModel
     {
         public int Id { get; set; }
+        public int BookId { get; set; }
+        public int ChapterId { get; set; }
+        public int SectionId { get; set; }
         public string SubSectionTitle { get; set; }
         public int SubSectionOrder { get; set; }
         public string SubSectionContents { get; set; }
+    }
+
+    public class UpdateSectionModel
+    {
+        public int BookId { get; set; }
+        public int ChapterId { get; set; }
+        public int SectionId { get; set; }
+        public string SectionTitle { get; set; }
+        public int SectionOrder { get; set; }
+        public string SectionContents { get; set; }
     }
 }

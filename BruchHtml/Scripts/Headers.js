@@ -6,7 +6,7 @@ function setHeader(headerContext) {
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displaySpaPage(\"ArticleList\")'>Latest Articles</div>\n
                 <div class='menuTab floatLeft' onclick='displaySpaPage(\"Books\")'>Books</div>\n
-                <div class='menuTab floatLeft'>Apps</div>\n
+                <div class='menuTab floatLeft' onclick='openAt(\"Books\")'>Apps</div>\n
                 <div class='menuTab floatLeft'>Intelligent Design</div>\n`);
             break;
         case "Books":
