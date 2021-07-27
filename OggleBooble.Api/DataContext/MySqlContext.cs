@@ -31,8 +31,10 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<RegisteredUser> RegisteredUsers { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         //public virtual DbSet<VwErrorReport> ErrorRepors { get; set; }
-        public virtual DbSet<VwActivityLog> VwActivityLogs { get; set; }
+        public virtual DbSet<VwErrorSummaryReport> VwErrorReportRows { get; set; }
+        public virtual DbSet<VwErrorDetailReport> VwErrorDetailRows { get; set; }
 
+        public virtual DbSet<VwActivityLog> VwActivityLogs { get; set; }
         public virtual DbSet<ActivityLog> ActivityLogs { get; set; }
         //public virtual DbSet<DailyActivityReport> DailyActivity { get; set; }
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
@@ -52,7 +54,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<VwCarouselItem> VwCarouselImages { get; set; }
         public virtual DbSet<LatestTouchedGalleries> LatestTouchedGalleries { get; set; }
         public virtual DbSet<VwImageHit> VwImageHits { get; set; }
-        public virtual DbSet<VwErrorReport> VwErrorReportRows { get; set; }
+
         public virtual DbSet<ImageComment> ImageComments { get; set; }
         public virtual DbSet<UserCredit> UserCredits { get; set; }
         public virtual DbSet<Centerfold> Centerfolds { get; set; }
@@ -668,41 +670,39 @@ namespace OggleBooble.Api.MySqlDataContext
         public string UserName { get; set; }
     }
 
-//FolderId int (4)	NO
-//FolderName  varchar(150)    YES
-//ErrorCode   varchar(3)  NO
-//Error   varchar(150)    YES
-//CalledFrom  varchar(50) NO
-//on  varchar(10) YES
-//at  varchar(8)  YES
-//ErrorMessage    varchar(2000)   YES
-//IpAddress   varchar(20) YES
-//City    varchar(50) YES
-//Country varchar(2)  YES
-
-  [Table("OggleBooble.VwErrorReport")]
-    public class VwErrorReport
+    [Table("OggleBooble.VwErrorSummaryReport")]
+    public class VwErrorSummaryReport
     {
-        public int FolderId { get; set; }
-        public string FolderName { get; set; }
-        public string Error { get; set; }
-        public string CalledFrom { get; set; }
-        public string ErrorMessage { get; set; }
+        [Key]
+        public string ErrorCode { get; set; }
+        public string RefDescription { get; set; }
+        public int ErrorCount { get; set; }
+    }
+
+    [Table("OggleBooble.VwErrorDetailReport")]
+    public class VwErrorDetailReport
+    {
         [Key]
         [Column(Order = 0)]
-        public string VisitorId { get; set; }
+        public string ErrorCode { get; set; }
         [Key]
         [Column(Order = 1)]
         public string Occured { get; set; }
-        public string Time { get; set; }
-        public string ErrorCode { get; set; }
-        public string IpAddress { get; set; }
+        public int RepeatCalls { get; set; }
+        public string UserName { get; set; }
+        public string CalledFrom { get; set; }
+        public string ErrorMessage { get; set; }
+        public string FolderId { get; set; }
+        public string FolderName { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
         public string Country { get; set; }
+        [Key]
+        [Column(Order = 2)]
+        public string VisitorId { get; set; }
     }
 
-    [Table("OggleBooble.vwImageHits")]
+  [Table("OggleBooble.vwImageHits")]
     public partial class VwImageHit
     {
         [Key]

@@ -93,16 +93,15 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
-    public class UserErrorReportSuccess
-    {
-        public UserErrorReportSuccess() 
-        {
-            ErrorRows = new List<VwErrorReport>();
-        }
-        public List<VwErrorReport> ErrorRows { get; set; }
-        public string Success { get; set; }
-    }
-
+    //public class UserErrorReportSuccess
+    //{
+    //    public UserErrorReportSuccess() 
+    //    {
+    //        ErrorRows = new List<VwErrorReport>();
+    //    }
+    //    public List<VwErrorReport> ErrorRows { get; set; }
+    //    public string Success { get; set; }
+    //}
 
     public class UserReportSuccessModel
     {
@@ -122,13 +121,23 @@ namespace OggleBooble.Api.Models
         public string UserName { get; set; }
     }
 
-    public class ErrorLogReportModel
+    
+    public class ErrorSummaryReportModel
     {
-        public ErrorLogReportModel()
+        public ErrorSummaryReportModel()
         {
-            ErrorRows = new List<VwErrorReport>();
+            ErrorRows = new List<VwErrorSummaryReport>();
         }
-        public List<VwErrorReport> ErrorRows { get; set; }
+        public List<VwErrorSummaryReport> ErrorRows { get; set; }
+        public string Success { get; set; }
+    }
+    public class ErrorDetailReportModel
+    {
+        public ErrorDetailReportModel()
+        {
+            ErrorDetailRows = new List<VwErrorDetailReport>();
+        }
+        public List<VwErrorDetailReport> ErrorDetailRows { get; set; }
         public string Success { get; set; }
     }
 

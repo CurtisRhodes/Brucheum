@@ -236,6 +236,8 @@ function runDailyRefferals() {
     }
 }
 
+//////////////////////////////////////////////////////////////////////////
+
 function runPageHitReport() {
     activeReport = "PageHitReport";
     $('#reportsHeaderTitle').html("Page Hit Report for : " + todayString());
@@ -519,54 +521,107 @@ function errorReport() {
     });
 }
 
-function showUserErrorDetail(ipAddress) {
-    // alert("showUserDetail: " + ipAddress);
+function errorSummaryReport() {
+    //$("#divStandardReportArea").addClass("tightReport");
+    activeReport = "ErrorSummary";
+    $('#reportsHeaderTitle').html("Error Report for : " + todayString());
+    $("#reportsContentArea").html("");
+    $("#reportsFooter").html("");
+    $('#dashBoardLoadingGif').show();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/Report/UserErrorDetails?ipAddress=" + ipAddress,
-        success: function (userErrors) {
+        url: settingsArray.ApiServer + "/api/Report/ErrorSummary",
+        success: function (errorSummary) {
             $('#dashBoardLoadingGif').hide();
-            if (userErrors.Success === "ok") {
-                $('#dashboardDialogTitle').html("user error details for: " + ipAddress);
-                let kludge = "<div>";
-                $.each(userErrors.ErrorRows, function (idx, obj) {
-                    if (idx == 0) {
-                        kludge += "<div>from: " + obj.City + ", " + obj.Region + ", " + obj.Country + "</div>";
-                        kludge += "<table>";
-                        kludge += "<tr><th>folder</th><th>error</th><th>called from</th><th>occured</th></tr>";
-                    }
-                    kludge += "<tr><td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
-                    kludge += "<td>" + obj.ErrorCode + ": " + obj.Error + "</td>";
-                    kludge += "<td>" + obj.CalledFrom + "</td>";
-                    kludge += "<td>" + obj.Occured + ":" + obj.Time + "</td><tr>";
+            if (errorSummary.Success === "ok") {
+                let kludge = "";
+                $.each(errorSummary.ErrorRows, function (idx, obj) {
+                    kludge += "<div id='er" + obj.ErrorCode + "' class='evtDetailRow' onclick='errorDetailReport(\"" + obj.ErrorCode + "\")'>" +
+                        "<div style='width:400px'>" + obj.RefDescription + "</div>" +
+                        "   <div>" + obj.ErrorCount.toLocaleString() + "</div>" +
+                        "</div>";
+                    kludge += "<div class='evtDetailContainer' id='erd" + obj.ErrorCode + "'></div>";
                 });
-                kludge += "</table>";
-                $('#dashboardDialogContents').html(kludge);
-                $('#dashboardDialog').fadeIn();
+                //kludge += "<td colspan='2'>Total</td><td colspan='4'>" + eventDetails.Total.toLocaleString() + "<td></tr>";
+                //kludge += "<div class='evtDetailRow'><div style='width:400px'>Total</div><div>" + errorSummary.Total.toLocaleString() + "</div></div>";
+                $("#reportsContentArea").html(kludge);
+                //$("#divStandardReportCount").html(" Total: " + eventSummary.Items.Count().toLocaleString());
             }
             else {
-                logError("AJX", 3910, userErrors.Success, "pageHitsReport");
+                logError("AJX", 3910, errorSummary.Success, "eventActivityReport");
             }
-
-            //    public class VwErrorReport {
-            //    public int FolderId { get; set; }
-            //    public string FolderName { get; set; }
-            //    public string Error { get; set; }
-            //    public string CalledFrom { get; set; }
-            //    public string ErrorMessage { get; set; }
-            //    public string VisitorId { get; set; }
-            //    public string Occured { get; set; }
-            //    public string Time { get; set; }
-            //    public string ErrorCode { get; set; }
-            //    public string IpAddress { get; set; }
-            //    public string City { get; set; }
-            //    public string Region { get; set; }
-            //    public string Country { get; set; }
-            //}
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "showUserErrorDetail")) logError("XHR", 3907, errMsg, "showUserErrorDetail");
+            if (!checkFor404(errMsg, folderId, "eventSummaryReport")) logError("XHR", 3907, errMsg, "eventSummaryReport");
+        }
+    });
+}
+
+function errorDetailReport(errorCode) {
+    if ($('#erd' + errorCode + '').is(":visible")) {
+        $('#erd' + errorCode + '').slideUp('slow');
+        return;
+    }
+
+        //public string ErrorCode { get; set; }
+        //public string Time { get; set; }
+        //public string UserName { get; set; }
+        //public string CalledFrom { get; set; }
+        //public string ErrorMessage { get; set; }
+        //public string FolderId { get; set; }
+        //public string FolderName { get; set; }
+        //public string City { get; set; }
+        //public string Region { get; set; }
+        //public string Country { get; set; }
+        //public string VisitorId { get; set; }
+
+
+    $('#dashBoardLoadingGif').show();
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Report/ErrorDetails?errorCode=" + errorCode,
+        success: function (errorDetails) {
+            $('#dashBoardLoadingGif').hide();
+            if (errorDetails.Success === "ok") {
+                $('#dashboardDialogTitle').html("user error details for: " + errorCode);
+                let kludge = "<div>";
+                $.each(errorDetails.ErrorDetailRows, function (idx, obj) {
+                    if (idx == 0) {
+                        kludge += "<table>";
+                        kludge += "<tr><th>folder</th><th>error</th><th>called from</th><th>calls</th><th>occured</th><th>visitor from</th></tr>";
+                    }
+                    kludge += "<tr><td>" + obj.FolderId + ": " + obj.FolderName + "</td>";
+                    kludge += "<td>" + obj.ErrorMessage + "</td>";
+                    kludge += "<td>" + obj.CalledFrom + "</td>";
+                    kludge += "<td>" + obj.RepeatCalls + "</td>";
+                    kludge += "<td>" + obj.Occured + "</td>";
+                    kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td></tr>";
+                });
+                kludge += "</table>";
+                $('#erd' + errorCode+ '').html(kludge).slideDown('slow');
+                //$('#dashboardDialog').fadeIn();
+            }
+            else {
+                logError("AJX", 3910, userErrors.Success, "error detail report");
+            }
+
+        //    Occured	varchar(20)	YES
+        //    ErrorCode	varchar(3)	NO
+        //    repeatCalls	bigint(21)	NO		0
+        //    UserName	varchar(50)	YES
+        //    CalledFrom	varchar(50)	NO
+        //    ErrorMessage	varchar(2000)	YES
+        //    FolderId	int(4)	NO
+        //    FolderName	varchar(150)	YES
+        //    City	varchar(50)	YES
+        //    Region	varchar(100)	YES
+        //    Country	varchar(150)	YES
+        //    VisitorId	varchar(36)	NO
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, folderId, "error detail report")) logError("XHR", 3907, errMsg, "error detail report");
         }
     });
 }

@@ -173,7 +173,7 @@ function setLeftMenu(role) {
             $('#reportsLeftMenu').html("<div class='clickable' onclick='runMetricsMatrixReport()'>Performance Metrics</div>\n" +
                 "<div class='clickable' onclick='runPageHitReport()'>Page Hit Report</div>\n" +
                 "<div class='clickable' onclick='eventSummaryReport()'>Event Activity</div>\n" +
-                "<div class='clickable' onclick='errorReport()'>Error Log</div>\n" +
+                "<div class='clickable' onclick='errorSummaryReport()'>Error Report</div>\n" +
                 "<div class='clickable' onclick='FeedbackReport()'>Feedback</div>\n" +
                 "<div class='clickable' onclick='runImpactReport()'>Impact</div>\n" +
                 "<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>\n" +

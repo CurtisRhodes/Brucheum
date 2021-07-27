@@ -435,23 +435,23 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Report/ErrorLogReport")]
-        public ErrorLogReportModel ErrorLogReport()
+        [Route("api/Report/ErrorSummary")]
+        public ErrorSummaryReportModel ErrorSummary()
         {
-            ErrorLogReportModel errorLog = new ErrorLogReportModel();
+            var errorSummary = new ErrorSummaryReportModel();
             try
-            {
+            { 
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    errorLog.ErrorRows = db.VwErrorReportRows.ToList();
-                    errorLog.Success = "ok";
+                    errorSummary.ErrorRows = db.VwErrorReportRows.ToList();
+                    errorSummary.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                errorLog.Success = Helpers.ErrorDetails(ex);
+                errorSummary.Success = Helpers.ErrorDetails(ex);
             }
-            return errorLog;
+            return errorSummary;
         }
 
         //public string ProcessStatus { get; set; }
@@ -486,20 +486,20 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Report/UserErrorDetails")]
-        public UserErrorReportSuccess UserErrorDetails(string ipAddress)
+        [Route("api/Report/ErrorDetails")]
+        public ErrorDetailReportModel ErrorDetails(string errorCode)
         {
-            var userErrors = new UserErrorReportSuccess();
+            var errorDetails = new ErrorDetailReportModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    userErrors.ErrorRows = db.VwErrorReportRows.Where(e => e.IpAddress == ipAddress).ToList();
+                    errorDetails.ErrorDetailRows = db.VwErrorDetailRows.Where(e => e.ErrorCode == errorCode).ToList();
                 }
-                userErrors.Success = "ok";
+                errorDetails.Success = "ok";
             }
-            catch (Exception ex) { userErrors.Success = Helpers.ErrorDetails(ex); }
-            return userErrors;
+            catch (Exception ex) { errorDetails.Success = Helpers.ErrorDetails(ex); }
+            return errorDetails;
         }
 
         [HttpGet]
