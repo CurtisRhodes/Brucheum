@@ -1,4 +1,4 @@
-﻿let bjschapterId = 0, pageIndex = 0;
+﻿let pageIndex = 0;
 let bookModel = {}, bookPages = [];
 let pageNumber = 0, bookPageLen = 2600;
 let curChapterId = 0; curSectionId = 0; // curSubSectionId = 0;
@@ -6,13 +6,13 @@ let curChapterNode = {}, curSectionNode = {};
 
 function showMyBooksPage() {
     $("#tanBlue").hide();
-    clearInterval(Carousel);
-    clearInterval(CarouselRotatorInterval);
+    //clearInterval(Carousel);
+    //clearInterval(CarouselRotatorInterval);
     $('#divBookPannel').hide();
     $("#middleColumn").html(`
         <div id="tocLoadingGif"><img class="loadingGif" src="Images/loader.gif" /></div>
-        <div class="pageTitle" id = "divBooksWriting" > Books I am writing</div>
-        <div id="divMyBooks">
+        <div class="pageTitle" id="divBooksWriting">Books I am writing</div>
+        <div class="divMyBooks">
             <div class="divBook" book="The Blond Jew" onclick="showBook(1)">
                 <img class="bookImage" src="Images/TheBlondJew.jpg" />
             </div>
@@ -25,7 +25,7 @@ function showMyBooksPage() {
         </div>
         <div class="divLibrayPages" id="divBooksRead">Books I have Read</div>
         <div class="divLibrayPages" id="divBooksIOwn">Book I Own</div>
-        `);
+    `);
 }
 
 function showBook(bookId) {
@@ -80,24 +80,23 @@ function loadBookAndShowToC(bookId) {
 
 function showToC(bookId) {
     $("#middleColumn").html(`
-            <div id="tocBookTitle" class="bookTitle" onclick='showPage(`+ bookId + `,1,1,1)'></div>
+            <div id="tocBookTitle" class="bookTitle" onclick='showPage(1,1,1)'></div>
             <div id="divToC" class="toCcontainer"></div>`
     );
     $('#tocBookTitle').html(bookModel.BookTitle);
     $.each(bookModel.Chapters, function (idx, chapter) {
         // kludge String To Prevent Jquery .append() from auto closing divs
         var kludge = "<div class='chapterContainer'>";
-        kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='showPage(\"" + bookId + "," + chapter.Id + "\",1,0)'>" + chapter.ChapterOrder + ": " + chapter.ChapterTitle + "</div>";
+        kludge += "<div id=ct" + chapter.Id + " class='chapterName' onclick='showPage(" + chapter.Id + ",0,0)'>" + chapter.ChapterOrder + ": " + chapter.ChapterTitle + "</div>";
         kludge += "<div class='dots' onclick='toggleTocSection(" + chapter.Id + ")'></div>";
         kludge += "<div class='divCaret'><img id=img" + chapter.Id + " onclick='toggleTocSection(" + chapter.Id + ")' src='/Images/caretDown.png'></div></div>";
         kludge += "</div>";
         kludge += "<div id=st" + chapter.Id + " class='tocSectionContainer'>";
         $.each(chapter.Sections, function (idx, section) {
-            kludge += "<div id=sc" + section.Id + " class='divSection' onclick='showPage(";
-            kludge += bookId + "," + chapter.Id + "," + section.Id + ",0)'>" + section.SectionOrder + ": " + section.SectionTitle + "</div>";
+            kludge += "<div id=sc" + section.Id + " class='divSection' onclick='showPage(" + chapter.Id + "," + section.Id + ",0)'>" + section.SectionOrder + ": " + section.SectionTitle + "</div>";
             kludge += "<div class='divSubsections'>";
             $.each(section.SubSections, function (idx, subSection) {
-                kludge += "<div class='divSubSection' onclick='showPage(" + bookId + "," + chapter.Id + ",";
+                kludge += "<div class='divSubSection' onclick='showPage(" + chapter.Id + ",";
                 kludge += section.Id + "," + subSection.SubSectionId + ")'>" + subSection.SubSectionOrder + ": " + subSection.SubSectionTitle + "</div>";
             })
             kludge += "</div>";
@@ -107,40 +106,44 @@ function showToC(bookId) {
     })
 }
 
-function showPage(bookId, chapterId, sectionId, subSectionId) {
+function showPage(chapterId, sectionId, subSectionId) {
 
-    let pageArrayItem = bookPages.filter(obj => {
-        return obj.Chapter == chapterId && obj.Section == sectionId && obj.SubSection == subSectionId
-    });
-    if (pageArrayItem.length == 0) {
-        alert("pageArrayItem.length == 0\nchapter: " + chapterId + ", section: " + sectionId + ", subSection: " + subSectionId + "  Not Found");
+    let pageArrayItem;
+    if (sectionId == 0) {
+        pageArrayItem = bookPages.filter(obj => {
+            return obj.Chapter == chapterId;
+        });
     }
-    else
+    else {
+        pageArrayItem = bookPages.filter(obj => {
+            return obj.Chapter == chapterId && obj.Section == sectionId && obj.SubSection == subSectionId
+        });
+    }
+    if (pageArrayItem.length == 0) {
+        alert("SHOW PAGE\nbookId: " + bookModel.Id + ", chapterId: " + chapterId + ", section: " + sectionId + ", subSection: " + subSectionId + "  Not Found");
+    }
+    else {
         pageIndex = pageArrayItem[0].Page;
 
-    console.log("show page: " + pageIndex);
+        if (bookModel.Id == 1) {
+            $("#middleColumn").html(pauapStyle());
+            $('#bookLeftContent').html(bookPages[pageIndex].PageContents);
+            $('#pgNumLeft').html(pageIndex);
+            $('#bookRightContent').html(bookPages[++pageIndex].PageContents);
+            $('#pgNumRight').html(pageIndex);
+        }
+        if (bookModel.Id == 3) {
+            //alert("pages.length: " + bookPages.length)
+            $('#twoPageBookStyleLeftContent').html(bookPages[pageIndex]);
+            $('#twoPageBookStyleRightContent').html(bookPages[++pageIndex]);
+        }
+        //if (User.IsInRole("Book Editor"))
 
-    if (bookId == 1) {
-        $("#middleColumn").html(pauapStyle());
-        $('#bookLeftContent').html(bookPages[pageIndex].PageContents);
-        $('#pgNumLeft').html(pageIndex);
-        $('#bookRightContent').html(bookPages[++pageIndex].PageContents);
-        $('#pgNumRight').html(pageIndex);
+        curChapterId = chapterId;
+        curSectionId = sectionId;
+        //curSubSectionId = subSectionId;
+        //resizeBookPage();
     }
-    if (bookId == 3) {
-        //alert("pages.length: " + bookPages.length)
-        $('#twoPageBookStyleLeftContent').html(bookPages[pageIndex]);
-        $('#twoPageBookStyleRightContent').html(bookPages[++pageIndex]);
-    }
-    //if (User.IsInRole("Book Editor"))
-    $("#middleColumn").append("<div id='tocEdit'><a href='javascript:pauapEdit()'>Edit</a></div>");
-
-    curChapterId = chapterId;
-    curSectionId = sectionId;
-    //curSubSectionId = subSectionId;
-    //alert("curChapterId: " + curChapterId + " curSectionId: " + curSectionId);
-
-    resizeBookPage();
 }
 
 function calcPageCharCount() {
@@ -240,6 +243,7 @@ function pauapStyle() {
             </div>
             <div id="pgNumLeft" class="inlineRelative" style="bottom:43px; left:250px"  >PAGE</div>
             <div id="pgNumRight" class="inlineRelative" style="bottom:43px; left:1200px"  >PAGE</div>
+            <div id='tocEdit'><a href='javascript:pauapEdit()'>Edit</a></div>
         </div>`;
 }
 
@@ -248,10 +252,10 @@ function loadPaupaEditForm() {
     $("#leftColumn").html(`
     <div class='paupaLeftColumnButtonContainer'>
         <div onclick="pauapUpdate()">Update</div>
-        <div onclick="showToC()">Back</div>
-        <div onclick="mediateNewCancelbtn()">Add Chapter</div>
-        <div onclick="mediateNewCancelbtn()">Add Section</div>
-        <div onclick="mediateNewCancelbtn()">Add Sub Section</div>
+        <div onclick="showToC()">Back to ToC</div>
+        <div onclick="showAddChapterDialog()">Add Chapter</div>
+        <div onclick="showAddChapterDialog()">Add Section</div>
+        <div onclick="showAddChapterDialog()">Add Sub Section</div>
     </div>`);
 
     $("#middleColumn").html(`
@@ -277,9 +281,9 @@ function loadPaupaEditForm() {
             </div>
             <div class="flexContainer">
                 <img class="floatLeft" src="Images/PaupaBook/book-cornerbleft.png" />
-                <img class="floatLeft paupaBorderContainer clickable" src="Images/PaupaBook/book-bottomleft.png" onclick="editPrevious()" />
+                <img class="floatLeft paupaBorderContainer clickable" src="Images/PaupaBook/book-bottomleft.png" onclick="editPagePrevious()" />
                 <img class="floatLeft" src="Images/PaupaBook/book-innerspinebottom.png" />
-                <img class="floatLeft paupaBorderContainer clickable" src="Images/PaupaBook/book-bottomright.png" onclick="editNext()" />
+                <img class="floatLeft paupaBorderContainer clickable" src="Images/PaupaBook/book-bottomright.png" onclick="editPageNext()" />
                 <img class="floatLeft" src="Images/PaupaBook/book-cornerbright.png" />
             </div>
         </div>
@@ -291,46 +295,48 @@ function loadPaupaEditForm() {
 function pauapEdit() {
     loadPaupaEditForm();
     $('#pauapEditorContainer').css("width", $('#middleColumn').width());
-    //$('#pauapEditorContainer').css("height", $('#middleColumn').height() - 230);
+    $("#paupaChapterTitle").css("left", $("#pauapEditorContainer").offset().left);
+
     $('#pauapEditor').summernote({
         codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
         height: '100%',
+        backcolor: '#ddd69f',
         toolbar: [
             ['codeview'],
             ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
         ]
     });
-    $("#pauapEditor").summernote("backColor", "#ddd69f");
-    $("#paupaChapterTitle").css("left", $("#pauapEditorContainer").offset().left);
-    
-    showPaupaChapter();
 
-    //<div id="chapterList" class="crudList">
-    //    chapter list
-    //</div>
+    showEditSection();
+    resizeBookPage();
 }
 
-function showPaupaChapter() {
+function showEditSection() {
     try {
         $.each(bookModel.Chapters, function (idx, chapter) {
             if (chapter.Id == curChapterId) {
                 curChapterNode = chapter;
-                $.each(chapter.Sections, function (idx, section) {
-                    if (section.Id == curSectionId) {
-                        $('#pauapEditor').summernote('code', section.SectionContents);
-                        $("#paupaChapterTitle").html("Chapter: " + chapter.ChapterOrder + " " + chapter.ChapterTitle +
-                            " Section: " + section.SectionOrder + " " + section.SectionTitle);
-                        curSectionNode = section;
-                    }
-                });
+                if (curSectionId == 0) {
+                    alert("SHOW EDIT SECTION\nshow preface?")
+                }
+                else {
+                    $.each(chapter.Sections, function (idx, section) {
+                        if (section.Id == curSectionId) {
+                            $('#pauapEditor').summernote('code', section.SectionContents);
+                            $("#paupaChapterTitle").html("Chapter: " + chapter.ChapterOrder + " " + chapter.ChapterTitle +
+                                " Section: " + section.SectionOrder + " " + section.SectionTitle);
+                            curSectionNode = section;
+                        }
+                    });
+                }
             }
         })
     } catch (e) {
-        alert("SHOW PAUPA CHAPTER\ncurChapterId: " + curChapterId + " curSectionId: " + curSectionId + "  e:" + e);
+        alert("SHOW EDIT SECTION catch\ncurChapterId: " + curChapterId + " curSectionId: " + curSectionId + "  e:" + e);
     }
 }
 
-function editPrevious() {
+function editPagePrevious() {
     try {
         let prevSectionOrder = curSectionNode.SectionOrder - 1;
         if (prevSectionOrder < 1) {
@@ -365,15 +371,17 @@ function editPrevious() {
                 }
             });
         }
-        showPaupaChapter();
+        showEditSection();
     } catch (e) {
         alert("EDIT PREVIOUS\ncurChapterId: " + curChapterId + " curSectionId: " + curSectionId + "  e:" + e);
     }
 }
 
-function editNext() {
+function editPageNext() {
     try {
         let nextSectionOrder = curSectionNode.SectionOrder + 1;
+
+
         if (nextSectionOrder > curChapterNode.Sections.length) {
             let nextChapterOrder = curChapterNode.ChapterOrder + 1;
             if (nextChapterOrder > bookModel.Chapters.length) {
@@ -398,7 +406,7 @@ function editNext() {
                 }
             });
         }
-        showPaupaChapter();
+        showEditSection();
     } catch (e) {
         //console.error("EDIT NEXT\ncurChapterId: " + curChapterId + "curSectionId: " + curSectionId + "  e:" + e);
         alert("EDIT NEXT\ncurChapterId: " + curChapterId + "curSectionId: " + curSectionId + "  e:" + e);
@@ -471,7 +479,7 @@ function pagePrevious() {
         $('#bookLeftContent').html(bookPages[pageIndex--].PageContents);
     }
     else {
-        if (bjschapterId > 0) {
+        if (curChapterNode.ChapterOrder == 1) {
             pageIndex = 0;
             alert("top");
         }
@@ -483,22 +491,6 @@ function pagePrevious() {
 
 function redirectToToC() {
     showBook(bookModel.BookId);
-}
-
-function setStyle() {
-
-    //alert("bookid: " + bookId);// + "   =2: " + bookId == "2");
-
-    if (bookId == '2') {
-        //alert("ok");
-        $('.threeColumnArray').css('background-image', 'url("/Images/Books/timeSquared01.jpg")')
-        $('.threeColumnArray').css('background-repeat', 'no-repeat');
-        $('.threeColumnArray').css('background-size', 'cover');
-        $('#divToC').css('color', '#fff');
-        $('.dots').css('border-bottom-color', '#fff');
-        $('#bookTitle').css('color', '#fff');
-    }
-
 }
 
 function toggleChapter(id) {
@@ -548,10 +540,55 @@ function resizeBookPage() {
     $('#bookLeftContent').css('height', winH - headerH - 288);
     $('#pauapEditorContainer').css("width", $('#middleColumn').width());
     $('#pauapEditorContainer').css("height", $('#middleColumn').height() - 222);
+    $(".note-editable").css("height", $("#pauapEditorContainer").height());
 
     $('#testMsg1').html("mch: " + $('#middleColumn').height());
     $('#testMsg2').html("bcc: " + $('#bookLeftContent').height());
     $('#testMsg3').html("3clH: " + $('.threeColumnLayout').height());
+}
+
+function showAddChapterDialog() {
+    $('#centeredDialogContents').html(`
+    <div>
+        <div class='flexContainer'>
+            <div class='floatleft'>
+                <div>Add Section</div>
+                <label>title</label> <input id="txtNewSection"/> 
+                <label>order</label>
+                <input id="txtSectionOrder"/>
+                <button>Add<button>
+            </div>
+            <div class='floatleft'>
+                <div>chapters</div>
+                <ul id="chapterList" class="noWrap"></ul>
+            </div>
+            <div class='floatleft'>
+                <div>sections</div>
+                <ul id="sectionsList" class="noWrap"></ul>
+            </div>
+        </div>
+    </div>`);
+
+    $('#centeredDialogTitle').html(bookModel.BookTitle);
+    $('#centeredDialogContainer').show();
+
+    //<div>chapter</div>
+    //<div>Add Chapter <input id="txtNewChapter"/> <input id="txtchapterOrder"/><button>Add<button></div>
+
+    $.each(bookModel.Chapters, function (idx, chapter) {
+        $('#chapterList').append("<li onclick='dlgShowChapter(" + chapter.Id + ")'>" + chapter.ChapterTitle + "</li>");
+    });
+
+    $.each(curChapterNode.Sections, function (idx, section) {
+        $('#sectionsList').append("<li onclick='dlgShowChapter(" + section.Id + ")'>" + section.sectionTitle + "</li>");
+
+    });
+
+
+}
+
+function dlgShowChapter(chapterId) {
+    alert("dlgShowChapter: " + chapterId);
 }
 
 ////////////////////////////////////////////////////////

@@ -263,7 +263,7 @@ namespace Bruchueum.Api
                     else
                     {
                         bookSection.SectionTitle = sectionModel.SectionTitle;
-                        bookSection.SectionOrder = sectionModel.SectionOrder;
+                        //bookSection.SectionOrder = sectionModel.SectionOrder;
                         bookSection.SectionContents = sectionModel.SectionContents;
                         db.SaveChanges();
                         success = "ok";

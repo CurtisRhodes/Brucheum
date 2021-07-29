@@ -1,18 +1,18 @@
 :root {
     --brucheumBlue: #74bac3;
     --brucheumBackgroundColor: #eeddbb; /* #f7eef7 #fef  #b081b1 #f8e8e8 */
-    --oggleContainerBackgroundColor: #fefefe; /*  #f8e8e8 */
-    --oggleBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
-    --ogglePurple: #79078f;
+    --brucheumContainerBackgroundColor: #fefefe; /*  #f8e8e8 */
+    --brucheumBorderColor: #b200ff; /* #f1cff7;       carouselContainer  #b200ff; */
+    --brucheumPurple: #79078f;
     --normalFont: 17px;
-    --ogglgeTitleColor: #7f2c8f;
-    --ogglgeSubTitleColor: #490157;
+    --brucheumTitleColor: #7f2c8f;
+    --brucheumSubTitleColor: #490157;
     --thumbnailBorderColor: #74bac3; /* hot pink #ff00dc   */
-    --ogglgeHeaderBarColor: #decd6f; /*#c79bbe*/
-    --oggleHeaderBoarderTop: #40767d 3px solid;
-    --oggleHeaderBackgroundColor: #74bac3;
-    --oggleHeaderBoarderBottom: #decd6f 11px solid;
-    --oggleHeaderSelectBackgroundColor: #74bac3;
+    --brucheumHeaderBarColor: #decd6f; /*#c79bbe*/
+    --brucheumHeaderBoarderTop: #40767d 3px solid;
+    --brucheumHeaderBackgroundColor: #74bac3;
+    --brucheumHeaderBoarderBottom: #decd6f 11px solid;
+    --brucheumHeaderSelectBackgroundColor: #74bac3;
 }
 body {
     background-color: var(--brucheumBackgroundColor);
@@ -53,7 +53,7 @@ body {
 }
 .threeColumnLayout #leftColumn {
     float: left;
-    /*border-right: solid 5px var(--ogglgeHeaderBarColor);*/
+    /*border-right: solid 5px var(--brucheumHeaderBarColor);*/
     min-width: 7%;
 }
 
