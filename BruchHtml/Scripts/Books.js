@@ -254,8 +254,7 @@ function loadPaupaEditForm() {
         <div onclick="pauapUpdate()">Update</div>
         <div onclick="showToC()">Back to ToC</div>
         <div onclick="showAddChapterDialog()">Add Chapter</div>
-        <div onclick="showAddChapterDialog()">Add Section</div>
-        <div onclick="showAddChapterDialog()">Add Sub Section</div>
+        <div onclick="showAddSectionDialog()">Add Section</div>
     </div>`);
 
     $("#middleColumn").html(`
@@ -317,7 +316,10 @@ function showEditSection() {
             if (chapter.Id == curChapterId) {
                 curChapterNode = chapter;
                 if (curSectionId == 0) {
-                    alert("SHOW EDIT SECTION\nshow preface?")
+                    //alert("SHOW EDIT SECTION\nshow preface?")
+                    $('#pauapEditor').summernote('code', chapter.Preface);
+                    $("#paupaChapterTitle").html("Chapter: " + chapter.ChapterOrder + " " + chapter.ChapterTitle + "  preface");
+                    curSectionNode = curChapterNode.Sections[0];
                 }
                 else {
                     $.each(chapter.Sections, function (idx, section) {
@@ -379,9 +381,11 @@ function editPagePrevious() {
 
 function editPageNext() {
     try {
-        let nextSectionOrder = curSectionNode.SectionOrder + 1;
+        let nextSectionOrder = 1;
+        if (isNullorUndefined(curSectionNode)) {
 
-
+        }
+        curSectionNode.SectionOrder + 1;
         if (nextSectionOrder > curChapterNode.Sections.length) {
             let nextChapterOrder = curChapterNode.ChapterOrder + 1;
             if (nextChapterOrder > bookModel.Chapters.length) {
@@ -549,46 +553,98 @@ function resizeBookPage() {
 
 function showAddChapterDialog() {
     $('#centeredDialogContents').html(`
-    <div>
+    <div id='addSectionDialog'>
         <div class='flexContainer'>
             <div class='floatleft'>
                 <div>Add Section</div>
                 <label>title</label> <input id="txtNewSection"/> 
                 <label>order</label>
-                <input id="txtSectionOrder"/>
-                <button>Add<button>
+                <input id="txtSectionOrder" style="width:50px"/>
+                <button onclick='addSection()'>Add</button>
             </div>
             <div class='floatleft'>
                 <div>chapters</div>
-                <ul id="chapterList" class="noWrap"></ul>
+                <ul id="chapterList"></ul>
             </div>
             <div class='floatleft'>
                 <div>sections</div>
-                <ul id="sectionsList" class="noWrap"></ul>
+                <ul id="sectionsList"></ul>
             </div>
         </div>
     </div>`);
 
     $('#centeredDialogTitle').html(bookModel.BookTitle);
-    $('#centeredDialogContainer').show();
+    $('#centeredDialogContainer').draggable().show();
 
     //<div>chapter</div>
     //<div>Add Chapter <input id="txtNewChapter"/> <input id="txtchapterOrder"/><button>Add<button></div>
 
     $.each(bookModel.Chapters, function (idx, chapter) {
-        $('#chapterList').append("<li onclick='dlgShowChapter(" + chapter.Id + ")'>" + chapter.ChapterTitle + "</li>");
+        $('#chapterList').append("<li class='noWrap clickable' onclick='dlgShowChapter(" + chapter.Id + ")'>" + chapter.ChapterTitle + "</li>");
     });
 
     $.each(curChapterNode.Sections, function (idx, section) {
-        $('#sectionsList').append("<li onclick='dlgShowChapter(" + section.Id + ")'>" + section.sectionTitle + "</li>");
-
+        $('#sectionsList').append("<li class='noWrap clickable' onclick='dlgShowSection(" + section.Id + ")'>" + section.SectionTitle + "</li>");
     });
+}
+function showAddSectionDialog() {
+    $('#centeredDialogContents').html(`
+    <div id='addSectionDialog'>
+        <div class='flexContainer'>
+            <div class='floatleft'>
+                <div>Add Section</div>
+                <label>title</label> <input id="txtNewSection"/> 
+                <label>order</label>
+                <input id="txtSectionOrder" style="width:50px"/>
+                <button onclick='addSection()'>Add</button>
+            </div>
+            <div class='floatleft'>
+                <div>sections</div>
+                <ul id="sectionsList"></ul>
+            </div>
+        </div>
+    </div>`);
 
+    $('#centeredDialogTitle').html(bookModel.BookTitle + "  " + curChapterNode.ChapterTitle + " Add Section");
+    $('#centeredDialogContainer').draggable().show();
 
+    $.each(curChapterNode.Sections, function (idx, section) {
+        $('#sectionsList').append("<li class='noWrap clickable' onclick='editSectionClick(" + section.Id + ")'>" + section.SectionTitle + "</li>");
+    });
 }
 
-function dlgShowChapter(chapterId) {
-    alert("dlgShowChapter: " + chapterId);
+function addSection() {
+    //alert("add Section: " + $('#txtNewSection').val() + "order: " + $('#txtSectionOrder').val());
+
+    $.ajax({
+        type: "POST",
+        url: settingsArray.ApiServer + "/api/BookDb/AddSection",
+        data: {
+            BookId: bookModel.Id,
+            ChapterId: curChapterId,
+            NewSectionTitle: $('#txtNewSection').val(),
+            NewSectionOrder: $('#txtSectionOrder').val()
+        },
+        success: function (success) {
+            if (success == "ok") {
+                displayStatusMessage("ok", "new section added");
+                loadBookAndShowToC(bookId);
+            }
+            else {
+                alert("add Section: " + success);
+            }
+        },
+        error: function (jqXHR, exception) {
+            $('#tocLoadingGif').hide();
+            alert("add Section XHR error: " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+function editSectionClick(sectionId) {
+
+
+    alert("editSection: " + sectionId);
 }
 
 ////////////////////////////////////////////////////////

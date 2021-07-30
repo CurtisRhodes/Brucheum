@@ -221,5 +221,5 @@
     overflow-y: auto;
 }
 .noWrap {
-    text-wrap: none;
+    white-space: nowrap;
 }

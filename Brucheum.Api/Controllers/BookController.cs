@@ -133,60 +133,36 @@ namespace Bruchueum.Api
             catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
-
-        //[HttpGet]
-        //public ChapterModel GetChapter(int chapterId)
-        //{
-        //    var chapter = new ChapterModel();
-        //    using (var db = new BookDbContext())
-        //    {
-        //        var dbChapter = db.Chapters.Where(c => c.Id == chapterId).FirstOrDefault();
-        //        if (dbChapter != null)
-        //        {
-        //            chapter.Id = dbChapter.Id;
-        //            chapter.ChapterTitle = dbChapter.ChapterTitle;
-        //            chapter.ChapterOrder = dbChapter.ChapterOrder;
-        //            chapter.Preface = dbChapter.Preface;
-        //            //chapter.BookTitle = dbChapter.Book.BookTitle;
-        //        }
-        //    }
-        //    return chapter;
-        //}
-        //[HttpGet]
-        //public IList<ChapterModel> GetChapters(int bookId)
-        //{
-        //    var chapters = new List<ChapterModel>();
-        //    using (var db = new BookDbContext())
-        //    {
-        //        List<BookChapter> dbChapters = db.Chapters.Where(c => c.BookId == bookId).ToList();
-        //        foreach (BookChapter chapter in dbChapters)
-        //        {
-        //            chapters.Add(new ChapterModel()
-        //            {
-        //                Id = chapter.Id,
-        //                ChapterTitle = chapter.ChapterTitle,
-        //                ChapterOrder = chapter.ChapterOrder,
-        //                Preface = chapter.Preface
-        //            });
-        //        }
-        //    }
-        //    return chapters;
-        //}
         [HttpPost]
-        public int AddChapter(ChapterModel chapterModel)
+        public string AddChapter(InsertChapterModel newChapterModel)
         {
-            int success = 0;
-            using (var db = new BookDbContext())
+            string success;
+            try
             {
-                var chapter = new BookChapter()
+                using (var db = new BookDbContext())
                 {
-                    ChapterTitle = chapterModel.ChapterTitle,
-                    ChapterOrder = chapterModel.ChapterOrder,
-                    Preface = chapterModel.Preface
-                };
-                db.Chapters.Add(chapter);
-                db.SaveChanges();
-                success = chapter.Id;
+                    var currentChapters = db.Chapters.Where(c => c.BookId == newChapterModel.BookId).ToList().OrderBy(c => c.ChapterOrder);
+                    foreach (BookChapter chapter in currentChapters) {
+                        if (chapter.ChapterOrder >= newChapterModel.NewChapterOrder) 
+                        {
+                            chapter.ChapterOrder += 1;
+                        }                    
+                    }
+                    var newChapter = new BookChapter()
+                    {
+                        BookId=newChapterModel.BookId,
+                        ChapterTitle = newChapterModel.NewChapterTitle,
+                        ChapterOrder = newChapterModel.NewChapterOrder
+                    };
+                    db.Chapters.Add(newChapter);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
             }
             return success;
         }
@@ -211,38 +187,39 @@ namespace Bruchueum.Api
             return success;
         }
 
-        //[HttpGet]
-        //public BookSectionModel GetSection(int sectionId)
-        //{
-        //    var sectionModel = new BookSectionModel();
-        //    using (var db = new BookDbContext())
-        //    {
-        //        BookSection dbSection = db.Sections.Where(s => s.Id == sectionId).FirstOrDefault();
-        //        if (dbSection != null)
-        //        {
-        //            sectionModel.Id = dbSection.Id;
-        //            sectionModel.SectionTitle = dbSection.SectionTitle;
-        //            sectionModel.SectionOrder = dbSection.SectionOrder;
-        //            sectionModel.SectionContents = dbSection.SectionContents;
-        //        }
-        //    }
-        //    return sectionModel;
-        //}
         [HttpPost]
-        public int AddSection(BookSectionModel bookSectionModel)
+        public string AddSection(InsertSectionModel newSectionModel)
         {
-            int success = 0;
-            using (var db = new BookDbContext())
+            string success;
+            try
             {
-                var bookSection = new BookSection()
+                using (var db = new BookDbContext())
                 {
-                    SectionTitle = bookSectionModel.SectionTitle,
-                    SectionOrder = bookSectionModel.SectionOrder,
-                    SectionContents = bookSectionModel.SectionContents
-                };
-                db.Sections.Add(bookSection);
-                db.SaveChanges();
-                success = bookSection.Id;
+                    // reOrder chapterSections
+                    var currentSections = db.Sections.Where(sec => sec.BookId == newSectionModel.BookId && sec.ChapterId == newSectionModel.ChapterId)
+                        .OrderBy(sec => sec.SectionOrder).ToList();
+                    foreach (BookSection section in currentSections)
+                    {
+                        if (section.SectionOrder >= newSectionModel.NewSectionOrder)
+                        {
+                            section.SectionOrder += 1;
+                        }
+                    }
+                    var bookSection = new BookSection()
+                    {
+                        BookId = newSectionModel.BookId,
+                        ChapterId = newSectionModel.ChapterId,
+                        SectionTitle = newSectionModel.NewSectionTitle,
+                        SectionOrder = newSectionModel.NewSectionOrder
+                    };
+                    db.Sections.Add(bookSection);
+                    db.SaveChanges();
+                    success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
             }
             return success;
         }
@@ -255,19 +232,40 @@ namespace Bruchueum.Api
             {
                 using (var db = new BookDbContext())
                 {
-                    //var bookSection = db.Sections.Where(sec => sec.BookId == sectionModel.BookId
-                    //&& sec.ChapterId == sectionModel.ChapterId && sec.Id == sectionModel.SectionId).FirstOrDefault();
-                    var bookSection = db.Sections.Where(sec => sec.Id == sectionModel.SectionId).FirstOrDefault();
-                    if (bookSection == null)
-                        success = "not found";
+                    if (sectionModel.ChapterId == 0)
+                    {
+                        if (sectionModel.SectionOrder == 0)
+                        {
+                            var book = db.Books.Where(b => b.Id == sectionModel.BookId).First();
+                            book.Preface = sectionModel.SectionContents;
+                        }
+                        else
+                        {
+                            var book = db.Books.Where(b => b.Id == sectionModel.BookId).First();
+                            book.Introduction = sectionModel.SectionContents;
+                        }
+                    }
                     else
                     {
-                        bookSection.SectionTitle = sectionModel.SectionTitle;
-                        //bookSection.SectionOrder = sectionModel.SectionOrder;
-                        bookSection.SectionContents = sectionModel.SectionContents;
-                        db.SaveChanges();
-                        success = "ok";
+                        if (sectionModel.SectionOrder == 0)
+                        {
+                            var chapter = db.Chapters.Where(c => c.Id == sectionModel.ChapterId).First();
+                            chapter.Preface = sectionModel.SectionContents;
+                        }
+                        else
+                        {
+                            var bookSection = db.Sections.Where(sec => sec.Id == sectionModel.SectionId).FirstOrDefault();
+                            if (bookSection == null)
+                                return "not found";
+                            else
+                            {
+                                bookSection.SectionTitle = sectionModel.SectionTitle;
+                                bookSection.SectionContents = sectionModel.SectionContents;
+                            }
+                        }
                     }
+                    db.SaveChanges();
+                    success = "ok";
                 }
             }
             catch (Exception ex)
