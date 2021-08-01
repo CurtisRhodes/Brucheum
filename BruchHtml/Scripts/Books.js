@@ -1,8 +1,6 @@
 ﻿let pageIndex = 0;
 let bookModel = {}, bookPages = [];
 let pageNumber = 0, bookPageLen = 2600;
-let curChapterId = 0; curSectionId = 0; // curSubSectionId = 0;
-let curChapterNode = {}, curSectionNode = {};
 
 function showMyBooksPage() {
     $("#tanBlue").hide();
@@ -107,7 +105,6 @@ function showToC(bookId) {
 }
 
 function showPage(chapterId, sectionId, subSectionId) {
-
     let pageArrayItem;
     if (sectionId == 0) {
         pageArrayItem = bookPages.filter(obj => {
@@ -137,13 +134,38 @@ function showPage(chapterId, sectionId, subSectionId) {
             $('#twoPageBookStyleLeftContent').html(bookPages[pageIndex]);
             $('#twoPageBookStyleRightContent').html(bookPages[++pageIndex]);
         }
-        //if (User.IsInRole("Book Editor"))
-
-        curChapterId = chapterId;
-        curSectionId = sectionId;
-        //curSubSectionId = subSectionId;
-        //resizeBookPage();
     }
+}
+
+function breakBookIntoPages() {
+    //bookPages = new Array();
+    //let bookPageLen = calcPageCharCount();
+    let pageHeader = "<div class='bookTitle'>" + bookModel.BookTitle + ": Introduction</div>";
+    let textfragment = "<div class='sectionContents'>" + bookModel.Introduction + "</div>";
+    addPages(0, 0, 0, pageHeader, textfragment);
+    textfragment = "<div class=''>" + bookModel.Preface + "</div>";
+    pageHeader = "<div class='bookPreface'>preface</div>";
+    addPages(0, 1, 0, pageHeader, textfragment);
+    $.each(bookModel.Chapters, function (idx, chapter) {
+        pageHeader = "<div class='chapterHeader'>Chapter " + chapter.ChapterOrder + " : " + chapter.ChapterTitle + "</div>";
+        pageHeader += "<div class='bookPreface'>preface</div>";
+        textfragment = "<div class='bookPreface'>" + chapter.Preface + "</div>";
+        addPages(chapter.Id, 0, 0, pageHeader, textfragment);
+        $.each(chapter.Sections, function (idx, section) {
+            pageHeader = "<div class='chapterHeader'>Chapter " + chapter.ChapterOrder + " : " + chapter.ChapterTitle + "</div>";
+            pageHeader += "<div class='sectionHeader'>" + section.SectionOrder + " : " + section.SectionTitle + "</div>";
+            textfragment = "<div class='sectionContents'>" + section.SectionContents + "</div>";
+            addPages(chapter.Id, section.Id, 0, pageHeader, textfragment);
+
+            if (section.SubSections.length > 0) {
+                $.each(section.SubSections, function (idx, subSection) {
+                    pageHeader = "<div class='subSectionHeader'>" + subSection.SubSectionOrder + " : " + subSection.SubSectionTitle + "</div>";
+                    textfragment = "<div class='sectionContents'>" + subSection.SubSectionContents + "</div>";
+                    addPages(chapter.Id, section.Id, subSection.Id, pageHeader, textfragment);
+                });
+            }
+        });
+    });
 }
 
 function calcPageCharCount() {
@@ -173,38 +195,6 @@ function addPages(chapter, section, subSection, pageHeader, textfragment) {
         });
         pagesLen += bookPageLen;
     };
-}
-
-function breakBookIntoPages() {
-    //bookPages = new Array();
-    //let bookPageLen = calcPageCharCount();
-    let pageHeader = "<div class='bookTitle'>" + bookModel.BookTitle + ": Introduction</div>";
-    let textfragment = "<div class='sectionContents'>" + bookModel.Introduction + "</div>";
-    addPages(0, 0, 0, pageHeader, textfragment);
-
-    textfragment = "<div class=''>" + bookModel.Preface + "</div>";
-    pageHeader = "<div class='bookPreface'>preface</div>";
-    addPages(0, 1, 0, pageHeader, textfragment);
-    $.each(bookModel.Chapters, function (idx, chapter) {
-        pageHeader = "<div class='chapterHeader'>Chapter " + chapter.ChapterOrder + " : " + chapter.ChapterTitle + "</div>";
-        textfragment = "<div class='bookPreface'>" + chapter.Preface + "</div>";
-        addPages(chapter.Id, 0, 0, pageHeader, textfragment);
-
-        $.each(chapter.Sections, function (idx, section) {
-            pageHeader = "<div class='chapterHeader'>Chapter " + chapter.ChapterOrder + " : " + chapter.ChapterTitle + "</div>";
-            pageHeader += "<div class='sectionHeader'>" + section.SectionOrder + " : " + section.SectionTitle + "</div>";
-            textfragment = "<div class='sectionContents'>" + section.SectionContents + "</div>";
-            addPages(chapter.Id, section.Id, 0, pageHeader, textfragment);
-
-            if (section.SubSections.length > 0) {
-                $.each(section.SubSections, function (idx, subSection) {
-                    pageHeader = "<div class='subSectionHeader'>" + subSection.SubSectionOrder + " : " + subSection.SubSectionTitle + "</div>";
-                    textfragment = "<div class='sectionContents'>" + subSection.SubSectionContents + "</div>";
-                    addPages(chapter.Id, section.Id, subSection.Id, pageHeader, textfragment);
-                });
-            }
-        });
-    });
 }
 
 function pauapStyle() {
@@ -243,178 +233,9 @@ function pauapStyle() {
             </div>
             <div id="pgNumLeft" class="inlineRelative" style="bottom:43px; left:250px"  >PAGE</div>
             <div id="pgNumRight" class="inlineRelative" style="bottom:43px; left:1200px"  >PAGE</div>
-            <div id='tocEdit'><a href='javascript:pauapEdit()'>Edit</a></div>
+
+            <div id='tocEdit'><a href='javascript:callPauapEdit()'>Edit</a></div>
         </div>`;
-}
-
-function loadPaupaEditForm() {
-
-    $("#leftColumn").html(`
-    <div class='paupaLeftColumnButtonContainer'>
-        <div onclick="pauapUpdate()">Update</div>
-        <div onclick="showToC()">Back to ToC</div>
-        <div onclick="showAddChapterDialog()">Add Chapter</div>
-        <div onclick="showAddSectionDialog()">Add Section</div>
-    </div>`);
-
-    $("#middleColumn").html(`
-    <div id="bookContentsContainer" class="block">
-        <div id="divStatusMessage"></div>
-        <div id="paupaStyleContainer" class="paupaStyle">
-            <div class="flexContainer">
-                <img class="floatLeft" src="Images/PaupaBook/book-cornertopleft.png" />
-                <div id="paupaTopLeftBorder" class="paupaBorderContainer">
-                    <img class="floatLeft full" src="Images/PaupaBook/book-topLeft.png" />
-                    <div id="paupaChapterTitle" class="inlineLabel">PAUPA CHAPTER TITLE</div>
-                </div>
-                <img class="floatLeft" src="Images/PaupaBook/book-innerspinetop.png" />
-                <img class="floatLeft paupaBorderContainer" src="Images/PaupaBook/book-topRight.png" />
-                <img class="floatLeft" src="Images/PaupaBook/book-cornertopright.png" />
-            </div>
-            <div class="flexContainer">
-                <img class="floatLeft" src="Images/PaupaBook/book-left.png" />
-                <div id="pauapEditorContainer" class="paupaInnerEditorContainer">
-                    <div id="pauapEditor"></div>
-                </div>
-                <img class="floatLeft" src="Images/PaupaBook/book-right.png" />
-            </div>
-            <div class="flexContainer">
-                <img class="floatLeft" src="Images/PaupaBook/book-cornerbleft.png" />
-                <img class="floatLeft paupaBorderContainer clickable" src="Images/PaupaBook/book-bottomleft.png" onclick="editPagePrevious()" />
-                <img class="floatLeft" src="Images/PaupaBook/book-innerspinebottom.png" />
-                <img class="floatLeft paupaBorderContainer clickable" src="Images/PaupaBook/book-bottomright.png" onclick="editPageNext()" />
-                <img class="floatLeft" src="Images/PaupaBook/book-cornerbright.png" />
-            </div>
-        </div>
-    </div>`);
-
-    $("#rightColumn").html("<img class='dirtyStatusImage' src='Images/ok-icon-9.jpg'/>");
-}
-
-function pauapEdit() {
-    loadPaupaEditForm();
-    $('#pauapEditorContainer').css("width", $('#middleColumn').width());
-    $("#paupaChapterTitle").css("left", $("#pauapEditorContainer").offset().left);
-
-    $('#pauapEditor').summernote({
-        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-        height: '100%',
-        backcolor: '#ddd69f',
-        toolbar: [
-            ['codeview'],
-            ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
-        ]
-    });
-
-    showEditSection();
-    resizeBookPage();
-}
-
-function showEditSection() {
-    try {
-        $.each(bookModel.Chapters, function (idx, chapter) {
-            if (chapter.Id == curChapterId) {
-                curChapterNode = chapter;
-                if (curSectionId == 0) {
-                    //alert("SHOW EDIT SECTION\nshow preface?")
-                    $('#pauapEditor').summernote('code', chapter.Preface);
-                    $("#paupaChapterTitle").html("Chapter: " + chapter.ChapterOrder + " " + chapter.ChapterTitle + "  preface");
-                    curSectionNode = curChapterNode.Sections[0];
-                }
-                else {
-                    $.each(chapter.Sections, function (idx, section) {
-                        if (section.Id == curSectionId) {
-                            $('#pauapEditor').summernote('code', section.SectionContents);
-                            $("#paupaChapterTitle").html("Chapter: " + chapter.ChapterOrder + " " + chapter.ChapterTitle +
-                                " Section: " + section.SectionOrder + " " + section.SectionTitle);
-                            curSectionNode = section;
-                        }
-                    });
-                }
-            }
-        })
-    } catch (e) {
-        alert("SHOW EDIT SECTION catch\ncurChapterId: " + curChapterId + " curSectionId: " + curSectionId + "  e:" + e);
-    }
-}
-
-function editPagePrevious() {
-    try {
-        let prevSectionOrder = curSectionNode.SectionOrder - 1;
-        if (prevSectionOrder < 1) {
-            let prevChapterOrder = curChapterNode.ChapterOrder - 1;
-            if (prevSectionOrder < 0) {
-                alert("you are at the beginning");
-            }
-            else {
-                $.each(bookModel.Chapters, function (idx, chapter) {
-                    if (chapter.ChapterOrder == prevChapterOrder) {
-                        curChapterNode = chapter;
-                        curChapterId = chapter.Id;
-                        return false;
-                    }
-                });
-
-                $.each(curChapterNode.Sections, function (idx, section) {
-                    if (section.SectionOrder == 1) {
-                        curSectionNode = section;
-                        curSectionId = section.Id;
-                        return false;
-                    }
-                });
-            }
-        }
-        else {
-            $.each(curChapterNode.Sections, function (idx, section) {
-                if (section.SectionOrder == prevSectionOrder) {
-                    curSectionNode = section;
-                    curSectionId = section.Id;
-                    return false;
-                }
-            });
-        }
-        showEditSection();
-    } catch (e) {
-        alert("EDIT PREVIOUS\ncurChapterId: " + curChapterId + " curSectionId: " + curSectionId + "  e:" + e);
-    }
-}
-
-function editPageNext() {
-    try {
-        let nextSectionOrder = 1;
-        if (isNullorUndefined(curSectionNode)) {
-
-        }
-        curSectionNode.SectionOrder + 1;
-        if (nextSectionOrder > curChapterNode.Sections.length) {
-            let nextChapterOrder = curChapterNode.ChapterOrder + 1;
-            if (nextChapterOrder > bookModel.Chapters.length) {
-                alert("the end");
-            }
-            else {
-                $.each(bookModel.Chapters, function (idx, chapter) {
-                    if (chapter.ChapterOrder == nextChapterOrder) {
-                        curChapterNode = chapter;
-                        curChapterId = curChapterNode.Id;
-                        curSectionNode = chapter.Sections[0];
-                        curSectionId = curSectionNode.Id;
-                    }
-                });
-            }
-        }
-        else {
-            $.each(curChapterNode.Sections, function (idx, section) {
-                if (section.SectionOrder == nextSectionOrder) {
-                    curSectionId = section.Id;
-                    curSectionNode = section;
-                }
-            });
-        }
-        showEditSection();
-    } catch (e) {
-        //console.error("EDIT NEXT\ncurChapterId: " + curChapterId + "curSectionId: " + curSectionId + "  e:" + e);
-        alert("EDIT NEXT\ncurChapterId: " + curChapterId + "curSectionId: " + curSectionId + "  e:" + e);
-    }
 }
 
 function pageNext() {
@@ -426,7 +247,7 @@ function pageNext() {
         $('#pgNumRight').html(pageIndex);
     }
     else {
-        if (pageIndex + 1 == bookPages.length) {
+        if (pageIndex + 1 >= bookPages.length) {
             alert("final page")
             $('#bookLeftContent').html(bookPages[pageIndex++].PageContents);
             $('#bookRightContent').html("");
@@ -435,62 +256,38 @@ function pageNext() {
             $('#bookLeftContent').html("The End");
             $('#bookRightContent').html("");
         }
+        $('#pgNumLeft').html(pageIndex - 1);
+        $('#pgNumRight').html(pageIndex);
     }
-    curChapterId = bookPages[pageIndex].Chapter;
-    curSectionId = bookPages[pageIndex].Section;
-    //curSubSectionId = bookPages[pageIndex].SubSection;
-
-    console.log("pageNext. curChapterId: " + curChapterId + " curSectionId: " + curSectionId);
-}
-
-function pauapUpdate() {
-    try {
-        $('#tocLoadingGif').show();
-        $.ajax({
-            type: "PUT",
-            url: settingsArray.ApiServer + "/api/BookDb/UpdateSection",
-            data: {
-                BookId: bookModel.Id,
-                ChapterId: curChapterId,
-                SectionId: curSectionId,
-                SectionTitle: curSectionNode.SectionTitle,
-                SectionContents: $('#pauapEditor').summernote('code')
-            },
-            success: function (success) {
-                if (success != "ok") {
-                    $('#tocLoadingGif').hide();
-                    alert("PAUAP UPDATE AJAX\n: " + success);
-                }
-                else {
-                    displayStatusMessage("ok", "section updated");
-                    $('#tocLoadingGif').hide();
-                }
-            },
-            error: function (jqXHR, exception) {
-                $('#tocLoadingGif').hide();
-                alert("loadBookAndShowToC XHR error: " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
-    } catch (e) {
-        $('#tocLoadingGif').hide();
-        alert("PAUAP UPDATE CATCH\n" + e);
-    }
+    resizeBookPage();
+    console.log("pageNext. bookPages[pageIndex].Chapter: " + bookPages[pageIndex].Chapter + " bookPages[pageIndex].Section: " + bookPages[pageIndex].Section);
 }
 
 function pagePrevious() {
     if (pageIndex - 2 > 0) {
         $('#bookRightContent').html(bookPages[pageIndex--].PageContents);
+        $('#pgNumLeft').html(pageIndex);
         $('#bookLeftContent').html(bookPages[pageIndex--].PageContents);
+        $('#pgNumRight').html(pageIndex);
     }
     else {
-        if (curChapterNode.ChapterOrder == 1) {
-            pageIndex = 0;
-            alert("top");
+        if (pageIndex == 2) {
+            $('#bookRightContent').html(bookPages[1].PageContents);
+            $('#pgNumLeft').html(1);
+            $('#bookLeftContent').html(bookPages[2].PageContents);
+            $('#pgNumRight').html(2);
         }
+        else {
+            $('#bookRightContent').html(bookPages[0].PageContents);
+            $('#pgNumLeft').html(0);
+            $('#bookLeftContent').html(bookPages[1].PageContents);
+            $('#pgNumRight').html(1);
+        }
+        pageIndex--;
+        //alert("top");
     }
-    curChapterId = bookPages[pageIndex].Chapter;
-    curSectionId = bookPages[pageIndex].Section;
-    //curSubSectionId = bookPages[pageIndex].SubSection;
+    resizeBookPage();
+    console.log("pagePrevious. bookPages[pageIndex].Chapter: " + bookPages[pageIndex].Chapter + " bookPages[pageIndex].Section: " + bookPages[pageIndex].Section);
 }
 
 function redirectToToC() {
@@ -551,100 +348,9 @@ function resizeBookPage() {
     $('#testMsg3').html("3clH: " + $('.threeColumnLayout').height());
 }
 
-function showAddChapterDialog() {
-    $('#centeredDialogContents').html(`
-    <div id='addSectionDialog'>
-        <div class='flexContainer'>
-            <div class='floatleft'>
-                <div>Add Section</div>
-                <label>title</label> <input id="txtNewSection"/> 
-                <label>order</label>
-                <input id="txtSectionOrder" style="width:50px"/>
-                <button onclick='addSection()'>Add</button>
-            </div>
-            <div class='floatleft'>
-                <div>chapters</div>
-                <ul id="chapterList"></ul>
-            </div>
-            <div class='floatleft'>
-                <div>sections</div>
-                <ul id="sectionsList"></ul>
-            </div>
-        </div>
-    </div>`);
-
-    $('#centeredDialogTitle').html(bookModel.BookTitle);
-    $('#centeredDialogContainer').draggable().show();
-
-    //<div>chapter</div>
-    //<div>Add Chapter <input id="txtNewChapter"/> <input id="txtchapterOrder"/><button>Add<button></div>
-
-    $.each(bookModel.Chapters, function (idx, chapter) {
-        $('#chapterList').append("<li class='noWrap clickable' onclick='dlgShowChapter(" + chapter.Id + ")'>" + chapter.ChapterTitle + "</li>");
-    });
-
-    $.each(curChapterNode.Sections, function (idx, section) {
-        $('#sectionsList').append("<li class='noWrap clickable' onclick='dlgShowSection(" + section.Id + ")'>" + section.SectionTitle + "</li>");
-    });
-}
-function showAddSectionDialog() {
-    $('#centeredDialogContents').html(`
-    <div id='addSectionDialog'>
-        <div class='flexContainer'>
-            <div class='floatleft'>
-                <div>Add Section</div>
-                <label>title</label> <input id="txtNewSection"/> 
-                <label>order</label>
-                <input id="txtSectionOrder" style="width:50px"/>
-                <button onclick='addSection()'>Add</button>
-            </div>
-            <div class='floatleft'>
-                <div>sections</div>
-                <ul id="sectionsList"></ul>
-            </div>
-        </div>
-    </div>`);
-
-    $('#centeredDialogTitle').html(bookModel.BookTitle + "  " + curChapterNode.ChapterTitle + " Add Section");
-    $('#centeredDialogContainer').draggable().show();
-
-    $.each(curChapterNode.Sections, function (idx, section) {
-        $('#sectionsList').append("<li class='noWrap clickable' onclick='editSectionClick(" + section.Id + ")'>" + section.SectionTitle + "</li>");
-    });
-}
-
-function addSection() {
-    //alert("add Section: " + $('#txtNewSection').val() + "order: " + $('#txtSectionOrder').val());
-
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "/api/BookDb/AddSection",
-        data: {
-            BookId: bookModel.Id,
-            ChapterId: curChapterId,
-            NewSectionTitle: $('#txtNewSection').val(),
-            NewSectionOrder: $('#txtSectionOrder').val()
-        },
-        success: function (success) {
-            if (success == "ok") {
-                displayStatusMessage("ok", "new section added");
-                loadBookAndShowToC(bookId);
-            }
-            else {
-                alert("add Section: " + success);
-            }
-        },
-        error: function (jqXHR, exception) {
-            $('#tocLoadingGif').hide();
-            alert("add Section XHR error: " + getXHRErrorDetails(jqXHR, exception));
-        }
-    });
-}
-
-function editSectionClick(sectionId) {
-
-
-    alert("editSection: " + sectionId);
+function callPauapEdit() {
+    console.log("pauapEdit Chapter: " + bookPages[pageIndex].Chapter + " Section: " + bookPages[pageIndex].Section);
+    pauapEdit(bookModel, bookPages[pageIndex].Chapter, bookPages[pageIndex].Section);
 }
 
 ////////////////////////////////////////////////////////
