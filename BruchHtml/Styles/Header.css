@@ -10,9 +10,9 @@
 }
 
 .classicColors {
-    background-color: var(--oggleHeaderBackgroundColor);
-    border-top: var(--oggleHeaderBoarderTop);
-    border-bottom: var(--oggleHeaderBoarderBottom);
+    background-color: var(--brucheumHeaderBackgroundColor);
+    border-top: var(--brucheumHeaderBoarderTop);
+    border-bottom: var(--brucheumHeaderBoarderBottom);
 }
 
 .siteLogoContainer {
@@ -37,7 +37,7 @@
     float: left;
     text-align: center;
     font-family: Comic Sans MS;
-    color: var(--ogglgeTitleColor);
+    color: var(--brucheumTitleColor);
     vertical-align: top;
     margin-left: 33px;
     margin-top: 7px;
@@ -45,7 +45,7 @@
 }
 
     .headerSubTitle a {
-        color: var(--ogglgeTitleColor);
+        color: var(--brucheumTitleColor);
         cursor: pointer;
         text-decoration: underline;
     }
@@ -69,7 +69,7 @@
 
 .breadCrumbArea {
     float: left;
-    color: var(--ogglgeSubTitleColor);
+    color: var(--brucheumSubTitleColor);
     font-family: Verdana;
     font-size: 24px;
     margin-left: 20px;
@@ -179,15 +179,6 @@
     font-family: 'Lucida Calligraphy';
 }
 
-
-.dialogContainer1 {
-    padding: 10px;
-    color: black;
-    font-size: 18px;
-    border: solid 4px var(--oggleBorderColor);
-    background-color: var(--oggleBackgroundColor);
-}
-
 .bigMessageContainer {
     /*    
     top: 255;
@@ -198,16 +189,16 @@
     padding: 0 70px 70px 70px;
     color: black;
     font-size: 18px;
-    border-left: solid 12px var(--oggleBorderColor);
-    border-bottom: solid 12px var(--oggleBorderColor);
-    border-right: solid 12px var(--oggleBorderColor);
-    background-color: var(--oggleBackgroundColor);
+    border-left: solid 12px var(--brucheumBorderColor);
+    border-bottom: solid 12px var(--brucheumBorderColor);
+    border-right: solid 12px var(--brucheumBorderColor);
+    background-color: var(--brucheumBackgroundColor);
 }
 
 .bigMessageContainerTitle {
     height: 44px;
     padding-top: 5px;
-    background-color: var(--oggleBorderColor);
+    background-color: var(--brucheumBorderColor);
     color: #fff;
     font-size: 28px;
     text-align: center;
@@ -223,7 +214,7 @@
     text-decoration: underline;
 }
 
-.oggleDialogContainer {
+.brucheumDialogContainer {
     position: absolute;
     z-index: 25;
     display: none;
@@ -232,47 +223,10 @@
     box-sizing: unset;
     overflow: auto;
     */
-    border: solid 2px var(--oggleBorderColor);
-    background-color: var(--oggleBackgroundColor);
+    border: solid 2px var(--brucheumBorderColor);
+    background-color: var(--brucheumBackgroundColor);
 }
 
-.oggleDialogHeader {
-    border: none;
-    background-color: var(--brucheumBlue);
-    color: #fff;
-    display: inline-flex;
-    width: 100%;
-    cursor: grabbing;
-}
-
-.oggleDialogTitle {
-    float: left;
-    padding: 2px 8px;
-    width: 100%;
-    white-space: nowrap;
-    font-size: 16px;
-    text-align: center;
-}
-
-.oggleDialogCloseButton {
-    float: right;
-    padding-top: 5px;
-    padding-right: 15px;
-    cursor: pointer;
-}
-
-    .oggleDialogCloseButton img {
-        height: 25px;
-    }
-
-.oggleDialogContents {
-    padding: 5px;
-    height: 100%;
-    color: #000;
-    min-width: 500px;
-    min-height: 120px;
-    /*padding: 4px 8px;*/
-}
 
 .siteLogoContainer {
     float: left;
@@ -299,7 +253,7 @@
     font-size: 20px;
     display: inline-block;
     font-family: Comic Sans MS;
-    color: var(--oggleTitleColor);
+    color: var(--brucheumTitleColor);
     vertical-align: top;
     padding-left: 28px;
     margin-right: 8px;
@@ -317,19 +271,19 @@
 }
 
 .topLinkRow a {
-    color: var(--oggleTitleColor);
+    color: var(--brucheumTitleColor);
     cursor: pointer;
     text-decoration: underline;
 }
 
-.oggleSearchBox {
+.brucheumSearchBox {
     position: absolute;
     right: 5px;
     margin-top: 8px;
     /*border: solid thin black;*/
 }
 
-.oggleSearchBoxText {
+.brucheumSearchBoxText {
     border-radius: 10px;
 }
 
@@ -424,19 +378,6 @@
     margin: 0;
 }
 
-.dialogContainer {
-    position: absolute;
-    z-index: 25;
-    display: none;
-    /* 
-    min-width: 400px;
-    box-sizing: unset;
-    overflow: auto;
-    */
-    border: solid 2px var(--oggleBorderColor);
-    background-color: var(--oggleBackgroundColor);
-}
-
 .dialogHeader {
     border: none;
     background-color: var(--brucheumBlue);
@@ -462,7 +403,7 @@
     cursor: pointer;
 }
 
-    .oggleDialogCloseButton img {
+    .dialogCloseButton img {
         height: 25px;
     }
 
@@ -475,3 +416,28 @@
     /*padding: 4px 8px;*/
 }
 
+.dialogContainer {
+    position: absolute;
+    z-index: 25;
+    border: solid 2px var(--brucheumBorderColor);
+    background-color: var(--brucheumBackgroundColor);
+    display: none;
+}
+
+.dialogHeader {
+    border: none;
+    background-color: var(--brucheumBlue);
+    color: #fff;
+    display: inline-flex;
+    width: 100%;
+    cursor: grabbing;
+}
+
+.dialogTitle {
+    float: left;
+    padding: 2px 8px;
+    width: 100%;
+    white-space: nowrap;
+    font-size: 16px;
+    text-align: center;
+}

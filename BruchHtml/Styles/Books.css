@@ -1,26 +1,5 @@
-﻿.crudContainer {
-    width: 48%;
-}
-
-#txtChapterOrder {
-    width: 50px;
-}
-
-#txtChapterTitle {
-    width: 70%;
-}
-
-#chapterList {
-    height: 47%;
-    overflow-y: auto;
-    margin-top: 4px;
-}
-
-#klude123 {
-    height: 100%;
-}
-
-#divMyBooks {
+﻿
+.divMyBooks {
     margin-top: 55px;
     width: 100%;
     display: flex;
@@ -116,13 +95,6 @@
     cursor: pointer;
 }
 
-#divEdit {
-    text-decoration: underline;
-    color: blue;
-    cursor: pointer;
-    margin-top: 50px;
-}
-
 .hiddenContainer {
     display: none;
 }
@@ -162,11 +134,11 @@
     font-size: 17px;
     text-align: justify;
     width: 48%;
-    height: 100%;
+    overflow-y: auto;
 }
 .paupaInnerEditorContainer {
     display: block;
-    border: solid thick black;
+    border: solid thin black;
     overflow-y: auto;
 }
 .paupaLeftColumnButtonContainer {    
@@ -182,7 +154,7 @@
 
 .dirtyStatusImage {
     margin-top: 100px;
-    height: 25px;
+    height: 25px; 
 }
 
 .bookTitle {
@@ -203,15 +175,17 @@
 .bookPreface {
     /*margin: 5px 166px;*/
     text-align: center;
-    font-size: 14px;
+    font-size: 15px;
+    margin:40px 200px;
     font-style: italic;
     color: #821c1c;
     font-weight: bold;
 }
 
 .chapterHeader {
+    font-family: Verdana;
     clear: left !important;
-    font-size: 28px;
+    font-size: 20px;
     margin-left: 44px;
     padding-bottom: 2px;
     width: 100%;
@@ -247,4 +221,7 @@
     background-color: #98d1d3;
     height: 666px;
     overflow-y: auto;
+}
+.noWrap {
+    white-space: nowrap;
 }

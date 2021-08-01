@@ -46,12 +46,10 @@ function headerHtml() {
         "       <div class='headerTopRow'>\n" +
         "           <div class='headerTitle' id='bannerTitle'>Curtis Rhodes.com</div>\n" +
         "           <div class='headerSubTitle' id='headerSubTitle'></div>\n" +
-        //"           <div id='oggleHeaderTitle' onclick='headerTitleClick()' class='calligraphyTitle'></div >\n" +
-        //"           <div id='mainMenuContainer' class='hdrTopRowMenu'></div>" +
         "           <div id='topRowRightContainer'></div>" +
-        //"           <div id='searchBox' class='oggleSearchBox'>\n" +
+        //"           <div id='searchBox' class='searchBox'>\n" +
         //"               <span id='notUserName' title='Esc clears search.'>search</span>" +
-        //"                   <input class='oggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)'></input>" +
+        //"                   <input class='searchBoxText' id='txtSearch' onkeydown='searchKeyDown(event)'></input>" +
         //"               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
         //"           </div>\n" +
         "       </div>\n" +
@@ -75,19 +73,19 @@ function headerHtml() {
         "       </div>\n" +
         "   </div>\n" +
 
-        "<div id='indexCatTreeContainer' class='oggleDialogContainer'></div>\n" +
+        "<div id='indexCatTreeContainer' class='dialogContainer'></div>\n" +
 
-        "<div id='customMessageContainer' class='oggleDialogContainer'>\n" +
+        "<div id='customMessageContainer' class='dialogContainer'>\n" +
         "    <div id='customMessage' class='customMessageContainer' ></div>\n" +
         "</div>\n" +
 
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "      <div id='centeredDialogContainer' class='dialogContainer'>\n" +
-        "           <div id='centeredDialogHeader'class='dialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
+        "           <div id='centeredDialogHeader'class='dialogHeader'>" +
         "               <div id='centeredDialogTitle' class='dialogTitle'></div>" +
         "               <div id='centeredDialogCloseButton' class='dialogCloseButton'>" +
-        "               <img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
+        "               <img src='/images/poweroffRed01.png' onclick='$(\"#centeredDialogContainer\").hide()'/></div>\n" +
         "           </div>\n" +
         "           <div id='centeredDialogContents' class='dialogContents'></div>\n" +
         "      </div>\n" +

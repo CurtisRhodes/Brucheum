@@ -54,6 +54,27 @@ namespace Bruchueum.Api
         public string SubSectionContents { get; set; }
     }
 
+    public class InsertChapterModel
+    {
+        public int BookId { get; set; }
+        public string NewChapterTitle { get; set; }
+        public int NewChapterOrder { get; set; }
+    }
+    public class UpdateChapterModel
+    {
+        public int BookId { get; set; }
+        public int ChapterId { get; set; }
+        public int SectionId { get; set; }
+        public string ChapterTitle { get; set; }
+        public int ChapterOrder { get; set; }
+    }
+    public class InsertSectionModel
+    {
+        public int BookId { get; set; }
+        public int ChapterId { get; set; }
+        public string NewSectionTitle { get; set; }
+        public int NewSectionOrder { get; set; }
+    }
     public class UpdateSectionModel
     {
         public int BookId { get; set; }
