@@ -6,6 +6,35 @@
 //var ipAddress = '@ViewBag.IpAddress';
 var thisArticleId;
 var hitSession = "";
+
+function viewArticle(articleId) {
+    showViewArticleHtml(articleId);
+    loadArticle(articleId);
+}
+
+function showViewArticleHtml(articleId) {
+    $('#middleColumn').html(`    
+        <div class="pollybox">
+            <div class="divTopLine">
+                <div id="divArticleDate" class="floatLeft"></div>
+                <div id="divCategory" class="floatRightDiv"></div>
+            </div>
+            <div id="divTitle" class='articleTitle'></div>
+            <div class="flexContainer">
+                <div id="divByline" class="byline"></div>
+                <div class="floatRightDivEdit clickable" onclick='editArticle("`+ articleId + `")'>edit</div>
+            </div>
+        </div>
+        <img id="divImage" class="articleCenterImage" />
+        <div id="contentArea">
+            <div id="divSummary" class="summaryText"></div>
+            <div id="divContent" class="articleContent"></div>
+            <div id="divCommentsButton" class="roundendButton">comments</div>
+        </div>
+        <div id="divCommentsSection"></div>`
+    );
+}
+
 function loadArticle(articleId) {
     thisArticleId = articleId;
     $('#lnkPermalink').hide();
@@ -80,10 +109,6 @@ $(window).unload(function () {
     }
     alert("page move");
 });
-function gotoArticleEdit() {
-    //alert("thisArticle.Id: " + thisArticleId);
-    window.location.href = "Article.html?ArticleEditId=" + thisArticleId;
-}
 
 ///////////////////////////////////////////////////
 

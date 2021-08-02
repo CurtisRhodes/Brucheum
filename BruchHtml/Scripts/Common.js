@@ -61,7 +61,7 @@ function resizePage() {
     //set page height
     var winH = $(window).height();
     var headerH = $('header').height();
-    $('#middleColumn').height(winH - headerH - 42);
+    $('#middleColumn').css('height', winH - headerH - 42);
 }
 function getParams() {
     var params = {},

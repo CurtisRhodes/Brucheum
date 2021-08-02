@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
+<head lang="en">
     <meta charset="utf-8" />
     <title>CurtisRhodes.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=0.75">
@@ -64,26 +64,7 @@
                 </div>
             </div>
         </div>
-        <div id="middleColumn">
-            <div id="bruchCaveImage" class="caveImage">
-                <div id="customMessage" class="displayHidden customMessageContainer"></div>
-                <div id="divStatusMessage"></div>
-                <div id="dots" style="color:white"></div>
-                <div class="centeredDivShell">
-                    <div class="centeredDivInner">
-                        <div id="carosuelContainer" class="carosuelContainer">
-                            <img id="leftFbutton" class="arrowButton" src="Images/blueCircleLeft.png" onclick="clickPrevious()" />
-                            <img id="rightFbutton" class="arrowButton" src="Images/blueCircleRight.png" onclick="clickNext()" />
-                            <div id='articleTitle' class='carouselLabel'></div>
-                            <div id='articleCat' class='carouselLabel'></div>
-                            <div class="carouselImageContainer">
-                                <img id="carouselImage" onclick="viewArticle()" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="middleColumn"></div>
         <div id="rightColumn"></div>
     </div>
     <footer></footer>
@@ -113,9 +94,7 @@
                         if (connectionVerified) {
                             clearInterval(connectionVerifiedLoop);
                             $('#dots').html('');
-                            $('#bruchCaveImage').show();
-                            $('#tanBlue').show();
-                            loadAndStartCarousel();
+                            displayCustomPage("Carosuel");
                             //verifySession(spaPageId);
                             //logVisit();
                             //setUserPermissions();

@@ -47,9 +47,9 @@ namespace Bruchueum.Api
         public string Success { get; set; }
     }
 
-    public class LoadImageSuccessModel {
-        public string ImageFileName { get; set; }
+    public class SuccessModel {
         public string Success { get; set; }
+        public string ReturnValue { get; set; }
     }
 
     public class RefModel
@@ -61,6 +61,7 @@ namespace Bruchueum.Api
         public List<RefModelItem> RefItems { get; set; }
         public string Success { get; set; }
     }
+
     public class RefModelItem
     {
         public string RefCode { get; set; }

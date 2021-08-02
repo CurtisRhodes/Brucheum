@@ -4,7 +4,6 @@ var carouselItemArray = new Array();
 var imageNum = 0;
 var carouselContainerHeight;
 var CarouselRotatorInterval;
-var currentArticleId = 0;
 
 function loadAndStartCarousel() {
     $('#carouselImage').css('cursor', 'no-drop');
@@ -48,11 +47,6 @@ function startCarousel() {
     rotate();
 }
 
-function viewArticle() {
-    clearInterval(CarouselRotatorInterval);
-    window.location.href = "Article.html?ArticleViewId=" + currentArticleId;
-}
-
 function clickPrevious() {
     imageNum--;
     if (imageNum < 0)
@@ -93,6 +87,7 @@ function displayCarouselItem() {
     //$('#articleCat').html(carouselArrayItem.CategoryLabel.trim());
     $('#articleCat').html(carouselArrayItem.CategoryLabel);
     $('#carouselImage').attr('src', "https://" + carouselArrayItem.ImageName).fadeIn(500, resizeAddRotator());
+    $('#carouselImage').click(function () { viewArticle(carouselArrayItem.Id); });
     //$('#carouselImage').attr('src', settingsArray.ImageArchive + carouselArrayItem.ImageName).fadeIn(500, resizeAddRotator());
     $('#carouselImage').css('z-index', 1000);
 }

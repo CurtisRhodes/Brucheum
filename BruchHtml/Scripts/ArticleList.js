@@ -38,28 +38,26 @@ function getArticleList(filterType, filter) {
                     $.each(articles.ArticleList, function (idx, article) {
                         try {
                             //var imgSrc = webService + "/App_Data/Images/" + article.ImageName;
-                            var articleHref = "Article.html?ArticleViewId=" + article.Id;
+                            //var articleHref = "Article.html?ArticleViewId=" + article.Id;
                             $('#articleListContainer').append("<div class='articleListItem'>\n" +
-                                "<div id='divImg'><a href=" + articleHref + "><img src=https://" + article.ImageName + "></a></div>\n" +
+                                "<div id='divImg'><a href='javascript:viewArticle(\"" + article.Id + "\")'><img src=https://" + article.ImageName + "></a></div>\n" +
                                 "<div class='articleDetail'>\n" +
                                 "<div class='articleTopRow'>\n" +
-                                "<div class='articleRowItemLeft'><a href=Article.html?ArticleList=Category&filter=" + article.CategoryLabel +
-                                "&filterType=Category&filter=" + article.CategoryRef + ">" + article.Category + "</a></div>\n" +
-                                "<div class='articleRowItemCenter'><a href=" + articleHref + ">" + article.Title + "</a></div>\n" +
+                                "<div class='articleRowItemLeft'><a href='javascript:getArticleList(\"Category\",\"" + article.CategoryRef + "\)'>" + article.Category + "</a></div>\n" +
+                                "<div class='articleRowItemCenter'><a href='javascript:viewArticle(\"" + article.Id + "\")'>" + article.Title + "</a></div>\n" +
                                 "<div class='articleRowItemRight'>" + article.Updated + "</div>\n" +
                                 "</div>\n" +  // top row
-                                "<a href=" + articleHref + "><div class='articleSummary'>" + article.Summary + "</div></a>\n" +
+                                "<a href='javascript:viewArticle(\"" + article.Id + "\")'><div class='articleSummary'>" + article.Summary + "</div></a>\n" +
                                 "<div class='articleBottomRow'>\n" +
-                                "<div class='articleRowItemLeft'> By: <a href=Article.html?ArticleList=Byline&filter=" + article.ByLineLabel +
-                                "&filterType=Byline&filter=" + article.ByLineRef + ">" + article.ByLine + "</a></div>\n" +
-                                "<div class='articleRowItemRight'><a href=Article.html?ArticleEditId=" + article.Id + ">edit</a></div>\n" +
+                                "<div class='articleRowItemLeft'> By: <a href='javascript:getArticleList(\"Byline\",\"" + article.ByLineRef + ")'>" +article.ByLine + "</a></div>\n" +
+                                "<div class='articleRowItemRight'><a href='javascript:editArticle(\""+ article.Id +"\")'>edit</a></div>\n" +
                                 "</div>\n" +  // bottom row
                                 "</div>\n" +  // article detail
                                 "</div>"  // article listItem
                             );
                             articleCount++;
                         } catch (e) {
-                            alert("formatArticleJog error: " + e);
+                            alert("get Article List error: " + e);
                         }
                     });
                     $('#loadingGif').hide();
@@ -103,37 +101,9 @@ function getArticleList(filterType, filter) {
     }
 }
 
-function formatArticleJog(article) {
-    try {
-        var webService = "https://api.curtisrhodes.com";
-        var imgSrc = webService + "/App_Data/Images/" + article.ImageName;
-        var articleHref = "Article.html?ArticleViewId=" + article.Id;
-        $('#articleListContainer').append("<div class='articleListItem'>\n" +
-            "<div id='divImg'><a href=" + articleHref + "><img src=" + imgSrc + "></a></div>\n" +
-            "<div class='articleDetail'>\n" +
-            "<div class='articleTopRow'>\n" +
-            "<div class='articleRowItemLeft'><a href=Article.html?ArticleList=Category&filter=" + article.CategoryLabel +
-            "&filterType=Category&filter=" + article.CategoryRef + ">" + article.CategoryLabel + "</a></div>\n" +
-            "<div class='articleRowItemCenter'><a href=" + articleHref + ">" + article.Title + "</a></div>\n" +
-            "<div class='articleRowItemRight'>" + article.LastUpdated + "</div>\n" +
-            "</div>\n" +  // top row
-            "<a href=" + articleHref + "><div class='articleSummary'>" + article.Summary + "</div></a>\n" +
-            "<div class='articleBottomRow'>\n" +
-            "<div class='articleRowItemLeft'> By: <a href=Article.html?ArticleList=Byline&filter=" + article.ByLineLabel +
-            "&filterType=Byline&filter=" + article.ByLineRef + ">" + article.ByLineLabel + "</a></div>\n" +
-            "<div class='articleRowItemRight'><a href=Article.html?ArticleEditId=" + article.Id + ">edit</a></div>\n" +
-            "</div>\n" +  // bottom row
-            "</div>\n" +  // article detail
-            "</div>"  // article listItem
-        );
-        articleCount++;
-    } catch (e) {
-        alert("formatArticleJog error: " + e);
-    }
-}
-
 function showMoreButtonClick() {
     page++;
     showMore = true;
     getArticleList();
 }
+

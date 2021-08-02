@@ -104,43 +104,40 @@ namespace Bruchueum.Api
         }
 
         [HttpPost]
-        public string Post(ArticleModel articleModel)
+        public SuccessModel AddNewArticle(ArticleModel articleModel)
         {
-            string success = "";
+            var successModel = new SuccessModel();
             try
             {
                 Article newArticle = new Article();
-                //if (articleModel.Id == null)
-                //    newArticle.Id = Guid.NewGuid().ToString();
-                //else
-                //    newArticle.Id = articleModel.Id;
-
                 newArticle.Id = Guid.NewGuid().ToString();
                 newArticle.Title = articleModel.Title;
                 newArticle.CategoryRef = articleModel.CategoryRef;
                 newArticle.SubCategoryRef = articleModel.SubCategoryRef;
                 newArticle.ImageName = articleModel.ImageName;
                 newArticle.Created = DateTime.Now;
+                newArticle.LastUpdated = DateTime.Now;
                 //newArticle.LastUpdated = DateTime.Parse(articleModel.LastUpdated);
                 newArticle.Content = articleModel.Contents;
                 newArticle.Summary = articleModel.Summary;
                 newArticle.ByLineRef = articleModel.ByLineRef;
 
-                foreach (DbArticleTagModel tag in articleModel.Tags)
-                    if (tag.TagName != null)
-                        newArticle.ArticleTags.Add(new ArticleTag() { TagName = tag.TagName, TagCategoryRef = tag.TagCategoryRef });
+                //foreach (DbArticleTagModel tag in articleModel.Tags)
+                //    if (tag.TagName != null)
+                //        newArticle.ArticleTags.Add(new ArticleTag() { TagName = tag.TagName, TagCategoryRef = tag.TagCategoryRef });
                 using (WebSiteContext db = new WebSiteContext())
                 {
                     db.Articles.Add(newArticle);
                     db.SaveChanges();
-                    success = newArticle.Id.ToString();
+                    successModel.ReturnValue = newArticle.Id.ToString();
+                    successModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return successModel;
         }
 
         [HttpPut]
@@ -161,12 +158,12 @@ namespace Bruchueum.Api
                     article.Content = editArticle.Contents;
                     article.Summary = editArticle.Summary;
 
-                    db.ArticleTags.RemoveRange(db.ArticleTags.Where(t => t.articleId.ToString() == editArticle.Id));
-                    //article.ArticleTags = null;
-                    foreach (DbArticleTagModel tagModel in editArticle.Tags)
-                    {
-                        article.ArticleTags.Add(new ArticleTag() { articleId = article.Id, Id = tagModel.Id, TagName = tagModel.TagName });
-                    }
+                    //db.ArticleTags.RemoveRange(db.ArticleTags.Where(t => t.articleId.ToString() == editArticle.Id));
+                    ////article.ArticleTags = null;
+                    //foreach (DbArticleTagModel tagModel in editArticle.Tags)
+                    //{
+                    //    article.ArticleTags.Add(new ArticleTag() { articleId = article.Id, Id = tagModel.Id, TagName = tagModel.TagName });
+                    //}
 
                     db.SaveChanges();
                     success = "ok";
@@ -420,7 +417,6 @@ namespace Bruchueum.Api
         static readonly NetworkCredential networkCredentials = new NetworkCredential(ftpUserName, ftpPassword);
         private readonly string imagesPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/Images");
 
-
         public class ImageData
         {
             public string ArticleId { get; set; }
@@ -429,9 +425,9 @@ namespace Bruchueum.Api
         }
 
         [HttpPut]
-        public LoadImageSuccessModel AddImage(ImageData data)
+        public SuccessModel AddImage(ImageData data)
         {
-            var imageModel = new LoadImageSuccessModel();
+            var successModel = new SuccessModel();
             try
             {
                 // data:image/jpeg;base64,
@@ -463,21 +459,19 @@ namespace Bruchueum.Api
                     requestStream.Close();
                 }
 
-
                 using (WebSiteContext db = new WebSiteContext())
                 {
                     Article article = db.Articles.Where(a => a.Id == data.ArticleId).FirstOrDefault();
                     article.ImageName = data.FileName;
                     db.SaveChanges();
                 }
-
-                imageModel.Success = "ok";
+                successModel.Success = "ok";
             }
             catch (Exception ex)
             {
-                imageModel.Success = Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
-            return imageModel;
+            return successModel;
         }
     }
 }

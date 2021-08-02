@@ -1,11 +1,39 @@
 ﻿var article = new Object();
 var metaTagsStringArray = new Array();
 
+function editArticle(articleId) {
+    setUpEditPage();
+    getArticle(articleId);
+}
+
+function newArticle() {
+    setUpEditPage();
+    $('#btnSave').text("Add New");
+}
+
+function editPageLeftColumnHtml() {
+    $('#leftColumn').html(`
+       <div id="articleViewLeftColumn" class="displayHidden">
+            <div class="staticFileLinks">
+                <div id="lnkStaticify" class="clickable" onclick="staticify()">staticify</div>
+                <div id="lnkFacebook" class="fb-share-button" data-href="' + pageName + '" data-layout="button" data-size="large" data-mobile-iframe="false">
+                    <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + pageName + '&src=sdkpreparse">Share on Facebook</a>
+                </div>
+                <div id="lnkPermalink" class="clickable" onclick="goToPermaLink()">permalink</div>
+            </div>
+       </div>`
+    );
+}
+
 function setUpEditPage() {
+    showArticleEditorHtml();
+    $('#imgArticleJog').css("height", $('#imgArticleJogContainer').height());
+    $('#tanBlue').hide();
+
     getCategories();
     getAvatars();
     $('#articleSummaryEditor').summernote({
-        height: 150,
+        height: 50,
         codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
         toolbar: [
             ['codeview'],
@@ -13,7 +41,7 @@ function setUpEditPage() {
         ]
     });
     $('#articleContentEditor').summernote({
-        height: 400,
+        height: 385,
         codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
         toolbar: [
             ['codeview'],
@@ -38,7 +66,8 @@ function getArticle(articleId) {
                 bind(response);
                 article.ImageName = response.ImageName;
                 $('#btnSave').text("Update");
-                //setTimeout(function () { adjust() }, 1000);
+                setTimeout(function () { adjust() }, 1000);
+
             }
             else
                 alert("getArticle: " + response.Success);
@@ -97,20 +126,13 @@ function unBind() {
 }
 
 function addUpdateArticle() {
-    $('#updateArticleSpinner').show();
-    if ($('#btnSave').text() === "Save")
+    if ($('#btnSave').text() === "Add New")
         postArticle();
     else
         updateArticle();
 }
 
-function saveAndView() {
-    $('#updateArticleSpinner').show();
-    if ($('#btnSave').text() === "Save")
-        postArticle("View");
-    else
-        updateArticle("View");
-}
+function saveAndView() { }
 
 function postArticle(view) {
     try {
@@ -119,22 +141,21 @@ function postArticle(view) {
             displayStatusMessage("severityWarning", "Title Required");
             return;
         }
+        $('#updateArticleSpinner').show();
         $.ajax({
-            url: settingsArray.ApiServer + "/api/Article",
+            url: settingsArray.ApiServer + "/api/Article/AddNewArticle",
             type: "post",
             dataType: "Json",
             data: article,
-            success: function (newArticleId) {
-                if (!newArticleId.startsWith("ERROR")) {
-                    if (view === "View")
-                        window.location = "Article?Id=" + newArticleId;
-                    article.Id = newArticleId;
-                    $('#updateArticleSpinner').hide();
+            success: function (successModel) {
+                $('#updateArticleSpinner').hide();
+                if (successModel.Success == "ok") {
+                    article.Id = successModel.ReturnValue;
                     displayStatusMessage("ok", "Saved");
                     $('#btnSave').text("Update");
                 }
                 else
-                    alert("postArticle: " + newArticleId);
+                    alert("postArticle: " + successModel.Success);
             },
             error: function (jqXHR, exception) {
                 alert("Post Article jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -145,6 +166,7 @@ function postArticle(view) {
 
 function updateArticle(view) {
     try {
+        $('#updateArticleSpinner').show();
         unBind();
         $.ajax({
             type: "PUT",
@@ -153,6 +175,7 @@ function updateArticle(view) {
             //dataType: "json",
             data: article,
             success: function (success) {
+                $('#updateArticleSpinner').hide();
                 if (success === "ok")
                     if (view === "View")
                         window.location = "Article.html?ArticleViewId=" + article.Id;
@@ -160,7 +183,6 @@ function updateArticle(view) {
                         displayStatusMessage("ok", "updated");
                 else
                     displayStatusMessage("error", "updateArticle: " + success);
-                $('#updateArticleSpinner').hide();
             },
             error: function (jqXHR, exception) {
                 alert("update Article jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -255,4 +277,52 @@ function adjust() {
     //var wlbl = $('#divEditArticleLabel').width() + 20;
     //$('#articleSummaryEditor').width(wAcr - wlbl);
     //$('#txtTitle').width(wAcr - wlbl);
+    $('#imgArticleJog').css("height", $('#imgArticleJogContainer').height());
 }
+
+function showArticleEditorHtml() {
+    //<div id="articleEditMiddleColumn" class="displayHidden">
+    //<div class="editArticleLabel align-right">Updated:</div>
+    //<div class="editArticleInput"><input class="roundedInput" id="txtUpdated" /></div>
+    //<div class="editArticleRow">
+    //    <div class="editArticleLabel">Meta Tag:</div>
+    //    <div class="editArticleInput"><input class="roundedInput" id="txtMetaTag" /></div>
+    //    <div id="divTagContainer" class="tagContainer"></div>
+    //</div>
+
+    $('#middleColumn').html(`
+        <div class="editArticleFlexContainer">
+            <div class="editArticleFloatContainer">
+                <div class="editArticleRow">
+                    <div class="editArticleLabel">Title:</div>
+                    <div class="editArticleInput" style="width:88%"><input id="txtTitle" class="roundedInput" style="width:100%" /></div>
+                </div>
+                <div class="editArticleRow">
+                    <div class="editArticleLabel">Category:</div>
+                    <div class="editArticleInput"><select id="ddCategory" class="crudDropDown"></select></div>
+                    <div class="editArticleLabel align-right">Byline:</div>
+                    <div class="editArticleInput"><select id="ddAvatars" class="crudDropDown"></select></div>
+                </div>
+                <div class="editArticleRow">
+                    <div class="editArticleLabel">Image:</div>
+                    <input id="uplImage" type="file" style="display:inline;" onchange="loadImage($(this).val())" />                                
+                </div>
+                <div class="editArticleRow">
+                    <div class="editArticleLabel">Summary:</div>
+                    <div id="articleSummaryEditor"></div>
+                </div>
+            </div>
+            <div id="imgArticleJogContainer" class="editArticleFloatContainer">
+                <img id="imgArticleJog" class="articleJog" />
+            </div>
+        </div>
+        <div id="articleContentEditor"></div>
+        <div id="divStatusMessage"></div>
+        <div class="btnRow">
+            <img id="updateArticleSpinner" class="btnSpinnerImage articleSaveSpinner" src="Images/loader.gif" />
+            <button id="btnSave" class="roundendButton" onclick="addUpdateArticle()">Save</button>
+            <button id="btnView" class="roundendButton" onclick="saveAndView()">View</button>
+        </div>`
+    );
+}
+
