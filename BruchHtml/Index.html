@@ -16,7 +16,6 @@
 
     <script src="Scripts/Common.js"></script>
     <script src="Scripts/VerifyConnection.js"></script>
-    <script src="Scripts/Headers.js"></script>
     <script src="Scripts/Carousel.js"></script>
     <script src="Scripts/Logging.js"></script>
     <script src="Scripts/Footer.js"></script>
@@ -25,6 +24,7 @@
     <script src="Scripts/ArticleList.js"></script>
     <script src="Scripts/ArticleView.js"></script>
     <script src="Scripts/ArticleEdit.js"></script>
+    <script src="Scripts/Headers.js"></script>
 
     <link href="Styles/Carousel.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet">
@@ -93,13 +93,13 @@
             let spaPage = "Brucheum";
             $('#carosuelContainer').hide();
             displayFooter();
+            loadHeader();
 
-            params = getParams();
-            if (params.spa != undefined) {
-                spaPage = params.spa;
-            }
+            //params = getParams();
+            //if (params.spa != undefined) {
+            //    spaPage = params.spa;
+            //}
 
-            setHeader(spaPage);
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -113,7 +113,9 @@
                         if (connectionVerified) {
                             clearInterval(connectionVerifiedLoop);
                             $('#dots').html('');
-                            displaySpaPage(spaPage);
+                            $('#bruchCaveImage').show();
+                            $('#tanBlue').show();
+                            loadAndStartCarousel();
                             //verifySession(spaPageId);
                             //logVisit();
                             //setUserPermissions();
@@ -122,34 +124,10 @@
                 }
             }, 300);
         });
-
         resizePage();
         $(window).resize(function () {
             resizePage();
         });
-
-        function displaySpaPage(subdomain) {
-            switch (subdomain) {
-                case "Brucheum":
-                    $('#bruchCaveImage').show();                    
-                    $('#tanBlue').show();
-                    loadAndStartCarousel();
-                    $('#rightColumn').append(showBookPanel());
-                    break;
-                case "Books":
-                    showMyBooksPage();
-                    break;
-                case "ArticleList":
-                    showArticleList();
-                    getArticleList("latest", params.filter);
-                    $('#divBookPannel').show();
-                    break;
-                default:
-                    alert("subdomain not found: " + subdomain)
-                    //logError("SPA", subdomain, "case not handled", "display SpaPage");
-            }
-        }
-
     </script>
 </body>
 </html>

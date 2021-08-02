@@ -1,45 +1,69 @@
-function setHeader(headerContext) {
+function loadHeader() {
     $('header').html(headerHtml());
-    switch (headerContext) {
-        case "Brucheum":
-            $("#bannerTitle").html("The Brucheum");
+    $("#bannerTitle").html("The Brucheum");
+    $("#breadcrumbContainer").html(`
+        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
+        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
+        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Apps\")'>Apps</div>\n
+        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
+        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
+    );
+}
+function displayCustomPage(pageName) {
+    switch (pageName) {
+        case "Latest Articles":
             $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft' onclick='displaySpaPage(\"ArticleList\")'>Latest Articles</div>\n
-                <div class='menuTab floatLeft' onclick='displaySpaPage(\"Books\")'>Books</div>\n
-                <div class='menuTab floatLeft' onclick='openAt(\"Books\")'>Apps</div>\n
-                <div class='menuTab floatLeft'>Intelligent Design</div>\n`);
+                <div class='menuTab onclick='displayCustomPage(\"New Article\")' floatLeft'>New Article</div>\n
+                <div class='menuTab floatLeft'>Books</div>\n
+                <div class='menuTab floatLeft'>Apps</div>\n
+                <div class='menuTab floatLeft'>Intelligent Design</div>\n`
+            );
+            $('#middleColumn').html(`
+                <div id="divArticleList">
+                    <div id="divlistHeader" class="articleListHeader"></div>
+                    <div id="articleListContainer" class="articleListContainer"></div>
+                    <div id="divMoreButton" class="roundendButton" onclick="showMoreButtonClick()">More</div>
+                </div>`
+            );
+            getArticleList("Latest Articles", "all");
+            $('#divBookPannel').hide();
+            break;
+        case "New Article":
             break;
         case "Books":
-            $("#bannerTitle").html("Curtis Rhodes.com : Books");
-            $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft'>Latest Articles'</div>\n
-                <div class='menuTab floatLeft'>Books</div>\n
-                <div class='menuTab floatLeft'>Apps</div>\n
-                <div class='menuTab floatLeft'>Intelligent Design</div>\n`);
+            $("#middleColumn").html(`
+                    <div id="tocLoadingGif"><img class="loadingGif" src="Images/loader.gif" /></div>
+                    <div class="pageTitle" id="divBooksWriting">Books I am writing</div>
+                    <div class="divMyBooks">
+                        <div class="divBook" book="The Blond Jew" onclick="showBook(1)">
+                            <img class="bookImage" src="Images/TheBlondJew.jpg" />
+                        </div>
+                        <div class="divBook" book="Time Squared" onclick="showBook(2)">
+                            <img class="bookImage" src="Images/TimeSquared.jpg" />
+                        </div>
+                        <div class="divBook" book="Ready; Fire; Aim" onclick="showBook(3)'">
+                            <img class="bookImage" src="Images/ReadyFireAim.jpg" />
+                        </div>
+                    </div>
+                    <div class="divLibrayPages" id="divBooksRead">Books I have Read</div>
+                    <div class="divLibrayPages" id="divBooksIOwn">Book I Own</div>
+                `);
             break;
-        case "Articles":
-            $("#bannerTitle").html("Curtis Rhodes.com : Articles");
-            $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft'>Latest Articles'</div>\n
-                <div class='menuTab floatLeft'>Books</div>\n
-                <div class='menuTab floatLeft'>Apps</div>\n
-                <div class='menuTab floatLeft'>Intelligent Design</div>\n`);
+        case "Apps":
+            $('#middleColumn').html(`<div class='landingPageHeader'>Apps</div>`);
+            break;
+        case "Intelligent Design":
+            $('#middleColumn').html(`<div class='landingPageHeader'>Intelligent Design</div>`);
+            break;
+        case "Get a Gig":
+            $('#middleColumn').html(`<div class='landingPageHeader'>Get a Gig"</div>`);
             break;
         default:
-            $("#bannerTitle").html("whaa whooo");
-            $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft'>Latest Articles'</div>\n
-                <div class='menuTab floatLeft'>Books</div>\n
-                <div class='menuTab floatLeft'>Apps</div>\n
-                <div class='menuTab floatLeft'>Intelligent Design</div>\n`);
-            break;
     }
 }
 
-//"   <div id='divTopLeftLogo' class='bannerImageContainer'>\n" +
-
 function headerHtml() {
-    return "<div class='siteLogoContainer' onclick='displaySpaPage(\"Brucheum\")'>" +
+    return "<div class='siteLogoContainer' onclick='window.location=\"Index.html\"'>" +
         "       <img id='divSiteLogo' title='home' class='bannerImage' src='Images/house.gif' />" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +

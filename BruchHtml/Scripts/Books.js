@@ -7,23 +7,6 @@ function showMyBooksPage() {
     //clearInterval(Carousel);
     //clearInterval(CarouselRotatorInterval);
     $('#divBookPannel').hide();
-    $("#middleColumn").html(`
-        <div id="tocLoadingGif"><img class="loadingGif" src="Images/loader.gif" /></div>
-        <div class="pageTitle" id="divBooksWriting">Books I am writing</div>
-        <div class="divMyBooks">
-            <div class="divBook" book="The Blond Jew" onclick="showBook(1)">
-                <img class="bookImage" src="Images/TheBlondJew.jpg" />
-            </div>
-            <div class="divBook" book="Time Squared" onclick="showBook(2)">
-                <img class="bookImage" src="Images/TimeSquared.jpg" />
-            </div>
-            <div class="divBook" book="Ready; Fire; Aim" onclick="showBook(3)'">
-                <img class="bookImage" src="Images/ReadyFireAim.jpg" />
-            </div>
-        </div>
-        <div class="divLibrayPages" id="divBooksRead">Books I have Read</div>
-        <div class="divLibrayPages" id="divBooksIOwn">Book I Own</div>
-    `);
 }
 
 function showBook(bookId) {

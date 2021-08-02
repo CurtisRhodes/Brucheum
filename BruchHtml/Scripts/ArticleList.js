@@ -1,42 +1,9 @@
 ﻿//var isArticeEditor = '@User.IsInRole("Article Editor")';
-var page = 1;
-var articlePageLimit = 5;
-var articleCount;
-var showMore = false;
-var thisfilterType = "Latest Articles";
-
-function showArticleList() {
-
-    $('#middleColumn').html(`
-        <div id="divArticleList">
-            <div id="divlistHeader" class="articleListHeader"></div>
-            <div id="articleListContainer" class="articleListContainer"></div>
-            <div id="divMoreButton" class="roundendButton" onclick="showMoreButtonClick()">More</div>
-        </div>`
-    );
-
-//    $('#middleColumn').html(`
-//        <div class="pollybox">
-//            <div class="divTopLine">
-//                <div id="divArticleDate" class="floatLeft"></div>
-//                <div id="divCategory" class="floatRightDiv"></div>
-//            </div>
-//            <div id="divTitle" class='articleTitle'></div>
-//            <div class="flexContainer">
-//                <div id="divByline" class="byline"></div>
-//                <div class="floatRightDivEdit clickable" onclick="gotoArticleEdit()">edit</div>
-//            </div>
-//        </div>
-//        <img id="divImage" class="articleCenterImage" />
-//        <div id="contentArea">
-//            <div id="divSummary" class="summaryText"></div>
-//            <div id="divContent" class="articleContent"></div>
-//            <div id="divCommentsButton" class="roundendButton">comments</div>
-//        </div>
-//        <div id="divCommentsSection"></div>`
-//    );
-}
-
+let page = 1;
+let articlePageLimit = 5;
+let articleCount;
+let showMore = false;
+let thisfilterType = "Latest Articles";
 
 function getListHeader(refCode) {
     $.ajax({
@@ -53,28 +20,20 @@ function getListHeader(refCode) {
 
 function getArticleList(filterType, filter) {
     try {
-        $('#loadingGif').show();
-
-        if (filterType !== undefined)
-            thisfilterType = filterType;
-
-        if (filterType === "latest")
-            $('#divlistHeader').html("Latest Articles");
-        //else {
-        //    getListHeader(filterType);
-        //}
+        $('#divlistHeader').html(filterType);
 
         if (showMore === false)
             $('#articleList').html('');
         else
             page += articlePageLimit;
 
+        $('#loadingGif').show();
         $.ajax({
-            url: settingsArray.ApiServer + "/api/Article/GetArticleList?pageLen=" + articlePageLimit + "&page=" + page + "&filterType=" + filterType + "&filter=" + filter,
+            url: settingsArray.ApiServer + "/api/Article/GetArticleList?pageLen=" + articlePageLimit + "&page=" + page +
+                "&filterType=" + filterType + "&filter=" + filter,
             type: "get",
             success: function (articles) {
                 if (articles.Success == "ok") {
-                    //var webService = "https://api.curtisrhodes.com";
                     articleCount = 0;
                     $.each(articles.ArticleList, function (idx, article) {
                         try {
@@ -104,10 +63,6 @@ function getArticleList(filterType, filter) {
                         }
                     });
                     $('#loadingGif').hide();
-                    //list.forEach(formatArticleJog);
-
-
-
                     if (articleCount < articlePageLimit)
                         $('#divMoreButton').hide();
                     else
