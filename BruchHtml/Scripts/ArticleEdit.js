@@ -132,7 +132,11 @@ function addUpdateArticle() {
         updateArticle();
 }
 
-function saveAndView() { }
+function saveAndView() {
+    if ($('#btnSave').text() != "Add New")
+        updateArticle();
+    viewArticle(article.Id);
+}
 
 function postArticle(view) {
     try {

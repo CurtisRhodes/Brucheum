@@ -53,9 +53,9 @@ function loadArticle(articleId) {
                     $('#divImage').attr("src", settingsArray.ImageArchive + article.ImageName);
                     $('#divCategory').html(thisArticle.CategoryLabel);
                     $('#divTitle').html(thisArticle.Title);
-                    $('#divArticleDate').html(thisArticle.LastUpdated);
+                    $('#divArticleDate').html("written " + thisArticle.Updated);
                     $('#divSummary').html(thisArticle.Summary);
-                    $('#divByline').html("by " + thisArticle.ByLineLabel);
+                    $('#divByline').html("by " + thisArticle.ByLine);
                     $('#divContent').html(thisArticle.Contents);
 
                     //hitSession = logPageHit(settingsArray.ApiServer, userName, ipAddress, "ViewArticle", article.Title);
@@ -74,7 +74,7 @@ function loadArticle(articleId) {
                     resizePage();
                 }
                 else
-                    alert("loadDBArticle: " + article.Success);
+                    alert("load Article: " + article.Success);
             },
             error: function (jqXHR, exception) {
                 alert("loadArticle jqXHR : " + getXHRErrorDetails(jqXHR, exception) + "\nurl: " + url);
