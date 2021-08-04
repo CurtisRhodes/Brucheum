@@ -1,9 +1,12 @@
 function displayCustomPage(pageName) {
+    $('#divSiteLogo').html(`<img title='home' class='bannerImage' src='Images/house.gif' onclick='javascript:displayCustomPage(\"Carosuel\")'/>`);
+    $('#tanBlue').hide();
+    $("#bannerTitle").html("The Brucheum");
+    $("#headerSubTitle").html("");
     switch (pageName) {
         case "Carosuel":
             $('#bruchCaveImage').show();
             $('#tanBlue').show();
-            $("#bannerTitle").html("The Brucheum");
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
@@ -34,8 +37,7 @@ function displayCustomPage(pageName) {
             loadAndStartCarousel();
             break;
         case "Latest Articles":
-            $("#bannerTitle").html("The Brucheum- lastest articles");
-            $('#tanBlue').hide();
+            $("#headerSubTitle").html("lastest articles");
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"New Article\")'>New Article</div>\n
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
@@ -52,8 +54,7 @@ function displayCustomPage(pageName) {
             getArticleList("Latest Articles", "all");
             break;
         case "New Article":
-            $("#bannerTitle").html("The Brucheum- new article");
-            $('#tanBlue').hide();
+            $("#headerSubTitle").html("new article");
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
@@ -63,8 +64,7 @@ function displayCustomPage(pageName) {
             newArticle();
             break;
         case "Books":
-            $("#bannerTitle").html("The Brucheum- My Books");
-            $('#tanBlue').hide();
+            $("#headerSubTitle").html("My Books");
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
@@ -89,12 +89,46 @@ function displayCustomPage(pageName) {
                 `);
             break;
         case "Apps":
-            $('#tanBlue').hide();
             $('#middleColumn').html(`<div class='landingPageHeader'>Apps</div>`);
             break;
         case "Intelligent Design":
-            $('#tanBlue').hide();
-            $('#middleColumn').html(`<div class='landingPageHeader'>Intelligent Design</div>`);
+            $("#bannerTitle").html("Intelligent Design Software");
+            $('#divSiteLogo').html(`<img title='home' class='bannerImage' src='Images/intel01.jpg' onclick='javascript:displayCustomPage(\"Carosuel\")'/>`);
+            $("#breadcrumbContainer").html(`
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"About Me\")'>About Me</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"My Resume\")'>My Resume</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Skills Cloud\")'>My Skills</div>`
+            );
+            $('#middleColumn').html(`
+                <div class="intelDsgnBackground">
+                    <div id="divWelcomeMessage" class="welcomeMessage">
+                        <div class="algerian">Welcome to Intelligent Design Software</div>
+                        <p>This web site demonstrates the work of an experienced if socially autistic web applications developer</p>
+                        <p>Check out the scection describing the <a href="~/IntelDsgn/Skills">skills used to build this site</a></p>
+                        <p>Read some of my <a href="Blog?filter=2">articles on computer programming</a></p>
+                        <p>Learn about <a href="?a=Our_Approach">our approach to application development</a></p>
+                        <p>See <a href="~/IntelDsgn/MyResume">My resume</a> with over thirty years experience. (yes I am old)</p>
+                        <p>If you might be interested in having me do some work for you</p>
+                        <p>(remote only) (direct hire only) please <a href="?a=Contact_Us">contact me</a> </p>
+                    </div>
+                </div>`
+            );
+            break;
+        case "Skills Cloud":
+            $('#middleColumn').html(`
+                <div class="intelDsgnBackground">
+                    <h2>My Skills</h2>
+                    <div id="skillsloadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
+                    <div id="skillsCloud" class="wordCloudContainer"></div>
+                    <div class="centeredDivShell">
+                        <div id="skillDetails" class="centeredDivInner skillDialogPopupBox" onmouseout="$(this).fadeOut()" onclick="$(this).fadeOut()">
+                            <div id="skillName" class="skillTitle"></div>
+                            <div id="skillProficiency" class="skillProficiency"></div>
+                            <div id="skillNarrative" class="skillNarrative"></div>
+                        </div>
+                    </div>
+                </div>`
+            );
             break;
         case "Get a Gig":
             $('#tanBlue').hide();
@@ -105,8 +139,8 @@ function displayCustomPage(pageName) {
 }
 
 function headerHtml() {
-    return "<div class='siteLogoContainer' onclick='javascript:displayCustomPage(\"Carosuel\")'>" +
-        "       <img id='divSiteLogo' title='home' class='bannerImage' src='Images/house.gif' />" +
+    return "<div id='divSiteLogo' class='siteLogoContainer'" +
+        "       <img title='home' class='bannerImage' src='Images/house.gif' onclick='javascript:displayCustomPage(\"Carosuel\")' />" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +
         "       <div class='headerTopRow'>\n" +

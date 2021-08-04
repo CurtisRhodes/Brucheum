@@ -11,15 +11,17 @@ function pauapEdit(bookModel, chapterId, sectionId) {
     $('#pauapEditorContainer').css("width", $('#middleColumn').width());
     $("#paupaChapterTitle").css("left", $("#pauapEditorContainer").offset().left);
 
-    $('#pauapEditor').summernote({
-        //codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-        //height: '100%',
-        //backcolor: '#ddd69f',
-        toolbar: [
-            ['codeview']
-            //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
-        ]
-    });
+    $('#pauapEditor').jqte();
+
+    //$('#pauapEditor').summernote({
+    //    //codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+    //    //height: '100%',
+    //    //backcolor: '#ddd69f',
+    //    toolbar: [
+    //        ['codeview']
+    //        //['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline',]],
+    //    ]
+    //});
     showEditSection();
     resizeBookPage();
 }
@@ -72,11 +74,12 @@ function showEditSection() {
     try {
         if (curChapterId == 0) {
             if (curSectionId == 0) {
-                $('#pauapEditor').summernote('code', bookModel.Introduction);
+                //$('#pauapEditor').summernote('code', bookModel.Introduction);
+                $('#pauapEditor').jqteVal(bookModel.Introduction);
                 $("#paupaChapterTitle").html("Introduction");
             }
             else {
-                $('#pauapEditor').summernote('code', bookModel.Preface);
+                $('#pauapEditor').jqteVal(bookModel.Preface);
                 $("#paupaChapterTitle").html("preface");
             }
         }
@@ -86,14 +89,14 @@ function showEditSection() {
                     curChapterNode = chapter;
                     if (curSectionId == 0) {
                         //alert("SHOW EDIT SECTION\nshow preface?")
-                        $('#pauapEditor').summernote('code', chapter.Preface);
+                        $('#pauapEditor').jqteVal(chapter.Preface);
                         $("#paupaChapterTitle").html("Chapter: " + chapter.ChapterOrder + " " + chapter.ChapterTitle + "  preface");
                         curSectionNode = curChapterNode.Sections[0];
                     }
                     else {
                         $.each(chapter.Sections, function (idx, section) {
                             if (section.Id == curSectionId) {
-                                $('#pauapEditor').summernote('code', section.SectionContents);
+                                $('#pauapEditor').jqteVal(section.SectionContents);
                                 $("#paupaChapterTitle").html("Chapter: " + chapter.ChapterOrder + " " + chapter.ChapterTitle +
                                     " Section: " + section.SectionOrder + " " + section.SectionTitle);
                                 curSectionNode = section;
@@ -194,7 +197,7 @@ function pauapUpdate() {
                 SectionId: curSectionId,
                 SectionOrder: curSectionNode.SectionOrder,
                 SectionTitle: curSectionNode.SectionTitle,
-                SectionContents: $('#pauapEditor').summernote('code')
+                SectionContents: $('#pauapEditor').val()
             },
             success: function (success) {
                 if (success != "ok") {

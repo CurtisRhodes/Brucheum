@@ -32,27 +32,29 @@ function setUpEditPage() {
 
     getCategories();
     getAvatars();
-    $('#articleSummaryEditor').summernote({
-        height: 50,
-        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-        toolbar: [
-            ['codeview'],
-            ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
-        ]
-    });
-    $('#articleContentEditor').summernote({
-        height: 385,
-        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
-        toolbar: [
-            ['codeview'],
-            ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']],
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['font', ['strikethrough', 'superscript', 'subscript']],
-            ['insert', ['picture', 'link', 'video', 'table', 'hr']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']]
-        ]
-    });
+    $('#articleSummaryEditor').jqte();
+    //$('#articleSummaryEditor').summernote({
+    //    height: 50,
+    //    codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+    //    toolbar: [
+    //        ['codeview'],
+    //        ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']]
+    //    ]
+    //});
+    $('#articleContentEditor').jqte();
+//    $('#articleContentEditor').summernote({
+//        height: 385,
+//        codemirror: { lineWrapping: true, mode: "htmlmixed", theme: "cobalt" },
+//        toolbar: [
+//            ['codeview'],
+//            ['font style', ['fontname', 'fontsize', 'color', 'bold', 'italic', 'underline']],
+//            ['style', ['bold', 'italic', 'underline', 'clear']],
+//            ['font', ['strikethrough', 'superscript', 'subscript']],
+//            ['insert', ['picture', 'link', 'video', 'table', 'hr']],
+//            ['para', ['ul', 'ol', 'paragraph']],
+//            ['height', ['height']]
+//        ]
+//    });
 }
 
 function getArticle(articleId) {
@@ -85,8 +87,10 @@ function bind(response) {
         $('#ddCategory').val(response.CategoryRef);
         $('#ddAvatars').val(response.ByLineRef);
         $('#txtUpdated').val(response.Updated);
-        $('#articleSummaryEditor').summernote('code', response.Summary);
-        $('#articleContentEditor').summernote('code', response.Contents);
+        //$('#articleSummaryEditor').summernote('code', response.Summary);
+        //$('#articleContentEditor').summernote('code', response.Contents);
+        $("#articleSummaryEditor").jqteVal(response.Summary);
+        $('#articleContentEditor').jqteVal(response.Contents);
         $('#chosenImageName').text(response.ImageName);
         article.ImageName = response.ImageName;
         $('#imgArticleJog').attr("src", settingsArray.ImageArchive + response.ImageName);
@@ -109,8 +113,8 @@ function unBind() {
         article.LastUpdated = $('#txtUpdated').val();
         //article.Summary = beautify($('#articleSummaryEditor').summernote('code'));
         //article.Contents = beautify($('#articleContentEditor').summernote('code'));
-        article.Summary = $('#articleSummaryEditor').summernote('code');
-        article.Contents = $('#articleContentEditor').summernote('code');
+        article.Summary = $('#articleSummaryEditor').val();
+        article.Contents = $('#articleContentEditor').val();
         article.Tags = new Array;
         $('#divTagContainer>div').each(function () {
             var dbArticleTagModel = new Object();

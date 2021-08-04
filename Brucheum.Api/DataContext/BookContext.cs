@@ -1,12 +1,12 @@
-﻿namespace Bruchueum.Api
-{
-    using System;
-    using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Data.Entity;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
+namespace Bruchueum.Api
+{
     public partial class BookDbContext : DbContext
     {
         public BookDbContext()

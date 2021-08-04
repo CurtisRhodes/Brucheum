@@ -3,7 +3,7 @@
         $('#skillsloadingGif').show();
         $.ajax({
             type: "GET",
-            url: service + "/api/JobSkill",
+            url: service + "/api/JobSkill/GetSkills",
             success: function (response) {
                 if (response !== null) {
                     //if (!response.Name.startsWith("ERROR")) {
