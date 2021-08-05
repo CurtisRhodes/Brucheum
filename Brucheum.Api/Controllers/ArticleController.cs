@@ -9,7 +9,7 @@ using System.IO;
 using System.Configuration;
 using System.Drawing;
 
-namespace Bruchueum.Api
+namespace Brucheum.Api
 {
     [EnableCors("*", "*", "*")]
     public class ArticleController : ApiController
@@ -32,6 +32,9 @@ namespace Bruchueum.Api
                             break;
                         case "Byline":
                             dbArtiles = db.VwArticles.Where(a => a.ByLine == filter).OrderByDescending(a => a.LastUpdated).Skip(page - 1).Take(pageLen).ToList();
+                            break;
+                        case "Latest":
+                            dbArtiles = db.VwArticles.Where(a => a.CategoryRef != "COM").OrderByDescending(a => a.LastUpdated).Skip(page - 1).Take(pageLen).ToList();
                             break;
                         default:
                             dbArtiles = db.VwArticles.OrderByDescending(a => a.LastUpdated).Skip(page - 1).Take(pageLen).ToList();

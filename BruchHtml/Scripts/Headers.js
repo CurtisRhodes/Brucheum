@@ -1,11 +1,15 @@
 function displayCustomPage(pageName) {
-    $('#divSiteLogo').html(`<img title='home' class='bannerImage' src='Images/house.gif' onclick='javascript:displayCustomPage(\"Carosuel\")'/>`);
     $('#tanBlue').hide();
     $("#bannerTitle").html("The Brucheum");
     $("#headerSubTitle").html("");
+    $('body').css("background-color", "#eeddbb");
+
+    //alert("this.html(): " + $(this).html());
+
     switch (pageName) {
         case "Carosuel":
-            $('#bruchCaveImage').show();
+            document.title = "welcome : Brucheum";
+            changeFavoriteIcon("default");
             $('#tanBlue').show();
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
@@ -37,6 +41,8 @@ function displayCustomPage(pageName) {
             loadAndStartCarousel();
             break;
         case "Latest Articles":
+            document.title = "articles : Brucheum";
+            changeFavoriteIcon("default");
             $("#headerSubTitle").html("lastest articles");
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"New Article\")'>New Article</div>\n
@@ -51,9 +57,11 @@ function displayCustomPage(pageName) {
                     <div id="divMoreButton" class="roundendButton" onclick="showMoreButtonClick()">More</div>
                 </div>`
             );
-            getArticleList("Latest Articles", "all");
+            getArticleList("Latest","all");
             break;
         case "New Article":
+            document.title = "CurtisRhodes.com";
+            changeFavoriteIcon("default");
             $("#headerSubTitle").html("new article");
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
@@ -64,6 +72,8 @@ function displayCustomPage(pageName) {
             newArticle();
             break;
         case "Books":
+            document.title = "books : CurtisRhodes.com";
+            changeFavoriteIcon("default");
             $("#headerSubTitle").html("My Books");
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
@@ -89,49 +99,28 @@ function displayCustomPage(pageName) {
                 `);
             break;
         case "Apps":
+            document.title = "apps : CurtisRhodes.com";
+            changeFavoriteIcon("default");
             $('#middleColumn').html(`<div class='landingPageHeader'>Apps</div>`);
             break;
         case "Intelligent Design":
+            document.title = "CurtisRhodes.com";
+            changeFavoriteIcon("intelDesign");
+            $('#divSiteLogo').attr("src", "Images/intel01.jpg");
             $("#bannerTitle").html("Intelligent Design Software");
-            $('#divSiteLogo').html(`<img title='home' class='bannerImage' src='Images/intel01.jpg' onclick='javascript:displayCustomPage(\"Carosuel\")'/>`);
             $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"About Me\")'>About Me</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"My Resume\")'>My Resume</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Skills Cloud\")'>My Skills</div>`
+                <div class='menuTab floatLeft' onclick='displayIntelBlogPost(3)'>About Me</div>\n
+                <div class='menuTab floatLeft' onclick='displayIntelArticles(0)'>Articles</div>\n
+                <div class='menuTab floatLeft' onclick='displayMyResume()'>My Resume</div>\n
+                <div class='menuTab floatLeft' onclick='displayIntelArticles(2)'>Programming for Girls</div>\n
+                <div class='menuTab floatLeft' onclick='displaySkillsCloud()'>My Skills</div>`
             );
-            $('#middleColumn').html(`
-                <div class="intelDsgnBackground">
-                    <div id="divWelcomeMessage" class="welcomeMessage">
-                        <div class="algerian">Welcome to Intelligent Design Software</div>
-                        <p>This web site demonstrates the work of an experienced if socially autistic web applications developer</p>
-                        <p>Check out the scection describing the <a href="~/IntelDsgn/Skills">skills used to build this site</a></p>
-                        <p>Read some of my <a href="Blog?filter=2">articles on computer programming</a></p>
-                        <p>Learn about <a href="?a=Our_Approach">our approach to application development</a></p>
-                        <p>See <a href="~/IntelDsgn/MyResume">My resume</a> with over thirty years experience. (yes I am old)</p>
-                        <p>If you might be interested in having me do some work for you</p>
-                        <p>(remote only) (direct hire only) please <a href="?a=Contact_Us">contact me</a> </p>
-                    </div>
-                </div>`
-            );
-            break;
-        case "Skills Cloud":
-            $('#middleColumn').html(`
-                <div class="intelDsgnBackground">
-                    <h2>My Skills</h2>
-                    <div id="skillsloadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
-                    <div id="skillsCloud" class="wordCloudContainer"></div>
-                    <div class="centeredDivShell">
-                        <div id="skillDetails" class="centeredDivInner skillDialogPopupBox" onmouseout="$(this).fadeOut()" onclick="$(this).fadeOut()">
-                            <div id="skillName" class="skillTitle"></div>
-                            <div id="skillProficiency" class="skillProficiency"></div>
-                            <div id="skillNarrative" class="skillNarrative"></div>
-                        </div>
-                    </div>
-                </div>`
-            );
+            intelDesignHtml();
             break;
         case "Get a Gig":
-            $('#tanBlue').hide();
+            $('#divSiteLogo').attr("src","Images/GetaJob.png")
+            document.title = "CurtisRhodes.com";
+            changeFavoriteIcon("getaJob");
             $('#middleColumn').html(`<div class='landingPageHeader'>Get a Gig"</div>`);
             break;
         default:
@@ -139,8 +128,8 @@ function displayCustomPage(pageName) {
 }
 
 function headerHtml() {
-    return "<div id='divSiteLogo' class='siteLogoContainer'" +
-        "       <img title='home' class='bannerImage' src='Images/house.gif' onclick='javascript:displayCustomPage(\"Carosuel\")' />" +
+    return "<div class='siteLogoContainer'>" +
+        "       <img id='divSiteLogo' class='bannerImage' title='home' src='Images/house.gif' onclick='javascript:displayCustomPage(\"Carosuel\")' />" +
         "   </div>\n" +
         "   <div class='headerBodyContainer'>\n" +
         "       <div class='headerTopRow'>\n" +

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-namespace Bruchueum.Api
+namespace Brucheum.Api
 {
     public enum FolderAttributeCode
     {

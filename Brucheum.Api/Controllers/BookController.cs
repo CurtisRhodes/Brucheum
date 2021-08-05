@@ -7,7 +7,7 @@ using System.Web.Http.Cors;
 using System.IO;
 using System.Configuration;
 
-namespace Bruchueum.Api
+namespace Brucheum.Api
 {
     [EnableCors("*", "*", "*")]
     public class BookDbController : ApiController

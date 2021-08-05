@@ -368,66 +368,54 @@
     margin: 0;
 }
 
-.dialogHeader {
-    border: none;
-    background-color: var(--brucheumBlue);
-    color: #fff;
-    display: inline-flex;
-    width: 100%;
-    cursor: grabbing;
-}
-
-.dialogTitle {
-    float: left;
-    padding: 2px 8px;
-    width: 100%;
-    white-space: nowrap;
-    font-size: 16px;
-    text-align: center;
-}
-
-.dialogCloseButton {
-    float: right;
-    padding-top: 5px;
-    padding-right: 15px;
-    cursor: pointer;
-}
-
-    .dialogCloseButton img {
-        height: 25px;
-    }
-
-.dialogContents {
-    padding: 5px;
-    height: 100%;
-    color: #000;
-    min-width: 500px;
-    min-height: 120px;
-    /*padding: 4px 8px;*/
-}
-
 .dialogContainer {
     position: absolute;
+    top: 200px;
     z-index: 25;
     border: solid 2px var(--brucheumBorderColor);
     background-color: var(--brucheumBackgroundColor);
     display: none;
 }
 
-.dialogHeader {
-    border: none;
-    background-color: var(--brucheumBlue);
-    color: #fff;
-    display: inline-flex;
-    width: 100%;
-    cursor: grabbing;
-}
-
 .dialogTitle {
     float: left;
-    padding: 2px 8px;
-    width: 100%;
+    color: #fff;
     white-space: nowrap;
+    width: 100%;
+    margin-top: 5px;
     font-size: 16px;
     text-align: center;
 }
+
+.dialogContents {
+    padding: 11px 20px;
+    min-width: 500px;
+    min-height: 120px;
+    /*padding: 4px 8px;*/
+}
+
+
+.dialogHeader {
+    display: flex;
+    background-color: var(--brucheumBlue);
+    width: -webkit-fill-available;
+    padding: 6px;
+}
+    .dialogHeader span {
+        font-family: 'Lucida Calligraphy';
+        color: #69387e;
+        font-size: 22px;
+        font-style: italic;
+    }
+
+.dialogCloseButton {
+    float: right;
+    padding-left: 11px;
+    margin-top: 6px;
+    margin-right: 4px;
+    cursor: pointer;
+}
+
+    .dialogCloseButton img {
+        height: 25px;
+    }

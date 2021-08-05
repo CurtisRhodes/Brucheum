@@ -1,5 +1,5 @@
-﻿var numArticles = 21;
-var rotationSpeed = 15000;
+﻿var numArticles = 201;
+var rotationSpeed = 6000;
 var carouselItemArray = new Array();
 var imageNum = 0;
 var carouselContainerHeight;

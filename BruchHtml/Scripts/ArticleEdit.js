@@ -8,6 +8,7 @@ function editArticle(articleId) {
 
 function newArticle() {
     setUpEditPage();
+    $('#dateEnteredRow').hide();
     $('#btnSave').text("Add New");
 }
 
@@ -29,7 +30,8 @@ function setUpEditPage() {
     showArticleEditorHtml();
     $('#imgArticleJog').css("height", $('#imgArticleJogContainer').height());
     $('#tanBlue').hide();
-
+    
+    $('#txtUpdated').datepicker();
     getCategories();
     getAvatars();
     $('#articleSummaryEditor').jqte();
@@ -86,6 +88,7 @@ function bind(response) {
         $('#txtTitle').val(response.Title);
         $('#ddCategory').val(response.CategoryRef);
         $('#ddAvatars').val(response.ByLineRef);
+        $('#txtCreated').val(response.Created);
         $('#txtUpdated').val(response.Updated);
         //$('#articleSummaryEditor').summernote('code', response.Summary);
         //$('#articleContentEditor').summernote('code', response.Contents);
@@ -310,6 +313,12 @@ function showArticleEditorHtml() {
                     <div class="editArticleInput"><select id="ddCategory" class="crudDropDown"></select></div>
                     <div class="editArticleLabel align-right">Byline:</div>
                     <div class="editArticleInput"><select id="ddAvatars" class="crudDropDown"></select></div>
+                </div>
+                <div id="dateEnteredRow" class="editArticleRow">
+                    <div class="editArticleLabel">Created:</div>
+                    <div class="editArticleInput"><input id="txtCreated" readonly="readonly" class="roundedInput"/></div>
+                    <div class="editArticleLabel">Last Updated:</div>
+                    <div class="editArticleInput"><input id="txtUpdated" class="roundedInput"/></div>
                 </div>
                 <div class="editArticleRow">
                     <div class="editArticleLabel">Image:</div>

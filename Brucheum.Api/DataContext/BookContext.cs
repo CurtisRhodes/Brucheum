@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Bruchueum.Api
+namespace Brucheum.Api
 {
     public partial class BookDbContext : DbContext
     {

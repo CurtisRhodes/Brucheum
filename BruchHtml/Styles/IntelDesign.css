@@ -1,6 +1,35 @@
 ﻿.intelDsgnBackground {
-    margin-top: 110px;
     background-image: url(../Images/globlic.jpg);
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: cover;
+    height: 100%;
 }
+.welcomeMessage {
+    position: absolute;
+    font-size: 18px;
+    color: #e8f6fb;
+}
+
+    .welcomeMessage a {
+        color: #d1c998;
+    }
+
+.cacaMessage {
+    position: absolute;
+    top: 475px;
+    left: 555px;
+    transform: skew(-20deg,-10deg);
+    background-color: #ea2177;
+    font-family: Arial;
+    font-size: 40px;
+    font-weight: bold;
+    padding: 16px;
+    border: solid 4px yellow;
+}
+
+.algerian {
+    font-family: Algerian;
+    font-size: 40px;
+    color: #d1c998;
+}
+

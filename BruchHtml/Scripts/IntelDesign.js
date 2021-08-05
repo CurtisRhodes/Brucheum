@@ -1,4 +1,212 @@
-﻿
+﻿function intelDesignHtml() {
+
+    $('body').css("background-color", "#222730");
+    $('#middleColumn').html(`
+        <div class="intelDsgnBackground">
+            <div id="divWelcomeMessage" class="welcomeMessage">
+                <div class="algerian">Welcome to Intelligent Design Software</div>
+                <p>This web site demonstrates the work of an experienced if socially autistic web applications developer</p>
+                <p>Check out the scection describing the <a href="javascript:displaySkillsCloud()">skills used to build this site</a></p>
+                <p>Read some of my <a href="javascript:displayIntelArticles(0)">articles on computer programming</a></p>
+                <p>Learn about <a href="javascript:displayArticleDialogBox(0)">our approach</a> to application development</p>
+                <p>See <a href="javascript:displayMyResume()">My resume</a> with over thirty years experience. (yes I am old af)</p>
+                <p>If you might be interested in having me do some work for you</p>
+                <p>(remote only) (direct hire only) please <a href="javascript:displayContactForm()">contact me</a> </p>
+            </div>
+        </div>
+        <div class='cacaMessage clickable' onclick='displayArticleDialogBox("cac953ce-58b8-4716-92e8-4c2e6cdafeca")'>Why I Built a Naked Lady Web Site</div>`
+    );
+}
+
+function displaySkillsCloud() {
+    document.title = "skills : CurtisRhodes.com";
+    $('#middleColumn').html(`
+            <h2>My Skills</h2>
+            <div id="skillsloadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
+            <div id="skillsCloud" class="wordCloudContainer"></div>
+            <div class="centeredDivShell">
+                <div id="skillDetails" class="centeredDivInner skillDialogPopupBox" onmouseout="$(this).fadeOut()" onclick="$(this).fadeOut()">
+                    <div id="skillName" class="skillTitle"></div>
+                    <div id="skillProficiency" class="skillProficiency"></div>
+                    <div id="skillNarrative" class="skillNarrative"></div>
+                </div>
+            </div>
+        </div>`
+    );
+    $('#rightColumn').html("<div class='adminButton' onclick=''>manage</div>");
+}
+
+function displayContactForm() {
+    $("#centeredDialogTitle").html("Contact Me");
+    $("#centeredDialogContents").html(`
+        <div>
+            <div><input type="radio">Love your work. I want to hire you to build something for me.</div>
+            <div></div>
+            <div>message</div>
+            <textarea id="txtCtMessage"></textarea>
+            <div></div>
+        </div>`
+    );
+    $('#centeredDialogContainer').draggable().show();
+}
+
+function displayArticleDialogBox(articleId) {
+
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/Article/GetSingleArticle?articleId=" + articleId,
+        success: function (article) {
+            if (article.Success == "ok") {
+                $("#centeredDialogTitle").html(article.Title);
+                $("#centeredDialogContents").html(article.Contents);
+                $('#centeredDialogContainer').draggable().show();
+            }
+            else
+                alert("displayArticleDialogBox: " + article.Success);
+        },
+        error: function (jqXHR, exception) {
+            alert("getArticleList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+function displayIntelArticles(displayMode) {
+    alert("displayIntelArticles: " + displayMode);
+    if (displayMode == 2) {
+        alert("Programming for Girls");
+    }
+}
+
+function displayMyResume() {
+    document.title = "my resume : CurtisRhodes.com";
+    $('#middleColumn').html(`
+        <div id="resumeSectionContainer" class="resumeContainer">
+            <div id="resumeLoadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
+            <div id="resumeTopSection"></div>
+            <div id="resumeJobSection"></div>
+            <div id="resumeBottomSection"></div>
+        </div>`
+    );
+    $('#rightColumn').html(`
+        <div class="rightColumnContents">
+            <a class="resumeDocLink" href="Docs/Curtis Rhodes Resume 2017.doc">
+                <img id="prntResume" class="docImage" title="download print copy" src="Images/wordDoc.jpg" />
+            </a>
+            <div class="adminButton" onclick='displayResumeManager()'>manage</div>
+            <div class="adminButton" onclick="docify()">docify</div>
+        </div>`
+    );
+}
+
+function displayResumeManager() {
+    $('#middleColumn').html(`
+        <div class="flexContainer">
+            <div class="floatLeft">
+                <div id="resumeSelectedElementsContainer" class="crudContainer">
+                    <div class="crudContainerTitle" id="selectedResumeItemsTitle">Resume Elements</div>
+                    <div class="crudArea">
+                        <div class="crudRow">
+                            <div class="crudLabel inline">Resume</div>
+                            <div id="elementDDsLoadingGif" class="loadingGif"> <img src="Images/loader.gif" /></div>
+                            <select id="ddResumes" class="roundedInput inline" onchange="loadSelectedResumeElements($(this).val())"></select>
+                        </div>
+                        <div id="editSelectedElementsCrudRow" class="crudRow">
+                            <div class="crudLabel inline">Order</div>
+                            <input id="txtResumeSelectedElementOrder" class="roundedInput inline width50px" />
+                            <!--
+                                        <div class="crudLabel inline">Item</div>
+                            <input id="txtSelectedElement" class="roundedInput inline" readonly="readonly" />
+                                    -->
+                                    <button id="btnResumeSelectedElementAddEdit" class="roundendButton" onclick="updateResumeElement()">Edit Sort Order</button>
+                            <button id="btnResumeSelectedElementDelete" class="roundendButton" onclick="removeSelectedElement()">Remove</button>
+                            <input id="hiddenSelectedElementId" type="hidden" />
+                        </div>
+                    </div>
+                    <div id="resumeSelectedElementsLoadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
+                    <div id="resumeSelectedElementsList" class="crudList"></div>
+                </div>
+            </div>
+            <div class="floatLeft">
+                <div id="resumeAvailableElementsContainer" class="crudContainer resizeContainer">
+                    <div class="crudContainerTitle">Resume Items</div>
+                    <div class="crudArea" id="availableElementsCrudSection">
+                        <div class="crudRow">
+                            <div class="crudRowLabel">Section</div>
+                            <select id="ddSectionType" class="roundedInput inline"> <!--// onchange="setDropDownElementType()">-->
+                                        <option class='ddOption' value='1'>Top</option>
+                                <option class='ddOption' value='2'>Job</option>
+                                <option class='ddOption' value='3'>Bottom</option>
+                            </select>
+                            <div class="crudLabel inline">Order</div>
+                            <input id="txtResumeAvailableElementOrder" class="roundedInput inline width50px" />
+                            <div class="crudLabel inline">Item</div>
+                            <input id="txtAvailableElement" class="roundedInput inline" readonly="readonly" />
+                            <input id="hiddenAvailableElementId" type="hidden" />
+                        </div>
+                        <div>
+                            <button id="btnAddItemToResume" class="roundendButton" onclick="addItemsToResume()">Add Item to resume</button>
+                            <button id="btnEditResumeItem" class="roundendButton" onclick="addItemsToResume()">Edit Resume Item</button>
+                            <button class="roundendButton" onclick="addItemsToResume()">Add New  Resume Item</button>
+
+                        </div>
+                    </div>
+                    <div id="resumeAvaibleElementsLoadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
+                    <div id="resumeAvailableElementsList" class="crudList"></div>
+                </div>
+            </div>
+        </div>`
+    );
+}
+
+function displaySkillsManager() {
+    $('#middleColumn').html(`
+        <div class="flexContainer">
+            <div class="floatLeft">
+                <div id="addEditSkillContainer" class="crudContainer">
+                    <div id="crudContainerTitle" class="crudContainerTitle">
+                        Add Edit Job Skills
+                                <!--<div id="closeIcon" class="closeIcon" onclick="$('#addaJob').hide()"><img src="Images/powerOnOffSilver.png" height="24" /></div>-->
+                            </div>
+                    <div class="crudArea">
+                        <div id="errSummary" class="validationError"></div>
+                        <div class="crudRow">
+                            <div id="errSkillName" class="validationError">Required</div>
+                            <div class="crudLabel">Skill</div>
+                            <input id="txtSkillName" class="roundedInput" />
+                            <div id="errSkillCat" class="validationError">Select a Category</div>
+                            <div class="crudLabel">Category</div>
+                            <select id="ddSkillCats" class="crudDropDown"></select>
+                        </div>
+                        <div class="crudRow">
+                            <div id="errProfeciency" class="validationError">Required</div>
+                            <div class="crudLabel">Profeciency</div>
+                            <select id="ddProfeciency" class="crudDropDown"></select>
+                            <div class="crudLabel">Font Size</div>
+                            <input id="txtFontSize" class="roundedInput" />
+                        </div>
+                        <div class="crudRow">
+                            <div id="skillNarrativeEditor"></div>
+                        </div>
+                        <div>
+                            <img id="skillAddEditSpinner" class="btnSpinnerImage positionSkillsSpinner" src="Images/loader.gif" />
+                            <button id="btnSkillAddEdit" class="roundendButton" onclick="addEditSkill()">Add</button>
+                            <button id="btnSkillNew" class="roundendButton" onclick="btnSkillNewToggle()">New</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="floatLeft">
+                <div id="skillListCrudContainer" class="crudContainer">
+                    <div id="crudContainerTitle" class="crudContainerTitle">Job Skills</div>
+                    <div id="skillList" class="crudList"></div>
+                </div>
+            </div>
+        </div>`
+    );
+}
+
+/////////////////////////////////////////////////////
+
 function loadSkillCloud(service) {
     try {
         $('#skillsloadingGif').show();

@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using static System.Net.WebRequestMethods;
 
-namespace Bruchueum.Api
+namespace Brucheum.Api
 {
     public class FtpUtilies
     {

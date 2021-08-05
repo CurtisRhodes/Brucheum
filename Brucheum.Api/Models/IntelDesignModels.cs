@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Bruchueum.Api
+namespace Brucheum.Api
 {
     public class JobSkillsModel
     {

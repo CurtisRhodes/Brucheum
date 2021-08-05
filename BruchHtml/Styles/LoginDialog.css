@@ -95,26 +95,6 @@
     display: none;
 }
 
-.dialogHeader {
-    text-align: center;
-    padding: 6px;
-    background-color: #74bac3;
-}
-
-    .dialogHeader span {
-        font-family: 'Lucida Calligraphy';
-        color: #69387e;
-        font-size: 22px;
-        font-style: italic;
-    }
-.dialogCloseButton {
-    float: right;
-    padding-left: 11px;
-    margin-top: 6px;
-    margin-right: 4px;
-    cursor: pointer;
-}
-
 .caretImgContainer {
     display: inline-block;
 }

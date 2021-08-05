@@ -3,7 +3,7 @@ let page = 1;
 let articlePageLimit = 5;
 let articleCount;
 let showMore = false;
-let thisfilterType = "Latest Articles";
+let thisFilterType, thisFilter;
 
 function getListHeader(refCode) {
     $.ajax({
@@ -20,12 +20,14 @@ function getListHeader(refCode) {
 
 function getArticleList(filterType, filter) {
     try {
-        $('#divlistHeader').html(filterType);
-
-        if (showMore === false)
+        if (showMore === false) {
             $('#articleList').html('');
-        else
+            thisFilterType = filterType;
+            thisFilter = filter;
+        }
+        else {
             page += articlePageLimit;
+        }
 
         $('#loadingGif').show();
         $.ajax({
@@ -81,17 +83,6 @@ function getArticleList(filterType, filter) {
             error: function (jqXHR, exception) {
                 alert("getArticleList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
             }
-            //error: function (xmlhttprequest, textstatus, message) {
-            //    $('#loadingGif').hide();
-            //    if (textstatus === "timeout") {
-            //        displayStatusMessage("error", "Server Timeout");
-            //        alert("Sorry. Server timeout. \n This webside is down.     ");
-            //    }
-            //    else {
-            //        displayStatusMessage("error", "status: " + textstatus + "   text: [" + textstatus + "]   error: " + message);
-            //        alert("getArticleList ERROR: [" + xmlhttprequest.status + "]  textstatus: [" + xmlhttprequest.textstatus + "]   message: " + message);
-            //    }
-            //}
         });
     }
     catch (e) {
@@ -104,6 +95,6 @@ function getArticleList(filterType, filter) {
 function showMoreButtonClick() {
     page++;
     showMore = true;
-    getArticleList();
+    getArticleList(thisFilterType, thisFilter);
 }
 

@@ -5,25 +5,6 @@ $(document).ready(function () {
     loadSettings();
 });
 
-function showBookPanel() {
-    return `
-    <div id="divBookPannel" class="mediumAddContainer bookPannel">
-        <div class="bookPannelHeader">
-            Check out my books
-                </div>
-        <div class="divBookImage" book="The Blond Jew" onclick="window.location.href='/BookDb/ToC?book=1'">
-            <img class="bookImage" src="Images/TheBlondJew.jpg" />
-        </div>
-        <div class="divBookImage" book="Time Squared" onclick="window.location.href='/BookDb/ToC?book=2'">
-            <img class="bookImage" src="Images/TimeSquared.jpg" />
-        </div>
-        <div class="divBookImage" book="Ready; Fire; Aim" onclick="window.location.href='/BookDb/ToC?book=3'">
-            <img class="bookImage" src="Images/ReadyFireAim.jpg" />
-        </div>
-    </div>`;
-}
-
-
 function includeHTML() {
     var z, i, elmnt, file, xhttp;
     /* Loop through a collection of all HTML elements: */
@@ -92,20 +73,17 @@ function loadSettings() {
     });
 }
 
+changeFavoriteIcon("intelDesign");
 function changeFavoriteIcon(icon) {
     try {
         let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
         link.type = 'image/x-icon';
         link.rel = 'shortcut icon';
         switch (icon) {
-            case "centerfold": link.href = 'https://ogglebooble.com/images/playboyballon.png'; break;
-            case "porn": link.href = 'https://ogglebooble.com/images/cslips03.png'; break;
-            case "soft": link.href = 'https://ogglebooble.com/images/redwoman.ico'; break;
-            case "loading":
-                link.href = "https://ogglebooble.com/images/loader.gif";
-                link.type = 'image/gif';
-                //link = "<link rel='icon' href='https://ogglebooble.com/images/loader.gif' type='image/gif' />";
-                break;
+            case "brucheum": link.href = 'Images/Brucheum.ico'; break;
+            case "intelDesign": link.href = 'Images/intel01.jpg'; break;
+            case "getaJob": link.href = 'Images/GetaJob.png'; break;
+            case "loading": link.href = "Images/loader.gif"; link.type = 'image/gif'; break;
             case "redBallon": link.href = 'Images/favicon.png'; break;
             default: link.href = 'Images/Brucheum.ico'; break;
         }
