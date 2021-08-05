@@ -38,23 +38,28 @@ namespace Brucheum.Api
             return success;
         }
 
-
-
-
-        //[HttpGet]
-        //public JsonResult MsSqlTest(int parent)
-        //{
-        //    var testResults = new TestResults();
-        //    using (OggleBoobleContext db = new OggleBoobleContext())
-        //    {
-        //       List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == parent).ToList();
-        //        foreach (CategoryFolder categoryFolder in categoryFolders) {
-        //            testResults.Items.Add(new TestResultsItem() { Id = categoryFolder.Id, FolderName = categoryFolder.FolderName });
-        //        }
-        //        testResults.Success = "ok";
-        //    }
-        //    return Json(testResults, JsonRequestBehavior.AllowGet);
-        //}
+        [HttpGet]
+        public TestResults MsSqlTest()
+        {
+            var testResults = new TestResults();
+            try
+            {
+                using (var db = new BookDbContext())
+                {
+                    var chapters = db.Chapters.Where(c => c.BookId == 1).ToList();
+                    foreach (BookChapter chapter in chapters)
+                    {
+                        testResults.Items.Add(new TestResultsItem() { Id = chapter.ChapterOrder, FolderName = chapter.ChapterTitle });
+                    }
+                }
+                testResults.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                testResults.Success = Helpers.ErrorDetails(ex);
+            }
+            return testResults;
+        }
 
         //[HttpPost]
         //public ActionResult EmailTest()

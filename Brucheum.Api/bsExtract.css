@@ -5,7 +5,7 @@
 }
 
 body {
-    margin: 0
+    margin: 10px;
 }
 
 .bsCol {
@@ -57,7 +57,7 @@ body {
     margin-bottom: 30px;
     padding-left: 8px;
     color: inherit;
-    background-color: #dbcdf7;
+    background-color: #ff6a00;
 }
 
         .jumbotron h1,

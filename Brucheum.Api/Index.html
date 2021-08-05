@@ -57,7 +57,7 @@
                   $.ajax({
                       type: "GET",
                       dataType: "json",
-                      url: "home/MsSqlTest/MsSqlTest?parent=4013",
+                      url: "api/home/MsSqlTest",
                       success: function (testResults) {
                           if (testResults.Success === "ok") {
                               $('#msgArea').html("");
