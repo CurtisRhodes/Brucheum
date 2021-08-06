@@ -8,6 +8,14 @@ function editArticle(articleId) {
 
 function newArticle() {
     setUpEditPage();
+    document.title = "CurtisRhodes.com";
+    $("#headerSubTitle").html("new article");
+    //$("#breadcrumbContainer").html(`
+    //            <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
+    //            <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
+    //            <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
+    //            <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
+    //);
     $('#dateEnteredRow').hide();
     $('#btnSave').text("Add New");
 }

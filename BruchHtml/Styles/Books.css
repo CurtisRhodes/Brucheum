@@ -15,6 +15,11 @@
     margin-top: 14px;
     font-size: 33px;
     font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+    padding-bottom: 2px;
+    cursor: pointer;
 }
 
 .bookImage {
@@ -157,20 +162,6 @@
     height: 25px; 
 }
 
-.bookTitle {
-    font-size: 32px;
-    font-weight: bold;
-    font-style: italic;
-    text-align: center;
-    padding-bottom: 2px;
-    cursor: pointer;
-}
-
-.bookCenterTitle {
-    font-size: 28px;
-    text-align: center;
-    padding: 11px;
-}
 
 .bookPreface {
     /*margin: 5px 166px;*/

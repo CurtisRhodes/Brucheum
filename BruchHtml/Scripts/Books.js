@@ -60,10 +60,6 @@ function loadBookAndShowToC(bookId) {
 }
 
 function showToC(bookId) {
-    $("#middleColumn").html(`
-            <div id="tocBookTitle" class="bookTitle" onclick='showPage(1,1,1)'></div>
-            <div id="divToC" class="toCcontainer"></div>`
-    );
     $('#tocBookTitle').html(bookModel.BookTitle);
     $.each(bookModel.Chapters, function (idx, chapter) {
         // kludge String To Prevent Jquery .append() from auto closing divs

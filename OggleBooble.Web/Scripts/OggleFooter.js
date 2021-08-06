@@ -42,7 +42,7 @@ function setOggleFooter(folderId, rootFolder, calledFrom) {
             "   </div>\n<div class='footerFooter'>\n" +
             "       <div id='footerMessage'></div>\n" +
             "       <div id='footerMessage2'></div>\n" +
-            "       <div id='copyright'>&copy; 2020 - <a href='https://curtisrhodes.com/IntelDsgn'>Intelligent Design SoftWare</a></div>\n" +
+            "       <div id='copyright'>&copy; 2020 - <a href='https://curtisrhodes.com/index.html?spa=IntelDesign' target='_blank'>Intelligent Design SoftWare</a></div>\n" +
             "   </div>\n" +
             "</div>\n");
 
@@ -58,7 +58,6 @@ function setOggleFooter(folderId, rootFolder, calledFrom) {
                 "   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);\n" +
                 "   })();</script>\n");
         }
-        // Refused to execute script from 'https://idsync.reson8.com/adb-int.gif?aamid=18999620808010826394036836937719761674' because its MIME type ('image/gif') is not executable.
         switch (rootFolder) {
             //rtpe(code,calledfrom,detail,folderId)
             case "playboyIndex":

@@ -30,6 +30,7 @@
     <script src="Scripts/ArticleView.js"></script>
     <script src="Scripts/ArticleEdit.js"></script>
     <script src="Scripts/IntelDesign.js"></script>
+    <script src="Scripts/Snippets.js"></script>
     <script src="Scripts/Headers.js"></script>
 
 
@@ -49,31 +50,7 @@
 <body>
     <header></header>
     <div id="visableArea" class="threeColumnLayout">
-        <div id="leftColumn">
-            <div id="tanBlue" class="vMenu">
-                <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='/IntelDsgn/'">
-                    <img src="Images/TanBlue/IntelligentDesignTan.png" onmouseover="this.src='Images/TanBlue/IntelligentDesignBlue.png'" onmouseout="this.src='Images/TanBlue/IntelligentDesignTan.png'" />
-                </div>
-                <div id="itemBlondJew" class="tabvMenuItem" onclick="loadBookAndShowToC(1)">
-                    <img src="Images/TanBlue/BlondJewTan.png" onmouseover="this.src='Images/TanBlue/BlondJewBlue.png'" onmouseout="this.src='Images/TanBlue/BlondJewTan.png'" />
-                </div>
-                <div class="tabvMenuItem">
-                    <img src="Images/TanBlue/BrucheumTan.png" onmouseover="this.src='Images/TanBlue/BrucheumBlue.png'" onmouseout="this.src='Images/TanBlue/BrucheumTan.png'" />
-                </div>
-                <div class="tabvMenuItem" onclick="window.location.href='/Flitter/Flitter'"> 
-                    <img src="Images/TanBlue/FlitterTan.png" onmouseover="this.src='Images/TanBlue/FlitterBlue.png'" onmouseout="this.src='Images/TanBlue/FlitterTan.png'" />
-                </div>
-                <div class="tabvMenuItem" onclick="window.location.href='/GetaJob/GetaJobAdmin'">
-                    <img src="Images/TanBlue/GetaJobTan.png" onmouseover="this.src='Images/TanBlue/GetaJobBlue.png'" onmouseout="this.src='Images/TanBlue/GetaJobTan.png'" />
-                </div>
-                <div class="tabvMenuItem" onclick="window.location.href='/BookDb/ToC?book=2'">
-                    <img src="Images/TanBlue/TimeSquaredTan.png" onmouseover="this.src='Images/TanBlue/TimeSquaredBlue.png'" onmouseout="this.src='Images/TanBlue/TimeSquaredTan.png'" />
-                </div>
-                <div id="item2aT" class="tabvMenuItem" onclick="emailTest()">
-                    <img src="Images/TanBlue/ToATeeTan.png" onmouseover="this.src='Images/TanBlue/ToATeeBlue.png'" onmouseout="this.src='Images/TanBlue/ToATeeTan.png'" />
-                </div>
-            </div>
-        </div>
+        <div id="leftColumn"></div>
         <div id="middleColumn"></div>
         <div id="rightColumn"></div>
     </div>
@@ -81,10 +58,15 @@
     <script>
         $(document).ready(function () {
             let permissionsSet = false;
-            let spaPage = "Brucheum";
+            let spaPage = "Carosuel";
+            params = getParams();
+            if (params.spa != undefined) {
+                spaPage = params.spa;
+            }
             $('#carosuelContainer').hide();
             displayFooter();
             loadHeader();
+            displayTanBlueMenu();
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -98,14 +80,7 @@
                         if (connectionVerified) {
                             clearInterval(connectionVerifiedLoop);
                             $('#dots').html('');
-                            displayCustomPage("Carosuel");
-
-                            //params = getParams();
-                            //if (params.spa != undefined) {
-                            //    spaPage = params.spa;
-                            //}
-
-
+                            displayCustomPage(spaPage);
                             //verifySession(spaPageId);
                             //logVisit();
                             //setUserPermissions();
@@ -114,10 +89,12 @@
                 }
             }, 300);
         });
+
         resizePage();
         $(window).resize(function () {
             resizePage();
         });
+
     </script>
 </body>
 </html>

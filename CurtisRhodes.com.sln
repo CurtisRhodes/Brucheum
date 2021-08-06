@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetaGig", "GetaGig\GetaGig.csproj", "{B72B77E3-655D-4C71-B5F4-6E9E932E40C2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntelDesign", "IntelDesign\IntelDesign.csproj", "{1B7441BF-C313-45A2-8AB8-8AE5DFFB7FEE}"
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BruchHtml", "BruchHtml\", "{5787F365-E98B-482F-A9D3-0702D363B9D0}"
@@ -41,10 +39,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B72B77E3-655D-4C71-B5F4-6E9E932E40C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B72B77E3-655D-4C71-B5F4-6E9E932E40C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B72B77E3-655D-4C71-B5F4-6E9E932E40C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B72B77E3-655D-4C71-B5F4-6E9E932E40C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1B7441BF-C313-45A2-8AB8-8AE5DFFB7FEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1B7441BF-C313-45A2-8AB8-8AE5DFFB7FEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B7441BF-C313-45A2-8AB8-8AE5DFFB7FEE}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -18,6 +18,26 @@ function getListHeader(refCode) {
     });
 }
 
+function displayArticleList() {
+    resetCustomPage();
+    document.title = "articles : Brucheum";
+    $("#headerSubTitle").html("lastest articles");
+    $("#breadcrumbContainer").html(`
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"New Article\")'>New Article</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
+    );
+    $('#middleColumn').html(`
+                <div id="divArticleList">
+                    <div id="divlistHeader" class="articleListHeader"></div>
+                    <div id="articleListContainer" class="articleListContainer"></div>
+                    <div id="divMoreButton" class="roundendButton" onclick="showMoreButtonClick()">More</div>
+                </div>`
+    );
+    getArticleList("Latest", "all");
+}
+
 function getArticleList(filterType, filter) {
     try {
         if (showMore === false) {

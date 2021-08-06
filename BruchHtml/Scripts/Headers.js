@@ -1,84 +1,38 @@
-function displayCustomPage(pageName) {
+function resetCustomPage() {
     $('#tanBlue').hide();
     $("#bannerTitle").html("The Brucheum");
     $("#headerSubTitle").html("");
     $('body').css("background-color", "#eeddbb");
+    changeFavoriteIcon("default");
+    stopCarousel();
+    $("#optionNotLoggedIn").show();
+    $("#optionLoggedIn").hide();    
+}
 
+function displayCustomPage(pageName) {
+    resetCustomPage();
     //alert("this.html(): " + $(this).html());
-
     switch (pageName) {
         case "Carosuel":
             document.title = "welcome : Brucheum";
-            changeFavoriteIcon("default");
             $('#tanBlue').show();
             $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Apps\")'>Apps</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
-            );
-            $('#middleColumn').html(`
-                <div id="bruchCaveImage" class="caveImage">
-                    <div id="customMessage" class="displayHidden customMessageContainer"></div>
-                    <div id="divStatusMessage"></div>
-                    <div id="dots" style="color:white"></div>
-                    <div class="centeredDivShell">
-                        <div class="centeredDivInner">
-                            <div id="carosuelContainer" class="carosuelContainer">
-                                <img id="leftFbutton" class="arrowButton" src="Images/blueCircleLeft.png" onclick="clickPrevious()" />
-                                <img id="rightFbutton" class="arrowButton" src="Images/blueCircleRight.png" onclick="clickNext()" />
-                                <div id='articleTitle' class='carouselLabel'></div>
-                                <div id='articleCat' class='carouselLabel'></div>
-                                <div class="carouselImageContainer">
-                                    <img id="carouselImage" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`
+                <div class='hoverTab'><a href='javascript:displayArticleList()'>Latest Articles</a></div>\n
+                <div class='hoverTab'><a href='javascript:displayCustomPage(\"Books\")'>Books</a></div>\n
+                <div class='hoverTab'><a href='javascript:displayCustomPage(\"Apps\")'>Apps</a></div>\n
+                <div class='hoverTab'><a href='javascript:displayCustomPage(\"IntelDesign\")'>Intelligent Design</a></div>\n
+                <div class='hoverTab'><a href='javascript:displayCustomPage(\"GetaGig\")'>Get a Gig</a></div>\n`
             );
             loadAndStartCarousel();
             break;
-        case "Latest Articles":
-            document.title = "articles : Brucheum";
-            changeFavoriteIcon("default");
-            $("#headerSubTitle").html("lastest articles");
-            $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"New Article\")'>New Article</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
-            );
-            $('#middleColumn').html(`
-                <div id="divArticleList">
-                    <div id="divlistHeader" class="articleListHeader"></div>
-                    <div id="articleListContainer" class="articleListContainer"></div>
-                    <div id="divMoreButton" class="roundendButton" onclick="showMoreButtonClick()">More</div>
-                </div>`
-            );
-            getArticleList("Latest","all");
-            break;
-        case "New Article":
-            document.title = "CurtisRhodes.com";
-            changeFavoriteIcon("default");
-            $("#headerSubTitle").html("new article");
-            $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
-            );
-            newArticle();
-            break;
         case "Books":
             document.title = "books : CurtisRhodes.com";
-            changeFavoriteIcon("default");
             $("#headerSubTitle").html("My Books");
             $("#breadcrumbContainer").html(`
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Carosuel\")'>Articles</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Apps\")'>Apps</div>\n
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"GetaGig\")'>Get a Gig</div>\n`
             );
             $("#middleColumn").html(`
                     <div id="tocLoadingGif"><img class="loadingGif" src="Images/loader.gif" /></div>
@@ -100,15 +54,15 @@ function displayCustomPage(pageName) {
             break;
         case "Apps":
             document.title = "apps : CurtisRhodes.com";
-            changeFavoriteIcon("default");
             $('#middleColumn').html(`<div class='landingPageHeader'>Apps</div>`);
             break;
-        case "Intelligent Design":
+        case "IntelDesign":
             document.title = "CurtisRhodes.com";
             changeFavoriteIcon("intelDesign");
             $('#divSiteLogo').attr("src", "Images/intel01.jpg");
             $("#bannerTitle").html("Intelligent Design Software");
             $("#breadcrumbContainer").html(`
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Carosuel\")'>The Brucheum</div>\n
                 <div class='menuTab floatLeft' onclick='displayIntelBlogPost(3)'>About Me</div>\n
                 <div class='menuTab floatLeft' onclick='displayIntelArticles(0)'>Articles</div>\n
                 <div class='menuTab floatLeft' onclick='displayMyResume()'>My Resume</div>\n
@@ -117,11 +71,17 @@ function displayCustomPage(pageName) {
             );
             intelDesignHtml();
             break;
-        case "Get a Gig":
-            $('#divSiteLogo').attr("src","Images/GetaJob.png")
+        case "GetaGig":
+            $('#divSiteLogo').attr("src", "Images/GetaJob.png")
             document.title = "CurtisRhodes.com";
             changeFavoriteIcon("getaJob");
-            $('#middleColumn').html(`<div class='landingPageHeader'>Get a Gig"</div>`);
+            $("#breadcrumbContainer").html(`
+                <div class='menuTab floatLeft' onclick='displayNewJobSearch()'>New Job Search</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Carosuel\")'>Articles</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Apps\")'>Apps</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n`
+            );
+            displayGetaGig();
             break;
         default:
     }
@@ -142,13 +102,13 @@ function headerHtml() {
         //"               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
         //"           </div>\n" +
         "       </div>\n" +
-        "       <div class='headerBottomRow'>\n" +
-        "           <div class='bottomRowSection1'>\n" +
+        "       <div id='headerBottomRow'>\n" +
+        //"           <div class='bottomRowSection1'>\n" +
         "               <div id='headerMessage' class='bottomLeftHeaderArea'></div>\n" +
         "               <div id='breadcrumbContainer' class='breadCrumbArea'></div>\n" +
         "               <div id='badgesContainer' class='badgesSection'></div>\n" +
         "               <div id='hdrBtmRowSec3' class='hdrBtmRowOverflow'></div>\n" +
-        "           </div>\n" +
+        //"           </div>\n" +
         "           <div id='divLoginArea' class='loginArea'>\n" +
         "               <div id='optionLoggedIn' class='displayHidden'>\n" +
         "                   <div class='hoverTab' title='modify profile'><a href='javascript:showUserProfileDialog()'>Hello <span id='spnUserName'></span></a></div>\n" +

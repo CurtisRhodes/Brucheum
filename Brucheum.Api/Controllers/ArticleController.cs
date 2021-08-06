@@ -17,6 +17,42 @@ namespace Brucheum.Api
         private readonly string articleImagesFolder = ConfigurationManager.AppSettings["ImageRepository"];
 
         [HttpGet]
+        public ArticlesModel LoadCarousel(string filterContext)
+        {
+            var articleModel = new ArticlesModel();
+            try
+            {
+                using (WebSiteContext db = new WebSiteContext())
+                {
+                    IList<VwArticle> dbArtiles = null;
+                    if(filterContext== "General")
+                        dbArtiles = db.VwArticles.Where(a => a.CategoryRef != "COM").OrderByDescending(a => a.LastUpdated).ToList();
+                    else
+                        dbArtiles = db.VwArticles.ToList();
+
+                    foreach (VwArticle vwArticle in dbArtiles)
+                    {
+                        articleModel.ArticleList.Add(new ArticleModel()
+                        {
+                            Id = vwArticle.Id,
+                            Title = vwArticle.Title,
+                            Category = vwArticle.Category,
+                            CategoryRef = vwArticle.CategoryRef,
+                            ImageName = articleImagesFolder + vwArticle.ImageName,
+                        });
+                    }
+                    articleModel.Success = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                articleModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return articleModel;
+        }
+
+
+        [HttpGet]
         public ArticlesModel GetArticleList(int pageLen, int page, string filterType, string filter)
         {
             var articleModel = new ArticlesModel();

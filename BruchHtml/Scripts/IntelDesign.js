@@ -41,10 +41,12 @@ function displayContactForm() {
     $("#centeredDialogContents").html(`
         <div>
             <div><input type="radio">Love your work. I want to hire you to build something for me.</div>
-            <div></div>
             <div>message</div>
-            <textarea id="txtCtMessage"></textarea>
-            <div></div>
+            <textarea id="txtCtMessage" class="cntFormTextArea" ></textarea>
+            <div>
+                <div class="inline roundendButton" onclick="submitContactForm">Submit</div>
+                <div class="inline"><a href="mailto:curtishrhodes@hotmail.com">curtis@intelDesign.com</a></div>
+            </div>
         </div>`
     );
     $('#centeredDialogContainer').draggable().show();
@@ -96,6 +98,14 @@ function displayMyResume() {
             <div class="adminButton" onclick="docify()">docify</div>
         </div>`
     );
+}
+
+function submitContactForm() {
+    alert("submitContactForm: " + $('#txtCtMessage').val());
+
+    sendEmail("CurtishRhodes@hotmail.com", "ContactForm@IntelligentDesign.com", "Contact Form Submiited!!!",
+        //"UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visid +
+        "<br/>" + $('#txtCtMessage').val());
 }
 
 function displayResumeManager() {

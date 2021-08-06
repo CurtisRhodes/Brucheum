@@ -5,33 +5,34 @@ $(document).ready(function () {
     loadSettings();
 });
 
-function includeHTML() {
-    var z, i, elmnt, file, xhttp;
-    /* Loop through a collection of all HTML elements: */
-    z = document.getElementsByTagName("*");
-    for (i = 0; i < z.length; i++) {
-        elmnt = z[i];
-        /*search for elements with a certain atrribute:*/
-        file = elmnt.getAttribute("w3-include-html");
-        if (file) {
-            /* Make an HTTP request using the attribute value as the file name: */
-            xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState === 4) {
-                    if (this.status === 200) { elmnt.innerHTML = this.responseText; }
-                    if (this.status === 404) { elmnt.innerHTML = "Page not found."; }
-                    /* Remove the attribute, and call this function once more: */
-                    elmnt.removeAttribute("w3-include-html");
-                    includeHTML();
-                }
-            };
-            xhttp.open("GET", file, true);
-            xhttp.send();
-            /* Exit the function: */
-            return;
-        }
-    }
+function displayTanBlueMenu() {
+    $('#leftColumn').html(`
+        <div id="tanBlue" class="vMenu">
+            <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='index.html?spa=IntelDsgn'">
+                <img src="Images/TanBlue/IntelligentDesignTan.png" onmouseover="this.src='Images/TanBlue/IntelligentDesignBlue.png'" onmouseout="this.src='Images/TanBlue/IntelligentDesignTan.png'" />
+            </div>
+            <div id="itemBlondJew" class="tabvMenuItem" onclick="showBook(1)">
+                <img src="Images/TanBlue/BlondJewTan.png" onmouseover="this.src='Images/TanBlue/BlondJewBlue.png'" onmouseout="this.src='Images/TanBlue/BlondJewTan.png'" />
+            </div>
+            <div id="itemBrucheum" class="tabvMenuItem" onclick="displayOldWebsite()">
+                <img src="Images/TanBlue/BrucheumTan.png" onmouseover="this.src='Images/TanBlue/BrucheumBlue.png'" onmouseout="this.src='Images/TanBlue/BrucheumTan.png'" />
+            </div>
+            <div class="tabvMenuItem" onclick="displayFlitter()">
+                <img src="Images/TanBlue/FlitterTan.png" onmouseover="this.src='Images/TanBlue/FlitterBlue.png'" onmouseout="this.src='Images/TanBlue/FlitterTan.png'" />
+            </div>
+            <div class="tabvMenuItem" onclick="window.location.href='index.html?spa=GetaGig'">
+                <img src="Images/TanBlue/GetaJobTan.png" onmouseover="this.src='Images/TanBlue/GetaJobBlue.png'" onmouseout="this.src='Images/TanBlue/GetaJobTan.png'" />
+            </div>
+            <div class="tabvMenuItem" onclick="window.location.href='showbook(2)">
+                <img src="Images/TanBlue/TimeSquaredTan.png" onmouseover="this.src='Images/TanBlue/TimeSquaredBlue.png'" onmouseout="this.src='Images/TanBlue/TimeSquaredTan.png'" />
+            </div>
+            <div id="item2aT" class="tabvMenuItem" onclick="display2aT()">
+                <img src="Images/TanBlue/ToATeeTan.png" onmouseover="this.src='Images/TanBlue/ToATeeBlue.png'" onmouseout="this.src='Images/TanBlue/ToATeeTan.png'" />
+            </div>
+        </div>`
+    );
 }
+
 function resizePage() {
     // set page width
     var winW = $(window).width();
@@ -71,6 +72,35 @@ function loadSettings() {
             if (!checkFor404(errMsg, 444, "loadOggleSettings")) logError("XHR", 444, errMsg, "loadOggleSettings");
         }
     });
+}
+
+function sendEmail(to, from, subject, message) {
+    try {
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/Common/SendEmail",
+            data: {
+                To: to,
+                From: from,
+                Subject: subject,
+                Message: message
+            },
+            success: function (success) {
+                if (success === "ok") {
+                    //$('#footerMessage').html("email sent");
+                    //displayStatusMessage("ok", "email sent");
+                }
+                else
+                    logError("EME", 3992, success, subject);
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "sendEmail")) logError("XHR", 3992, errMsg, "sendEmail");
+            }
+        });
+    } catch (e) {
+        logError("CAT", 3992, e, "sendEmail");
+    }
 }
 
 changeFavoriteIcon("intelDesign");

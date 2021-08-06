@@ -3,10 +3,8 @@
     top: 0;
     width: 100%;
     background: var(--brucheumBlue);
-    border-top: #40767d 3px solid;
-    border-bottom: #decd6f 3px solid;
-    display: flex;
-    z-index: 10;
+    border-top: #40767d 4px solid;
+    border-bottom: #decd6f 7px solid;
 }
 
 .classicColors {
@@ -21,8 +19,31 @@
     padding-left: 2px;
 }
 .bannerImage {
-    height: 66px;
+    height: 55px;
     cursor: pointer;
+}
+
+.headerBodyContainer {
+    float: left;
+}
+
+.headerTopRow {
+    display: flex;
+}
+
+.headerBottomRow {
+    display: flex;
+    color: var(--brucheumSubTitleColor);
+    margin-right: 25px;
+}
+
+.bottomRowSection1 {
+    float: left;
+    display: flex;
+}
+.loginArea {
+    position: absolute;
+    right: 20px;
 }
 
 .headerTitle {
@@ -49,8 +70,6 @@
         text-decoration: underline;
     }
 
-.headerBottomRow {
-}
 
 .menuTab {
     margin-top: 2px;
@@ -64,15 +83,10 @@
         background-color: #fef;
     }
 
-
 .breadCrumbArea {
-    float: left;
-    color: var(--brucheumSubTitleColor);
-    font-family: Verdana;
-    font-size: 21px;
     margin-left: 20px;
 }
- 
+
 .activeBreadCrumb {
     margin-left: 20px;
     cursor: pointer;
@@ -100,23 +114,6 @@
     /*    background: var(--brucheumBlue);*/
 }
 
-.headerBodyContainer {
-    float: left;
-}
-
-.headerTopRow {
-    display: flex;
-}
-
-.headerBottomRow {
-    display: inline-block;
-}
-
-.bottomRowSection1 {
-    float: left;
-    display: flex;
-}
-
 .bottomLeftHeaderArea {
     padding-right: 8px;
     float: left;
@@ -125,13 +122,6 @@
 .badgesSection {
     display: flex;
     float: left;
-}
-
-.loginArea {
-    font-family: Arial;
-    margin-right: 25px;
-    margin-top: 4px;
-    float: right;
 }
 
 .headerBannerButton {
@@ -217,18 +207,6 @@
     background-color: var(--brucheumBackgroundColor);
 }
 
-
-.siteLogoContainer {
-    float: left;
-    padding-top: 2px;
-    padding-left: 2px;
-}
-/*
-//$('#divSiteLogo').css("height", "50px");
-//$('#bannerTitle').css("height", "20px");
-//$('#mainMenuContainer').css("font-size", "20px");
-//$('.headerBannerButton').css("font-size", "12px");
-*/
 .siteLogo {
     height: 50px;
     cursor: pointer;
@@ -301,8 +279,7 @@
 .hoverTab {
     float: left;
     display: inline-block;
-    margin-top: 1px;
-    border-radius: 5px;
+    margin-right: 15px;
 }
 
     .hoverTab a {
@@ -311,7 +288,6 @@
         padding: 8px;
         text-decoration: none;
         padding: 5px 5px;
-        border-radius: 1px;
     }
 
         .hoverTab a:hover {

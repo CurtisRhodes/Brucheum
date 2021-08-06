@@ -6,11 +6,31 @@ var carouselContainerHeight;
 var CarouselRotatorInterval;
 
 function loadAndStartCarousel() {
+    $('#middleColumn').html(`
+        <div id="bruchCaveImage" class="caveImage">
+            <div id="customMessage" class="displayHidden customMessageContainer"></div>
+            <div id="divStatusMessage"></div>
+            <div id="dots" style="color:white"></div>
+            <div class="centeredDivShell">
+                <div class="centeredDivInner">
+                    <div id="carosuelContainer" class="carosuelContainer">
+                        <img id="leftFbutton" class="arrowButton" src="Images/blueCircleLeft.png" onclick="clickPrevious()" />
+                        <img id="rightFbutton" class="arrowButton" src="Images/blueCircleRight.png" onclick="clickNext()" />
+                        <div id='articleTitle' class='carouselLabel'></div>
+                        <div id='articleCat' class='carouselLabel'></div>
+                        <div class="carouselImageContainer">
+                            <img id="carouselImage" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`
+    );
     $('#carouselImage').css('cursor', 'no-drop');
-    $('#carouselImage').attr('src', "Images/ingranaggi3.gif" ).fadeIn(50, resizeAddRotator());
+    $('#carouselImage').attr('src', "Images/ingranaggi3.gif").fadeIn(850, resizeCarouselImage());
 
     $('#carosuelContainer').show();
-    let url = settingsArray.ApiServer + "api/Article/GetArticleList?pageLen=" + numArticles + "&page=1&filterType=null&filter=null";
+    let url = settingsArray.ApiServer + "api/Article/LoadCarousel?filterContext=General";
     $.ajax({
         type: "GET",
         url: url,
@@ -36,14 +56,17 @@ function loadAndStartCarousel() {
             alert("XHR error in loadAndStartCarousel: " + errorMessage + "\nurl: " + url);
         }
     });
+    $(window).resize(function () {
+        resizeCarouselImage();
+    });
 }
 
 function stopCarousel() {
-    clearInterval(Carousel);
+    clearInterval(CarouselRotatorInterval);
 }
 
 function startCarousel() {
-    clearInterval(Carousel);
+    clearInterval(CarouselRotatorInterval);
     rotate();
 }
 
@@ -76,47 +99,33 @@ function rotate() {
             imageNum = 0;
         }
         displayCarouselItem();
-        resizeAddRotator();
     }, rotationSpeed);
 }
 
 function displayCarouselItem() {
-    var carouselArrayItem = carouselItemArray[imageNum];
-    currentArticleId = carouselArrayItem.Id;
+    let carouselArrayItem = carouselItemArray[imageNum];
+    let currentArticleId = carouselArrayItem.Id;
     $('#articleTitle').html(carouselArrayItem.Title);
-    //$('#articleCat').html(carouselArrayItem.CategoryLabel.trim());
-    $('#articleCat').html(carouselArrayItem.CategoryLabel);
-    $('#carouselImage').attr('src', "https://" + carouselArrayItem.ImageName).fadeIn(500, resizeAddRotator());
+    $('#articleCat').html(carouselArrayItem.Category);
+    let imageName = carouselArrayItem.ImageName;
+    if (isNullorUndefined(imageName)) imageName = "Images/placeholder.png";
+    $('#carouselImage').attr('src', "https://" + imageName).fadeIn(850, resizeCarouselImage());
     $('#carouselImage').click(function () { viewArticle(carouselArrayItem.Id); });
-    //$('#carouselImage').attr('src', settingsArray.ImageArchive + carouselArrayItem.ImageName).fadeIn(500, resizeAddRotator());
-    $('#carouselImage').css('z-index', 1000);
 }
 
-function resizeAddRotator() {
-    resizePage();
-
-    //$('#carouselImage').css('max-width', parseInt($('#middleColumn').css('width')) * .65);
-    $('#carouselImage').css('height', parseInt($('#middleColumn').css('height')) * .65);
-
-    $('.centeredDivShell').css('top', $('#middleColumn').position().top + (parseInt($('#middleColumn').css('height')) - parseInt($('#carouselImage').css('height'))) * .5);
-
-    //alert("top: " + $('.centeredDivShell').css('top'));
-    //alert("top: " + (parseInt($('#middleColumn').css('height')) - parseInt($('#carouselImage').css('height'))) * .5);
-
+function resizeCarouselImage() {
+    //$('#carouselImage').css('width', $('#middleColumn').width() * .65);
+    $('.centeredDivShell').css('top', parseInt($('#middleColumn').position().top + 65));
+    $('#carouselImage').css('height', parseInt($('#middleColumn').height() * .75));
     setTimeout(function () {
         $('#rightFbutton').css('left', $('#carouselImage').width() - 4);
         $('.arrowButton').css('top', $('#carouselImage').height() * .475);
         $('#articleCat').css('top', $('#carouselImage').height() + 1);
-        //$('.arrowButton').css('z-index', 2);
-        //$('#carouselImage').css('z-index', 200);
-    }, 300);
-
-    //$('#leftFbutton').css('left', $('#carouselImage').width());
-
-    //alert("$('#middleColumn ').css('width'):   " + $('#middleColumn ').css('width') + " $('#carouselImage').css('width'): " + $('#carouselImage').css('width'));
-    //#leftFbutton {
-    //    margin - left: -60px;
-    //}
+    }, 666);
 }
 
+function viewArticle(articleId) {
+    stopCarousel();
+    displayViewArticle(articleId);
+}
 
