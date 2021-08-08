@@ -57,7 +57,7 @@ function displayCustomPage(pageName) {
             $('#middleColumn').html(`<div class='landingPageHeader'>Apps</div>`);
             break;
         case "IntelDesign":
-            document.title = "CurtisRhodes.com";
+            document.title = "Intelligent Design Software";
             changeFavoriteIcon("intelDesign");
             $('#divSiteLogo').attr("src", "Images/intel01.jpg");
             $("#bannerTitle").html("Intelligent Design Software");

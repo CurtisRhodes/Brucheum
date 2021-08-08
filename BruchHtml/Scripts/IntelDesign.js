@@ -1,5 +1,4 @@
 ﻿function intelDesignHtml() {
-
     $('body').css("background-color", "#222730");
     $('#middleColumn').html(`
         <div class="intelDsgnBackground">
@@ -16,6 +15,7 @@
         </div>
         <div class='cacaMessage clickable' onclick='displayArticleDialogBox("cac953ce-58b8-4716-92e8-4c2e6cdafeca")'>Why I Built a Naked Lady Web Site</div>`
     );
+    document.title = "Intelligent Design Software";
 }
 
 function displaySkillsCloud() {

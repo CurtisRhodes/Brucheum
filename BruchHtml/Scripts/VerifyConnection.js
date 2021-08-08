@@ -19,10 +19,10 @@ function checkFor404(errMsg, folderId, calledFrom) {
 }
 
 function checkConnection(subdomain, calledFrom) {
-    changeFavoriteIcon("loading");
+    //changeFavoriteIcon("loading");
     let dots = "";
     let getXMLsettingsWaiter = setInterval(function () {
-        document.title = "loading settings : Brucheum";
+        //document.title = "loading settings : Brucheum";
         if (settingsArray.ApiServer === undefined) {
             dots += "~ ";
             $('#dots').html(dots);
@@ -31,12 +31,12 @@ function checkConnection(subdomain, calledFrom) {
             clearInterval(getXMLsettingsWaiter);
             let verifyConnectionCount = 0, verifyConnectionAvailable = true;
             let connectingToServerImgShowing = false, canIgetaConnectionImgShowing = false;
-            document.title = "connecting : Brucheum";
+            //document.title = "connecting : Brucheum";
             connectionVerified = false;
             let verifyConnectionWaiter = setInterval(function () {
                 if (connectionVerified) {
                     changeFavoriteIcon("default");
-                    document.title = "welcome : Brucheum";
+                    //document.title = "welcome : Brucheum";
                     clearInterval(verifyConnectionWaiter);
                     $('#dots').html('');
                     console.log("connection verified after: " + verifyConnectionCount);

@@ -8,7 +8,7 @@ $(document).ready(function () {
 function displayTanBlueMenu() {
     $('#leftColumn').html(`
         <div id="tanBlue" class="vMenu">
-            <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='index.html?spa=IntelDsgn'">
+            <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='index.html?spa=IntelDesign'">
                 <img src="Images/TanBlue/IntelligentDesignTan.png" onmouseover="this.src='Images/TanBlue/IntelligentDesignBlue.png'" onmouseout="this.src='Images/TanBlue/IntelligentDesignTan.png'" />
             </div>
             <div id="itemBlondJew" class="tabvMenuItem" onclick="showBook(1)">
