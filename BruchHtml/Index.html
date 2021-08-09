@@ -5,8 +5,6 @@
     <title>CurtisRhodes.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=0.75">
     <link rel='shortcut icon' href='Images/Brucheum.ico' type='image/x-icon' />
-
-
     <!--
         <script src="https ://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <link href="https ://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
@@ -33,7 +31,6 @@
     <script src="Scripts/Snippets.js"></script>
     <script src="Scripts/Headers.js"></script>
 
-
     <link href="Styles/Carousel.css" rel="stylesheet" />
     <link href="Styles/Common.css" rel="stylesheet">
     <link href="Styles/loginDialog.css" rel="stylesheet">
@@ -44,6 +41,7 @@
     <link href="Styles/ArticleList.css" rel="stylesheet" />
     <link href="Styles/ArticleView.css" rel="stylesheet" />
     <link href="Styles/ArticleEdit.css" rel="stylesheet" />
+    <link href="Styles/jqueryUI.css" rel="stylesheet" />
     <link href="Styles/jquery-te-1.4.0.css" rel="stylesheet" />
 
 </head>
@@ -58,15 +56,15 @@
     <script>
         $(document).ready(function () {
             let permissionsSet = false;
+            loadSettings();
             let spaPage = "Carosuel";
             params = getParams();
             if (params.spa != undefined) {
                 spaPage = params.spa;
             }
             $('#carosuelContainer').hide();
-            displayFooter();
             loadHeader();
-            displayTanBlueMenu();
+            loadSnippets();
             var dots = ""
             var waiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
@@ -81,19 +79,32 @@
                             clearInterval(connectionVerifiedLoop);
                             $('#dots').html('');
                             displayCustomPage(spaPage);
+                            displayFooter();
                             //verifySession(spaPageId);
                             //logVisit();
-                            //setUserPermissions();
+                            //setUserPermissions
+                            resizePage();
+                            $(window).resize(function () {
+                                resizePage();
+                            });
                         }
                     }, 300);
                 }
             }, 300);
         });
 
-        resizePage();
-        $(window).resize(function () {
-            resizePage();
-        });
+        function resizePage() {
+            // set page width
+            var winW = $(window).width();
+            var lcW = $('#leftColumn').width();
+            var rcW = $('#rightColumn').width();
+            $('#middleColumn').width(winW - lcW - rcW);
+
+            //set page height
+            var winH = $(window).height();
+            var headerH = $('header').height();
+            $('#middleColumn').css('height', winH - headerH - 42);
+        }
 
     </script>
 </body>

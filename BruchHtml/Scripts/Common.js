@@ -1,50 +1,7 @@
 var settingsArray = {};
 var userRoles = [];
+let tanBlueMenuSnippet, bookPanelSnippet;
 
-$(document).ready(function () {
-    loadSettings();
-});
-
-function displayTanBlueMenu() {
-    $('#leftColumn').html(`
-        <div id="tanBlue" class="vMenu">
-            <div id="itemIntelDesgn" class="tabvMenuItem" onclick="window.location.href='index.html?spa=IntelDesign'">
-                <img src="Images/TanBlue/IntelligentDesignTan.png" onmouseover="this.src='Images/TanBlue/IntelligentDesignBlue.png'" onmouseout="this.src='Images/TanBlue/IntelligentDesignTan.png'" />
-            </div>
-            <div id="itemBlondJew" class="tabvMenuItem" onclick="showBook(1)">
-                <img src="Images/TanBlue/BlondJewTan.png" onmouseover="this.src='Images/TanBlue/BlondJewBlue.png'" onmouseout="this.src='Images/TanBlue/BlondJewTan.png'" />
-            </div>
-            <div id="itemBrucheum" class="tabvMenuItem" onclick="displayOldWebsite()">
-                <img src="Images/TanBlue/BrucheumTan.png" onmouseover="this.src='Images/TanBlue/BrucheumBlue.png'" onmouseout="this.src='Images/TanBlue/BrucheumTan.png'" />
-            </div>
-            <div class="tabvMenuItem" onclick="displayFlitter()">
-                <img src="Images/TanBlue/FlitterTan.png" onmouseover="this.src='Images/TanBlue/FlitterBlue.png'" onmouseout="this.src='Images/TanBlue/FlitterTan.png'" />
-            </div>
-            <div class="tabvMenuItem" onclick="window.location.href='index.html?spa=GetaGig'">
-                <img src="Images/TanBlue/GetaJobTan.png" onmouseover="this.src='Images/TanBlue/GetaJobBlue.png'" onmouseout="this.src='Images/TanBlue/GetaJobTan.png'" />
-            </div>
-            <div class="tabvMenuItem" onclick="window.location.href='showbook(2)">
-                <img src="Images/TanBlue/TimeSquaredTan.png" onmouseover="this.src='Images/TanBlue/TimeSquaredBlue.png'" onmouseout="this.src='Images/TanBlue/TimeSquaredTan.png'" />
-            </div>
-            <div id="item2aT" class="tabvMenuItem" onclick="display2aT()">
-                <img src="Images/TanBlue/ToATeeTan.png" onmouseover="this.src='Images/TanBlue/ToATeeBlue.png'" onmouseout="this.src='Images/TanBlue/ToATeeTan.png'" />
-            </div>
-        </div>`
-    );
-}
-
-function resizePage() {
-    // set page width
-    var winW = $(window).width();
-    var lcW = $('#leftColumn').width();
-    var rcW = $('#rightColumn').width();
-    $('#middleColumn').width(winW - lcW - rcW);
-
-    //set page height
-    var winH = $(window).height();
-    var headerH = $('header').height();
-    $('#middleColumn').css('height', winH - headerH - 42);
-}
 function getParams() {
     var params = {},
         pairs = document.URL.split('?').pop().split('&');
@@ -53,6 +10,14 @@ function getParams() {
         params[p[0]] = p[1];
     }
     return params;
+}
+
+function create_UUID() {
+    // thanks to-https://www.w3resource.com/javascript-exercises/javascript-math-exercise-23.php
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }
 
 function loadSettings() {
@@ -103,7 +68,6 @@ function sendEmail(to, from, subject, message) {
     }
 }
 
-changeFavoriteIcon("intelDesign");
 function changeFavoriteIcon(icon) {
     try {
         let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
@@ -121,6 +85,14 @@ function changeFavoriteIcon(icon) {
     } catch (e) {
         logError("CAT", 3992, e, "changeFavoriteIcon");
     }
+}
+
+function todayString() {
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+    return mm + '/' + dd + '/' + yyyy;
 }
 
 function displayStatusMessage(msgCode, message) {
@@ -201,6 +173,7 @@ function logActivity(changeLogModel) {
         }
     });
 }
+
 
 // HITCOUNTER
 function logVisit() {

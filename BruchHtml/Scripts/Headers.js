@@ -1,4 +1,5 @@
-function resetCustomPage() {
+function resetSpaPage() {
+    $('#leftColumn').html("");
     $('#tanBlue').hide();
     $("#bannerTitle").html("The Brucheum");
     $("#headerSubTitle").html("");
@@ -10,12 +11,12 @@ function resetCustomPage() {
 }
 
 function displayCustomPage(pageName) {
-    resetCustomPage();
+    resetSpaPage();
     //alert("this.html(): " + $(this).html());
     switch (pageName) {
         case "Carosuel":
             document.title = "welcome : Brucheum";
-            $('#tanBlue').show();
+            $('#leftColumn').html(tanBlueMenuSnippet);
             $("#breadcrumbContainer").html(`
                 <div class='hoverTab'><a href='javascript:displayArticleList()'>Latest Articles</a></div>\n
                 <div class='hoverTab'><a href='javascript:displayCustomPage(\"Books\")'>Books</a></div>\n
@@ -35,8 +36,8 @@ function displayCustomPage(pageName) {
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"GetaGig\")'>Get a Gig</div>\n`
             );
             $("#middleColumn").html(`
-                    <div id="tocLoadingGif"><img class="loadingGif" src="Images/loader.gif" /></div>
-                    <div class="pageTitle" id="divBooksWriting">Books I am writing</div>
+                <div id="tocLoadingGif"><img class="loadingGif" src="Images/loader.gif" /></div>
+                <div class="pageTitle" id="divBooksWriting">Books I am writing</div>
                     <div class="divMyBooks">
                         <div class="divBook" book="The Blond Jew" onclick="showBook(1)">
                             <img class="bookImage" src="Images/TheBlondJew.jpg" />
@@ -48,9 +49,9 @@ function displayCustomPage(pageName) {
                             <img class="bookImage" src="Images/ReadyFireAim.jpg" />
                         </div>
                     </div>
-                    <div class="divLibrayPages" id="divBooksRead">Books I have Read</div>
-                    <div class="divLibrayPages" id="divBooksIOwn">Book I Own</div>
-                `);
+                <div class="divLibrayPages" id="divBooksRead">Books I have Read</div>
+                <div class="divLibrayPages" id="divBooksIOwn">Book I Own</div>
+            `);
             break;
         case "Apps":
             document.title = "apps : CurtisRhodes.com";

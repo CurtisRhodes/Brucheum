@@ -1,21 +1,27 @@
 ﻿var article = new Object();
 var metaTagsStringArray = new Array();
+let categoriesDDloaded = false, avitorsDDloaded = false;
 
 function editArticle(articleId) {
     setUpEditPage();
-    getArticle(articleId);
+    let dots = "";
+    let ddWaiter = setInterval(function () {
+        if (!categoriesDDloaded || !avitorsDDloaded) {
+            dots += ". ";
+            $('#dots').html(dots);
+        }
+        else {
+            clearInterval(ddWaiter);
+            getArticle(articleId);
+        }
+    }, 300);
 }
 
 function newArticle() {
     setUpEditPage();
+    article.Id = create_UUID();
     document.title = "CurtisRhodes.com";
     $("#headerSubTitle").html("new article");
-    //$("#breadcrumbContainer").html(`
-    //            <div class='menuTab floatLeft' onclick='displayCustomPage(\"Latest Articles\")'>Latest Articles</div>\n
-    //            <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
-    //            <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
-    //            <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
-    //);
     $('#dateEnteredRow').hide();
     $('#btnSave').text("Add New");
 }
@@ -36,8 +42,10 @@ function editPageLeftColumnHtml() {
 
 function setUpEditPage() {
     showArticleEditorHtml();
+
     $('#imgArticleJog').css("height", $('#imgArticleJogContainer').height());
-    $('#tanBlue').hide();
+
+    resetSpaPage();
     
     $('#txtUpdated').datepicker();
     getCategories();
@@ -73,16 +81,16 @@ function getArticle(articleId) {
     $.ajax({
         type: "GET",
         url: url,
-        success: function (response) {
-            if (response.Success === "ok") {
-                bind(response);
-                article.ImageName = response.ImageName;
+        success: function (articleModel) {
+            if (articleModel.Success === "ok") {
+                bind(articleModel.Article);
+                //article = articleModel.Article
+
                 $('#btnSave').text("Update");
                 setTimeout(function () { adjust() }, 1000);
-
             }
             else
-                alert("getArticle: " + response.Success);
+                alert("getArticle: " + articleModel.Success);
         },
         error: function (jqXHR, exception) {
             alert("getArticle jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -92,24 +100,22 @@ function getArticle(articleId) {
 
 function bind(response) {
     try {
-
         $('#txtTitle').val(response.Title);
         $('#ddCategory').val(response.CategoryRef);
         $('#ddAvatars').val(response.ByLineRef);
-        $('#txtCreated').val(response.Created);
-        $('#txtUpdated').val(response.Updated);
+        $('#txtCreated').val(response.Created.substring(0, 10));
+        $('#txtUpdated').val(todayString());
         //$('#articleSummaryEditor').summernote('code', response.Summary);
         //$('#articleContentEditor').summernote('code', response.Contents);
         $("#articleSummaryEditor").jqteVal(response.Summary);
-        $('#articleContentEditor').jqteVal(response.Contents);
+        $('#articleContentEditor').jqteVal(response.Content);
         $('#chosenImageName').text(response.ImageName);
         article.ImageName = response.ImageName;
         $('#imgArticleJog').attr("src", settingsArray.ImageArchive + response.ImageName);
-
-        $.each(response.Tags, function (idx, tag) {
-            if (tag.TagName !== null)
-                $("#divTagContainer").append("<div class='tagItem' id=" + tag.Id + ">" + tag.TagName + "</div>");
-        });
+    //    $.each(response.Tags, function (idx, tag) {
+    //        if (tag.TagName !== null)
+    //            $("#divTagContainer").append("<div class='tagItem' id=" + tag.Id + ">" + tag.TagName + "</div>");
+    //    });
     } catch (e) {
         alert("bind(response): " + e);
     }
@@ -122,8 +128,6 @@ function unBind() {
         article.BylineRef = $('#ddAvatars').val();
         article.SubCategoryRef = 'AWC';
         article.LastUpdated = $('#txtUpdated').val();
-        //article.Summary = beautify($('#articleSummaryEditor').summernote('code'));
-        //article.Contents = beautify($('#articleContentEditor').summernote('code'));
         article.Summary = $('#articleSummaryEditor').val();
         article.Contents = $('#articleContentEditor').val();
         article.Tags = new Array;
@@ -221,6 +225,7 @@ function getCategories() {
             $.each(refModel.RefItems, function (idx, obj) {
                 $('#ddCategory').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
             });
+            categoriesDDloaded = true;
         },
         error: function (jqXHR, exception) {
             alert("getCategories jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -238,6 +243,7 @@ function getAvatars() {
                 //obj = obj.split(",");
                 $('#ddAvatars').append("<option class='ddOption' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
             });
+            avitorsDDloaded = true;
         },
         error: function (jqXHR, exception) {
             alert("getAvatars jqXHR : " + getXHRErrorDetails(jqXHR, exception));
@@ -300,21 +306,13 @@ function adjust() {
 }
 
 function showArticleEditorHtml() {
-    //<div id="articleEditMiddleColumn" class="displayHidden">
-    //<div class="editArticleLabel align-right">Updated:</div>
-    //<div class="editArticleInput"><input class="roundedInput" id="txtUpdated" /></div>
-    //<div class="editArticleRow">
-    //    <div class="editArticleLabel">Meta Tag:</div>
-    //    <div class="editArticleInput"><input class="roundedInput" id="txtMetaTag" /></div>
-    //    <div id="divTagContainer" class="tagContainer"></div>
-    //</div>
-
     $('#middleColumn').html(`
+        <div id="dots" style="color:white"></div>
         <div class="editArticleFlexContainer">
             <div class="editArticleFloatContainer">
                 <div class="editArticleRow">
                     <div class="editArticleLabel">Title:</div>
-                    <div class="editArticleInput" style="width:88%"><input id="txtTitle" class="roundedInput" style="width:100%" /></div>
+                    <div class="editArticleInput"><input id="txtTitle" style="font-size: 20px; width:700px" /></div>
                 </div>
                 <div class="editArticleRow">
                     <div class="editArticleLabel">Category:</div>
@@ -324,9 +322,9 @@ function showArticleEditorHtml() {
                 </div>
                 <div id="dateEnteredRow" class="editArticleRow">
                     <div class="editArticleLabel">Created:</div>
-                    <div class="editArticleInput"><input id="txtCreated" readonly="readonly" class="roundedInput"/></div>
+                    <div class="editArticleInput"><input id="txtCreated" readonly="readonly"/></div>
                     <div class="editArticleLabel">Last Updated:</div>
-                    <div class="editArticleInput"><input id="txtUpdated" class="roundedInput"/></div>
+                    <div class="editArticleInput"><input id="txtUpdated"/></div>
                 </div>
                 <div class="editArticleRow">
                     <div class="editArticleLabel">Image:</div>
@@ -350,4 +348,3 @@ function showArticleEditorHtml() {
         </div>`
     );
 }
-

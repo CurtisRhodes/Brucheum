@@ -17,22 +17,22 @@ namespace Brucheum.Api
         private readonly string articleImagesFolder = ConfigurationManager.AppSettings["ImageRepository"];
 
         [HttpGet]
-        public ArticlesModel LoadCarousel(string filterContext)
+        public CarouselModel LoadCarousel(string filterContext)
         {
-            var articleModel = new ArticlesModel();
+            var carouselModel = new CarouselModel();
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    IList<VwArticle> dbArtiles = null;
-                    if(filterContext== "General")
-                        dbArtiles = db.VwArticles.Where(a => a.CategoryRef != "COM").OrderByDescending(a => a.LastUpdated).ToList();
+                    var items = new List<VwArticle>();
+                    if (filterContext== "General")
+                        items = db.VwArticles.Where(a => a.CategoryRef != "COM").OrderByDescending(a => a.LastUpdated).ToList();
                     else
-                        dbArtiles = db.VwArticles.ToList();
+                        items = db.VwArticles.OrderByDescending(a => a.Created).ToList();
 
-                    foreach (VwArticle vwArticle in dbArtiles)
+                    foreach (VwArticle vwArticle in items)
                     {
-                        articleModel.ArticleList.Add(new ArticleModel()
+                        carouselModel.CarouselItems.Add(new CarouselItem()
                         {
                             Id = vwArticle.Id,
                             Title = vwArticle.Title,
@@ -41,14 +41,14 @@ namespace Brucheum.Api
                             ImageName = articleImagesFolder + vwArticle.ImageName,
                         });
                     }
-                    articleModel.Success = "ok";
+                    carouselModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                articleModel.Success = Helpers.ErrorDetails(ex);
+                carouselModel.Success = Helpers.ErrorDetails(ex);
             }
-            return articleModel;
+            return carouselModel;
         }
 
         [HttpGet]
@@ -112,23 +112,25 @@ namespace Brucheum.Api
         }
 
         [HttpPost]
-        public SuccessModel AddNewArticle(ArticleModel articleModel)
+        public string AddNewArticle(VwArticle articleModel)
         {
-            var successModel = new SuccessModel();
+            string success;
             try
             {
-                Article newArticle = new Article();
-                newArticle.Id = Guid.NewGuid().ToString();
-                newArticle.Title = articleModel.Title;
-                newArticle.CategoryRef = articleModel.CategoryRef;
-                newArticle.SubCategoryRef = articleModel.SubCategoryRef;
-                newArticle.ImageName = articleModel.ImageName;
-                newArticle.Created = DateTime.Now;
-                newArticle.LastUpdated = DateTime.Now;
-                //newArticle.LastUpdated = DateTime.Parse(articleModel.LastUpdated);
-                newArticle.Content = articleModel.Contents;
-                newArticle.Summary = articleModel.Summary;
-                newArticle.ByLineRef = articleModel.ByLineRef;
+                Article newArticle = new Article
+                {
+                    //Id = Guid.NewGuid().ToString(),
+                    Id = articleModel.Id,
+                    Title = articleModel.Title,
+                    CategoryRef = articleModel.CategoryRef,
+                    SubCategoryRef = articleModel.SubCategoryRef,
+                    ImageName = articleModel.ImageName,
+                    Created = DateTime.Now,
+                    LastUpdated = DateTime.Now,
+                    Content = articleModel.Content,
+                    Summary = articleModel.Summary,
+                    ByLineRef = articleModel.ByLineRef
+                };
 
                 //foreach (DbArticleTagModel tag in articleModel.Tags)
                 //    if (tag.TagName != null)
@@ -137,19 +139,18 @@ namespace Brucheum.Api
                 {
                     db.Articles.Add(newArticle);
                     db.SaveChanges();
-                    successModel.ReturnValue = newArticle.Id.ToString();
-                    successModel.Success = "ok";
+                    success= "ok";
                 }
             }
             catch (Exception ex)
             {
-                successModel.Success = Helpers.ErrorDetails(ex);
+                success = Helpers.ErrorDetails(ex);
             }
-            return successModel;
+            return success;
         }
 
         [HttpPut]
-        public string UpdateArticle(ArticleModel articleModel)
+        public string UpdateArticle(VwArticle articleModel)
         {
             var success = "";
             try
@@ -163,7 +164,7 @@ namespace Brucheum.Api
                     updateArticle.ImageName = articleModel.ImageName;
                     updateArticle.LastUpdated = articleModel.LastUpdated;  //DateTime.Now; 
                     updateArticle.ByLineRef = articleModel.ByLineRef;
-                    updateArticle.Content = articleModel.Contents;
+                    updateArticle.Content = articleModel.Content;
                     updateArticle.Summary = articleModel.Summary;
 
                     //db.ArticleTags.RemoveRange(db.ArticleTags.Where(t => t.articleId.ToString() == editArticle.Id));

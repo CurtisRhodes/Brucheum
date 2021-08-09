@@ -28,29 +28,29 @@ namespace Brucheum.Api
         public string Success { get; set; }
     }
 
-    //public class ArticleModel
-    //{
-    //    public ArticleModel()
-    //    {
-    //        Tags = new List<DbArticleTagModel>();
-    //    }
-    //    public string Id { get; set; }
-    //    public string Title { get; set; }
-    //    public string Summary { get; set; }
-    //    public string Contents { get; set; }
-    //    public string Category { get; set; }
-    //    public string SubCategory { get; set; }
-    //    public string ByLine { get; set; }
-    //    public string CategoryRef { get; set; }
-    //    public string SubCategoryRef { get; set; }
-    //    public string ByLineRef { get; set; }
-    //    public string ImageName { get; set; }
-    //    public string Updated { get; set; }
-    //    public DateTime Created { get; set; }
-    //    public DateTime LastUpdated { get; set; }
-    //    public List<DbArticleTagModel> Tags { get; set; }
-    //    public string Success { get; set; }
-    //}
+    public class CarouselModel
+    {
+        public CarouselModel()
+        {
+            CarouselItems = new List<CarouselItem>();
+        }
+        public List<CarouselItem> CarouselItems { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class CarouselItem
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Summary { get; set; }
+        public string Contents { get; set; }
+        public string Category { get; set; }
+        public string CategoryRef { get; set; }
+        public string ImageName { get; set; }
+        public string Updated { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime LastUpdated { get; set; }
+    }
 
     public class SuccessModel {
         public string Success { get; set; }

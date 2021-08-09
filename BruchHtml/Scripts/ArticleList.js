@@ -3,9 +3,10 @@ let articleTake = 5;
 let articleCount;
 let showMore = false;
 let thisFilterType = "Latest", thisFilter = "all";
+let imageRepository = "img.OGGLEBOOBLE.COM/jogs/";
 
 function displayArticleList() {
-    resetCustomPage();
+    resetSpaPage();
     document.title = "articles : Brucheum";
     $("#headerSubTitle").html("lastest articles");
     $("#breadcrumbContainer").html(`
@@ -27,7 +28,7 @@ function displayArticleList() {
 function displayArticleListItemStyle1(article) {
     $('#articleListContainer').append(`
         <div class='articleListItem'>\n +
-            <div id='divImg'><a href='javascript:viewArticle("` + article.Id + `")'><img src=https://` + article.ImageName + `></a></div>\n
+            <div id='divImg'><a href='javascript:viewArticle("` + article.Id + `")'><img src=https://` + imageRepository + article.ImageName + `></a></div>\n
             <div class='articleDetail'>\n
                 <div class='articleTopRow'>\n
                     <div class='articleRowItemLeft'><a href='javascript:getArticleList("Category",` + article.CategoryRef + `)'>` + article.Category + `</a></div>\n
@@ -56,7 +57,6 @@ function getInitialArticleList() {
                 articleCount = articleTake;
                 $('#loadingGif').hide();
                 $('#divMoreButton').show();
-                $('#hrefAddNew').show();
                 $('#divBookPannel').show();
                 $('#articleListContainer').css('height', parseInt($('#middleColumn').css('height')) - 100);
             }

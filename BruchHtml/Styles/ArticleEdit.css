@@ -1,5 +1,6 @@
-﻿.panel {
-    margin-bottom: 1px;
+﻿
+.jqte {
+    margin: 4px !important;
 }
 
 .editArticleFlexContainer {
@@ -10,6 +11,10 @@
 .editArticleFloatContainer {
     float: left;
 }
+
+    .editArticleFloatContainer input {
+        font-size: 17px;
+    }
 
 .articleJog {
     margin-left: 5px;
@@ -112,12 +117,8 @@
 }
 
 .crudDropDown {
-    /*height: 28px;
-    margin: 6px;*/
     padding: 3px 6px;
-    /*color: #555;
-    background-color: #ddd;
-        */
+    font-size: 17px;
     border: 1px solid #ccc;
     border-radius: 3px;
 }

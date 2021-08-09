@@ -1,7 +1,7 @@
 ﻿var numArticles = 201;
 var rotationSpeed = 6000;
 var carouselItemArray = new Array();
-var imageNum = 0;
+var currentIndexId = 0;
 var carouselContainerHeight;
 var CarouselRotatorInterval;
 
@@ -34,20 +34,17 @@ function loadAndStartCarousel() {
     $.ajax({
         type: "GET",
         url: url,
-        success: function (articlesModel) {
-            console.log("articlesModel.Success: " + articlesModel.Success);
-            if (articlesModel.Success === "ok") {
-                console.log("articlesModel.articleList len: " + articlesModel.ArticleList.length);
-                $.each(articlesModel.ArticleList, function (idx, article) {
-                    carouselItemArray.push(article);
+        success: function (carouselModel) {
+            if (carouselModel.Success === "ok") {                
+                $.each(carouselModel.CarouselItems, function (idx, carouselItem) {
+                    carouselItemArray.push(carouselItem);
                 });
-                console.log("carouselItemArray len: " + carouselItemArray.length);
                 $('#carouselImage').css('cursor', 'pointer');
                 rotate();
             }
             else {
                 $('#carosuelContainer').hide();
-                alert("loadAndStartCarousel: " + articlesModel.Success);
+                alert("loadAndStartCarousel: " + carouselModel.Success);
             }
         },
         error: function (jqXHR) {
@@ -56,6 +53,7 @@ function loadAndStartCarousel() {
             alert("XHR error in loadAndStartCarousel: " + errorMessage + "\nurl: " + url);
         }
     });
+
     $(window).resize(function () {
         resizeCarouselImage();
     });
@@ -71,9 +69,9 @@ function startCarousel() {
 }
 
 function clickPrevious() {
-    imageNum--;
-    if (imageNum < 0)
-        imageNum = numArticles;
+    currentIndexId--;
+    if (currentIndexId < 0)
+        currentIndexId = numArticles;
     clearInterval(CarouselRotatorInterval);
     rotate();
     event.stopPropagation();
@@ -83,9 +81,9 @@ function clickPrevious() {
 function clickNext() {
     //alert("clickNext")
     clearInterval(CarouselRotatorInterval);
-    imageNum++;
-    if (imageNum >= numArticles)
-        imageNum = 0;
+    currentIndexId++;
+    if (currentIndexId >= numArticles)
+        currentIndexId = 0;
     rotate();
     event.stopPropagation();
     return false;
@@ -94,23 +92,21 @@ function clickNext() {
 function rotate() {
     displayCarouselItem();
     CarouselRotatorInterval = setInterval(function () {
-        imageNum++;
-        if (imageNum >= numArticles) {
-            imageNum = 0;
+        currentIndexId++;
+        if (currentIndexId >= numArticles) {
+            currentIndexId = 0;
         }
         displayCarouselItem();
     }, rotationSpeed);
 }
 
 function displayCarouselItem() {
-    let carouselArrayItem = carouselItemArray[imageNum];
-    let currentArticleId = carouselArrayItem.Id;
-    $('#articleTitle').html(carouselArrayItem.Title);
-    $('#articleCat').html(carouselArrayItem.Category);
-    let imageName = carouselArrayItem.ImageName;
+    $('#articleTitle').html(carouselItemArray[currentIndexId].Title);
+    $('#articleCat').html(carouselItemArray[currentIndexId].Category);
+    let imageName = carouselItemArray[currentIndexId].ImageName;
     if (isNullorUndefined(imageName)) imageName = "Images/placeholder.png";
     $('#carouselImage').attr('src', "https://" + imageName).fadeIn(850, resizeCarouselImage());
-    $('#carouselImage').click(function () { viewArticle(carouselArrayItem.Id); });
+    $('#carouselImage').click(function () { viewArticle(); });
 }
 
 function resizeCarouselImage() {
@@ -124,8 +120,9 @@ function resizeCarouselImage() {
     }, 666);
 }
 
-function viewArticle(articleId) {
+function viewArticle() {
     stopCarousel();
-    displayViewArticle(articleId);
+    console.log("viewArticle: " + carouselItemArray[currentIndexId].Title);
+    displayViewArticle(carouselItemArray[currentIndexId].Id);
 }
 

@@ -36,27 +36,22 @@ function showViewArticleHtml(articleId) {
 }
 
 function loadArticle(articleId) {
-    //thisArticleId = articleId;
     $('#lnkPermalink').hide();
     $('#lnkFacebook').hide();
     try {
         let url = settingsArray.ApiServer + "/api/Article/GetSingleArticle?articleId=" + articleId;
-        //alert("url: " + url);
         $.ajax({
             type: "GET",
             url: url,
-            //dataType: "json",
-            success: function (article) {
-                if (article.Success === "ok") {
-                    //thisArticle = article;
-                    
-                    $('#divImage').attr("src", settingsArray.ImageArchive + article.ImageName);
-                    $('#divCategory').html(article.CategoryLabel);
-                    $('#divTitle').html(article.Title);
-                    $('#divArticleDate').html("written " + article.Updated);
-                    $('#divSummary').html(article.Summary);
-                    $('#divByline').html("by " + article.ByLine);
-                    $('#divContent').html(article.Contents);
+            success: function (articleModel) {
+                if (articleModel.Success === "ok") {
+                    $('#divImage').attr("src", settingsArray.ImageArchive + articleModel.Article.ImageName);
+                    $('#divCategory').html(articleModel.Article.Category);
+                    $('#divTitle').html(articleModel.Article.Title);
+                    $('#divArticleDate').html("written " + articleModel.Article.LastUpdated.substring(0, 10));
+                    $('#divSummary').html(articleModel.Article.Summary);
+                    $('#divByline').html("by " + articleModel.Article.ByLine);
+                    $('#divContent').html(articleModel.Article.Content);
 
                     //hitSession = logPageHit(settingsArray.ApiServer, userName, ipAddress, "ViewArticle", article.Title);
 
