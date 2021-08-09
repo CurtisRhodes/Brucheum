@@ -1,22 +1,8 @@
 ﻿//var isArticeEditor = '@User.IsInRole("Article Editor")';
-let page = 1;
-let articlePageLimit = 5;
+let articleTake = 5;
 let articleCount;
 let showMore = false;
-let thisFilterType, thisFilter;
-
-function getListHeader(refCode) {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/D",
-        success: function (refDescription) {
-            $('#divlistHeader').html(refDescription);
-        },
-        error: function (jqXHR, exception) {
-            alert("getArticleList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-        }
-    });
-}
+let thisFilterType = "Latest", thisFilter = "all";
 
 function displayArticleList() {
     resetCustomPage();
@@ -35,67 +21,72 @@ function displayArticleList() {
                     <div id="divMoreButton" class="roundendButton" onclick="showMoreButtonClick()">More</div>
                 </div>`
     );
-    getArticleList("Latest", "all");
+    getInitialArticleList();
 }
 
-function getArticleList(filterType, filter) {
-    try {
-        if (showMore === false) {
-            $('#articleList').html('');
-            thisFilterType = filterType;
-            thisFilter = filter;
-        }
-        else {
-            page += articlePageLimit;
-        }
+function displayArticleListItemStyle1(article) {
+    $('#articleListContainer').append(`
+        <div class='articleListItem'>\n +
+            <div id='divImg'><a href='javascript:viewArticle("` + article.Id + `")'><img src=https://` + article.ImageName + `></a></div>\n
+            <div class='articleDetail'>\n
+                <div class='articleTopRow'>\n
+                    <div class='articleRowItemLeft'><a href='javascript:getArticleList("Category",` + article.CategoryRef + `)'>` + article.Category + `</a></div>\n
+                    <div class='articleRowItemCenter'><a href='javascript:viewArticle("` + article.Id + `")'>` + article.Title + `</a></div>\n
+                    <div class='articleRowItemRight'>` + article.Updated + `</div>\n
+                </div>\n
+                <a href='javascript:viewArticle("` + article.Id + `")'><div class='articleSummary'>` + article.Summary + `</div></a>\n
+                <div class='articleBottomRow'>\n
+                    <div class='articleRowItemLeft'> By: <a href='javascript:getArticleList("Byline","` + article.ByLineRef + `")'>` + article.ByLine + `</a></div>\n
+                    <div class='articleRowItemRight'><a href='javascript:editArticle("` + article.Id + `")'>edit</a></div>\n 
+                </div>\n 
+            </div>\n 
+        </div>`
+    );
+}
 
+function getInitialArticleList() {
+    $.ajax({
+        url: settingsArray.ApiServer + "/api/Article/GetArticleList?start=0&take=" + articleTake + "&filterType=Latest&filter=all",
+        type: "get",
+        success: function (articles) {
+            if (articles.Success == "ok") {
+                $.each(articles.ArticleList, function (idx, article) {
+                    displayArticleListItemStyle1(article)
+                });
+                articleCount = articleTake;
+                $('#loadingGif').hide();
+                $('#divMoreButton').show();
+                $('#hrefAddNew').show();
+                $('#divBookPannel').show();
+                $('#articleListContainer').css('height', parseInt($('#middleColumn').css('height')) - 100);
+            }
+            else
+                alert("get InitialArticleList: " + articles.Success);
+        },
+        error: function (jqXHR, exception) {
+            alert("getArticleList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
+}
+
+//getArticleList("Latest", "all");
+function getMoreArticles(filterType, filter) {
+    try {
         $('#loadingGif').show();
         $.ajax({
-            url: settingsArray.ApiServer + "/api/Article/GetArticleList?pageLen=" + articlePageLimit + "&page=" + page +
+            url: settingsArray.ApiServer + "/api/Article/GetArticleList?start=" + articleCount + "& page=" + articleTake +
                 "&filterType=" + filterType + "&filter=" + filter,
             type: "get",
             success: function (articles) {
+                $('#loadingGif').hide();
                 if (articles.Success == "ok") {
                     articleCount = 0;
                     $.each(articles.ArticleList, function (idx, article) {
-                        try {
-                            //var imgSrc = webService + "/App_Data/Images/" + article.ImageName;
-                            //var articleHref = "Article.html?ArticleViewId=" + article.Id;
-                            $('#articleListContainer').append("<div class='articleListItem'>\n" +
-                                "<div id='divImg'><a href='javascript:viewArticle(\"" + article.Id + "\")'><img src=https://" + article.ImageName + "></a></div>\n" +
-                                "<div class='articleDetail'>\n" +
-                                "<div class='articleTopRow'>\n" +
-                                "<div class='articleRowItemLeft'><a href='javascript:getArticleList(\"Category\",\"" + article.CategoryRef + "\)'>" + article.Category + "</a></div>\n" +
-                                "<div class='articleRowItemCenter'><a href='javascript:viewArticle(\"" + article.Id + "\")'>" + article.Title + "</a></div>\n" +
-                                "<div class='articleRowItemRight'>" + article.Updated + "</div>\n" +
-                                "</div>\n" +  // top row
-                                "<a href='javascript:viewArticle(\"" + article.Id + "\")'><div class='articleSummary'>" + article.Summary + "</div></a>\n" +
-                                "<div class='articleBottomRow'>\n" +
-                                "<div class='articleRowItemLeft'> By: <a href='javascript:getArticleList(\"Byline\",\"" + article.ByLineRef + ")'>" +article.ByLine + "</a></div>\n" +
-                                "<div class='articleRowItemRight'><a href='javascript:editArticle(\""+ article.Id +"\")'>edit</a></div>\n" +
-                                "</div>\n" +  // bottom row
-                                "</div>\n" +  // article detail
-                                "</div>"  // article listItem
-                            );
-                            articleCount++;
-                        } catch (e) {
-                            alert("get Article List error: " + e);
-                        }
+                        displayArticleListItemStyle1(article)
                     });
-                    $('#loadingGif').hide();
-                    if (articleCount < articlePageLimit)
-                        $('#divMoreButton').hide();
-                    else
-                        $('#divMoreButton').show();
 
-                    $('#hrefAddNew').show();
-                    $('#divBookPannel').show();
-
-                    //if (showMore) {
-                    //    //var mch = $('#middleColumn').height();
-                    //}
-
-                    $('#articleListContainer').css('height', parseInt($('#middleColumn').css('height')) - 100);
+                    if (articles.articleList.Count() < articleTake)
+                        $('#divMoreButton').html("looks like you reached the end");
                 }
                 else
                     alert("getArticleList: " + articles.Success);
@@ -115,6 +106,19 @@ function getArticleList(filterType, filter) {
 function showMoreButtonClick() {
     page++;
     showMore = true;
-    getArticleList(thisFilterType, thisFilter);
+    getMoreArticles(thisFilterType, thisFilter);
+}
+
+function displaySortFilterHeader(refCode) {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "/api/D",
+        success: function (refDescription) {
+            $('#divlistHeader').html(refDescription);
+        },
+        error: function (jqXHR, exception) {
+            alert("getArticleList jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+        }
+    });
 }
 

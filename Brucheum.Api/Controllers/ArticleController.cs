@@ -51,50 +51,34 @@ namespace Brucheum.Api
             return articleModel;
         }
 
-
         [HttpGet]
-        public ArticlesModel GetArticleList(int pageLen, int page, string filterType, string filter)
+        public ArticlesModel GetArticleList(int start, int take, string filterType, string filter)
         {
             var articleModel = new ArticlesModel();
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    IList<VwArticle> dbArtiles = null;
                     switch (filterType)
                     {
                         case "Category":
-                            dbArtiles = db.VwArticles.Where(a => a.Category == filter).OrderByDescending(a => a.LastUpdated).Skip(page - 1).Take(pageLen).ToList();
+                            articleModel.ArticleList= db.VwArticles.Where(a => a.Category == filter).
+                                OrderByDescending(a => a.LastUpdated).Skip(start).Take(take).ToList();
                             break;
                         case "Byline":
-                            dbArtiles = db.VwArticles.Where(a => a.ByLine == filter).OrderByDescending(a => a.LastUpdated).Skip(page - 1).Take(pageLen).ToList();
+                            articleModel.ArticleList = db.VwArticles.Where(a => a.ByLine == filter).
+                                OrderByDescending(a => a.LastUpdated).Skip(start).Take(take).ToList();
                             break;
                         case "Latest":
-                            dbArtiles = db.VwArticles.Where(a => a.CategoryRef != "COM").OrderByDescending(a => a.LastUpdated).Skip(page - 1).Take(pageLen).ToList();
+                            articleModel.ArticleList = db.VwArticles.Where(a => a.CategoryRef != "COM")
+                                .OrderByDescending(a => a.LastUpdated).Skip(start).Take(take).ToList();
+                            break;
+                        case "Summary":
+                            articleModel.ArticleList = db.VwArticles.OrderByDescending(a => a.LastUpdated).ToList();
                             break;
                         default:
-                            dbArtiles = db.VwArticles.OrderByDescending(a => a.LastUpdated).Skip(page - 1).Take(pageLen).ToList();
+                            articleModel.Success = "filterType: " + filterType;
                             break;
-                    }
-                    foreach (VwArticle vwArticle in dbArtiles)
-                    {
-                        articleModel.ArticleList.Add(new ArticleModel()
-                        {
-                            Title = vwArticle.Title,
-                            Summary = vwArticle.Summary,
-                            Contents = vwArticle.Content,
-                            ByLine = vwArticle.ByLine,
-                            ByLineRef = vwArticle.ByLineRef,
-                            ImageName = articleImagesFolder + vwArticle.ImageName,
-                            Updated = vwArticle.LastUpdated.ToShortDateString(),
-                            Created = vwArticle.Created,
-                            LastUpdated = vwArticle.LastUpdated,
-                            SubCategoryRef = vwArticle.SubCategoryRef,
-                            SubCategory = vwArticle.SubCategory,
-                            Category = vwArticle.Category,
-                            CategoryRef = vwArticle.CategoryRef,
-                            Id = vwArticle.Id
-                        });
                     }
                     articleModel.Success = "ok";
                 }
@@ -106,6 +90,7 @@ namespace Brucheum.Api
             return articleModel;
         }
 
+
         [HttpGet]
         public ArticleModel GetSingleArticle(string articleId)
         {
@@ -114,26 +99,10 @@ namespace Brucheum.Api
             {
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    VwArticle dbArticle = db.VwArticles.Where(a => a.Id.ToString() == articleId).FirstOrDefault();
-                    if (dbArticle != null)
-                    {                 
-                        articleModel.Title = dbArticle.Title;
-                        articleModel.ByLine = dbArticle.ByLine;
-                        articleModel.ByLineRef = dbArticle.ByLineRef;
-                        articleModel.Category = dbArticle.Category;
-                        articleModel.CategoryRef = dbArticle.CategoryRef;
-                        articleModel.SubCategory = dbArticle.SubCategory;
-                        articleModel.Contents = dbArticle.Content;
-                        articleModel.Summary = dbArticle.Summary;
-                        articleModel.Created = dbArticle.Created;
-                        articleModel.LastUpdated = dbArticle.LastUpdated;
-                        articleModel.Updated = dbArticle.LastUpdated.ToShortDateString();
-                        articleModel.ImageName = dbArticle.ImageName;
-                        //article.SortDate = dbArticle.LastUpdated.Value.ToString("yyyyMMdd");
-                        //foreach (ArticleTag tag in dbArticle.ArticleTags)
-                        //{
-                        //    articleModel.Tags.Add(new DbArticleTagModel() { TagName = tag.TagName, Id = tag.Id, TagCategoryRef = tag.TagCategoryRef });
-                        //}
+                    VwArticle dbVwArticle = db.VwArticles.Where(a => a.Id.ToString() == articleId).FirstOrDefault();
+                    if (dbVwArticle != null)
+                    {
+                        articleModel.Article = dbVwArticle;
                         articleModel.Success = "ok";
                     }
                 }
@@ -180,22 +149,22 @@ namespace Brucheum.Api
         }
 
         [HttpPut]
-        public string UpdateArticle(ArticleModel editArticle)
+        public string UpdateArticle(ArticleModel articleModel)
         {
             var success = "";
             try
             {
                 using (WebSiteContext db = new WebSiteContext())
                 {
-                    Article article = db.Articles.Where(a => a.Id.ToString() == editArticle.Id).FirstOrDefault();
-                    article.Title = editArticle.Title;
-                    article.CategoryRef = editArticle.CategoryRef;
-                    article.SubCategoryRef = editArticle.SubCategoryRef;
-                    article.ImageName = editArticle.ImageName;
-                    article.LastUpdated = DateTime.Now;  //DateTime.Parse(editArticle.LastUpdated);
-                    article.ByLineRef = editArticle.ByLineRef;
-                    article.Content = editArticle.Contents;
-                    article.Summary = editArticle.Summary;
+                    Article updateArticle = db.Articles.Where(a => a.Id.ToString() == articleModel.Id).FirstOrDefault();
+                    updateArticle.Title = articleModel.Title;
+                    updateArticle.CategoryRef = articleModel.CategoryRef;
+                    updateArticle.SubCategoryRef = articleModel.SubCategoryRef;
+                    updateArticle.ImageName = articleModel.ImageName;
+                    updateArticle.LastUpdated = articleModel.LastUpdated;  //DateTime.Now; 
+                    updateArticle.ByLineRef = articleModel.ByLineRef;
+                    updateArticle.Content = articleModel.Contents;
+                    updateArticle.Summary = articleModel.Summary;
 
                     //db.ArticleTags.RemoveRange(db.ArticleTags.Where(t => t.articleId.ToString() == editArticle.Id));
                     ////article.ArticleTags = null;
