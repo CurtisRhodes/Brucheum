@@ -59,14 +59,6 @@ function loadArticle(articleId) {
                     //sendEmail(emailSubject, "someday it will be someone other than you");
 
                     //stickCommentsButton();
-                //    var mch = $('#middleColumn').height();
-                //    $('#middleColumn').height(mch + $('#contentArea').height());
-                //    var mch2 = $('#middleColumn').height();
-
-                //    //var hdr = $('.Header').height();
-                //    //var cch = $('#divCommentsBody').height()
-                //    $('.threeColumnLayout').height(mch2);
-                //    resizePage();
                 }
                 else
                     alert("load Article: " + article.Success);
@@ -78,6 +70,20 @@ function loadArticle(articleId) {
     } catch (e) {
         alert("load article catch: " + e);
     }
+}
+
+function resizeViewPage() {
+    //<div id="divContent" class="articleContent"></div>
+    //    var mch = $('#middleColumn').height();
+    //    $('#middleColumn').height(mch + $('#contentArea').height());
+    //    var mch2 = $('#middleColumn').height();
+
+    //    //var hdr = $('.Header').height();
+    //    //var cch = $('#divCommentsBody').height()
+    //    $('.threeColumnLayout').height(mch2);
+    //    resizePage();
+
+
 }
 
 function staticify() {
