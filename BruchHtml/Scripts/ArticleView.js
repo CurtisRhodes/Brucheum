@@ -10,6 +10,9 @@ var hitSession = "";
 function displayViewArticle(articleId) {
     showViewArticleHtml(articleId);
     loadArticle(articleId);
+    $(window).resize(function () {
+        resizeViewPage();
+    });
 }
 
 function showViewArticleHtml(articleId) {
@@ -59,6 +62,7 @@ function loadArticle(articleId) {
                     //sendEmail(emailSubject, "someday it will be someone other than you");
 
                     //stickCommentsButton();
+                    resizeViewPage();
                 }
                 else
                     alert("load Article: " + article.Success);
@@ -82,8 +86,14 @@ function resizeViewPage() {
     //    //var cch = $('#divCommentsBody').height()
     //    $('.threeColumnLayout').height(mch2);
     //    resizePage();
+    //<div id="divSummary" class="summaryText"></div>
+    //<div id="divContent" class="articleContent"></div>
+    //<div id="divCommentsButton" class="roundendButton">comments</div>
 
-
+    $('#middleColumn').css("height", $('#articleContent').height() + $('.pollybox').height() + $('#divImage').height() + $('#divSummary').height());
+    $('testMsg1').html("middleColumn.height: " + $('#middleColumn').height());
+    //alert("articleContent" + hhh);
+   
 }
 
 function staticify() {

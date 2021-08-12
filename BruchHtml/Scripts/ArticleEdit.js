@@ -20,7 +20,7 @@ function editArticle(articleId) {
 function newArticle() {
     setUpEditPage();
     article.Id = create_UUID();
-    document.title = "CurtisRhodes.com";
+    document.title = "editing : CurtisRhodes.com";
     $("#headerSubTitle").html("new article");
     $('#dateEnteredRow').hide();
     $('#btnSave').text("Add New");
@@ -84,8 +84,7 @@ function getArticle(articleId) {
         success: function (articleModel) {
             if (articleModel.Success === "ok") {
                 bind(articleModel.Article);
-                //article = articleModel.Article
-
+                document.title = articleModel.Article.Title + ": editing";
                 $('#btnSave').text("Update");
                 setTimeout(function () { adjust() }, 1000);
             }
