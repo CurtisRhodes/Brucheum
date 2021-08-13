@@ -259,37 +259,39 @@ $('#txtMetaTag').blur(function () {
 });
 
 function loadImage(imageFullFileName) {
-
-    var input = document.getElementById("uplImage");
-    var fReader = new FileReader();
-    fReader.readAsDataURL(input.files[0]);
-    fReader.onloadend = function (event) {
-       let img = document.getElementById("imgArticleJog");
-        img.src = event.target.result;
-
-        let url = settingsArray.ApiServer + "/api/Image/AddImage";
-        $.ajax({
-            type: "PUT",
-            data: {
-                ArticleId: article.Id,
-                FileName : input.files[0].name,
-                Data: img.src
-            },
-            url: url,
-            success: function (response) {
-                if (response.Success === "ok") {
-                    //bind(response);
-                    //article.ImageName = response.ImageName;
-                    //$('#btnSave').text("Update");
-                    //setTimeout(function () { adjust() }, 1000);
+    try {
+        let input = document.getElementById("uplImage");
+        let fReader = new FileReader();
+        fReader.readAsDataURL(input.files[0]);
+        fReader.onloadend = function (event) {
+            let img = document.getElementById("imgArticleJog");
+            img.src = event.target.result;
+            let url = settingsArray.ApiServer + "/api/Image/AddImage";
+            $.ajax({
+                type: "PUT",
+                data: {
+                    ArticleId: article.Id,
+                    FileName: input.files[0].name,
+                    Data: img.src
+                },
+                url: url,
+                success: function (successModel) {
+                    if (successModel.Success === "ok") {
+                        //bind(response);
+                        article.ImageName = successModel.ReturnValue;
+                        //$('#btnSave').text("Update");
+                        //setTimeout(function () { adjust() }, 1000);
+                    }
+                    else
+                        alert("getArticle: " + response.Success);
+                },
+                error: function (jqXHR, exception) {
+                    alert("loadImage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
                 }
-                else
-                    alert("getArticle: " + response.Success);
-            },
-            error: function (jqXHR, exception) {
-                alert("loadImage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
-            }
-        });
+            });
+        }
+    } catch (e) {
+        alert("loadImage Catch: " + e);
     }
 }
 

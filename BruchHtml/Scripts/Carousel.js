@@ -106,7 +106,7 @@ function displayCarouselItem() {
     let imageName = carouselItemArray[currentIndexId].ImageName;
     if (isNullorUndefined(imageName)) imageName = "Images/placeholder.png";
     $('#carouselImage').attr('src', "https://" + imageName).fadeIn(850, resizeCarouselImage());
-    $('#carouselImage').click(function () { viewArticle(); });
+    $('#carouselImage').click(function () { viewCarouselArticle(); });
 }
 
 function resizeCarouselImage() {
@@ -120,7 +120,7 @@ function resizeCarouselImage() {
     }, 666);
 }
 
-function viewArticle() {
+function viewCarouselArticle() {
     stopCarousel();
     console.log("viewArticle: " + carouselItemArray[currentIndexId].Title);
     displayViewArticle(carouselItemArray[currentIndexId].Id);

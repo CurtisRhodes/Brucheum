@@ -473,6 +473,7 @@ namespace Brucheum.Api
                     Article article = db.Articles.Where(a => a.Id == data.ArticleId).FirstOrDefault();
                     article.ImageName = data.FileName;
                     db.SaveChanges();
+                    successModel.ReturnValue = data.FileName;
                 }
                 successModel.Success = "ok";
             }

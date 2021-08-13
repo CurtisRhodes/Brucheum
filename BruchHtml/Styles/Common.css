@@ -57,13 +57,12 @@ body {
 
 .threeColumnLayout {
     width: 100%;
-    display: flex;  
+    display: flex;
     margin-top: -24px;
-/*    border-left:dashed red 3px;*/
 }
+
 .threeColumnLayout #leftColumn {
     float: left;
-    /*border-right: solid 5px var(--brucheumHeaderBarColor);*/
     min-width: 7%;
 }
 

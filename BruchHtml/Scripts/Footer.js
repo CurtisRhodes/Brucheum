@@ -9,7 +9,7 @@ function displayFooter(footerContext) {
                 <div class='footerCol' id='footerCol4'></div>\n
                 <div class='footerCol' id='footerCol5'></div>\n
                 <div class='footerCol' id='footerCol6'></div>\n
-                <div class='rightMostfooterColumn' id='footerCol7'></div>\n 
+                <div class='footerCol floatRight' id='footerCol7'></div>\n 
                </div>\n<div class='footerFooter'>\n
                    <div id='footerMessage'></div>\n
                    <div id='footerMessage2'></div>\n
@@ -28,16 +28,13 @@ function displayFooter(footerContext) {
                 $('#footerCol2').html(`
                     <div class='clickable' onclick='footerItemClick(1)'>Blog</div>\n
                     <div class='clickable' onclick='footerItemClick(1)'>Sitemap</div>\n
-                    <div class='clickable' onclick='displayFeedback()'>Feedback</div>\n
-                    <div class='clickable' onclick='footerItemClick(1)'>Search</div>\n
-                    <div class='clickable' onclick='footerItemClick(1)'>Research</div>\n
-                    <div class='clickable' onclick='footerItemClick(1)'>Advertize</div>\n`
+                    <div class='clickable' onclick='displayFeedback()'>Feedback</div>\n`
                 );
                 $('#footerCol3').html(`
                     <div class='clickable' onclick='footerItemClick(1)'>email site developer</div>\n
-                    <div id='footerPageHits'></div>\n
-                    <div id='footerFolderType'></div>\n
-                    <div id='footerStaticPage'></div>\n`
+                    <div class='clickable' onclick='footerItemClick(1)'>Search</div>\n
+                    <div class='clickable' onclick='footerItemClick(1)'>Research</div>\n
+                    <div class='clickable' onclick='footerItemClick(1)'>Advertize</div>\n`
                 );
                 $('#footerCol4').html(`
                     <div id='testMsg1'></div>
@@ -52,6 +49,11 @@ function displayFooter(footerContext) {
                     <div class='clickable' onclick='footerItemClick(1)'>Category List</div>\n`
                 );
                 $('#footerCol6').html(`
+                    <div class='clickable' onclick='footerItemClick(1)'>Category List</div>\n
+                    <div class='clickable' onclick='footerItemClick(1)'>Category List</div>\n
+                    <div class='clickable' onclick='footerItemClick(1)'>Category List</div>\n`
+                );
+                $('#footerCol7').html(`
                     <div class='clickable' onclick='footerItemClick(1)'>Category List</div>\n
                     <div class='clickable' onclick='footerItemClick(1)'>Category List</div>\n
                     <div class='clickable' onclick='footerItemClick(1)'>Category List</div>\n`

@@ -95,17 +95,21 @@
 
         function resizePage() {
             // set page width
-            var winW = $(window).width();
-            var lcW = $('#leftColumn').width();
-            var rcW = $('#rightColumn').width();
-            $('#middleColumn').width(winW - lcW - rcW);
+            //    var winW = $(window).width();
+            //    var lcW = $('#leftColumn').width();
+            //    var rcW = $('#rightColumn').width();
+            //    $('#middleColumn').width(winW - lcW - rcW);
 
-            //set page height
-            var winH = $(window).height();
-            var headerH = $('header').height();
-            $('#middleColumn').css('height', winH - headerH - 42);
+            //    //set page height
+            //    var winH = $(window).height();
+            //<header></header>
+            //    var headerH = $('header').height();
+            //$('#visableArea').css('min-height', $(window).height() - $('header').height());
+            //$('#testMsg1').html("win.height: " + $(window).height());
+            //$('#testMsg2').html("header.hgt: " + $('header').height());
+            //$('#testMsg3').html("visableAra: " + $('#visableArea').height());
+            $('#visableArea').css('min-height', $(window).height());
         }
-
     </script>
 </body>
 </html>

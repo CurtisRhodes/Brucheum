@@ -1,21 +1,22 @@
-﻿//var settingsArray.ApiServer = '@ViewBag.Service';
-//var articleId = '@ViewBag.ArticleId';
-//var userId = '@ViewBag.UserId';
-//var userName = '@ViewBag.UserName';
-//var filePath = '@ViewBag.FilePath';
-//var ipAddress = '@ViewBag.IpAddress';
-var thisArticleId;
+﻿var thisArticleId;
 var hitSession = "";
 
 function displayViewArticle(articleId) {
     showViewArticleHtml(articleId);
     loadArticle(articleId);
-    $(window).resize(function () {
-        resizeViewPage();
-    });
+//    $(window).resize(function () {
+//        resizeViewPage();
+//    });
 }
 
 function showViewArticleHtml(articleId) {
+    $("#breadcrumbContainer").html(`
+        <div class='hoverTab'><a href='javascript:displayArticleList()'>Latest Articles</a></div>\n
+        <div class='menuTab floatLeft' onclick='displayCustomPage(\"New Article\")'>New Article</div>\n
+        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
+        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
+        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
+    );
     $('#middleColumn').html(`    
         <div class="pollybox">
             <div class="divTopLine">
@@ -56,13 +57,16 @@ function loadArticle(articleId) {
                     $('#divByline').html("by " + articleModel.Article.ByLine);
                     $('#divContent').html(articleModel.Article.Content);
 
+                    document.title = articleModel.Article.Title + " : Brucheum";
+                    $("#headerSubTitle").html(articleModel.Article.Title);
+
                     //hitSession = logPageHit(settingsArray.ApiServer, userName, ipAddress, "ViewArticle", article.Title);
 
                     //var emailSubject = "CONGRATULATIONS: " + loginVM.UserName + " just logged onto The Brucheum";
                     //sendEmail(emailSubject, "someday it will be someone other than you");
 
                     //stickCommentsButton();
-                    resizeViewPage();
+                    //resizeViewPage();
                 }
                 else
                     alert("load Article: " + article.Success);
@@ -77,23 +81,13 @@ function loadArticle(articleId) {
 }
 
 function resizeViewPage() {
-    //<div id="divContent" class="articleContent"></div>
-    //    var mch = $('#middleColumn').height();
-    //    $('#middleColumn').height(mch + $('#contentArea').height());
-    //    var mch2 = $('#middleColumn').height();
+    //$('#middleColumn').css("height", $('#articleContent').height() + $('.pollybox').height() + $('#divImage').height() + $('#divSummary').height());
+    //$('testMsg1').html("middleColumn.height: " + $('#middleColumn').height());
 
-    //    //var hdr = $('.Header').height();
-    //    //var cch = $('#divCommentsBody').height()
-    //    $('.threeColumnLayout').height(mch2);
-    //    resizePage();
-    //<div id="divSummary" class="summaryText"></div>
-    //<div id="divContent" class="articleContent"></div>
-    //<div id="divCommentsButton" class="roundendButton">comments</div>
-
-    $('#middleColumn').css("height", $('#articleContent').height() + $('.pollybox').height() + $('#divImage').height() + $('#divSummary').height());
-    $('testMsg1').html("middleColumn.height: " + $('#middleColumn').height());
-    //alert("articleContent" + hhh);
-   
+    // let txtEditAreaHeight = $('#articleContent').height() + $('.pollybox').height() + $('#divImage').height() + $('#divSummary').height();
+    // $('#middleColumn').css("height", txtEditAreaHeight);
+    // $('testMsg1').html("middleColumn.height: " + txtEditAreaHeight);
+    // alert("resizeViewPage\narticleContent: " + txtEditAreaHeight);
 }
 
 function staticify() {
