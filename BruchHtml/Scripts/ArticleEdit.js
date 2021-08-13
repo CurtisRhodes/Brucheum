@@ -128,7 +128,7 @@ function unBind() {
         article.SubCategoryRef = 'AWC';
         article.LastUpdated = $('#txtUpdated').val();
         article.Summary = $('#articleSummaryEditor').val();
-        article.Contents = $('#articleContentEditor').val();
+        article.Content = $('#articleContentEditor').val();
         article.Tags = new Array;
         $('#divTagContainer>div').each(function () {
             var dbArticleTagModel = new Object();
@@ -286,7 +286,7 @@ function loadImage(imageFullFileName) {
                         alert("getArticle: " + response.Success);
                 },
                 error: function (jqXHR, exception) {
-                    alert("loadImage jqXHR : " + getXHRErrorDetails(jqXHR, exception));
+                    alert("loadImage jqXHR : " + jqXHR.responseText + "\n md: " + getXHRErrorDetails(jqXHR, exception));
                 }
             });
         }

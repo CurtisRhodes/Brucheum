@@ -9,7 +9,7 @@ function displayArticleList() {
     document.title = "articles : Brucheum";
     $("#headerSubTitle").html("lastest articles");
     $("#breadcrumbContainer").html(`
-        <div class='menuTab floatLeft' onclick='displayCustomPage(\"New Article\")'>New Article</div>\n
+        <div class='menuTab floatLeft' onclick='newArticle()'>New Article</div>\n
         <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
         <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
         <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`

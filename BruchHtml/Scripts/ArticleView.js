@@ -12,7 +12,7 @@ function displayViewArticle(articleId) {
 function showViewArticleHtml(articleId) {
     $("#breadcrumbContainer").html(`
         <div class='hoverTab'><a href='javascript:displayArticleList()'>Latest Articles</a></div>\n
-        <div class='menuTab floatLeft' onclick='displayCustomPage(\"New Article\")'>New Article</div>\n
+        <div class='menuTab floatLeft' onclick='newArticle()'>New Article</div>\n
         <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
         <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
         <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
