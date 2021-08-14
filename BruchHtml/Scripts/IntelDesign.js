@@ -1,4 +1,5 @@
-﻿function intelDesignHtml() {
+﻿
+function displayIntelDesignPage() {
     $('body').css("background-color", "#222730");
     $('#middleColumn').html(`
         <div class="intelDsgnBackground">
@@ -6,7 +7,7 @@
                 <div class="algerian">Welcome to Intelligent Design Software</div>
                 <p>This web site demonstrates the work of an experienced if socially autistic web applications developer</p>
                 <p>Check out the scection describing the <a href="javascript:displaySkillsCloud()">skills used to build this site</a></p>
-                <p>Read some of my <a href="javascript:displayIntelArticles(0)">articles on computer programming</a></p>
+                <p>Read some of my <a href="javascript:displayIntelArticles(1)">articles on computer programming</a></p>
                 <p>Learn about <a href="javascript:displayArticleDialogBox(0)">our approach</a> to application development</p>
                 <p>See <a href="javascript:displayMyResume()">My resume</a> with over thirty years experience. (yes I am old af)</p>
                 <p>If you might be interested in having me do some work for you</p>
@@ -21,6 +22,7 @@
 function displaySkillsCloud() {
     document.title = "skills : CurtisRhodes.com";
     $('#middleColumn').html(`
+        <div class='whiteContrastBackground'>
             <h2>My Skills</h2>
             <div id="skillsloadingGif" class="loadingGif"><img src="Images/loader.gif" /></div>
             <div id="skillsCloud" class="wordCloudContainer"></div>
@@ -34,6 +36,7 @@ function displaySkillsCloud() {
         </div>`
     );
     $('#rightColumn').html("<div class='adminButton' onclick=''>manage</div>");
+    loadSkillCloud();
 }
 
 function displayContactForm() {
@@ -73,7 +76,7 @@ function displayArticleDialogBox(articleId) {
 }
 
 function displayIntelArticles(displayMode) {
-    alert("displayIntelArticles: " + displayMode);
+    displayArticleList(displayMode);
     if (displayMode == 2) {
         alert("Programming for Girls");
     }
@@ -217,7 +220,7 @@ function displaySkillsManager() {
 
 /////////////////////////////////////////////////////
 
-function loadSkillCloud(service) {
+function loadSkillCloud() {
     try {
         $('#skillsloadingGif').show();
         $.ajax({
@@ -277,7 +280,7 @@ function showSkillDialog(id) {
             url: service + "/api/JobSkill?skillId=" + id,
             success: function (response) {
                 $('#skillsloadingGif').hide();
-
+                 
                 //alert("response.Name: " + response.Name);
                 $('#skillName').html(response.Name);
                 $('#skillProficiency').html(response.ProficiencyDescription);

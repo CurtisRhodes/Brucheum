@@ -129,14 +129,14 @@ function unBind() {
         article.LastUpdated = $('#txtUpdated').val();
         article.Summary = $('#articleSummaryEditor').val();
         article.Content = $('#articleContentEditor').val();
-        article.Tags = new Array;
-        $('#divTagContainer>div').each(function () {
-            var dbArticleTagModel = new Object();
-            dbArticleTagModel.TagName = $(this).html();
-            dbArticleTagModel.Id = $(this).attr("Id");
-            //alert("dbArticleTagModel.Id: " + dbArticleTagModel.Id);
-            article.Tags.push(dbArticleTagModel);
-        });
+    //    article.Tags = new Array;
+    //    $('#divTagContainer>div').each(function () {
+    //        var dbArticleTagModel = new Object();
+    //        dbArticleTagModel.TagName = $(this).html();
+    //        dbArticleTagModel.Id = $(this).attr("Id");
+    //        //alert("dbArticleTagModel.Id: " + dbArticleTagModel.Id);
+    //        article.Tags.push(dbArticleTagModel);
+    //    });
     }
     catch (e) {
         alert("unBind: " + e);
@@ -166,8 +166,7 @@ function postArticle(view) {
         $('#updateArticleSpinner').show();
         $.ajax({
             url: settingsArray.ApiServer + "/api/Article/AddNewArticle",
-            type: "post",
-            dataType: "Json",
+            type: "POST",
             data: article,
             success: function (successModel) {
                 $('#updateArticleSpinner').hide();

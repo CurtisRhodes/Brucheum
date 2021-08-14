@@ -9,10 +9,13 @@
     font-size: 18px;
     color: #e8f6fb;
 }
-
     .welcomeMessage a {
         color: #d1c998;
     }
+
+.whiteContrastBackground {
+    color: #fff;
+}
 
 .cacaMessage {
     position: absolute;

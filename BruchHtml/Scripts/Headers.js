@@ -18,7 +18,7 @@ function displayCustomPage(pageName) {
             document.title = "welcome : Brucheum";
             $('#leftColumn').html(tanBlueMenuSnippet);
             $("#breadcrumbContainer").html(`
-                <div class='hoverTab'><a href='javascript:displayArticleList()'>Latest Articles</a></div>\n
+                <div class='hoverTab'><a href='javascript:displayArticleList(0)'>Latest Articles</a></div>\n
                 <div class='hoverTab'><a href='javascript:displayCustomPage(\"Books\")'>Books</a></div>\n
                 <div class='hoverTab'><a href='javascript:displayCustomPage(\"Apps\")'>Apps</a></div>\n
                 <div class='hoverTab'><a href='javascript:displayCustomPage(\"IntelDesign\")'>Intelligent Design</a></div>\n
@@ -32,7 +32,7 @@ function displayCustomPage(pageName) {
             $("#breadcrumbContainer").html(`
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Carosuel\")'>Articles</div>\n
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"Apps\")'>Apps</div>\n
-                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"IntelDesign\")'>Intelligent Design</div>\n
                 <div class='menuTab floatLeft' onclick='displayCustomPage(\"GetaGig\")'>Get a Gig</div>\n`
             );
             $("#middleColumn").html(`
@@ -70,7 +70,7 @@ function displayCustomPage(pageName) {
                 <div class='menuTab floatLeft' onclick='displayIntelArticles(2)'>Programming for Girls</div>\n
                 <div class='menuTab floatLeft' onclick='displaySkillsCloud()'>My Skills</div>`
             );
-            intelDesignHtml();
+            displayIntelDesignPage();
             break;
         case "GetaGig":
             $('#divSiteLogo').attr("src", "Images/GetaJob.png")

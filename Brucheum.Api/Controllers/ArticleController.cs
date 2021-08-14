@@ -62,7 +62,7 @@ namespace Brucheum.Api
                     switch (filterType)
                     {
                         case "Category":
-                            articleModel.ArticleList= db.VwArticles.Where(a => a.Category == filter).
+                            articleModel.ArticleList= db.VwArticles.Where(a => a.CategoryRef == filter).
                                 OrderByDescending(a => a.LastUpdated).Skip(start).Take(take).ToList();
                             break;
                         case "Byline":
