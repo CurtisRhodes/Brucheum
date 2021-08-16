@@ -148,10 +148,11 @@
                             changeFavoriteIcon("redBallon");
                             verifySession(albumParamFolderId);
 
+                            if (!isNullorUndefined(params.calledFrom)) {
+                                logStaticPageHit(albumParamFolderId, params.calledFrom);
+                            }
                             if (!isNullorUndefined(params.tic)) {
-                                params.tic = null;
-                                logStaticPageHit(albumParamFolderId, "Album.html");
-                                window.location.href = "album.html?folder=" + albumParamFolderId;
+                                logStaticPageHit(albumParamFolderId, "static page");
                             }
 
                             if (largeLoad)

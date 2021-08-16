@@ -333,6 +333,8 @@ function showTrackbackDialog() {
         "   <div>link <input id='txtTrackBackLink'  class='roundedInput' style='width:85%'></input></div>" +
         "   <div>site <select id='selTrackBackLinkSite' class='roundedInput'>\n" +
         "          <option value='BAB'>babepedia</option>\n" +
+        "          <option value='BOB'>boobpedia</option>\n" +
+        "          <option value='IND'>Indexx</option>\n" +
         "          <option value='FRE'>freeones</option>\n" +
         "       </select></div>\n" +
         "   <div>status<input id='txtTrackBackStatus' class='roundedInput'></input></div>" +

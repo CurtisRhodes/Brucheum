@@ -311,6 +311,9 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
                             case "BAB":
                                 $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Babepedia</a></div>");
                                 break;
+                            case "BOB":
+                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Boobpedia</a></div>");
+                                break;
                             case "IND":
                                 $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Indexx</a></div>");
                                 break;
