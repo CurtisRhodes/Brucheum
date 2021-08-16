@@ -4,16 +4,36 @@ let articleStart = 0;
 let thisFilterType = "Latest", thisFilter = "all";
 let imageRepository = "img.OGGLEBOOBLE.COM/jogs/";
 
-function displayArticleList() {
+function displayArticleList(listMode) {
     resetSpaPage();
-    document.title = "articles : Brucheum";
-    $("#headerSubTitle").html("lastest articles");
-    $("#breadcrumbContainer").html(`
-        <div class='menuTab floatLeft' onclick='newArticle()'>New Article</div>\n
-        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
-        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
-        <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
-    );
+    switch (listMode) {
+        case 0:
+            thisFilterType = "Latest";
+            thisFilter = "all";
+            document.title = "articles : Brucheum";
+            $("#headerSubTitle").html("lastest articles");
+            $("#breadcrumbContainer").html(`
+                <div class='menuTab floatLeft' onclick='newArticle()'>New Article</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Books\")'>Books</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Intelligent Design\")'>Intelligent Design</div>\n
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Get a Gig\")'>Get a Gig</div>\n`
+            );
+            break;
+        case 1:
+            thisFilterType = "Category";
+            thisFilter = "COM";
+            document.title = "articles : Intel Design";
+            $("#headerSubTitle").html("lastest computer articles");
+            $("#breadcrumbContainer").html(`
+                <div class='menuTab floatLeft' onclick='displayCustomPage(\"Carosuel\")'>The Brucheum</div>\n
+                <div class='menuTab floatLeft' onclick='displayIntelBlogPost(3)'>About Me</div>\n
+                <div class='menuTab floatLeft' onclick='displayMyResume()'>My Resume</div>\n
+                <div class='menuTab floatLeft' onclick='displayIntelArticles(2)'>Programming for Girls</div>\n
+                <div class='menuTab floatLeft' onclick='displaySkillsCloud()'>My Skills</div>`
+            );
+            break;
+        default:
+    }
     $('#middleColumn').html(`
         <div id="divArticleList">
             <div id="divlistHeader" class="articleListHeader"></div>
@@ -52,6 +72,7 @@ function displayArticleListItemStyle1(article) {
 
 function viewArticle(articleId) {
     console.log("log event viewArticle: " + articleId);
+    //window.location.href = "index?viewArticle=" + articleId;
     displayViewArticle(articleId);
 }
 
