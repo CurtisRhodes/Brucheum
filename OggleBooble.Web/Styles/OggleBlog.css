@@ -1,8 +1,4 @@
-﻿.blogArea {
-    display: none;
-    box-sizing: unset;
-}
-
+﻿
 .twoColumnFrame {
     border: solid thin var(--oggleBorderColor);
 }
@@ -45,7 +41,6 @@
 .blogDisplayArea {
     vertical-align: top;
     margin-top: 10px;
-    display: none;
 }
 
 .rightBlogEditPane {
@@ -65,7 +60,7 @@
     margin-left: 10px;
 }
 
-.blogLeftColumnBlog {
+.blogLeftColumn {
     margin-top: 100px;
 }
 
@@ -146,8 +141,7 @@
     margin: 0 8px;
 }
 
-.singleBlogEntryContainer {
-    display: none;
+.singleBlogEntryContainer {    
     background-color: var(--oggleContainerBackgroundColor);
     border: solid thin black;
     padding: 6px;
