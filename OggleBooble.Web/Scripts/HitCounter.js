@@ -192,7 +192,7 @@ function logStaticPageHit(folderId, calledFrom) {
             }
             else {
                 logActivity("SP2", folderId, calledFrom); // static page hit ajax error
-                logError("AJX", folderId, success, "logStatic PageHit/" + calledFrom);
+                //logError("AJX", folderId, success, "logStatic PageHit/" + calledFrom);
             }
         },
         error: function (jqXHR) {
