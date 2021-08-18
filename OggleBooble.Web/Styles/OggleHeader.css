@@ -19,6 +19,9 @@
     border-top: #40767d 3px solid;
     border-bottom: #decd6f 11px solid;
 }
+    .playboyHeader .inactiveBreadCrumb {
+        color: #d47979;
+    }
     .playboyHeader .hdrTopRowMenu {
         color: #bbbd1d;
     }
@@ -139,11 +142,13 @@
 
 .bigMessageContainer {
     /*    
-    top: 255;
-    left: 522;
-    height: 666px;
-    width: 1111px;
-*/
+        top: 255;
+        left: 522;
+        height: 666px;
+        width: 1111px;
+    */
+    max-height: 500px;
+    overflow: auto;
     padding: 0 70px 70px 70px;
     color: black;
     font-size: 18px;

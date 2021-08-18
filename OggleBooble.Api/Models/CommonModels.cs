@@ -169,6 +169,11 @@ namespace OggleBooble.Api.Models
         public string FeedBackEmail { get; set; }
         public DateTime Occured { get; set; }
     }
+    public class FeedBackSuccessModel
+    {
+        public string VisitorInfo { get; set; }
+        public string Success { get; set; }
+    }
     public class DataActivityModel
     {
         public int FolderId { get; set; }

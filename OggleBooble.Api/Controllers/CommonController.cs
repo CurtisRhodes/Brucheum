@@ -389,13 +389,25 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/Common/LogFeedback")]
-        public string LogFeedback(FeedBackModel feedBackModel)
+        public FeedBackSuccessModel LogFeedback(FeedBackModel feedBackModel)
         {
-            string success;
+            var feedbackSuccess = new FeedBackSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    //feedbackSuccess.FolderName = db.CategoryFolders.Where(f => f.Id == feedBackModel.FolderId).Select(f => f.FolderName).FirstOrDefault();
+                    Visitor feedbackVisitor = db.Visitors.Where(v => v.VisitorId == feedBackModel.VisitorId).FirstOrDefault();
+                    string visitorInfo = feedBackModel.VisitorId;
+                    if (feedbackVisitor != null)
+                    {
+                        RegisteredUser registeredUser = db.RegisteredUsers.Where(r => r.VisitorId == feedBackModel.VisitorId).FirstOrDefault();
+                        if (registeredUser != null)
+                            visitorInfo = registeredUser.UserName;
+                        else
+                            visitorInfo = feedbackVisitor.City + ", " + feedbackVisitor.Region + ", " + feedbackVisitor.Region;
+                    }
+
                     db.FeedBacks.Add(new FeedBack()
                     {
                         PageId = feedBackModel.FolderId,
@@ -406,14 +418,14 @@ namespace OggleBooble.Api.Controllers
                         Occured = DateTime.Now
                     });
                     db.SaveChanges();
-                    success = "ok";
+                    feedbackSuccess.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                feedbackSuccess.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return feedbackSuccess;
         }
     }
 

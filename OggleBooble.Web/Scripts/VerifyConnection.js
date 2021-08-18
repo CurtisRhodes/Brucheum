@@ -19,10 +19,10 @@ function checkFor404(errMsg, folderId, calledFrom) {
 }
 
 function checkConnection(folderId, calledFrom) {
-    changeFavoriteIcon("loading");
     let dots = "";
     let getXMLsettingsWaiter = setInterval(function () {
-        document.title = "loading settings : OggleBooble";
+        $('#headerMessage').html("loading settings");
+        //document.title = "loading settings : OggleBooble";
         if (settingsArray.ApiServer === undefined) {
             dots += "~ ";
             $('#dots').html(dots);
@@ -31,11 +31,14 @@ function checkConnection(folderId, calledFrom) {
             clearInterval(getXMLsettingsWaiter);
             let verifyConnectionCount = 0, verifyConnectionAvailable = true;
             let connectingToServerImgShowing = false, canIgetaConnectionImgShowing = false;
-            document.title = "connecting : OggleBooble";
+            $('#headerMessage').html("connecting");
+            //document.title = "connecting : OggleBooble";
+            changeFavoriteIcon("loading");
             connectionVerified = false;
             let verifyConnectionWaiter = setInterval(function () {
                 if (connectionVerified) {
-                    clearInterval(verifyConnectionWaiter);
+                    changeFavoriteIcon("redBallon");
+                     clearInterval(verifyConnectionWaiter);
                     $('#dots').html('');
                     console.log("connection verified after: " + verifyConnectionCount);
                     $('#headerMessage').html("");
@@ -70,6 +73,7 @@ function checkConnection(folderId, calledFrom) {
                                 console.log("GET VerifyConnection: " + verifyConnectionCount);
                                 if (successModel.Success == "ok") {
                                     if (successModel.ConnectionVerified) {
+                                        //changeFavoriteIcon("redBallon");
                                         connectionVerified = true;
                                         $('#customMessage').hide();
                                         canIgetaConnectionMessageShowing = false;

@@ -1,6 +1,6 @@
-﻿
+﻿function setOggleHeader(headerContext) {
+    // focus fix someone commented
 
-function setOggleHeader(headerContext) {
 
     $('#oggleHeader').html(headerHtml());
 
@@ -10,13 +10,14 @@ function setOggleHeader(headerContext) {
             changeFavoriteIcon("redBallon");
             $('#oggleHeader').addClass('boobsHeader');
             $('#mainMenuContainer').html("Home of the Big Naturals");
-            document.title = "welcome : OggleBooble";
+            //document.title = "welcome : OggleBooble";
             break;
         }
         case "album":
         case "loading": {
             $("#divLoginArea").hide();
-            document.title = "loading : OggleBooble";
+            $('#headerMessage').html("connecting");
+            //document.title = "loading : OggleBooble";
             break;
         }
         case "playboyIndex":
@@ -25,7 +26,7 @@ function setOggleHeader(headerContext) {
             break;
         case "porn":
             changeFavoriteIcon("porn");
-            document.title = "welcome : OgglePorn";
+            document.title = "OgglePorn";
             break;
         case "dashboard": {
             $('#headerMessage').html("dashboard");

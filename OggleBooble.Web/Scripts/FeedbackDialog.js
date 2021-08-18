@@ -65,16 +65,17 @@
                         FeedBackType: feedbackType,
                         FeedBackEmail: $('#txtFeedbackEmail').val()
                     },
-                    success: function (success) {
-                        if (success === "ok") {
-                            logEvent("FBS", folderId, "saveFeedback", "Hooraaaayyy !!");
+                    success: function (feedbackSuccess)
+                    {
+                        if (feedbackSuccess.Success === "ok")
+                        {
+                            logEvent("FBS", folderId, "save Feedback", "Hooraaaayyy !!");
 
-                            //sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "Wow!! FeedBack", "feedbackType: " + feedbackType + "message:" + feedbackMessage);
-                            //sendEmail("CurtishRhodes@hotmail.com", "FolderComment@Ogglebooble.com", "Wow!! FolderComment", "message:" + folderCommentMessage);
                             if (document.domain !== "localhost")
-                                sendEmail("CurtishRhodes@hotmail.com", "Feedback@Ogglebooble.com", "You Got Some Feedback", " radio button: " + feedbackType + "<br/><br/>" +
+                                sendEmail("CurtishRhodes@hotmail.com", "YouGotFeedback@Ogglebooble.com", "You Got Some Feedback",
+                                    "feedBackType: " + feedbackType + "<br/><br/>" +
                                     "feedbackMessage: " + $('#smnFeedback').val() + "<br/>" +
-                                    "visitor: " + getCookieValue("VisitorId") + "<br/>" +
+                                    "visitor: " + feedbackSuccess.VisitorInfo + "<br/>" +
                                     "folder: " + folderName);
                             else
                                 alert("sendEmail(CurtishRhodes@hotmail.com, Feedback@Ogglebooble.com, Feedback !!!" +
@@ -94,12 +95,12 @@
                     },
                     error: function (jqXHR) {
                         let errMsg = getXHRErrorDetails(jqXHR);
-                        if (!checkFor404(errMsg, folderId, "saveFeedback")) logError("XHR", folderId, errMsg, "saveFeedback");
+                        if (!checkFor404(errMsg, folderId, "save Feedback")) logError("XHR", folderId, errMsg, "save Feedback");
                     }
                 });
             }
         } catch (e) {
-            logError("CAT", folderId, e, "saveFeedback");
+            logError("CAT", folderId, e, "save Feedback");
         }
     }
 

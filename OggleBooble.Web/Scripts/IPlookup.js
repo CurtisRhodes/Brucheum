@@ -100,14 +100,14 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             },
             error: function (jqXHR) {
                 ipCall0Returned = true;
-                logActivity2(visitorId, "IP3", folderId, "get IpInfo"); // XHR error
-
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (errMsg.indexOf("Not connect.") == -1) {
                     logActivity2(visitorId, "IP6", folderId, "XHR:" + errMsg); // connection problem
                     logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
                 }
+                else
+                    logActivity2(visitorId, "IP3", folderId, errMsg); // XHR error
 
                 if (!isNullorUndefined(ipResponse)) {
                     logActivity2(visitorId, "IP7", folderId, "get IpInfo"); // juneteenth setCookie problem

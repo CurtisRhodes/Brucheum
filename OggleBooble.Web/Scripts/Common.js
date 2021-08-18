@@ -7,7 +7,7 @@
 //<div class="g-recaptcha" data-sitekey="6LfaZzEUAAAAAMbgdAUmSHAHzv-dQaBAMYkR4h8L"></div>
 
 function loadOggleSettings() {
-    document.title = "loading settings : OggleBooble";
+    //document.title = "loading settings : OggleBooble";
     $.ajax({
         type: "GET",
         url: "/Data/Settings.xml",
@@ -460,11 +460,14 @@ function showCustomMessage(blogId, allowClickAnywhere) {
 
                 $("#vailShell").fadeIn();
                 $('#customMessage').html(entry.CommentText).show();
+                $("#customMessageContainer").css("top", 100);
+                $('#customMessageContainer').css("left", 260);
+                $('#customMessageContainer').css("width", 1200);
+                $('#bigMessageContainer').css("height", 1100);
+                
+                //$('#customMessageContainer').css("height", 1200);
                 $("#customMessageContainer").draggable().fadeIn();
 
-
-                //top: 255;
-                //left: 522;
                 //    if (allowClickAnywhere) {
                 //        $('#centeredDialogCloseButton').prop('title', 'click anywhere on dialog to close');
                 //        $('#centeredDialogContents').click(function () { dragableDialogClose(); });
@@ -484,6 +487,46 @@ function showCustomMessage(blogId, allowClickAnywhere) {
         }
     });
 }
+
+function showCenteredMessage(blogId, allowClickAnywhere) {
+    //alert("showCustomMessage(" + blogId + ")");
+    if (typeof pause === 'function') {
+        pause();
+    }
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/OggleBlog/GetBlogItem?blogId=" + blogId,
+        success: function (entry) {
+            if (entry.Success === "ok") {
+
+                $("#vailShell").fadeIn();
+                $('#centeredDialogContents').html(entry.CommentText).show();
+                //$("#centeredDialogContainer").css("top", 100);
+                //$("#centeredDialogContainer").css("max-width", 1200);
+
+                $("#centeredDialogContainer").draggable().fadeIn();
+
+                if (allowClickAnywhere) {
+                    $('#centeredDialogCloseButton').prop('title', 'click anywhere on dialog to close');
+                    $('#centeredDialogContents').click(function () { dragableDialogClose(); });
+                }
+                else {
+                    $('#centeredDialogContents').prop("onclick", null).off("click");
+                    $('#centeredDialogCloseButton').removeProp('title');
+                }
+            }
+            else {
+                logError("AJX", 3111, "error: " + entry.Success, "showCustomMessage");
+            }
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, 999, "showCustomMessage")) logError("XHR", 311, errMsg, "showCustomMessage");
+        }
+    });
+}
+
+
 
 // EMAIL PROCESSES
 function isValidEmail(email) {

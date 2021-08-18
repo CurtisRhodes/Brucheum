@@ -17,7 +17,7 @@ function displaySpaPage(spaPageId) {
             dashboardStartup();
             break;
         case 3908:  //indexStartup();
-            document.title = "welcome : OggleBooble";
+            //document.title = "welcome : OggleBooble";
             changeFavoriteIcon("redBallon");
             spaType = "boobs";
             $('#indexMiddleColumn').html(indexPageHTML());
@@ -127,12 +127,16 @@ function latestGalleryImageError(folderId, thisItemSrc) {
     }, 600);
 }
 
+
+
 function testFunction() {
 
     // time to log in
-    showCustomMessage('0783d756-04bb-4339-9029-75c9a2f93d8b', false);
-    $('#customMessageContainer').css("top", 255);
-    $('#customMessageContainer').css("left", 522);
+    showCustomMessage('09b40acd-083e-44fe-970d-0a57d1a61360', false);
+    //$('#customMessageContainer').css("top", 255);
+    $('#customMessageContainer').css("left", 260);
+    $('#customMessageContainer').css("width", 1200);
+
 
     //// this site requires cookies
     //showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');

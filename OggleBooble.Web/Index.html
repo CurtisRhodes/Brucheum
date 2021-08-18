@@ -1,7 +1,17 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Welcome - OggleBooble</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7SZQC39FSN"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-7SZQC39FSN');
+    </script>
+
+    <title>OggleBooble : home of the best Big Naturals</title>
     <link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=.07">
@@ -99,7 +109,7 @@
                 }
                 else {
                     clearInterval(settingsWaiter);
-                    document.title = "connecting : OggleBooble";
+                    //document.title = "connecting : OggleBooble";
                     $('#mainMenuContainer').html("connecting");
                     checkConnection(spaPageId, "Index.html");
                     let connectionVerifiedLoop = setInterval(function () {
