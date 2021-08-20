@@ -12,7 +12,6 @@ function blogStartup() {
     //PGM	Programmer Notes	12
     //CON	Site Content	11
 
-    loadCommentTypesDD();
 
     //if (isInRole("BLG")) {
     //    //if (document.domain === 'localhost') alert("is in role blog editor");
@@ -22,7 +21,7 @@ function blogStartup() {
     //}
 
     $('#leftColumnArea').html("<div class='blogLeftColumn'>\n" +
-        "<div class='blogEditButton displayHidden' id='leftColumnShow' onclick='displayBlogItemsList()'>Show Blog List</div>\n" +
+        "<div class='blogEditButton displayHidden' id='leftColumnShow' onclick='displayBlogList()'>Show Blog List</div>\n" +
         "<div class='blogEditButton displayHidden' id='leftColumnNew' onclick='newEntry()'>New Entry</div>\n" +
         "<div class='blogEditButton displayHidden' id='leftColumnEdit' onclick='editBlogEntry()'>Edit</div>\n"
         //"<div class='blogEditButton displayHidden' id='leftColumnShowPage' onclick='viewBlogEntry()'>Show Page</div>\n</div>\n"
@@ -33,6 +32,7 @@ function blogStartup() {
 }
 
 function displayBlogList() {
+    loadCommentTypesDD();
     $('#indexMiddleColumn').html(`
         <div id='blogArticleJogListArea' class='blogDisplayArea'>\n
             <select id='ddCommentType' class='roundedInput blogDropdown'></select>\n
@@ -42,8 +42,9 @@ function displayBlogList() {
     $('#leftColumnNew').show();
     $('#leftColumnShow').hide();
     $('#leftColumnEdit').hide();
-    displayBlogItems()
+    displayBlogItems();
 }
+
 function displayBlogItems() {
     try {
         $.ajax({
@@ -97,8 +98,9 @@ function displayBlogItems() {
 
 function newEntry() {
     //"    <div id='blogEditArea' class='blogArea twoColumnFrame flexContainer'>\n" +   
-
+    displayBlogEditHtml();
     clearBlogGets();
+    loadCommentTypesDD();
     $('#leftColumnNew').hide();
     $('#leftColumnShow').show();
     $('#leftColumnEdit').hide();
@@ -118,6 +120,7 @@ function editBlogEntry(blogItemId) {
     $('#btnAddEdit').html("Update");
     //$('#btnNewCancel').hide();
     displayBlogEditHtml();
+    loadCommentTypesDD();
     $('#blogCrudBox').css("width", $(window).width() * .66);
     loadSingleBlogEntry(blogItemId, "edit");
 }
@@ -203,13 +206,10 @@ function loadCommentTypesDD() {
                 $('#ddCommentType').html("");
                 $.each(refs.RefItems, function (idx, obj) {
                     $('#ddCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-                    $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
-
-                    if (obj.RefCode == blogObject.CommentType) {
-
-                    }
-
-
+                    if (obj.RefCode == blogObject.CommentType) 
+                        $('#selBlogEditCommentType').append("<option selected='selected' value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
+                    else
+                        $('#selBlogEditCommentType').append("<option value='" + obj.RefCode + "'>" + obj.RefDescription + "</option>");
                 });
 
                 $('#ddCommentType').change(function () {
@@ -218,7 +218,7 @@ function loadCommentTypesDD() {
                 });
 
                 $('#selBlogEditCommentType').change(function () {
-                    alert("selBlogEditCommentType(" + $('#selBlogEditCommentType option:selected').val() + ")");
+                    //alert("selBlogEditCommentType(" + $('#selBlogEditCommentType option:selected').val() + ")");
                     blogObject.CommentType = $('#ddCommentType').val()
                     //blogObject.CommentType = $('#selBlogEditCommentType option:selected').val();
                     //loadBlogList(blogObject.CommentType);
