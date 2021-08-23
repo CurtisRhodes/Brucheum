@@ -160,7 +160,7 @@ namespace OggleBooble.Api.Controllers
                         VisitorId = visitorId,
                         FolderId = folderId,
                         CalledFrom = calledFrom,
-                        Occured = DateTime.Today
+                        Occured = DateTime.Now
                     });
                     db.SaveChanges();
                     success = "ok";

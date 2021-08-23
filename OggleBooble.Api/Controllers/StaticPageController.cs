@@ -30,13 +30,100 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                    CreatePage(folderId, resultsModel, db, recurr);
+                    //CreatePage(folderId, resultsModel, db, recurr);
+                    CreateRedirectPage(folderId, resultsModel, db, recurr);
                 }
             }
-            catch (Exception e) { resultsModel.Success = Helpers.ErrorDetails(e); }
+            catch (Exception e)
+            {
+                resultsModel.Errors.Add(Helpers.ErrorDetails(e));
+                resultsModel.Success = "err";
+            }
             return resultsModel;
         }
+
+        private void CreateRedirectPage(int folderId, StaticPageResultsModel resultsModel, OggleBoobleMySqlContext db, bool recurr) {
+            try
+            {
+                CategoryFolder dbFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                if (((dbFolder.FolderType == "singleModel") || (dbFolder.FolderType == "singleParent")) && (dbFolder.RootFolder != "magazine"))
+                {
+                    string pageLocation = httpLocation + "album.html?folder=" + folderId;
+                    var sb = new StringBuilder("<html>\n<head>\n");
+                    sb.Append(createMetaHead(dbFolder.FolderName, pageLocation));
+                    sb.Append("</head><body>\n");
+
+                    var babepediaTrackBackLink = db.TrackbackLinks.Where(t => t.PageId == folderId && t.SiteCode == "BAB").FirstOrDefault();
+                    if (babepediaTrackBackLink != null)
+                    {
+                        sb.Append("<div><a href='" + babepediaTrackBackLink.Href + "'>Babepedia</a></div>\n");
+                    }
+                    sb.Append("<script>\nif(document.URL.indexOf(\"?\")>0)\n"+
+                        "{\n" +
+                            "let paramLink='" + pageLocation + "&'.concat(document.URL.substring(document.URL.indexOf(\"?\")+1));\n" +
+                            "(function(){window.location.href=paramLink;})();}\n" +
+                        "else\n" +
+                            " (function(){window.location.href='" + pageLocation + "&calledFrom=static';})();\n</script>\n");
+                    sb.Append("</body>\n</html>");
+
+                    string writeToDiskSuccess = WriteFileToDisk(sb.ToString(), dbFolder.FolderName, folderId, db);
+                    if (writeToDiskSuccess != "ok")
+                    {
+                        resultsModel.Errors.Add(writeToDiskSuccess + "  " + dbFolder.FolderName);
+                        resultsModel.Success = writeToDiskSuccess + "  " + dbFolder.FolderName;
+                    }
+                    else
+                        resultsModel.PagesCreated++;
+                }
+                if (recurr)
+                {
+                    if (resultsModel.Success == "ok")
+                    {
+                        List<CategoryFolder> categoryFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                        foreach (CategoryFolder dbCategoryFolder in categoryFolders)
+                        {
+                            CreateRedirectPage(dbCategoryFolder.Id, resultsModel, db, true);
+                        }
+                    }
+                }
+                resultsModel.FoldersProcessed++;
+            }
+            catch (Exception e) { resultsModel.Success = Helpers.ErrorDetails(e); }
+        }
+
+        private string createMetaHead(string pageName, string pageLocation) {
+            string ultimateMetaHead =
+            "<title>" + pageName + " : OggleBooble</title>" +
+            "<link rel='shortcut icon' href='Images/favicon.png' type='image/x-icon' />" +
+            "<meta http-equiv='Content-type' content='text/html; charset=UTF-8'>" +
+            "<meta http-equiv='X-UA-Compatible' content='IE=edge'>" +
+            "<meta name='description' content='Ogglebooble is a large collection of natural big breasted girls." +
+            " You'll find hundreds of photos of each model. " +
+            "Ogglebooble has the web's largest collection of free Playboy images" +
+            "<meta name='keywords' content='" + pageName + ",big naturals, naked, nude, big boobs, big tits, Every Playboy Centerfold," +
+            " enterfolds, Playboy Playmates, poses, naked ladies by poses '/>\n" +
+            "<meta property='og:title' content='" + pageName + "- Free pics, videos & biography'/>\n" +
+            "<meta property='og:description' content='" + pageName + " - Free pics, videos & biography'/>\n" +
+            "<meta property='og:url' content='" + pageLocation + "'/>\n" +
+            "<meta property='og:site_name' content='OggleBooble'/>\n" +
+            "<meta name='og:type' content='website'>\n" +
+            "<meta property='og:type' content='website'/>" +
+            "<meta property='og:image' content='" + pageName + "'/>\n";
+
+            return ultimateMetaHead;
+
+            //<link rel="search" href="https://www.Oggglebooble.com/data/opensearchdescription.xml" 
+            //"   <OpenSearchDescription xmlns = 'http://a9.com/-/spec/opensearch/1.1/' >\n" +
+            //< ShortName > Babepedia </ ShortName >
+            //< Tags > babepedia pornstars babes models photos videos free galleries pics </ Tags >
+            //< Url type = "text/html" template = "http://www.babepedia.com/search/{searchTerms}" />
+            //< Image height = "24" width = "24" type = "image/x-icon" > http://www.babepedia.com/favicon.ico</Image>
+            //< Query role = "example" searchTerms = "Tiffany" />
+            //< AdultContent > TRUE </ AdultContent >
+            //</ OpenSearchDescription >
+        }
+
+
         private void CreatePage(int folderId, StaticPageResultsModel resultsModel, OggleBoobleMySqlContext db, bool recurr)
         {
             if (resultsModel.Success != "ok")
