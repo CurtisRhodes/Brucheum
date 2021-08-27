@@ -57,7 +57,6 @@ let lastPageHitFolderId, lastPageHitVisitorId;
 function logPageHit(folderId) {
     try {
         //logActivity2(create_UUID(), "PH0", folderId, "log pageHit");  // entering log page hit
-
         let visitorId = getCookieValue("VisitorId");
         if (visitorId.indexOf("cookie not found") > -1) {
             visitorId = create_UUID();

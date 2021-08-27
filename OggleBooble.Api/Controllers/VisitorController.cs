@@ -46,37 +46,66 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Visitor/UpdateVisitor")]
-        public string UpdateVisitor(AddVisitorModel visitorData)
-        {
-            string success = "ono";
+        public UpdateVisitorSuccessModel UpdateVisitor(AddVisitorModel visitorData) {
+            var updateVisitorSuccessModel = new UpdateVisitorSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    Visitor visitor = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
-                    if (visitor == null)
-                        success = "VisitorId not found";
+                    Visitor visitor1 = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
+                    if (visitor1 == null)
+                        updateVisitorSuccessModel.ReturnValue = "VisitorId not found";
                     else
                     {
-                        visitor.IpAddress = visitorData.IpAddress;
-                        visitor.City = visitorData.City;
-                        visitor.Country = visitorData.Country;
-                        visitor.GeoCode = visitorData.GeoCode;
-                        visitor.Region = visitorData.Region;
-                        if (visitor.InitialPage == 0)
-                            visitor.InitialPage = visitorData.InitialPage;
-                        db.SaveChanges();
-                        success = "ok";
+                        Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                        if (visitor2 == null)
+                        {
+                            if (visitor1.Country == "ZZ")
+                            {
+                                visitor1.IpAddress = visitorData.IpAddress;
+                                visitor1.City = visitorData.City;
+                                visitor1.Country = visitorData.Country;
+                                visitor1.GeoCode = visitorData.GeoCode;
+                                visitor1.Region = visitorData.Region;
+                                if (visitor1.InitialPage == 0)
+                                    visitor1.InitialPage = visitorData.InitialPage;
+                                db.SaveChanges();
+                                updateVisitorSuccessModel.ReturnValue = "ZZ Visitor Updated";
+                            }
+                            else
+                                updateVisitorSuccessModel.ReturnValue = "no ZZ Visitor Updated";
+                        }
+                        else
+                        {
+                            if (visitor2.GeoCode != visitorData.GeoCode)
+                            {
+                                updateVisitorSuccessModel.ReturnValue = "Existing Ip new GeoCode";
+                            }
+                            else
+                            {                                
+                                updateVisitorSuccessModel.VisitorId = visitor2.VisitorId;
+                                if (visitor2.InitialPage == 0)
+                                    visitor2.InitialPage = visitorData.InitialPage;
+                                if (visitor1.Country == "ZZ")
+                                {
+                                    db.Visitors.Remove(visitor1);
+                                    db.SaveChanges();
+                                    updateVisitorSuccessModel.ReturnValue = "Existing Ip found. ZZ removed";
+                                }
+                                else { 
+                                }
+                            }
+                        }
                     }
                 }
+                updateVisitorSuccessModel.Success = "ok";
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                updateVisitorSuccessModel.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return updateVisitorSuccessModel;
         }
-
 
         [HttpGet]
         [Route("api/Visitor/GetVisitorInfo")]

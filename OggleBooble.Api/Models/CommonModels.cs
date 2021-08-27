@@ -27,6 +27,13 @@ namespace OggleBooble.Api.Models
         public int Parent { get; set; }
         public string Success { get; set; }
     }
+        
+    public class UpdateVisitorSuccessModel {
+        public string VisitorId { get; set; }
+        public string ReturnValue { get; set; }
+        public string Success { get; set; }
+    }
+
     public class SuccessModel
     {
         public string ReturnValue { get; set; }

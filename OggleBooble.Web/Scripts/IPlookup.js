@@ -14,7 +14,7 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
             logActivity("IPX", folderId, "tryAddNewIP/" + calledFrom);
         }
         else {
-            logActivity2(visitorId, "IP0", folderId, "tryAddNewIP/" + calledFrom);
+            //logActivity2(visitorId, "IP0", folderId, "tryAddNewIP/" + calledFrom);
             getIpInfo(folderId, visitorId, calledFrom);
         }
         // 1 geoplugin(folderId, calledFrom);
@@ -67,14 +67,10 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                         Region: ipResponse.region,
                         GeoCode: ipResponse.loc
                     },
-                    success: function (success) {
-                        if (success == "ok") {
-                            logActivity2(visitorId, "IPA", folderId, "get IpInfo/" + calledFrom); // visitor successfully updated
-                            logVisit(visitorId, folderId, "get IpInfo/" + calledFrom);
-                        }
-                        else {
-                            if (success == "VisitorId not found") {
-                                logActivity2(visitorId, "IPB", folderId, "get IpInfo/updateVisitor/" + calledFrom); // update failed. VisitorId not found
+                    success: function (updateVisitorSuccessModel) {
+                        if (updateVisitorSuccessModel.Success == "ok") {
+                            if (updateVisitorSuccessModel.ReturnValue == "VisitorId not found") {
+                                logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
                                 addVisitor({
                                     visitorId: visitorId,
                                     IpAddress: ipResponse.ip,
@@ -83,10 +79,33 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                                     Region: ipResponse.region,
                                     GeoCode: ipResponse.loc
                                 }, "get IpInfo/" + calledFrom);
-                            } else {
-                                logActivity2(visitorId, "IPC", folderId, success); // update failed. ajax error
-                                logError2(visitorId, "AJX", folderId, success, "get IpInfo/" + calledFrom);
                             }
+                            if (updateVisitorSuccessModel.ReturnValue == "Existing Ip found ZZ removed") {
+                                setCookieValue("VisitorId", updateVisitorSuccessModel.VisitorId);
+                                logActivity("IP7", folderId, "get IpInfo/" + calledFrom); // Existing Ip found ZZ removed. 
+                            }
+                            if (updateVisitorSuccessModel.ReturnValue == "ZZ Visitor Updated") {
+                                logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
+                            }
+                            if (updateVisitorSuccessModel.ReturnValue == "no ZZ Visitor Updated") {
+                                logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+                            }
+                            if (updateVisitorSuccessModel.ReturnValue == "Existing Ip new GeoCode") {
+                                logActivity2(visitorId, "IPD", folderId, "get IpInfo/updateVisitor/" + calledFrom); // Existing Ip new GeoCode
+                                addVisitor({
+                                    visitorId: visitorId,
+                                    IpAddress: ipResponse.ip,
+                                    City: ipResponse.city,
+                                    Country: ipResponse.country,
+                                    Region: ipResponse.region,
+                                    GeoCode: ipResponse.loc
+                                }, "get IpInfo/" + calledFrom);
+                            }
+                            logVisit(visitorId, folderId, "get IpInfo/" + calledFrom);
+                        }
+                        else {
+                            logActivity2(visitorId, "IPC", folderId, success); // update failed. ajax error
+                            logError2(visitorId, "AJX", folderId, success, "get IpInfo/" + calledFrom);
                         }
                     },
                     error: function (jqXHR) {
@@ -101,7 +120,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             error: function (jqXHR) {
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (errMsg.indexOf("Not connect.") == -1) {
+                if (errMsg.indexOf("Not connect.") > -1) {
                     logActivity2(visitorId, "IP6", folderId, "XHR:" + errMsg); // connection problem
                     logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
@@ -132,7 +151,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
         setTimeout(function () {
             if (!ipCall0Returned) {
                 logActivity2(visitorId, "IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
-                if (isNullorUndefined(ipResponse.ip)) {
+                if (!isNullorUndefined(ipResponse.ip)) {
                     logActivity2(create_UUID(), "IP9", 621237, "folderId: " + folderId + " visitorId: " + visitorId); // ipInfo failed to respond
                     tryApiDbIpFree(folderId, visitorId, calledFrom);  // try something else
                 }
