@@ -71,7 +71,10 @@ function setOggleFooter(folderId, rootFolder, calledFrom) {
                     "<div class='clickable' onclick='window.location.href=\"index.html?folderId=1142\", \"_blank\"'>Centerfolds</div>\n");
                 $('#footerCol2').html(
                     "<div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n" +
-                    "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n");
+                    "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n");                
+                $('#footerCol6').html(
+                    "<a href='https://www.babepedia.com/' target='_blank' alt='geolocation API and database'>" +
+                    "<img src='/images/babepdiaBanner02.png' height='65'/></a>\n");
                 break;
             }
             case "boobs": {  //    poses 

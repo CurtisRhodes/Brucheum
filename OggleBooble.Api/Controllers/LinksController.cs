@@ -459,9 +459,8 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Links/MoveMany")]
-        public string MoveMany(MoveManyModel moveManyModel)
-        {
-            string success;
+        public string MoveMany(MoveManyModel moveManyModel) {
+            string success = "ono";
             try
             {
                 string ftpRepo = imgRepo.Substring(7);
@@ -530,10 +529,12 @@ namespace OggleBooble.Api.Controllers
                                 return success;
                         }
                     }
-                    success = "ok";
                 }
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
             return success;
         }
 

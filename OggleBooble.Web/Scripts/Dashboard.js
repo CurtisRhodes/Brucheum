@@ -787,6 +787,7 @@ function moveCheckedImages() {
             ImageLinkIds: checkedImages
         };
         $('#dashBoardLoadingGif').fadeIn();
+        try {
         $.ajax({
             type: "PUT",
             url: settingsArray.ApiServer + "api/Links/MoveMany",
@@ -796,13 +797,23 @@ function moveCheckedImages() {
                 if (success === "ok") {
                     loadMMcheckboxes();
                 }
-                else { logError("AJX", mmSourceFolderId, success, "moveCheckedImages"); }
+                else {
+                    //logError("AJX", mmSourceFolderId, success, "moveCheckedImages");
+                    alert("MoveMany Ajax: " + errMsg);
+                }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, pSelectedTreeId, "loadMMcheckboxes")) logError("XHR", pSelectedTreeId, errMsg, "loadMMcheckboxes");
+                if (!checkFor404(errMsg, pSelectedTreeId, "loadMMcheckboxes"))
+                    logError("XHR", pSelectedTreeId, errMsg, "loadMMcheckboxes");
+
+                alert("MoveMany XHR error: " + errMsg);
+
             }
         });
+        } catch (e) {
+            alert("MoveMany CATCH error: " + e);
+        }
     }
 }
 
