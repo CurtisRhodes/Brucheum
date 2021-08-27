@@ -248,6 +248,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public string CalledFrom { get; set; }
         public int FolderId { get; set; }
         public DateTime Occured { get; set; }
+        public DateTime OccuredDay { get; set; }
     }
 
     [Table("OggleBooble.IpInfoHit")]
