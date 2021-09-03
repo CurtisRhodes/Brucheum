@@ -33,11 +33,13 @@ function checkConnection(folderId, calledFrom) {
             let connectingToServerImgShowing = false, canIgetaConnectionImgShowing = false;
             $('#headerMessage').html("connecting");
             //document.title = "connecting : OggleBooble";
-            changeFavoriteIcon("loading");
+            //changeFavoriteIcon("loading");
             connectionVerified = false;
             let verifyConnectionWaiter = setInterval(function () {
                 if (connectionVerified) {
-                    changeFavoriteIcon("redBallon");
+                    //changeFavoriteIcon("redBallon");
+                    //console.log("changeFavoriteIcon redBallon 155")
+
                      clearInterval(verifyConnectionWaiter);
                     $('#dots').html('');
                     console.log("connection verified after: " + verifyConnectionCount);

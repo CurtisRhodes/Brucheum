@@ -135,14 +135,29 @@ namespace OggleBooble.Api.Models
 
     public class ImageCommentModel 
     {
+        public int FolderId { get; set; }
+        public string ImageLinkId { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentText { get; set; }
+        public string CalledFrom { get; set; }
+        public string VisitorId { get; set; }
+    }
+
+    public class GetImageCommentModel {
+        public string ImageLinkId { get; set; }
         public string CommentId { get; set; }
         public string CommentTitle { get; set; }
         public string CommentText { get; set; }
-        public string ImageLinkId { get; set; }
-        public string CalledFrom { get; set; }
-        public string VisitorId { get; set; }
-        public DateTime Posted { get; set; }
+        public string UserName { get; set; }
         public string ImageName { get; set; }
+        public string Posted { get; set; }
+        public string Success { get; set; }
+    }
+
+    public class ImageCommentSuccessModel {
+        public string VisitorInfo { get; set; }
+        public string FolderName { get; set; }
+        public string UserName { get; set; }
         public string Success { get; set; }
     }
 }

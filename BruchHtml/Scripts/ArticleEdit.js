@@ -265,15 +265,19 @@ function loadImage(imageFullFileName) {
         fReader.onloadend = function (event) {
             let img = document.getElementById("imgArticleJog");
             img.src = event.target.result;
-            let url = settingsArray.ApiServer + "/api/Image/AddImage";
+            //let url = ;
+
+            alert("img.src: " + event.target.result)
+
+
             $.ajax({
                 type: "PUT",
                 data: {
                     ArticleId: article.Id,
                     FileName: input.files[0].name,
-                    Data: img.src
+                    Data: event.target.result
                 },
-                url: url,
+                url: settingsArray.ApiServer + "/api/Image/AddImage",
                 success: function (successModel) {
                     if (successModel.Success === "ok") {
                         //bind(response);

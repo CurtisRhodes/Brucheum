@@ -106,19 +106,19 @@ function addImageComment() {
         type: "POST",
         url: settingsArray.ApiServer + "api/ImageComment/Add",
         data: imageComment,
-        success: function (success) {
-            if (success === "ok") {
+        success: function (imageCommentSuccess) {
+            if (imageCommentSuccess.Success == "ok") {
                 displayStatusMessage("ok", "Entry Added");
                 console.log("image comment Added");
                 $('#divSaveFantasy').html("edit");
                 $('#divCloseFantasy').html("done");
-
                 awardCredits("IMC", imageComment.FolderId);
 
                 sendEmail("CurtishRhodes@hotmail.com", "SomeoneCommented@Ogglebooble.com", "Someone Entered an Image comment !!!",
-                    "<br/>VisitorId: " + imageComment.VisitorId +
+                    "<br/>VisitorInfo: " + imageComment.VisitorId + " " + imageCommentSuccess.VisitorInfo +
                     "<br/>ImageId: " + imageComment.linkId +
-                    "<br/>FolderId: " + imageComment.FolderId +
+                    "<br/>FolderInfo: " + imageComment.FolderId + " " + imageCommentSuccess.FolderName +
+                    "<br/>CommentTitle : " + imageComment.CommentTitle +
                     "<br/>comment: " + imageComment.CommentText);
 
                 logEvent("FCC", imageComment.FolderId, imageComment.CalledFrom, imageComment.CommentText);

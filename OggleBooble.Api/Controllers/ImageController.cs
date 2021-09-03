@@ -376,9 +376,9 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/ImageComment/GetImageComment")]
-        public ImageCommentModel GetImageComment(string linkId)
+        public GetImageCommentModel GetImageComment(string linkId)
         {
-            var imageComment = new ImageCommentModel();
+            var imageComment = new GetImageCommentModel();
             try
             {
             using (var db = new OggleBoobleMySqlContext())
@@ -386,13 +386,13 @@ namespace OggleBooble.Api.Controllers
                 imageComment = (from c in db.ImageComments
                                 join i in db.ImageFiles on c.ImageLinkId equals i.Id
                                 join f in db.CategoryFolders on i.FolderId equals f.Id
-                                select new ImageCommentModel()
+                                select new GetImageCommentModel()
                                 {
                                     CommentId = c.Id,
                                     CommentText = c.CommentText,
                                     CommentTitle = c.CommentTitle,
                                     ImageName = f.FolderPath + "/" + i.FileName,
-                                    Posted = c.Posted
+                                    Posted = c.Posted.ToShortDateString()
                                 }).Where(c => c.ImageLinkId == linkId).FirstOrDefault();
                 imageComment.Success = "ok";
             }
@@ -407,31 +407,41 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPost]
         [Route("api/ImageComment/Add")]
-        public string Add(ImageCommentModel imageCommentModel)
+        public ImageCommentSuccessModel Add(ImageCommentModel imageCommentModel)
         {
-            string success;
+            var imageCommentSuccessModel = new ImageCommentSuccessModel();
             try
             {
-                ImageComment imageComment = new ImageComment();
-                imageComment.Id = Guid.NewGuid().ToString();
-                imageComment.Posted = DateTime.Now;
-                imageComment.ImageLinkId = imageCommentModel.ImageLinkId;
-                imageComment.CommentText = imageCommentModel.CommentText;
-                imageComment.CommentTitle = imageCommentModel.CommentTitle;
-                imageComment.CalledFrom = imageCommentModel.CalledFrom;
-                imageComment.VisitorId = imageCommentModel.VisitorId;
+                ImageComment dbNewImageComment = new ImageComment();
+                dbNewImageComment.Id = Guid.NewGuid().ToString();
+                dbNewImageComment.Posted = DateTime.Now;
+                dbNewImageComment.ImageLinkId = imageCommentModel.ImageLinkId;
+                dbNewImageComment.CommentText = imageCommentModel.CommentText;
+                dbNewImageComment.CommentTitle = imageCommentModel.CommentTitle;
+                dbNewImageComment.CalledFrom = imageCommentModel.CalledFrom;
+                dbNewImageComment.VisitorId = imageCommentModel.VisitorId;
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.ImageComments.Add(imageComment);
+                    db.ImageComments.Add(dbNewImageComment);
                     db.SaveChanges();
-                    success = "ok";
+
+                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == imageCommentModel.FolderId).FirstOrDefault();
+                    imageCommentSuccessModel.FolderName = categoryFolder.FolderName;
+                    Visitor visitor = db.Visitors.Where(v => v.VisitorId == imageCommentModel.VisitorId).FirstOrDefault();
+                    if (visitor != null)
+                        imageCommentSuccessModel.VisitorInfo = visitor.City + " " + visitor.Region + " " + visitor.Country;
+                    RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.VisitorId == imageCommentModel.VisitorId).FirstOrDefault();
+                    if (dbRegisteredUser != null)
+                        imageCommentSuccessModel.UserName = dbRegisteredUser.UserName;
+
+                    imageCommentSuccessModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                imageCommentSuccessModel.Success = Helpers.ErrorDetails(ex);
             }
-            return success;
+            return imageCommentSuccessModel;
         }
 
         [HttpPut]

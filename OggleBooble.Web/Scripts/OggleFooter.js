@@ -73,7 +73,7 @@ function setOggleFooter(folderId, rootFolder, calledFrom) {
                     "<div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n" +
                     "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n");                
                 $('#footerCol6').html(
-                    "<a href='https://www.babepedia.com/' target='_blank' alt='geolocation API and database'>" +
+                    "<a href='https://www.babepedia.com/' target='_blank' alt='Babepedia - The hottest nude babes'>" +
                     "<img src='/images/babepdiaBanner02.png' height='65'/></a>\n");
                 break;
             }

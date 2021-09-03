@@ -26,6 +26,7 @@
             break;
         case "porn":
             changeFavoriteIcon("porn");
+            console.log("changeFavoriteIcon porn 1")
             document.title = "OgglePorn";
             break;
         case "dashboard": {
@@ -51,29 +52,6 @@
     //window.addEventListener("resize", mediaSavyHdrResize);
 }
 
-function setFavoriteIcon(rootFolder) {
-    switch (rootFolder) {
-        case "root":
-        case "dashboard":
-        case "index":
-        case "blog":
-        case "album":
-        case "ranker":
-        case "loading":
-            changeFavoriteIcon("redBallon");
-            break;
-        case "playboyIndex":
-            changeFavoriteIcon("centerfold");
-            break;
-        case "porn":
-            changeFavoriteIcon("porn");
-            break;
-        default:
-            alert("headerContext " + headerContext + " not handled");
-            changeFavoriteIcon("redBallon");
-            break;
-    }
-} 
 
 let hdrFolderId, hdrRootFolder;
 function resetOggleHeader(folderId, rootFolder) {
@@ -92,7 +70,8 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#hdrBtmRowSec3').append(addPgLinkButton(846, "Gent Archive"));
             $('#hdrBtmRowSec3').append(addSpaButton(72, "every playboy centerfold"));
         case "archive": {
-            changeFavoriteIcon("redBallon");
+            //changeFavoriteIcon("redBallon");
+            console.log("changeFavoriteIcon redBallon 1")
             $('#oggleHeader').switchClass('playboyHeader', 'boobsHeader');
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#oggleHeaderTitle').html("OggleBooble");
@@ -178,6 +157,7 @@ function resetOggleHeader(folderId, rootFolder) {
         }
         case "porn": {
             changeFavoriteIcon("porn");
+            console.log("changeFavoriteIcon porn 2")
             $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
             $('#oggleHeaderTitle').html("OgglePorn ");
