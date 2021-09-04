@@ -122,7 +122,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (errMsg.indexOf("Not connect.") > -1) {
                     logActivity2(visitorId, "IP6", folderId, "XHR:" + errMsg); // connection problem
-                    logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
+                    //logError2(visitorId, "XIP", folderId, errMsg, "get IpInfo/" + calledFrom);
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
                 }
                 else
@@ -172,7 +172,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                         success: function (success) {
                             if (success == "ok") {
                                 logActivity2(visitorId, "IPA", folderId, "timeout"); // visitor successfully updated
-                                logVisit(visitorId, folderId, "add Visitor");
+                                logVisit(visitorId, folderId, "timeout Update Visitor");
                             }
                             else {
                                 if (success == "VisitorId not found") {
@@ -184,10 +184,10 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                             }
                         },
                         error: function (jqXHR) {
-                            logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
+                            logActivity2(create_UUID(), "AV8", 555, "Update Visitor"); // AddVisitor XHR error
                             let errMsg = getXHRErrorDetails(jqXHR);
-                            if (!checkFor404(errMsg, 555, "add Visitor"))
-                                logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
+                            if (!checkFor404(errMsg, folderId, "add Visitor"))
+                                logError2(create_UUID(), "XHR", folderId, errMsg, "Update Visitor");
                         }
                     });
 
