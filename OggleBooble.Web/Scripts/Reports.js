@@ -52,7 +52,6 @@ function runMetricsMatrixReport() {
 
                     runMostVisitedPages();
                     runMostImageHits();
-                    runDailyRefferals();
                     //runMostActiveUsers();
                     $("#reportsFooter").html("<button onclick='rerun()'>reload</button>\n");
                 }
@@ -203,36 +202,62 @@ function runMostVisitedPages() {
 
 function runDailyRefferals() {
     try {
+        $('#dashBoardLoadingGif').show();
+        $("#dailyRefferalsContainer").html("");
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "/api/Report/ReferralsReport",
+            success: function (referrals) {
+                $('#dashBoardLoadingGif').hide();
+                if (referrals.Success === "ok") {
+                    let kludge = "<table class='mostAvtiveUsersTable'>";
+                    kludge += "<tr><th>occured</th><th>source</th><th>type</th><th>naked lady</th><th>visitor</th><th>location</th></tr>";
+                    //kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>hit time</th></tr>";
+                    $.each(referrals.VwStaticPageReferrals, function (idx, obj) {
+                        kludge += "<tr><td>" + obj.Occured + "</td>";
+                        kludge += "<td>" + obj.CalledFrom + "</td>";
+                        switch (obj.RootFolder) {
+                            case "boobs":
+                                kludge += "<td><span style='color:#966211'>" + obj.RootFolder + "</span></td>";
+                                break;
+                            case "archive":
+                                kludge += "<td><span style='color:#ed18ef'>" + obj.RootFolder + "</span></td>";
+                                break;
+                            case "porn":
+                                kludge += "<td><span style='color:red'>" + obj.RootFolder + "</span></td>";
+                                break;
+                            default:
+                                kludge += "<td>" + obj.RootFolder + "</td>";
+                        }
+                        kludge += "<td><a href='/album.html?folder=" + obj.Id + "' target='_blank'>" + obj.FolderName + "</a></td>";
+                        kludge += "<td class='clickable' onclick='showUserDetail(\"" + obj.Visitor + "\")'>" + obj.Visitor + "</td>";
+                        kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td></tr>";
+                    });
+                    kludge += "</table>";
+                    $("#reportsContentArea").html(kludge);
 
-    $('#dashBoardLoadingGif').show();
-    $("#dailyRefferalsContainer").html("");
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "/api/Report/ReferralsReport",
-        success: function (referrals) {
-            $('#dashBoardLoadingGif').hide();
-            //$('.subreportContainer').css("height", $('#dashboardContainer').height() - $("#dailyActivityReportContainer").height() * 2.13);
-            if (referrals.Success === "ok") {
-                $("#dailyRefferalsContainer").html("<div>Refferals " + todayString() + "</div>");
-                $.each(referrals.VwStaticPageReferrals, function (idx, obj) {
-                    $("#dailyRefferalsContainer").append(
-                        "<div><a href='/album.html?folder=" + obj.FolderId + "' target='_blank'>" +
-                        obj.FolderName + "</a>" + obj.Hits + "</div>");
-                });
+
+                    //$.each(pageHitReportModel.Items, function (idx, obj) {
+                    //kludge += "<tr><td class='clickable' onclick='showUserDetail(\"" + obj.VisitorId + "\")'>" + obj.VisitorId.substr(9) + "</td>";
+                    //kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
+                    //kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
+                    // kludge += "<td>" + obj.ImageHits + "</td>";
+
+                    $("#reportsFooter").html(" Total: " + pageHitReportModel.HitCount.toLocaleString());
+                }
+                else {
+                    logError("AJX", 3910, referrals.Success, "Daily Refferals Report");
+                    if (document.domain == "localhost") alert("run DailyRefferals: " + referrals.Success);
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "Daily Refferals Report"))
+                    logError("XHR", 3907, errMsg, "Daily Refferals Report");
             }
-            else {
-                logError("AJX", 3910, referrals.Success, "Daily Refferals Report");
-                if (document.domain == "localhost") alert("runDailyRefferals: " + referrals.Success);
-            }
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "Daily Refferals Report"))
-                logError("XHR", 3907, errMsg, "Daily Refferals Report");
-        }
-    });
+        });
     } catch (e) {
-        alert("runDailyRefferals Catch: " + e);
+        alert("run DailyRefferals Catch: " + e);
     }
 }
 
