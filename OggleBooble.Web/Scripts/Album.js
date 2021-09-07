@@ -302,23 +302,23 @@ function getAlbumPageInfo(folderId, isLargeLoad) {
                 if ((albumInfo.TrackBackItems.length > 0)) {
                     $('#trackbackContainer').css("display", "inline-block");
                     $.each(albumInfo.TrackBackItems, function (idx, obj) {
-                        switch (obj.SiteCode) {
-                            case "FRE":
-                                //alert("ss for " + obj.LinkStatus);
-                                if (obj.LinkStatus == "ok")
+                        if (obj.LinkStatus == "ok") {
+                            switch (obj.SiteCode) {
+                                case "FRE":
                                     $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">" + albumInfo.FolderName + " Free Porn</a></div>");
-                                break;
-                            case "BAB":
-                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Babepedia</a></div>");
-                                break;
-                            case "BOB":
-                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Boobpedia</a></div>");
-                                break;
-                            case "IND":
-                                $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Indexxx</a></div>");
-                                break;
-                            default:
-                                logError("SWT", folderId, "site code: " + obj.SiteCode, "getAlbumPageInfo/TrackBackItems");
+                                    break;
+                                case "BAB":
+                                    $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Babepedia</a></div>");
+                                    break;
+                                case "BOB":
+                                    $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Boobpedia</a></div>");
+                                    break;
+                                case "IND":
+                                    $('#trackbackLinkArea').append("<div class='trackBackLink'><a href='" + obj.Href + "' target=\"_blank\">Indexxx</a></div>");
+                                    break;
+                                default:
+                                    logError("SWT", folderId, "site code: " + obj.SiteCode, "getAlbumPageInfo/TrackBackItems");
+                            }
                         }
                     });
                 }

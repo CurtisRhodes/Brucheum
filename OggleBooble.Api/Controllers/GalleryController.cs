@@ -122,12 +122,15 @@ namespace OggleBooble.Api.Controllers
                     var trackbackLinks = db.TrackbackLinks.Where(t => t.PageId == folderId).ToList();
                     foreach (TrackbackLink trackbackLink in trackbackLinks)
                     {
-                        albumInfo.TrackBackItems.Add(new TrackbackLink()
+                        if (trackbackLink.LinkStatus == "ok")
                         {
-                            SiteCode = trackbackLink.SiteCode,
-                            Href = trackbackLink.Href,
-                            LinkStatus = trackbackLink.LinkStatus
-                        });
+                            albumInfo.TrackBackItems.Add(new TrackbackLink()
+                            {
+                                SiteCode = trackbackLink.SiteCode,
+                                Href = trackbackLink.Href,
+                                LinkStatus = trackbackLink.LinkStatus
+                            });
+                        }
                     }
                     var dbFolderDetails = db.FolderDetails.Where(d => d.FolderId == folderId).FirstOrDefault();
                     if (dbFolderDetails != null)
