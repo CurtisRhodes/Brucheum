@@ -56,66 +56,73 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             success: function (ipResponse) {
                 ipCall0Returned = true;
                 logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
-                $.ajax({
-                    type: "PUT",
-                    url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
-                    data: {
-                        VisitorId: visitorId,
-                        IpAddress: ipResponse.ip,
-                        City: ipResponse.city,
-                        Country: ipResponse.country,
-                        Region: ipResponse.region,
-                        GeoCode: ipResponse.loc
-                    },
-                    success: function (updateVisitorSuccessModel) {
-                        if (updateVisitorSuccessModel.Success == "ok") {
-                            if (updateVisitorSuccessModel.ReturnValue == "VisitorId not found") {
-                                logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
-                                addVisitor({
-                                    visitorId: visitorId,
-                                    IpAddress: ipResponse.ip,
-                                    City: ipResponse.city,
-                                    Country: ipResponse.country,
-                                    Region: ipResponse.region,
-                                    GeoCode: ipResponse.loc
-                                }, "get IpInfo/" + calledFrom);
+
+                try {
+
+                    $.ajax({
+                        type: "PUT",
+                        url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
+                        data: {
+                            VisitorId: visitorId,
+                            IpAddress: ipResponse.ip,
+                            City: ipResponse.city,
+                            Country: ipResponse.country,
+                            Region: ipResponse.region,
+                            GeoCode: ipResponse.loc
+                        },
+                        success: function (updateVisitorSuccessModel) {
+                            if (updateVisitorSuccessModel.Success == "ok") {
+                                if (updateVisitorSuccessModel.ReturnValue == "VisitorId not found") {
+                                    logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
+                                    addVisitor({
+                                        visitorId: visitorId,
+                                        IpAddress: ipResponse.ip,
+                                        City: ipResponse.city,
+                                        Country: ipResponse.country,
+                                        Region: ipResponse.region,
+                                        GeoCode: ipResponse.loc
+                                    }, "get IpInfo/" + calledFrom);
+                                }
+                                if (updateVisitorSuccessModel.ReturnValue == "Existing Ip found ZZ removed") {
+                                    setCookieValue("VisitorId", updateVisitorSuccessModel.VisitorId);
+                                    logActivity("IP7", folderId, "get IpInfo/" + calledFrom); // Existing Ip found ZZ removed. 
+                                }
+                                if (updateVisitorSuccessModel.ReturnValue == "ZZ Visitor Updated") {
+                                    logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
+                                }
+                                if (updateVisitorSuccessModel.ReturnValue == "no ZZ Visitor Updated") {
+                                    logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+                                }
+                                if (updateVisitorSuccessModel.ReturnValue == "Existing Ip new GeoCode") {
+                                    logActivity2(visitorId, "IPD", folderId, "get IpInfo/updateVisitor/" + calledFrom); // Existing Ip new GeoCode
+                                    addVisitor({
+                                        visitorId: visitorId,
+                                        IpAddress: ipResponse.ip,
+                                        City: ipResponse.city,
+                                        Country: ipResponse.country,
+                                        Region: ipResponse.region,
+                                        GeoCode: ipResponse.loc
+                                    }, "get IpInfo/" + calledFrom);
+                                }
+                                logVisit(visitorId, folderId, "get IpInfo/" + calledFrom);
                             }
-                            if (updateVisitorSuccessModel.ReturnValue == "Existing Ip found ZZ removed") {
-                                setCookieValue("VisitorId", updateVisitorSuccessModel.VisitorId);
-                                logActivity("IP7", folderId, "get IpInfo/" + calledFrom); // Existing Ip found ZZ removed. 
+                            else {
+                                logActivity2(visitorId, "IPC", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
+                                logError2(visitorId, "AJX", folderId, updateVisitorSuccessModel.Success, "get IpInfo/" + calledFrom);
                             }
-                            if (updateVisitorSuccessModel.ReturnValue == "ZZ Visitor Updated") {
-                                logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
-                            }
-                            if (updateVisitorSuccessModel.ReturnValue == "no ZZ Visitor Updated") {
-                                logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
-                            }
-                            if (updateVisitorSuccessModel.ReturnValue == "Existing Ip new GeoCode") {
-                                logActivity2(visitorId, "IPD", folderId, "get IpInfo/updateVisitor/" + calledFrom); // Existing Ip new GeoCode
-                                addVisitor({
-                                    visitorId: visitorId,
-                                    IpAddress: ipResponse.ip,
-                                    City: ipResponse.city,
-                                    Country: ipResponse.country,
-                                    Region: ipResponse.region,
-                                    GeoCode: ipResponse.loc
-                                }, "get IpInfo/" + calledFrom);
-                            }
-                            logVisit(visitorId, folderId, "get IpInfo/" + calledFrom);
+                        },
+                        error: function (jqXHR) {
+                            logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
+                            let errMsg = getXHRErrorDetails(jqXHR);
+                            if (!checkFor404(errMsg, 555, "add Visitor"))
+                                logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
                         }
-                        else {
-                            logActivity2(visitorId, "IPC", folderId, success); // update failed. ajax error
-                            logError2(visitorId, "AJX", folderId, success, "get IpInfo/" + calledFrom);
-                        }
-                    },
-                    error: function (jqXHR) {
-                        logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
-                        let errMsg = getXHRErrorDetails(jqXHR);
-                        if (!checkFor404(errMsg, 555, "add Visitor"))
-                            logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
-                    }
-                });
+                    });
+                } catch (e) {
+                    logError("CAT", folderId, e, "Update Visitor");
+                }
                 ip0Busy = false;
+                logActivity2(visitorId, "IP0", folderId, statusCode); // well it worked
             },
             error: function (jqXHR) {
                 ipCall0Returned = true;

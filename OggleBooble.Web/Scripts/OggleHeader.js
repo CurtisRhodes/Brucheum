@@ -227,7 +227,7 @@ function setHeaderMenu(menu) {
         }
         case "soft": {
             $('#mainMenuContainer').html(
-                "<span onclick='headerMenuClick(\"soft\",243)'>pussy, </span>\n" +
+                "<span onclick='headerMenuClick(\"soft\",379)'>pussy, </span>\n" +
                 "<span onclick='headerMenuClick(\"soft\",420)'>boob suckers, </span>\n" +
                 "<span onclick='headerMenuClick(\"soft\",498)'>big tit lezies, </span>\n" +
                 "<span onclick='headerMenuClick(\"soft\",357)'>fondle, </span>\n" +
