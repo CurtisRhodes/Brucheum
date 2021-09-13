@@ -56,6 +56,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             success: function (ipResponse) {
                 ipCall0Returned = true;
                 logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
+
                 $.ajax({
                     type: "PUT",
                     url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
@@ -69,7 +70,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     },
                     success: function (updateVisitorSuccessModel) {
                         if (updateVisitorSuccessModel.Success == "ok") {
-                            if (updateVisitorSuccessModel.ReturnValue == "VisitorId not found") {
+                            if (updateVisitorSuccessModel.Message1 == "VisitorId not found") {
                                 logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
                                 addVisitor({
                                     visitorId: visitorId,
@@ -80,26 +81,20 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                                     GeoCode: ipResponse.loc
                                 }, "get IpInfo/" + calledFrom);
                             }
-                            if (updateVisitorSuccessModel.ReturnValue == "Existing Ip found ZZ removed") {
+                            if (updateVisitorSuccessModel.Message1 == "New Ip Visitor Updated") {
+                                if (updateVisitorSuccessModel.Message2 == "ZZ Visitor Updated")
+                                    logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
+                                if (updateVisitorSuccessModel.Message2 == "no ZZ Visitor Updated")
+                                    logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+
+                            }
+                            if (updateVisitorSuccessModel.Message1 == "Existing IP") {
                                 setCookieValue("VisitorId", updateVisitorSuccessModel.VisitorId);
-                                logActivity("IP7", folderId, "get IpInfo/" + calledFrom); // Existing Ip found ZZ removed. 
-                            }
-                            if (updateVisitorSuccessModel.ReturnValue == "ZZ Visitor Updated") {
-                                logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
-                            }
-                            if (updateVisitorSuccessModel.ReturnValue == "no ZZ Visitor Updated") {
-                                logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
-                            }
-                            if (updateVisitorSuccessModel.ReturnValue == "Existing Ip new GeoCode") {
-                                logActivity2(visitorId, "IPD", folderId, "get IpInfo/updateVisitor/" + calledFrom); // Existing Ip new GeoCode
-                                addVisitor({
-                                    visitorId: visitorId,
-                                    IpAddress: ipResponse.ip,
-                                    City: ipResponse.city,
-                                    Country: ipResponse.country,
-                                    Region: ipResponse.region,
-                                    GeoCode: ipResponse.loc
-                                }, "get IpInfo/" + calledFrom);
+                                if (updateVisitorSuccessModel.Message2 == "Existing Ip found. ZZ removed")
+                                    logActivity("IP7", folderId, "get IpInfo/" + calledFrom); // Existing Ip found ZZ removed. 
+                                else
+                                    logActivity("IPD", folderId, updateVisitorSuccessModel.Message2); // Existing Ip new GeoCode?
+                                //logActivity2(visitorId, "IPD", folderId, "curr" + updateVisitorSuccessModel.CurrGeoCode + " new: " + ipResponse.loc); // Existing Ip new GeoCode
                             }
                             logVisit(visitorId, folderId, "get IpInfo/" + calledFrom);
                         }
