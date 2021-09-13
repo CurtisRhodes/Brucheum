@@ -70,11 +70,11 @@ function logPageHit(folderId) {
                 GeoCode: "cookie not found",
                 InitialPage: folderId
             }, "log pageHit");
-            logActivity2(create_UUID(), "PH3", folderId, "log pageHit"); // cookie not found
+            logActivity("PH3", folderId, "log pageHit"); // cookie not found
         }
 
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
-            logActivity2(visitorId, "PH6", folderId, "log PageHit"); // looping page hit
+            logActivity("PH6", folderId, "log PageHit"); // looping page hit
             return;
         }
         lastPageHitVisitorId = visitorId;

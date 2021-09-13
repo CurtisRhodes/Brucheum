@@ -30,7 +30,8 @@ namespace OggleBooble.Api.Models
         
     public class UpdateVisitorSuccessModel {
         public string VisitorId { get; set; }
-        public string ReturnValue { get; set; }
+        public string Message1 { get; set; }
+        public string Message2 { get; set; }
         public string Success { get; set; }
     }
 

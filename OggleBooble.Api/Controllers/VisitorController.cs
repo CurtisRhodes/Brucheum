@@ -54,45 +54,51 @@ namespace OggleBooble.Api.Controllers
                 {
                     Visitor visitor1 = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
                     if (visitor1 == null)
-                        updateVisitorSuccessModel.ReturnValue = "VisitorId not found";
+                        updateVisitorSuccessModel.Message1 = "VisitorId not found";
                     else
                     {
                         Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
                         if (visitor2 == null)
                         {
+                            updateVisitorSuccessModel.Message1 = "New Ip Visitor Updated";
+                            visitor1.IpAddress = visitorData.IpAddress;
+                            visitor1.City = visitorData.City;
+                            visitor1.Country = visitorData.Country;
+                            visitor1.GeoCode = visitorData.GeoCode;
+                            visitor1.Region = visitorData.Region;
+                            if (visitor1.InitialPage == 0)
+                                visitor1.InitialPage = visitorData.InitialPage;
+                            db.SaveChanges();
+
+                            if (visitor1.Country == "ZZ")
+                                updateVisitorSuccessModel.Message2 = "ZZ Visitor Updated";
+                            else
+                                updateVisitorSuccessModel.Message2 = "no ZZ Visitor Updated";
+                        }
+                        else //  IpAddress Dupe Problem
+                        {
+                            updateVisitorSuccessModel.Message1 = "Existing IP";
+                            updateVisitorSuccessModel.VisitorId = visitor2.VisitorId;
                             if (visitor1.Country == "ZZ")
                             {
-                                visitor1.IpAddress = visitorData.IpAddress;
-                                visitor1.City = visitorData.City;
-                                visitor1.Country = visitorData.Country;
-                                visitor1.GeoCode = visitorData.GeoCode;
-                                visitor1.Region = visitorData.Region;
-                                if (visitor1.InitialPage == 0)
-                                    visitor1.InitialPage = visitorData.InitialPage;
+                                db.Visitors.Remove(visitor1);
                                 db.SaveChanges();
-                                updateVisitorSuccessModel.ReturnValue = "ZZ Visitor Updated";
+                                updateVisitorSuccessModel.Message2 = "Existing Ip found. ZZ removed";
                             }
                             else
-                                updateVisitorSuccessModel.ReturnValue = "no ZZ Visitor Updated";
-                        }
-                        else
-                        {
-                            if (visitor2.GeoCode != visitorData.GeoCode)
                             {
-                                updateVisitorSuccessModel.ReturnValue = "Existing Ip new GeoCode";
-                            }
-                            else
-                            {                                
-                                updateVisitorSuccessModel.VisitorId = visitor2.VisitorId;
-                                if (visitor2.InitialPage == 0)
-                                    visitor2.InitialPage = visitorData.InitialPage;
-                                if (visitor1.Country == "ZZ")
+
+                                if (visitor2.GeoCode != visitorData.GeoCode)
                                 {
-                                    db.Visitors.Remove(visitor1);
+                                    visitor2.GeoCode = visitorData.GeoCode;
                                     db.SaveChanges();
-                                    updateVisitorSuccessModel.ReturnValue = "Existing Ip found. ZZ removed";
+                                    updateVisitorSuccessModel.Message2 = "Existing Ip new GeoCode";
                                 }
-                                else { 
+                                if (visitor2.InitialPage == 0)
+                                {
+                                    updateVisitorSuccessModel.Message2 += "Initial Page updated";
+                                    visitor2.InitialPage = visitorData.InitialPage;
+                                    db.SaveChanges();
                                 }
                             }
                         }
