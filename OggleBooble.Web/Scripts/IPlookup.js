@@ -56,9 +56,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             success: function (ipResponse) {
                 ipCall0Returned = true;
                 logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
-
                 try {
-
                     $.ajax({
                         type: "PUT",
                         url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
@@ -122,7 +120,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     logError("CAT", folderId, e, "Update Visitor");
                 }
                 ip0Busy = false;
-                logActivity2(visitorId, "IP0", folderId, statusCode); // well it worked
+                //logActivity2(visitorId, "IP0", folderId, statusCode); // well it worked
             },
             error: function (jqXHR) {
                 ipCall0Returned = true;
