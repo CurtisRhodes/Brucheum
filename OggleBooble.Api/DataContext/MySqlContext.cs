@@ -84,11 +84,22 @@ namespace OggleBooble.Api.MySqlDataContext
     [Table("OggleBooble.VwStaticPageReferral")]
     public partial class VwStaticPageReferral
     {
+        public string On { get; set; }
         [Key]
-        public int FolderId { get; set; }
+        [Column(Order = 2)]
+        public string At { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int Id { get; set; }
         public string FolderName { get; set; }
-        public int Hits { get; set; }
-        //public int Total { get; set; }
+        public string CalledFrom { get; set; }
+        public string RootFolder { get; set; }        
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        [Key]
+        [Column(Order = 0)]
+        public string Visitor { get; set; }
     }
 
     //[Table("OggleBooble.VwStaticPageReferral")]

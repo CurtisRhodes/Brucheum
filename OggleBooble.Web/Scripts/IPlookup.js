@@ -111,6 +111,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     }
                 });
                 ip0Busy = false;
+                logActivity2(visitorId, "IP0", folderId, statusCode); // well it worked
             },
             error: function (jqXHR) {
                 ipCall0Returned = true;
