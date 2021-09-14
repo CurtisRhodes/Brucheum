@@ -112,10 +112,10 @@ function dashboardHtml() {
         "                   <div class='workAreaCloseButton'><img style='height:25px' src='/images/poweroffRed01.png' onclick='showDefaultWorkArea()'></div>\n" +
         "               </div>\n" +
         "               <div id='reportsContentArea' class='workAreaDisplayContainer'></div>\n" +
-        "               <div id='reportsFooter' class='workareaFooter'></div>\n" +
         "           </div>\n" +
         "       </div>\n" +
         "   </div>\n" +
+        "   <div id='reportsFooter' class='workareaFooter'></div>\n" +
         "   <div id='dataifyInfo' class='infoLine' onclick='$(\"#dataifyInfo\").hide()'></div>\n" +
 
         "   <div id='dashboardDialog' class='oggleDialogContainer displayHidden'>\n" +

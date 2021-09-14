@@ -222,7 +222,7 @@ function runDailyRefferals() {
                                 kludge += "<td><span style='color:#ed18ef'>" + obj.CalledFrom + "</span></td>";
                                 break;
                             default:
-                                kludge += "<td>" + obj.RootFolder + "</td>";
+                                kludge += "<td>" + obj.CalledFrom + "</td>";
                         }
                         kludge += "<td>" + obj.RootFolder + "</td>";
                         kludge += "<td><a href='/album.html?folder=" + obj.Id + "' target='_blank'>" + obj.FolderName + "</a></td>";
@@ -266,11 +266,9 @@ function runPageHitReport() {
             $('#dashBoardLoadingGif').hide();
             if (pageHitReportModel.Success === "ok") {
                 let kludge = "<table class='mostAvtiveUsersTable'>";
-                //kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>&nbsp;images hit</th><th>hit time</th></tr>";
-                kludge += "<tr><th>ip</th><th>location</th><th>page</th><th>folder type</th><th>hit time</th></tr>";
+                kludge += "<tr><th>time</th><th>page</th><th>page type</th><th>location</th><th>Visitor</th></tr>";
                 $.each(pageHitReportModel.Items, function (idx, obj) {
-                    kludge += "<tr><td class='clickable' onclick='showUserDetail(\"" + obj.VisitorId + "\")'>" + obj.VisitorId.substr(9) + "</td>";
-                    kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
+                    kludge += "<td>" + obj.HitTime + "</td>";
                     kludge += "<td><a href='/album.html?folder=" + obj.PageId + "' target='_blank'>" + obj.FolderName.substring(0, 20) + "</a></td>";
                     switch (obj.RootFolder) {
                         case "boobs":
@@ -285,8 +283,8 @@ function runPageHitReport() {
                         default:
                             kludge += "<td>" + obj.RootFolder + "</td>";
                     }
-                    // kludge += "<td>" + obj.ImageHits + "</td>";
-                    kludge += "<td>" + obj.HitTime + "</td></tr>";
+                    kludge += "<td>" + obj.City + ", " + obj.Region + ", " + obj.Country + "</td>";
+                    kludge += "<td class='clickable' onclick='showUserDetail(\"" + obj.VisitorId + "\")'>" + obj.VisitorId.substr(9) + "</td></tr>";
                 });
                 kludge += "</table>";
                 $("#reportsContentArea").html(kludge);
