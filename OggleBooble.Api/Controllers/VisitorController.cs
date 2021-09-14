@@ -251,6 +251,33 @@ namespace OggleBooble.Api.Controllers
             }
             return successModel;
         }
+        
+        [HttpPut]
+        [Route("api/Visitor/TagVisitor")]
+        public string TagVisitor(string visitorId, string tagValue) {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (dbVisitor == null)
+                        success = "VisitorId not found";
+                    else
+                    {
+                        dbVisitor.City = "already processed";
+                        dbVisitor.GeoCode = tagValue;
+                        db.SaveChanges();
+                        success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
     }
 
     [EnableCors("*", "*", "*")]
