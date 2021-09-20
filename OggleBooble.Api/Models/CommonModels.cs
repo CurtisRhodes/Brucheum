@@ -165,6 +165,10 @@ namespace OggleBooble.Api.Models
         public string IpAddress { get; set; }
         public string VisitorId { get; set; }
         public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string GeoCode { get; set; }
+        public int InitialPage { get; set; }
         public string Success { get; set; }
     }
 

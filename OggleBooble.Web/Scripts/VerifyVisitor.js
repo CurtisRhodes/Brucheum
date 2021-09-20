@@ -177,9 +177,10 @@ function addVisitor(visitorData, calledFrom) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity2(create_UUID(), "AV8", 555, errMsg); // AddVisitor XHR error
                 if (!checkFor404(errMsg, 555, "add Visitor"))
                     logError2(create_UUID(), "XHR", 55, errMsg, "add visitor/" + calledFrom);
+                else
+                    logActivity2(create_UUID(), "AV8", 555, errMsg); // AddVisitor XHR error
             }
         });
     } catch (e) {

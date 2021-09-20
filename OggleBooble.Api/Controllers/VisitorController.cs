@@ -137,6 +137,9 @@ namespace OggleBooble.Api.Controllers
                             visitorInfoModel.IsRegisteredUser = true;
                             visitorInfoModel.RegisteredUser = dbRegisteredUser;
                         }
+                        visitorInfoModel.Country = dbVisitor.Country;
+                        visitorInfoModel.City = dbVisitor.City;
+                        visitorInfoModel.GeoCode = dbVisitor.GeoCode;
                         visitorInfoModel.IpAddress = dbVisitor.IpAddress;
                         visitorInfoModel.Success = "ok";
                     }

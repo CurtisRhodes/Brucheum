@@ -85,13 +85,12 @@ function logPageHit(folderId) {
             url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
             success: function (pageHitSuccess) {
                 if (pageHitSuccess.Success === "ok") {
-                    //logActivity2(visitorId, "PH1",  folderId, "log pageHit");  // page hit success
-
                     if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
                         logActivity2(visitorId, "PH4", folderId, "log pageHit"); // pageHits > 3 and country=="ZZ"
                         tryAddNewIP(folderId, visitorId, "log pageHit");
                     }
-                    // logVisit(visitorId, folderId, "logPageHit");
+                    else
+                        logVisit(visitorId, folderId, "log pageHit");
                 }
                 else {
                     if (pageHitSuccess.Success = "duplicate hit") {
@@ -99,19 +98,20 @@ function logPageHit(folderId) {
                     }
                     else {
                         logActivity2(visitorId, "PH8", folderId, "log pageHit");  // page hit ajax error
-                        logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "logPageHit");
+                        logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log pageHit");
                     }
                 }
             },
             error: function (jqXHR) {
                 logActivity(visitorId, "PH7", "log pageHit");  // page hit XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "logPageHit")) logError("XHR", folderId, errMsg, "logPageHit");
+                if (!checkFor404(errMsg, folderId, "logPageHit"))
+                    logError("XHR", folderId, errMsg, "log pageHit");
             }
         });
     } catch (e) {
         logActivity(visitorId, "PH9", "log pageHit");  // page hit catch error
-        logError("CAT", folderId, e, "logPageHIt");
+        logError("CAT", folderId, e, "log pageHit");
     }
 }
 
@@ -176,32 +176,45 @@ function logVisit(visitorId, folderId, calledFrom) {
 }
 
 function logStaticPageHit(folderId, calledFrom) {
-
     logActivity("SP0", folderId, calledFrom); // calling static page hit
     let visitorId = getCookieValue("VisitorId");
+
+/*
+ACT	SP0	calling static page hit
+ACT	SP1	static page hit success
+ACT	SP2	static page hit ajax error
+ACT	SP3	static page hit no VisitorId
+ACT	SP4	success return to static page hit
+ACT	SP5	no VisitorId loop
+ACT	SP6	static page hit XHR error
+ERR	SPH	Visitor Id found 2nd time
+EVT	SPH	static page call
+*/
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId +
-            "&folderId=" + folderId + "&calledFrom=" + calledFrom,
+        url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId + "&folderId=" + folderId + "&calledFrom=" + calledFrom,
         success: function (success) {
-            logActivity("SP4", folderId, success); // static page hit return
+            //logActivity("SP4", folderId, success); // static page hit return
             if (success == "ok") {
-                logActivity("SP1", folderId, calledFrom); // static page hit success
-                //logEvent("SPH", folderId, "logStatic PageHit/" + calledFrom, "");
+                logActivity("SP1", folderId, "logStatic PageHit/" + calledFrom); // static page hit success
             }
             else {
-                logActivity("SP2", folderId, calledFrom); // static page hit ajax error
-                //logError("AJX", folderId, success, "logStatic PageHit/" + calledFrom);
+                if (success.toUpperCase().indexOf("DUPLICATE") > -1) {
+                    logActivity("SP3", folderId, "logStatic PageHit/" + calledFrom); // duplicate static pageHit
+                }
+                else {
+                    logActivity("SP2", folderId, "logStatic PageHit/" + calledFrom); // static page hit ajax error
+                    logError("AJX", folderId, success, "logStatic PageHit/" + calledFrom);
+                }
             }
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
             logActivity("SP6", folderId, calledFrom); // static page hit XHR error
-            if (!checkFor404(errMsg, folderId, "log StaticPageHit"))
-                logError("XHR", folderId, errMsg, "log StaticPageHit");
+            if (!checkFor404(errMsg, folderId, "logStatic PageHit/" + calledFrom))
+                logError("XHR", folderId, errMsg, "logStatic PageHit/" + calledFrom);
         }
     });
-    //logEvent("SDS", folderId, "logStatic PageHit/" + calledFrom, "");
 }
 
 function logIpHit(visitorId, ipAddress, folderId) {
