@@ -799,7 +799,7 @@ function moveCheckedImages() {
                 }
                 else {
                     //logError("AJX", mmSourceFolderId, success, "moveCheckedImages");
-                    alert("MoveMany Ajax: " + errMsg);
+                    alert("MoveMany Ajax: " + success);
                 }
             },
             error: function (jqXHR) {
