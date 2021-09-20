@@ -114,11 +114,17 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                                 }, "get IpInfo/" + calledFrom);
                             }
                             if (updateVisitorSuccessModel.Message1 == "New Ip Visitor Updated") {
-                                if (updateVisitorSuccessModel.Message2 == "ZZ Visitor Updated")
-                                    logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
-                                if (updateVisitorSuccessModel.Message2 == "no ZZ Visitor Updated")
-                                    logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
-
+                                switch (updateVisitorSuccessModel.Message2) {
+                                    case "ZZ Visitor Updated":
+                                        logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
+                                        break;
+                                    case "no ZZ Visitor Updated":
+                                        logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+                                        break;
+                                    default:
+                                        logActivity("IPE", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+                                        logError("BUG", folderId, updateVisitorSuccessModel.Message2, "get IpInfo/" + calledFrom);
+                                }
                             }
                             if (updateVisitorSuccessModel.Message1 == "Existing IP") {
                                 setCookieValue("VisitorId", updateVisitorSuccessModel.VisitorId);
@@ -126,7 +132,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                                     logActivity("IP7", folderId, "get IpInfo/" + calledFrom); // Existing Ip found ZZ removed. 
                                 else
                                     logActivity("IPD", folderId, updateVisitorSuccessModel.Message2); // Existing Ip new GeoCode?
-                                //logActivity2(visitorId, "IPD", folderId, "curr" + updateVisitorSuccessModel.CurrGeoCode + " new: " + ipResponse.loc); // Existing Ip new GeoCode
                             }
                             logVisit(visitorId, folderId, "get IpInfo/" + calledFrom);
                         }
@@ -136,7 +141,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                         }
                     },
                     error: function (jqXHR) {
-                        logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
+                        logActivity2(create_UUID(), "IPE", 555, "add Visitor"); // AddVisitor XHR error
                         let errMsg = getXHRErrorDetails(jqXHR);
                         if (!checkFor404(errMsg, 555, "add Visitor"))
                             logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
