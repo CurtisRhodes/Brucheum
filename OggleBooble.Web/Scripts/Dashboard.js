@@ -178,6 +178,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='runImpactReport()'>Impact</div>\n" +
                 "<div class='clickable' onclick='showMostActiveUsersReport()'>Most Active Users</div>\n" +
                 "<div class='clickable' onclick='showLatestImageHitsReport()'>Latest Image Hits</div>\n" +
+                "<div class='clickable' onclick='showPlaymatePageDialog()'>Build Playmate Page</div>\n" +                
                 "<div class='clickable' onclick='runDailyRefferals();'>Daily Refferals</div>\n");
             break;
         case "admin":
@@ -1223,7 +1224,6 @@ function performRipPdf() {
 
 // UNUSED
 function showRenameFolderDialog(folderId, folderName) {
-    showLinkDialog();
     $('#centeredDialogTitle').html("Rename Folder: " + folderName);
     //$('#centeredDialogContents').html(
     //    "<div><span>folder to rename</span>" + folderName + "</div>\n" +

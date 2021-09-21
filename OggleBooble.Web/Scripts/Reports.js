@@ -732,15 +732,35 @@ function int2Month(nMonth) {
     }
 }
 
-function buildHtmlPage() {
+function buildCategoryPage(folderId) { }
+
+function showPlaymatePageDialog() {
+    $('#dashboardDialogTitle').html("Build Facebook Page");
+    $('#dashboardDialogContents').html(
+        "       <div><span>Section Type</span><select id='ddFolderSection' class='inlineInput roundedInput'>\n" +
+        "              <option value='allDecades'>All Decades</option>\n" +
+        "              <option value='decade'>single Decade</option>\n" +
+        "              <option value='year'>Single Year</option>\n" +
+        "              <option value='category'>Category</option>\n" +
+        "              <option value='multiFolder'>multiFolder</option>\n" +
+        "          </select></div>\n" +
+        "       <div><span>Start Node</span><input id='txtStartNode' class='inlineInput roundedInput'></input></div>\n" +
+        "       <div class='roundendButton' onclick='buildPlayboyPlaymatePage()'>Build</div>\n"
+    );
+    $("#txtCreateFolderParent").val(pSelectedTreeFolderPath);
+    $('#dashboardDialog').fadeIn();
+}
+
+function buildPlayboyPlaymatePage() {
     let start = Date.now();
-    //let pollingLoop = setInterval(function () { pollBuildCenterfoldHtmlPage() }, 5000);
-    let startFolder = 1;
+    let section = $('#ddFolderSection').val();
+    let startNode = $('#txtStartNode').val();
+    alert("section: " + section + " startNode:" + startNode);
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("building Html Page");
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/HtmlPage/BuildEveryPlayboyPlaymatePage",
+        url: settingsArray.ApiServer + "api/HtmlPage/BuildPlayboyPlaymatePage?section=" + section + "&startNode=" + startNode,
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (success == "ok") {
@@ -807,6 +827,7 @@ function DupeCheck() {
 }
 
 function runPlayboyListReport() {
+    // can't remember or figure out what this report does.
     if (connectionVerified) {
         $('#dashBoardLoadingGif').show();
         $('#reportsHeaderTitle').html("Playboy List");
