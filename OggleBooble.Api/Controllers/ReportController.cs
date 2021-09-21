@@ -1820,7 +1820,7 @@ namespace OggleBooble.Api.Controllers
         //public string Build(int rootFolder)
 
         [HttpPost]
-        public string BuildPlayboyPlaymatePage(string section, int startNode) {
+        public string BuildPlayboyPlaymatePage(string section, int startNode, string fileName) {
             string success;
             try
             {
@@ -1842,10 +1842,9 @@ namespace OggleBooble.Api.Controllers
 
                 stringBuilder.Append("</head>\n<body>\n");
                 stringBuilder.Append(PbHeader());
-                string fileName = "Test.html";
+                //fileName = "Test.html";
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    List<CategoryFolder> dbDecades = null;
                     if (section == "year")
                     {
                         stringBuilder.Append(ProcessCenterfoldYear(startNode, db));
