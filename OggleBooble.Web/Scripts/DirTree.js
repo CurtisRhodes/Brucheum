@@ -33,22 +33,6 @@ function showHtmlDirTree(container) {
     });
 }
 
-//        strdirTree +=
-//            "<div class='dirTreeNode clickable' style='text-indent:" + dirTreeTab + "px'>"
-//            + "<span id='DQ33" + randomId + "' onclick='toggleDirTree(\"" + randomId + "\")' >[" + expandMode + "] </span>"
-//            + "<div id='" + randomId + "aq' class='" + treeNodeClass + "' "
-//            + "onclick=commonDirTreeClick('" + thisNode.DanniPath + "'," + vwDir.Id + ") "
-//            + "oncontextmenu=showDirTreeContextMenu(" + vwDir.Id + ") "
-//            + "onmouseover=showFolderImage('" + encodeURI(folderImage) + "') onmouseout=$('.dirTreeImageContainer').hide()>"
-//            + vwDir.FolderName.replace(".OGGLEBOOBLE.COM", "") + "</div><span class='fileCount'>  : "
-//            + txtFileCount + "</span></div>" + "\n<div class='" + expandClass + "' id='Q88" + randomId + "'>";
-//        dirTreeTabIndent = 22;
-//        buildDirTreeRecurr(thisNode);
-//        strdirTree += "</div>";
-//        dirTreeTab -= dirTreeTabIndent;
-//    });
-//}
-
 function hideFolderImage() {
     $('.dirTreeImageContainer').hide();
 }

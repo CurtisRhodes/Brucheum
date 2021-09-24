@@ -128,13 +128,13 @@ namespace OggleBooble.Api.Controllers
                 {
                     //txtFileCount = "(" + parentNode.SubDirs.length + ")";
                     if (vwDir.ThisNode.FileCount > 0)
-                        txtFileCount = "[" + vwDir.ThisNode.SubFolderCount + "] (" + vwDir.ThisNode.TotalChildFiles + ") {" + vwDir.ThisNode.FileCount + "}";
+                        txtFileCount = "[" + vwDir.ThisNode.SubFolderCount + "] (" + String.Format("{0:n0}", vwDir.ThisNode.TotalChildFiles) + ") {" + vwDir.ThisNode.FileCount + "}";
                     else
                     {
                         if (vwDir.SubDirs.Count == vwDir.ThisNode.SubFolderCount)
-                            txtFileCount = vwDir.SubDirs.Count + " (" + vwDir.ThisNode.TotalChildFiles + ")";
+                            txtFileCount = vwDir.SubDirs.Count + " (" + String.Format("{0:n0}", vwDir.ThisNode.TotalChildFiles) + ")";
                         else
-                            txtFileCount = vwDir.SubDirs.Count + " [" + vwDir.ThisNode.SubFolderCount + " / " + vwDir.ThisNode.TotalChildFiles + "]";
+                            txtFileCount = vwDir.SubDirs.Count + " [" + vwDir.ThisNode.SubFolderCount + " / " + String.Format("{0:n0}", vwDir.ThisNode.TotalChildFiles) + "]";
                     }
                 }
                 else
