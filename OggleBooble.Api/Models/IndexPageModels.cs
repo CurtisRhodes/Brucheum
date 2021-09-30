@@ -16,13 +16,20 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
-    //public class LatestUpdateItemModel
-    //{
-    //    public int FolderId { get; set; }
-    //    public string FolderName { get; set; }
-    //    public DateTime LastModified { get; set; }
-    //    public string FolderImage { get; set; }
-    //}
+    public class RandomGalleriesModel {
+        public RandomGalleriesModel() {
+            RandomGalleries = new List<RandomGalleyModel>();
+        }
+        public List<RandomGalleyModel> RandomGalleries { get; set; }
+        public string Success { get; set; }
+    }
+    public class RandomGalleyModel {
+        public int FolderId { get; set; }
+        public string FolderName { get; set; }
+        public string FolderPath { get; set; }
+        public string FileName { get; set; }
+        public string RandomGuid { get; set; }
+    }
 
     public class CarouselInfoModel
     {

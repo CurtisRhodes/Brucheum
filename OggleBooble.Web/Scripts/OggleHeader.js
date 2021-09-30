@@ -222,7 +222,8 @@ function setHeaderMenu(menu) {
                 "<span onclick='headerMenuClick(\"boobs\",136)'> positions,</span>\n" +
                 "<span onclick='headerMenuClick(\"boobs\",159)'> topics,</span>\n" +
                 "<span onclick='headerMenuClick(\"boobs\",199)'> shape,</span>\n" +
-                "<span onclick='headerMenuClick(\"boobs\",241)'> sizes</span>\n");
+                "<span onclick='headerMenuClick(\"boobs\",241)'> size,</span>\n" +
+                "<span onclick='headerMenuClick(\"boobs\",4010)'> tit play</span>\n");
             break;
         }
         case "soft": {

@@ -28,9 +28,9 @@ function displaySpaPage(spaPageId) {
             loadUpdatedGalleriesBoxes();
             resetOggleHeader(3908, "boobs");
             //setTimeout(function () { launchPromoMessages(); }, 3000);
-
-            $('#testFunctionClick').show();
-
+            $('#showRandomGalleriesLabel').hide();
+            showRandomGalleries();           
+            //$('#testFunctionClick').show();
             break;
         case 3909: // porn
             spaType = "porn";
@@ -71,7 +71,7 @@ function loadUpdatedGalleriesBoxes() {
     let getLatestStart = Date.now();
     $.ajax({
         type: "GET",
-        url: settingsArray.ApiServer + "api/LatestUpdates/GetLatestUpdatedFolders?take=" + numUpdatedGalleries + "&root=" + spaType,
+        url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numUpdatedGalleries + "&root=" + spaType,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
                 //$('#updatedGalleriesSectionLoadingGif').hide();
@@ -127,7 +127,54 @@ function latestGalleryImageError(folderId, thisItemSrc) {
     }, 600);
 }
 
+function showRandomGalleries() {
+    $('#randomGalleriesSectionLoadingGif').hide();
+    let randGalleryCount = 9;
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/IndexPage/GetRandomGalleries?take=" + randGalleryCount + "&root=boobs",
+        success: function (randomGalleriesModel) {
+            if (randomGalleriesModel.Success === "ok") {
+                $('#randomGalleriesSection').html("");
+                let rndItemSrc = "/Images/binaryCodeRain.gif";
 
+                let winWidth = $(window).width();
+                //"   <div class='randomGalleriesSectionContainer'>\n" +
+                //    "       <div id='randomGalleriesSection' class='randomGalleriesFloatbox'>" +
+                let winWidthss = $('#rgSectionContainer').width();
+                //let winWidths1 = $('#randomGalleriesSection').innerWidth();
+                $.each(randomGalleriesModel.RandomGalleries, function (idx, randomGallery) {
+
+                    //if (winWidthss < winWidth)
+                    {
+                        rndItemSrc = settingsImgRepo + randomGallery.FolderPath + "/" + randomGallery.FileName;
+                        $('#randomGalleriesSection').append("<div id='rg" + randomGallery.FolderId + "' class='newsContentBox'>" +
+                            "<div class='newsContentBoxLabel'>" + randomGallery.FolderName + "</div>" +
+                            "<img id='lt" + randomGallery.FolderId + "' class='newsContentBoxImage' " +
+                            "alt='Images/redballon.png' " +
+                            "onerror='randomGalleriesImageError(" + randomGallery.FolderId + ",\"" + rndItemSrc + "\")' src='" + rndItemSrc + "'" +
+                            "onclick='rtpe(\"RGC\",\"" + spaType + "\",\"" + randomGallery.FolderName + "\"," + randomGallery.FolderId + ")' />" +
+                            "</div>");
+                    }
+
+                    let fff = $('#rgSectionContainer');
+                    winWidthss = $('#rgSectionContainer').width();
+                    winWidths1 = $('#randomGalleriesSection').innerWidth();
+                    if (winWidthss > winWidth)
+                        $('#rg' + randomGallery.FolderId).hide();
+
+                });
+                $('#showRandomGalleriesLabel').show();
+            }
+            else logError("AJX", 3908, randomGalleriesModel.Success, "show RandomGalleries");
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, 619845, "show RandomGalleries")) logError("XHR", 619846, errMsg, "show RandomGalleries");
+        }
+    });
+
+}
 
 function testFunction() {
 
@@ -152,8 +199,6 @@ function testFunction() {
     //    wipMessage += "<div class='robotWarning'><input type='checkbox'> I am not a robot.</input></div>";
     //    showMyAlert(wipTitle, wipMessage);
 }
-
-
 
 function launchPromoMessages() {
     $.ajax({
@@ -224,6 +269,17 @@ function showHideGalleries() {
     resizeIndexPage();
 }
 
+function refreshRandomGalleries() {
+    showRandomGalleries();
+}
+
+function randomGalleriesImageError(folderId, imgSrc) {
+    $('#rg' + folderId).hide();
+    alert("randomGalleriesImageError\nfolderId: " + folderId + " imgSrc: " + imgSrc);
+    logError("DRV", folderId, imgSrc, "load randomGalleries");
+    //" + randomGallery.FolderId + ", \"" + rndItemSrc + "\")'
+}
+
 function goToPorn() {
     //if(hasPorn)
     //if (document.domain === 'localhost') alert("goToPorn()");
@@ -275,8 +331,17 @@ function indexPageHTML() {
         "       <div id='promoContainer' class='promoContainer' >my promo message</div>\n" +
         "       <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
+
+        "   <div id='showRandomGalleriesLabel' class='clickable sectionLabel' onclick='refreshRandomGalleries()' title='refresh random galleries'>random galleries</div>\n" +
+        "   <div id='rgSectionContainer' class='randomGalleriesSectionContainer'>\n" +
+        "       <div id='randomGalleriesSection' class='randomGalleriesFloatbox'>" +
+        //"           <img id='randomGalleriesSectionLoadingGif' class='containerloadingGif' title='loading random galleries' alt='' src='Images/loader.gif' />" +
+        "       </div>" +
+        "   </div>\n" +
+
         "    <div id='testFunctionClick' class='testFunctionLabel' onclick='testFunction()'>reformat hard drive</div>\n" +
-        "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
+
+        "    <div class='clickable sectionLabel' onclick='showHideGalleries()' title='show hide'>latest updates</div>\n" +
         "    <div class='indexPageSection' id='bottomSection'>\n" +
         "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
         "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' title='loading gif' alt='' src='Images/loader.gif' />" +

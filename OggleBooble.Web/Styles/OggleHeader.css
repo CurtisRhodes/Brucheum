@@ -70,13 +70,12 @@
     margin-top: 4px;
     float: right;
 }
-
-
 .breadCrumbArea {
     float: left;
     display: inline-block;
     margin-right: 7px;
     margin-top: 5px;
+    cursor: pointer;
 }
 .headerBannerButton {
     font-size: 15px;

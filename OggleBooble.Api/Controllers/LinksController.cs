@@ -530,6 +530,8 @@ namespace OggleBooble.Api.Controllers
                                 return success;
                         }
                     }
+                    db.SaveChanges();
+                    success = "ok";
                 }
             }
             catch (Exception ex)

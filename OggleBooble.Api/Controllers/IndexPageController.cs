@@ -99,7 +99,7 @@ namespace OggleBooble.Api.Controllers
     }
 
     [EnableCors("*", "*", "*")]
-    public class LatestUpdatesController : ApiController
+    public class IndexPageController : ApiController
     {
         [HttpGet]
         //[Route("api/IndexPage/GetLatestUpdatedFolders")]
@@ -135,6 +135,36 @@ namespace OggleBooble.Api.Controllers
             }
             catch (Exception ex) { updatesModel.Success = Helpers.ErrorDetails(ex); }
             return updatesModel;
+        }
+
+        [HttpGet]
+        //[Route("api/IndexPage/GetRandomGalleries")]
+        public RandomGalleriesModel GetRandomGalleries(int take, string root) {
+            RandomGalleriesModel randomGalleries = new RandomGalleriesModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var temp1 = (from f in db.CategoryFolders
+                                 join i in db.ImageFiles on f.FolderImage equals i.Id
+                                 join f2 in db.CategoryFolders on i.FolderId equals f2.Id
+                                 where f.RootFolder == root && f.SubFolders == 0
+                                 select new RandomGalleyModel()
+                                 {
+                                     FolderId = f.Id,
+                                     FolderPath = f2.FolderPath,
+                                     FileName = i.FileName,
+                                     FolderName = f.FolderName
+                                 }).ToList();
+                    foreach (RandomGalleyModel m in temp1) {
+                        m.RandomGuid = Guid.NewGuid().ToString();                    
+                    }
+                    randomGalleries.RandomGalleries = temp1.OrderBy(x => x.RandomGuid).Skip(0).Take(take).ToList();
+                }
+                randomGalleries.Success = "ok";
+            }
+            catch (Exception ex) { randomGalleries.Success = Helpers.ErrorDetails(ex); }
+            return randomGalleries;
         }
     }
 }

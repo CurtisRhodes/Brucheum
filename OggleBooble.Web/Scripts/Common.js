@@ -207,7 +207,7 @@ function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
 
     if (document.domain === 'localhost') {
         console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
-        //alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
+        alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
     }
     else {
         try {

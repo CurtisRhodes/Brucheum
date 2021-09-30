@@ -59,6 +59,7 @@ function performEvent(eventCode, eventDetail, folderId) {
             case "HB2":  // PgLinkButton header banner clicked
                 window.location.href = "/album.html?folder=" + folderId;  //  open page in same window
                 break;
+            case "RGC":  // random gallery click
             case "LUP":  // Update Box click
                 if (eventDetail.lastIndexOf("_") > 0) {
                     logImageHit(eventDetail.substr(eventDetail.lastIndexOf("_") + 1, 36), folderId, true);

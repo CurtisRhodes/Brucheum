@@ -1820,109 +1820,112 @@ namespace OggleBooble.Api.Controllers
         //public string Build(int rootFolder)
 
         [HttpPost]
-        public string BuildPlayboyPlaymatePage(string section, int startNode, string fileName) {
-            string success;
+        public string BuildFolderTreePage(int startNode, string fileName) {
+            string success = "ono";
+            var stringBuilder = new StringBuilder("<html><head>");
             try
             {
-                var stringBuilder = new StringBuilder("<html><head>" +
-                    "<title>OggleHtml: Every Playboy Playmate</title>\n" +
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    var dbStartFolder = db.CategoryFolders.Where(f => f.Id == startNode).FirstOrDefault();
+                    var dbImageFile = db.ImageFiles.Where(i => i.Id == dbStartFolder.FolderImage).FirstOrDefault();
+                    var dbImageCatFile = db.CategoryFolders.Where(i => i.Id == dbImageFile.FolderId).FirstOrDefault();
+                    stringBuilder.Append("<title>OggleHtml: " + fileName + "</title>\n" +
                     "<link rel='shortcut icon' href='https://ogglebooble.com/Images/favicon.png' type='image/x-icon'/>\n" +
                     "<meta name='viewport' content='width=device-width, initial-scale=.07'>\n" +
                     "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>\n" +
+                    "<meta property='og:title' content='OggleHtml: " + fileName + "'>\n" +
+                    "<meta property='og:description' content='free pics of " + dbStartFolder.FolderName + "'>\n" +
+                    "<meta property='og:image' content='" + imgRepo + "/" + dbImageCatFile.FolderPath + "/" + dbImageFile.FileName + "'>" +
                     "<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.0/jquery.min.js'></script>");
 
-                stringBuilder.Append("\n<style>\n" +
-                    "body { font-family: Verdana; background-color:#c1bad1; }" +
-                    ".pbDecade {margin-top: 12px;text-decoration: underline;font-size: 35px;cursor: pointer;width: 100%;background-color: #c2b35f;}\n" +
-                    ".pbCollapse { display:block;}\n" +
-                    ".pbYear {margin-top: 12px;margin-bottom: 12px;cursor: pointer;width: 100%;text-align: center;background-color: #74bac3;font-size: 25px;}\n" +
-                    ".playmateDiv{ display: inline-block; margin-left: 60px; }\n" +
-                    ".playmateImage { height: 122px; }\n" +
-                "</style>\n");
+                    stringBuilder.Append("\n<style>\n" +
+                        "body { font-family: Verdana; background-color:#c1bad1;}" +
+                        ".pbDecade {margin-bottom:4px;font-size:35px;text-align:center;cursor:pointer;width:100%;background-color:#c2b35f;}\n" +
+                        ".pbCollapse {display:block;}\n" +
+                        ".pbYear   {margin-bottom:12px;font-size:25px;cursor:pointer;width:100%;background-color:#74bac3;}\n" +
+                        ".l2Collapse {display:block;}\n" +
+                        ".playmateDiv{display:inline-block; margin-left:55px; padding:6px;}\n" +
+                        ".playmateImage { height: 122px;}\n" +
+                        ".flexContainer {display: flex;}\n" +
+                        ".footer {padding-top:14px; border-top: solid 4px #feb236;font-family:Arial; background-color:#333;color:#eee;}\n" +
+                        ".footerCol {padding-top: 8px;float: left;min-width: 200px;}\n" +
+                        ".footerCol div {padding: 8px;text-align: center;}\n" +
+                        ".footerCol div a {text-decoration: none;color: #fff;}\n" +
+                        ".footerFooter {-moz-box-sizing: border-box;box-sizing: border-box;width: 100%;background-color: #212121;padding-bottom: 2px;}\n" +
+                        ".footerFooter div {display: inline-block;padding-left: 12px;}\n" +
+                        ".footer #copyright {display: inline-block;float: right;margin-right: 8px;}\n" +
+                    "</style>\n");
 
-                stringBuilder.Append("</head>\n<body>\n");
-                stringBuilder.Append(PbHeader());
-                //fileName = "Test.html";
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    if (section == "year")
-                    {
-                        stringBuilder.Append(ProcessCenterfoldYear(startNode, db));
+                    stringBuilder.Append("</head>\n<body>\n");
+                    stringBuilder.Append(PbHeader(fileName));
+                    if (dbStartFolder.FolderType == "multiFolder") {
+                        var dbChildFolders = db.CategoryFolders.Where(f => f.Parent == startNode).OrderBy(f => f.SortOrder).ToList();
+                        foreach (CategoryFolder dbChildFolder in dbChildFolders)
+                        {
+                            stringBuilder.Append(ProcessMultiFolder(dbChildFolder.Id, dbChildFolder.FolderName, 1, db));
+                        }
                     }
-                    if (section == "decade")
-                    {
-                        stringBuilder.Append(ProcessCenterfoldDecade(startNode, db));
-                    }
-                    if (section == "allDecades")
-                    {
-                        fileName = "EveryPlayboyPlaymate.html";
-                        ProcessCenterfoldDecade(1132, db);
-                    }
+                    else
+                        return "invalid node";
                 }
+                stringBuilder.Append(PbFooter());
                 stringBuilder.Append("\n</body>\n</html>");
                 success = WriteFileToDisk(stringBuilder.ToString(), fileName);
             }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
-            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
 
-        private string ProcessCenterfoldDecade(int centerfoldDecade, OggleBoobleMySqlContext db) {
-
-            var stringBuilder = new StringBuilder();
-           var dbDecades = db.CategoryFolders.Where(f => f.Parent == centerfoldDecade).OrderBy(f => f.SortOrder).ToList();
-            foreach (CategoryFolder dbDecade in dbDecades)
+        private string ProcessMultiFolder(int parentId, string folderName, int level, OggleBoobleMySqlContext db) {
+            try
             {
-                stringBuilder.Append("<div class='pbDecade' onclick=\"$('#pb" + dbDecade.Id + "').toggle()\">" + dbDecade.FolderName + "</div>\n" +
-                "<div class='pbCollapse' id='pb" + dbDecade.Id + "' >\n");
-                List<CategoryFolder> dbDecadeYears = db.CategoryFolders.Where(f => f.Parent == dbDecade.Id).OrderBy(f => f.SortOrder).ToList();
-                foreach (CategoryFolder dbDecadeYear in dbDecadeYears)
+                var stringBuilder = new StringBuilder();
+                if (level == 1)
+                    stringBuilder.Append("<div class='pbDecade' onclick=\"$('#pb" + parentId + "').toggle()\">" + folderName + "</div>\n" +
+                        "<div class='pbCollapse' id='pb" + parentId + "' >\n");
+                if (level == 2)
+                    stringBuilder.Append("<div class='pbYear' onclick=\"$('#" + parentId + "').toggle()\">" + folderName + "</div>\n" +
+                        "<div class='l2Collapse' id='" + parentId + "' >\n");
+                if (level == 3)
+                    stringBuilder.Append("<div class='pbMon' onclick=\"$('#" + parentId + "').toggle()\">" + folderName + "</div>\n" +
+                        "<div class='l2Collapse' id='" + parentId + "' >\n");
+                var dbChildFolders = db.CategoryFolders.Where(f => f.Parent == parentId).OrderBy(f => f.SortOrder).ToList();
+                foreach (CategoryFolder dbChildFolder in dbChildFolders)
                 {
-                    stringBuilder.Append("<div class='pbYear' onclick=\"$('#" + dbDecadeYear.Id + "').toggle()\">" + dbDecadeYear.FolderName + "</div>\n" +
-                    "<div class='pbCollapse' id='" + dbDecadeYear.Id + "' >\n");
-                    List<CategoryFolder> dbPaymates = db.CategoryFolders.Where(f => f.Parent == dbDecadeYear.Id).ToList();
-
-                    stringBuilder.Append(ProcessCenterfoldYear(dbDecadeYear.Id, db));
-
-                    stringBuilder.Append("</div>\n");
+                    if (dbChildFolder.FolderType == "multiFolder")
+                        stringBuilder.Append(ProcessMultiFolder(dbChildFolder.Id, dbChildFolder.FolderName, level + 1, db));
+                    else
+                        stringBuilder.Append(AddFolderNode(dbChildFolder.Id, dbChildFolder.FolderName, dbChildFolder.FolderImage, db));
                 }
-                stringBuilder.Append("</div>\n");
+                stringBuilder.Append("</div>");
+                return stringBuilder.ToString();
             }
-            return stringBuilder.ToString();
+            catch (Exception ex)
+            {
+                throw new Exception(Helpers.ErrorDetails(ex));
+            }
         }
 
-        private string ProcessCenterfoldYear(int centerfoldYear,  OggleBoobleMySqlContext db) {
-
-            var stringBuilder = new StringBuilder();
-            ImageFile dbImageFile;
-            CategoryFolder dbImageCatFile;
-            List<CategoryFolder> dbPaymates = db.CategoryFolders.Where(f => f.Parent == centerfoldYear).ToList();
-            foreach (CategoryFolder dbPaymate in dbPaymates)
+        private string AddFolderNode(int folderId,  string folderName, string folderImage, OggleBoobleMySqlContext db) {
+            try
             {
-                dbImageFile = db.ImageFiles.Where(i => i.Id == dbPaymate.FolderImage).FirstOrDefault();
-                if (dbImageFile != null)
+                string src = "https://ogglebooble.com/Images/redBallon.png";
+                if (folderImage != null)
                 {
-                    dbImageCatFile = db.CategoryFolders.Where(i => i.Id == dbImageFile.FolderId).FirstOrDefault();
-
-                    stringBuilder.Append("<div class='playmateDiv'><a href='https://ogglebooble.com/" + dbPaymate.FolderName +
-                        ".html?CalledFrom=facebook 'target='_blank'>" +
-                        "<img class='playmateImage' src='" + imgRepo + "/" + dbImageCatFile.FolderPath + "/" + dbImageFile.FileName + "'/>\n");
-
-                    //stringBuilder.Append("<div class='playmateDiv'><a href='https://ogglebooble.com/album.html?folder=" + dbPaymate.Id + " 'target='_blank'>" +
-                    //    "<img class='playmateImage' src='" + imgRepo + "/" + dbImageCatFile.FolderPath + "/" + dbImageFile.FileName + "'/>\n");
+                    var dbImageFile = db.ImageFiles.Where(i => i.Id == folderImage).FirstOrDefault();
+                    var dbImageCatFile = db.CategoryFolders.Where(i => i.Id == dbImageFile.FolderId).FirstOrDefault();
+                    src = imgRepo + "/" + dbImageCatFile.FolderPath + "/" + dbImageFile.FileName;
                 }
-                else
-                {
-                    stringBuilder.Append("<div class='playmateDiv'><a href='https://ogglebooble.com/album.html?folder=" +
-                        dbPaymate.Id + "'target='_blank'>" +
-                        "<img class='playmateImage' src='https://ogglebooble.com/Images/redballon.png'/>\n");
-
-                }
-                stringBuilder.Append("<br/>" + dbPaymate.FolderName + "</a></div>\n");
+                string folderNode = "<div class='playmateDiv'><a href='https://ogglebooble.com/album.html?folder=" + folderId + "&CalledFrom=facebook 'target='_blank'>" +
+                    "<img class='playmateImage' title='" + folderName + "' src='" + src + "'/>\n" +
+                    "<br/>" + folderName + "</a></div>\n";
+                return folderNode;
             }
-            return stringBuilder.ToString();
+            catch (Exception ex)
+            {
+                throw new Exception(Helpers.ErrorDetails(ex));
+            }
         }
 
         private string WriteFileToDisk(string staticContent, string pageTitle)
@@ -1942,7 +1945,7 @@ namespace OggleBooble.Api.Controllers
                 FtpWebRequest webRequest = null;
                 //string ftpPath = ftpHost + "/pages.OGGLEBOOBLE.COM/";
 
-                string ftpFileName = ftpHost + "ogglebooble/static/" + pageTitle;
+                string ftpFileName = ftpHost + "ogglebooble/static/" + pageTitle + ".html";
                 string httpFileName = httpLocation + pageTitle;
 
                 webRequest = (FtpWebRequest)WebRequest.Create(ftpFileName);
@@ -1956,22 +1959,60 @@ namespace OggleBooble.Api.Controllers
                     requestStream.Flush();
                     requestStream.Close();
                 }
-
-                //success = RecordPageCreation(folderId, httpFileName, db);
                 success = "ok";
             }
             catch (Exception e) { success = Helpers.ErrorDetails(e); }
             return success;
         }
 
-        private string PbHeader()
+        private string PbHeader(string pageTitle)
         {
             return "<div style='display:flex; background-color:#74bac3; border:solid thin black;'>" +
              "   <div style='float:left;'>" +
              "        <a href='https://ogglebooble.com/'><img style='height:50px; cursor:pointer;' src='https://ogglebooble.com/Images/redballon.png' target='_blank' /></a>" +
              "   </div>" +
-             "   <div style='float:left;width:100%; font-size:32px; text-align:center;'>Every Playboy Playmate</div>" +
+             "   <div style='float:left;width:100%; font-size:32px; text-align:center;'>" + pageTitle + "</div>" +
              "</div>";
+        }
+        
+        private string PbFooter() {
+            return "<footer class='footer'><div class='flexContainer'>\n" +
+                "    <div class='footerCol'>\n" +  // column 1
+                //"       <div class='clickable' onclick='rtpe(\"FLC\",\"feedback\"," + rootFolder + "\"," + folderId + ")'>Feedback</div>\n" +
+                "       <div id='footerCol1' class='footerColCustContainer'></div>\n" +
+                "    </div>\n" +
+                "    <div class='footerCol'>\n" + // column 2
+                "       <div class='clickable' onclick='window.location.href=\"index.html?spa=3911\", \"_blank\"'>Blog</div>\n" +
+                "       <div id='footerCol2' class='footerColCustContainer'></div>\n" +
+                "    </div>\n" +
+                "    <div class='footerCol'>\n" + // column 3
+                "       <div class='clickable' onclick=window.location.href = 'mailto:curtishrhodes@hotmail.com'>email site developer</div>\n" +
+                "       <div id='footerCol3' class='footerColCustContainer'></div>\n" +
+                "    </div>\n" +
+                "    <div class='footerCol'>\n" +  // column 4
+                "       <div id='footerPageHits'></div>\n" +
+                "       <div id='footerCol4' class='footerColCustContainer'></div>\n" +
+                "    </div>\n" +
+                "    <div class='footerCol'>\n" +  // column 5
+                "       <div id='footerCol5' class='footerColCustContainer'>" +
+                //"           <div>page type: " + rootFolder + "</div>\n" +
+                "           <div id='footerFolderType'></div>\n" +
+                "           <div id='footerStaticPage'></div>\n" +
+                "       </div>\n" +
+                "    </div>\n" +
+                "    <div class='footerCol'>\n" +  // column 6
+                "   <div id='histats_counter'></div>\n" +
+                "       <div id='footerCol6' class='footerColCustContainer'>\n" +
+                "       </div >\n" +
+                "    </div>\n" +
+                "    <div class='rightMostfooterColumn'>\n" +  // column 7
+                "    </div>\n" +
+                "   </div>\n<div class='footerFooter'>\n" +
+                "       <div id='footerMessage'></div>\n" +
+                "       <div id='footerMessage2'></div>\n" +
+                "       <div id='copyright'>&copy; 2020 - <a href='https://curtisrhodes.com/index.html?spa=IntelDesign' target='_blank'>Intelligent Design SoftWare</a></div>\n" +
+                "   </div>\n" +
+                "</div></footer>\n";
         }
     }
 

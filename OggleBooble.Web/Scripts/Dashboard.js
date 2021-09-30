@@ -197,7 +197,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showRipPdfDialog();'>Rip Pdf</div>\n"+
                 "<div class='clickable' onclick='DupeCheck();'>Dupe Check</div>\n" +
                 "<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>\n" +
-                "<div class='clickable' onclick='showPlaymatePageDialog()'>Build Playmate Page</div>\n" +                
+                "<div class='clickable' onclick='showBuildFolderTreePageDialog()'>Build FolderTree Page</div>\n" +                
                         "<div class='clickable' onclick='showAutoIncrimentDialog();'>Auto Incriment</div>\n"
             );
             //"<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" 
@@ -1159,33 +1159,24 @@ function prepareXhamsterPage() {
 }
 
 // FACEBOOK PAGE
-function showPlaymatePageDialog() {
+function showBuildFolderTreePageDialog() {
     $('#dashboardDialogTitle').html("Build Facebook Page");
     $('#dashboardDialogContents').html(
-        "       <div><span>Section Type</span><select id='ddFolderSection' class='inlineInput roundedInput'>\n" +
-        "              <option value='allDecades'>All Decades</option>\n" +
-        "              <option value='decade'>single Decade</option>\n" +
-        "              <option value='year'>Single Year</option>\n" +
-        "              <option value='category'>Category</option>\n" +
-        "              <option value='multiFolder'>multiFolder</option>\n" +
-        "          </select></div>\n" +
-        "       <div><span>Start Node</span><input id='txtStartNode' class='txtLinkPath roundedInput' readonly='readonly'></input></div>\n" +
-        "       <div><span>Html File Name</span><input id='txtHtmlFileName' class='txtLinkPath roundedInput'></input></div>\n" +
-        "       <div class='roundendButton' onclick='buildPlayboyPlaymatePage()'>Build</div>\n"
+        "<div><span>Start Node</span><input id='txtStartNode' class='txtLinkPath roundedInput' readonly='readonly'></input></div>\n" +
+        "<div><span>Html File Name</span><input id='txtHtmlFileName' class='txtLinkPath roundedInput'></input></div>\n" +
+        "<div class='roundendButton' onclick='buildFolderTreePage()'>Build</div>\n"
     );
     $("#txtStartNode").val(pSelectedTreeFolderPath);
-    $("#txtHtmlFileName").val(pSelectedTreeFolderPath.substr(pSelectedTreeFolderPath.lastIndexOf("/")));
+    $("#txtHtmlFileName").val(pSelectedTreeFolderPath.substr(pSelectedTreeFolderPath.lastIndexOf("/") + 1));
     $('#dashboardDialog').fadeIn();
 }
-function buildPlayboyPlaymatePage() {
+function buildFolderTreePage() {
     let start = Date.now();
-    //alert("section: " + section + " startNode: " + startNode);
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("building Html Page");
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/HtmlPage/BuildPlayboyPlaymatePage?section=" +
-            $('#ddFolderSection').val() + "&startNode=" + pSelectedTreeId + "&fileName=" + $('#txtHtmlFileName').val(),
+        url: settingsArray.ApiServer + "api/HtmlPage/BuildFolderTreePage?startNode=" + pSelectedTreeId + "&fileName=" + $('#txtHtmlFileName').val(),
         success: function (success) {
             $('#dashBoardLoadingGif').hide();
             if (success == "ok") {
@@ -1194,16 +1185,21 @@ function buildPlayboyPlaymatePage() {
                 let seconds = (delta % 60000 / 1000).toFixed(0);
                 console.log("build Centerfold List took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                 //clearInterval(pollingLoop);
-                $('#dataifyInfo').html("build Html Page took: " + minutes + ":" + seconds);
+                $('#dataifyInfo').html("build Html Page " + $('#txtHtmlFileName').val() + " took: " + minutes + ":" + seconds);
+                $('#dashboardDialog').fadeOut();
             }
             else {
+                $('#dataifyInfo').html(success);
+                alert("build List Page: " + success);
                 logError("AJX", 3910, success, "build List Page");
             }
         },
         error: function (jqXHR) {
             $('#dashBoardLoadingGif').hide();
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "buildHtmlPage")) logError("XHR", 3907, errMsg, "buildHtmlPage");
+            alert("build HtmlPage: " + errMsg);
+            if (!checkFor404(errMsg, pSelectedTreeId, "build HtmlPage"))
+                logError("XHR", 3907, errMsg, "build HtmlPage");
         }
     });
 }

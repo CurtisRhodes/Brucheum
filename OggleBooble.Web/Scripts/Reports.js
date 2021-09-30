@@ -513,6 +513,8 @@ function runDailyRefferals() {
     try {
         $('#dashBoardLoadingGif').show();
         $("#dailyRefferalsContainer").html("");
+        activeReport = "ReferralsReport";
+        $('#reportsHeaderTitle').html("Referrals Report for : " + todayString());
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "/api/Report/ReferralsReport",

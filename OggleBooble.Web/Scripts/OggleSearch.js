@@ -3,7 +3,6 @@ var searchString = "";
 var itemIndex = -1;
 var listboxActive = false;
 
-
 function startOggleSearch(folderId) {
 }
 
@@ -29,16 +28,29 @@ function oggleSearchKeyDown(event) {
             return;
         }
         if (ev === 13) {  // enter
-
+            alert("enter");
             var selectedItem = $('#searchResultsDiv').find('li:first').prop("id");
-
             jumpToSelected(selectedItem);
             return;
         }
 
         if (ev !== 46 && ev > 31 && (ev < 48 || ev > 57)) {
-            searchString += String.fromCharCode(ev);
-            performSearch(searchString);
+
+            alert("cur: " + searchString + "ins: " + $('#searchResultsDiv').val());
+
+            if ($('#searchResultsDiv').val().length > searchString.length + 2) {
+                alert("ev: " + ev + " evc: " + String.fromCharCode(ev) +
+                    "\n cur: " + searchString + "ins: " + $('#searchResultsDiv').val() +
+                    "\ncurL: " + searchString.length + " insL: " + $('#searchResultsDiv').val().length
+                );
+                searchString = $('#searchResultsDiv').val();
+                performSearch(searchString);
+            }
+            else {
+                searchString += String.fromCharCode(ev);
+                alert("performSearch: " + searchString);
+                performSearch(searchString);
+            }
         }
     }
     else {
