@@ -94,6 +94,7 @@ function dashboardHtml() {
         "           <div id='sortToolFooter' class='workareaFooter'>\n" +
         "               <button onclick='updateSortOrder()'>ReSort</button>\n" +
         "               <button onclick='autoIncrimentSortOrder()'>AutoIncriment</button>\n" +        
+        "               <button onclick='saveSortOrder()'>Save</button>\n" +
         "           </div>\n" +
         "       </div>\n" +
         "   </div>\n" +
@@ -893,10 +894,12 @@ function loadSortImages() {
         }
     });
 }
+
+let sortOrderArray = [];
 function updateSortOrder() {
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("sorting array");
-    var sortOrderArray = [];
+    sortOrderArray = [];
     let autoI = 0;
     $('#sortToolImageArea').children().each(function () {
         autoI++;
@@ -907,13 +910,13 @@ function updateSortOrder() {
         });
         $('#dataifyInfo').show().html("sorting array: " + autoI);
     });
-    saveSortChanges(sortOrderArray, "sort");
+    //saveSortChanges(sortOrderArray, "sort");
 }
 function autoIncrimentSortOrder() {
     if (confirm("reset all sort orders")) {
         $('#dashBoardLoadingGif').show();
         $('#dataifyInfo').show().html("auto incrimenting array");
-        var sortOrderArray = [];
+        sortOrderArray = [];
         let autoI = 0;
 
         //alert("pSelectedTreeFolderPath: " + pSelectedTreeId);
@@ -925,12 +928,25 @@ function autoIncrimentSortOrder() {
                 SortOrder: autoI += 2
             });
         });
-        saveSortChanges(sortOrderArray, "incrimenting");
+
+
+        //saveSortChanges(sortOrderArray, "incrimenting");
     }
 }
 
-function saveSortChanges(sortOrderArray, calledFrom) {
-    $('#dataifyInfo').html("saving " + calledFrom + " changes");
+function reloadSortArray() {
+    $('#sortToolImageArea').html("");
+    $.each(imgLinks.Links, function (ndx, obj) {
+        $('#sortToolImageArea').append("<div class='sortBox'><img class='sortBoxImage' src='" +
+            settingsImgRepo + obj.FileName + "'/>" +
+            "<br/><input class='sortBoxInput' id=" + obj.LinkId + " value=" + obj.SortOrder + "></input></div>");
+    });
+    $('#dashBoardLoadingGif').hide();
+    $('#dataifyInfo').html(daInfoMessage + " done");
+}
+
+function saveSortOrder() {
+    $('#dataifyInfo').html("saving changes");
     let sStart = Date.now();
     $.ajax({
         type: "PUT",
