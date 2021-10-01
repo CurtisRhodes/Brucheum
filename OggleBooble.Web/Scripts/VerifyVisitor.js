@@ -13,10 +13,51 @@ function verifySession(folderId) {
             sessionStorage["VisitorVerified"] = true;
             let returnVisit = true;
 
-            if (!navigator.cookieEnabled) {  // user accepts cookies
+            if (navigator.cookieEnabled)  // user accepts cookies
+            {
+                //logError2(cookieItemValue, "CK3", 615112, "cookieItemValue == undefined", "get CookieValue");
+
+                let visitorId = getCookieValue("VisitorId");
+                if (isNullorUndefined(visitorId)) {
+                    returnVisit = false;
+                    visitorId = create_UUID();
+                    sessionStorage["VisitorId"] = visitorId;
+                    logActivity2(visitorId, "VS7", folderId, "verify session"); // visitorId null or undefined
+                    addVisitor({
+                        VisitorId: visitorId,
+                        IpAddress: '00.00.00',
+                        City: "undefined",
+                        Country: "ZZ",
+                        Region: "undefined",
+                        GeoCode: "undefined",
+                        InitialPage: folderId
+                    }, "verify session2");
+                }
+
+                if (visitorId.indexOf("cookie not found") > -1) {
+                    returnVisit = false;
+                    visitorId = create_UUID();
+                    sessionStorage["VisitorId"] = visitorId;
+                    logActivity2(visitorId, "VS2", folderId, "verify session"); // verify visitorId not found (new user?)
+                    addVisitor({
+                        VisitorId: visitorId,
+                        IpAddress: '00.00.00',
+                        City: "new visitor?",
+                        Country: "ZZ",
+                        Region: "unknown",
+                        GeoCode: "unknown",
+                        InitialPage: folderId
+                    }, "verify session");
+                }
+
+                if (returnVisit) {
+                    logActivity2(visitorId, "VS1", folderId, "verify session"); // visitor verified ok
+                    verifyVisitorId(folderId, "verify session");
+                    logVisit(visitorId, folderId, "verify session");
+                }
+            }
+            else {
                 logActivity2(visitorId, "VS5", folderId, "verify session"); // user does not accept cookies
-
-
                 let visitorId = sessionStorage["VisitorId"];
                 if (isNullorUndefined(visitorId)) {
                     returnVisit = false;
@@ -33,46 +74,6 @@ function verifySession(folderId) {
                         InitialPage: folderId
                     }, "verify session1");
                 }
-                //logError2(cookieItemValue, "CK3", 615112, "cookieItemValue == undefined", "get CookieValue");
-            }
-
-            let visitorId = getCookieValue("VisitorId");
-            if (isNullorUndefined(visitorId)) {
-                returnVisit = false;
-                visitorId = create_UUID();
-                sessionStorage["VisitorId"] = visitorId;
-                logActivity2(visitorId, "VS7", folderId, "verify session"); // visitorId null or undefined
-                addVisitor({
-                    VisitorId: visitorId,
-                    IpAddress: '00.00.00',
-                    City: "undefined",
-                    Country: "ZZ",
-                    Region: "undefined",
-                    GeoCode: "undefined",
-                    InitialPage: folderId
-                }, "verify session2");
-            }
-
-            if (visitorId.indexOf("cookie not found") > -1) {
-                returnVisit = false;
-                visitorId = create_UUID();
-                sessionStorage["VisitorId"] = visitorId;
-                logActivity2(visitorId, "VS2", folderId, "verify session"); // verify visitorId not found (new user?)
-                addVisitor({
-                    VisitorId: visitorId,
-                    IpAddress: '00.00.00',
-                    City: "new visitor?",
-                    Country: "ZZ",
-                    Region: "unknown",
-                    GeoCode: "unknown",
-                    InitialPage: folderId
-                }, "verify session");
-            }
-
-            if (returnVisit) {
-                logActivity2(visitorId, "VS1", folderId, "verify session"); // visitor verified ok
-                verifyVisitorId(folderId, "verify session");
-                logVisit(visitorId, folderId, "verify session");
             }
         }
         //    else {

@@ -632,6 +632,12 @@ function getCookieValue(itemName) {
             logError2(create_UUID(), "BUG", 618429, "isNullorUndefined(itemName)", "get CookieValue");
             return returnValue;
         }
+
+
+
+
+
+
         let decodedCookie = decodeURIComponent(document.cookie);
         let cookieElements = decodedCookie.split(";");
         let cookieItem, cookieItemName, cookieItemValue;
@@ -641,23 +647,38 @@ function getCookieValue(itemName) {
             cookieItemValue = cookieItem[1];
             if (cookieItemName === itemName) {
                 if (isNullorUndefined(cookieItemValue)) {
-                    let visitorId = create_UUID();
-                    if (!navigator.cookieEnabled) {  // user accepts cookies
-                        localStorage[itemName] = visitorId;
-                        logError2(visitorId, "CK3", 615112, "need a fix", "get CookieValue"); // undefined and cookies not enabled
+
+                    if (itemName == "VisitorId") {
+                        if (!navigator.cookieEnabled) {  // user accepts cookies
+                            localStorage[itemName] = visitorId;
+                            logError2(create_UUID(), "CK3", 615112, "need a fix", "get CookieValue"); // undefined and cookies not enabled
+                        }
+                        else {
+                            //if (!isNullorUndefined(localStorage[itemName]))
+                            
+
+                            let markedVid = create_UUID();
+
+
+                            logError2(visitorId, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
+                            setCookieValue("VisitorId", visitorId);
+                            //addVisitor({
+                            //    VisitorId: visitorId,
+                            //    IpAddress: '00.11.00',
+                            //    City: "undefined",
+                            //    Country: "ZZ",
+                            //    Region: "undefined",
+                            //    GeoCode: "get CookieValue"
+                            //}, "get CookieValue");
+
+
+                            
+                            returnValue = visitorId;
+                        }
                     }
                     else {
-                        logError2(visitorId, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
-                        setCookieValue("VisitorId", visitorId);
-                        addVisitor({
-                            VisitorId: visitorId,
-                            IpAddress: '00.11.00',
-                            City: "undefined",
-                            Country: "ZZ",
-                            Region: "undefined",
-                            GeoCode: "get CookieValue"
-                        }, "get CookieValue");
-                        returnValue = visitorId;
+                        logError2(visitorId, "CK3", 615112, itemName, "get CookieValue"); // undefined and cookies not enabled
+                        returnValue = undefined;
                     }
                 }
                 else {

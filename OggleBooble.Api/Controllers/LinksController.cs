@@ -314,8 +314,7 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Links/UpdateSortOrder")]
-        public string UpdateSortOrder(List<SortOrderItem> links)
-        {
+        public string UpdateSortOrder(List<SortOrderItem> links) {
             string success = "";
             int folderId = links[0].FolderId;
             using (var db = new OggleBoobleMySqlContext())
@@ -325,9 +324,11 @@ namespace OggleBooble.Api.Controllers
                 {
                     CategoryImageLink catLink = catLinks.Where(x => x.ImageLinkId == link.ItemId).FirstOrDefault();
                     if (catLink != null)
+                    {
                         catLink.SortOrder = link.SortOrder;
+                        db.SaveChanges();
+                    }
                 }
-                db.SaveChanges();
                 success = "ok";
             }
             return success;

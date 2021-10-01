@@ -57,6 +57,7 @@ namespace OggleBooble.Api.Controllers
                         updateVisitorSuccessModel.Message1 = "VisitorId not found";
                     else
                     {
+                        /////////////////  IPO
                         Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
                         if (visitor2 == null)
                         {
@@ -78,22 +79,28 @@ namespace OggleBooble.Api.Controllers
                         else //  IpAddress Dupe Problem
                         {
                             updateVisitorSuccessModel.Message1 = "Existing IP";
-                            updateVisitorSuccessModel.VisitorId = visitor2.VisitorId;
                             if (visitor1.Country == "ZZ")
                             {
-                                db.Visitors.Remove(visitor1);
+                                visitor1.City = visitorData.City;
+                                visitor1.Country = visitorData.Country;
+                                visitor1.GeoCode = visitorData.GeoCode;
+                                visitor1.Region = visitorData.Region;
+                                if (visitor1.InitialPage == 0)
+                                    visitor1.InitialPage = visitorData.InitialPage;
                                 db.SaveChanges();
                                 updateVisitorSuccessModel.Message2 = "Existing Ip found. ZZ removed";
                             }
                             else
                             {
-
                                 if (visitor2.GeoCode != visitorData.GeoCode)
                                 {
                                     visitor2.GeoCode = visitorData.GeoCode;
                                     db.SaveChanges();
                                     updateVisitorSuccessModel.Message2 = "Existing Ip new GeoCode";
                                 }
+                                else
+                                    updateVisitorSuccessModel.Message2 = "Existing Ip Cookie Problem";
+
                                 if (visitor2.InitialPage == 0)
                                 {
                                     updateVisitorSuccessModel.Message2 += "Initial Page updated";

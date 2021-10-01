@@ -27,8 +27,7 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                         else {
                             if (visitorModel.Country == "ZZ") {
                                 logActivity2(visitorId, "IPF", folderId, "tryAddNewIP/" + calledFrom); // calling GetVisitorInfo
-                                //tagVisitor(visitorId, folderId, "try AddNewIP", "attempt");
-                                getIpInfo(folderId, visitorId, calledFrom);
+                                getIpInfo(folderId, visitorId, calledFrom);                                
                             }
                             else
                                 logError2(visitorId, "AJ5", folderId, "visitorModel.Country: " + visitorModel.Country, "try AddNewIP/" + calledFrom); // non ZZ country Ip lookup
@@ -102,38 +101,51 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     },
                     success: function (updateVisitorSuccessModel) {
                         if (updateVisitorSuccessModel.Success == "ok") {
-                            if (updateVisitorSuccessModel.Message1 == "VisitorId not found") {
-                                logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
-                                addVisitor({
-                                    visitorId: visitorId,
-                                    IpAddress: ipResponse.ip,
-                                    City: ipResponse.city,
-                                    Country: ipResponse.country,
-                                    Region: ipResponse.region,
-                                    GeoCode: ipResponse.loc
-                                }, "get IpInfo/" + calledFrom);
+                            switch (updateVisitorSuccessModel.Message1) {
+                                case "VisitorId not found":
+                                    logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
+                                    addVisitor({
+                                        visitorId: visitorId,
+                                        IpAddress: ipResponse.ip,
+                                        City: ipResponse.city,
+                                        Country: ipResponse.country,
+                                        Region: ipResponse.region,
+                                        GeoCode: ipResponse.loc
+                                    }, "get IpInfo/" + calledFrom);
+                                    break;
+                                case "New Ip Visitor Updated":
+                                    switch (updateVisitorSuccessModel.Message2) {
+                                        case "ZZ Visitor Updated":
+                                            logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
+                                            break;
+                                        case "no ZZ Visitor Updated":
+                                            logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+                                            break;
+                                        default:
+                                            logActivity("IPS", folderId, "get IpInfo/" + calledFrom); // Switch Case Problem. 
+                                            logError("SWT", folderId, updateVisitorSuccessModel.Message2, "updateVisitorSuccessModel 1");
+                                    }
+                                    break;
+                                case "Existing IP":
+                                    setCookieValue("VisitorId", updateVisitorSuccessModel.VisitorId);
+                                    switch (updateVisitorSuccessModel.Message2) {
+                                        case "Existing Ip found. ZZ removed":
+                                            logActivity("IP7", folderId, "get IpInfo/" + calledFrom); // Existing Ip found ZZ removed. 
+                                            break;
+                                        case "Existing Ip Cookie Problem":
+                                            logActivity("IPG", folderId, "get IpInfo/" + calledFrom); // Existing Ip Cookie Problem. 
+                                            tagVisitor(visitorId, folderId, "get IpInfo/" + calledFrom, "Existing Ip Cookie Problem");
+                                            break;
+                                        case "Existing Ip new GeoCode":
+                                            logActivity("IPE", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+                                            break;
+                                        default:
+                                            logActivity("IPS", folderId, "get IpInfo/" + calledFrom); // Switch Case Problem. 
+                                            logError("SWT", folderId, updateVisitorSuccessModel.Message2, "updateVisitorSuccessModel.Message2");
+                                    }
+                                    break;
                             }
-                            if (updateVisitorSuccessModel.Message1 == "New Ip Visitor Updated") {
-                                switch (updateVisitorSuccessModel.Message2) {
-                                    case "ZZ Visitor Updated":
-                                        logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
-                                        break;
-                                    case "no ZZ Visitor Updated":
-                                        logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
-                                        break;
-                                    default:
-                                        logActivity("IPE", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
-                                        logError("BUG", folderId, updateVisitorSuccessModel.Message2, "get IpInfo/" + calledFrom);
-                                }
-                            }
-                            if (updateVisitorSuccessModel.Message1 == "Existing IP") {
-                                setCookieValue("VisitorId", updateVisitorSuccessModel.VisitorId);
-                                if (updateVisitorSuccessModel.Message2 == "Existing Ip found. ZZ removed")
-                                    logActivity("IP7", folderId, "get IpInfo/" + calledFrom); // Existing Ip found ZZ removed. 
-                                else
-                                    logActivity("IPD", folderId, updateVisitorSuccessModel.Message2); // Existing Ip new GeoCode?
-                            }
-                            logVisit(visitorId, folderId, "get IpInfo/" + calledFrom);
+                            logVisit(visitorId, folderId, "UpdateVisitor/get IpInfo/" + calledFrom);
                         }
                         else {
                             logActivity2(visitorId, "IPC", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
@@ -177,7 +189,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     tryApiDbIpFree(folderId, visitorId, calledFrom);  // try something else
                 }
                 else {
-                    logActivity2(create_UUID(), "IP7", 621239, "timeout but info"); // timeout but info
+                    logActivity2(create_UUID(), "IP8", 621239, "timeout but info"); // timeout but info
                     //logActivity2(visitorId, "IP2", folderId, "timeout"); // well it worked
                     $.ajax({
                         type: "PUT",
@@ -351,7 +363,7 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
     } catch (e) {
         ip2Busy = false;
         logError2(visitorId, "CAT", folderId, e, "apiDbIpFree");
-        logActivity2(visitorId, "IP7", folderId, "apiDbIpFree");
+        logActivity2(visitorId, "IPK", folderId, "apiDbIpFree");
     }
 } // 2 api.db-ip.com/v2/free/self
 
@@ -541,7 +553,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
         }
     } catch (e) {
         logError2(visitorId, "CAT", folderId, e, "cloudflareTrace");
-        logActivity2(visitorId, "IP7", folderId, "cloudflareTrace");
+        logActivity2(visitorId, "IPK", folderId, "cloudflareTrace");
     }
 } // 3 www.cloudflare.com/cdn-cgi/trace
 
