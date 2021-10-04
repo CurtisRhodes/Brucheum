@@ -58,10 +58,9 @@ namespace OggleBooble.Api.Controllers
                     else
                     {
                         /////////////////  IPO
-                        Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
+                        Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress && v.VisitorId != visitorData.VisitorId).FirstOrDefault();
                         if (visitor2 == null)
                         {
-                            updateVisitorSuccessModel.Message1 = "New Ip Visitor Updated";
                             visitor1.IpAddress = visitorData.IpAddress;
                             visitor1.City = visitorData.City;
                             visitor1.Country = visitorData.Country;
@@ -71,6 +70,7 @@ namespace OggleBooble.Api.Controllers
                                 visitor1.InitialPage = visitorData.InitialPage;
                             db.SaveChanges();
 
+                            updateVisitorSuccessModel.Message1 = "New Ip Visitor Updated";
                             if (visitor1.Country == "ZZ")
                                 updateVisitorSuccessModel.Message2 = "ZZ Visitor Updated";
                             else
@@ -82,6 +82,7 @@ namespace OggleBooble.Api.Controllers
                             if (visitor1.Country == "ZZ")
                             {
                                 visitor1.City = visitorData.City;
+                                visitor1.IpAddress = visitorData.IpAddress;
                                 visitor1.Country = visitorData.Country;
                                 visitor1.GeoCode = visitorData.GeoCode;
                                 visitor1.Region = visitorData.Region;
@@ -118,6 +119,61 @@ namespace OggleBooble.Api.Controllers
                 updateVisitorSuccessModel.Success = Helpers.ErrorDetails(ex);
             }
             return updateVisitorSuccessModel;
+        }
+
+        [HttpGet]
+        [Route("api/Visitor/ScreenIplookupCandidate")]
+        public LookupCandidateModel ScreenIplookupCandidate(string visitorId) {
+            var lookupCandidateModel = new LookupCandidateModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    lookupCandidateModel.Success = "ok";
+                    if (dbVisitor == null)
+                    {
+                        lookupCandidateModel.lookupStatus = "visitorId not found";
+                        return lookupCandidateModel;
+                    }
+                    if (dbVisitor.Country != "ZZ")
+                    {
+                        lookupCandidateModel.lookupStatus = "country not ZZ";
+                        return lookupCandidateModel;
+                    }
+                    if (dbVisitor.City == "fail two")
+                    {
+                        lookupCandidateModel.lookupStatus = "fail two";
+                        return lookupCandidateModel;
+                    }
+                    if (dbVisitor.City == "already processed")
+                    {
+                        lookupCandidateModel.lookupStatus = "already processed";
+                        dbVisitor.City = "fail two";
+                        db.SaveChanges();
+                        return lookupCandidateModel;
+                    }
+                    if (dbVisitor.VisitorId.Length != 36)
+                    {
+                        lookupCandidateModel.lookupStatus = "bad visitor Id";
+                        return lookupCandidateModel;
+                    }
+                    string alreadyBurnedVisitor =
+                        (from a in db.ActivityLogs
+                         where a.Occured > DateTime.Today
+                         && a.ActivityCode == "ip7" && a.VisitorId == visitorId
+                         select a.VisitorId).FirstOrDefault();
+                    if (alreadyBurnedVisitor != null)
+                        lookupCandidateModel.lookupStatus = "alreadyBurnedVisitor";
+                    else
+                        lookupCandidateModel.lookupStatus = "passed";
+                }
+            }
+            catch (Exception ex)
+            {
+                lookupCandidateModel.Success = Helpers.ErrorDetails(ex);
+            }
+            return lookupCandidateModel;
         }
 
         [HttpGet]

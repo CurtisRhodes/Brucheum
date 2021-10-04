@@ -155,6 +155,12 @@ namespace OggleBooble.Api.Models
         public int InitialPage { get; set; }
     }
 
+    public class LookupCandidateModel
+    {
+        public string lookupStatus { get; set; }
+        public string Success { get; set; }
+    }
+
     public class VisitorInfoSuccessModel
     {
         public VisitorInfoSuccessModel() {

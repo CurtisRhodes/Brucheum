@@ -17,21 +17,29 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
             logActivity2(visitorId, "IPF", folderId, "tryAddNewIP/" + calledFrom); // calling GetVisitorInfo
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + visitorId,
-                success: function (visitorModel) {
-                    if (visitorModel.Success == "ok") {
-                        //alert("visitorModel.City: " + visitorModel.City);
-                        if (visitorModel.City == "already processed") {
-                            logActivity("IP0", folderId, visitorModel.GeoCode); // already processed
+                url: settingsArray.ApiServer + "api/Visitor/ScreenIplookupCandidate?visitorId=" + visitorId,
+                success: function (lookupCandidateModel) {
+                    if (lookupCandidateModel.Success == "ok") {
+                        switch (lookupCandidateModel.lookupStatus) {
+                            case "bad visitor Id":
+                                let oldVisitorId = visitorId;
+                                visitorId = create_UUID();
+                                setCookieValue("visitorId", visitorId);
+                                logActivity2(visitorId, "IP0", folderId, "bvId: " + oldVisitorId);
+                                break;
+                            case "already processed":
+                            case "country not ZZ":
+                            case "alreadyBurnedVisitor":
+                            case "fail two":
+                                logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
+                                break;
+                            case "passed":
+                                getIpInfo(folderId, visitorId, calledFrom);
+                                break;
+                            default:
+                                logError2(visitorId, "SWT", folderId, lookupCandidateModel.lookupStatus, "lookupCandidateModel.lookupStatus");
                         }
-                        else {
-                            if (visitorModel.Country == "ZZ") {
-                                logActivity2(visitorId, "IPF", folderId, "tryAddNewIP/" + calledFrom); // calling GetVisitorInfo
-                                getIpInfo(folderId, visitorId, calledFrom);                                
-                            }
-                            else
-                                logError2(visitorId, "AJ5", folderId, "visitorModel.Country: " + visitorModel.Country, "try AddNewIP/" + calledFrom); // non ZZ country Ip lookup
-                        }
+                        //logActivity2(visitorId, "IPF", folderId, "tryAddNewIP/" + calledFrom); // calling GetVisitorInfo
                     }
                     else {
                         logError2(visitorId, "AJX", folderId, visitorModel.Success, "try AddNewIP");
@@ -48,8 +56,6 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
         // 2 tryApiDbIpFree(folderId, calledFrom);
         // 3 ipapico(folderId, calledFrom);
     } catch (e) {
-        alert("tryAddNewIP CAT: " + e);
-
         logError2(create_UUID, "CAT", "666", e, "tryAddNewIP");
     }
 }
@@ -87,6 +93,8 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             success: function (ipResponse) {
                 ipCall0Returned = true;
                 logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
+
+
 
                 $.ajax({
                     type: "PUT",
@@ -130,7 +138,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                                     setCookieValue("VisitorId", updateVisitorSuccessModel.VisitorId);
                                     switch (updateVisitorSuccessModel.Message2) {
                                         case "Existing Ip found. ZZ removed":
-                                            logActivity("IP7", folderId, "get IpInfo/" + calledFrom); // Existing Ip found ZZ removed. 
+                                            logActivity2(visitorId, "IP7", folderId, "UpdateVisitor " + ipResponse.ip); // Existing Ip found ZZ removed. 
                                             break;
                                         case "Existing Ip Cookie Problem":
                                             logActivity("IPG", folderId, "get IpInfo/" + calledFrom); // Existing Ip Cookie Problem. 

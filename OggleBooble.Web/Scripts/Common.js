@@ -632,12 +632,6 @@ function getCookieValue(itemName) {
             logError2(create_UUID(), "BUG", 618429, "isNullorUndefined(itemName)", "get CookieValue");
             return returnValue;
         }
-
-
-
-
-
-
         let decodedCookie = decodeURIComponent(document.cookie);
         let cookieElements = decodedCookie.split(";");
         let cookieItem, cookieItemName, cookieItemValue;
@@ -658,10 +652,10 @@ function getCookieValue(itemName) {
                             
 
                             let markedVid = create_UUID();
-
-
-                            logError2(visitorId, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
-                            setCookieValue("VisitorId", visitorId);
+                            setCookieValue("VisitorId", markedVid);
+                            //localStorage[itemName] = markedVid;
+                            logError2(markedVid, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
+                            //setCookieValue("VisitorId", visitorId);
                             //addVisitor({
                             //    VisitorId: visitorId,
                             //    IpAddress: '00.11.00',
