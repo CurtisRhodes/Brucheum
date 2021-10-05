@@ -34,6 +34,12 @@ namespace OggleBooble.Api.Models
         public string Message2 { get; set; }
         public string Success { get; set; }
     }
+        
+    public class VerifyVisitorSuccessModel {
+        public string ReturnValue { get; set; }
+        public string ComprableIpAddressVisitorId { get; set; }
+        public string Success { get; set; }
+    }
 
     public class SuccessModel
     {

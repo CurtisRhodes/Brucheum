@@ -94,8 +94,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 ipCall0Returned = true;
                 logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
 
-
-
                 $.ajax({
                     type: "PUT",
                     url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",

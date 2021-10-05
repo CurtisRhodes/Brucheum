@@ -18,6 +18,12 @@ function verifySession(folderId) {
                 //logError2(cookieItemValue, "CK3", 615112, "cookieItemValue == undefined", "get CookieValue");
 
                 let visitorId = getCookieValue("VisitorId");
+
+                //VS0	new session started	1796
+                //VS1	visitor verified ok	1028
+                //VS2	VisitorId not found(new visitor ?)	741
+                //VS8	verify session CATCH error	38
+
                 if (isNullorUndefined(visitorId)) {
                     returnVisit = false;
                     visitorId = create_UUID();
@@ -58,6 +64,7 @@ function verifySession(folderId) {
             }
             else {
                 logActivity2(visitorId, "VS5", folderId, "verify session"); // user does not accept cookies
+
                 let visitorId = sessionStorage["VisitorId"];
                 if (isNullorUndefined(visitorId)) {
                     returnVisit = false;
@@ -97,32 +104,57 @@ function verifyVisitorId(folderId, calledFrom) {
             logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom); // cookie not found made it too far
             return;
         }
+
+        //VV0	attempting to verify visitor	1018
+        //VV1	verify visitor ok	615
+        //VV2	missing VisitorId readded	169
+        //VV3	visitorId came back not found	259
+        //VV4	verify visitor AJX error
+        //VV5	verify visitor CATCH error
+        //VV6	verify visitor XHR error
+        //VV7	unknown country	136
+
+        //ACT	VV8	cookie not found made it too far
+        //ACT	VVa	missing VisitorId repeatOffender
+        //VVb	missing VisitorId false flag	4
+
+
         else {
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
                 success: function (successModel) {
                     if (successModel.Success == "ok") {
-                        if (successModel.ReturnValue == "visitorId ok") {
-                            logActivity2(visitorId, "VV1", folderId, "verify VisitorId"); // visitor verified ok
-                            loadUserProfile(folderId, "verify VisitorId");
-                            logVisit(visitorId, folderId, "verify visitorId");
-                        }
-                        if (successModel.ReturnValue == "not found") {
-                            logActivity2(visitorId, "VV3", folderId, "verify Visitor"); // visitorId came back not found
-                            //doubleCheckVisitorId(visitorId, folderId);
-                            addVisitor({
-                                VisitorId: visitorId,
-                                IpAddress: '00.11.11',
-                                City: "not found",
-                                Country: "ZZ",
-                                Region: "unknown",
-                                GeoCode: "unknown",
-                                InitialPage: folderId
-                            }, "verify session3");
-                        }
-                        if (successModel.ReturnValue == "unknown country") {
-                            logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // unknown country
+                        switch (successModel.ReturnValue) {
+                            case "visitorId ok":
+                                logActivity2(visitorId, "VV1", folderId, "verify VisitorId"); // visitor verified ok
+                                loadUserProfile(folderId, "verify VisitorId");
+                                logVisit(visitorId, folderId, "verify visitorId");
+                                break;
+                            case "retired visitor":
+                                setCookieValue("VisitorId", successModel.ComprableIpAddressVisitorId);
+                                logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // 
+                                break;
+                            case "retired visitor comparable not found":
+                                logError("BUG", folderId, "retired visitor comparable not found", "verify VisitorId");
+                                break;
+                            case "unknown country":
+                                logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // unknown country
+                                break;
+                            case "not found":
+                                logActivity2(visitorId, "VV3", folderId, "verify Visitor"); // visitorId came back not found
+                                //doubleCheckVisitorId(visitorId, folderId);
+                                addVisitor({
+                                    VisitorId: visitorId,
+                                    IpAddress: '00.11.11',
+                                    City: "not found",
+                                    Country: "ZZ",
+                                    Region: "unknown",
+                                    GeoCode: "unknown",
+                                    InitialPage: folderId
+                                }, "verify session3");
+                                break;
+                            default:
                         }
                     }
                     else {

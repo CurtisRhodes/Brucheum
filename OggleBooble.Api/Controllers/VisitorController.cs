@@ -58,7 +58,12 @@ namespace OggleBooble.Api.Controllers
                     else
                     {
                         /////////////////  IPO
-                        Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress && v.VisitorId != visitorData.VisitorId).FirstOrDefault();
+
+                        Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress
+                        && v.VisitorId != visitorData.VisitorId).FirstOrDefault();
+
+
+
                         if (visitor2 == null)
                         {
                             visitor1.IpAddress = visitorData.IpAddress;
@@ -217,16 +222,31 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/Visitor/VerifyVisitor")]
-        public SuccessModel VerifyVisitor(string visitorId)
+        public VerifyVisitorSuccessModel VerifyVisitor(string visitorId)
         {
-            SuccessModel successModel = new SuccessModel();
+            var successModel = new VerifyVisitorSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                    if (dbVisitor == null)
-                        successModel.ReturnValue = "not found";
+                    if (dbVisitor == null) {
+                        RetiredVisitor dbRetiredVisitor = db.RetiredVisitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                        if (dbRetiredVisitor != null)
+                        {
+                            var dbComprableIpAddressVisitor = db.Visitors.Where(v => v.IpAddress == dbRetiredVisitor.IpAddress).FirstOrDefault();
+                            if (dbComprableIpAddressVisitor != null)
+                            {
+                                successModel.ComprableIpAddressVisitorId = dbComprableIpAddressVisitor.VisitorId;
+                                successModel.ReturnValue = "retired visitor";
+                            }
+                            else {
+                                successModel.ReturnValue = "retired visitor comparable not found";
+                            }
+                        }
+                        else
+                            successModel.ReturnValue = "not found";
+                    }
                     else
                     {
                         successModel.ReturnValue = "visitorId ok";

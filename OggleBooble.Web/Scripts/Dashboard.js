@@ -197,11 +197,15 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showMoveManyTool(3);'>Archive Many</div>\n" +
                 "<div class='clickable' onclick='showRipPdfDialog();'>Rip Pdf</div>\n"+
                 "<div class='clickable' onclick='DupeCheck();'>Dupe Check</div>\n" +
+                "<div class='clickable' onclick='RemoveDuplicateIps();'>Remove Duplicate Ips</div>\n" +
+
+                
+
                 "<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>\n" +
                 "<div class='clickable' onclick='showBuildFolderTreePageDialog()'>Build FolderTree Page</div>\n" +                
                         "<div class='clickable' onclick='showAutoIncrimentDialog();'>Auto Incriment</div>\n"
             );
-            //"<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" 
+            //"<div class='clickable' onclick='removeDupeIps();'>removeDupeIps</div>\n" RemoveDuplicateIps
             //"<div class='clickable' onclick='HardcoreFilecounts();'>HardcoreFilecounts()</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='addFileDates();'>Add File Dates</div>");
             //$('#dashboardLeftMenu').append("<div class='clickable' onclick='emergencyFolderLocationFix()'>emergencyFolderLocationFix</div>");
@@ -360,7 +364,7 @@ function performRepairLinks(justOne) {
     }
 }
 
-function removeDupeIps() {
+function RemoveDuplicateIps() {
     let start = Date.now();
     $('#dataifyInfo').show().html("performing one time fix");
     //$('#dashBoardLoadingGif').fadeIn();
@@ -368,7 +372,7 @@ function removeDupeIps() {
     try {
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/RepairLinks/RemoveDuplicateStaticPageHits",
+            url: settingsArray.ApiServer + "api/RepairLinks/RemoveDuplicateIps",
             success: function (repairReport) {
                 $('#dashBoardLoadingGif').hide();
                 $("#centeredDialogContents").fadeOut();

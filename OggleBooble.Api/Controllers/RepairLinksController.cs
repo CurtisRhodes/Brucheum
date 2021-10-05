@@ -495,44 +495,81 @@ namespace OggleBooble.Api.Controllers
                 {
                     int imageHitsChanged, pageHitsChanged, activityLogsChanged;
 
-                    //List<Visitor> unregistedVisitors =
-                    //    db.Database.SqlQuery<Visitor>("select * from OggleBooble.Visitor where VisitorId not in (select VisitorId from OggleBooble.RegisteredUser)").ToList();
+                    //var IpAddresses = db.Visitors.Where(v => v.Country != "ZZ" && v.IpAddress != "error").Select(v => v.IpAddress).Distinct().ToList();
 
-                    List<DupeGroup> dupGroups = db.Database.SqlQuery<DupeGroup>("select IpAddress, count(*) from Visitor v left join RegisteredUser r " +
-                    "on v.VisitorId = r.VisitorId where r.VisitorId is null group by IpAddress having count(*) > 1 order by count(*) desc").ToList();
-                        
-                    //"select IpAddress, count(*) from Visitor group by IpAddress having count(*) > 1 order by count(*) desc;").ToList();
+                    var IpGroupings = db.Visitors.Where(v => v.Country != "ZZ" && v.IpAddress != "error"
+                        && v.IpAddress != "00.00.00" && v.IpAddress != "00.11.11")
+                        .GroupBy(v => v.IpAddress).Where(v => v.Count() > 1).ToList();
 
-                    foreach (DupeGroup dupGroup in dupGroups)
+                    foreach (var ipGrouping in IpGroupings)
                     {
-                        List<Visitor> duplicateIps = db.Visitors.Where(v => v.IpAddress == dupGroup.IpAddress).ToList();
-                        Visitor firstVisitor = duplicateIps[0];
-                        foreach (Visitor duplicateIp in duplicateIps)
+                        string firstVisitorId = ipGrouping.First().VisitorId;
+                        foreach (Visitor duplicateIp in ipGrouping)
                         {
-                            if (duplicateIp.VisitorId != firstVisitor.VisitorId)
+                            //List<Visitor> dupIps = db.Visitors.Where(v => v.IpAddress == ipAddress).ToList();
+                            //string firstVisitorId = dupIps[0].VisitorId;
+                            if (duplicateIp.VisitorId != firstVisitorId)
                             {
-                                imageHitsChanged = db.Database.ExecuteSqlCommand(
-                                    "Update OggleBooble.ImageHit set VisitorId = '" + firstVisitor.VisitorId + "' where VisitorId='" + duplicateIp.VisitorId + "';");
-                                repairReport.ImageHitsUpdated += imageHitsChanged;
+                                try
+                                {
+                                    imageHitsChanged = db.Database.ExecuteSqlCommand(
+                                        "Update OggleBooble.ImageHit set VisitorId = '" + firstVisitorId + "' where VisitorId='" + duplicateIp.VisitorId + "';");
+                                    repairReport.ImageHitsUpdated += imageHitsChanged;
+                                }
+                                catch (Exception ex)
+                                {
+                                    repairReport.Errors.Add(Helpers.ErrorDetails(ex));
+                                }
 
-                                pageHitsChanged = db.Database.ExecuteSqlCommand(
-                                    "Update OggleBooble.PageHit set VisitorId = '" + firstVisitor.VisitorId + "' where VisitorId='" + duplicateIp.VisitorId + "';");
-                                repairReport.PageHitsUpdated += pageHitsChanged;
+                                try
+                                {
+                                    pageHitsChanged = db.Database.ExecuteSqlCommand(
+                                        "Update OggleBooble.PageHit set VisitorId = '" + firstVisitorId + "' where VisitorId='" + duplicateIp.VisitorId + "';");
+                                    repairReport.PageHitsUpdated += pageHitsChanged;
+                                }
+                                catch (Exception ex)
+                                {
+                                    repairReport.Errors.Add(Helpers.ErrorDetails(ex));
+                                }
 
-                                activityLogsChanged = db.Database.ExecuteSqlCommand(
-                                    "Update OggleBooble.ActivityLog set VisitorId ='" + firstVisitor.VisitorId + "' where VisitorId='" + duplicateIp.VisitorId + "';");
-                                repairReport.ActivityLogsUpdated += activityLogsChanged;
+                                try
+                                {
+                                    activityLogsChanged = db.Database.ExecuteSqlCommand(
+                                        "Update OggleBooble.ActivityLog set VisitorId ='" + firstVisitorId + "' where VisitorId='" + duplicateIp.VisitorId + "';");
+                                    repairReport.ActivityLogsUpdated += activityLogsChanged;
+                                }
+                                catch (Exception ex)
+                                {
+                                    repairReport.Errors.Add(Helpers.ErrorDetails(ex));
+                                }
 
-                                //unregistedVisitors.Remove(duplicateIp);
-                                repairReport.VisitorRowsRemoved++;
+                                try
+                                {
+                                    db.RetiredVisitors.Add(new RetiredVisitor()
+                                    {
+                                        VisitorId = duplicateIp.VisitorId,
+                                        IpAddress = duplicateIp.IpAddress,
+                                        City = duplicateIp.City,
+                                        Country = duplicateIp.Country,
+                                        GeoCode = duplicateIp.GeoCode,
+                                        InitialPage = duplicateIp.InitialPage,
+                                        InitialVisit = duplicateIp.InitialVisit,
+                                        Region = duplicateIp.Region
+                                    });
+                                    db.Visitors.Remove(duplicateIp);
+                                    db.SaveChanges();
+                                    repairReport.VisitorRowsRemoved++;
+                                }
+                                catch (Exception ex)
+                                {
+                                     repairReport.Errors.Add(Helpers.ErrorDetails(ex));
+                                }
                             }
                         }
-                        duplicateIps.Remove(firstVisitor);
-                        db.Visitors.RemoveRange(duplicateIps);
-                        db.SaveChanges();
+                        repairReport.TotalMultiIPsRepaired++;
                     }
-                    repairReport.Success = "ok";
                 }
+                repairReport.Success = "ok";
             }
             catch (Exception ex)
             {

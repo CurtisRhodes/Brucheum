@@ -21,6 +21,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<ImageHit> ImageHits { get; set; }
         public virtual DbSet<PageHit> PageHits { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
+        public virtual DbSet<RetiredVisitor> RetiredVisitors { get; set; }
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<MetricsMatrix> VwMetricsMatrices { get; set; }
         public virtual DbSet<StepChild> StepChildren { get; set; }
@@ -483,6 +484,19 @@ namespace OggleBooble.Api.MySqlDataContext
     [Table("OggleBooble.Visitor")]
     public partial class Visitor
     {
+        [Key]
+        public string VisitorId { get; set; }
+        public string IpAddress { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        public string GeoCode { get; set; }
+        public int InitialPage { get; set; }
+        public DateTime InitialVisit { get; set; }
+    }
+
+    [Table("OggleBooble.RetiredVisitor")]
+    public partial class RetiredVisitor {
         [Key]
         public string VisitorId { get; set; }
         public string IpAddress { get; set; }

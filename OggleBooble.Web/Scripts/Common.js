@@ -281,7 +281,6 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
     });
 }
 
-
 function logActivity(activityCode, folderId, calledFrom) {    
     logActivity2(getCookieValue("VisitorId"), activityCode, folderId, calledFrom);
 }
@@ -643,17 +642,20 @@ function getCookieValue(itemName) {
                 if (isNullorUndefined(cookieItemValue)) {
 
                     if (itemName == "VisitorId") {
+                        let markedVid = create_UUID();
+                        setCookieValue("VisitorId", markedVid);
                         if (!navigator.cookieEnabled) {  // user accepts cookies
-                            localStorage[itemName] = visitorId;
+                            //localStorage[itemName] = visitorId;
                             logError2(create_UUID(), "CK3", 615112, "need a fix", "get CookieValue"); // undefined and cookies not enabled
                         }
                         else {
-                            //if (!isNullorUndefined(localStorage[itemName]))
-                            
+                            if (!isNullorUndefined(localStorage[itemName])) {
+                                returnValue = localStorage[itemName];
+                                logError2(markedVid, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
+                            }
 
-                            let markedVid = create_UUID();
-                            setCookieValue("VisitorId", markedVid);
                             //localStorage[itemName] = markedVid;
+
                             logError2(markedVid, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
                             //setCookieValue("VisitorId", visitorId);
                             //addVisitor({
@@ -664,11 +666,8 @@ function getCookieValue(itemName) {
                             //    Region: "undefined",
                             //    GeoCode: "get CookieValue"
                             //}, "get CookieValue");
-
-
-                            
-                            returnValue = visitorId;
                         }
+                        returnValue = markedVid;
                     }
                     else {
                         logError2(visitorId, "CK3", 615112, itemName, "get CookieValue"); // undefined and cookies not enabled

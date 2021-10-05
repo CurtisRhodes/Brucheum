@@ -111,6 +111,7 @@ namespace OggleBooble.Api.Models
         public int PageHitsUpdated { get; set; }
         public int ImageHitsUpdated { get; set; }
         public int ActivityLogsUpdated { get; set; }
+        public int TotalMultiIPsRepaired { get; set; }
         public List<string> Errors { get; set; }
         public string Success { get; set; }
     }
