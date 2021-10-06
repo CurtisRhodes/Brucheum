@@ -167,7 +167,9 @@ function getAlbumImages(folderId) {
                     // IMAGES
                     $('#imageContainer').html('');
                     $.each(albumImageInfo.ImageLinks, function (idx, obj) {
-                        let imgSrc = settingsImgRepo + "/" + obj.FileName;
+                        //let imgSrc = settingsImgRepo + "/" + encodeURI(obj.FileName.replace(/'/g, '&27'));
+                        let imgSrc = settingsImgRepo + "/" + obj.FileName.replace(/'/g, '%27');
+                        //let imgSrc = settingsImgRepo + "/" + obj.FileName.replace("'","''");
                         if (obj.FileName.endsWith("mpg") || obj.FileName.endsWith("mp4")) {
                             $('#imageContainer').append(
                                 "<div class='" + imageFrameClass +
@@ -213,7 +215,7 @@ function getAlbumImages(folderId) {
                                 logError("FIM", folder.FolderId, "FolderImage missing", "get AlbumImages");
                             }
                             else
-                                imgSrc = settingsImgRepo + folder.FolderImage;
+                                imgSrc = encodeURI(settingsImgRepo + folder.FolderImage);
 
                             $('#imageContainer').append("<div class='" + imageFrameClass + "'\n" +
                                 " oncontextmenu='albumContextMenu(\"Folder\",\"" + folder.LinkId + "\"," + folder.FolderId + ",\"" + imgSrc + "\")'\n" +
@@ -434,8 +436,8 @@ function setBreadcrumbs(folderId) {
                             if (isLargeLoad) {
                                 $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
                                     "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" +
-                                    breadCrumbSuccess.BreadCrumbs[i].FolderName + "\"," + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")'>" +
-                                    "return to " + breadCrumbSuccess.BreadCrumbs[i].FolderName + "</a>"
+                                    breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(/'/g, '%27') + "\"," + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")'>" +
+                                    "return to " + breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(/'/g, '%27') + "</a>"
                                 );
                             }
                             else {
@@ -452,7 +454,7 @@ function setBreadcrumbs(folderId) {
                         else {
                             $('#breadcrumbContainer').append("<a class='activeBreadCrumb'" +
                                 "href='javascript:rtpe(\"BCC\"," + apFolderId + ",\"" +
-                                breadCrumbSuccess.BreadCrumbs[i].FolderName + "\"," + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")'>" +
+                                breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(/'/g, '%27') + "\"," + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")'>" +
                                 breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + " &#187</a>"
                             );
                         }

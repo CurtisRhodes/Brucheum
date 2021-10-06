@@ -27,14 +27,7 @@ namespace OggleBooble.Api.Models
         public int Parent { get; set; }
         public string Success { get; set; }
     }
-        
-    public class UpdateVisitorSuccessModel {
-        public string VisitorId { get; set; }
-        public string Message1 { get; set; }
-        public string Message2 { get; set; }
-        public string Success { get; set; }
-    }
-        
+    
     public class VerifyVisitorSuccessModel {
         public string ReturnValue { get; set; }
         public string ComprableIpAddressVisitorId { get; set; }

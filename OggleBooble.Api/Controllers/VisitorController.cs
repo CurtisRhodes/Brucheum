@@ -46,72 +46,110 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Visitor/UpdateVisitor")]
-        public UpdateVisitorSuccessModel UpdateVisitor(AddVisitorModel visitorData) {
-            var updateVisitorSuccessModel = new UpdateVisitorSuccessModel();
+        public SuccessModel UpdateVisitor(AddVisitorModel visitorData) {
+            var updateVisitorSuccessModel = new SuccessModel();
             try
             {
+                if (visitorData.City == "ZZ")
+                {
+                    updateVisitorSuccessModel.Success = "IpInfo ZZ fail";
+                    return updateVisitorSuccessModel;
+                }
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor visitor1 = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
                     if (visitor1 == null)
-                        updateVisitorSuccessModel.Message1 = "VisitorId not found";
+                    {
+                        updateVisitorSuccessModel.Success = "VisitorId not found";
+                        return updateVisitorSuccessModel;
+                    }
+                    visitor1.City = visitorData.City;
+                    visitor1.IpAddress = visitorData.IpAddress;
+                    visitor1.Country = visitorData.Country;
+                    visitor1.GeoCode = visitorData.GeoCode;
+                    visitor1.Region = visitorData.Region;
+                    if (visitor1.InitialPage == 0)
+                        visitor1.InitialPage = visitorData.InitialPage;
+                    db.SaveChanges();
+
+                    List<Visitor> duplicateIpVisitors = db.Visitors
+                         .Where(v => (v.IpAddress == visitorData.IpAddress) && (v.VisitorId != visitorData.VisitorId)).ToList();
+
+                    if (duplicateIpVisitors.Count == 0)
+                    {
+                        updateVisitorSuccessModel.ReturnValue = "New Ip Visitor Updated";
+                    }
                     else
                     {
-                        /////////////////  IPO
-
-                        Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress
-                        && v.VisitorId != visitorData.VisitorId).FirstOrDefault();
-
-
-
-                        if (visitor2 == null)
+                        updateVisitorSuccessModel.ReturnValue = "Duplicate Ip";
+                        /////////////////  DUPLICATE IP
+                        string firstVisitorId = visitor1.VisitorId;
+                        int imageHitsChanged, pageHitsChanged, activityLogsChanged;
+                        foreach (Visitor sameIpVisitor in duplicateIpVisitors)
                         {
-                            visitor1.IpAddress = visitorData.IpAddress;
-                            visitor1.City = visitorData.City;
-                            visitor1.Country = visitorData.Country;
-                            visitor1.GeoCode = visitorData.GeoCode;
-                            visitor1.Region = visitorData.Region;
-                            if (visitor1.InitialPage == 0)
-                                visitor1.InitialPage = visitorData.InitialPage;
-                            db.SaveChanges();
-
-                            updateVisitorSuccessModel.Message1 = "New Ip Visitor Updated";
-                            if (visitor1.Country == "ZZ")
-                                updateVisitorSuccessModel.Message2 = "ZZ Visitor Updated";
-                            else
-                                updateVisitorSuccessModel.Message2 = "no ZZ Visitor Updated";
-                        }
-                        else //  IpAddress Dupe Problem
-                        {
-                            updateVisitorSuccessModel.Message1 = "Existing IP";
-                            if (visitor1.Country == "ZZ")
+                            if (sameIpVisitor.VisitorId != visitor1.VisitorId)
                             {
-                                visitor1.City = visitorData.City;
-                                visitor1.IpAddress = visitorData.IpAddress;
-                                visitor1.Country = visitorData.Country;
-                                visitor1.GeoCode = visitorData.GeoCode;
-                                visitor1.Region = visitorData.Region;
-                                if (visitor1.InitialPage == 0)
-                                    visitor1.InitialPage = visitorData.InitialPage;
-                                db.SaveChanges();
-                                updateVisitorSuccessModel.Message2 = "Existing Ip found. ZZ removed";
-                            }
-                            else
-                            {
-                                if (visitor2.GeoCode != visitorData.GeoCode)
+                                if (visitor1.City != sameIpVisitor.City)
                                 {
-                                    visitor2.GeoCode = visitorData.GeoCode;
-                                    db.SaveChanges();
-                                    updateVisitorSuccessModel.Message2 = "Existing Ip new GeoCode";
+                                    if (sameIpVisitor.City == "ZZ" && visitor1.City != "ZZ")
+                                    {
+                                        //updateVisitorSuccessModel.Message2 = "ZZ Visitor Updated";
+                                    }
+                                    else
+                                    { 
+                                    
+                                    }
                                 }
-                                else
-                                    updateVisitorSuccessModel.Message2 = "Existing Ip Cookie Problem";
+                                //updateVisitorSuccessModel.SameIp = visitor2.VisitorId;
+                                //visitor1.IpAddress = visitorData.IpAddress;
+                                //updateVisitorSuccessModel.Message1 = "New Ip Visitor Updated";
+                                //updateVisitorSuccessModel.Message1 = "Existing IP";
+                                //updateVisitorSuccessModel.Message2 = "Existing Ip found. ZZ removed";
+                                //updateVisitorSuccessModel.Message2 = "Existing Ip Cookie Problem";
+                                //updateVisitorSuccessModel.Message2 += "Initial Page updated";
 
-                                if (visitor2.InitialPage == 0)
+                                try
                                 {
-                                    updateVisitorSuccessModel.Message2 += "Initial Page updated";
-                                    visitor2.InitialPage = visitorData.InitialPage;
+                                    imageHitsChanged = db.Database.ExecuteSqlCommand(
+                                        "Update OggleBooble.ImageHit set VisitorId = '" + firstVisitorId + "' where VisitorId='" + sameIpVisitor.VisitorId + "';");
+                                    //repairReport.ImageHitsUpdated += imageHitsChanged;
+                                }
+                                catch { }
+                                try
+                                {
+                                    pageHitsChanged = db.Database.ExecuteSqlCommand(
+                                        "Update OggleBooble.PageHit set VisitorId = '" + firstVisitorId + "' where VisitorId='" + sameIpVisitor.VisitorId + "';");
+                                    //repairReport.PageHitsUpdated += pageHitsChanged;
+                                }
+                                catch { }
+                                try
+                                {
+                                    activityLogsChanged = db.Database.ExecuteSqlCommand(
+                                        "Update OggleBooble.ActivityLog set VisitorId ='" + firstVisitorId + "' where VisitorId='" + sameIpVisitor.VisitorId + "';");
+                                    //repairReport.ActivityLogsUpdated += activityLogsChanged;
+                                }
+                                catch { }
+                                try
+                                {
+                                    db.RetiredVisitors.Add(new RetiredVisitor()
+                                    {
+                                        VisitorId = sameIpVisitor.VisitorId,
+                                        IpAddress = sameIpVisitor.IpAddress,
+                                        City = sameIpVisitor.City,
+                                        Country = sameIpVisitor.Country,
+                                        GeoCode = sameIpVisitor.GeoCode,
+                                        InitialPage = sameIpVisitor.InitialPage,
+                                        InitialVisit = sameIpVisitor.InitialVisit,
+                                        Region = sameIpVisitor.Region
+                                    });
+                                    db.Visitors.Remove(sameIpVisitor);
                                     db.SaveChanges();
+                                    //repairReport.VisitorRowsRemoved++;
+                                }
+                                catch (Exception ex)
+                                {
+                                    updateVisitorSuccessModel.Success = Helpers.ErrorDetails(ex);
+                                    return updateVisitorSuccessModel;
                                 }
                             }
                         }

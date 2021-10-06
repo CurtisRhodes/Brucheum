@@ -92,7 +92,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             },
             success: function (ipResponse) {
                 ipCall0Returned = true;
-                logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // well it worked
+                //logActivity2(visitorId, "IP2", folderId, "Ip: "+ipResponse.ip); // well it worked
 
                 $.ajax({
                     type: "PUT",
@@ -106,56 +106,43 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                         GeoCode: ipResponse.loc
                     },
                     success: function (updateVisitorSuccessModel) {
-                        if (updateVisitorSuccessModel.Success == "ok") {
-                            switch (updateVisitorSuccessModel.Message1) {
-                                case "VisitorId not found":
-                                    logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
-                                    addVisitor({
-                                        visitorId: visitorId,
-                                        IpAddress: ipResponse.ip,
-                                        City: ipResponse.city,
-                                        Country: ipResponse.country,
-                                        Region: ipResponse.region,
-                                        GeoCode: ipResponse.loc
-                                    }, "get IpInfo/" + calledFrom);
-                                    break;
-                                case "New Ip Visitor Updated":
-                                    switch (updateVisitorSuccessModel.Message2) {
-                                        case "ZZ Visitor Updated":
-                                            logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
-                                            break;
-                                        case "no ZZ Visitor Updated":
-                                            logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
-                                            break;
-                                        default:
-                                            logActivity("IPS", folderId, "get IpInfo/" + calledFrom); // Switch Case Problem. 
-                                            logError("SWT", folderId, updateVisitorSuccessModel.Message2, "updateVisitorSuccessModel 1");
-                                    }
-                                    break;
-                                case "Existing IP":
-                                    setCookieValue("VisitorId", updateVisitorSuccessModel.VisitorId);
-                                    switch (updateVisitorSuccessModel.Message2) {
-                                        case "Existing Ip found. ZZ removed":
-                                            logActivity2(visitorId, "IP7", folderId, "UpdateVisitor " + ipResponse.ip); // Existing Ip found ZZ removed. 
-                                            break;
-                                        case "Existing Ip Cookie Problem":
-                                            logActivity("IPG", folderId, "get IpInfo/" + calledFrom); // Existing Ip Cookie Problem. 
-                                            tagVisitor(visitorId, folderId, "get IpInfo/" + calledFrom, "Existing Ip Cookie Problem");
-                                            break;
-                                        case "Existing Ip new GeoCode":
-                                            logActivity("IPE", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
-                                            break;
-                                        default:
-                                            logActivity("IPS", folderId, "get IpInfo/" + calledFrom); // Switch Case Problem. 
-                                            logError("SWT", folderId, updateVisitorSuccessModel.Message2, "updateVisitorSuccessModel.Message2");
-                                    }
-                                    break;
-                            }
-                            logVisit(visitorId, folderId, "UpdateVisitor/get IpInfo/" + calledFrom);
-                        }
-                        else {
-                            logActivity2(visitorId, "IPC", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
-                            logError2(visitorId, "AJX", folderId, updateVisitorSuccessModel.Success, "get IpInfo/" + calledFrom);
+                        switch (updateVisitorSuccessModel.Success) {
+                            case "ok":
+                                if (updateVisitorSuccessModel.ReturnValue == "New Ip Visitor Updated") {
+                                    //logActivity2(visitorId, "IP2", folderId, "Ip: " + ipResponse.ip); // well it worked
+                                    logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+                                }
+                                if (updateVisitorSuccessModel.ReturnValue == "Duplicate Ip") {
+                                    logActivity2(visitorId, "IP7", folderId, "UpdateVisitor " + ipResponse.ip); // Existing Ip found ZZ removed. 
+                                }
+                                //logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
+                                //logActivity("IPS", folderId, "get IpInfo/" + calledFrom); // Switch Case Problem. 
+                                //logError("SWT", folderId, updateVisitorSuccessModel.Message2, "updateVisitorSuccessModel 1");
+                                //logActivity("IPG", folderId, "get IpInfo/" + calledFrom); // Existing Ip Cookie Problem. 
+                                //tagVisitor(visitorId, folderId, "get IpInfo/" + calledFrom, "Existing Ip Cookie Problem");
+                                //logActivity("IPE", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+                                //logActivity("IPS", folderId, "Message2: " + updateVisitorSuccessModel.Message2); // Switch Case Problem. 
+                                //logError("SWT", folderId, updateVisitorSuccessModel.Message2, "updateVisitorSuccessModel.Message2");
+                                logVisit(visitorId, folderId, "UpdateVisitor/get IpInfo/" + calledFrom);
+                                break;
+                            case "VisitorId not found":
+                                addVisitor({
+                                    visitorId: visitorId,
+                                    IpAddress: ipResponse.ip,
+                                    City: ipResponse.city,
+                                    Country: ipResponse.country,
+                                    Region: ipResponse.region,
+                                    GeoCode: ipResponse.loc
+                                }, "get IpInfo/" + calledFrom);
+                                logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
+                                break;
+                            case "IpInfo ZZ fail":
+                                logActivity2(visitorId, "IPC", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
+                                break;
+                            default:
+                                logActivity2(visitorId, "IPC", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
+                                logError2(visitorId, "AJX", folderId, updateVisitorSuccessModel.Success, "get IpInfo/" + calledFrom);
+                                break;
                         }
                     },
                     error: function (jqXHR) {
