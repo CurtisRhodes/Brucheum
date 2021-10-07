@@ -179,6 +179,14 @@ namespace OggleBooble.Api.Controllers
                         lookupCandidateModel.lookupStatus = "visitorId not found";
                         return lookupCandidateModel;
                     }
+
+                    var dupeCheck1 = db.ActivityLogs.Where(a => a.ActivityCode == "IP1" && a.VisitorId == visitorId).FirstOrDefault();
+                    if (dupeCheck1 != null)
+                    {
+                        lookupCandidateModel.lookupStatus = "already looked up";
+                        return lookupCandidateModel;
+                    }
+
                     if (dbVisitor.Country != "ZZ")
                     {
                         lookupCandidateModel.lookupStatus = "country not ZZ";
@@ -201,6 +209,7 @@ namespace OggleBooble.Api.Controllers
                         lookupCandidateModel.lookupStatus = "bad visitor Id";
                         return lookupCandidateModel;
                     }
+
                     string alreadyBurnedVisitor =
                         (from a in db.ActivityLogs
                          where a.Occured > DateTime.Today

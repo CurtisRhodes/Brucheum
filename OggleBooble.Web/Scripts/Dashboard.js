@@ -382,7 +382,7 @@ function RemoveDuplicateIps() {
                         var minutes = Math.floor(delta / 60000);
                         var seconds = (delta % 60000 / 1000).toFixed(0);
                         //console.log("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-                        $('#dataifyInfo').html("repair links took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+                        $('#dataifyInfo').html("Remove Duplicate Ips took: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
                         
                         $('#dataifyInfo').append(", VisitorRowsRemoved: " + repairReport.VisitorRowsRemoved);
 
@@ -413,6 +413,7 @@ function RemoveDuplicateIps() {
                 }
                 else {
                     //logError("AJX", apFolderId, repairReport.Success, "performRepairLinks");
+                    $('#dataifyInfo').hide();
                     alert(repairReport.Success);
                 }
             },

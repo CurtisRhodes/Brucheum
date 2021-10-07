@@ -31,10 +31,10 @@ function verifySession(folderId) {
                     logActivity2(visitorId, "VS7", folderId, "verify session"); // visitorId null or undefined
                     addVisitor({
                         VisitorId: visitorId,
-                        IpAddress: '00.00.00',
-                        City: "undefined",
+                        IpAddress: Math.floor(Math.random() * 10000000000).toString(),
+                        City: "verify session",
                         Country: "ZZ",
-                        Region: "undefined",
+                        Region: "VS7",
                         GeoCode: "undefined",
                         InitialPage: folderId
                     }, "verify session2");
@@ -47,10 +47,10 @@ function verifySession(folderId) {
                     logActivity2(visitorId, "VS2", folderId, "verify session"); // verify visitorId not found (new user?)
                     addVisitor({
                         VisitorId: visitorId,
-                        IpAddress: '00.00.00',
+                        IpAddress: Math.floor(Math.random() * 10000000000).toString(),
                         City: "new visitor?",
                         Country: "ZZ",
-                        Region: "unknown",
+                        Region: "VS2",
                         GeoCode: "unknown",
                         InitialPage: folderId
                     }, "verify session");
@@ -73,10 +73,10 @@ function verifySession(folderId) {
                     sessionStorage["VisitorId"] = visitorId;
                     addVisitor({
                         VisitorId: visitorId,
-                        IpAddress: '00.00.00',
+                        IpAddress: Math.floor(Math.random() * 10000000000).toString(),
                         City: "cookies not enabled",
                         Country: "ZZ",
-                        Region: "cookies not enabled",
+                        Region: "VS5",
                         GeoCode: "cookies not enabled",
                         InitialPage: folderId
                     }, "verify session1");
@@ -146,10 +146,10 @@ function verifyVisitorId(folderId, calledFrom) {
                                 //doubleCheckVisitorId(visitorId, folderId);
                                 addVisitor({
                                     VisitorId: visitorId,
-                                    IpAddress: '00.11.11',
-                                    City: "not found",
+                                    IpAddress: Math.floor(Math.random() * 10000000000).toString(),
+                                    City: "verify visitor",
                                     Country: "ZZ",
-                                    Region: "unknown",
+                                    Region: "VV3",
                                     GeoCode: "unknown",
                                     InitialPage: folderId
                                 }, "verify session3");
@@ -213,7 +213,7 @@ function addVisitor(visitorData, calledFrom) {
                 if (!checkFor404(errMsg, 555, "add Visitor"))
                     logError2(create_UUID(), "XHR", 55, errMsg, "add visitor/" + calledFrom);
                 else
-                    logActivity2(create_UUID(), "AV8", 555, errMsg); // AddVisitor XHR error
+                    logActivity2(create_UUID(), "AV8", 555, errMsg); // Add Visitor XHR error
             }
         });
     } catch (e) {

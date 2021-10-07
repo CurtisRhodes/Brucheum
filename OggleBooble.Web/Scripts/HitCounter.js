@@ -63,10 +63,10 @@ function logPageHit(folderId) {
             setCookieValue("VisitorId", visitorId);
             addVisitor({
                 VisitorId: visitorId,
-                IpAddress: '00.08.00',
+                IpAddress: Math.floor(Math.random() * 10000000000).toString(),
                 City: "log PageHit",
                 Country: "ZZ",
-                Region: "cookie not found",
+                Region: "PH3",
                 GeoCode: "cookie not found",
                 InitialPage: folderId
             }, "log pageHit");
@@ -146,10 +146,10 @@ function logVisit(visitorId, folderId, calledFrom) {
                     if (successModel.ReturnValue == "VisitorId not found") {
                         addVisitor({
                             VisitorId: visitorId,
-                            IpAddress: '22.11.11',
+                            IpAddress: Math.floor(Math.random() * 10000000000).toString(),
                             City: "log Visit",
                             Country: "ZZ",
-                            Region: "visitor not found",
+                            Region: "LV3",
                             GeoCode: "visitor not found",
                             InitialPage: folderId
                         }, "log visit/" + calledFrom);

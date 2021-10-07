@@ -525,9 +525,6 @@ function showCenteredMessage(blogId, allowClickAnywhere) {
     });
 }
 
-
-
-// EMAIL PROCESSES
 function isValidEmail(email) {
     let emailReg = /^([\w-.]+@([\w-]+\.)+[\w-]{2,4})?$/;
     //alert("emailReg.test(email): " + emailReg.test(email));

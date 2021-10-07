@@ -1,5 +1,4 @@
-﻿
-function tryAddNewIP(folderId, visitorId, calledFrom) {
+﻿function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
         //let visitorId = getCookieValue("VisitorId");
         if (visitorId.indexOf("cookie not found") > -1) {
@@ -23,13 +22,25 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                         switch (lookupCandidateModel.lookupStatus) {
                             case "bad visitor Id":
                                 let oldVisitorId = visitorId;
-                                visitorId = create_UUID();
-                                setCookieValue("visitorId", visitorId);
-                                logActivity2(visitorId, "IP0", folderId, "bvId: " + oldVisitorId);
+                                let newVisitorId = create_UUID();
+                                setCookieValue("visitorId", newVisitorId);
+                                logActivity2(newVisitorId, "IP0", folderId, "bvId: " + oldVisitorId);
                                 break;
                             case "already processed":
+                                logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
+                                break;
+                            case "already looked up":
+                                logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
+                                break;
+                            case "visitorId not found":
+                                logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
+                                break;
                             case "country not ZZ":
+                                logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
+                                break;
                             case "alreadyBurnedVisitor":
+                                logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
+                                break;
                             case "fail two":
                                 logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
                                 break;
@@ -110,10 +121,10 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                             case "ok":
                                 if (updateVisitorSuccessModel.ReturnValue == "New Ip Visitor Updated") {
                                     //logActivity2(visitorId, "IP2", folderId, "Ip: " + ipResponse.ip); // well it worked
-                                    logActivity("IPA", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
+                                    logActivity("IP2", folderId, "get IpInfo/" + calledFrom); // Visitor Ip found. VisitorId reset. 
                                 }
                                 if (updateVisitorSuccessModel.ReturnValue == "Duplicate Ip") {
-                                    logActivity2(visitorId, "IP7", folderId, "UpdateVisitor " + ipResponse.ip); // Existing Ip found ZZ removed. 
+                                    logActivity2(visitorId, "IP3", folderId, "UpdateVisitor " + ipResponse.ip); // Existing Ip found ZZ removed. 
                                 }
                                 //logActivity("IP9", folderId, "get IpInfo/" + calledFrom); // ZZ Visitor Updated. 
                                 //logActivity("IPS", folderId, "get IpInfo/" + calledFrom); // Switch Case Problem. 
@@ -141,12 +152,12 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                                 break;
                             default:
                                 logActivity2(visitorId, "IPC", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
-                                logError2(visitorId, "AJX", folderId, updateVisitorSuccessModel.Success, "get IpInfo/" + calledFrom);
+                                logError2(visitorId, "AJX", folderId, updateVisitorSuccessModel.Success, "update visitor/get IpInfo/" + calledFrom);
                                 break;
                         }
                     },
                     error: function (jqXHR) {
-                        logActivity2(create_UUID(), "IPE", 555, "add Visitor"); // AddVisitor XHR error
+                        logActivity2(create_UUID(), "IPE", 555, "add Visitor"); // Add Visitor XHR error
                         let errMsg = getXHRErrorDetails(jqXHR);
                         if (!checkFor404(errMsg, 555, "add Visitor"))
                             logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
@@ -210,7 +221,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                             }
                         },
                         error: function (jqXHR) {
-                            logActivity2(create_UUID(), "AV8", 555, "Update Visitor"); // AddVisitor XHR error
+                            logActivity2(create_UUID(), "AV8", 555, "Update Visitor"); // Add Visitor XHR error
                             let errMsg = getXHRErrorDetails(jqXHR);
                             if (!checkFor404(errMsg, folderId, "add Visitor"))
                                 logError2(create_UUID(), "XHR", folderId, errMsg, "Update Visitor");
@@ -301,7 +312,7 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
                                 }
                             },
                             error: function (jqXHR) {
-                                logActivity2(create_UUID(), "AV8", 555, "apiDbIpFree/update Visitor"); // AddVisitor XHR error
+                                logActivity2(create_UUID(), "AV8", 555, "apiDbIpFree/update Visitor"); // Add Visitor XHR error
                                 let errMsg = getXHRErrorDetails(jqXHR);
                                 if (!checkFor404(errMsg, 555, "apiDbIpFree/update Visitor"))
                                     logError2(create_UUID(), "XHR", 55, errMsg, "apiDbIpFree/update Visitor");
@@ -336,7 +347,7 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
                             logActivity2(visitorId, "IP6", folderId, "apiDbIpFree");
                         }
                         else {
-                            logActivity2(visitorId, "IP3", folderId, "apiDbIpFree");
+                            logActivity2(visitorId, "IPA", folderId, "apiDbIpFree");
                             logError2(visitorId, "XHR", folderId, errMsg, "apiDbIpFree/" + calledFrom);
                             tryCloudflareTrace(folderId, visitorId, calledFrom); // try something else
                         }
@@ -431,7 +442,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                                 }
                             },
                             error: function (jqXHR) {
-                                logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
+                                logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // Add Visitor XHR error
                                 let errMsg = getXHRErrorDetails(jqXHR);
                                 if (!checkFor404(errMsg, 555, "add Visitor"))
                                     logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
@@ -508,7 +519,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                                 }
                             },
                             error: function (jqXHR) {
-                                logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
+                                logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // Add Visitor XHR error
                                 let errMsg = getXHRErrorDetails(jqXHR);
                                 if (!checkFor404(errMsg, 555, "add Visitor"))
                                     logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
@@ -564,7 +575,7 @@ function tagVisitor(visitorId, folderId, calledFrom, tagValue)
             }
         },
         error: function (jqXHR) {
-            logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // AddVisitor XHR error
+            logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // Add Visitor XHR error
             let errMsg = getXHRErrorDetails(jqXHR);
             if (!checkFor404(errMsg, 555, "add Visitor"))
                 logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
