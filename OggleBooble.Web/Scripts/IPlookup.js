@@ -125,7 +125,9 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                                         logActivity2(visitorId, "IP2", folderId, "get IpInfo/" + calledFrom); // New Ip Visitor Updated
                                         break;
                                     case "Duplicate Ip":
-                                        logActivity2(visitorId, "IP3", folderId, "UpdateVisitor " + ipResponse.ip); // Duplicate Ip 
+                                        setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
+                                        //logActivity2(visitorId, "IP3", folderId, "UpdateVisitor " + ipResponse.ip); // Duplicate Ip 
+                                        logActivity2(visitorId, "IP3", folderId, updateVisitorSuccessModel.ComprableIpAddressVisitorId); // Duplicate Ip 
                                         break;
                                     case "VisitorId not found":
                                         logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
@@ -138,15 +140,15 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                                         //    GeoCode: ipResponse.loc
                                         //}, "get IpInfo/" + calledFrom);
                                         break;
-                                    case "IpInfo ZZ fail":
-                                        logActivity2(visitorId, "IPZ", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
-                                        break;
-                                    case "add retired failed":
-                                        logActivity2(visitorId, "IPH", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
-                                        break;
-                                    case "update failed":
-                                        logActivity2(visitorId, "IPI", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
-                                        break;
+                                    //case "IpInfo ZZ fail":
+                                    //    logActivity2(visitorId, "IPZ", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
+                                    //    break;
+                                    //case "add retired failed":
+                                    //    logActivity2(visitorId, "IPH", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
+                                    //    break;
+                                    //case "update failed":
+                                    //    logActivity2(visitorId, "IPI", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
+                                    //    break;
                                     default:
                                         logActivity2(visitorId, "IPS", folderId, "update visitor/get IpInfo/" + calledFrom); // Switch Case Problem
                                         logError2(visitorId, "SWT", folderId, updateVisitorSuccessModel.ReturnValue, "update visitor/get IpInfo/" + calledFrom);
