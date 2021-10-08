@@ -52,7 +52,8 @@ namespace OggleBooble.Api.Controllers
             {
                 if (visitorData.City == "ZZ")
                 {
-                    updateVisitorSuccessModel.Success = "IpInfo ZZ fail";
+                    updateVisitorSuccessModel.ReturnValue = "IpInfo ZZ fail";
+                    updateVisitorSuccessModel.Success = "ok";
                     return updateVisitorSuccessModel;
                 }
                 using (var db = new OggleBoobleMySqlContext())
@@ -60,17 +61,36 @@ namespace OggleBooble.Api.Controllers
                     Visitor visitor1 = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
                     if (visitor1 == null)
                     {
-                        updateVisitorSuccessModel.Success = "VisitorId not found";
+                        updateVisitorSuccessModel.ReturnValue = "VisitorId not found";
+                        updateVisitorSuccessModel.Success = "ok";
                         return updateVisitorSuccessModel;
                     }
-                    visitor1.City = visitorData.City;
-                    visitor1.IpAddress = visitorData.IpAddress;
-                    visitor1.Country = visitorData.Country;
-                    visitor1.GeoCode = visitorData.GeoCode;
-                    visitor1.Region = visitorData.Region;
-                    if (visitor1.InitialPage == 0)
-                        visitor1.InitialPage = visitorData.InitialPage;
-                    db.SaveChanges();
+                    try
+                    {
+                        visitor1.City = visitorData.City;
+                        visitor1.IpAddress = visitorData.IpAddress;
+                        visitor1.Country = visitorData.Country;
+                        visitor1.GeoCode = visitorData.GeoCode;
+                        visitor1.Region = visitorData.Region;
+                        if (visitor1.InitialPage == 0)
+                            visitor1.InitialPage = visitorData.InitialPage;
+                        db.SaveChanges();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        if (Helpers.ErrorDetails(ex).IndexOf("Duplicate entry") > 0)
+                        {
+                            updateVisitorSuccessModel.ReturnValue = "add retired failed";
+                            updateVisitorSuccessModel.Success = "ok";
+                            return updateVisitorSuccessModel;
+                        }
+                        else
+                        {
+                            updateVisitorSuccessModel.Success = Helpers.ErrorDetails(ex);
+                            return updateVisitorSuccessModel;
+                        }
+                    }
 
                     List<Visitor> duplicateIpVisitors = db.Visitors
                          .Where(v => (v.IpAddress == visitorData.IpAddress) && (v.VisitorId != visitorData.VisitorId)).ToList();
@@ -78,6 +98,8 @@ namespace OggleBooble.Api.Controllers
                     if (duplicateIpVisitors.Count == 0)
                     {
                         updateVisitorSuccessModel.ReturnValue = "New Ip Visitor Updated";
+                        updateVisitorSuccessModel.Success = "ok";
+                        return updateVisitorSuccessModel;
                     }
                     else
                     {
@@ -89,25 +111,6 @@ namespace OggleBooble.Api.Controllers
                         {
                             if (sameIpVisitor.VisitorId != visitor1.VisitorId)
                             {
-                                if (visitor1.City != sameIpVisitor.City)
-                                {
-                                    if (sameIpVisitor.City == "ZZ" && visitor1.City != "ZZ")
-                                    {
-                                        //updateVisitorSuccessModel.Message2 = "ZZ Visitor Updated";
-                                    }
-                                    else
-                                    { 
-                                    
-                                    }
-                                }
-                                //updateVisitorSuccessModel.SameIp = visitor2.VisitorId;
-                                //visitor1.IpAddress = visitorData.IpAddress;
-                                //updateVisitorSuccessModel.Message1 = "New Ip Visitor Updated";
-                                //updateVisitorSuccessModel.Message1 = "Existing IP";
-                                //updateVisitorSuccessModel.Message2 = "Existing Ip found. ZZ removed";
-                                //updateVisitorSuccessModel.Message2 = "Existing Ip Cookie Problem";
-                                //updateVisitorSuccessModel.Message2 += "Initial Page updated";
-
                                 try
                                 {
                                     imageHitsChanged = db.Database.ExecuteSqlCommand(
@@ -144,18 +147,27 @@ namespace OggleBooble.Api.Controllers
                                     });
                                     db.Visitors.Remove(sameIpVisitor);
                                     db.SaveChanges();
-                                    //repairReport.VisitorRowsRemoved++;
                                 }
                                 catch (Exception ex)
                                 {
-                                    updateVisitorSuccessModel.Success = Helpers.ErrorDetails(ex);
-                                    return updateVisitorSuccessModel;
+                                    if (Helpers.ErrorDetails(ex).IndexOf("Duplicate entry") > 0)
+                                    {
+                                        updateVisitorSuccessModel.ReturnValue = "add retired failed";
+                                        updateVisitorSuccessModel.Success = "ok";
+                                        return updateVisitorSuccessModel;
+                                    }
+                                    else
+                                    {
+                                        updateVisitorSuccessModel.Success = Helpers.ErrorDetails(ex);
+                                        return updateVisitorSuccessModel;
+                                    }
+
                                 }
                             }
-                        }
-                    }
+                        }  // for each
+                        updateVisitorSuccessModel.Success = "ok";
+                    }  // duplicate Ip
                 }
-                updateVisitorSuccessModel.Success = "ok";
             }
             catch (Exception ex)
             {
