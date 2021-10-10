@@ -28,16 +28,13 @@
                             case "already processed":
                                 logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
                                 break;
-                            case "already looked up":
-                                logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
+                            case "already looked up today":
+                                logActivity2(visitorId, "IP7", folderId, lookupCandidateModel.lookupStatus);
                                 break;
                             case "visitorId not found":
                                 logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
                                 break;
                             case "country not ZZ":
-                                logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
-                                break;
-                            case "alreadyBurnedVisitor":
                                 logActivity2(visitorId, "IP0", folderId, lookupCandidateModel.lookupStatus);
                                 break;
                             case "fail two":
@@ -126,29 +123,10 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                                         break;
                                     case "Duplicate Ip":
                                         setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
-                                        //logActivity2(visitorId, "IP3", folderId, "UpdateVisitor " + ipResponse.ip); // Duplicate Ip 
-                                        logActivity2(visitorId, "IP3", folderId, updateVisitorSuccessModel.ComprableIpAddressVisitorId); // Duplicate Ip 
+                                        logActivity("IP3", folderId, visitorId); // Duplicate Ip 
                                         break;
                                     case "VisitorId not found":
                                         logActivity("IPB", folderId, "get IpInfo/" + calledFrom); // ip lookup VisitorId not found. 
-                                        //addVisitor({
-                                        //    visitorId: visitorId,
-                                        //    IpAddress: ipResponse.ip,
-                                        //    City: ipResponse.city,
-                                        //    Country: ipResponse.country,
-                                        //    Region: ipResponse.region,
-                                        //    GeoCode: ipResponse.loc
-                                        //}, "get IpInfo/" + calledFrom);
-                                        break;
-                                    //case "IpInfo ZZ fail":
-                                    //    logActivity2(visitorId, "IPZ", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
-                                    //    break;
-                                    //case "add retired failed":
-                                    //    logActivity2(visitorId, "IPH", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
-                                    //    break;
-                                    //case "update failed":
-                                    //    logActivity2(visitorId, "IPI", folderId, updateVisitorSuccessModel.Success); // update failed. ajax error
-                                    //    break;
                                     default:
                                         logActivity2(visitorId, "IPS", folderId, "update visitor/get IpInfo/" + calledFrom); // Switch Case Problem
                                         logError2(visitorId, "SWT", folderId, updateVisitorSuccessModel.ReturnValue, "update visitor/get IpInfo/" + calledFrom);
@@ -172,13 +150,12 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     }
                 });
                 ip0Busy = false;
-                //logActivity2(visitorId, "IP0", folderId, "get IpInfo/" + calledFrom); // well it worked
             },
             error: function (jqXHR) {
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (errMsg.indexOf("Not connect.") > -1) {
-                    logActivity2(visitorId, "IP6", folderId, "XHR:" + errMsg); // connection problem
+                    logActivity2(visitorId, "IP6", folderId, errMsg); // connection problem
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
                 }
                 else {

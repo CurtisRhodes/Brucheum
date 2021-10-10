@@ -622,12 +622,16 @@ function weDemandCookies() {
 }
 
 function getCookieValue(itemName) {
+
+    //ERR	CK1	local storage not matching cookie
+    //ERR	CK2	cookieItemValue == undefined
+    //ERR	CK3	undefined and cookies not enabled
+    //ERR	CK4	localStorage bypass cookies not enabled
+    //ERR	CK7	localStorage ends with an =
+    //ERR	CKE	Verify Network error caught
+
     let returnValue = "cookie not found";
     try {
-        if (isNullorUndefined(itemName)) {
-            logError2(create_UUID(), "BUG", 618429, "isNullorUndefined(itemName)", "get CookieValue");
-            return returnValue;
-        }
         let decodedCookie = decodeURIComponent(document.cookie);
         let cookieElements = decodedCookie.split(";");
         let cookieItem, cookieItemName, cookieItemValue;
@@ -636,85 +640,33 @@ function getCookieValue(itemName) {
             cookieItemName = cookieItem[0].trim();
             cookieItemValue = cookieItem[1];
             if (cookieItemName === itemName) {
-                if (isNullorUndefined(cookieItemValue)) {
-
-                    if (itemName == "VisitorId") {
-                        let markedVid = create_UUID();
-                        setCookieValue("VisitorId", markedVid);
-                        if (!navigator.cookieEnabled) {  // user accepts cookies
-                            //localStorage[itemName] = visitorId;
-                            logError2(create_UUID(), "CK3", 615112, "need a fix", "get CookieValue"); // undefined and cookies not enabled
-                        }
-                        else {
-                            if (!isNullorUndefined(localStorage[itemName])) {
-                                returnValue = localStorage[itemName];
-                                logError2(markedVid, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
-                            }
-
-                            //localStorage[itemName] = markedVid;
-
-                            logError2(markedVid, "CK2", 614725, "cookieItemValue == undefined", "get CookieValue"); // cookieItemValue == undefined
-                            //setCookieValue("VisitorId", visitorId);
-                            //addVisitor({
-                            //    VisitorId: visitorId,
-                            //    IpAddress: '00.11.00',
-                            //    City: "undefined",
-                            //    Country: "ZZ",
-                            //    Region: "undefined",
-                            //    GeoCode: "get CookieValue"
-                            //}, "get CookieValue");
-                        }
-                        returnValue = markedVid;
-                    }
-                    else {
-                        logError2(visitorId, "CK3", 615112, itemName, "get CookieValue"); // undefined and cookies not enabled
-                        returnValue = undefined;
-                    }
-                }
-                else {
+                if (!isNullorUndefined(cookieItemValue)) {
                     returnValue = cookieItemValue;
-                    if (isNullorUndefined(localStorage[itemName])) {
-                        localStorage[itemName] = cookieItemValue;
-                    }
-                    else {
-                        if (localStorage[itemName] != cookieItemValue) {
-                            if (itemName == "VisitorId") {
-                                if (localStorage[itemName].indexOf("=") > 0) {
-                                    localStorage[itemName] = cookieItemValue.substr(36);
-                                    logError2(returnValue, "CK7", 616307, "get cookie"); // localStorage ends with an =
-                                }
-                            }
-                            else {
-                                logError2(cookieItemValue, "CK1", 614737, "localStorage[itemName]: " + localStorage[itemName], "get CookieValue");
-                                localStorage[itemName] = cookieItemValue;
-                            }
-                        }
-                    }
+                    localStorage[itemName] = cookieItemValue;
                 }
-                break;
             }
         }
-
         if (returnValue == "cookie not found") {
-            if (isNullorUndefined(window.localStorage)) {
-                window.localStorage["IsLoggedIn"] = "false";
-                logError("BUG", 602537, "entire concept of window.localStorage fail", "get cookie value");
-                return returnValue;
+            try {
+                if (!isNullorUndefined(localStorage[itemName])) {
+                    returnValue = localStorage[itemName];
+                    logActivity2(create_UUID(), "LSB", 1091118, "get cookie: " + itemName); // local storage bypass
+                }
+                //else {
+                //    logError2(create_UUID(), "CK1", 1009620, "no value found for: " + itemName, "get cookie");
+                //    //returnValue = "no value found";
+                //}
+
+            } catch (e) {
+                logError2(create_UUID(), "CAT", 616329, e, "get Cookie inner");
             }
 
-            if (!isNullorUndefined(localStorage[itemName])) {
-                returnValue = localStorage[itemName];
-                if (navigator.cookieEnabled) {  // user accepts cookies
-                    setCookieValue(itemName, returnValue);
-                    logActivity2(create_UUID(), "LSB", 61723, "get cookie"); // local storage bypass
-                }
-                else {
-                    ///TODO do something about this
-                    // logError2(returnValue, "CK4", 616307, "get cookie"); // localStorage bypass cookies not enabled
-                }
-            }
+            ///TODO do something about this
+            // logError2(returnValue, "CK4", 616307, "get cookie"); // localStorage bypass cookies not enabled
+            //if (!navigator.cookieEnabled) {  // user accepts cookies
+                //showCookiesRequiredMessage();
         }
-    }
+    }        
     catch (e) {
         logError2(create_UUID(), "CAT", 616329, e, "get CookieValue");
     }
@@ -725,21 +677,14 @@ function setCookieValue(elementToSet, newValue) {
     try {
         if (!navigator.cookieEnabled) {  // user accepts cookies
             //showCookiesRequiredMessage();
-            logError2(create_UUID(), "UNC", 73734, "elementToSet: " + elementToSet, "set CookieValue");
-        }
-        try {
+            logError2(create_UUID(), "UNC", 73734, elementToSet + " :" + newValue, "set CookieValue");
             localStorage[elementToSet] = newValue;
-        } catch (e) {
-            logError2(create_UUID(), "CAT", 73729, e, "set CookieValue/ local storage");
         }
-
-        let cookieString = elementToSet + ":" + newValue;
-        document.cookie = cookieString;
-
-        //alert("document.cookie:\n\n" + JSON.stringify(document.cookie, null, 2));
-        //console.log("setCookieValue.  set:" + elementToSet + " to: " + newValue);
+        else {
+            let cookieString = elementToSet + ":" + newValue;
+            document.cookie = cookieString;
+        }
     } catch (e) {
-        //alert("setcookie CATCH Error: " + e);
         logError2(create_UUID(), "CAT", 616415, e, "setCookieValue");
     }
 }

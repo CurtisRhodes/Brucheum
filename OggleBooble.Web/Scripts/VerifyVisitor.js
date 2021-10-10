@@ -66,30 +66,10 @@ function verifyVisitorId(folderId, calledFrom) {
             logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom); // cookie not found made it too far
             return;
         }
-
-        //VV0	attempting to verify visitor	1018
-        //VV1	verify visitor ok	615
-        //VV2	missing VisitorId readded	169
-        //VV3	visitorId came back not found	259
-        //VV4	verify visitor AJX error
-        //VV5	verify visitor CATCH error
-        //VV6	verify visitor XHR error
-        //VV7	unknown country	136
-
-        //ACT	VV8	cookie not found made it too far
-        //ACT	VVa	missing VisitorId repeatOffender
-        //VVb	missing VisitorId false flag	4
-
-
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
             success: function (successModel) {
-            //VV0 attempting to verify visitor    590
-            //VV1 verify visitor ok   320
-            //VV3 visitorId came back not found   130
-            //VV7 unknown country 136
-            //VVb missing VisitorId false flag    1
                 if (successModel.Success == "ok") {
                     switch (successModel.ReturnValue) {
                         case "visitorId ok":
@@ -102,10 +82,8 @@ function verifyVisitorId(folderId, calledFrom) {
                             logActivity2(visitorId, "VV2", folderId, "verify Visitor"); // retired visitorId updated
                             break;
                         case "retired visitor comparable not found":
-                            logError("BUG", folderId, "retired visitor comparable not found", "verify VisitorId");
-                            break;
-                        case "unknown country":
-                            logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // unknown country
+                            logActivity2(visitorId, "VV7", folderId, "verify Visitor"); // visitorId came back not found
+                            logError("BUG", folderId, "retired visitor not found", "verify VisitorId");
                             break;
                         case "not found":
                             logActivity2(visitorId, "VV3", folderId, "verify Visitor"); // visitorId came back not found
