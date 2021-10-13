@@ -25,11 +25,10 @@ function displaySpaPage(spaPageId) {
             setOggleFooter(3908, "index", "index");
             launchCarousel("boobs");
             $('.indexPageSection').show();
-            loadUpdatedGalleriesBoxes();
+            //resizeIndexPage();
             resetOggleHeader(3908, "boobs");
             //setTimeout(function () { launchPromoMessages(); }, 3000);
-            $('#showRandomGalleriesLabel').hide();
-            showRandomGalleries();           
+            loadUpdatedGalleriesBoxes();
             //$('#testFunctionClick').show();
             break;
         case 3909: // porn
@@ -96,9 +95,11 @@ function loadUpdatedGalleriesBoxes() {
                             "</div>");
                     }
                 });
-                $('.sectionLabel').show();
+                //$('.sectionLabel').show();
                 resizeIndexPage();
-                setTimeout(function () { resizeIndexPage(); }, 300);
+                setTimeout(function () {
+                    showRandomGalleries();
+                }, 3000);
                 var delta = (Date.now() - getLatestStart) / 1000;
                 console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes.  Took: " + delta.toFixed(3));
             }
@@ -332,8 +333,8 @@ function indexPageHTML() {
         "       <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
 
-        "   <div id='showRandomGalleriesLabel' class='clickable sectionLabel' onclick='refreshRandomGalleries()' title='refresh random galleries'>random galleries" +
-        "   <img src='images/refresh.png' height='22' />" +
+        "   <div id='showRandomGalleriesLabel' class='displayHidden clickable sectionLabel' onclick='refreshRandomGalleries()' title='refresh random galleries'>random galleries" +
+        "   <img src='images/refresh02.png' height='22' />" +
         "   </div>\n" +
         "   <div id='rgSectionContainer' class='randomGalleriesSectionContainer'>\n" +
         "       <div id='randomGalleriesSection' class='randomGalleriesFloatbox'>" +
