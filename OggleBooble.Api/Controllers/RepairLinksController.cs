@@ -151,7 +151,7 @@ namespace OggleBooble.Api.Controllers
                             ImageFile imageFile = new ImageFile()
                             {
                                 Id = physcialFileLinkId,
-                                Acquired = DateTime.Today,
+                                Acquired = DateTime.Now,
                                 ExternalLink = newFileName,
                                 FileName = physcialFileName,
                                 FolderId = folderId,

@@ -53,7 +53,7 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<VwMostActiveUsersForToday> MostActiveUsersForToday { get; set; }
         public virtual DbSet<VwSlideshowItem> VwSlideshowItems { get; set; }
         public virtual DbSet<VwCarouselItem> VwCarouselImages { get; set; }
-        public virtual DbSet<LatestTouchedGalleries> LatestTouchedGalleries { get; set; }
+        public virtual DbSet<VwLatestTouchedGalleries> LatestTouchedGalleries { get; set; }
         public virtual DbSet<VwImageHit> VwImageHits { get; set; }
 
         public virtual DbSet<ImageComment> ImageComments { get; set; }
@@ -786,8 +786,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public string Occured { get; set; }
     }
 
-    [Table("OggleBooble.LatestTouchedGalleries")]
-    public class LatestTouchedGalleries
+    [Table("OggleBooble.VwLatestTouchedGalleries")]
+    public class VwLatestTouchedGalleries
     {
         [Key]
         public int FolderId { get; set; }

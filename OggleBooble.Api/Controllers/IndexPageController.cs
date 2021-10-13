@@ -110,26 +110,28 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.Database.ExecuteSqlCommand("call OggleBooble.spLatestTouchedGalleries()");
+                    //
+                    updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries.Where(v => v.RootFolder == root).Take(take).ToList();
 
-                    if ((root == "porn") || (root == "sluts"))
-                    {
-                        updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
-                           .Where(t => t.RootFolder == "porn" || t.RootFolder == "sluts")
-                           .OrderByDescending(t => t.Acquired).Take(take).ToList();
-                    }
-                    if ((root == "archive") || (root == "boobs"))
-                    {
-                        updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
-                           .Where(t => t.RootFolder == "archive" || t.RootFolder == "boobs")
-                           .OrderByDescending(t => t.Acquired).Take(take).ToList();
-                    }
-                    if ((root == "playboy") || (root == "centerfold") || (root == "cybergirl"))
-                    {
-                        updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
-                            .Where(t => t.RootFolder == "playboy")
-                            .OrderByDescending(t => t.Acquired).Take(take).ToList();
-                    }
+                    //db.Database.ExecuteSqlCommand("call OggleBooble.spLatestTouchedGalleries()");
+                    //if ((root == "porn") || (root == "sluts"))
+                    //{
+                    //    updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
+                    //       .Where(t => t.RootFolder == "porn" || t.RootFolder == "sluts")
+                    //       .OrderByDescending(t => t.Acquired).Take(take).ToList();
+                    //}
+                    //if ((root == "archive") || (root == "boobs"))
+                    //{
+                    //    updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
+                    //       .Where(t => t.RootFolder == "archive" || t.RootFolder == "boobs")
+                    //       .OrderByDescending(t => t.Acquired).Take(take).ToList();
+                    //}
+                    //if ((root == "playboy") || (root == "centerfold") || (root == "cybergirl"))
+                    //{
+                    //    updatesModel.LatestTouchedGalleries = db.LatestTouchedGalleries
+                    //        .Where(t => t.RootFolder == "playboy")
+                    //        .OrderByDescending(t => t.Acquired).Take(take).ToList();
+                    //}
                 }
                 updatesModel.Success = "ok";
             }

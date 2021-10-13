@@ -332,7 +332,9 @@ function indexPageHTML() {
         "       <div id='carouselContainer'></div>\n" +
         "    </div>\n" +
 
-        "   <div id='showRandomGalleriesLabel' class='clickable sectionLabel' onclick='refreshRandomGalleries()' title='refresh random galleries'>random galleries</div>\n" +
+        "   <div id='showRandomGalleriesLabel' class='clickable sectionLabel' onclick='refreshRandomGalleries()' title='refresh random galleries'>random galleries" +
+        "   <img src='images/refresh.png' height='22' />" +
+        "   </div>\n" +
         "   <div id='rgSectionContainer' class='randomGalleriesSectionContainer'>\n" +
         "       <div id='randomGalleriesSection' class='randomGalleriesFloatbox'>" +
         //"           <img id='randomGalleriesSectionLoadingGif' class='containerloadingGif' title='loading random galleries' alt='' src='Images/loader.gif' />" +
