@@ -2,21 +2,21 @@
     promoIdx = 0,
     promoMessageRotator = null,
     promoMessageRotationSpeed = 15000,
-    numUpdatedGalleries = 25,
+    numUpdatedGalleries = 24,
     spaType = "archive";
 
 function displaySpaPage(spaPageId) {
     switch (Number(spaPageId)) {
         case 3907:
             rankerStartup(params.bp);
-            break;
+            break; // ranker
         case 3911:
             blogStartup();
-            break;
+            break; // blog
         case 3910:
             dashboardStartup();
-            break;
-        case 3908:  //indexStartup();
+            break; // dashboard
+        case 3908:
             //document.title = "welcome : OggleBooble";
             changeFavoriteIcon("redBallon");
             spaType = "boobs";
@@ -24,14 +24,15 @@ function displaySpaPage(spaPageId) {
             setOggleHeader("index");
             setOggleFooter(3908, "index", "index");
             launchCarousel("boobs");
-            $('.indexPageSection').show();
-            //resizeIndexPage();
             resetOggleHeader(3908, "boobs");
+            //setTimeout(function () { loadLatestUpdates(); }, 3000);
+            loadLatestUpdates();
+            loadRandomGalleries();
             //setTimeout(function () { launchPromoMessages(); }, 3000);
-            loadUpdatedGalleriesBoxes();
             //$('#testFunctionClick').show();
-            break;
-        case 3909: // porn
+            resizeIndexPage();
+            break;  //index page;
+        case 3909:
             spaType = "porn";
             $('#indexMiddleColumn').html(indexPageHTML());
             setOggleHeader("porn");
@@ -44,10 +45,10 @@ function displaySpaPage(spaPageId) {
             //else
             //    $('.threeColumnLayout').css("background-color", "#d279a6");
             $('#updatedGalleriesSectionLoadingGif').show();
-            loadUpdatedGalleriesBoxes();
+            loadLatestUpdates();
             resetOggleHeader(3909, "porn");
-            break;
-        case 72: // every playboy centerfold
+            break; // porn
+        case 72: 
             spaType = "centerfold";
             $('#indexMiddleColumn').html(playboyPageHTML());
             setOggleHeader("playboyIndex");
@@ -55,8 +56,8 @@ function displaySpaPage(spaPageId) {
             setOggleFooter(spaPageId, "centerfold", "centerfold");
             launchCarousel("centerfold");
             $('#updatedGalleriesSectionLoadingGif').show();
-            loadUpdatedGalleriesBoxes();
-            break;
+            loadLatestUpdates();
+            break; // every playboy centerfold
         default:
             if (document.domain === 'localhost') alert("spaPageId: " + spaPageId + " not found");
             logError("SWT", spaPageId, spaPageId, "displaySpaPage");
@@ -64,46 +65,24 @@ function displaySpaPage(spaPageId) {
     }
 }
 
-function loadUpdatedGalleriesBoxes() {
-    let settingsImgRepo = settingsArray.ImageRepo, thisItemSrc;
-    $('#updatedGalleriesSectionLoadingGif').show();
-    let getLatestStart = Date.now();
+function loadLatestUpdates() {
+    if (isNullorUndefined(window.localStorage[spaType + "latestUpdatesCache"])) {
+        console.log("no " + spaType + "latestUpdatesCache found.");
+    }
+    else {
+        console.log("latestUpdates " + spaType + "latestUpdatesCache loaded from cache.");
+        loadLatestUpdateArray(JSON.parse(window.localStorage[spaType + "latestUpdatesCache"]), "cache");
+    }
+    //$('#updatedGalleriesSectionLoadingGif').show();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numUpdatedGalleries + "&root=" + spaType,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
-                //$('#updatedGalleriesSectionLoadingGif').hide();
-                $('#updatedGalleriesSection').html("");
-                $.each(latestUpdates.LatestTouchedGalleries, function (idx, LatestUpdate) {
-                    if (!isNullorUndefined(LatestUpdate.ImageFile)) {
-
-                        if (isNullorUndefined(LatestUpdate.ImageFile)) {
-                            thisItemSrc = "/Images/binaryCodeRain.gif";
-                            logError("FIM", folder.FolderId, "UpdatedGalleriesBox image missing", "load UpdatedGalleriesBoxes");
-                        }
-                        else
-                            thisItemSrc = settingsImgRepo + LatestUpdate.ImageFile;
-
-                        $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
-                            "<div class='newsContentBoxLabel'>" + LatestUpdate.FolderName + "</div>" +
-                            "<img id='lt" + LatestUpdate.FolderId + "' class='newsContentBoxImage' " +
-                            "alt='Images/redballon.png' "+
-                            "onerror='latestGalleryImageError(" + LatestUpdate.FolderId + ",\"" + thisItemSrc + "\")' src='" + thisItemSrc + "'" +
-                            "onclick='rtpe(\"LUP\",\"" + spaType + "\",\"" + LatestUpdate.FolderName + "\"," + LatestUpdate.FolderId + ")' />" +
-                            "<div class='newsContentBoxDateLabel'>updated: " + dateString2(LatestUpdate.Acquired) + "</span></div>" +
-                            "</div>");
-                    }
-                });
-                //$('.sectionLabel').show();
-                resizeIndexPage();
-                setTimeout(function () {
-                    showRandomGalleries();
-                }, 3000);
-                var delta = (Date.now() - getLatestStart) / 1000;
-                console.log("loaded " + latestUpdates.LatestTouchedGalleries.length + " news boxes.  Took: " + delta.toFixed(3));
+                window.localStorage[spaType + "latestUpdatesCache"] = JSON.stringify(latestUpdates.LatestTouchedGalleries);
+                loadLatestUpdateArray(latestUpdates.LatestTouchedGalleries, "ajax");
             }
-            else logError("AJX", 3908, latestUpdates.Success, "load Updated Galleries Boxes");
+            else logError("AJX", 3908, latestUpdates.Success, "load LatestUpdates");
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
@@ -112,7 +91,84 @@ function loadUpdatedGalleriesBoxes() {
     });
 }
 
-function latestGalleryImageError(folderId, thisItemSrc) {    
+function loadLatestUpdateArray(latestTouchedGalleries, calledFrom) {
+    console.log("loadLatestUpdateArray: " + calledFrom);
+    $('#updatedGalleriesSection').html("");
+    $('#updatedGalleriesSectionLoadingGif').hide();
+
+    $.each(latestTouchedGalleries, function (idx, touchedGallery) {
+        let thisItemSrc = settingsImgRepo + touchedGallery.ImageFile;
+        $('#updatedGalleriesSection').append("<div class='newsContentBox'>" +
+            "<div class='newsContentBoxLabel'>" + touchedGallery.FolderName + "</div>" +
+            "<img id='lt" + touchedGallery.FolderId + "' class='newsContentBoxImage' " +
+            "alt='Images/redballon.png' " +
+            "onerror='latestGalleryImageError(" + touchedGallery.FolderId + ",\"" + thisItemSrc + "\")' src='" + thisItemSrc + "'" +
+            "onclick='rtpe(\"LUP\",\"" + spaType + "\",\"" + touchedGallery.FolderName + "\"," + touchedGallery.FolderId + ")' />" +
+            "<div class='newsContentBoxDateLabel'>updated: " + dateString2(touchedGallery.Acquired) + "</span></div>" +
+            "</div>"
+        );
+    });
+    $('#lblLatestUpdates').show();
+    resizeIndexPage();
+}
+
+function loadRandomGalleries() {
+    if (isNullorUndefined(window.localStorage[spaType + "randomGalleriesCache"])) {
+        console.log("no " + spaType + " cache found");
+    }
+    else {
+        console.log("loading " + spaType + " random galleries from cache");
+        loadRandomGalleriesArray(JSON.parse(window.localStorage[spaType + "randomGalleriesCache"], "cache"));
+    }
+    //$('#randomGalleriesSectionLoadingGif').hide();
+    let randGalleryCount = 9;
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/IndexPage/GetRandomGalleries?take=" + randGalleryCount + "&root=" + spaType,
+        success: function (randomGalleriesModel) {
+            if (randomGalleriesModel.Success === "ok") {
+                window.localStorage[spaType + "latestUpdatesCache"] = JSON.stringify(randomGalleriesModel.RandomGalleries);
+                loadRandomGalleriesArray(randomGalleriesModel.RandomGalleries, "ajax");
+            }
+            else logError("AJX", 3908, randomGalleriesModel.Success, "show RandomGalleries");
+        },
+        error: function (jqXHR) {
+            let errMsg = getXHRErrorDetails(jqXHR);
+            if (!checkFor404(errMsg, 619845, "show RandomGalleries")) logError("XHR", 619846, errMsg, "show RandomGalleries");
+        }
+    });
+}
+
+function loadRandomGalleriesArray(randomGalleriesArray,calledFrom) {
+    console.log("loadRandomGalleriesArray: " + calledFrom);
+    $('#rgSectionContainer').show().html("");
+    let rndItemSrc = "/Images/binaryCodeRain.gif";
+    let winWidth = $(window).width();
+    let winWidthss = $('#rgSectionContainer').width();
+    $.each(randomGalleriesArray, function (idx, randomGallery) {
+        //if (winWidthss < winWidth)
+        {
+            rndItemSrc = settingsImgRepo + randomGallery.FolderPath + "/" + randomGallery.FileName;
+            $('#rgSectionContainer').append("<div id='rg" + randomGallery.FolderId + "' class='newsContentBox'>" +
+                "<div class='newsContentBoxLabel'>" + randomGallery.FolderName + "</div>" +
+                "<img id='lt" + randomGallery.FolderId + "' class='newsContentBoxImage' " +
+                "alt='Images/redballon.png' " +
+                "onerror='randomGalleriesImageError(" + randomGallery.FolderId + ",\"" + rndItemSrc + "\")' src='" + rndItemSrc + "'" +
+                "onclick='rtpe(\"RGC\",\"" + spaType + "\",\"" + randomGallery.FolderName + "\"," + randomGallery.FolderId + ")' />" +
+                "</div>");
+        }
+        //let fff = $('#rgSectionContainer');
+        winWidthss = $('#rgSectionContainer').width();
+        winWidths1 = $('#randomGalleriesSection').innerWidth();
+        if (winWidthss > winWidth)
+            $('#rg' + randomGallery.FolderId).hide();
+
+    });
+    $('#showRandomGalleriesLabel').show();
+    resizeIndexPage();
+}
+
+function latestGalleryImageError(folderId, thisItemSrc) {
     //logError("ILF", folderId, thisItemSrc, "latestGalleryImage");
     setTimeout(function () {
         if ($('#lt' + folderId).attr('src') == null) {
@@ -126,55 +182,6 @@ function latestGalleryImageError(folderId, thisItemSrc) {
             }
         }
     }, 600);
-}
-
-function showRandomGalleries() {
-    $('#randomGalleriesSectionLoadingGif').hide();
-    let randGalleryCount = 9;
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/IndexPage/GetRandomGalleries?take=" + randGalleryCount + "&root=boobs",
-        success: function (randomGalleriesModel) {
-            if (randomGalleriesModel.Success === "ok") {
-                $('#randomGalleriesSection').html("");
-                let rndItemSrc = "/Images/binaryCodeRain.gif";
-
-                let winWidth = $(window).width();
-                //"   <div class='randomGalleriesSectionContainer'>\n" +
-                //    "       <div id='randomGalleriesSection' class='randomGalleriesFloatbox'>" +
-                let winWidthss = $('#rgSectionContainer').width();
-                //let winWidths1 = $('#randomGalleriesSection').innerWidth();
-                $.each(randomGalleriesModel.RandomGalleries, function (idx, randomGallery) {
-
-                    //if (winWidthss < winWidth)
-                    {
-                        rndItemSrc = settingsImgRepo + randomGallery.FolderPath + "/" + randomGallery.FileName;
-                        $('#randomGalleriesSection').append("<div id='rg" + randomGallery.FolderId + "' class='newsContentBox'>" +
-                            "<div class='newsContentBoxLabel'>" + randomGallery.FolderName + "</div>" +
-                            "<img id='lt" + randomGallery.FolderId + "' class='newsContentBoxImage' " +
-                            "alt='Images/redballon.png' " +
-                            "onerror='randomGalleriesImageError(" + randomGallery.FolderId + ",\"" + rndItemSrc + "\")' src='" + rndItemSrc + "'" +
-                            "onclick='rtpe(\"RGC\",\"" + spaType + "\",\"" + randomGallery.FolderName + "\"," + randomGallery.FolderId + ")' />" +
-                            "</div>");
-                    }
-
-                    let fff = $('#rgSectionContainer');
-                    winWidthss = $('#rgSectionContainer').width();
-                    winWidths1 = $('#randomGalleriesSection').innerWidth();
-                    if (winWidthss > winWidth)
-                        $('#rg' + randomGallery.FolderId).hide();
-
-                });
-                $('#showRandomGalleriesLabel').show();
-            }
-            else logError("AJX", 3908, randomGalleriesModel.Success, "show RandomGalleries");
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, 619845, "show RandomGalleries")) logError("XHR", 619846, errMsg, "show RandomGalleries");
-        }
-    });
-
 }
 
 function testFunction() {
@@ -229,6 +236,7 @@ function launchPromoMessages() {
         }
     });
 }
+
 function showPromoMessages(promoMessagesArray) {
     $('#promoContainer').html(
         "<div id='promoContainerTitle' class='ogglePromoTitle'></div>\n" +
@@ -251,6 +259,7 @@ function showPromoMessages(promoMessagesArray) {
         promoIdx++;
     }, promoMessageRotationSpeed);
 }
+
 function killPromoMessages() {
     $('#promoContainer').fadeOut();
     clearInterval(promoMessageRotator);
@@ -271,7 +280,7 @@ function showHideGalleries() {
 }
 
 function refreshRandomGalleries() {
-    showRandomGalleries();
+    loadRandomGalleries();
 }
 
 function randomGalleriesImageError(folderId, imgSrc) {
@@ -312,44 +321,30 @@ function resizeIndexPage() {
 function playboyPageHTML() {
     return "<div class='playboyShell'> <div class='indexPageSection' id='topIndexPageSection'>\n" +
         "       <div class='sectionLabel'>random galleries</div>\n" +
-        //"       <div id='testMessage1' class='indexPageHappyMessage'></div>\n" +
         "           <div id='carouselContainer'></div>\n" +
-        "    </div>\n" +
-        "    <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
-        "    <div class='indexPageSection' id='bottomSection'>\n" +
-        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
-        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' title='loading gif' alt='' src='Images/loader.gif' />" +
-        "       </div>\n" +
-        "    </div></div>\n" +
-        "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
-        "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
+        "   </div>\n" +
+        "   <div class='clickable sectionLabel' onclick='showHideGalleries()'>latest updates</div>\n" +
+        "   <div class='indexPageSection' id='bottomSection'>\n" +
+        "   <div id='updatedGalleriesSection' class='updatedGalleriesSection'></div>\n" +
+        "   <div id='showMoreGalleriesDiv' class='clickable sectionLabel' onclick='showMoreGalleries()'>show more updated galleries</div>\n";
 }
 
 function indexPageHTML() {
-    return " <div class='indexPageSection' id='topIndexPageSection'>\n" +
-        "       <div class='sectionLabel'>random galleries</div>\n" +
-        //"       <div id='testMessage1' class='indexPageHappyMessage'></div>\n" +
-        "       <div id='promoContainer' class='promoContainer' >my promo message</div>\n" +
-        "       <div id='carouselContainer'></div>\n" +
-        "    </div>\n" +
+    return "" +
+        "<div class='indexPageSection' id='topIndexPageSection'>\n" +
+        "   <div class='sectionLabel'>random galleries</div>\n" +
+        "   <div id='promoContainer' class='promoContainer' >my promo message</div>\n" +
+        "   <div id='carouselContainer'></div>\n" +
+        "</div>\n" +
 
+        "<div id='testFunctionClick' class='testFunctionLabel' onclick='testFunction()'>reformat hard drive</div>\n" +
+        "<div class='indexPageSection' id='bottomSection'>\n" +
         "   <div id='showRandomGalleriesLabel' class='displayHidden clickable sectionLabel' onclick='refreshRandomGalleries()' title='refresh random galleries'>random galleries" +
-        "   <img src='images/refresh02.png' height='22' />" +
+        "      <img src='images/refresh02.png' height='22' />" +
         "   </div>\n" +
-        "   <div id='rgSectionContainer' class='randomGalleriesSectionContainer'>\n" +
-        "       <div id='randomGalleriesSection' class='randomGalleriesFloatbox'>" +
-        //"           <img id='randomGalleriesSectionLoadingGif' class='containerloadingGif' title='loading random galleries' alt='' src='Images/loader.gif' />" +
-        "       </div>" +
-        "   </div>\n" +
-
-        "    <div id='testFunctionClick' class='testFunctionLabel' onclick='testFunction()'>reformat hard drive</div>\n" +
-
-        "    <div class='clickable sectionLabel' onclick='showHideGalleries()' title='show hide'>latest updates</div>\n" +
-        "    <div class='indexPageSection' id='bottomSection'>\n" +
-        "        <div id='updatedGalleriesSection' class='updatedGalleriesSection'>" +
-        "           <img id='updatedGalleriesSectionLoadingGif' class='containerloadingGif' title='loading gif' alt='' src='Images/loader.gif' />" +
-        "       </div>\n" +
-        "    </div>\n" +
-        "    <div id='showMoreGalleriesDiv' class='clickable sectionLabel' " +
-        "       onclick='showMoreGalleries()'>show more updated galleries</div>\n";
+        "   <div id='rgSectionContainer' class='randomGalleriesSectionContainer'></div>\n" +
+        "   <div id='lblLatestUpdates' class='clickable sectionLabel' onclick='showHideGalleries()' title='show hide'>latest updates</div>\n" +
+        "   <div id='updatedGalleriesSection' class='updatedGalleriesSection'></div>\n" +
+        "   <div id='showMoreGalleriesDiv' class='clickable sectionLabel' onclick='showMoreGalleries()'>show more updated galleries</div>\n" +
+        "</div>\n";
 }

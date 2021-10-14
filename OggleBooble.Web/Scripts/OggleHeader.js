@@ -390,7 +390,7 @@ function headerHtml() {
         "           <div id='topRowRightContainer'></div>" +
         "           <div id='searchBox' class='oggleSearchBox'>\n" +
         "               <span id='notUserName' title='Esc clears search.'>search</span>" +
-        "                   <input class='oggleSearchBoxText' id='txtSearch' onkeydown='oggleSearchKeyDown(event)'></input>" +
+        "                   <input class='oggleSearchBoxText' id='txtSearch' title='search' onkeydown='oggleSearchKeyDown(event)'></input>" +
         "               <div id='searchResultsDiv' class='searchResultsDropdown'></div>\n" +
         "           </div>\n" +
         "       </div>\n" +

@@ -82,20 +82,17 @@
 .indexPageSection {
     margin-top: 26px;
     width: 100%;
-    display: flex;
+    /*    display: flex;*/
     overflow: auto;
     min-height: 40%;
     color: var(--oggleTitleColor);
     /*border: solid 10px orange;*/
 }
 .randomGalleriesSectionContainer {
-    margin-top: 11px;
+    margin-top: 8px;
     /*    border: solid 4px #a7984d;*/
-    display: block;
-    margin-bottom: 11px;
-}
-
-.randomGalleriesFloatbox {
+    display: none;
+    margin-bottom: 8px;
     text-align: center;
 }
 
