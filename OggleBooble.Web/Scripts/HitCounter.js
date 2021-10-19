@@ -19,7 +19,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
             data: {
-                VisitorId: getCookieValue("VisitorId"),
+                VisitorId: getCookieValue("VisitorId", "log ImageHit"),
                 FolderId: folderId,
                 LinkId: linkId,
                 IsInitialHit: isInitialHit
@@ -57,7 +57,7 @@ let lastPageHitFolderId, lastPageHitVisitorId;
 function logPageHit(folderId) {
     try {
         //logActivity2(create_UUID(), "PH0", folderId, "log pageHit");  // entering log page hit
-        let visitorId = getCookieValue("VisitorId");
+        let visitorId = getCookieValue("VisitorId", "log PageHit");
         if (visitorId.indexOf("cookie not found") > -1) {
             visitorId = create_UUID();
             setCookieValue("VisitorId", visitorId);
@@ -177,7 +177,7 @@ function logVisit(visitorId, folderId, calledFrom) {
 
 function logStaticPageHit(folderId, calledFrom) {
     logActivity("SP0", folderId, calledFrom); // calling static page hit
-    let visitorId = getCookieValue("VisitorId");
+    let visitorId = getCookieValue("VisitorId", "log StaticPageHit");
 
 /*
 ACT	SP0	calling static page hit

@@ -270,7 +270,7 @@ function clearBlogGets() {
 function saveBlogEntry() {
     try {
         blogObject.CommentTitle = $('#txtCommentTitle').val();
-        blogObject.VisitorId = getCookieValue("VisitorId");
+        blogObject.VisitorId = getCookieValue("VisitorId", "save BlogEntry");
         blogObject.Link = $('#txtLink').val();
         blogObject.CommentText = $('#summernoteContainer').summernote('code');
         blogObject.CommentType = $('#selBlogEditCommentType').val();

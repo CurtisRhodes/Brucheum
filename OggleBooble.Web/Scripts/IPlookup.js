@@ -1,17 +1,26 @@
-﻿function tryAddNewIP(folderId, visitorId, calledFrom) {
+﻿const { get } = require("jquery");
+
+function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
         //let visitorId = getCookieValue("VisitorId");
         if (visitorId.indexOf("cookie not found") > -1) {
-            visitorId = create_UUID();
             logError2(visitorId, "BUG", "cookie not found made it to tryAddNewIP", calledFrom);
-        }
-        if (visitorId == "user does not accept cookies") {
-            visitorId = create_UUID();
-            logError2(visitorId, "BUG", "user does not accept cookies made it to tryAddNewIP", calledFrom);
+            return;
         }
         if (isNullorUndefined(visitorId)) {
             logActivity("IPX", folderId, "tryAddNewIP/" + calledFrom);
+            return;
         }
+        if (visitorId.length != 36) {
+            let newVisitorId = create_UUID();
+
+            logError2(newVisitorId, "BUG", folderId, "Bad VisitorId: " + visitorId, "tryAddNewIP");
+            let visitorId = newVisitorId;
+            setCookieValue("VisitorId", newVisitorId);
+            return;
+        }
+
+
         else {            
             $.ajax({
                 type: "GET",

@@ -96,7 +96,7 @@ function onLogoutClick(pageId) {
     if (confirm("log out?")) {
         //setCookieValue("IsLoggedIn", "false");
         updateRegisteredUser({
-            VisitorId: getCookieValue("VisitorId"),
+            VisitorId: getCookieValue("VisitorId", "on LogoutClick"),
             IsLoggedIn: "false"
         });
         localStorage["IsLoggedIn"] = "false";
@@ -237,7 +237,7 @@ function attemptRegister() {
     try {
         if (validateRegister())
         {
-            let visitorId = getCookieValue("VisitorId");
+            let visitorId = getCookieValue("VisitorId", "attempt Register");
             let userInfo = {
                 VisitorId: visitorId,
                 UserName: $('#txtRegisterUserName').val(),
@@ -302,11 +302,10 @@ function attemptRegister() {
                         $('#optionNotLoggedIn').hide();
                         $('#optionLoggedIn').show();
                         $('#footerCol5').show();
-                        let visid = getCookieValue("VisitorId");
 
                         logActivity("LG4", 713654, registerdUserSuccessModel.RegisterStatus); // Someone Registerd !!!
                         sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
-                            "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visid +
+                            "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visitorId +
                             "<br/>" + registerdUserSuccessModel.RegisterStatus);
                     }
                     else {
@@ -425,7 +424,7 @@ function showUserProfileDialog() {
 
 function userProfileHtml() {
     return "<div id='userProfileDialog' class='roundedDialog' >\n" +
-        "   <div><label style='white-space:nowrap;'>visitorId: </label><span> " + getCookieValue("VisitorId") + "</span></div>\n" +
+        "   <div><label style='white-space:nowrap;'>visitorId: </label><span> " + getCookieValue("VisitorId", "user ProfileHtml") + "</span></div>\n" +
         "   <div><label style='white-space:nowrap;'>user name</label><input id='txtUserProfileName' class='roundedInput' placeholder='your go by name'></input></div>\n" +
         "   <div><label style='white-space:nowrap;'>First Name</label><input id='txtUserProfileFirstName' class='roundedInput'></input></div>\n" +
         "   <div><label style='white-space:nowrap;'>Last Name</label><input id='txtUserProfileLastName' class='roundedInput'></input></div>\n" +
@@ -439,8 +438,7 @@ function userProfileHtml() {
 }
 
 function callUpdateUserProfile() {
-
-    let visitorId = getCookieValue("VisitorId");
+    let visitorId = getCookieValue("VisitorId", "call UpdateUserProfile");
     if (visitorId == "cookie not found") {
         logError2(create_UUID(), "BUG", 616356, "cookie not found", "call Update UserProfile");
         alert("Sorry\nprogram error\please report by sending feedback");
@@ -495,7 +493,7 @@ function updateRegisteredUser(userProfileData) {
 //DAC	LKM	Link Moved
 //DAC	ARK	Archive Image
 function awardCredits(activityCode, folderId) {
-    let visitorId = getCookieValue("VisitorId");
+    let visitorId = getCookieValue("VisitorId", "award Credits");
     let credits;
     switch (activityCode) {
         case "PBV": credits = -20; break; // Playboy Page View

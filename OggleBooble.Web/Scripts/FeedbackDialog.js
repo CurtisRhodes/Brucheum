@@ -53,7 +53,7 @@
         try {
             if (validateFeedback()) {
                 //alert("feedbackType: " + $('#feedbackDialog input[type=\'radio\']:checked').val());
-                let visitorId = getCookieValue("VisitorId");
+                let visitorId = getCookieValue("VisitorId", "save Feedback");
                 let feedbackType = $('#feedbackDialog input[type=\'radio\']:checked').val();
                 $.ajax({
                     type: "POST",
@@ -135,7 +135,7 @@
         try {
             $.ajax({
                 type: "GET",
-                url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + getCookieValue("VisitorId"),
+                url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + getCookieValue("VisitorId","ge tUserEmail"),
                 success: function (visitorInfo) {
                     if (visitorInfo.Success == "ok") {
                         if (visitorInfo.IsRegisteredUser)
@@ -194,7 +194,7 @@ function saveFolderComment(folderId) {
     //public string AddEditTrackBackLink(FolderCommentModel folderCommentModel)
     //let folderCommentMessage = $('#smnFolderComment').summernote('code');
     try {
-        let visitorId = getCookieValue("VisitorId");
+        let visitorId = getCookieValue("VisitorId", "save FolderComment");
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/FolderComment/AddFolderComment",

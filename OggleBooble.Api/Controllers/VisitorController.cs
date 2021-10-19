@@ -96,6 +96,10 @@ namespace OggleBooble.Api.Controllers
             var lookupCandidateModel = new LookupCandidateModel();
             try
             {
+                if (visitorId.Length != 36)
+                {
+                    lookupCandidateModel.lookupStatus = "visitorId not valid";
+                }
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
@@ -110,18 +114,13 @@ namespace OggleBooble.Api.Controllers
                         lookupCandidateModel.lookupStatus = "country not ZZ";
                         return lookupCandidateModel;
                     }
-                    if (dbVisitor.City == "fail two")
-                    {
-                        lookupCandidateModel.lookupStatus = "fail two";
-                        return lookupCandidateModel;
-                    }
-                    if (dbVisitor.City == "already processed")
-                    {
-                        lookupCandidateModel.lookupStatus = "already processed";
-                        dbVisitor.City = "fail two";
-                        db.SaveChanges();
-                        return lookupCandidateModel;
-                    }
+                    //if (dbVisitor.City == "already processed")
+                    //{
+                    //    lookupCandidateModel.lookupStatus = "already processed";
+                    //    dbVisitor.City = "fail two";
+                    //    db.SaveChanges();
+                    //    return lookupCandidateModel;
+                    //}
                     if (dbVisitor.VisitorId.Length != 36)
                     {
                         lookupCandidateModel.lookupStatus = "bad visitor Id";

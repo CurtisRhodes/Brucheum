@@ -253,7 +253,7 @@ function getAlbumImages(folderId) {
 function getAlbumPageInfo(folderId, isLargeLoad) {
     var infoStart = Date.now();
 
-    let visitorId = getCookieValue("VisitorId");
+    let visitorId = getCookieValue("VisitorId", "getAlbumPageInfo");
 
     $.ajax({
         type: "GET",
@@ -361,7 +361,7 @@ function checkRegistrationStatus(folderId, visitorId, albumInfo) {
                     || (albumInfo.RootFolder == "cybergirl") || (albumInfo.RootFolder == "playboy"))
                 {
                     if (albumInfo.UserPageHits > 100) {
-                        let visitorId = getCookieValue("VisitorId");
+                        let visitorId = getCookieValue("VisitorId", "checkRegistrationStatus");
                         if ((visitorId == "cookie not found") || (visitorId == "user does not accept cookies")) {
                             if (visitorId == "user does not accept cookies") {
                                 showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
@@ -541,7 +541,7 @@ function chargeCredits(folderId, rootFolder) {
         type: "POST",
         url: settingsArray.ApiServer + "api/User/AwardCredits",
         data: {
-            VisitorId: getCookieValue("VisitorId"),
+            VisitorId: getCookieValue("VisitorId", "chargeCredits"),
             ActivityCode: activityCode,
             PageId: folderId,
             Credits: credits

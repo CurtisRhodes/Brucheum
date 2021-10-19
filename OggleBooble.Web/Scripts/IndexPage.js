@@ -284,10 +284,15 @@ function refreshRandomGalleries() {
 }
 
 function randomGalleriesImageError(folderId, imgSrc) {
-    $('#rg' + folderId).hide();
-    alert("randomGalleriesImageError\nfolderId: " + folderId + " imgSrc: " + imgSrc);
-    logError("DRV", folderId, imgSrc, "load randomGalleries");
-    //" + randomGallery.FolderId + ", \"" + rndItemSrc + "\")'
+    try {
+        $('#rg' + folderId).hide();
+        //alert("randomGalleriesImageError\nfolderId: " + folderId + " imgSrc: " + imgSrc);
+        logError("BUG", folderId, imgSrc, "load randomGalleries");
+        //" + randomGallery.FolderId + ", \"" + rndItemSrc + "\")'
+
+    } catch (e) {
+        logError("CAT", folderId, e, "load randomGalleries");
+    }
 }
 
 function goToPorn() {

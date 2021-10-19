@@ -63,7 +63,7 @@ function perfomCopyLink(linkId) {
             if (success === "ok") {
                 displayStatusMessage("ok", "link copied")
                 logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: getCookieValue("VisitorId", "perfom CopyLink"),
                     ActivityCode: "LKC",
                     FolderId: pSelectedTreeId,
                     Details: "copy: " + linkId + " to: " + pSelectedTreeFolderPath
@@ -118,7 +118,7 @@ function moveFile(request, linkId, folderId) {
                 displayStatusMessage("ok", "image moved from: " + folderId + "  to: " + pSelectedTreeFolderPath);
 
                 logDataActivity({
-                    VisitorId: getCookieValue("VisitorId"),
+                    VisitorId: getCookieValue("VisitorId", "move File"),
                     ActivityCode: request,
                     FolderId: pSelectedTreeId,
                     Details: linkId + " " + request + " from " + folderId
@@ -159,7 +159,7 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                     getAlbumImages(folderId);
 
                     logDataActivity({
-                        VisitorId: getCookieValue("VisitorId"),
+                        VisitorId: getCookieValue("VisitorId", "attempt RemoveLink"),
                         ActivityCode: "REM",
                         PageId: folderId,
                         Details: "link: " + linkId
@@ -168,7 +168,7 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
                 }
                 else {
                     $('#albumPageLoadingGif').hide();
-                    logError("AJX", folderId, success, "attemptRemoveLink");
+                    logError("AJX", folderId, success, "attempt RemoveLink");
                 }
             }
         },
@@ -223,20 +223,20 @@ function performMoveImageToRejects(linkId, folderId) {
                         slide("next");
                     }
 
-                   // TODO: include reason radio button
+                    // TODO: include reason radio button
                     getAlbumImages(folderId);
                     dragableDialogClose();
                     slideShowDialogClose();
                     displayStatusMessage("ok", "link moved to rejects" + linkId);
                     logDataActivity({
-                        VisitorId: getCookieValue("VisitorId"),
+                        VisitorId: getCookieValue("VisitorId", "perform MoveImageToRejects"),
                         ActivityCode: "REJ",
                         FolderId: folderId,
                         Details: "reason: " + $('input[name=rdoRejectImageReasons]:checked', '#frmReject').val() + "link moved to rejects" + linkId
                     });
                 }
                 else {
-                    logError("AJX", 3908, success, "performMoveImageToRejects");
+                    logError("AJX", 3908, success, "perform MoveImageToRejects");
                 }
             }
         },
@@ -265,7 +265,7 @@ function removeHomeFolderLink(linkId, folderId) {
                         slide("next");
                     getAlbumImages(folderId);
                     logDataActivity({
-                        VisitorId: getCookieValue("VisitorId"),
+                        VisitorId: getCookieValue("VisitorId", "removeHome FolderLink"),
                         FolderId: folderId,
                         ActivityCode: "RHL",
                         Details: "link: " + selectedImageLinkId + " removed from " + currentAlbumJSfolderName
@@ -278,7 +278,7 @@ function removeHomeFolderLink(linkId, folderId) {
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "removeHomeFolderLink")) logError("XHR", pSelectedTreeId, errMsg, "removeHomeFolderLink");
+            if (!checkFor404(errMsg, folderId, "removeHome FolderLink")) logError("XHR", pSelectedTreeId, errMsg, "removeHome FolderLink");
         }
     });
 }

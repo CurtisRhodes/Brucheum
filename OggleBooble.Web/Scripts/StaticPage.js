@@ -25,7 +25,7 @@ $(document).ready(function () {
     var dots = "";
     loadSettings();
     $('#adminLink').hide();
-    let visitorId = getCookieValue("VisitorId");
+    let visitorId = getCookieValue("VisitorId", "StaticPage");
 
     let loadSettingsWaiter = setInterval(function () {
         if (settingsArray.ApiServer === undefined) {

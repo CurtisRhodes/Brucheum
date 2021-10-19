@@ -11,7 +11,7 @@ function verifySession(folderId) {
 
             logActivity("VS0", folderId, "verify session"); // new session started
             $('#headerMessage').html("new session started");
-            let visitorId = getCookieValue("VisitorId");
+            let visitorId = getCookieValue("VisitorId", "verifySession");
 
             if (!navigator.cookieEnabled)  // user accepts cookies
             {
@@ -60,7 +60,7 @@ function verifySession(folderId) {
 function verifyVisitorId(folderId, calledFrom) {
     try {
         logActivity("VV0", folderId, "verify Visitor"); // attempting to verify visitor
-        let visitorId = getCookieValue("VisitorId");
+        let visitorId = getCookieValue("VisitorId", "verifyVisitorId");
 
         if (visitorId.indexOf("cookie not found") > -1) {
             logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom); // cookie not found made it too far
@@ -157,7 +157,7 @@ function addVisitor(visitorData, calledFrom) {
 
 function loadUserProfile(folderId, calledFrom) {
     try {
-        let visitorId = getCookieValue("VisitorId");
+        let visitorId = getCookieValue("VisitorId", "loadUserProfile");
 
         if ((isNullorUndefined(visitorId)) || (visitorId.indexOf("cookie not found") > -1)) {
             localStorage["IsLoggedIn"] = "false";

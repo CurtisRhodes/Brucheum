@@ -109,7 +109,13 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#hdrBtmRowSec3').append(addSpaButton(3908, "back to OggleBooble"));
             $('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
             $('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
-            setHeaderMenu("playboy");
+            //setHeaderMenu("playboy");
+            $('#mainMenuContainer').html(
+                "<span onclick='headerMenuClick(\"playboyIndex\",1132)'>centerfolds, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>playboy plus, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
+            );
             break;
         case "muses":
             $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
@@ -120,7 +126,13 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#badgesContainer').append(addSpaButton(3908, "back to OggleBooble"));
             //$('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
             //$('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
-            setHeaderMenu("playboy");
+            //setHeaderMenu("playboy");
+            $('#mainMenuContainer').html(
+                "<span onclick='headerMenuClick(\"playboyIndex\",1132)'>centerfolds, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>playboy plus, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
+            );
             break;
         case "plus":
             $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
@@ -129,7 +141,13 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#topRowRightContainer').append(addRankerButton("000001000", "Muses ranker"));
             // bottom row
             $('#badgesContainer').append(addSpaButton(3908, "back to OggleBooble"));
-            setHeaderMenu("playboy");
+            //setHeaderMenu("playboy");
+            $('#mainMenuContainer').html(
+                "<span onclick='headerMenuClick(\"playboyIndex\",1132)'>centerfolds, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
+            );
             break;
         case "magazine":
         case "centerfold": {
@@ -238,27 +256,25 @@ function setHeaderMenu(menu) {
         }
         case "playboy":
             $('#mainMenuContainer').html(
-                "<span onclick='headerMenuClick(\"centerfold\",4015)'>pictorials, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",2601)'>extras, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",6368)'>plus, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",6076)'>specials, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",3393)'>lingerie, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",3128)'>international, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",1986)'>magazine covers, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",6095)'>muses, </span>\n" +
-                "<span onclick='headerMenuClick(\"centerfold\",3796)'>cybergirls</span>\n"
+                "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>playboy plus, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
+                //"<span onclick='headerMenuClick(\"playboyIndex\",3128)'>international, </span>\n" +
+                //"<span onclick='headerMenuClick(\"playboyIndex\",6076)'>specials, </span>\n" +
+                //"<span onclick='headerMenuClick(\"playboyIndex\",3393)'>lingerie, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
             );
             break;
         case "playboyIndex":
             $('#mainMenuContainer').html(
-                "<span onclick='headerMenuClick(\"playboyIndex\",4015)'>pictorials, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",2601)'>extras, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>plus, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls, </span>\n"+
+                //"<span onclick='headerMenuClick(\"playboyIndex\",4015)'>pictorials, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>playboy plus, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",3128)'>international, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",6076)'>specials, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",3393)'>lingerie, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls </span>\n"
+                //"<span onclick='headerMenuClick(\"playboyIndex\",3128)'>international, </span>\n" +
+                //"<span onclick='headerMenuClick(\"playboyIndex\",6076)'>specials, </span>\n" +
+                //"<span onclick='headerMenuClick(\"playboyIndex\",3393)'>lingerie, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
             );
             $('#breadcrumbContainer').html(
                 "<span onclick='headerMenuClick(\"playboyIndex\",621)'>1950's, </span>\n" +
