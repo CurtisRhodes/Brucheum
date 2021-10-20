@@ -2,27 +2,14 @@
 function verifySession(folderId) {
     try {
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
-            let returnVisit = true;
-
             //if (document.domain == "localhost") {
             //    setCookieValue("VisitorId", "ec6fb880-ddc2-4375-8237-021732907510");
             //    alert("VisitorId set to: " + getCookieValue("VisitorId"));
             //}
 
-            logActivity("VS0", folderId, "verify session"); // new session started
             $('#headerMessage').html("new session started");
-            let visitorId = getCookieValue("VisitorId", "verifySession");
 
-            if (!navigator.cookieEnabled)  // user accepts cookies
-            {
-                let SSvisitorId = sessionStorage["VisitorId"];
-                if (isNullorUndefined(SSvisitorId))
-                    logActivity2(visitorId, "VS5", folderId, "verify session"); // user does not accept cookies
-            }
-            else {
-                logActivity2(visitorId, "VS3", folderId, "verify session"); // session storage nav bypass
-                returnVisit = false;
-            }
+            let visitorId = getCookieValue("VisitorId", "verify session");
 
             if (visitorId.indexOf("cookie not found") > -1) {
                 returnVisit = false;
@@ -39,12 +26,22 @@ function verifySession(folderId) {
                     InitialPage: folderId
                 }, "verify session");
             }
-
-            if (returnVisit) {
+            else {
                 logActivity2(visitorId, "VS1", folderId, "verify session"); // visitor verified ok
                 verifyVisitorId(folderId, "verify session");
                 logVisit(visitorId, folderId, "verify session");
             }
+            //if (!navigator.cookieEnabled)  // user accepts cookies
+            //{
+            //    let SSvisitorId = sessionStorage["VisitorId"];
+            //    if (isNullorUndefined(SSvisitorId))
+            //        logActivity2(visitorId, "VS5", folderId, "verify session"); // user does not accept cookies
+            //    else {
+            //        logActivity2(visitorId, "VS3", folderId, "verify session"); // session storage nav bypass
+            //        returnVisit = false;
+            //    }
+            //}
+            logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
             sessionStorage["VisitorVerified"] = true;
         }
         //    else 
@@ -59,13 +56,12 @@ function verifySession(folderId) {
 
 function verifyVisitorId(folderId, calledFrom) {
     try {
-        logActivity("VV0", folderId, "verify Visitor"); // attempting to verify visitor
         let visitorId = getCookieValue("VisitorId", "verifyVisitorId");
-
         if (visitorId.indexOf("cookie not found") > -1) {
             logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom); // cookie not found made it too far
             return;
         }
+        logActivity2(visitorId, "VV0", folderId, "verify Visitor"); // attempting to verify visitor
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
@@ -115,19 +111,18 @@ function verifyVisitorId(folderId, calledFrom) {
 function addVisitor(visitorData, calledFrom) {
     try {
         if (isNullorUndefined(visitorData.VisitorId)) {
-            logActivity2(visitorData.VisitorId, "AV9", 555, "add visitor/" + calledFrom); // VisitorId undefined
             logError2(create_UUID(), "BUG", visitorData.FolderId, "visitorId came in null", "add visitor/" + calledFrom);
             return;
         }
 
-        logActivity("AV0", visitorData.FolderId, "add visitor/" + calledFrom); // entering Add Visitor 
+        logActivity2(visitorData.VisitorId, "AV0", visitorData.FolderId, "add visitor/" + calledFrom); // entering Add Visitor 
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
             data: visitorData,
             success: function (success) {
                 if (success == "ok") {
-                    logActivity("AV1", visitorData.InitialPage, "add visitor"); // new visitor added
+                    logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add visitor"); // new visitor added
                     setCookieValue("VisitorId", visitorData.VisitorId);
                     logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor");
                 }
@@ -232,12 +227,4 @@ function loadUserProfile(folderId, calledFrom) {
     } catch (e) {
         logError2(create_UUID(), "CAT", folderId, e, "load UserProfile/" + calledFrom);
     }
-}
-
-function moveStatsToNewVisitorId(badVisitorId, newVisitorId) {
-    //$.ajax({
-
-    //});
-    logActivity("IPD", visitorData.FolderId, "add visitor"); // ToDo: move Stats To New VisitorId
-
 }

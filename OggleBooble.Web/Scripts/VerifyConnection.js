@@ -7,7 +7,7 @@ function checkFor404(errMsg, folderId, calledFrom) {
             return true;
         }
         else {
-            logError("CKE", folderId, errMsg, calledFrom);
+            logError("NVE", folderId, errMsg, calledFrom);
             return false;
         }
     } catch (e) {

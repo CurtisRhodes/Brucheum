@@ -622,14 +622,6 @@ function weDemandCookies() {
 }
 
 function getCookieValue(itemName, calledFrom) {
-
-    //ERR	CK1	local storage not matching cookie
-    //ERR	CK2	cookieItemValue == undefined
-    //ERR	CK3	undefined and cookies not enabled
-    //ERR	CK4	localStorage bypass cookies not enabled
-    //ERR	CK7	localStorage ends with an =
-    //ERR	CKE	Verify Network error caught
-
     let returnValue = "cookie not found";
     try {
         let decodedCookie = decodeURIComponent(document.cookie);
@@ -648,31 +640,81 @@ function getCookieValue(itemName, calledFrom) {
         }
         if (returnValue == "cookie not found") {
             try {
-                if (!isNullorUndefined(localStorage[itemName])) {
-                    returnValue = localStorage[itemName];
-                    logActivity2(create_UUID(), "LSB", 1091118, "get cookie/" + calledFrom + ": " + itemName); // local storage bypass
+                if (!navigator.cookieEnabled)  // user accepts cookies
+                {
+                    if (itemName == "VisitorId") {
+                        if (!isNullorUndefined(localStorage["VisitorId"])) {
+                            returnValue = localStorage["VisitorId"];
+                            logError2(returnValue, "CK1", 703245, "", "GET CookieValue/" + calledFrom); // VisitorId cookies not accepted But local storage bypass
+                        }
+                        else {
+                            if (calledFrom != "verify session")
+                                logError2(create_UUID(), "CK2", 703245, itemName, "GET CookieValue/" + calledFrom); // visitorId cookies not accepted no local storage!
+                        }
+                    }
+                    else {
+                        if (!isNullorUndefined(localStorage[itemName])) {
+                            //logActivity2(create_UUID(), "LSB", 1091118, "get cookie/" + calledFrom + ": " + itemName); // local storage bypass
+                            logError2(create_UUID(), "CK3", 703245, itemName, "GET CookieValue/" + calledFrom); // non visitorId cookies not accepted but local storage bypass
+                            returnValue = localStorage[itemName];
+                        }
+                        else
+                            logError2(create_UUID(), "CK4", 703245, itemName + " cookie not found", "GET CookieValue/" + calledFrom);
+                    }
                 }
-                //else {
-                //    if (itemName == "VisitorId") {
-                //        let newVisitorId = create_UUID();
-                //        logError2(newVisitorId, "CK1", 1018223, "VisitorId set here", "get cookie");
-                //        setCookieValue("VisitorId", newVisitorId);
-                //        returnValue = newVisitorId;
-                //    }
-                //    else {
-                //        logError2(localStorage["VisitorId"], "BUG", 1018224, "cookie not found for: " + itemName, "get cookie");
-                //        returnValue = "cookie not found";
-                //    }
-                //}
-
+                else {
+                    if (!isNullorUndefined(localStorage[itemName])) {
+                        returnValue = localStorage[itemName];
+                        if (itemName == "VisitorId") {
+                            if (calledFrom != "verify session") {
+                                logError2(returnValue, "CK5", 1019503, "navigator.cookieEnabled: " + navigator.cookieEnabled, "GET CookieValue/" + calledFrom); // cookies enabled local storage bypass VisitorId
+                                setCookieValue("VisitorId", returnValue);
+                            }
+                        }
+                        else {
+                            logError2(create_UUID(), "CK6", 703245, "itemName: " + itemName + " returnValue: " + returnValue, "GET CookieValue/" + calledFrom);// not visitorId cookies enabled local storage bypass
+                            setCookieValue(itemName, returnValue);
+                        }
+                    }
+                    else {
+                        if (itemName == "VisitorId") {
+                            if (calledFrom != "logActivity") {
+                                if (calledFrom != "verify session") {
+                                    let visitorId = create_UUID();
+                                    addVisitor({
+                                        VisitorId: visitorId,
+                                        IpAddress: Math.floor(Math.random() * 10000000000).toString(),
+                                        City: "cookie not found",
+                                        Country: "ZZ",
+                                        Region: "calledFrom: " + calledFrom,
+                                        GeoCode: "unknown",
+                                        InitialPage: 0
+                                    }, "GET CookieValue/" + calledFrom);
+                                    setCookieValue("VisitorId", visitorId);
+                                    if (calledFrom != "StaticPageHit")
+                                        logError2(visitorId, "CK7", 703245, "itemName: {" + itemName + "}", "GET CookieValue/" + calledFrom); // cookies enabled not found no local storage!
+                                    returnValue = visitorId;
+                                }
+                            }
+                        }
+                        else
+                            logError2(create_UUID(), "CK8", 703245, "itemName: {" + itemName + "}", "GET CookieValue/" + calledFrom); // not visitorId cookies enabled not found no local storage 
+                    }
+                }
             } catch (e) {
                 logError2(create_UUID(), "CAT", 616329, e, "get Cookie inner/" + calledFrom);
             }
-
             ///TODO do something about this
-            // logError2(returnValue, "CK4", 616307, "get cookie"); // localStorage bypass cookies not enabled
-            //if (!navigator.cookieEnabled) {  // user accepts cookies
             //showCookiesRequiredMessage();
+        }
+        else {
+            if (itemName == "VisitorId") {
+                //logError2(returnValue, "CK0", 1019503, itemName, "GET CookieValue/" + calledFrom); // get cookie worked properly
+            }
+            else {
+                logError2(create_UUID(), "CK9", 703245, itemName, "GET CookieValue/" + calledFrom); // get cookie worked properly not visitorId
+            }
+            return returnValue;
         }
     }
     catch (e) {

@@ -74,10 +74,18 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
-                            db.Visitors.Remove(visitor1);
-                            db.SaveChanges();
-                            updateVisitorSuccessModel.ComprableIpAddressVisitorId = visitor2.VisitorId;
-                            updateVisitorSuccessModel.ReturnValue = "Duplicate Ip";
+                            if (visitor2.Country == "ZZ")
+                            {
+                                updateVisitorSuccessModel.ReturnValue = "bad duplicate Ip";
+                            }
+                            else {
+                                if (visitor2.InitialPage == 0)
+                                    visitor2.InitialPage = visitor1.InitialPage;
+                                db.Visitors.Remove(visitor1);
+                                db.SaveChanges();
+                                updateVisitorSuccessModel.ComprableIpAddressVisitorId = visitor2.VisitorId;
+                                updateVisitorSuccessModel.ReturnValue = "Duplicate Ip";
+                            }
                         }
                     }
                 }
@@ -96,44 +104,63 @@ namespace OggleBooble.Api.Controllers
             var lookupCandidateModel = new LookupCandidateModel();
             try
             {
-                if (visitorId.Length != 36)
-                {
-                    lookupCandidateModel.lookupStatus = "visitorId not valid";
-                }
+                lookupCandidateModel.lookupStatus = "passed";
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                    lookupCandidateModel.Success = "ok";
                     if (dbVisitor == null)
                     {
                         lookupCandidateModel.lookupStatus = "visitorId not found";
-                        return lookupCandidateModel;
                     }
                     if (dbVisitor.Country != "ZZ")
                     {
                         lookupCandidateModel.lookupStatus = "country not ZZ";
-                        return lookupCandidateModel;
                     }
-                    //if (dbVisitor.City == "already processed")
-                    //{
-                    //    lookupCandidateModel.lookupStatus = "already processed";
-                    //    dbVisitor.City = "fail two";
-                    //    db.SaveChanges();
-                    //    return lookupCandidateModel;
-                    //}
                     if (dbVisitor.VisitorId.Length != 36)
                     {
                         lookupCandidateModel.lookupStatus = "bad visitor Id";
-                        return lookupCandidateModel;
                     }
-                    var dupeCheck1 = db.ActivityLogs.Where(a => a.ActivityCode == "IP1" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
-                    if (dupeCheck1 != null)
+                    if (dbVisitor.GeoCode == "too many page hits")
                     {
-                        lookupCandidateModel.lookupStatus = "already looked up today";
-                        return lookupCandidateModel;
+                        lookupCandidateModel.lookupStatus = "too many page hits";
                     }
-                    lookupCandidateModel.lookupStatus = "passed";
+                    if (dbVisitor.GeoCode == "too many page hits")
+                    {
+                        lookupCandidateModel.lookupStatus = "too many page hits";
+                    }
+                    if (lookupCandidateModel.lookupStatus == "passed")
+                    {
+                        if (dbVisitor.InitialVisit < DateTime.Today.AddMonths(-1))
+                        {
+                            lookupCandidateModel.lookupStatus = "pending months old InitialVisit";
+                            dbVisitor.GeoCode = "months old InitialVisit";
+                            db.SaveChanges();
+                        }
+                    }
+                    if (dbVisitor.GeoCode == "too many page hits")
+                    {
+                        lookupCandidateModel.lookupStatus = "too many page hits";
+                    }
+                    if (lookupCandidateModel.lookupStatus == "passed")
+                    {
+                        int pageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
+                        if (pageHits > 10)
+                        {
+                            lookupCandidateModel.lookupStatus = "pending too many pageHits";
+                            dbVisitor.GeoCode = "too many page hits";
+                            db.SaveChanges();
+                        }
+                    }
+                    if (lookupCandidateModel.lookupStatus == "passed")
+                    {
+                        var dupeCheck1 = db.ActivityLogs.Where(a => a.ActivityCode == "IP1" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
+                        if (dupeCheck1 != null)
+                        {
+                            lookupCandidateModel.lookupStatus = "already looked up today";
+                        }
+                    }
                 }
+                lookupCandidateModel.Success = "ok";
             }
             catch (Exception ex)
             {
