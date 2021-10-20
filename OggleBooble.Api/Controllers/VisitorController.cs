@@ -108,49 +108,32 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                    if (dbVisitor == null)
-                    {
-                        lookupCandidateModel.lookupStatus = "visitorId not found";
-                    }
-                    if (dbVisitor.Country != "ZZ")
-                    {
-                        lookupCandidateModel.lookupStatus = "country not ZZ";
-                    }
-                    if (dbVisitor.VisitorId.Length != 36)
-                    {
-                        lookupCandidateModel.lookupStatus = "bad visitor Id";
-                    }
-                    if (dbVisitor.GeoCode == "too many page hits")
-                    {
-                        lookupCandidateModel.lookupStatus = "too many page hits";
-                    }
-                    if (dbVisitor.GeoCode == "too many page hits")
-                    {
-                        lookupCandidateModel.lookupStatus = "too many page hits";
-                    }
-                    if (lookupCandidateModel.lookupStatus == "passed")
-                    {
-                        if (dbVisitor.InitialVisit < DateTime.Today.AddMonths(-1))
-                        {
-                            lookupCandidateModel.lookupStatus = "pending months old InitialVisit";
-                            dbVisitor.GeoCode = "months old InitialVisit";
-                            db.SaveChanges();
-                        }
-                    }
-                    if (dbVisitor.GeoCode == "too many page hits")
-                    {
-                        lookupCandidateModel.lookupStatus = "too many page hits";
-                    }
-                    if (lookupCandidateModel.lookupStatus == "passed")
-                    {
-                        int pageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
-                        if (pageHits > 10)
-                        {
-                            lookupCandidateModel.lookupStatus = "pending too many pageHits";
-                            dbVisitor.GeoCode = "too many page hits";
-                            db.SaveChanges();
-                        }
-                    }
+                    if (dbVisitor == null) lookupCandidateModel.lookupStatus = "visitorId not found";
+                    if (dbVisitor.Country != "ZZ") lookupCandidateModel.lookupStatus = "country not ZZ";
+                    if (dbVisitor.VisitorId.Length != 36) lookupCandidateModel.lookupStatus = "bad visitor Id";
+
+
+
+                    //if (dbVisitor.GeoCode == "too many page hits") lookupCandidateModel.lookupStatus = "too many page hits";
+                    //if (lookupCandidateModel.lookupStatus == "passed")
+                    //{
+                    //    if (dbVisitor.InitialVisit < DateTime.Today.AddMonths(-1))
+                    //    {
+                    //        lookupCandidateModel.lookupStatus = "pending months old InitialVisit";
+                    //        dbVisitor.GeoCode = "months old InitialVisit";
+                    //        db.SaveChanges();
+                    //    }
+                    //}
+                    //if (lookupCandidateModel.lookupStatus == "passed")
+                    //{
+                    //    int pageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
+                    //    if (pageHits > 10)
+                    //    {
+                    //        lookupCandidateModel.lookupStatus = "pending too many pageHits";
+                    //        dbVisitor.GeoCode = "too many page hits";
+                    //        db.SaveChanges();
+                    //    }
+                    //}
                     if (lookupCandidateModel.lookupStatus == "passed")
                     {
                         var dupeCheck1 = db.ActivityLogs.Where(a => a.ActivityCode == "IP1" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();

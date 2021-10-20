@@ -678,24 +678,24 @@ function getCookieValue(itemName, calledFrom) {
                     }
                     else {
                         if (itemName == "VisitorId") {
-                            if (calledFrom != "logActivity") {
-                                if (calledFrom != "verify session") {
-                                    let visitorId = create_UUID();
-                                    addVisitor({
-                                        VisitorId: visitorId,
-                                        IpAddress: Math.floor(Math.random() * 10000000000).toString(),
-                                        City: "cookie not found",
-                                        Country: "ZZ",
-                                        Region: "calledFrom: " + calledFrom,
-                                        GeoCode: "unknown",
-                                        InitialPage: 0
-                                    }, "GET CookieValue/" + calledFrom);
-                                    setCookieValue("VisitorId", visitorId);
-                                    if (calledFrom != "StaticPageHit")
-                                        logError2(visitorId, "CK7", 703245, "itemName: {" + itemName + "}", "GET CookieValue/" + calledFrom); // cookies enabled not found no local storage!
-                                    returnValue = visitorId;
-                                }
-                            }
+                            //if (calledFrom != "logActivity") {
+                            //        let visitorId = create_UUID();
+                            //        addVisitor({
+                            //            VisitorId: visitorId,
+                            //            IpAddress: Math.floor(Math.random() * 10000000000).toString(),
+                            //            City: "cookie not found",
+                            //            Country: "ZZ",
+                            //            Region: "calledFrom: getCookieValue/" + calledFrom,
+                            //            GeoCode: "unknown",
+                            //            InitialPage: 0
+                            //        }, "GET CookieValue/" + calledFrom);
+                            //        setCookieValue("VisitorId", visitorId);
+                            //        if (calledFrom != "StaticPageHit")
+                            if (calledFrom != "verify session")
+                                logError2(create_UUID(), "CK7", 1020239, "VisitorId cookie not found", "GET CookieValue/" + calledFrom); // cookies enabled not found no local storage!
+                            //        returnValue = visitorId;
+                            //    }
+                            //}
                         }
                         else
                             logError2(create_UUID(), "CK8", 703245, "itemName: {" + itemName + "}", "GET CookieValue/" + calledFrom); // not visitorId cookies enabled not found no local storage 

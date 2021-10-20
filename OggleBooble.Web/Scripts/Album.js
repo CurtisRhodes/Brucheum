@@ -12,7 +12,7 @@ function loadLargeAlbum(folderId) {
     getAlbumPageInfo(folderId, true);
 }
 
-function loadAlbum(folderId) {
+function loadAlbum(folderId, visitorId) {
     if (isNullorUndefined(folderId)) {
         logError("BUG", 999, "folderId not found", "loadAlbum");
         return;
@@ -20,7 +20,7 @@ function loadAlbum(folderId) {
     setOggleHeader("album");
     apFolderId = folderId;
     qucikHeader(folderId);
-    logPageHit(folderId);
+    logPageHit(folderId, visitorId);
     settingsImgRepo = settingsArray.ImageRepo;
     getAlbumImages(folderId);
     getAlbumPageInfo(folderId, false);

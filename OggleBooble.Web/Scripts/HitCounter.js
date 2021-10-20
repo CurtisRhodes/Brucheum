@@ -54,24 +54,32 @@ function logImageHit(linkId, folderId, isInitialHit) {
 }
 
 let lastPageHitFolderId, lastPageHitVisitorId;
-function logPageHit(folderId) {
+function logPageHit(folderId,visitorId) {
     try {
         //logActivity2(create_UUID(), "PH0", folderId, "log pageHit");  // entering log page hit
-        let visitorId = getCookieValue("VisitorId", "log PageHit");
-        if (visitorId.indexOf("cookie not found") > -1) {
-            visitorId = create_UUID();
-            setCookieValue("VisitorId", visitorId);
-            addVisitor({
-                VisitorId: visitorId,
-                IpAddress: Math.floor(Math.random() * 10000000000).toString(),
-                City: "log PageHit",
-                Country: "ZZ",
-                Region: "PH3",
-                GeoCode: "cookie not found",
-                InitialPage: folderId
-            }, "log pageHit");
-            logActivity("PH3", folderId, "log pageHit"); // cookie not found
-        }
+        //let visitorId = getCookieValue("VisitorId", "log PageHit");
+        //if (visitorId.indexOf("cookie not found") > -1) {
+        //    if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
+        //        verifySession(folderId, "album.html");
+        //        logError2(create_UUID(), "BUG", folderId, "verifySession called", "log PageHit");
+        //    }
+        //    else {
+        //        logError2(create_UUID(), "BUG", folderId, "cookie not found", "log PageHit");
+        //    }
+        //    return;
+        //    visitorId = create_UUID();
+        //    setCookieValue("VisitorId", visitorId);
+        //    addVisitor({
+        //        VisitorId: visitorId,
+        //        IpAddress: Math.floor(Math.random() * 10000000000).toString(),
+        //        City: "log PageHit",
+        //        Country: "ZZ",
+        //        Region: "PH3",
+        //        GeoCode: "cookie not found",
+        //        InitialPage: folderId
+        //    }, "log pageHit");
+        //    logActivity("PH3", folderId, "log pageHit"); // cookie not found
+        //}
 
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
             logActivity("PH6", folderId, "log PageHit"); // looping page hit
@@ -89,8 +97,8 @@ function logPageHit(folderId) {
                         logActivity2(visitorId, "PH4", folderId, "log pageHit"); // pageHits > 3 and country=="ZZ"
                         tryAddNewIP(folderId, visitorId, "log pageHit");
                     }
-                    else
-                        logVisit(visitorId, folderId, "log pageHit");
+                //    else
+                //        logVisit(visitorId, folderId, "log pageHit");
                 }
                 else {
                     if (pageHitSuccess.Success = "duplicate hit") {
@@ -115,69 +123,9 @@ function logPageHit(folderId) {
     }
 }
 
-function logVisit(visitorId, folderId, calledFrom) {
-    try {
-        logActivity2(visitorId, "LV0", folderId, calledFrom);
-        //let visitorId = getCookieValue("VisitorId");
-        if (visitorId == "cookie not found") {
-            logActivity2(visitorId, "LV4", folderId, calledFrom);
-            logError2(create_UUID(), "VNF", folderId, " ", "log visit"); // visitorId came back cookie not found
-            return;
-        }
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/Common/LogVisit?visitorId=" + visitorId,
-            success: function (successModel) {
-                if (successModel.Success === "ok") {
-                    if (successModel.ReturnValue == "new visitor logged") {
-                        logActivity2(visitorId, "LV1", folderId, "log visit/" + calledFrom); // new visitor visit added
-                        $('#headerMessage').html("Welcome new visitor. Please log in");
-                    }
-                    if (successModel.ReturnValue == "return visit logged") {
-                        logActivity2(visitorId, "LV2", folderId, "log visit/" + calledFrom);  // Return Vist Recorded
-                        if (isLoggedIn())
-                            $('#headerMessage').html("Welcome back " + localStorage["UserName"]);
-                        else
-                            $('#headerMessage').html("Welcome back. Please log in");
-                    }
-                    if (successModel.ReturnValue == "no visit recorded")
-                        logActivity2(visitorId, "LV5", folderId, "log visit/" + calledFrom); // no visit recorded
-
-                    if (successModel.ReturnValue == "VisitorId not found") {
-                        addVisitor({
-                            VisitorId: visitorId,
-                            IpAddress: Math.floor(Math.random() * 10000000000).toString(),
-                            City: "log Visit",
-                            Country: "ZZ",
-                            Region: "LV3",
-                            GeoCode: "visitor not found",
-                            InitialPage: folderId
-                        }, "log visit/" + calledFrom);
-                        logActivity2(visitorId, "LV3", folderId, "log visit/" + calledFrom);  // visitorId not found
-                        //logError2(visitorId, "BUG", folderId, "visitorId not found new vis rec added", "log visit");
-                    }
-                }
-                else {
-                    logActivity2(visitorId, "LV7", folderId, "log visit/" + calledFrom);  // 
-                    logError2(visitorId, "AJX", folderId, successModel.Success, "log visit/" + calledFrom);
-                }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity2(visitorId, "LV6", folderId, errMsg);
-                if (!checkFor404(errMsg, folderId, "log visit/" + calledFrom))
-                    logError2(visitorId, "XHR", folderId, errMsg, "log visit/" + calledFrom);
-            }
-        });
-    } catch (e) {
-        logError2(visitorId, "LV7", folderId, "visitorId: " + visitorId, "log visit/" + calledFrom);
-        logError2(visitorId, "CAT", folderId, e, "log visit/" + calledFrom);
-    }
-}
-
-function logStaticPageHit(folderId, calledFrom) {
+function logStaticPageHit(folderId, visitorId, calledFrom) {
     logActivity("SP0", folderId, calledFrom); // calling static page hit
-    let visitorId = getCookieValue("VisitorId", "log StaticPageHit");
+    //let visitorId = getCookieValue("VisitorId", "log StaticPageHit");
 
 /*
 ACT	SP0	calling static page hit

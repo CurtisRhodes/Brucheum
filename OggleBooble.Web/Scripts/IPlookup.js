@@ -277,7 +277,6 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
         if (ip3Busy) {
             console.debug("CloudflareTrace busy");
             logActivity2(visitorId, "IP8", folderId, "CloudflareTrace");
-            tagVisitor(visitorId, folderId, "CloudflareTrace/" + calledFrom, "CloudflareTrace busy");            
         }
         else {
             ip3Busy = true;
@@ -290,7 +289,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                 success: function (ipResponse) {
                     ipCall3Returned = true;
                     if (!isNullorUndefined(ipResponse.ipAddress)) {
-                        logActivity2(visitorId, "IP2", folderId, "cloudflare/" + calledFrom); // well it worked
+                        //logActivity2(visitorId, "IP2", folderId, "cloudflare/" + calledFrom); // well it worked
                         updateVisitor({
                             VisitorId: visitorId,
                             IpAddress: ipResponse.ipAddress,
@@ -302,15 +301,13 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                     }
                     else {
                         if (ipResponse.errorCode == "OVER_QUERY_LIMIT") {                            
-                            logActivity2(visitorId, "IP5", folderId, "CloudflareTrace/" + calledFrom); // lookup limit exceeded
-                            tagVisitor(visitorId, folderId, "CloudflareTrace/" + calledFrom, "CloudflareTrace OVER_QUERY_LIMIT");
-
+                            logActivity2(visitorId, "IP5", folderId, "CloudflareTrace"); // lookup limit exceeded
                         }
                         else {
                             //console.debug("tryCloudflareTrace 6 " + JSON.stringify(ipResponse, null, 2));
                             //logError("200", folderId, JSON.stringify(ipResponse, null, 2), "tryCloudflareTrace/" + calledFrom); // Json response code
-                            logActivity2(visitorId, "IP9", folderId, "CloudflareTrace/" + calledFrom);
-                            tagVisitor(visitorId, folderId, "CloudflareTrace/" + calledFrom, "no response");
+                            logActivity2(visitorId, "IP4", folderId, "CloudflareTrace" + calledFrom);
+                            //tagVisitor(visitorId, folderId, "CloudflareTrace/" + calledFrom, "no response");
                         }
                     }
                     ip3Busy = false;
@@ -356,7 +353,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                     else {
                         if (errMsg.indexOf("Rate limit exceeded") > 0) {
                             logActivity2(visitorId, "IP5", folderId, "cloudflareTrace"); // lookup limit exceeded                            
-                            tagVisitor(visitorId, folderId, "cloudflareTrace/" + calledFrom, "Rate limit exceeded")
+                            //tagVisitor(visitorId, folderId, "cloudflareTrace/" + calledFrom, "Rate limit exceeded")
 
                         }
                         else {

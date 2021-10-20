@@ -46,6 +46,8 @@ function resetUserSettings() {
 function isLoggedIn() {
     //if (document.domain === 'localhost') return true;
     //alert("who is calling this?");
+    if (isNullorUndefined(localStorage["IsLoggedIn"]))
+        return false;
     return localStorage["IsLoggedIn"] == "true";
 }
 
@@ -58,13 +60,11 @@ function updateUserSettings(settingName, settingJson) {
                 if (successModel.Success === "ok") {
                     if (!isNullorUndefined(successModel.ReturnValue)) {
                         console.log("no user settings found");
-
                     }
-                    else {
-
-                        //window.localStorage["userPermissons"] = successModel.ReturnValue;
-                        //displayStatusMessage("ok", "user settings updated");
-                    }
+                //    else {
+                //        //window.localStorage["userPermissons"] = successModel.ReturnValue;
+                //        //displayStatusMessage("ok", "user settings updated");
+                //    }
                 }
                 else
                     logError("AJX", 3908, successModel.Success, "updateUserSettings");

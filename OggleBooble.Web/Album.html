@@ -156,20 +156,25 @@
                             clearInterval(waiter2);
                             $('#dots').html('');
 
-                            verifySession(albumParamFolderId);
+
+
+                            //verifySession(albumParamFolderId);
 
                             if (!isNullorUndefined(params.calledFrom)) {
-                                //alert("params.calledFrom: " + params.calledFrom);
-                                logStaticPageHit(albumParamFolderId, params.calledFrom);
+                                verifySession(albumParamFolderId, params.calledFrom);
                             }
-                            if (!isNullorUndefined(params.tic)) {
-                                logStaticPageHit(albumParamFolderId, "tic");
+                            else {
+                                if (!isNullorUndefined(params.tic)) {
+                                    verifySession(albumParamFolderId, "tic");
+                                }
+                                else
+                                    verifySession(albumParamFolderId, "album.html");
                             }
 
                             if (largeLoad)
                                 loadLargeAlbum(albumParamFolderId);
-                            else
-                                loadAlbum(albumParamFolderId);
+                        //    else
+                        //        loadAlbum(albumParamFolderId);
                         }
                     }, 300);
                 }
