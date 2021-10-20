@@ -126,18 +126,6 @@ function logPageHit(folderId,visitorId) {
 function logStaticPageHit(folderId, visitorId, calledFrom) {
     logActivity("SP0", folderId, calledFrom); // calling static page hit
     //let visitorId = getCookieValue("VisitorId", "log StaticPageHit");
-
-/*
-ACT	SP0	calling static page hit
-ACT	SP1	static page hit success
-ACT	SP2	static page hit ajax error
-ACT	SP3	static page hit no VisitorId
-ACT	SP4	success return to static page hit
-ACT	SP5	no VisitorId loop
-ACT	SP6	static page hit XHR error
-ERR	SPH	Visitor Id found 2nd time
-EVT	SPH	static page call
-*/
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId + "&folderId=" + folderId + "&calledFrom=" + calledFrom,
@@ -164,6 +152,19 @@ EVT	SPH	static page call
         }
     });
 }
+
+/*
+    ACT	SP0	calling static page hit
+    ACT	SP1	static page hit success
+    ACT	SP2	static page hit ajax error
+    ACT	SP3	static page hit no VisitorId
+    ACT	SP4	success return to static page hit
+    ACT	SP5	no VisitorId loop
+    ACT	SP6	static page hit XHR error
+    ERR	SPH	Visitor Id found 2nd time
+    EVT	SPH	static page call
+*/
+
 
 function logIpHit(visitorId, ipAddress, folderId) {
     try {

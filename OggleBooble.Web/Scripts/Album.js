@@ -14,7 +14,7 @@ function loadLargeAlbum(folderId) {
 
 function loadAlbum(folderId, visitorId) {
     if (isNullorUndefined(folderId)) {
-        logError("BUG", 999, "folderId not found", "loadAlbum");
+        logError("BUG", 999, "folderId isNullorUndefined. VisitorId: " + visitorId, "loadAlbum");
         return;
     }
     setOggleHeader("album");

@@ -166,6 +166,7 @@ namespace OggleBooble.Api.Models
             RegisteredUser = new RegisteredUser();
         }
         public bool IsRegisteredUser { get; set; }
+        public bool VisitorFound { get; set; }
         public RegisteredUser RegisteredUser { get; set; }
         public string IpAddress { get; set; }
         public string VisitorId { get; set; }

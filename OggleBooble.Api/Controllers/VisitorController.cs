@@ -163,14 +163,13 @@ namespace OggleBooble.Api.Controllers
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
-                        visitorInfoModel.Success = "not found";
+                        visitorInfoModel.VisitorFound = false;
                     else
                     {
+                        visitorInfoModel.VisitorFound = true;
                         RegisteredUser dbRegisteredUser = db.RegisteredUsers.Where(u => u.VisitorId == visitorId).FirstOrDefault();
                         if (dbRegisteredUser == null)
-                        {
                             visitorInfoModel.IsRegisteredUser = false;
-                        }
                         else
                         {
                             visitorInfoModel.IsRegisteredUser = true;
@@ -180,8 +179,8 @@ namespace OggleBooble.Api.Controllers
                         visitorInfoModel.City = dbVisitor.City;
                         visitorInfoModel.GeoCode = dbVisitor.GeoCode;
                         visitorInfoModel.IpAddress = dbVisitor.IpAddress;
-                        visitorInfoModel.Success = "ok";
                     }
+                    visitorInfoModel.Success = "ok";
                 }
             }
             catch (Exception ex)
