@@ -176,8 +176,8 @@ function latestGalleryImageError(folderId, thisItemSrc) {
             logError("ILF", folderId, "Src: " + thisItemSrc, "latest Galleries");
 
             if (document.domain === 'localhost') {
-                pause();
-                alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+              //  pause();
+              //  alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
                 console.log("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
             }
         }

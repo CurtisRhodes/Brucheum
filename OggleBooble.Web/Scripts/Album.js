@@ -14,17 +14,21 @@ function loadLargeAlbum(folderId) {
 }
 
 function loadAlbum(folderId, visitorId) {
-    if (isNullorUndefined(folderId)) {
-        logError("BUG", 999, "folderId isNullorUndefined. VisitorId: " + visitorId, "loadAlbum");
-        return;
+    try {
+        if (isNullorUndefined(folderId)) {
+            logError("BUG", 1021720, "folderId isNullorUndefined: " + folderId, "load album");
+            return;
+        }
+        setOggleHeader("album");
+        apFolderId = folderId;
+        qucikHeader(folderId);
+        logPageHit(folderId, visitorId);
+        settingsImgRepo = settingsArray.ImageRepo;
+        getAlbumImages(folderId);
+        getAlbumPageInfo(folderId, visitorId, false);
+    } catch (e) {
+        logError("CAT", folderId, e, "load album");
     }
-    setOggleHeader("album");
-    apFolderId = folderId;
-    qucikHeader(folderId);
-    logPageHit(folderId, visitorId);
-    settingsImgRepo = settingsArray.ImageRepo;
-    getAlbumImages(folderId);
-    getAlbumPageInfo(folderId, visitorId, false);
 }
 
 function qucikHeader(folderId) {
@@ -144,8 +148,8 @@ function getMultipleAlbumImages(folderId, visitorId) {
             }
         });
     } catch (e) {
-        alert("getAlbumImages: " + e);
-        logError("CAT", folderId, e, "getAlbumImages");
+        //alert("getAlbumImages: " + e);
+        logError("CAT", folderId, e, "get multiple album Images");
     }
 }
 

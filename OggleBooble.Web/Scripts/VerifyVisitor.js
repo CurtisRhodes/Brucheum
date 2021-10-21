@@ -1,5 +1,4 @@
-﻿
-function verifySession(folderId, calledFrom) {
+﻿function verifySession(folderId, calledFrom) {
     try {
         let visitorId = "uninitialized";
         visitorId = getCookieValue("VisitorId", "verify session");
@@ -24,10 +23,14 @@ function verifySession(folderId, calledFrom) {
             else {
                 logActivity2(visitorId, "VS1", folderId, "verify session"); // visitor verified ok
                 verifyVisitorId(visitorId);
+
                 logVisit(visitorId, folderId, "verify session");
-                if (calledFrom != "album.html")
-                    logStaticPageHit(folderId, visitorId, calledFrom);
-                loadAlbum(folderId, visitorId);
+
+                if (calledFrom != "Index.html") {
+                    if (calledFrom != "album.html")
+                        logStaticPageHit(folderId, visitorId, calledFrom);
+                    loadAlbum(folderId, visitorId);
+                }
             }
             //if (!navigator.cookieEnabled)  // user accepts cookies
             //{
@@ -43,10 +46,12 @@ function verifySession(folderId, calledFrom) {
             sessionStorage["VisitorVerified"] = true;
         }
         else {
-            if (calledFrom != "album.html")
-                logStaticPageHit(folderId, visitorId, calledFrom);
-            loadAlbum(folderId, visitorId);
-            // logActivity("VV3", folderId, "verify Visitor"); // active session new page
+            if (calledFrom != "Index.html") {
+                if (calledFrom != "album.html")
+                    logStaticPageHit(folderId, visitorId, calledFrom);
+                loadAlbum(folderId, visitorId);
+                // logActivity("VV3", folderId, "verify Visitor"); // active session new page
+            }
         }
     }
     catch (e) {
@@ -124,14 +129,21 @@ function addVisitor(visitorData, calledFrom) {
                     logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add visitor"); // new visitor added
                     setCookieValue("VisitorId", visitorData.VisitorId);
                     logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor");
-                    if (calledFrom != "album.html")
-                        logStaticPageHit(visitorData.FolderId, visitorData.VisitorId, calledFrom);
-                    loadAlbum(visitorData.FolderId, visitorData.VisitorId);
+                    if (isNullorUndefined(visitorData.FolderId))
+                        logError2(visitorData.VisitorId, "IHF", visitorData.FolderId, "isNullorUndefined(visitorData.FolderId)", "add visitor/ok/" + calledFrom);
+                    else {
+                        if (calledFrom != "album.html")
+                            logStaticPageHit(visitorData.FolderId, visitorData.VisitorId, calledFrom);
+                        loadAlbum(visitorData.FolderId, visitorData.VisitorId);
+                    }
                 }
                 else {
                     if (success.indexOf("Duplicate entry") > 0) {
                         logActivity2(visitorData.VisitorId, "AV3", visitorData.InitialPage, "add visitor/" + calledFrom); // duplicate key violation
-                        loadAlbum(visitorData.FolderId, visitorData.VisitorId);
+                        if (isNullorUndefined(visitorData.FolderId))
+                            logError2(visitorData.VisitorId, "BUG", visitorData.FolderId, "isNullorUndefined(visitorData.FolderId)", "add visitor/dupe/" + calledFrom);
+                        else
+                            loadAlbum(visitorData.FolderId, visitorData.VisitorId);
                     } else {
                         logActivity2(visitorData.VisitorId, "AV7", visitorData.InitialPage, success); // ajax error from Add Visitor
                         logError2(visitorData.VisitorId, "AJ7", visitorData.InitialPage, success, "add visitor/" + calledFrom);
@@ -240,7 +252,7 @@ function logVisit(visitorId, folderId, calledFrom) {
 
                     if (successModel.ReturnValue == "VisitorId not found") {
                         logActivity2(visitorId, "LV3", folderId, "log visit/" + calledFrom);  // visitorId not found
-                        logError2(visitorId, "BUG", folderId, "visitorId not found", "log visit");
+                        logError2(visitorId, "BUG", folderId, "visitorId not found", "log visit/" + calledFrom);
                     }
                 }
                 else {
