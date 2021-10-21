@@ -6,15 +6,6 @@ function logImageHit(linkId, folderId, isInitialHit) {
             logError("IHF", folderId, "linkId: " + linkId, "log ImageHit");
             return;
         }
-
-        //let visitorId = getCookieValue("VisitorId");
-
-        //if (visitorId == "not found") {
-        //    logError2(visitorId, "IHE", folderId, "using visitorId bypass logError", "log ImageHit"); // visitorId came into logImageHit null or undefined
-        //    //tryAddNewIP(folderId, "log ImageHit");
-        //    //return;
-        //}
-
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
@@ -56,31 +47,6 @@ function logImageHit(linkId, folderId, isInitialHit) {
 let lastPageHitFolderId, lastPageHitVisitorId;
 function logPageHit(folderId,visitorId) {
     try {
-        //logActivity2(create_UUID(), "PH0", folderId, "log pageHit");  // entering log page hit
-        //let visitorId = getCookieValue("VisitorId", "log PageHit");
-        //if (visitorId.indexOf("cookie not found") > -1) {
-        //    if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
-        //        verifySession(folderId, "album.html");
-        //        logError2(create_UUID(), "BUG", folderId, "verifySession called", "log PageHit");
-        //    }
-        //    else {
-        //        logError2(create_UUID(), "BUG", folderId, "cookie not found", "log PageHit");
-        //    }
-        //    return;
-        //    visitorId = create_UUID();
-        //    setCookieValue("VisitorId", visitorId);
-        //    addVisitor({
-        //        VisitorId: visitorId,
-        //        IpAddress: Math.floor(Math.random() * 10000000000).toString(),
-        //        City: "log PageHit",
-        //        Country: "ZZ",
-        //        Region: "PH3",
-        //        GeoCode: "cookie not found",
-        //        InitialPage: folderId
-        //    }, "log pageHit");
-        //    logActivity("PH3", folderId, "log pageHit"); // cookie not found
-        //}
-
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
             logActivity("PH6", folderId, "log PageHit"); // looping page hit
             return;
@@ -125,7 +91,6 @@ function logPageHit(folderId,visitorId) {
 
 function logStaticPageHit(folderId, visitorId, calledFrom) {
     logActivity("SP0", folderId, calledFrom); // calling static page hit
-    //let visitorId = getCookieValue("VisitorId", "log StaticPageHit");
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId + "&folderId=" + folderId + "&calledFrom=" + calledFrom,

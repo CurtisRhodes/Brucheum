@@ -3,13 +3,14 @@ const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
 let tempDirTree = null;
 
 function loadLargeAlbum(folderId) {
+    let visitorId = getCookieValue("VisitorId", "checkRegistrationStatus");
     setOggleHeader("album");
     apFolderId = folderId;
     qucikHeader(folderId);
     //logPageHit(folderId);
     settingsImgRepo = settingsArray.ImageRepo;
-    getMultipleAlbumImages(folderId);
-    getAlbumPageInfo(folderId, true);
+    getMultipleAlbumImages(folderId, visitorId);
+    getAlbumPageInfo(folderId, visitorId, true);
 }
 
 function loadAlbum(folderId, visitorId) {
@@ -23,7 +24,7 @@ function loadAlbum(folderId, visitorId) {
     logPageHit(folderId, visitorId);
     settingsImgRepo = settingsArray.ImageRepo;
     getAlbumImages(folderId);
-    getAlbumPageInfo(folderId, false);
+    getAlbumPageInfo(folderId, visitorId, false);
 }
 
 function qucikHeader(folderId) {
@@ -59,7 +60,7 @@ function qucikHeader(folderId) {
     });
 }
 
-function getMultipleAlbumImages(folderId) {
+function getMultipleAlbumImages(folderId, visitorId) {
     //alert("getMultipleAlbumImages: " + folderId);
     let getImagesStart = Date.now();
     $('#albumPageLoadingGif').show();
@@ -250,11 +251,8 @@ function getAlbumImages(folderId) {
     }
 }
 
-function getAlbumPageInfo(folderId, isLargeLoad) {
+function getAlbumPageInfo(folderId, visitorId, isLargeLoad) {
     var infoStart = Date.now();
-
-    let visitorId = getCookieValue("VisitorId", "getAlbumPageInfo");
-
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?folderId=" + folderId + "&visitorId=" +visitorId,
@@ -361,7 +359,6 @@ function checkRegistrationStatus(folderId, visitorId, albumInfo) {
                     || (albumInfo.RootFolder == "cybergirl") || (albumInfo.RootFolder == "playboy"))
                 {
                     if (albumInfo.UserPageHits > 100) {
-                        let visitorId = getCookieValue("VisitorId", "checkRegistrationStatus");
                         if ((visitorId == "cookie not found") || (visitorId == "user does not accept cookies")) {
                             if (visitorId == "user does not accept cookies") {
                                 showCustomMessage('25aada3a-84ac-45a9-b85f-199876b297be');
@@ -518,6 +515,7 @@ function launchDeepSlideShow() {
     $('#albumPageLoadingGif').show();
     logEvent("DSC", apFolderId, apFolderName, "launchDeepSlideShow");
     launchViewer(apFolderId, 1, true);
+
     //    let visitorId = getCookieValue("VisitorId");
     //    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com",
     //        "deep slideshow clicked", "Visitor Id: " + visitorId + "<br/>Folder: " + apFolderName);
@@ -527,7 +525,7 @@ function checkAlbumCost() {
     //alert("You must be logged in to view this album");
 }
 
-function chargeCredits(folderId, rootFolder) {
+function chargeCredits(folderId, visitorId, rootFolder) {
         let activityCode = "PGV"  //  
     if (rootFolder === "centerfold")
         activityCode = "PBV";
@@ -541,7 +539,7 @@ function chargeCredits(folderId, rootFolder) {
         type: "POST",
         url: settingsArray.ApiServer + "api/User/AwardCredits",
         data: {
-            VisitorId: getCookieValue("VisitorId", "chargeCredits"),
+            VisitorId: visitorId,
             ActivityCode: activityCode,
             PageId: folderId,
             Credits: credits
