@@ -90,18 +90,18 @@ function logPageHit(folderId,visitorId) {
 }
 
 function logStaticPageHit(folderId, visitorId, calledFrom) {
-    logActivity("SP0", folderId, calledFrom); // calling static page hit
+    //logActivity("SP0", folderId, calledFrom); // calling static page hit
     $.ajax({
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId + "&folderId=" + folderId + "&calledFrom=" + calledFrom,
         success: function (success) {
             //logActivity("SP4", folderId, success); // static page hit return
             if (success == "ok") {
-                logActivity("SP1", folderId, "logStatic PageHit/" + calledFrom); // static page hit success
+                //logActivity("SP1", folderId, "logStatic PageHit/" + calledFrom); // static page hit success
             }
             else {
                 if (success.toUpperCase().indexOf("DUPLICATE") > -1) {
-                    logActivity("SP3", folderId, "logStatic PageHit/" + calledFrom); // duplicate static pageHit
+                    //logActivity("SP3", folderId, "logStatic PageHit/" + calledFrom); // duplicate static pageHit
                 }
                 else {
                     logActivity("SP2", folderId, "logStatic PageHit/" + calledFrom); // static page hit ajax error
