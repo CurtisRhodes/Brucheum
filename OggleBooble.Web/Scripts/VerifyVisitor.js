@@ -16,23 +16,14 @@
                     IpAddress: Math.floor(Math.random() * 10000000000).toString(),
                     City: "new visitor?",
                     Country: "ZZ",
-                    Region: "VS2",
+                    Region: "VS",
                     GeoCode: "unknown",
                     InitialPage: folderId
                 }, calledFrom);
             }
             else {
-
                 logActivity2(visitorId, "VS1", folderId, "verify session"); // visitor verified ok
-                verifyVisitorId(visitorId);
-
-                logVisit(visitorId, folderId, "verify session");
-
-                if (calledFrom != "Index.html") {
-                    if (calledFrom != "album.html")
-                        logStaticPageHit(folderId, visitorId, calledFrom);
-                    loadAlbum(folderId, visitorId);
-                }
+                verifyVisitorId(visitorId, folderId, calledFrom);
             }
             //if (!navigator.cookieEnabled)  // user accepts cookies
             //{
@@ -57,18 +48,18 @@
     }
     catch (e) {
         sessionStorage["VisitorVerified"] = true;
-        logActivity2(create_UUID(), "VS8", folderId, e); // verify session CATCH error
-        logError2(create_UUID(), "CAT", folderId, e, "verify session");
+        logActivity2(create_UUID(), "VS8", folderId, "verify session/" + calledFrom); // verify session CATCH error
+        logError2(create_UUID(), "CAT", folderId, e, "verify session/" + calledFrom);
     }
 }
 
-function verifyVisitorId(visitorId) {
+function verifyVisitorId(visitorId, folderId,calledFrom) {
     try {
         if (visitorId.indexOf("cookie not found") > -1) {
             logActivity2(create_UUID(), "VV8", "verify visitor"); // cookie not found made it too far
             return;
         }
-        //logActivity2(visitorId, "VV0", folderId, "verify Visitor"); // attempting to verify visitor
+        logActivity2(visitorId, "VV0", folderId, "verify Visitor"); // attempting to verify visitor
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
@@ -76,8 +67,9 @@ function verifyVisitorId(visitorId) {
                 if (successModel.Success == "ok") {
                     switch (successModel.ReturnValue) {
                         case "visitorId ok":
-                            //logActivity2(visitorId, "VV1", 1020222, "verify VisitorId"); // visitor verified ok
+                            logActivity2(visitorId, "VV1", 1020222, "verify VisitorId"); // visitor verified ok
                             loadUserProfile(folderId, visitorId);
+                            logVisit(visitorId, folderId, "verify session");
                             break;
                         case "retired visitor":
                             setCookieValue("VisitorId", successModel.ComprableIpAddressVisitorId);
@@ -89,6 +81,17 @@ function verifyVisitorId(visitorId) {
                             break;
                         case "not found":
                             logActivity2(visitorId, "VV3", 1020222, "verify Visitor"); // visitorId came back not found
+
+                            addVisitor({
+                                VisitorId: newVisitorId,
+                                IpAddress: Math.floor(Math.random() * 10000000000).toString(),
+                                City: "visitor not found",
+                                Country: "ZZ",
+                                Region: "VV",
+                                GeoCode: "unknown",
+                                InitialPage: folderId
+                            }, calledFrom);
+
                             break;
                         default:
                     }
@@ -179,10 +182,6 @@ function loadUserProfile(folderId, visitorId) {
             url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + visitorId,
             success: function (visitorInfo) {
                 if (visitorInfo.Success == "ok") {
-                    if (visitorInfo.VisitorFound) {
-                        logError2(visitorId, "BUG", folderId, "VisitorId not found", "loadUserProfile");
-                        return;
-                    }
                     if (visitorInfo.IsRegisteredUser) {
                         localStorage["IsLoggedIn"] = "true";
                         if (visitorInfo.RegisteredUser.IsLoggedIn == 0)
@@ -212,6 +211,20 @@ function loadUserProfile(folderId, visitorId) {
                         $('#optionLoggedIn').hide();
                         $('#optionNotLoggedIn').show();
                         $('#footerCol5').hide
+
+                        if (!visitorInfo.VisitorFound) {
+                            addVisitor({
+                                VisitorId: visitorId,
+                                IpAddress: Math.floor(Math.random() * 10000000000).toString(),
+                                City: "loadUserProfile",
+                                Country: "ZZ",
+                                Region: "LP",
+                                GeoCode: "unknown",
+                                InitialPage: folderId
+                            }, "loadUserProfile");
+                            logActivity2(visitorId, "VS3", folderId, "load UserProfile"); // visitorId cookie exists but not found
+                            //logError2(visitorId, "BUG", folderId, "VisitorId not found", "loadUserProfile");
+                        }
                     }
                 }
                 else {
@@ -260,7 +273,7 @@ function logVisit(visitorId, folderId, calledFrom) {
 
                     if (successModel.ReturnValue == "VisitorId not found") {
                         logActivity2(visitorId, "LV3", folderId, "log visit/" + calledFrom);  // visitorId not found
-                        logError2(visitorId, "BUG", folderId, "visitorId not found", "log visit/" + calledFrom);
+                        //logError2(visitorId, "BUG", folderId, "visitorId not found", "log visit/" + calledFrom);
                     }
                 }
                 else {
