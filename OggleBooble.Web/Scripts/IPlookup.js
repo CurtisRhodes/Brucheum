@@ -30,24 +30,7 @@
 
 function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
-        //let visitorId = getCookieValue("VisitorId");
-        if (visitorId.indexOf("cookie not found") > -1) {
-            logError2(visitorId, "BUG", "cookie not found made it to tryAddNewIP", calledFrom);
-            return;
-        }
-        if (isNullorUndefined(visitorId)) {
-            logActivity("IPX", folderId, "tryAddNewIP/" + calledFrom);
-            return;
-        }
-        if (visitorId.length != 36) {
-            let newVisitorId = create_UUID();
-
-            logError2(newVisitorId, "BUG", folderId, "Bad VisitorId: " + visitorId, "tryAddNewIP");
-            let visitorId = newVisitorId;
-            setCookieValue("VisitorId", newVisitorId);
-            return;
-        }
-        else {            
+        try {
             $.ajax({
                 type: "GET",
                 url: settingsArray.ApiServer + "api/Visitor/ScreenIplookupCandidate?visitorId=" + visitorId,
@@ -103,12 +86,11 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                         logError2(create_UUID(), "XHR", folderId, errMsg, "try AddNewIP");
                 }
             });
+        } catch (e) {
+            logError2(visitorId, "CAT", "1023823", e, "tryAddNewIP/" + calledFrom);
         }
-        // 1 geoplugin(folderId, calledFrom);
-        // 2 tryApiDbIpFree(folderId, calledFrom);
-        // 3 ipapico(folderId, calledFrom);
     } catch (e) {
-        logError2(create_UUID, "CAT", "666", e, "tryAddNewIP");
+        logError2(create_UUID(), "CAT", "9999", e, "tryAddNewIP");
     }
 }
 
