@@ -129,7 +129,8 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     City: ipResponse.city,
                     Country: ipResponse.country,
                     Region: ipResponse.region,
-                    GeoCode: ipResponse.loc
+                    GeoCode: ipResponse.loc,
+                    InitialPage: folderId
                 });
                 ip0Busy = false;
             },
@@ -196,7 +197,8 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
                             City: ipResponse.city,
                             Country: ipResponse.countryCode,
                             Region: ipResponse.stateProv,
-                            GeoCode: "apiDbIpFree"
+                            GeoCode: "apiDbIpFree",
+                            InitialPage: folderId
                         });
                     }
                     else {
@@ -276,7 +278,8 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                             City: ipResponse.city,
                             Country: ipResponse.countryCode,
                             Region: ipResponse.stateProv,
-                            GeoCode: "cloudflare"
+                            GeoCode: "cloudflare",
+                            InitialPage: folderId
                         });
                     }
                     else {
@@ -326,7 +329,8 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                             City: "CloudflareTrace",
                             Country: visitorInfo.Country,
                             Region: "uncaught error?",
-                            GeoCode: visitorInfo.GeoCode
+                            GeoCode: visitorInfo.GeoCode,
+                            InitialPage: folderId
                         });
                         logActivity2(visitorId, "IP2", folderId, "CloudflareTrace/" + calledFrom);
                     }
@@ -398,29 +402,29 @@ function updateVisitor(ipData) {
                 if (updateVisitorSuccessModel.Success == "ok") {
                     switch (updateVisitorSuccessModel.ReturnValue) {
                         case "VisitorId not found":
-                            logActivity(create_UUID(), "IPB", folderId, "UpdateVisitor"); // ip lookup VisitorId not found. 
+                            logActivity(create_UUID(), "IPB", ipData.InitialPage, "UpdateVisitor"); // ip lookup VisitorId not found. 
                             break;
                         case "New Ip Visitor Updated":
-                            logActivity2(ipData.VisitorId, "IP2", folderId, "UpdateVisitor"); // New Ip Visitor Updated
+                            logActivity2(ipData.VisitorId, "IP2", ipData.InitialPage, "UpdateVisitor"); // New Ip Visitor Updated
                             break;  // 2
                         case "Duplicate Ip":
                             setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
-                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", folderId, "UpdateVisitor"); // Duplicate Ip 
+                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, "UpdateVisitor"); // Duplicate Ip 
                             break;  // 3
                         case "bad duplicate Ip":
-                            logActivity(create_UUID(), "IPB", folderId, "UpdateVisitor"); // ip lookup VisitorId not found. 
+                            logActivity(create_UUID(), "IPB", ipData.InitialPage, "UpdateVisitor"); // ip lookup VisitorId not found. 
                             setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
-                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", folderId, "UpdateVisitor"); // Duplicate Ip 
+                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, "UpdateVisitor"); // Duplicate Ip 
                             break;
                         default:
-                            logActivity2(ipData.VisitorId, "IPS", folderId, "update visitor"); // Switch Case Problem
-                            logError2(ipData.VisitorId, "SWT", folderId, updateVisitorSuccessModel.ReturnValue, "update visitor");
+                            logActivity2(ipData.VisitorId, "IPS", ipData.InitialPage, "update visitor"); // Switch Case Problem
+                            logError2(ipData.VisitorId, "SWT", ipData.InitialPage, updateVisitorSuccessModel.ReturnValue, "update visitor");
                             break;
                     }
                 }
                 else {
-                    logActivity2(ipData.VisitorId, "IPJ", folderId, updateVisitorSuccessModel.Success, "update visitor");
-                    logError2(ipData.VisitorId, "AJX", folderId, updateVisitorSuccessModel.Success, "update visitor");
+                    logActivity2(ipData.VisitorId, "IPJ", ipData.InitialPage, updateVisitorSuccessModel.Success, "update visitor");
+                    logError2(ipData.VisitorId, "AJX", ipData.InitialPage, updateVisitorSuccessModel.Success, "update visitor");
                 }
             },
             error: function (jqXHR) {
