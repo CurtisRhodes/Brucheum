@@ -74,18 +74,22 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
-                            if (visitor2.Country == "ZZ")
+                            updateVisitorSuccessModel.ReturnValue = "Duplicate Ip";
+                            visitor2.IpAddress = visitorData.IpAddress;
+                            if (visitor2.Country != visitorData.City)
                             {
+                                visitor2.City = visitorData.City;
+                                visitor2.Country = visitorData.Country;
+                                visitor2.GeoCode = visitorData.GeoCode;
+                                visitor2.Region = visitorData.Region;
                                 updateVisitorSuccessModel.ReturnValue = "bad duplicate Ip";
                             }
-                            else {
-                                if (visitor2.InitialPage == 0)
-                                    visitor2.InitialPage = visitor1.InitialPage;
-                                db.Visitors.Remove(visitor1);
-                                db.SaveChanges();
-                                updateVisitorSuccessModel.ComprableIpAddressVisitorId = visitor2.VisitorId;
-                                updateVisitorSuccessModel.ReturnValue = "Duplicate Ip";
-                            }
+                            if (visitor2.InitialPage == 0)
+                                visitor2.InitialPage = visitorData.InitialPage;
+
+                            db.Visitors.Remove(visitor1);
+                            db.SaveChanges();
+                            updateVisitorSuccessModel.ComprableIpAddressVisitorId = visitor2.VisitorId;
                         }
                     }
                 }
@@ -100,7 +104,8 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/Visitor/ScreenIplookupCandidate")]
-        public LookupCandidateModel ScreenIplookupCandidate(string visitorId) {
+        public LookupCandidateModel ScreenIplookupCandidate(string visitorId)
+        {
             var lookupCandidateModel = new LookupCandidateModel();
             try
             {
@@ -108,38 +113,35 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                    if (dbVisitor == null) lookupCandidateModel.lookupStatus = "visitorId not found";
-                    if (dbVisitor.Country != "ZZ") lookupCandidateModel.lookupStatus = "country not ZZ";
-                    if (dbVisitor.VisitorId.Length != 36) lookupCandidateModel.lookupStatus = "bad visitor Id";
-
-
-
-                    //if (dbVisitor.GeoCode == "too many page hits") lookupCandidateModel.lookupStatus = "too many page hits";
-                    //if (lookupCandidateModel.lookupStatus == "passed")
-                    //{
-                    //    if (dbVisitor.InitialVisit < DateTime.Today.AddMonths(-1))
-                    //    {
-                    //        lookupCandidateModel.lookupStatus = "pending months old InitialVisit";
-                    //        dbVisitor.GeoCode = "months old InitialVisit";
-                    //        db.SaveChanges();
-                    //    }
-                    //}
-                    //if (lookupCandidateModel.lookupStatus == "passed")
-                    //{
-                    //    int pageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
-                    //    if (pageHits > 10)
-                    //    {
-                    //        lookupCandidateModel.lookupStatus = "pending too many pageHits";
-                    //        dbVisitor.GeoCode = "too many page hits";
-                    //        db.SaveChanges();
-                    //    }
-                    //}
-                    if (lookupCandidateModel.lookupStatus == "passed")
+                    if (dbVisitor == null) 
+                        lookupCandidateModel.lookupStatus = "visitorId not found";
+                    else if (dbVisitor.Country != "ZZ") 
+                        lookupCandidateModel.lookupStatus = "country not ZZ";
+                    else if (dbVisitor.VisitorId.Length != 36) 
+                        lookupCandidateModel.lookupStatus = "bad visitor Id";
+                    // else if (dbVisitor.GeoCode == "too many page hits") lookupCandidateModel.lookupStatus = "too many page hits";
+                    else
                     {
                         var dupeCheck1 = db.ActivityLogs.Where(a => a.ActivityCode == "IP1" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
                         if (dupeCheck1 != null)
-                        {
                             lookupCandidateModel.lookupStatus = "already looked up today";
+                        else
+                        {
+                            if (dbVisitor.InitialVisit < DateTime.Today.AddMonths(-1))
+                            {
+                                lookupCandidateModel.lookupStatus = "pending months old InitialVisit";
+                                //dbVisitor.GeoCode = "months old InitialVisit";
+                                //db.SaveChanges();
+                            }
+                            else {
+                                int pageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
+                                if (pageHits > 10)
+                                {
+                                    lookupCandidateModel.lookupStatus = "pending too many pageHits";
+                                    //dbVisitor.GeoCode = "too many page hits";
+                                    //db.SaveChanges();
+                                }
+                            }
                         }
                     }
                 }
@@ -150,6 +152,12 @@ namespace OggleBooble.Api.Controllers
                 lookupCandidateModel.Success = Helpers.ErrorDetails(ex);
             }
             return lookupCandidateModel;
+
+
+            //if (lookupCandidateModel.lookupStatus == "passed")
+            //{
+            //}
+            //if (lookupCandidateModel.lookupStatus == "passed")
         }
 
         [HttpGet]

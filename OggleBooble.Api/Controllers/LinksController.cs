@@ -508,14 +508,14 @@ namespace OggleBooble.Api.Controllers
                             {
                                 dbImageFile.FolderId = moveManyModel.DestinationFolderId;
                                 dbImageFile.FileName = newFileName;
-                                //db.SaveChanges();
+                                db.SaveChanges();
 
                                 var oldLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
                                 sortOrder = oldLink.SortOrder;
                                 if (moveManyModel.Context == "move")
                                 {
                                     db.CategoryImageLinks.Remove(oldLink);
-                                    //db.SaveChanges();
+                                    db.SaveChanges();
                                 }
 
                                 db.CategoryImageLinks.Add(new CategoryImageLink()

@@ -50,7 +50,7 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                                 logActivity2(visitorId, "IP7", folderId, lookupCandidateModel.lookupStatus);
                                 break;
                             case "months old InitialVisit":
-                                logActivity2(visitorId, "IP9", folderId, lookupCandidateModel.lookupStatus);
+                                logActivity2(visitorId, "IPL", folderId, lookupCandidateModel.lookupStatus);
                                 break;
                             case "pending months old InitialVisit":
                                 logActivity2(visitorId, "IPD", folderId, lookupCandidateModel.lookupStatus);
@@ -67,7 +67,7 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                                 getIpInfo(folderId, visitorId, calledFrom);
                                 break;
                             case "passed":
-                                //logActivity2(visitorId, "IPP", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
+                                logActivity2(visitorId, "IPP", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
                                 getIpInfo(folderId, visitorId, calledFrom);
                                 break;
                             default:
@@ -103,10 +103,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             tryApiDbIpFree(folderId, visitorId, calledFrom);
             return;
         }
-        if (visitorId.indexOf("XLX") > -1) {
-            logActivity2(visitorId, "IP9", folderId, calledFrom); // blocked looping ip-lookup attempt
-            return;
-        }
 
         let ipCall0Returned = false;
         ip0Busy = true;
@@ -125,6 +121,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 }
             },
             success: function (ipResponse) {
+                logActivity2(visitorId, "IP9", folderId, "IPInfo"); // well it worked
                 ipCall0Returned = true;
                 updateVisitor({
                     VisitorId: visitorId,
@@ -189,6 +186,7 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
                 url: "https://api.db-ip.com/v2/free/self",
                 dataType: "JSON",
                 success: function (ipResponse) {
+                    logActivity2(visitorId, "IP9", folderId, "apiDbIpFree"); // well it worked
                     ipCall2Returned = true;
                     if (!isNullorUndefined(ipResponse.ipAddress)) {
                         logActivity2(visitorId, "IP2", folderId, "apiDbIpFree/" + calledFrom); // well it worked
@@ -390,28 +388,30 @@ function tagVisitor(visitorId, folderId, calledFrom, tagValue)
 }
 
 function updateVisitor(ipData) {
+    try {
+        logActivity2(ipData.VisitorId, "IPQ", folderId, "IPInfo"); // entering update visitor
         $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
-        data: ipData,
-        success: function (updateVisitorSuccessModel) {
-            try {
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
+            data: ipData,
+            success: function (updateVisitorSuccessModel) {
                 if (updateVisitorSuccessModel.Success == "ok") {
                     switch (updateVisitorSuccessModel.ReturnValue) {
+                        case "VisitorId not found":
+                            logActivity(create_UUID(), "IPB", folderId, "UpdateVisitor"); // ip lookup VisitorId not found. 
+                            break;
                         case "New Ip Visitor Updated":
                             logActivity2(ipData.VisitorId, "IP2", folderId, "UpdateVisitor"); // New Ip Visitor Updated
-                            break;
+                            break;  // 2
                         case "Duplicate Ip":
                             setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
                             logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", folderId, "UpdateVisitor"); // Duplicate Ip 
-
-
-
-
-
-                            break;
-                        case "VisitorId not found":
+                            break;  // 3
+                        case "bad duplicate Ip":
                             logActivity(create_UUID(), "IPB", folderId, "UpdateVisitor"); // ip lookup VisitorId not found. 
+                            setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
+                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", folderId, "UpdateVisitor"); // Duplicate Ip 
+                            break;
                         default:
                             logActivity2(ipData.VisitorId, "IPS", folderId, "update visitor"); // Switch Case Problem
                             logError2(ipData.VisitorId, "SWT", folderId, updateVisitorSuccessModel.ReturnValue, "update visitor");
@@ -422,17 +422,17 @@ function updateVisitor(ipData) {
                     logActivity2(ipData.VisitorId, "IPJ", folderId, updateVisitorSuccessModel.Success, "update visitor");
                     logError2(ipData.VisitorId, "AJX", folderId, updateVisitorSuccessModel.Success, "update visitor");
                 }
+            },
+            error: function (jqXHR) {
+                logActivity2(create_UUID(), "IPE", 555, "add Visitor"); // Add Visitor XHR error
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, 555, "add Visitor"))
+                    logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
             }
-            catch (e) {
-                logActivity2(ipData.VisitorId, "IPC", folderId, updateVisitorSuccessModel.ReturnValue); // catch error
-                logError2(ipData.VisitorId, "CAT", 621241, e, "Update Visitor");
-            }
-        },
-        error: function (jqXHR) {
-            logActivity2(ipData.VisitorId, "IPE", 555, "add Visitor"); // Add Visitor XHR error
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, 555, "add Visitor"))
-                logError2(ipData.VisitorId, "XHR", 55, errMsg, "add Visitor");
-        }
-    });
+        });
+    }
+    catch (e) {
+        logActivity2(create_UUID(), "IPC", 1022842, "Update Visitor"); // catch error
+        logError2(create_UUID(), "CAT", 621241, e, "Update Visitor");
+    }
 }

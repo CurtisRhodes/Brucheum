@@ -4,6 +4,7 @@
         visitorId = getCookieValue("VisitorId", "verify session");
 
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
+            sessionStorage["VisitorVerified"] = true;
             $('#headerMessage').html("new session started");
             if (visitorId.indexOf("cookie not found") > -1) {
                 returnVisit = false;
@@ -21,6 +22,7 @@
                 }, calledFrom);
             }
             else {
+
                 logActivity2(visitorId, "VS1", folderId, "verify session"); // visitor verified ok
                 verifyVisitorId(visitorId);
 
@@ -43,7 +45,6 @@
             //    }
             //}
             logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
-            sessionStorage["VisitorVerified"] = true;
         }
         else {
             if (calledFrom != "Index.html") {
@@ -129,21 +130,28 @@ function addVisitor(visitorData, calledFrom) {
                     logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add visitor"); // new visitor added
                     setCookieValue("VisitorId", visitorData.VisitorId);
                     logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor");
-                    if (isNullorUndefined(visitorData.FolderId))
-                        logError2(visitorData.VisitorId, "IHF", visitorData.FolderId, "isNullorUndefined(visitorData.FolderId)", "add visitor/ok/" + calledFrom);
-                    else {
-                        if (calledFrom != "album.html")
-                            logStaticPageHit(visitorData.FolderId, visitorData.VisitorId, calledFrom);
-                        loadAlbum(visitorData.FolderId, visitorData.VisitorId);
+                    if (calledFrom != "Index.html") {
+                        if (isNullorUndefined(visitorData.InitialPage))
+                            logError2(visitorData.VisitorId, "IHF", visitorData.InitialPage, "isNullorUndefined(visitorData.InitialPage)", "add visitor/ok/" + calledFrom);
+                        else {
+                            if (calledFrom != "album.html")
+                                logStaticPageHit(visitorData.InitialPage, visitorData.VisitorId, calledFrom);
+                            loadAlbum(visitorData.InitialPage, visitorData.VisitorId);
+                        }
                     }
                 }
                 else {
                     if (success.indexOf("Duplicate entry") > 0) {
                         logActivity2(visitorData.VisitorId, "AV3", visitorData.InitialPage, "add visitor/" + calledFrom); // duplicate key violation
-                        if (isNullorUndefined(visitorData.FolderId))
-                            logError2(visitorData.VisitorId, "BUG", visitorData.FolderId, "isNullorUndefined(visitorData.FolderId)", "add visitor/dupe/" + calledFrom);
-                        else
-                            loadAlbum(visitorData.FolderId, visitorData.VisitorId);
+                        if (calledFrom != "album.html") {
+                            if (isNullorUndefined(visitorData.InitialPage))
+                                logError2(visitorData.VisitorId, "IHF", visitorData.InitialPage, "isNullorUndefined(visitorData.InitialPage)", "add visitor/dupe/" + calledFrom);
+                            else {
+                                if (calledFrom != "album.html")
+                                    logStaticPageHit(visitorData.InitialPage, visitorData.VisitorId, calledFrom);
+                                loadAlbum(visitorData.InitialPage, visitorData.VisitorId);
+                            }
+                        }
                     } else {
                         logActivity2(visitorData.VisitorId, "AV7", visitorData.InitialPage, success); // ajax error from Add Visitor
                         logError2(visitorData.VisitorId, "AJ7", visitorData.InitialPage, success, "add visitor/" + calledFrom);
