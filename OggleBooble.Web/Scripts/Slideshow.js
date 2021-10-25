@@ -48,7 +48,11 @@ function getSlideshowItems(folderId, startItem) {
                             break;
                         }
                     };
-                    logImageHit(imageViewerArray[imageViewerIndex].LinkId, folderId, true);
+
+                    if (typeof logImageHit === 'function')
+                        logImageHit(imageViewerArray[imageViewerIndex].LinkId, folderId, true);
+                    else
+                        logError("FNF", folderId, "logImageHit not a function", "getSlideshowItems");
 
                     viewerShowing = true;
                     resizeViewer();
@@ -248,10 +252,14 @@ function slide(direction) {
             tempImgSrc.src = settingsImgRepo + imageViewerArray[imageViewerIndex].FileName;
             spSessionCount++;
             //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
-            logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+
+            if (typeof logImageHit === 'function')
+                logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+            else
+                logError("FNF", imageViewerFolderId, "logImageHit not a function", "slide");
         }        
     } catch (e) {
-        logError("CAT", 3910, e, "slide");
+        logError("CAT", 111187, e, "slide");
     }
 }
 

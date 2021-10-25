@@ -39,10 +39,15 @@
         }
         else {
             if (calledFrom != "Index.html") {
-                if (calledFrom != "album.html")
-                    logStaticPageHit(folderId, visitorId, calledFrom);
+                if (calledFrom != "album.html") {
+                    if (typeof logStaticPageHit === 'function')
+                        logStaticPageHit(folderId, visitorId, calledFrom);
+                    else
+                        logError2(visitorId, "FNF", "logStaticPageHit not a function", "verify session");
+
+                }
                 loadAlbum(folderId, visitorId);
-                // logActivity("VV3", folderId, "verify Visitor"); // active session new page
+                // logActivity("VV3", folderId, "verify session"); // active session new page
             }
         }
     }

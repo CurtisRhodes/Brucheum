@@ -259,7 +259,7 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
         type: "POST",
         url: settingsArray.ApiServer + "api/Common/LogEvent",
         data: {
-            VisitorId: getCookieValue("VisitorId", "logEvent"),
+            VisitorId: getCookieValue("VisitorId", "logEvent/" + eventCode),
             EventCode: eventCode,
             EventDetail: eventDetails,
             CalledFrom: calledFrom,

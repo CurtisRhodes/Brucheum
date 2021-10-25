@@ -109,7 +109,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
         logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            //url: "https://ipinfo.io?token=ac5da086206dc4", 
+            //url: "http s://ipinfo.io?token=ac5da086206dc4", 
             url: "https://ipinfo.io?token=e66f93d609e1d8", 
             dataType: "JSON",
             statusCode: {
@@ -155,9 +155,9 @@ function getIpInfo(folderId, visitorId, calledFrom) {
         });
         setTimeout(function () {
             if (!ipCall0Returned) {
-                logActivity2(visitorId, "IP4", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
+                logActivity2(visitorId, "IPT", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
                 tryApiDbIpFree(folderId, visitorId, calledFrom);  // try something else
-                logError2(create_UUID(), "200", folderId, JSON.stringify(ipResponse, null, 2), "ip info timeout"); // Json response code
+                //logError2(create_UUID(), "200", folderId, JSON.stringify(ipResponse, null, 2), "ip info timeout"); // Json response code
             }
             ip0Busy = false;
         }, 4000);
@@ -240,7 +240,7 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
             setTimeout(function () {
                 if (!ipCall2Returned) {
                     console.debug("tryApiDbIpFree timeout");
-                    logActivity2(visitorId, "IP4", folderId, "apiDbIpFree");
+                    logActivity2(visitorId, "IPT", folderId, "apiDbIpFree");
                     tryCloudflareTrace(folderId, visitorId, calledFrom); // try something else
                 }
                 ip2Busy = false;
@@ -289,7 +289,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                         else {
                             //console.debug("tryCloudflareTrace 6 " + JSON.stringify(ipResponse, null, 2));
                             //logError("200", folderId, JSON.stringify(ipResponse, null, 2), "tryCloudflareTrace/" + calledFrom); // Json response code
-                            logActivity2(visitorId, "IP4", folderId, "CloudflareTrace" + calledFrom);
+                            logActivity2(visitorId, "IPK", folderId, "CloudflareTrace. err: " + ipResponse.errorCode);
                             //tagVisitor(visitorId, folderId, "CloudflareTrace/" + calledFrom, "no response");
                         }
                     }
@@ -357,8 +357,8 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
             });
             setTimeout(function () {
                 if (!ipCall3Returned) {
-                    logActivity2(visitorId, "IP4", folderId, "cloudflareTrace");
-                    tagVisitor(visitorId, folderId, "cloudflareTrace/" + calledFrom, "time out");
+                    logActivity2(visitorId, "IPT", folderId, "cloudflareTrace");
+                    //tagVisitor(visitorId, folderId, "cloudflareTrace/" + calledFrom, "time out");
                 }
                 ip3Busy = false;
             }, 2000);
@@ -369,31 +369,9 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
     }
 } // 3 www.cloudflare.com/cdn-cgi/trace
 
-function tagVisitor(visitorId, folderId, calledFrom, tagValue)
-{    
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "api/Visitor/TagVisitor?visitorId=" + visitorId + "&tagValue=" + tagValue,
-        success: function (success) {
-            if (success == "ok") {
-                logActivity2(visitorId, "IPT", folderId, "tag Visitor/" + calledFrom); // Visitor Tagged
-            }
-            else {
-                logError2(visitorId, "AJX", folderId, success, "tag Visitor/" + calledFrom);
-            }
-        },
-        error: function (jqXHR) {
-            logActivity2(create_UUID(), "AV8", 555, "add Visitor"); // Add Visitor XHR error
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, 555, "add Visitor"))
-                logError2(create_UUID(), "XHR", 55, errMsg, "add Visitor");
-        }
-    });
-}
-
 function updateVisitor(ipData) {
     try {
-        logActivity2(ipData.VisitorId, "IPQ", folderId, "IPInfo"); // entering update visitor
+        // logActivity2(ipData.VisitorId, "IPQ", folderId, "IPInfo"); // entering update visitor
         $.ajax({
             type: "PUT",
             url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
@@ -403,19 +381,18 @@ function updateVisitor(ipData) {
                     switch (updateVisitorSuccessModel.ReturnValue) {
                         case "VisitorId not found":
                             logActivity(create_UUID(), "IPB", ipData.InitialPage, "UpdateVisitor"); // ip lookup VisitorId not found. 
-                            break;
+                            break;  // 1
                         case "New Ip Visitor Updated":
                             logActivity2(ipData.VisitorId, "IP2", ipData.InitialPage, "UpdateVisitor"); // New Ip Visitor Updated
                             break;  // 2
                         case "Duplicate Ip":
+                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
                             setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
-                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, "UpdateVisitor"); // Duplicate Ip 
                             break;  // 3
                         case "bad duplicate Ip":
-                            logActivity(create_UUID(), "IPB", ipData.InitialPage, "UpdateVisitor"); // ip lookup VisitorId not found. 
+                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP4", ipData.InitialPage, ipData.VisitorId); // Duplicate IP Bad Info
                             setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
-                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, "UpdateVisitor"); // Duplicate Ip 
-                            break;
+                            break;  // 4
                         default:
                             logActivity2(ipData.VisitorId, "IPS", ipData.InitialPage, "update visitor"); // Switch Case Problem
                             logError2(ipData.VisitorId, "SWT", ipData.InitialPage, updateVisitorSuccessModel.ReturnValue, "update visitor");

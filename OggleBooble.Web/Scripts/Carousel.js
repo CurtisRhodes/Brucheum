@@ -82,7 +82,7 @@ function launchCarousel(startRoot) {
     catch (e) {
         // TypeError: localStorage is null
         //if (e.IndexOf("SyntaxError: Unexpected token u in JSON at position 1") > -1) {
-        logError2(create_UUID(), "CAT", 3910, e, "launch Carousel");
+        logError2(create_UUID(), "CAT", 1025142, e, "launch Carousel");
     }
     finally {
         window.addEventListener("resize", resizeCarousel);

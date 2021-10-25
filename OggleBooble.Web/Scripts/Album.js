@@ -22,10 +22,15 @@ function loadAlbum(folderId, visitorId) {
         setOggleHeader("album");
         apFolderId = folderId;
         qucikHeader(folderId);
-        logPageHit(folderId, visitorId);
         settingsImgRepo = settingsArray.ImageRepo;
         getAlbumImages(folderId);
         getAlbumPageInfo(folderId, visitorId, false);
+
+        if (typeof logPageHit === 'function')
+            logPageHit(folderId, visitorId);
+        else
+            logError2(visitorId, "FNF", "logPageHit not a function", "load album");
+
     } catch (e) {
         logError("CAT", folderId, e, "load album");
     }
