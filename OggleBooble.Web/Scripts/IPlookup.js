@@ -1,33 +1,4 @@
-﻿/*
-    IP0	already processed               97
-    IP1	calling ip-lookup api           964
-    IP2	New Ip Visitor Updated          531
-    IP3	Duplicate Ip                    394
-    IP4	timeout failed to respond       21
-    IP5	lookup limit exceeded           24
-    IP6	connection problem              47
-    IP7	already looked up today         441
-    IP8	IpInfo busy                     1
-    IP9	months old InitialVisit         X
-    IPA	apiDbIpFree XHR error           10
-    IPB	ip lookup VisitorId not found   X
-    IPC	Catch Error
-    IPD	pending months old InitialVisit X
-    IPE	update visitor XHR Error        1
-    IPF	screen candidate Ajax error     9
-    IPG	tryApiDbIpFree timeout          10
-    IPH	pending too many pageHits       x
-    IPI	too many pageHits               x
-    IPJ	update visitor AJAX error
-    country not ZZ
-    IPK	IP catch error
-    IPP	candidate screen passed
-    IPS	Switch Case Problem
-    IPT	Visitor Tagged                  11
-    IPX Xhr error
-    IPZ	IpInfo ZZ fail
-*/
-
+﻿
 function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
         try {
@@ -67,7 +38,7 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                                 getIpInfo(folderId, visitorId, calledFrom);
                                 break;
                             case "passed":
-                                logActivity2(visitorId, "IPP", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
+                                //logActivity2(visitorId, "IPP", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
                                 getIpInfo(folderId, visitorId, calledFrom);
                                 break;
                             default:
@@ -121,7 +92,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 }
             },
             success: function (ipResponse) {
-                logActivity2(visitorId, "IP9", folderId, "IPInfo"); // well it worked
                 ipCall0Returned = true;
                 updateVisitor({
                     VisitorId: visitorId,
@@ -187,10 +157,11 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
                 url: "https://api.db-ip.com/v2/free/self",
                 dataType: "JSON",
                 success: function (ipResponse) {
-                    logActivity2(visitorId, "IP9", folderId, "apiDbIpFree"); // well it worked
                     ipCall2Returned = true;
                     if (!isNullorUndefined(ipResponse.ipAddress)) {
-                        logActivity2(visitorId, "IP2", folderId, "apiDbIpFree/" + calledFrom); // well it worked
+
+                        logActivity2(visitorId, "IP9", folderId, "apiDbIpFree/" + calledFrom); // apiDbIpFree used ok
+
                         updateVisitor({
                             VisitorId: visitorId,
                             IpAddress: ipResponse.ipAddress,
@@ -208,9 +179,8 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
                             tryCloudflareTrace(folderId, visitorId, calledFrom); // try something else
                         }
                         else {
-                            console.debug("tryApiDbIpFree 6 " + JSON.stringify(ipResponse, null, 2));
+                            //console.debug("tryApiDbIpFree 6 " + JSON.stringify(ipResponse, null, 2));
                             //logError("200", folderId, JSON.stringify(ipResponse, null, 2), "apiDbIpFree/" + calledFrom); // Json response code
-                            logActivity2(visitorId, "IP9", folderId, "apiDbIpFree/" + calledFrom);
                         }
                     }
                     ip2Busy = false;
@@ -257,7 +227,7 @@ let ip3Busy = false;
 function tryCloudflareTrace(folderId, visitorId, calledFrom) {
     try {
         if (ip3Busy) {
-            console.debug("CloudflareTrace busy");
+            //console.debug("CloudflareTrace busy");
             logActivity2(visitorId, "IP8", folderId, "CloudflareTrace");
         }
         else {
@@ -271,7 +241,9 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                 success: function (ipResponse) {
                     ipCall3Returned = true;
                     if (!isNullorUndefined(ipResponse.ipAddress)) {
-                        //logActivity2(visitorId, "IP2", folderId, "cloudflare/" + calledFrom); // well it worked
+
+                        logActivity2(visitorId, "IPA", folderId, "cloudflare/" + calledFrom); // CloudflareTrace worked
+
                         updateVisitor({
                             VisitorId: visitorId,
                             IpAddress: ipResponse.ipAddress,

@@ -8,7 +8,7 @@
             $('#headerMessage').html("new session started");
             if (visitorId.indexOf("cookie not found") > -1) {
                 returnVisit = false;
-               let newVisitorId = create_UUID();
+                let newVisitorId = create_UUID();
                 sessionStorage["VisitorId"] = newVisitorId;
                 logActivity2(newVisitorId, "VS2", folderId, "verify session"); // verify visitorId not found (new user?)
                 addVisitor({
@@ -37,24 +37,21 @@
             //}
             logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
         }
-        else {
-            if (calledFrom != "Index.html") {
-                if (calledFrom != "album.html") {
-                    if (typeof logStaticPageHit === 'function')
-                        logStaticPageHit(folderId, visitorId, calledFrom);
-                    else
-                        logError2(visitorId, "FNF", "logStaticPageHit not a function", "verify session");
-
-                }
-                loadAlbum(folderId, visitorId);
-                // logActivity("VV3", folderId, "verify session"); // active session new page
+        if (calledFrom != "Index.html") {
+            if (calledFrom != "album.html") {
+                if (typeof logStaticPageHit === 'function')
+                    logStaticPageHit(folderId, visitorId, calledFrom);
+                else
+                    logError2(visitorId, "FNF", "logStaticPageHit not a function", "verify session");
             }
+            loadAlbum(folderId, visitorId);
+            // logActivity("VV3", folderId, "verify session"); // active session new page
         }
     }
     catch (e) {
         sessionStorage["VisitorVerified"] = true;
-        logActivity2(create_UUID(), "VS8", folderId, "verify session/" + calledFrom); // verify session CATCH error
-        logError2(create_UUID(), "CAT", folderId, e, "verify session/" + calledFrom);
+        logActivity2(visitorId, "VS8", folderId, "verify session/" + calledFrom); // verify session CATCH error
+        logError2(visitorId, "CAT", folderId, e, "verify session/" + calledFrom);
     }
 }
 
@@ -200,14 +197,6 @@ function loadUserProfile(folderId, visitorId) {
                             $('#optionLoggedIn').show();
                             $('#footerCol5').show();
                         }
-
-                        if (calledFrom == "show UserProfileDialog") {
-                            $('#txtUserProfileName').val(visitorInfo.RegisteredUser.UserName);
-                            $('#txtUserProfileFirstName').val(visitorInfo.RegisteredUser.FirstName);
-                            $('#txtUserProfileLastName').val(visitorInfo.RegisteredUser.LastName);
-                            $('#txtUserProfileEmail').val(visitorInfo.RegisteredUser.Email);
-                        }
-                        //doubleCheckVisitorId(visitorId, folderId);
                     }
                     else {
                         localStorage["IsLoggedIn"] = "false";

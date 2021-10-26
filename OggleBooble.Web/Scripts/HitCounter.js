@@ -44,8 +44,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
     }
 }
 
-let lastPageHitFolderId, lastPageHitVisitorId;
-function logPageHit(folderId,visitorId) {
+function logPageHit(folderId, visitorId) {
     try {
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
             logActivity("PH6", folderId, "log PageHit"); // looping page hit
@@ -63,8 +62,8 @@ function logPageHit(folderId,visitorId) {
                         logActivity2(visitorId, "PH4", folderId, "log pageHit"); // pageHits > 3 and country=="ZZ"
                         tryAddNewIP(folderId, visitorId, "log pageHit");
                     }
-                //    else
-                //        logVisit(visitorId, folderId, "log pageHit");
+                    //    else
+                    //        logVisit(visitorId, folderId, "log pageHit");
                 }
                 else {
                     if (pageHitSuccess.Success = "duplicate hit") {

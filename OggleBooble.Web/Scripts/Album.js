@@ -13,10 +13,57 @@ function loadLargeAlbum(folderId) {
     getAlbumPageInfo(folderId, visitorId, true);
 }
 
+function logAPageHit(folderId, visitorId) {
+    try {
+        if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
+            logActivity("PH6", folderId, "log PageHit"); // looping page hit
+            return;
+        }
+        lastPageHitVisitorId = visitorId;
+        lastPageHitFolderId = folderId;
+
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
+            success: function (pageHitSuccess) {
+                if (pageHitSuccess.Success === "ok") {
+                    if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
+                        logActivity2(visitorId, "PH4", folderId, "log pageHit"); // pageHits > 3 and country=="ZZ"
+                        tryAddNewIP(folderId, visitorId, "log pageHit");
+                    }
+                    logError2(visitorId, "FNF", folderId, "logPageHit not a function", "logAPageHit");
+
+
+                    //    else
+                    //        logVisit(visitorId, folderId, "log pageHit");
+                }
+                else {
+                    if (pageHitSuccess.Success = "duplicate hit") {
+                        logActivity2(visitorId, "PH5", folderId, "log pageHit");  // duplicate page hit
+                    }
+                    else {
+                        logActivity2(visitorId, "PH8", folderId, "log pageHit");  // page hit ajax error
+                        logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log pageHit");
+                    }
+                }
+            },
+            error: function (jqXHR) {
+                logActivity(visitorId, "PH7", "log pageHit");  // page hit XHR error
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "logPageHit"))
+                    logError("XHR", folderId, errMsg, "log pageHit");
+            }
+        });
+    } catch (e) {
+        logActivity(visitorId, "PH9", "log pageHit");  // page hit catch error
+        logError("CAT", folderId, e, "log pageHit");
+    }
+}
+
 function loadAlbum(folderId, visitorId) {
     try {
         if (isNullorUndefined(folderId)) {
-            logError("BUG", 1021720, "folderId isNullorUndefined: " + folderId, "load album");
+            logError2(visitorId, "BUG", 1021720, "folderId isNullorUndefined: " + folderId, "load album");
             return;
         }
         setOggleHeader("album");
@@ -29,8 +76,7 @@ function loadAlbum(folderId, visitorId) {
         if (typeof logPageHit === 'function')
             logPageHit(folderId, visitorId);
         else
-            logError2(visitorId, "FNF", "logPageHit not a function", "load album");
-
+            logAPageHit(folderId, visitorId);
     } catch (e) {
         logError("CAT", folderId, e, "load album");
     }
