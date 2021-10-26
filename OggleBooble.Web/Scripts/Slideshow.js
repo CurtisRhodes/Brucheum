@@ -3,6 +3,53 @@
     imageViewerFolderName, albumFolderId, spSlideShowRunning, spSessionCount = 0, slideShowButtonsActive = false, spIncludeSubFolders, slideshowSpped = 570,
     slideshowImgSrc = new Image(), tempImgSrc = new Image();
 
+function logSSImageHit(linkId, folderId, isInitialHit) {
+    try {
+        if (isNullorUndefined(folderId)) {
+            logError("IHF", folderId, "linkId: " + linkId, "log ImageHit");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogImageHit",
+            data: {
+                VisitorId: getCookieValue("VisitorId", "log ImageHit"),
+                FolderId: folderId,
+                LinkId: linkId,
+                IsInitialHit: isInitialHit
+            },
+            success: function (imageHitSuccessModel) {
+                if (imageHitSuccessModel.Success == "ok") {
+                    userPageHits = imageHitSuccessModel.UserPageHits;
+                    userImageHits = imageHitSuccessModel.UserImageHits;
+
+                    logError("FNF", imageViewerFolderId, "logImageHit not a function", "slide");
+
+                    //checkForHitLimit("images", folderId, userPageHits, userImageHits);
+                }
+                else {
+                    if (imageHitSuccessModel.Success.indexOf("Duplicate entry") > 0) {
+                        //logError("AJX", folderId, imageHitSuccessModel.Success, "logcImageHit");
+                    }
+                    else {
+                        // ERROR: Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.
+                        // Entity of type "ImageHit" in state "Added" has the following validation errors: - 
+                        // Property: "VisitorId", Error: "The VisitorId field is required."
+                        if (document.domain == 'localhost') alert(imageHitSuccessModel.Success);
+                        logError("AJX", folderId, imageHitSuccessModel.Success, "log ImageHit");
+                    }
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "log ImageHit")) logError("XHR", folderId, errMsg, "log ImageHit");
+            }
+        });
+    } catch (e) {
+        logError("CAT", folderId, e, "log SSImageHit");
+    }
+}
+
 function launchViewer(folderId, startItem, includeSubFolders) {
     spSlideShowRunning = false;
     imageViewerFolderId = folderId;
@@ -255,11 +302,12 @@ function slide(direction) {
 
             if (typeof logImageHit === 'function')
                 logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
-            else
-                logError("FNF", imageViewerFolderId, "logImageHit not a function", "slide");
+            else {
+                logSSImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+            }
         }        
     } catch (e) {
-        logError("CAT", 111187, e, "slide");
+        logError("CAT", 111187, e, "slide2");
     }
 }
 
