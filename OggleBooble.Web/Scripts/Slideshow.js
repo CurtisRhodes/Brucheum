@@ -9,11 +9,18 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
             logError("IHF", folderId, "linkId: " + linkId, "log ImageHit");
             return;
         }
+
+        let stepVis = getCookieValue("VisitorId", "log SSImageHit");
+        if (isNullorUndefined(stepVis)) {
+            stepVis = "vs kludge";
+            logError("BUG", folderId, "VisitorId null in this kludge", "log SSImageHit");
+        }
+
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
             data: {
-                VisitorId: getCookieValue("VisitorId", "log ImageHit"),
+                VisitorId: stepVis,
                 FolderId: folderId,
                 LinkId: linkId,
                 IsInitialHit: isInitialHit
@@ -23,7 +30,7 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
                     userPageHits = imageHitSuccessModel.UserPageHits;
                     userImageHits = imageHitSuccessModel.UserImageHits;
 
-                    logError("FNF", imageViewerFolderId, "logImageHit not a function", "slide");
+                    // logError("FNF", folderId, "logImageHit not a function", "log SSImageHit");
 
                     //checkForHitLimit("images", folderId, userPageHits, userImageHits);
                 }
@@ -36,13 +43,13 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
                         // Entity of type "ImageHit" in state "Added" has the following validation errors: - 
                         // Property: "VisitorId", Error: "The VisitorId field is required."
                         if (document.domain == 'localhost') alert(imageHitSuccessModel.Success);
-                        logError("AJX", folderId, imageHitSuccessModel.Success, "log ImageHit");
+                        logError("AJX", folderId, imageHitSuccessModel.Success, "log SSImageHit");
                     }
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "log ImageHit")) logError("XHR", folderId, errMsg, "log ImageHit");
+                if (!checkFor404(errMsg, folderId, "log ImageHit")) logError("XHR", folderId, errMsg, "log SSImageHit");
             }
         });
     } catch (e) {

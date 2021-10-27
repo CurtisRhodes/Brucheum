@@ -13,14 +13,15 @@ function loadLargeAlbum(folderId) {
     getAlbumPageInfo(folderId, visitorId, true);
 }
 
+let lastAPageHitFolderId, lastAPageHitVisitorId;
 function logAPageHit(folderId, visitorId) {
     try {
-        if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
+        if ((lastAPageHitFolderId == folderId) && (lastAPageHitVisitorId == visitorId)) {
             logActivity("PH6", folderId, "log PageHit"); // looping page hit
             return;
         }
-        lastPageHitVisitorId = visitorId;
-        lastPageHitFolderId = folderId;
+        lastAPageHitVisitorId = visitorId;
+        lastAPageHitFolderId = folderId;
 
         $.ajax({
             type: "POST",
@@ -31,19 +32,18 @@ function logAPageHit(folderId, visitorId) {
                         logActivity2(visitorId, "PH4", folderId, "log pageHit"); // pageHits > 3 and country=="ZZ"
                         tryAddNewIP(folderId, visitorId, "log pageHit");
                     }
-                    logError2(visitorId, "FNF", folderId, "logPageHit not a function", "logAPageHit");
-
+                    //logError2(visitorId, "FNF", folderId, "logPageHit not a function", "logAPageHit");
 
                     //    else
                     //        logVisit(visitorId, folderId, "log pageHit");
                 }
                 else {
                     if (pageHitSuccess.Success = "duplicate hit") {
-                        logActivity2(visitorId, "PH5", folderId, "log pageHit");  // duplicate page hit
+                        logActivity2(visitorId, "PH5", folderId, "log A PageHit");  // duplicate page hit
                     }
                     else {
-                        logActivity2(visitorId, "PH8", folderId, "log pageHit");  // page hit ajax error
-                        logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log pageHit");
+                        logActivity2(visitorId, "PH8", folderId, "log A PageHit");  // page hit ajax error
+                        logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "logAPageHit");
                     }
                 }
             },
@@ -539,6 +539,15 @@ function setBadges(folderComments) {
         if (folderComments.toUpperCase().indexOf("HEF LIKES TWINS") > -1) {
             $('#badgesContainer').append("<a href='/album.html?folder=3904'><img src='/Images/gemini03.png' title='Hef likes twins' class='badgeImage'></a>");
         }
+
+        if (folderComments.toUpperCase().indexOf("PARENT LINK") > -1) {
+            let parentLinkStart = folderComments.toUpperCase().indexOf("PARENT LINK=") + 12;
+            let parentLinkEnd = folderComments.substr(parentLinkStart).indexOf("|");
+            let parentLink = folderComments.substr(parentLinkStart, parentLinkEnd);
+            $('#badgesContainer').append("<a href='/album.html?folder=" + parentLink + "'><div class='back2gallery'>back to gallery</div></a>");
+        }
+
+
     }
 }
 

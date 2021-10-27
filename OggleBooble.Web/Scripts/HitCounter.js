@@ -44,6 +44,7 @@ function logImageHit(linkId, folderId, isInitialHit) {
     }
 }
 
+let lastPageHitFolderId, lastPageHitVisitorId;
 function logPageHit(folderId, visitorId) {
     try {
         if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {

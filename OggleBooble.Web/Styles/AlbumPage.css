@@ -8,10 +8,15 @@
     white-space: nowrap;
     color: var(--oggleTitleColor);
 }
+.back2gallery {
+    font-size: 19px;
+    padding-left: 16px;
+    margin-top: 6px;
+}
 .knownModelIndicator {
     position: relative;
     bottom: 23px;
-    text-align:right;
+    text-align: right;
     margin-bottom: -25px;
 }
     .knownModelIndicator img {

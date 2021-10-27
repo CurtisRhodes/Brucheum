@@ -1,7 +1,6 @@
 ﻿let verbosity = 5, freeVisitorHitsAllowed = 7500, settingsArray = {}, userRoles = [], settingsImgRepo, userProfileData = {},
     viewerShowing = false, waitingForReportThenPerformEvent = true, forgetShowingCustomMessage = true,
     debugMode = false, pSelectedTreeId, pSelectedTreeFolderPath, activeDirTree, dSelectedTreeId;
-let lastPageHitFolderId, lastPageHitVisitorId;
 
 //if (ipAddr !== "68.203.90.183" && ipAddr !== "50.62.160.105")
 //<script src="https://www.google.com/recaptcha/api.js" async defer></script>
