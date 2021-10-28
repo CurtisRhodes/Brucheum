@@ -102,12 +102,11 @@ function getSlideshowItems(folderId, startItem) {
                             break;
                         }
                     };
-
                     if (typeof logImageHit === 'function')
-                        logImageHit(imageViewerArray[imageViewerIndex].LinkId, folderId, true);
-                    else
-                        logError("FNF", folderId, "logImageHit not a function", "getSlideshowItems");
-
+                        logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, true);
+                    else {
+                        logSSImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, true);
+                    }
                     viewerShowing = true;
                     resizeViewer();
                     explodeViewer();

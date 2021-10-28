@@ -76,13 +76,22 @@ namespace OggleBooble.Api.Controllers
                         {
                             updateVisitorSuccessModel.ReturnValue = "Duplicate Ip";
                             visitor2.IpAddress = visitorData.IpAddress;
-                            if (visitor2.Country != visitorData.City)
+                            if ((visitor2.Country == "ZZ") && (visitor1.Country != "ZZ"))
                             {
                                 visitor2.City = visitorData.City;
                                 visitor2.Country = visitorData.Country;
                                 visitor2.GeoCode = visitorData.GeoCode;
                                 visitor2.Region = visitorData.Region;
                                 updateVisitorSuccessModel.ReturnValue = "bad duplicate Ip";
+
+                                db.ActivityLogs.Add(new ActivityLog()
+                                {
+                                    ActivityCode = "IP1",
+                                    VisitorId = visitor2.VisitorId,
+                                    FolderId = visitor1.InitialPage,
+                                    Occured = DateTime.Now,
+                                    CalledFrom = "Update Controller"
+                                });
                             }
                             if (visitor2.InitialPage == 0)
                                 visitor2.InitialPage = visitorData.InitialPage;
@@ -113,18 +122,24 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                    if (dbVisitor == null) 
+                    if (dbVisitor == null)
                         lookupCandidateModel.lookupStatus = "visitorId not found";
-                    else if (dbVisitor.Country != "ZZ") 
+                    else if (dbVisitor.Country != "ZZ")
                         lookupCandidateModel.lookupStatus = "country not ZZ";
-                    else if (dbVisitor.VisitorId.Length != 36) 
+                    else if (dbVisitor.VisitorId.Length != 36)
                         lookupCandidateModel.lookupStatus = "bad visitor Id";
                     // else if (dbVisitor.GeoCode == "too many page hits") lookupCandidateModel.lookupStatus = "too many page hits";
                     else
                     {
-                        var dupeCheck1 = db.ActivityLogs.Where(a => a.ActivityCode == "IP1" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
+                        var dupeCheck1 = db.ActivityLogs
+                            .Where(a => a.ActivityCode == "IP1" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
                         if (dupeCheck1 != null)
-                            lookupCandidateModel.lookupStatus = "already looked up today";
+                        {
+                            var dupeCheck2 = db.ActivityLogs
+                                .Where(a => a.ActivityCode == "IP6" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
+                            if (dupeCheck2 == null)
+                                lookupCandidateModel.lookupStatus = "already looked up today";
+                        }
                         else
                         {
                             if (dbVisitor.InitialVisit < DateTime.Today.AddMonths(-1))
@@ -133,7 +148,8 @@ namespace OggleBooble.Api.Controllers
                                 //dbVisitor.GeoCode = "months old InitialVisit";
                                 //db.SaveChanges();
                             }
-                            else {
+                            else
+                            {
                                 int pageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
                                 if (pageHits > 10)
                                 {

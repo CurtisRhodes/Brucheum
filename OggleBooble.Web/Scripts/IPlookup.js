@@ -108,7 +108,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (errMsg.indexOf("Not connect.") > -1) {
-                    logActivity2(visitorId, "IP6", folderId, errMsg); // connection problem
+                    logActivity2(visitorId, "IP6", folderId, "Ipinfo"); // connection problem
                     tryApiDbIpFree(folderId, visitorId, calledFrom); // try something else
                 }
                 else {
@@ -116,7 +116,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     logError2(visitorId, "XHR", folderId, errMsg, calledFrom);
                 }
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
-                    ipCall0Returned = true;
                     logActivity2(visitorId, "IP5", folderId, "IpInfo XHR/" + calledFrom); // lookup limit exceeded
                     tryApiDbIpFree(folderId, visitorId, calledFrom);
                 }
@@ -195,12 +194,12 @@ function tryApiDbIpFree(folderId, visitorId, calledFrom) {
                     }
                     else {
                         if (!checkFor404(errMsg, folderId, "apiDbIpFree")) {
-                            logError2(visitorId, "XHR", folderId, errMsg, "apiDbIpFree/" + calledFrom);
+                            //logError2(visitorId, "XHR", folderId, errMsg, "apiDbIpFree/" + calledFrom);
                             logActivity2(visitorId, "IP6", folderId, "apiDbIpFree");
                         }
                         else {
-                            logActivity2(visitorId, "IPX", folderId, "apiDbIpFree");
-                            logError2(visitorId, "XHR", folderId, errMsg, "apiDbIpFree/" + calledFrom);
+                            logActivity2(visitorId, "IPX", folderId, errMsg);
+                            // logError2(visitorId, "XHR", folderId, errMsg, "apiDbIpFree/" + calledFrom);
                             tryCloudflareTrace(folderId, visitorId, calledFrom); // try something else
                         }
                     }
@@ -314,7 +313,7 @@ function tryCloudflareTrace(folderId, visitorId, calledFrom) {
                         }
                         else {
                             if (!checkFor404(errMsg, folderId, "tryCloudflareTrace")) {
-                                logError2(visitorId, "XHR", folderId, errMsg, "cloudflareTrace/" + calledFrom);
+                                //logError2(visitorId, "XHR", folderId, errMsg, "cloudflareTrace/" + calledFrom);
                                 logActivity2(visitorId, "IP6", folderId, "cloudflareTrace");
                             }
                             else {
