@@ -44,51 +44,6 @@ function logImageHit(linkId, folderId, isInitialHit) {
     }
 }
 
-let lastPageHitFolderId, lastPageHitVisitorId;
-function logPageHit(folderId, visitorId) {
-    try {
-        if ((lastPageHitFolderId == folderId) && (lastPageHitVisitorId == visitorId)) {
-            logActivity("PH6", folderId, "log PageHit"); // looping page hit
-            return;
-        }
-        lastPageHitVisitorId = visitorId;
-        lastPageHitFolderId = folderId;
-
-        $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
-            success: function (pageHitSuccess) {
-                if (pageHitSuccess.Success === "ok") {
-                    if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
-                        logActivity2(visitorId, "PH4", folderId, "log pageHit"); // pageHits > 3 and country=="ZZ"
-                        tryAddNewIP(folderId, visitorId, "log pageHit");
-                    }
-                    //    else
-                    //        logVisit(visitorId, folderId, "log pageHit");
-                }
-                else {
-                    if (pageHitSuccess.Success = "duplicate hit") {
-                        logActivity2(visitorId, "PH5", folderId, "log pageHit");  // duplicate page hit
-                    }
-                    else {
-                        logActivity2(visitorId, "PH8", folderId, "log pageHit");  // page hit ajax error
-                        logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log pageHit");
-                    }
-                }
-            },
-            error: function (jqXHR) {
-                logActivity(visitorId, "PH7", "log pageHit");  // page hit XHR error
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "logPageHit"))
-                    logError("XHR", folderId, errMsg, "log pageHit");
-            }
-        });
-    } catch (e) {
-        logActivity(visitorId, "PH9", "log pageHit");  // page hit catch error
-        logError("CAT", folderId, e, "log pageHit");
-    }
-}
-
 function logIpHit(visitorId, ipAddress, folderId) {
     try {
         $.ajax({
@@ -101,9 +56,9 @@ function logIpHit(visitorId, ipAddress, folderId) {
             },
             success: function (success) {
                 if (success == "ok")
-                    logActivity("IPH", folderId, "log IpHit");
+                    logActivity2(visitorId, "IPH", folderId, "log IpHit");
                 else
-                    logError("AJX", folderId, success, "log IpHit");
+                    logError2(visitorId, "AJX", folderId, success, "log IpHit");
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
@@ -112,7 +67,7 @@ function logIpHit(visitorId, ipAddress, folderId) {
             }
         });
     } catch (e) {
-        logError("CAT", folderId, e, "log IpHit");
+        logError2(create_UUID(), "CAT", folderId, e, "log IpHit");
     }
 }
 

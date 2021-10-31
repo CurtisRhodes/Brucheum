@@ -16,8 +16,13 @@ function loadLargeAlbum(folderId) {
 let lastAPageHitFolderId, lastAPageHitVisitorId;
 function logAPageHit(folderId, visitorId) {
     try {
+        if (isNullorUndefined(folderId)) {
+            logError2(visitorId, "BUG", 0111, "isNullorUndefined(folderId)", "log A PageHit");
+            return;
+        }
+
         if ((lastAPageHitFolderId == folderId) && (lastAPageHitVisitorId == visitorId)) {
-            logActivity("PH6", folderId, "log PageHit"); // looping page hit
+            logActivity2(visitorId, "PH6", folderId, "log A PageHit"); // looping page hit
             return;
         }
         lastAPageHitVisitorId = visitorId;
@@ -27,36 +32,38 @@ function logAPageHit(folderId, visitorId) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
             success: function (pageHitSuccess) {
-                if (pageHitSuccess.Success === "ok") {
-                    if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
-                        logActivity2(visitorId, "PH4", folderId, "log pageHit"); // pageHits > 3 and country=="ZZ"
-                        tryAddNewIP(folderId, visitorId, "log pageHit");
-                    }
-                    //logError2(visitorId, "FNF", folderId, "logPageHit not a function", "logAPageHit");
-
-                    //    else
-                    //        logVisit(visitorId, folderId, "log pageHit");
-                }
-                else {
-                    if (pageHitSuccess.Success = "duplicate hit") {
-                        logActivity2(visitorId, "PH5", folderId, "log A PageHit");  // duplicate page hit
-                    }
-                    else {
-                        logActivity2(visitorId, "PH8", folderId, "log A PageHit");  // page hit ajax error
-                        logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "logAPageHit");
+                if (pageHitSuccess.Success === "VisitorId not found") {
+                    logActivity2(visitorId, "PH1", folderId, "log A PageHit");  // VisitorId not found
+                } else {
+                    if (pageHitSuccess.Success === "ok") {
+                        if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
+                            let cf = "PageHits: " + pageHitSuccess.PageHits + " Country: " + pageHitSuccess.VisitorCountry;
+                            logActivity2(visitorId, "PH4", folderId, cf); // pageHits > 3 and country=="ZZ"
+                            tryAddNewIP(folderId, visitorId, cf);
+                        }
+                        //    else
+                        //        logVisit(visitorId, folderId, "log pageHit");
+                    } else {
+                        if (pageHitSuccess.Success = "duplicate hit") {
+                            logActivity2(visitorId, "PH5", folderId, "log A PageHit");  // duplicate page hit
+                        }
+                        else {
+                            logActivity2(visitorId, "PH8", folderId, "log A PageHit");  // page hit ajax error
+                            logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log A PageHit");
+                        }
                     }
                 }
             },
             error: function (jqXHR) {
-                logActivity(visitorId, "PH7", "log pageHit");  // page hit XHR error
+                logActivity2(visitorId, "PH7", "log A pageHit");  // page hit XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "logPageHit"))
-                    logError("XHR", folderId, errMsg, "log pageHit");
+                if (!checkFor404(errMsg, folderId, "log A PageHit"))
+                    logError("XHR", folderId, errMsg, "log A pageHit");
             }
         });
     } catch (e) {
-        logActivity(visitorId, "PH9", "log pageHit");  // page hit catch error
-        logError("CAT", folderId, e, "log pageHit");
+        logActivity2(visitorId, "PH9", "log A pageHit");  // page hit catch error
+        logError2(visitorId, "CAT", folderId, e, "log A pageHit");
     }
 }
 
@@ -72,12 +79,9 @@ function loadAlbum(folderId, visitorId) {
         settingsImgRepo = settingsArray.ImageRepo;
         getAlbumImages(folderId);
         getAlbumPageInfo(folderId, visitorId, false);
-
-        if (typeof logPageHit === 'function')
-            logPageHit(folderId, visitorId);
-        else
-            logAPageHit(folderId, visitorId);
-    } catch (e) {
+        logAPageHit(folderId, visitorId);
+    }
+    catch (e) {
         logError("CAT", folderId, e, "load album");
     }
 }

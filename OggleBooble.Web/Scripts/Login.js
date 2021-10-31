@@ -85,8 +85,8 @@ function attemptLogin() {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
-                if (!checkFor404(errMsg, folderId, functionName)) logError("XHR", 0, errMsg, functionName);
+                //let functionName = arguments.callee.toString().match(/function ([^\(]+)/)[1];
+                if (!checkFor404(errMsg, folderId, "attempt login")) logError("XHR", 0, errMsg, "attempt login");
             }
         });
     }

@@ -61,55 +61,62 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
-                { 
+                {
                     //var OccuredDate = DateTime.Today.ToString("yyyyMMdd");
-                    var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
-
-                    var lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
-                    if (lastHit == null)
+                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (dbVisitor == null)
                     {
-                        db.PageHits.Add(new PageHit()
-                        {
-                            VisitorId = visitorId,
-                            PageId = folderId,
-                            //OccuredDate = DateTime.Today.ToShortDateString(),
-                            Occured = DateTime.Now  //.AddMilliseconds(getrandom.Next())
-                        });
-                        db.SaveChanges();
-                        pageHitSuccessModel.Success = "ok";
+                        pageHitSuccessModel.Success = "VisitorId not found";
                     }
                     else
-                        pageHitSuccessModel.Success = "duplicate hit";
-
-                    pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == folderId).Count();
-                    var dbPageHitTotals = db.PageHitTotal.Where(h => h.PageId == folderId).FirstOrDefault();
-                    if (dbPageHitTotals != null)
                     {
-                        pageHitSuccessModel.PageHits += dbPageHitTotals.Hits;
-                    }
-                    pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
-                    pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
-                    pageHitSuccessModel.VisitorCountry = db.Visitors.Where(v => v.VisitorId == visitorId).Select(v => v.Country).FirstOrDefault();
-
-                    CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    if (categoryFolder != null)
-                    {
-                        pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
-                        pageHitSuccessModel.PageName = categoryFolder.FolderName;
-
-                        if (categoryFolder.Parent == -1)
+                        var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
+                        var lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
+                        if (lastHit == null)
                         {
-                            pageHitSuccessModel.ParentName = "special";
+                            pageHitSuccessModel.VisitorCountry = dbVisitor.Country;
+                            pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
+
+                            db.PageHits.Add(new PageHit()
+                            {
+                                VisitorId = visitorId,
+                                PageId = folderId,
+                                Occured = DateTime.Now  //.AddMilliseconds(getrandom.Next())
+                            });
+                            db.SaveChanges();
+                            pageHitSuccessModel.Success = "ok";
                         }
                         else
-                        {
-                            CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
-                            if (parentFolder != null)
-                                pageHitSuccessModel.ParentName = parentFolder.FolderName;
-                        }
+                            pageHitSuccessModel.Success = "duplicate hit";
                     }
-                    else
-                        pageHitSuccessModel.PageName = "Not Found";
+                    //pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == folderId).Count();
+                    //var dbPageHitTotals = db.PageHitTotal.Where(h => h.PageId == folderId).FirstOrDefault();
+                    //if (dbPageHitTotals != null)
+                    //{
+                    //    pageHitSuccessModel.PageHits += dbPageHitTotals.Hits;
+                    //}
+                    //pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
+                    //pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
+
+                    //CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                    //if (categoryFolder != null)
+                    //{
+                    //    pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
+                    //    pageHitSuccessModel.PageName = categoryFolder.FolderName;
+
+                    //    if (categoryFolder.Parent == -1)
+                    //    {
+                    //        pageHitSuccessModel.ParentName = "special";
+                    //    }
+                    //    else
+                    //    {
+                    //        CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
+                    //        if (parentFolder != null)
+                    //            pageHitSuccessModel.ParentName = parentFolder.FolderName;
+                    //    }
+                    //}
+                    //else
+                    //    pageHitSuccessModel.PageName = "Not Found";
                 }
             }
             catch (Exception ex)

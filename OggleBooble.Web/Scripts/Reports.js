@@ -2,10 +2,12 @@
 let activeReport = "";
 function runMetricsMatrixReport() {
     if (connectionVerified) {
+
         $('.middleColumn').width($(window).width() - 100);
         $('#workAreaContainer').css("height", $('#dashboardContainer').height());
         $('#dashBoardLoadingGif').show();
         $('#reportsHeaderTitle').html("Performance Metrics  " + todayString());
+
 
         $.ajax({
             type: "GET",

@@ -35,7 +35,12 @@ namespace OggleBooble.Api.Controllers
                 {
                     DateTime maxReportDay = db.DailyPerformances.Max(p => p.ReportDay);
                     int dd = Math.Max(1, (int)DateTime.Today.Subtract(maxReportDay).TotalDays);
+                 
+                    
                     db.Database.ExecuteSqlCommand("call spPerformance(" + dd + ")");
+
+
+
                     var sevenDaysAgo = DateTime.Today.AddDays(-14);
                     var performanceRows = db.DailyPerformances.Where(p => p.ReportDay > sevenDaysAgo).OrderByDescending(p => p.ReportDay).ToList();
                     foreach (DailyPerformance pRow in performanceRows)
