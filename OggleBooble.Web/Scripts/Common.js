@@ -666,10 +666,6 @@ function getCookieValue(itemName, calledFrom) {
 
 function setCookieValue(elementToSet, newValue) {
     try {
-        if (!navigator.cookieEnabled) {  // user accepts cookies
-            //showCookiesRequiredMessage();
-            logError2(create_UUID(), "UNC", 703245, elementToSet + " :" + newValue, "set CookieValue");
-        }
         localStorage[elementToSet] = newValue;
         let cookieString = elementToSet + ":" + newValue;
         document.cookie = cookieString;
