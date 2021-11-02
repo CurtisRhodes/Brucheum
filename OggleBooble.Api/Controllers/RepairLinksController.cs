@@ -69,6 +69,7 @@ namespace OggleBooble.Api.Controllers
                     repairReport.Success = physcialFiles[0];
                     return;
                 }
+
                 #region 0 rename ImageFiles to expected name 
                 var dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
                 string expectedFileName;
@@ -347,7 +348,6 @@ namespace OggleBooble.Api.Controllers
             string success;
             try
             {
-                // use parent foldername for path
                 string fileName, newFileName, ext, possibleGuid = "";
                 string[] physcialFiles = FtpUtilies.GetFiles(ftpPath);
                 if ((physcialFiles.Length == 1) && (physcialFiles[0].StartsWith("ERROR")))
@@ -358,46 +358,68 @@ namespace OggleBooble.Api.Controllers
                 {
                     fileName = physcialFiles[i];
                     ext = fileName.Substring(fileName.LastIndexOf("."));
-                    if (fileName.LastIndexOf("_") > 0)
+                    if (ext == ".webp")
                     {
-                        if (fileName.Length > 40)
-                        {
-                            try
-                            {
-                                possibleGuid = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
-                                if (Guid.TryParse(possibleGuid, out Guid outGuid))
-                                {
-                                    if (fileName != (folderName + "_" + possibleGuid + ext))
-                                    {
-                                        newFileName = folderName + "_" + possibleGuid + ext;
-                                        FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                                        repairReport.PhyscialFileRenamed++;
-                                    }
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
-                                FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                                repairReport.PhyscialFileRenamed++;
-                            }
-                        }
-                        else
-                        {
-                            newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
-                            FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                            repairReport.PhyscialFileRenamed++;
-                        }
+                        ext = ".jpg";
+                        newFileName = fileName.Substring(0, fileName.LastIndexOf(".")) + ".jpg";
+                        FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                        repairReport.ExtensionChanged++;
+                    }
+                    if (fileName.LastIndexOf("_") - 1 < -1)
+                    {
+                        possibleGuid = Guid.NewGuid().ToString();
+                        //possibleGuid = null;
                     }
                     else
                     {
-                        newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
-                        var sss = FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
-                        if(sss=="ok")
-                            repairReport.PhyscialFileRenamed++;
+                        if (fileName.Substring(fileName.LastIndexOf("_") + 1).Length < 36)
+                        {
+                            possibleGuid = Guid.NewGuid().ToString();
+                        }
+                        else
+                        {
+                            possibleGuid = fileName.Substring(fileName.LastIndexOf("_") + 1, 36);
+                            Guid.TryParse(possibleGuid, out Guid outGuid);
+                            if (outGuid == Guid.Empty)
+                                possibleGuid = Guid.NewGuid().ToString();
+                            else
+                                repairReport.Success = "happy";
+                        }
                     }
+                    try
+                    {
+                        if (fileName != (folderName + "_" + possibleGuid + ext))
+                        {
+                            newFileName = folderName + "_" + possibleGuid + ext;
+                            FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                            repairReport.PhyscialFileRenamed++;
+                        }
+                        else
+                            newFileName = "ok";
+                    }
+                    catch (Exception ex)
+                    {
+                        newFileName = Helpers.ErrorDetails(ex);
+                        //newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
+                        //FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                        //repairReport.PhyscialFileRenamed++;
+                    }
+                        //}
+                        //else
+                        //{
+                        //    newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
+                        //    FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                        //    repairReport.PhyscialFileRenamed++;
+                        //}
+                    //}
+                    //else
+                    //{
+                    //    newFileName = folderName + "_" + Guid.NewGuid().ToString() + ext;
+                    //    var sss = FtpUtilies.RenameFile(ftpPath + "/" + fileName, newFileName);
+                    //    if (sss == "ok")
+                    //        repairReport.PhyscialFileRenamed++;
+                    //}
                 }
-
                 success = "ok";
             }
             catch (Exception ex)

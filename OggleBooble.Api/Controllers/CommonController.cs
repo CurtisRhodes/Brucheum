@@ -61,6 +61,7 @@ namespace OggleBooble.Api.Controllers
             try
             {
                 pageHitSuccessModel.ReturnMessage = "ok";
+                string visitorCountry = "QQ";
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
@@ -76,8 +77,10 @@ namespace OggleBooble.Api.Controllers
                                 {
                                     VisitorId = visitorId,
                                     IpAddress = DateTime.UtcNow.Ticks.ToString().Substring(8),
-                                    GeoCode = "log page hit",
+                                    GeoCode = "unknown",
                                     Country = "ZZ",
+                                    City = "added in log page hit",
+                                    Region = "PP",
                                     InitialVisit = DateTime.Now,
                                     InitialPage = folderId
                                 });
@@ -94,11 +97,14 @@ namespace OggleBooble.Api.Controllers
                                 pageHitSuccessModel.ReturnMessage = "Visitor not found but exists";
                         }
                     }
+                    else
+                        visitorCountry = dbVisitor.Country;
+
                     var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
                     PageHit lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
                     if (lastHit == null)
                     {
-                        pageHitSuccessModel.VisitorCountry = dbVisitor.Country;
+                        pageHitSuccessModel.VisitorCountry = visitorCountry;
                         pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId).Count();
                         db.PageHits.Add(new PageHit()
                         {

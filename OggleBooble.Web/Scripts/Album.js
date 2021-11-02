@@ -20,29 +20,12 @@ function logAPageHit(folderId, visitorId) {
             logError2(visitorId, "BUG", 0111, "isNullorUndefined(folderId)", "log A PageHit");
             return;
         }
-
         if ((lastAPageHitFolderId == folderId) && (lastAPageHitVisitorId == visitorId)) {
             logActivity2(visitorId, "PH6", folderId, "log A PageHit"); // looping page hit
             return;
         }
         lastAPageHitVisitorId = visitorId;
         lastAPageHitFolderId = folderId;
-
-        if (!isValidGuid(visitorId)) {
-            let newVisitorId = create_UUID();
-            setCookieValue("VisitorId", newVisitorId);
-            logError2(visitorId, "IVV", folderId, "newVisitorId: " + newVisitorId, "log A PageHit"); // Invalid VisitorId
-            addVisitor({
-                VisitorId: newVisitorId,
-                IpAddress: Math.floor(Math.random() * 10000000000).toString(),
-                City: "replaceBadVisitorId: " + visitorId,
-                Country: "ZZ",
-                Region: "LL",
-                GeoCode: "unknown",
-                InitialPage: folderId
-            }, "log A PageHit");
-        }
-
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
@@ -57,7 +40,7 @@ function logAPageHit(folderId, visitorId) {
                             }
                             break;
                         case "duplicate hit":
-                            logActivity2(visitorId, "PH5", folderId, "at:"+ now());
+                            logActivity2(visitorId, "PH5", folderId, "at:" + now());
                             break;
                         case "Visitor not found but exists":
                             logActivity2(visitorId, "PH2", folderId, "log A PageHit");
@@ -70,25 +53,26 @@ function logAPageHit(folderId, visitorId) {
                             break;
                         case "Bad VisitorId not found":
                             logActivity2(visitorId, "PH1", folderId, "log A PageHit");
-                            logError2(visitorId, "BUG", folderId, "Bad VisitorId", "log A PageHit");
+                            //logError2(visitorId, "BUG", folderId, "Bad VisitorId", "log A PageHit");
                             break;
                         default:
                             break;
                     }
                 }
                 else {
-                    logActivity2(visitorId, "PH8", folderId, "log A PageHit");  // page hit ajax error
-                    logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log A PageHit");
+                    logActivity2(visitorId, "PH8", folderId, "just PerformLogAPageHit");  // page hit ajax error
+                    logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "just PerformLogAPageHit");
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "log A PageHit")) {
-                    logError("XHR", folderId, errMsg, "log A pageHit");
+                if (!checkFor404(errMsg, folderId, "just PerformLogAPageHit")) {
+                    logError("XHR", folderId, errMsg, "just PerformLogAPageHit");
                     logActivity2(visitorId, "PH7", errMsg);  // page hit XHR error
                 }
             }
         });
+
     } catch (e) {
         logActivity2(visitorId, "PH9", "log A pageHit");  // page hit catch error
         logError2(visitorId, "CAT", folderId, e, "log A pageHit");

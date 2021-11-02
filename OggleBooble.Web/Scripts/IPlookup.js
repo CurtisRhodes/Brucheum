@@ -9,45 +9,42 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                     if (lookupCandidateModel.Success == "ok") {
                         switch (lookupCandidateModel.lookupStatus) {
                             case "bad visitor Id":
-                                logActivity2(visitorId, "IXX", folderId, "tryAddNewIP/" + calledFrom);
+                                logActivity2(visitorId, "I0X", folderId, "tryAddNewIP/" + calledFrom);
                                 break;
                             case "visitorId not found":
-                                logActivity2(visitorId, "IPB", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            case "already processed":
-                                logActivity2(visitorId, "IP0", folderId, "tryAddNewIP/" + calledFrom);
+                                logActivity2(visitorId, "I0B", folderId, "tryAddNewIP/" + calledFrom);
                                 break;
                             case "already looked up today":
-                                logActivity2(visitorId, "IP7", folderId, "tryAddNewIP/" + calledFrom);
+                                logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
                                 break;
                             case "months old InitialVisit":
-                                logActivity2(visitorId, "IPL", folderId, "tryAddNewIP/" + calledFrom);
+                                logActivity2(visitorId, "I0L", folderId, "tryAddNewIP/" + calledFrom);
                                 break;
                             case "pending months old InitialVisit":
-                                logActivity2(visitorId, "IPD", folderId, "tryAddNewIP/" + calledFrom);
+                                logActivity2(visitorId, "I0D", folderId, "tryAddNewIP/" + calledFrom);
                                 getIpInfo(folderId, visitorId, calledFrom);
                                 break;
                             case "too many page hits":
-                                logActivity2(visitorId, "IPI", folderId, "tryAddNewIP/" + calledFrom);
+                                logActivity2(visitorId, "I0I", folderId, "tryAddNewIP/" + calledFrom);
                                 break;
                             case "country not ZZ":
-                                logActivity2(visitorId, "IZZ", folderId, "tryAddNewIP/" + calledFrom);
+                                logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
                                 break;
                             case "pending too many pageHits":
-                                logActivity2(visitorId, "IPH", folderId, "tryAddNewIP/" + calledFrom);
+                                logActivity2(visitorId, "I0H", folderId, "tryAddNewIP/" + calledFrom);
                                 getIpInfo(folderId, visitorId, calledFrom);
                                 break;
                             case "passed":
-                                //logActivity2(visitorId, "IPP", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
+                                logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
                                 getIpInfo(folderId, visitorId, calledFrom);
                                 break;
                             default:
-                                logActivity2(visitorId, "IPS", folderId, "tryAddNewIP/" + lookupCandidateModel.lookupStatus); // Switch Case Problem
+                                logActivity2(visitorId, "I0S", folderId, "tryAddNewIP  missisg case: " + lookupCandidateModel.lookupStatus); // Switch Case Problem
                                 logError2(visitorId, "SWT", folderId, lookupCandidateModel.lookupStatus, "lookupCandidateModel.lookupStatus");
                         }
                     }
                     else {
-                        logActivity2(visitorId, "IPF", folderId, visitorModel.Success); // screen candidate Ajax error
+                        logActivity2(visitorId, "I0J", folderId, visitorModel.Success); // screen candidate Ajax error
                         logError2(visitorId, "AJX", folderId, visitorModel.Success, "try AddNewIP");
                     }
                 },
@@ -80,8 +77,85 @@ function getIpInfo(folderId, visitorId, calledFrom) {
         logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            async: "false",
-            //url: "http s://ipinfo.io?token=ac5da086206dc4", 
+            url: "https://ipinfo.io?token=ac5da086206dc4", 
+            //url: "ht tps://ipinfo.io?token=e66f93d609e1d8",
+            dataType: "JSON",
+            statusCode: {
+                429: function () {
+                    logActivity2(visitorId, "IA5", folderId, "statusCode: " + statusCode); // lookup limit exceeded
+                    ipCall0Returned = true;
+                    ip0Busy = false;
+                    tryApiDbIpFree(folderId, visitorId, calledFrom);
+                    return;
+                }
+            },
+            success: function (ipResponse) {
+
+                ipCall0Returned = true;
+                updateVisitor({
+                    VisitorId: visitorId,
+                    IpAddress: ipResponse.ip,
+                    City: ipResponse.city,
+                    Country: ipResponse.country,
+                    Region: ipResponse.region,
+                    GeoCode: ipResponse.loc,
+                    InitialPage: folderId
+                }, "ipinfo");
+                ip0Busy = false;
+            },
+            error: function (jqXHR) {
+                ipCall0Returned = true;
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (errMsg.indexOf("Rate limit exceeded") > 0) {
+                    logActivity2(visitorId, "IA5", folderId, "get IpInfo/" + calledFrom); // lookup limit exceeded
+                    tryApiDbIpFree(folderId, visitorId, calledFrom);
+                }
+                else {
+                    if (errMsg.toUpperCase().indexOf("NOT CONNECT") > -1) {
+                        logActivity2(visitorId, "IA6", folderId, "get IpInfo/" + calledFrom); // connection problem
+                        tryOtherAccessTokin();
+                    }
+                    else {
+                        logError2(visitorId, "XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
+                        logActivity2(visitorId, "IAX", folderId, "indexOf: " + errMsg.toUpperCase().indexOf("NOT CONNECT") + " errMsg: " + errMsg); // XHR error
+                    }
+                }
+                ip0Busy = false;
+            }
+        });
+        setTimeout(function () {
+            if (!ipCall0Returned) {
+                logActivity2(visitorId, "IAT", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
+                tryApiDbIpFree(folderId, visitorId, calledFrom);  // try something else
+                //logError2(create_UUID(), "200", folderId, JSON.stringify(ipResponse, null, 2), "ip info timeout"); // Json response code
+            }
+            ip0Busy = false;
+        }, 4000);
+    }
+    catch (e)
+    {
+        logActivity2(create_UUID(), "IAC", 621240, "get IpInfo"); // IP catch error
+        logError2(create_UUID(), "CAT", 621241, e, "get IpInfo");
+        ip0Busy = false;
+    }
+} // 0 ipinfo.io?token=ac5da086206dc4
+
+let ip8Busy = false;
+function tryOtherAccessTokin() {
+    try {
+        if (ip8Busy) {
+            console.log("getIpInfo busy");
+            logActivity2(visitorId, "IP8", folderId, "get IpInfo/" + calledFrom);
+            tryApiDbIpFree(folderId, visitorId, calledFrom);
+            return;
+        }
+
+        let ipCall8Returned = false;
+        ip8Busy = true;
+        logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
+        $.ajax({
+            type: "GET",
+            //url: "htt ps://ipinfo.io?token=ac5da086206dc4", 
             url: "https://ipinfo.io?token=e66f93d609e1d8",
             dataType: "JSON",
             statusCode: {
@@ -108,7 +182,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 ip0Busy = false;
             },
             error: function (jqXHR) {
-                ipCall0Returned = true;
+                ipCall8Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
                     logActivity2(visitorId, "IP5", folderId, "get IpInfo/" + calledFrom); // lookup limit exceeded
@@ -124,25 +198,24 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                         logActivity2(visitorId, "IPX", folderId, "indexOf: " + errMsg.toUpperCase().indexOf("NOT CONNECT") + " errMsg: " + errMsg); // XHR error
                     }
                 }
-                ip0Busy = false;
+                ip8Busy = false;
             }
         });
         setTimeout(function () {
-            if (!ipCall0Returned) {
+            if (!ipCall8Returned) {
                 logActivity2(visitorId, "IPT", folderId, "get IpInfo/" + calledFrom); // ipInfo failed to respond
                 tryApiDbIpFree(folderId, visitorId, calledFrom);  // try something else
                 //logError2(create_UUID(), "200", folderId, JSON.stringify(ipResponse, null, 2), "ip info timeout"); // Json response code
             }
-            ip0Busy = false;
+            ip8Busy = false;
         }, 4000);
     }
-    catch (e)
-    {
+    catch (e) {
         logActivity2(create_UUID(), "IPC", 621240, "get IpInfo"); // IP catch error
         logError2(create_UUID(), "CAT", 621241, e, "get IpInfo");
         ip0Busy = false;
     }
-} // 0 ipinfo.io?token=ac5da086206dc4
+} //  // 8 ipinfo.io?token=e66f93d609e1d8
 
 let ip2Busy = false;
 function tryApiDbIpFree(folderId, visitorId, calledFrom) {

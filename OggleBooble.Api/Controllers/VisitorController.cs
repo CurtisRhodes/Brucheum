@@ -215,6 +215,22 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
+        [Route("api/Visitor/VerifyVisitorId")]
+        public bool VerifyVisitorId(string visitorId)
+        {
+            bool visitorIdExists = false;
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (dbVisitor != null)
+                        visitorIdExists = true;
+
+                }
+            return visitorIdExists;
+        }
+
+
+        [HttpGet]
         [Route("api/Visitor/VerifyVisitor")]
         public VerifyVisitorSuccessModel VerifyVisitor(string visitorId)
         {

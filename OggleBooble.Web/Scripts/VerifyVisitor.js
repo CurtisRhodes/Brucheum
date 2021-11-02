@@ -2,11 +2,8 @@
 function verifySession(folderId, calledFrom) {
     let visitorId = "uninitialized";
     try {
-        visitorId = getCookieValue("VisitorId", "verify session");
-
-        //let tt1 = isValidGuid("c507a5b6-372b-40c8-92c5-3cff2fa330de");
-
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
+            visitorId = getCookieValue("VisitorId", "verify session");
             sessionStorage["VisitorVerified"] = true;
             $('#headerMessage').html("new session started");
 
@@ -33,24 +30,20 @@ function verifySession(folderId, calledFrom) {
                 callAlbumPage(folderId, newVisitorId, calledFrom);
             }
             else {
-                if (!isValidGuid(visitorId)) {
-                    logError2(visitorId, "IVV", folderId, "Invalid VisitorId", "verify session2"); // Invalid VisitorId
-                }
-                verifyVisitorId(visitorId, folderId, calledFrom);
+                verifyVisitor(visitorId, folderId, calledFrom)
+                verifyVisitorId(visitorId, folderId);
+                callAlbumPage(folderId, visitorId, calledFrom);
             }
             logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
         }
         else {
-            if (!isValidGuid(visitorId)) {
-                logError2(visitorId, "IVV", folderId, "Invalid VisitorId", "verify session1"); // Invalid VisitorId
-            }
-            callAlbumPage(folderId, visitorId, calledFrom);
+            callAlbumPage(folderId, localStorage["VisitorId"], calledFrom);
         }
     }
     catch (e) {
-        sessionStorage["VisitorVerified"] = true;
         logActivity2(visitorId, "VS8", folderId, "verify session/" + calledFrom); // verify session CATCH error
         logError2(visitorId, "CAT", folderId, e, "verify session/" + calledFrom);
+        callAlbumPage(folderId, visitorId, calledFrom);
     }
 }
 
@@ -67,7 +60,31 @@ function callAlbumPage(folderId, visitorId, calledFrom) {
     }
 }
 
-function verifyVisitorId(visitorId, folderId, calledFrom) {
+function verifyVisitorId(visitorId, folderId) {
+    let guidIsValid = isValidGuid(visitorId);
+    $.ajax({
+        type: "GET",
+        async: "false",
+        url: settingsArray.ApiServer + "api/Visitor/VerifyVisitorId?visitorId=" + visitorId,
+        success: function (visitorIdExistsSuccess) {
+            if (visitorIdExistsSuccess) {
+                if (guidIsValid)
+                    logActivity2(visitorId, "IV0", folderId, "verify visitorId"); // VisitorId verified ok
+                else
+                    logActivity2(visitorId, "IVX", folderId, "verify visitorId"); // is valid guid false alarm
+            }
+            else {
+                if (guidIsValid)
+                    logActivity2(visitorId, "IVY", folderId, "verify visitorId"); // VisitorId not verified but is valid guid
+                else {
+                    logActivity2(visitorId, "IVZ", folderId, "verify visitorId"); // VisitorId not verified AND is valid not guid
+                }
+            }
+        }
+    });
+}
+
+function verifyVisitor(visitorId, folderId, calledFrom) {
     try {
         if (visitorId.indexOf("cookie not found") > -1) {
             logActivity2(create_UUID(), "VV8", "verify visitor"); // cookie not found made it too far
@@ -81,10 +98,10 @@ function verifyVisitorId(visitorId, folderId, calledFrom) {
                 if (successModel.Success == "ok") {
                     switch (successModel.ReturnValue) {
                         case "visitorId ok":
-                            logActivity2(visitorId, "VV1", 1020222, "verify VisitorId"); // visitor verified ok
+                            //logActivity2(visitorId, "VV1", 1020222, "verify VisitorId"); // visitor verified ok
                             loadUserProfile(folderId, visitorId);
 
-                            callAlbumPage(folderId, visitorId, calledFrom);
+                            //callAlbumPage(folderId, visitorId, calledFrom);
 
                             logVisit(visitorId, folderId, "verify session");
                             break;
