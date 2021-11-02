@@ -60,64 +60,58 @@ namespace OggleBooble.Api.Controllers
             PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
             try
             {
+                pageHitSuccessModel.ReturnMessage = "ok";
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    //var OccuredDate = DateTime.Today.ToString("yyyyMMdd");
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
                     {
-                        pageHitSuccessModel.Success = "VisitorId not found";
+                        try
+                        {
+                            Guid guidOutput;
+                            bool isValid = Guid.TryParse(visitorId, out guidOutput);
+                            if (isValid)
+                            {
+                                db.Visitors.Add(new Visitor()
+                                {
+                                    VisitorId = visitorId,
+                                    IpAddress = DateTime.UtcNow.Ticks.ToString().Substring(8),
+                                    GeoCode = "log page hit",
+                                    Country = "ZZ",
+                                    InitialVisit = DateTime.Now,
+                                    InitialPage = folderId
+                                });
+                                db.SaveChanges();
+                                pageHitSuccessModel.ReturnMessage = "VisitorId not found added";
+                            }
+                            else
+                                pageHitSuccessModel.ReturnMessage = "Bad VisitorId not found";
+                        }
+                        catch (Exception ex)
+                        {
+                            pageHitSuccessModel.ReturnMessage = Helpers.ErrorDetails(ex);
+                            if (pageHitSuccessModel.ReturnMessage.IndexOf("Duplicate") > -1)
+                                pageHitSuccessModel.ReturnMessage = "Visitor not found but exists";
+                        }
+                    }
+                    var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
+                    PageHit lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
+                    if (lastHit == null)
+                    {
+                        pageHitSuccessModel.VisitorCountry = dbVisitor.Country;
+                        pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId).Count();
+                        db.PageHits.Add(new PageHit()
+                        {
+                            VisitorId = visitorId,
+                            PageId = folderId,
+                            Occured = DateTime.Now
+                        });
+                        db.SaveChanges();
                     }
                     else
-                    {
-                        var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
-                        var lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
-                        if (lastHit == null)
-                        {
-                            pageHitSuccessModel.VisitorCountry = dbVisitor.Country;
-                            pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
-
-                            db.PageHits.Add(new PageHit()
-                            {
-                                VisitorId = visitorId,
-                                PageId = folderId,
-                                Occured = DateTime.Now  //.AddMilliseconds(getrandom.Next())
-                            });
-                            db.SaveChanges();
-                            pageHitSuccessModel.Success = "ok";
-                        }
-                        else
-                            pageHitSuccessModel.Success = "duplicate hit";
-                    }
-                    //pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.PageId == folderId).Count();
-                    //var dbPageHitTotals = db.PageHitTotal.Where(h => h.PageId == folderId).FirstOrDefault();
-                    //if (dbPageHitTotals != null)
-                    //{
-                    //    pageHitSuccessModel.PageHits += dbPageHitTotals.Hits;
-                    //}
-                    //pageHitSuccessModel.UserPageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
-                    //pageHitSuccessModel.UserImageHits = db.ImageHits.Where(h => h.VisitorId == visitorId).Count();
-
-                    //CategoryFolder categoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-                    //if (categoryFolder != null)
-                    //{
-                    //    pageHitSuccessModel.RootFolder = categoryFolder.RootFolder;
-                    //    pageHitSuccessModel.PageName = categoryFolder.FolderName;
-
-                    //    if (categoryFolder.Parent == -1)
-                    //    {
-                    //        pageHitSuccessModel.ParentName = "special";
-                    //    }
-                    //    else
-                    //    {
-                    //        CategoryFolder parentFolder = db.CategoryFolders.Where(f => f.Id == categoryFolder.Parent).FirstOrDefault();
-                    //        if (parentFolder != null)
-                    //            pageHitSuccessModel.ParentName = parentFolder.FolderName;
-                    //    }
-                    //}
-                    //else
-                    //    pageHitSuccessModel.PageName = "Not Found";
+                        pageHitSuccessModel.ReturnMessage = "duplicate hit";
                 }
+                pageHitSuccessModel.Success = "ok";
             }
             catch (Exception ex)
             {

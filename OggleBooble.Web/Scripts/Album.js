@@ -28,37 +28,65 @@ function logAPageHit(folderId, visitorId) {
         lastAPageHitVisitorId = visitorId;
         lastAPageHitFolderId = folderId;
 
+        if (!isValidGuid(visitorId)) {
+            let newVisitorId = create_UUID();
+            setCookieValue("VisitorId", newVisitorId);
+            logError2(visitorId, "IVV", folderId, "newVisitorId: " + newVisitorId, "log A PageHit"); // Invalid VisitorId
+            addVisitor({
+                VisitorId: newVisitorId,
+                IpAddress: Math.floor(Math.random() * 10000000000).toString(),
+                City: "replaceBadVisitorId: " + visitorId,
+                Country: "ZZ",
+                Region: "LL",
+                GeoCode: "unknown",
+                InitialPage: folderId
+            }, "log A PageHit");
+        }
+
         $.ajax({
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogPageHit?visitorId=" + visitorId + "&folderId=" + folderId,
             success: function (pageHitSuccess) {
-                if (pageHitSuccess.Success === "VisitorId not found") {
-                    logActivity2(visitorId, "PH1", folderId, "log A PageHit");  // VisitorId not found
-                } else {
-                    if (pageHitSuccess.Success === "ok") {
-                        if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
-                            let cf = "PageHits: " + pageHitSuccess.PageHits + " Country: " + pageHitSuccess.VisitorCountry;
-                            logActivity2(visitorId, "PH4", folderId, cf); // pageHits > 3 and country=="ZZ"
-                            tryAddNewIP(folderId, visitorId, cf);
-                        }
-                        //    else
-                        //        logVisit(visitorId, folderId, "log pageHit");
-                    } else {
-                        if (pageHitSuccess.Success = "duplicate hit") {
-                            logActivity2(visitorId, "PH5", folderId, "log A PageHit");  // duplicate page hit
-                        }
-                        else {
-                            logActivity2(visitorId, "PH8", folderId, "log A PageHit");  // page hit ajax error
-                            logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log A PageHit");
-                        }
+                if (pageHitSuccess.Success === "ok") {
+                    switch (pageHitSuccess.ReturnMessage) {
+                        case "ok":
+                            if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
+                                let cf = "PageHits: " + pageHitSuccess.PageHits + " Country: " + pageHitSuccess.VisitorCountry;
+                                logActivity2(visitorId, "PH4", folderId, cf); // pageHits > 3 and country=="ZZ"
+                                tryAddNewIP(folderId, visitorId, cf);
+                            }
+                            break;
+                        case "duplicate hit":
+                            logActivity2(visitorId, "PH5", folderId, "at:"+ now());
+                            break;
+                        case "Visitor not found but exists":
+                            logActivity2(visitorId, "PH2", folderId, "log A PageHit");
+                            break;
+                        case "VisitorId not found added":
+                            logActivity2(visitorId, "PH3", folderId, "log A PageHit");
+                            break;
+                        case "Visitor not found fail":
+                            logActivity2(visitorId, "PH5", folderId, "log A PageHit");
+                            break;
+                        case "Bad VisitorId not found":
+                            logActivity2(visitorId, "PH1", folderId, "log A PageHit");
+                            logError2(visitorId, "BUG", folderId, "Bad VisitorId", "log A PageHit");
+                            break;
+                        default:
+                            break;
                     }
+                }
+                else {
+                    logActivity2(visitorId, "PH8", folderId, "log A PageHit");  // page hit ajax error
+                    logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log A PageHit");
                 }
             },
             error: function (jqXHR) {
-                logActivity2(visitorId, "PH7", "log A pageHit");  // page hit XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "log A PageHit"))
+                if (!checkFor404(errMsg, folderId, "log A PageHit")) {
                     logError("XHR", folderId, errMsg, "log A pageHit");
+                    logActivity2(visitorId, "PH7", errMsg);  // page hit XHR error
+                }
             }
         });
     } catch (e) {

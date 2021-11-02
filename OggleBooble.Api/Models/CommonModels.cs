@@ -63,12 +63,8 @@ namespace OggleBooble.Api.Models
     public class PageHitSuccessModel
     {
         public int PageHits { get; set; }
-        public int UserImageHits { get; set; }
-        public int UserPageHits { get; set; }
         public string VisitorCountry { get; set; }
-        public string PageName { get; set; }
-        public string ParentName { get; set; }
-        public string RootFolder { get; set; }
+        public string ReturnMessage { get; set; }
         public string Success { get; set; }
     }
     public class LogImageHitDataModel

@@ -84,6 +84,16 @@ function dateString2(dateObject) {
     return month + "/" + day;
 };
 
+function iszzValidGuid(uuid) {
+    let s = "" + uuid;
+
+    s = s.match('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+    if (s === null) {
+        return false;
+    }
+    return true;
+}
+
 function todayString() {
     let today = new Date();
     let dd = String(today.getDate()).padStart(2, '0');

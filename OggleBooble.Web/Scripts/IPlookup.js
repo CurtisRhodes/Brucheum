@@ -94,6 +94,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 }
             },
             success: function (ipResponse) {
+
                 ipCall0Returned = true;
                 updateVisitor({
                     VisitorId: visitorId,
