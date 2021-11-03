@@ -77,10 +77,9 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (imageFile.FileName.LastIndexOf(".") < 5)
                     {
-                        repairReport.Errors.Add("bad filename: " + imageFile.FileName + "folder: " + imageFile.FolderId);
+                        imageFile.FileName = "xxxxx.jpg";
+                        //repairReport.Errors.Add("bad filename: " + imageFile.FileName + "folder: " + imageFile.FolderId);
                     }
-                    else
-                    {
                         expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
                         if (imageFile.FileName != expectedFileName)
                         {
@@ -88,7 +87,6 @@ namespace OggleBooble.Api.Controllers
                             db.SaveChanges();
                             repairReport.ImageFilesRenamed++;
                         }
-                    }
                 }
                 #endregion
 
@@ -285,7 +283,7 @@ namespace OggleBooble.Api.Controllers
                                     repairReport.ImagesDownLoaded++;
                                 else
                                 {
-                                    repairReport.Errors.Add("download faild: " + imageFile.ExternalLink);
+                                    //repairReport.Errors.Add("download faild: " + imageFile.ExternalLink);
                                     db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList());
                                     db.ImageFiles.Remove(imageFile);
                                     db.SaveChanges();
