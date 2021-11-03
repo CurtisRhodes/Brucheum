@@ -4,14 +4,16 @@ function verifySession(folderId, calledFrom) {
     try {
         if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
             visitorId = getCookieValue("VisitorId", "verify session");
-            sessionStorage["VisitorVerified"] = true;
+
+	        // uninitialized	2021-11-03 06:55:30	CAT	1582	verify session/album.html	TypeError: Cannot read properties of null (reading 'VisitorId')
+
+
             $('#headerMessage').html("new session started");
 
             if (visitorId.indexOf("cookie not found") > -1) {
                 let newVisitorId = create_UUID();
                 let geoCode = "unknown";
                 if (!navigator.cookieEnabled) {
-                    //setCookieValue("VisitorId", "00000880-0000-0000-0000-UNKNOWN");
                     logActivity2(newVisitorId, "VS5", folderId, "verify session"); // user does not accept cookies
                     logError2(newVisitorId, "UNC", folderId, "verify session");
                     geoCode = "user does not accept cookies";
@@ -27,7 +29,7 @@ function verifySession(folderId, calledFrom) {
                     GeoCode: geoCode,
                     InitialPage: folderId
                 }, calledFrom);
-                callAlbumPage(folderId, newVisitorId, calledFrom);
+                //callAlbumPage(folderId, newVisitorId, calledFrom);
             }
             else {
                 verifyVisitor(visitorId, folderId, calledFrom)
@@ -35,6 +37,7 @@ function verifySession(folderId, calledFrom) {
                 callAlbumPage(folderId, visitorId, calledFrom);
             }
             logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
+            sessionStorage["VisitorVerified"] = true;
         }
         else {
             callAlbumPage(folderId, localStorage["VisitorId"], calledFrom);
@@ -55,7 +58,7 @@ function callAlbumPage(folderId, visitorId, calledFrom) {
             else
                 logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "verify session");
         }
-        loadAlbum(folderId, visitorId);
+        loadAlbum(folderId, visitorId, calledFrom);
         // logActivity("VV3", folderId, "verify session"); // active session new page
     }
 }
@@ -69,15 +72,15 @@ function verifyVisitorId(visitorId, folderId) {
         success: function (visitorIdExistsSuccess) {
             if (visitorIdExistsSuccess) {
                 if (guidIsValid)
-                    logActivity2(visitorId, "IV0", folderId, "verify visitorId"); // VisitorId verified ok
+                    logActivity2(visitorId, "VV1", folderId, "verify visitorId"); // VisitorId verified ok
                 else
-                    logActivity2(visitorId, "IVX", folderId, "verify visitorId"); // is valid guid false alarm
+                    logActivity2(visitorId, "VVX", folderId, "verify visitorId"); // is valid guid false alarm
             }
             else {
                 if (guidIsValid)
-                    logActivity2(visitorId, "IVY", folderId, "verify visitorId"); // VisitorId not verified but is valid guid
+                    logActivity2(visitorId, "VVY", folderId, "verify visitorId"); // VisitorId not verified but is valid guid
                 else {
-                    logActivity2(visitorId, "IVZ", folderId, "verify visitorId"); // VisitorId not verified AND is valid not guid
+                    logActivity2(visitorId, "VVZ", folderId, "verify visitorId"); // VisitorId not verified AND is valid not guid
                 }
             }
         }
@@ -175,10 +178,13 @@ function addVisitor(visitorData, calledFrom) {
                     logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add visitor"); // new visitor added
                     setCookieValue("VisitorId", visitorData.VisitorId);
                     logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor");
+                    callAlbumPage(folderId, newVisitorId, calledFrom);
                 }
                 else {
                     if (success.indexOf("Duplicate entry") > 0) {
                         logActivity2(visitorData.VisitorId, "AV3", visitorData.InitialPage, "add visitor/" + calledFrom); // duplicate key violation
+                        logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor. Duplicate entry");
+                        callAlbumPage(folderId, newVisitorId, calledFrom);
                     } else {
                         logActivity2(visitorData.VisitorId, "AV7", visitorData.InitialPage, success); // ajax error from Add Visitor
                         logError2(visitorData.VisitorId, "AJ7", visitorData.InitialPage, success, "add visitor/" + calledFrom);

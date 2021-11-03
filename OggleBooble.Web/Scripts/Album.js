@@ -2,6 +2,25 @@
 const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
 let tempDirTree = null;
 
+function loadAlbum(folderId, visitorId, calledFrom) {
+    try {
+        if (isNullorUndefined(folderId)) {
+            logError2(visitorId, "BUG", 1021720, "folderId isNullorUndefined: " + folderId, "load album");
+            return;
+        }
+        setOggleHeader("album");
+        apFolderId = folderId;
+        qucikHeader(folderId);
+        settingsImgRepo = settingsArray.ImageRepo;
+        getAlbumImages(folderId);
+        getAlbumPageInfo(folderId, visitorId, false);
+        logAPageHit(folderId, visitorId, calledFrom);
+    }
+    catch (e) {
+        logError("CAT", folderId, e, "load album");
+    }
+}
+
 function loadLargeAlbum(folderId) {
     let visitorId = getCookieValue("VisitorId", "checkRegistrationStatus");
     setOggleHeader("album");
@@ -14,14 +33,14 @@ function loadLargeAlbum(folderId) {
 }
 
 let lastAPageHitFolderId, lastAPageHitVisitorId;
-function logAPageHit(folderId, visitorId) {
+function logAPageHit(folderId, visitorId, calledFrom) {
     try {
         if (isNullorUndefined(folderId)) {
-            logError2(visitorId, "BUG", 0111, "isNullorUndefined(folderId)", "log A PageHit");
+            logError2(visitorId, "BUG", 0111, "isNullorUndefined(folderId)", "log A PageHit/" + calledFrom);
             return;
         }
         if ((lastAPageHitFolderId == folderId) && (lastAPageHitVisitorId == visitorId)) {
-            logActivity2(visitorId, "PH6", folderId, "log A PageHit"); // looping page hit
+            logActivity2(visitorId, "PH6", folderId, "log A PageHit/" + calledFrom); // looping page hit
             return;
         }
         lastAPageHitVisitorId = visitorId;
@@ -43,16 +62,17 @@ function logAPageHit(folderId, visitorId) {
                             logActivity2(visitorId, "PH5", folderId, "at:" + now());
                             break;
                         case "Visitor not found but exists":
-                            logActivity2(visitorId, "PH2", folderId, "log A PageHit");
+                            logActivity2(visitorId, "PH2", folderId, "log A PageHit/" + calledFrom);
                             break;
                         case "VisitorId not found added":
-                            logActivity2(visitorId, "PH3", folderId, "log A PageHit");
+                            logActivity2(visitorId, "PH3", folderId, "log A PageHit/" + calledFrom);
                             break;
                         case "Visitor not found fail":
-                            logActivity2(visitorId, "PH5", folderId, "log A PageHit");
+                            logActivity2(visitorId, "PH5", folderId, "log A PageHit/" + calledFrom);
                             break;
-                        case "Bad VisitorId not found":
-                            logActivity2(visitorId, "PH1", folderId, "log A PageHit");
+                        case "bad VisitorId not found":
+                        case "invalid VisitorId not found":
+                            logActivity2(visitorId, "PH1", folderId, "log A PageHit/" + calledFrom);
                             //logError2(visitorId, "BUG", folderId, "Bad VisitorId", "log A PageHit");
                             break;
                         default:
@@ -60,41 +80,22 @@ function logAPageHit(folderId, visitorId) {
                     }
                 }
                 else {
-                    logActivity2(visitorId, "PH8", folderId, "just PerformLogAPageHit");  // page hit ajax error
-                    logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "just PerformLogAPageHit");
+                    logActivity2(visitorId, "PH8", folderId, "log A PageHit/" + calledFrom);  // page hit ajax error
+                    logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log A PageHit/" + calledFrom);
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "just PerformLogAPageHit")) {
-                    logError("XHR", folderId, errMsg, "just PerformLogAPageHit");
+                if (!checkFor404(errMsg, folderId, "log A PageHit/" + calledFrom)) {
+                    logError("XHR", folderId, errMsg, "log A PageHit/" + calledFrom);
                     logActivity2(visitorId, "PH7", errMsg);  // page hit XHR error
                 }
             }
         });
 
     } catch (e) {
-        logActivity2(visitorId, "PH9", "log A pageHit");  // page hit catch error
-        logError2(visitorId, "CAT", folderId, e, "log A pageHit");
-    }
-}
-
-function loadAlbum(folderId, visitorId) {
-    try {
-        if (isNullorUndefined(folderId)) {
-            logError2(visitorId, "BUG", 1021720, "folderId isNullorUndefined: " + folderId, "load album");
-            return;
-        }
-        setOggleHeader("album");
-        apFolderId = folderId;
-        qucikHeader(folderId);
-        settingsImgRepo = settingsArray.ImageRepo;
-        getAlbumImages(folderId);
-        getAlbumPageInfo(folderId, visitorId, false);
-        logAPageHit(folderId, visitorId);
-    }
-    catch (e) {
-        logError("CAT", folderId, e, "load album");
+        logActivity2(visitorId, "PH9", "log A PageHit/" + calledFrom);  // page hit catch error
+        logError2(visitorId, "CAT", folderId, e, "log A PageHit/" + calledFrom);
     }
 }
 

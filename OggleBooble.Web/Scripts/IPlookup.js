@@ -1,64 +1,65 @@
 ﻿
 function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
-        try {
-            $.ajax({
-                type: "GET",
-                url: settingsArray.ApiServer + "api/Visitor/ScreenIplookupCandidate?visitorId=" + visitorId,
-                success: function (lookupCandidateModel) {
-                    if (lookupCandidateModel.Success == "ok") {
-                        switch (lookupCandidateModel.lookupStatus) {
-                            case "bad visitor Id":
-                                logActivity2(visitorId, "I0X", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            case "visitorId not found":
-                                logActivity2(visitorId, "I0B", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            case "already looked up today":
-                                logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            case "months old InitialVisit":
-                                logActivity2(visitorId, "I0L", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            case "pending months old InitialVisit":
-                                logActivity2(visitorId, "I0D", folderId, "tryAddNewIP/" + calledFrom);
-                                getIpInfo(folderId, visitorId, calledFrom);
-                                break;
-                            case "too many page hits":
-                                logActivity2(visitorId, "I0I", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            case "country not ZZ":
-                                logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            case "pending too many pageHits":
-                                logActivity2(visitorId, "I0H", folderId, "tryAddNewIP/" + calledFrom);
-                                getIpInfo(folderId, visitorId, calledFrom);
-                                break;
-                            case "passed":
-                                logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
-                                getIpInfo(folderId, visitorId, calledFrom);
-                                break;
-                            default:
-                                logActivity2(visitorId, "I0S", folderId, "tryAddNewIP  missisg case: " + lookupCandidateModel.lookupStatus); // Switch Case Problem
-                                logError2(visitorId, "SWT", folderId, lookupCandidateModel.lookupStatus, "lookupCandidateModel.lookupStatus");
-                        }
+
+        logActivity2(visitorId, "I0A", folderId, "tryAddNewIP/" + calledFrom);
+
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Visitor/ScreenIplookupCandidate?visitorId=" + visitorId,
+            success: function (lookupCandidateModel) {
+                if (lookupCandidateModel.Success == "ok") {
+                    switch (lookupCandidateModel.lookupStatus) {
+                        case "bad visitor Id":
+                            logActivity2(visitorId, "I0B", folderId, "tryAddNewIP/" + calledFrom);
+                            break;
+                        case "visitorId not found":
+                            logActivity2(visitorId, "I0F", folderId, "tryAddNewIP/" + calledFrom);
+                            break;
+                        case "already looked up today":
+                            logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
+                            break;
+                        case "months old InitialVisit":
+                            logActivity2(visitorId, "I0L", folderId, "tryAddNewIP/" + calledFrom);
+                            break;
+                        case "pending months old InitialVisit":
+                            logActivity2(visitorId, "I00", folderId, "pending months old InitialVisit/" + calledFrom); // candidate screen passed
+                            //logActivity2(visitorId, "I0D", folderId, "tryAddNewIP/" + calledFrom);
+                            getIpInfo(folderId, visitorId, calledFrom);
+                            break;
+                        case "too many page hits":
+                            logActivity2(visitorId, "I0I", folderId, "tryAddNewIP/" + calledFrom);
+                            break;
+                        case "country not ZZ":
+                            logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
+                            break;
+                        case "pending too many pageHits":
+                            logActivity2(visitorId, "I00", folderId, "pending too many pageHits/" + calledFrom); // candidate screen passed
+                            //logActivity2(visitorId, "I0H", folderId, "tryAddNewIP/" + calledFrom);
+                            getIpInfo(folderId, visitorId, calledFrom);
+                            break;
+                        case "passed":
+                            logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
+                            getIpInfo(folderId, visitorId, calledFrom);
+                            break;
+                        default:
+                            logActivity2(visitorId, "I0S", folderId, "tryAddNewIP  missisg case: " + lookupCandidateModel.lookupStatus); // Switch Case Problem
+                            logError2(visitorId, "SWT", folderId, lookupCandidateModel.lookupStatus, "lookupCandidateModel.lookupStatus");
                     }
-                    else {
-                        logActivity2(visitorId, "I0J", folderId, visitorModel.Success); // screen candidate Ajax error
-                        logError2(visitorId, "AJX", folderId, visitorModel.Success, "try AddNewIP");
-                    }
-                },
-                error: function (jqXHR) {
-                    let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg, folderId, "try AddNewIP"))
-                        logError2(create_UUID(), "XHR", folderId, errMsg, "try AddNewIP");
                 }
-            });
-        } catch (e) {
-            logError2(visitorId, "CAT", "1023823", e, "tryAddNewIP/" + calledFrom);
-        }
+                else {
+                    logActivity2(visitorId, "I0J", folderId, visitorModel.Success); // screen candidate Ajax error
+                    logError2(visitorId, "AJX", folderId, visitorModel.Success, "try AddNewIP");
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "try AddNewIP"))
+                    logError2(create_UUID(), "XHR", folderId, errMsg, "try AddNewIP");
+            }
+        });
     } catch (e) {
-        logError2(create_UUID(), "CAT", "9999", e, "tryAddNewIP");
+        logError2(visitorId, "CAT", "1023823", e, "tryAddNewIP/" + calledFrom);
     }
 }
 
@@ -74,11 +75,11 @@ function getIpInfo(folderId, visitorId, calledFrom) {
 
         let ipCall0Returned = false;
         ip0Busy = true;
-        logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
+        logActivity2(visitorId, "IA1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            url: "https://ipinfo.io?token=ac5da086206dc4", 
-            //url: "ht tps://ipinfo.io?token=e66f93d609e1d8",
+            //url: "https:/ /ipinfo.io?token=ac5da086206dc4", 
+            url: "https://ipinfo.io?token=e66f93d609e1d8",
             dataType: "JSON",
             statusCode: {
                 429: function () {
@@ -113,7 +114,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 else {
                     if (errMsg.toUpperCase().indexOf("NOT CONNECT") > -1) {
                         logActivity2(visitorId, "IA6", folderId, "get IpInfo/" + calledFrom); // connection problem
-                        tryOtherAccessTokin();
+                        tryOtherAccessTokin(folderId, visitorId, calledFrom);
                     }
                     else {
                         logError2(visitorId, "XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
@@ -141,7 +142,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
 } // 0 ipinfo.io?token=ac5da086206dc4
 
 let ip8Busy = false;
-function tryOtherAccessTokin() {
+function tryOtherAccessTokin(folderId, visitorId, calledFrom) {
     try {
         if (ip8Busy) {
             console.log("getIpInfo busy");
@@ -155,8 +156,8 @@ function tryOtherAccessTokin() {
         logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            //url: "htt ps://ipinfo.io?token=ac5da086206dc4", 
-            url: "https://ipinfo.io?token=e66f93d609e1d8",
+            url: "https://ipinfo.io?token=ac5da086206dc4", 
+            url: "https:/ /ipinfo.io?token=e66f93d609e1d8",
             dataType: "JSON",
             statusCode: {
                 429: function () {

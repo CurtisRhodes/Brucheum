@@ -88,7 +88,9 @@ namespace OggleBooble.Api.Controllers
                                 pageHitSuccessModel.ReturnMessage = "VisitorId not found added";
                             }
                             else
-                                pageHitSuccessModel.ReturnMessage = "Bad VisitorId not found";
+                            {
+                                pageHitSuccessModel.ReturnMessage = "invalid VisitorId not found";
+                            }
                         }
                         catch (Exception ex)
                         {
