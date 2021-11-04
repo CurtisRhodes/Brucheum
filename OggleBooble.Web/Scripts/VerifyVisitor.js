@@ -44,7 +44,7 @@ function verifySession(folderId, calledFrom) {
         }
     }
     catch (e) {
-        logActivity2(visitorId, "VS8", folderId, "verify session/" + calledFrom); // verify session CATCH error
+        logActivity2(visitorId, "VS8", folderId, "verify session/" + calledFrom + " ERRMSG: " + e); // verify session CATCH error
         logError2(visitorId, "CAT", folderId, e, "verify session/" + calledFrom);
         callAlbumPage(folderId, visitorId, calledFrom);
     }
@@ -122,6 +122,14 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
                         case "not found":
 
                             let newVisitorId = create_UUID();
+                            //setCookieValue("VisitorId", newVisitorId);
+                            try {
+                                localStorage["VisitorId"] = newValue;
+                                let cookieString = "VisitorId:" + newValue;
+                                document.cookie = cookieString;
+                            } catch (e) {
+                                logError2(create_UUID(), "CAT", 616415, e, "verify VisitorId/set CookieValue");
+                            }
 
                             addVisitor({
                                 VisitorId: newVisitorId,
@@ -156,9 +164,9 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
         });
     }
     catch (e) {
+        logError2(create_UUID(), "CAT", 1020222, e, "verify visitorId");
         sessionStorage["VisitorVerified"] = true;
         logActivity2(create_UUID(), "VV5", 1020222, e); // verify visitor CATCH error
-        logError2(create_UUID(), "CAT", 1020222, e, "verify visitorId");
     }
 }
 
@@ -175,10 +183,14 @@ function addVisitor(visitorData, calledFrom) {
             data: visitorData,
             success: function (success) {
                 if (success == "ok") {
-                    logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add visitor"); // new visitor added
+                    logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add Visitor/" + calledFrom); // new visitor added
                     setCookieValue("VisitorId", visitorData.VisitorId);
                     logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor");
                     callAlbumPage(folderId, newVisitorId, calledFrom);
+
+                    // just for today
+                    tryAddNewIP(folderId, visitorId, "add Visitor/" + calledFrom);
+
                 }
                 else {
                     if (success.indexOf("Duplicate entry") > 0) {

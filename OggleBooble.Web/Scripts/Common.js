@@ -651,11 +651,16 @@ function getCookieValue(itemName, calledFrom) {
         if (returnValue == "cookie not found") {
             if (!isNullorUndefined(localStorage[itemName])) {
                 returnValue = localStorage[itemName];
-                if (itemName == "VisitorId") 
-                    logActivity2(returnValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass                                
-                else
-                    logActivity2("unknown", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass                
-                setCookieValue(itemName, returnValue);
+                if (isNullorUndefined(returnValue)) {
+                    logActivity2("unknown", "CK4", 1031128, "GET CookieValue/" + calledFrom); // local storage null?
+                }
+                else {
+                    if (itemName == "VisitorId")
+                        logActivity2(returnValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
+                    else
+                        logActivity2("unknown", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass                
+                    setCookieValue(itemName, returnValue);
+                }
             }
             else {
                 if (navigator.cookieEnabled) { // user accepts cookies

@@ -281,6 +281,8 @@ function showHideGalleries() {
 
 function refreshRandomGalleries() {
     loadRandomGalleries();
+    logActivity("RRG", 555, "index page");
+    sendEmail("CurtishRhodes@hotmail.com", "button_click7775@yahoo.com", "Random Galleries Refreshed", "<br/>visitor: " + getCookieValue("VisitorId"));
 }
 
 function randomGalleriesImageError(folderId, imgSrc) {

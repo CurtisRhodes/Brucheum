@@ -2,7 +2,7 @@
 function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
 
-        logActivity2(visitorId, "I0A", folderId, "tryAddNewIP/" + calledFrom);
+        logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom);
 
         $.ajax({
             type: "GET",
@@ -18,12 +18,14 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                             break;
                         case "already looked up today":
                             logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
+                            // just for today
+                            getIpInfo(folderId, visitorId, "I07/" + calledFrom);
                             break;
                         case "months old InitialVisit":
                             logActivity2(visitorId, "I0L", folderId, "tryAddNewIP/" + calledFrom);
                             break;
                         case "pending months old InitialVisit":
-                            logActivity2(visitorId, "I00", folderId, "pending months old InitialVisit/" + calledFrom); // candidate screen passed
+                            logActivity2(visitorId, "I0A", folderId, "pending months old InitialVisit/" + calledFrom); // candidate screen passed
                             //logActivity2(visitorId, "I0D", folderId, "tryAddNewIP/" + calledFrom);
                             getIpInfo(folderId, visitorId, calledFrom);
                             break;
@@ -34,12 +36,12 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                             logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
                             break;
                         case "pending too many pageHits":
-                            logActivity2(visitorId, "I00", folderId, "pending too many pageHits/" + calledFrom); // candidate screen passed
+                            logActivity2(visitorId, "I0A", folderId, "pending too many pageHits/" + calledFrom); // candidate screen passed
                             //logActivity2(visitorId, "I0H", folderId, "tryAddNewIP/" + calledFrom);
                             getIpInfo(folderId, visitorId, calledFrom);
                             break;
                         case "passed":
-                            logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
+                            logActivity2(visitorId, "I0A", folderId, "tryAddNewIP/" + calledFrom); // candidate screen passed
                             getIpInfo(folderId, visitorId, calledFrom);
                             break;
                         default:
@@ -68,7 +70,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
     try {
         if (ip0Busy) {
             console.log("getIpInfo busy");
-            logActivity2(visitorId, "IP8", folderId, "get IpInfo/" + calledFrom);
+            logActivity2(visitorId, "IA8", folderId, "get IpInfo/" + calledFrom);
             tryApiDbIpFree(folderId, visitorId, calledFrom);
             return;
         }
@@ -78,8 +80,8 @@ function getIpInfo(folderId, visitorId, calledFrom) {
         logActivity2(visitorId, "IA1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            //url: "https:/ /ipinfo.io?token=ac5da086206dc4", 
-            url: "https://ipinfo.io?token=e66f93d609e1d8",
+            url: "https://ipinfo.io?token=ac5da086206dc4", 
+            // url: "https: //ipinfo.io?token=e66f93d609e1d8",
             dataType: "JSON",
             statusCode: {
                 429: function () {
@@ -91,21 +93,27 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                 }
             },
             success: function (ipResponse) {
-
-                ipCall0Returned = true;
-                updateVisitor({
-                    VisitorId: visitorId,
-                    IpAddress: ipResponse.ip,
-                    City: ipResponse.city,
-                    Country: ipResponse.country,
-                    Region: ipResponse.region,
-                    GeoCode: ipResponse.loc,
-                    InitialPage: folderId
-                }, "ipinfo");
+                if (isNullorUndefined(ipResponse.ip)) {
+                    logActivity2(visitorId, "IA3", folderId, "get IpInfo/" + calledFrom); // empty resopnse
+                }
+                else {
+                    // logActivity2(visitorId, "IA2", folderId, "ipResponse.ip: " + ipResponse.ip); // it worked
+                    ipCall0Returned = true;
+                    updateVisitor({
+                        VisitorId: visitorId,
+                        IpAddress: ipResponse.ip,
+                        City: ipResponse.city,
+                        Country: ipResponse.country,
+                        Region: ipResponse.region,
+                        GeoCode: ipResponse.loc,
+                        InitialPage: folderId
+                    }, "ipinfo");
+                }
                 ip0Busy = false;
             },
             error: function (jqXHR) {
                 ipCall0Returned = true;
+                logActivity2(visitorId, "IAE", folderId, "get IpInfo/" + calledFrom); // XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
                     logActivity2(visitorId, "IA5", folderId, "get IpInfo/" + calledFrom); // lookup limit exceeded
@@ -118,7 +126,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     }
                     else {
                         logError2(visitorId, "XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
-                        logActivity2(visitorId, "IAX", folderId, "indexOf: " + errMsg.toUpperCase().indexOf("NOT CONNECT") + " errMsg: " + errMsg); // XHR error
+                        logActivity2(visitorId, "IAX", folderId, "get IpInfo/" + calledFrom); // XHR error
                     }
                 }
                 ip0Busy = false;
@@ -156,8 +164,8 @@ function tryOtherAccessTokin(folderId, visitorId, calledFrom) {
         logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            url: "https://ipinfo.io?token=ac5da086206dc4", 
-            url: "https:/ /ipinfo.io?token=e66f93d609e1d8",
+            // url: "h ttps://ipinfo.io?token=ac5da086206dc4", 
+            url: "https://ipinfo.io?token=e66f93d609e1d8",
             dataType: "JSON",
             statusCode: {
                 429: function () {
@@ -179,7 +187,7 @@ function tryOtherAccessTokin(folderId, visitorId, calledFrom) {
                     Region: ipResponse.region,
                     GeoCode: ipResponse.loc,
                     InitialPage: folderId
-                }, "ipinfo");
+                }, "ipinfo2");
                 ip0Busy = false;
             },
             error: function (jqXHR) {
@@ -431,10 +439,16 @@ function updateVisitor(ipData, calledFrom) {
                             logActivity2(create_UUID(), "IPB", ipData.InitialPage, calledFrom); // ip lookup VisitorId not found. 
                             break;  // 1
                         case "New Ip Visitor Updated":
-                            logActivity2(ipData.VisitorId, "IP2", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
+                            if (calledFrom == "ipinfo")
+                                logActivity2(ipData.VisitorId, "IA2", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
+                            else
+                                logActivity2(ipData.VisitorId, "IP2", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
                             break;  // 2
                         case "Duplicate Ip":
-                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
+                            if (calledFrom == "ipinfo")
+                                logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IA3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
+                            else
+                                logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
                             setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
                             break;  // 3
                         case "bad duplicate Ip":
