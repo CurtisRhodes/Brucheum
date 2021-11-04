@@ -151,7 +151,7 @@ namespace OggleBooble.Api.Controllers
                             {
                                 Id = physcialFileLinkId,
                                 Acquired = DateTime.Now,
-                                ExternalLink = newFileName,
+                                ExternalLink = "??",
                                 FileName = physcialFileName,
                                 FolderId = folderId,
                                 Height = imageFileInfo.Height,
@@ -160,19 +160,29 @@ namespace OggleBooble.Api.Controllers
                             };
                             db.ImageFiles.Add(imageFile);
                             dbFolderImageFiles.Add(imageFile);
+                            db.SaveChanges();
+                            repairReport.ImageFilesAdded++;
+
                             CategoryImageLink ktest = db.CategoryImageLinks.Where(l => (l.ImageCategoryId == folderId) && (l.ImageLinkId == physcialFileLinkId)).FirstOrDefault();
                             if (ktest == null)
                             {
-                                db.CategoryImageLinks.Add(new CategoryImageLink()
+                                try
                                 {
-                                    ImageCategoryId = folderId,
-                                    ImageLinkId = physcialFileLinkId,
-                                    SortOrder = 0
-                                });
-                                repairReport.CatLinksAdded++;
+                                    db.CategoryImageLinks.Add(new CategoryImageLink()
+                                    {
+                                        ImageCategoryId = folderId,
+                                        ImageLinkId = physcialFileLinkId,
+                                        SortOrder = 0
+                                    });
+                                    db.SaveChanges();
+                                    repairReport.CatLinksAdded++;
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    repairReport.Errors.Add("ktest lied: " + Helpers.ErrorDetails(ex));
+                                }
                             }
-                            db.SaveChanges();
-                            repairReport.ImageFilesAdded++;
                         }
                     }
                     else
