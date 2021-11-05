@@ -18,7 +18,7 @@ function verifySession(folderId, calledFrom) {
                     logError2(newVisitorId, "UNC", folderId, "verify session");
                     geoCode = "user does not accept cookies";
                 }
-                setCookieValue("VisitorId", newVisitorId);
+                setCookieValue("VisitorId", newVisitorId, "verify session");
                 logActivity2(newVisitorId, "VS2", folderId, "verify session"); // verify visitorId not found (new user?)
                 addVisitor({
                     VisitorId: newVisitorId,
@@ -64,20 +64,18 @@ function callAlbumPage(folderId, visitorId, calledFrom) {
 }
 
 function verifyVisitorId(visitorId, folderId) {
-    let guidIsValid = isValidGuid(visitorId);
     $.ajax({
         type: "GET",
-        async: "false",
         url: settingsArray.ApiServer + "api/Visitor/VerifyVisitorId?visitorId=" + visitorId,
         success: function (visitorIdExistsSuccess) {
             if (visitorIdExistsSuccess) {
-                if (guidIsValid)
+                if (isValidGuid(visitorId))
                     logActivity2(visitorId, "VV1", folderId, "verify visitorId"); // VisitorId verified ok
                 else
                     logActivity2(visitorId, "VVX", folderId, "verify visitorId"); // is valid guid false alarm
             }
             else {
-                if (guidIsValid)
+                if (isValidGuid(visitorId))
                     logActivity2(visitorId, "VVY", folderId, "verify visitorId"); // VisitorId not verified but is valid guid
                 else {
                     logActivity2(visitorId, "VVZ", folderId, "verify visitorId"); // VisitorId not verified AND is valid not guid
@@ -106,35 +104,19 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
 
                             //callAlbumPage(folderId, visitorId, calledFrom);
 
-                            logVisit(visitorId, folderId, "verify session");
-                            break;
-                        case "retired visitor":
-                            setCookieValue("VisitorId", successModel.ComprableIpAddressVisitorId);
-                            logActivity2(visitorId, "VV2", 1020222, "verify Visitor"); // retired visitorId updated
-
-                            callAlbumPage(folderId, visitorId, calledFrom);
-
-                            break;
-                        case "retired visitor comparable not found":
-                            logActivity2(visitorId, "VV7", 1020222, "verify Visitor"); // visitorId came back not found
-                            logError("BUG", folderId, "retired visitor not found", "verify VisitorId");
+                            logVisit(visitorId, folderId, "verify visitor");
                             break;
                         case "not found":
-
                             let newVisitorId = create_UUID();
-                            //setCookieValue("VisitorId", newVisitorId);
-                            try {
-                                localStorage["VisitorId"] = newValue;
-                                let cookieString = "VisitorId:" + newValue;
-                                document.cookie = cookieString;
-                            } catch (e) {
-                                logError2(create_UUID(), "CAT", 616415, e, "verify VisitorId/set CookieValue");
-                            }
+                            setCookieValue("VisitorId", newVisitorId, "verify visitor");
+                            localStorage["VisitorId"] = newVisitorId;
+                            let cookieString = "VisitorId:" + newVisitorId;
+                            document.cookie = cookieString;
 
                             addVisitor({
                                 VisitorId: newVisitorId,
                                 IpAddress: Math.floor(Math.random() * 10000000000).toString(),
-                                City: "visitor not found",
+                                City: "verify visitor",
                                 Country: "ZZ",
                                 Region: "VV",
                                 GeoCode: "unknown",
@@ -147,6 +129,9 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
 
                             break;
                         default:
+                            logActivity2(visitorId, "VVS", 1020222, "verify VisitorId");
+                            logError2(create_UUID(), "SWT", "value: " + successModel.ReturnValue, "verify visitor");
+                            break;
                     }
                 }
                 else {
@@ -184,7 +169,7 @@ function addVisitor(visitorData, calledFrom) {
             success: function (success) {
                 if (success == "ok") {
                     logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add Visitor/" + calledFrom); // new visitor added
-                    setCookieValue("VisitorId", visitorData.VisitorId);
+                    setCookieValue("VisitorId", visitorData.VisitorId, "add Visitor/" + calledFrom);
                     logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor");
                     callAlbumPage(folderId, newVisitorId, calledFrom);
 
@@ -248,7 +233,7 @@ function loadUserProfile(folderId, visitorId) {
 
                         if (!visitorInfo.VisitorFound) {
                             k1VisitorId = create_UUID();
-                            setCookieValue("VisitorId", k1VisitorId);
+                            setCookieValue("VisitorId", k1VisitorId, "load UserProfile");
                             addVisitor({
                                 VisitorId: k1VisitorId,
                                 IpAddress: Math.floor(Math.random() * 10000000000).toString(),

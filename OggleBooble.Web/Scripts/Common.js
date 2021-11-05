@@ -649,23 +649,19 @@ function getCookieValue(itemName, calledFrom) {
             }
         }
         if (returnValue == "cookie not found") {
-            if (!isNullorUndefined(localStorage[itemName])) {
-                returnValue = localStorage[itemName];
-                if (isNullorUndefined(returnValue)) {
-                    logActivity2("unknown", "CK4", 1031128, "GET CookieValue/" + calledFrom); // local storage null?
-                }
-                else {
-                    if (itemName == "VisitorId")
-                        logActivity2(returnValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
-                    else
-                        logActivity2("unknown", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass                
-                    setCookieValue(itemName, returnValue);
-                }
+            let storageValue = localStorage[itemName];
+            if (!isNullorUndefined(storageValue)) {
+                if (itemName == "VisitorId")
+                    logActivity2(returnValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
+                else
+                    logActivity2("unknown", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass                
+                setCookieValue(itemName, returnValue, "GET CookieValue/" + calledFrom);
+                returnValue = storageValue
             }
             else {
                 if (navigator.cookieEnabled) { // user accepts cookies
                     if (calledFrom != "verify session")
-                        logError2(create_UUID(), "CK2", 703245, "itemName: " + itemName, "GET CookieValue/" + calledFrom); // cookies enabled. No local storage bypass
+                        logError2(create_UUID(), "CK2", 703245, "itemName: " + itemName + "  localStorage[itemName]: " + localStorage[itemName], "GET CookieValue/" + calledFrom); // cookies enabled. No local storage bypass
                 }
                 else {
                     logError2(create_UUID(), "CK3", 703245, "itemName: " + itemName, "GET CookieValue/" + calledFrom); // cookies NOT enabled. No local storage bypass
@@ -679,13 +675,18 @@ function getCookieValue(itemName, calledFrom) {
     return returnValue;
 }
 
-function setCookieValue(elementToSet, newValue) {
+function setCookieValue(elementToSet, newValue, calledFrom) {
     try {
-        localStorage[elementToSet] = newValue;
-        let cookieString = elementToSet + ":" + newValue;
-        document.cookie = cookieString;
+        if (!isNullorUndefined(newValue)) {
+            localStorage[elementToSet] = newValue;
+            let cookieString = elementToSet + ":" + newValue;
+            document.cookie = cookieString;
+        }
+        else
+            logError2(create_UUID(), "BUG", 1104845, "newValue NullorUndefined", "set CookieValue/" + calledFrom);
+
     } catch (e) {
-        logError2(create_UUID(), "CAT", 616415, e, "set CookieValue");
+        logError2(create_UUID(), "CAT", 616415, e, "set CookieValue/" + calledFrom);
     }
 }
 

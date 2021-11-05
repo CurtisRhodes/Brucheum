@@ -47,10 +47,8 @@ function attemptLogin() {
                 if (loginSuccess.Success === "ok") {
                     $("#vailShell").hide();
                     $("#centeredDialogContainer").hide();
-
-                    //setCookieValue("UserName", userName);
-                    setCookieValue("IsLoggedIn", "true");
-                    setCookieValue("VisitorId", loginSuccess.VisitorId);
+                    setCookieValue("IsLoggedIn", "true", "attempt Login");
+                    setCookieValue("VisitorId", loginSuccess.VisitorId, "attempt Login");
 
                     localStorage["IsLoggedIn"] = "true";
                     localStorage["UserName"] = loginSuccess.UserName;
@@ -283,11 +281,11 @@ function attemptRegister() {
                         }
 
                         if (registerdUserSuccessModel.RegisterStatus == "admin override") {
-                            setCookieValue("VisitorId", registerdUserSuccessModel.NewVisitorId);
+                            setCookieValue("VisitorId", registerdUserSuccessModel.NewVisitorId, "admin override");
                         }
 
                         if (registerdUserSuccessModel.RegisterStatus == "new VisitorId created") {
-                            setCookieValue("VisitorId", registerdUserSuccessModel.NewVisitorId);
+                            setCookieValue("VisitorId", registerdUserSuccessModel.NewVisitorId, "AddRegisterUser");
                         }
                         if (typeof resume === 'function') resume();
                         $("#vailShell").hide();

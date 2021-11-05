@@ -80,8 +80,8 @@ function getIpInfo(folderId, visitorId, calledFrom) {
         logActivity2(visitorId, "IA1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            url: "https://ipinfo.io?token=ac5da086206dc4", 
-            // url: "https: //ipinfo.io?token=e66f93d609e1d8",
+            // url: "h ttps://ipinfo.io?token=ac5da086206dc4", 
+            url: "https: //ipinfo.io?token=e66f93d609e1d8",
             dataType: "JSON",
             statusCode: {
                 429: function () {
@@ -164,8 +164,8 @@ function tryOtherAccessTokin(folderId, visitorId, calledFrom) {
         logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            // url: "h ttps://ipinfo.io?token=ac5da086206dc4", 
-            url: "https://ipinfo.io?token=e66f93d609e1d8",
+            // url: "https: //ipinfo.io?token=e66f93d609e1d8",
+            url: "https://ipinfo.io?token=ac5da086206dc4", 
             dataType: "JSON",
             statusCode: {
                 429: function () {
@@ -449,11 +449,11 @@ function updateVisitor(ipData, calledFrom) {
                                 logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IA3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
                             else
                                 logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
-                            setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
+                            setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId, "update visitor");
                             break;  // 3
                         case "bad duplicate Ip":
                             logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP4", ipData.InitialPage, ipData.VisitorId); // Duplicate IP Bad Info
-                            setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId);
+                            setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId, "update visitor");
                             break;  // 4
                         default:
                             logActivity2(ipData.VisitorId, "IPS", ipData.InitialPage, "update visitor"); // Switch Case Problem
