@@ -682,11 +682,12 @@ function setCookieValue(elementToSet, newValue, calledFrom) {
             let cookieString = elementToSet + ":" + newValue;
             document.cookie = cookieString;
         }
-        else
-            logError2(create_UUID(), "BUG", 1104845, "newValue NullorUndefined", "set CookieValue/" + calledFrom);
-
+        else {
+            logError2(create_UUID(), "BUG", 1104845, "newValue: " + newValue, "set CookieValue/" + calledFrom);
+            //logError2(create_UUID(), "BUG", 1104845, "newValue NullorUndefined", "set CookieValue/" + calledFrom);
+        }
     } catch (e) {
-        logError2(create_UUID(), "CAT", 616415, e, "set CookieValue/" + calledFrom);
+        logError2(create_UUID(), "CAT", 1105947, e, "set cookie/" + calledFrom);
     }
 }
 

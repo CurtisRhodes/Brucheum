@@ -93,15 +93,11 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
-    //public class UserErrorReportSuccess
-    //{
-    //    public UserErrorReportSuccess() 
-    //    {
-    //        ErrorRows = new List<VwErrorReport>();
-    //    }
-    //    public List<VwErrorReport> ErrorRows { get; set; }
-    //    public string Success { get; set; }
-    //}
+    public class OverdueZZVisitors
+    {
+        public List<VwOverdueZZVisitors> ZZVisitors { get; set; }
+        public string Success { get; set; }
+    }
 
     public class UserReportSuccessModel
     {

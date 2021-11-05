@@ -1,7 +1,6 @@
 ﻿
 function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
-
         logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom);
 
         $.ajax({
@@ -80,8 +79,8 @@ function getIpInfo(folderId, visitorId, calledFrom) {
         logActivity2(visitorId, "IA1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            // url: "h ttps://ipinfo.io?token=ac5da086206dc4", 
-            url: "https: //ipinfo.io?token=e66f93d609e1d8",
+            url: "https://ipinfo.io?token=ac5da086206dc4", 
+            //url: "h ttps://ipinfo.io?token=e66f93d609e1d8",
             dataType: "JSON",
             statusCode: {
                 429: function () {
@@ -113,8 +112,9 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             },
             error: function (jqXHR) {
                 ipCall0Returned = true;
-                logActivity2(visitorId, "IAE", folderId, "get IpInfo/" + calledFrom); // XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
+                logActivity2(visitorId, "IAE", folderId, errMsg); // XHR error
+
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
                     logActivity2(visitorId, "IA5", folderId, "get IpInfo/" + calledFrom); // lookup limit exceeded
                     tryApiDbIpFree(folderId, visitorId, calledFrom);
@@ -126,7 +126,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     }
                     else {
                         logError2(visitorId, "XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
-                        logActivity2(visitorId, "IAX", folderId, "get IpInfo/" + calledFrom); // XHR error
+                        logActivity2(visitorId, "IAX", folderId, errMsg); // XHR error
                     }
                 }
                 ip0Busy = false;
@@ -164,8 +164,8 @@ function tryOtherAccessTokin(folderId, visitorId, calledFrom) {
         logActivity2(visitorId, "IP1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
-            // url: "https: //ipinfo.io?token=e66f93d609e1d8",
-            url: "https://ipinfo.io?token=ac5da086206dc4", 
+            url: "https://ipinfo.io?token=e66f93d609e1d8",
+            //url: "h ttps://ipinfo.io?token=ac5da086206dc4", 
             dataType: "JSON",
             statusCode: {
                 429: function () {

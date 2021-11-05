@@ -197,7 +197,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showMoveManyTool(3);'>Archive Many</div>\n" +
                 "<div class='clickable' onclick='showRipPdfDialog();'>Rip Pdf</div>\n"+
                 "<div class='clickable' onclick='DupeCheck();'>Dupe Check</div>\n" +
-                "<div class='clickable' onclick='RemoveDuplicateIps();'>Remove Duplicate Ips</div>\n" +
+                "<div class='clickable' onclick='RemoveDuplicateIps();'>force a few</div>\n" +
 
                 
 
@@ -427,6 +427,29 @@ function RemoveDuplicateIps() {
         logError("CAT", apFolderId, e, "performRepairLinks");
     }
 }
+
+function forceAfew() {
+    $.ajax({
+        type: "GET",
+        url: settingsArray.ApiServer + "api/Report/GetZZVisitors",
+        success: function (overdueZZVisitors) {
+            $('#dashBoardLoadingGif').hide();
+            if (overdueZZVisitors.Success === "ok") {
+                for (i = 0; i < 5; i++) {
+                    tryAddNewIP(3110, overdueZZVisitors.ZZVisitors[i], "any");
+                }
+            }
+            else
+                alert("CreateNewFolder: " + successModel.Success);
+        },
+        error: function (xhr) {
+            $('#dashBoardLoadingGif').hide();
+            alert("createNewFolder xhr error: " + getXHRErrorDetails(xhr));
+        }
+    });
+
+}
+
 
 // CREATE STATIC PAGES
 function showCreateStaticPagesDialog() {

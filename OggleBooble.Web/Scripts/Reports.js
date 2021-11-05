@@ -8,11 +8,9 @@ function runMetricsMatrixReport() {
         $('#dashBoardLoadingGif').show();
         $('#reportsHeaderTitle').html("Performance Metrics  " + todayString());
 
-
         $.ajax({
             type: "GET",
-            url: settingsArray.ApiServer + "api/Report/DailyPerformance",
-            // url: settingsArray.ApiServer + "api/Report/MetricMatrixReport",
+            url: settingsArray.ApiServer + "api/Report/MetricsMatrixReport",
             success: function (rslts) {
                 $('#dashBoardLoadingGif').hide();
                 if (rslts.Success === "ok") {

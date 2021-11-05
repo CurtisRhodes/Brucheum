@@ -1,13 +1,25 @@
-﻿
+﻿let isSessionVerified = false;
+
 function verifySession(folderId, calledFrom) {
     let visitorId = "uninitialized";
     try {
-        if (isNullorUndefined(sessionStorage["VisitorVerified"])) {
+        try {
+            let storagek = window.sessionStorage || {};
+            // logActivity2(visitorId, "VS4", folderId, "verify session"); // session storage ok
+        } catch (e) {
+            logActivity2(visitorId, "VS6", folderId, e); // session storage fail
+        }
+
+        //if (isNullorUndefined(storagek["VisitorVerified"])) {
+        if (!isSessionVerified) {
+            logActivity("VS9", folderId, "verify session"); // session verified
+            callAlbumPage(folderId, localStorage["VisitorId"], calledFrom);
+        }
+        else
+        {
             visitorId = getCookieValue("VisitorId", "verify session");
 
 	        // uninitialized	2021-11-03 06:55:30	CAT	1582	verify session/album.html	TypeError: Cannot read properties of null (reading 'VisitorId')
-
-
             $('#headerMessage').html("new session started");
 
             if (visitorId.indexOf("cookie not found") > -1) {
@@ -36,16 +48,14 @@ function verifySession(folderId, calledFrom) {
                 verifyVisitorId(visitorId, folderId);
                 callAlbumPage(folderId, visitorId, calledFrom);
             }
+            //sessionStorage["VisitorVerified"] = true;
+            isSessionVerified = true;
             logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
-            sessionStorage["VisitorVerified"] = true;
-        }
-        else {
-            callAlbumPage(folderId, localStorage["VisitorId"], calledFrom);
         }
     }
     catch (e) {
-        logActivity2(visitorId, "VS8", folderId, "verify session/" + calledFrom + " ERRMSG: " + e); // verify session CATCH error
-        logError2(visitorId, "CAT", folderId, e, "verify session/" + calledFrom);
+        logActivity2(visitorId, "VS8", folderId, "verify session2/" + calledFrom + " ERRMSG: " + e); // verify session CATCH error
+        logError2(visitorId, "CAT", folderId, e, "verify session2/" + calledFrom);
         callAlbumPage(folderId, visitorId, calledFrom);
     }
 }
@@ -150,7 +160,7 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
     }
     catch (e) {
         logError2(create_UUID(), "CAT", 1020222, e, "verify visitorId");
-        sessionStorage["VisitorVerified"] = true;
+        //sessionStorage["VisitorVerified"] = true;
         logActivity2(create_UUID(), "VV5", 1020222, e); // verify visitor CATCH error
     }
 }

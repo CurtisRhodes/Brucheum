@@ -44,8 +44,8 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<TrackbackLink> TrackbackLinks { get; set; }
         public virtual DbSet<VwEventSummary> VwEventSummary { get; set; }
         public virtual DbSet<VwEventDetail> VwEventDetails { get; set; }
-
         public virtual DbSet<VwVisitor> VwVisitors { get; set; }
+        public virtual DbSet<VwOverdueZZVisitors> VwOverdueZZVisitors { get; set; }
         public virtual DbSet<VwDirTree> VwDirTrees { get; set; }
         public virtual DbSet<VwLink> VwLinks { get; set; }
         public virtual DbSet<VwPageHit> VwPageHits { get; set; }
@@ -201,6 +201,16 @@ namespace OggleBooble.Api.MySqlDataContext
         public int InitialPage { get; set; }
         public string FolderName { get; set; }
     }
+
+    [Table("OggleBooble.VwOverdueZZVisitors")]
+    public class VwOverdueZZVisitors
+    {
+        [Key]
+        public string VisitorId { get; set; }
+        public DateTime InitialVisit { get; set; }
+        public int Hits { get; set; }
+    }
+
 
     [Table("OggleBooble.VwImpact")]
     public class VwImpact

@@ -19,10 +19,10 @@ namespace OggleBooble.Api.Controllers
         static readonly string devlVisitorId = ConfigurationManager.AppSettings["devlVisitorId"];
 
         [HttpGet]
-        [Route("api/Report/DailyPerformance")]
-        public MatrixResultsModel DailyPerformance()
+        [Route("api/Report/UpdateDailyPerformance")]
+        public string UpdateDailyPerformance()
         {
-            var rslts = new MatrixResultsModel();
+            string success;
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
@@ -33,14 +33,23 @@ namespace OggleBooble.Api.Controllers
                 }
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    DateTime maxReportDay = db.DailyPerformances.Max(p => p.ReportDay);
-                    int dd = Math.Max(1, (int)DateTime.Today.Subtract(maxReportDay).TotalDays);
-                 
-                    
-                    db.Database.ExecuteSqlCommand("call spPerformance(" + dd + ")");
+                    db.Database.ExecuteSqlCommand("call spPerformance(5,false)");
+                    success = "ok";
+                }
+            }
+            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
+            return success;
+        }
 
-
-
+        [HttpGet]
+        [Route("api/Report/MetricsMatrixReport")]
+        public MatrixResultsModel MetricsMatrixReport()
+        {
+            var rslts = new MatrixResultsModel();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
                     var sevenDaysAgo = DateTime.Today.AddDays(-14);
                     var performanceRows = db.DailyPerformances.Where(p => p.ReportDay > sevenDaysAgo).OrderByDescending(p => p.ReportDay).ToList();
                     foreach (DailyPerformance pRow in performanceRows)
@@ -62,41 +71,6 @@ namespace OggleBooble.Api.Controllers
             catch (Exception ex) { rslts.Success = Helpers.ErrorDetails(ex); }
             return rslts;
         }
-
-        //public MatrixResultsModel MetricsMatrixReport()
-        //{
-        //    var rslts = new MatrixResultsModel();
-        //    try
-        //    {
-        //        using (var db = new OggleBoobleMySqlContext())
-        //        {
-        //            db.PageHits.RemoveRange(db.PageHits.Where(h => h.VisitorId == devlVisitorId));
-        //            db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
-        //            db.SaveChanges();
-        //        };
-        //        using (var db = new OggleBoobleMySqlContext())
-        //        {
-        //            db.Database.ExecuteSqlCommand("call OggleBooble.spDailyVisits()");
-        //            var performanceRows = db.Performances.ToList();
-        //            foreach (Performance pRow in performanceRows)
-        //            {
-        //                rslts.mRows.Add(new MatrixModel()
-        //                {
-        //                    ReportDay = pRow.ReportDay,
-        //                    DayofWeek = pRow.ReportDay.DayOfWeek.ToString(),
-        //                    DateString = pRow.DayString,
-        //                    NewVisitors = pRow.NewVisitors,
-        //                    Visits = pRow.Visits,
-        //                    PageHits = pRow.PageHits,
-        //                    ImageHits = pRow.ImageHits
-        //                });
-        //            }
-        //            rslts.Success = "ok";
-        //        }
-        //    }
-        //    catch (Exception ex) { rslts.Success = Helpers.ErrorDetails(ex); }
-        //    return rslts;
-        //}
 
         [HttpGet]
         [Route("api/Report/ReferralsReport")]
@@ -335,8 +309,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
-                    db.SaveChanges();
+                    // db.ImageHits.RemoveRange(db.ImageHits.Where(i => i.VisitorId == devlVisitorId));
+                    // db.SaveChanges();
                     var mostActiveUserItems = db.MostActiveUsersForToday.ToList();
                     foreach (VwMostActiveUsersForToday mostActiveUserItem in mostActiveUserItems)
                     {
@@ -580,6 +554,22 @@ namespace OggleBooble.Api.Controllers
             return centerfoldReport;
         }
 
+        [HttpGet]
+        [Route("api/Report/GetZZVisitors")]
+        public OverdueZZVisitors GetZZVisitors()
+        {
+            var overdueZZVisitors = new OverdueZZVisitors();
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    overdueZZVisitors.ZZVisitors = db.VwOverdueZZVisitors.Where(v=>v.InitialVisit < DateTime.Today.AddDays(-5)).ToList();
+                }
+                overdueZZVisitors.Success = "ok";
+            }
+            catch (Exception ex) { overdueZZVisitors.Success = Helpers.ErrorDetails(ex); }
+            return overdueZZVisitors;
+        }
         public string MySnippet()
         {
             string success;
