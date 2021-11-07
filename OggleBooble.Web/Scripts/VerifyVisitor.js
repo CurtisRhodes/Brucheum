@@ -1,27 +1,27 @@
 ﻿var isSessionVerified = false;
 
-//function verifySession(folderId, calledFrom) {
-//    console.log("verifySession(" + folderId + "," + calledFrom + ")");
-//}
 function verifySession(folderId, calledFrom) {
     console.log("verifySession(" + folderId + "," + calledFrom + ")");
     let visitorId = "uninitialized";
     try {
-        //try {
-        //    let storagek = window.sessionStorage || {};
-        //    // logActivity2(visitorId, "VS4", folderId, "verify session"); // session storage ok
-        //} catch (e) {
-        //    logActivity2(visitorId, "VS6", folderId, e); // session storage fail
-        //}
-
         visitorId = getCookieValue("VisitorId", "verify session");
+        let localSessionIsVerified;
+        try {
+            let storagek = window.sessionStorage || {};
+            localSessionIsVerified = window.sessionStorage["SessionVerified"];
+            // logActivity2(visitorId, "VS4", folderId, "verify session"); // session storage ok
+        } catch (e) {
+            localSessionIsVerified = isSessionVerified;
+            logActivity2(visitorId, "VS6", folderId, e); // session storage fail
+        }
 
-        if (isSessionVerified) {
-            //logActivity("VS9", folderId, "verify session"); // session verified
+        if (localSessionIsVerified) {
+            logActivity("VS9", folderId, "verify session"); // session verified
             callAlbumPage(folderId, visitorId, calledFrom);
         }
         else {
             $('#headerMessage').html("new session started");
+            logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
 
             if (visitorId.indexOf("cookie not found") > -1) {
                 //createNewVisitorId
@@ -48,30 +48,19 @@ function verifySession(folderId, calledFrom) {
                 verifyVisitor(visitorId, folderId, calledFrom);
                 callAlbumPage(folderId, visitorId, calledFrom);
             }
-
+            try {
+                let storagek = window.sessionStorage || {};
+                window.sessionStorage["SessionVerified"] = true;
+            } catch (e) {
+                logActivity2(visitorId, "VS6", folderId, "isSessionVerified set to true"); // session storage fail
+                isSessionVerified = true;
+            }
         }
-        //sessionStorage["VisitorVerified"] = true;
-        isSessionVerified = true;
-        logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
-
     }
     catch (e) {
         logActivity2(visitorId, "VS8", folderId, "verify session2/" + calledFrom + " ERRMSG: " + e); // verify session CATCH error
         logError2(visitorId, "CAT", folderId, e, "verify session2/" + calledFrom);
         callAlbumPage(folderId, visitorId, calledFrom);
-    }
-}
-
-function callAlbumPage(folderId, visitorId, calledFrom) {
-    if (calledFrom != "Index.html") {
-        if (calledFrom != "album.html") {
-            if (typeof logStaticPageHit === 'function')
-                logStaticPageHit(folderId, visitorId, calledFrom);
-            else
-                logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "verify session");
-        }
-        loadAlbum(folderId, visitorId, calledFrom);
-        // logActivity("VV3", folderId, "verify session"); // active session new page
     }
 }
 
@@ -86,41 +75,27 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
             type: "GET",
             url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
             success: function (successModel) {
-                //ACT	VV0	attempting to verify visitor
-                //ACT	VV1	verify visitor ok
-                //ACT	VV2	incoming visitor Country=ZZ
-                //ACT	VV3	incoming registered user
-                //ACT	VV4	verify visitor AJX error
-                //ACT	VV5	verify visitor CATCH error
-                //ACT	VV6	verify visitor XHR error
-                //ACT	VV7	retired visitor not found
-                //ACT	VV8	cookie not found made it too far
-                //ACT	VVa	missing VisitorId repeatOffender
-                //ACT	VVb	missing VisitorId false flag
-                //ACT	VVX	is valid guid false alarm
-                //ACT	VVY	VisitorId not verified but is valid guid
-                //ACT	VVZ	VisitorId not verified AND is valid not guid
-
                 if (successModel.Success == "ok") {
                     if (successModel.VisitorIdExits) {
                         //logActivity2(visitorId, "VV1", 1020222, "verify VisitorId"); // visitor verified ok
                         if (successModel.Country == "ZZ") {
                             tryAddNewIP(folderId, visitorId, "verify visitor/" + calledFrom);
-                            logActivity2(visitorId, "VV2", 1020222, "verify VisitorId"); // incoming visitor Country=ZZ
+                            logActivity2(visitorId, "VV2", folderId, "verify VisitorId"); // incoming visitor Country=ZZ
                         }
                         if (successModel.IsRegisteredUser) {
-                            logActivity2(visitorId, "VV3", 1020222, "verify VisitorId"); // VV3	incoming registered user
+                            logActivity2(visitorId, "VV3", folderId, "verify visitor/" + calledFrom); // VV3	incoming registered user
                             loadUserProfile(folderId, visitorId);
                         }
                         logVisit(visitorId, folderId, "verify visitor");
                     }
                     else {
-                        logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify VisitorId");
+                        logActivity2(visitorId, "VV4", folderId, "verify visitor/" + calledFrom); // visitorId not found
+                        //logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify visitor/" + calledFrom);
                     }
                 }
                 else {
-                    logActivity2(visitorId, "VV4", folderId, "verify Visitor"); // verify visitor AJX error
-                    logError2(visitorId, "AJX", folderId, successModel.Success, "verify VisitorId");
+                    logActivity2(visitorId, "VV5", folderId, "verify Visitor"); // verify visitor AJX error
+                    logError2(visitorId, "AJX", folderId, successModel.Success, "verify visitor/" + calledFrom);
                 }
             },
             error: function (jqXHR) {
@@ -133,8 +108,8 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
         });
     }
     catch (e) {
-        logError2(visitorId, "CAT", folderId, e, "verify visitorId");
-        logActivity2(visitorId, "VV5", folderId, e); // verify visitor CATCH error
+        logError2(visitorId, "CAT", folderId, e, "verify visitor/" + calledFrom);
+        logActivity2(visitorId, "VV7", folderId, e); // verify visitor CATCH error
     }
 }
 
@@ -333,4 +308,17 @@ function logStaticPageHit(folderId, visitorId, calledFrom) {
                 logError2(visitorId, "XHR", folderId, errMsg, "logStatic PageHit/" + calledFrom);
         }
     });
+}
+
+function callAlbumPage(folderId, visitorId, calledFrom) {
+    if (calledFrom != "Index.html") {
+        if (calledFrom != "album.html") {
+            if (typeof logStaticPageHit === 'function')
+                logStaticPageHit(folderId, visitorId, calledFrom);
+            else
+                logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "verify session");
+        }
+        loadAlbum(folderId, visitorId, calledFrom);
+        // logActivity("VV3", folderId, "verify session"); // active session new page
+    }
 }

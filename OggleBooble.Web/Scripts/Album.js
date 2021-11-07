@@ -22,7 +22,7 @@ function loadAlbum(folderId, visitorId, calledFrom) {
 }
 
 function loadLargeAlbum(folderId) {
-    let visitorId = getCookieValue("VisitorId", "checkRegistrationStatus");
+    let visitorId = getCookieValue("VisitorId", "load LargeAlbum");
     setOggleHeader("album");
     apFolderId = folderId;
     qucikHeader(folderId);
@@ -36,7 +36,11 @@ let lastAPageHitFolderId, lastAPageHitVisitorId;
 function logAPageHit(folderId, visitorId, calledFrom) {
     try {
         if (isNullorUndefined(folderId)) {
-            logError2(visitorId, "BUG", 0111, "isNullorUndefined(folderId)", "log A PageHit/" + calledFrom);
+            logError2(visitorId, "BUG", Undefined, "isNullorUndefined(folderId)", "log A PageHit/" + calledFrom);
+            return;
+        }
+        if (isNullorUndefined(visitorId)) {
+            logError2("Undefined", "BUG", folderId, "isNullorUndefined(visitorId)", "log A PageHit/" + calledFrom);
             return;
         }
         if ((lastAPageHitFolderId == folderId) && (lastAPageHitVisitorId == visitorId)) {
@@ -418,7 +422,8 @@ function getAlbumPageInfo(folderId, visitorId, isLargeLoad) {
 
 function checkRegistrationStatus(folderId, visitorId, albumInfo) {
     try {
-        if (!isLoggedIn()) {
+        //if (!isLoggedIn())
+        {
             if (albumInfo.FolderType == "singleChild") {
                 if ((albumInfo.RootFolder == "centerfold") || (albumInfo.RootFolder == "muses")
                     || (albumInfo.RootFolder == "cybergirl") || (albumInfo.RootFolder == "playboy"))
@@ -443,7 +448,7 @@ function checkRegistrationStatus(folderId, visitorId, albumInfo) {
             }
         }
     } catch (e) {
-        logError2(visitorId, "CAT", folderId, e, "check registration status");
+        logError2(visitorId, "CAT", folderId, "e: " + e, "check registration status");
     }
 }
 

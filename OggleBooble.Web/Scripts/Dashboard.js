@@ -3,7 +3,7 @@
     changeFavoriteIcon("redBallon");
     $('#indexMiddleColumn').html(dashboardHtml());
 
-    if (!isInRole("admin")) {
+    if (!isInRole("admin", "dashboard")) {
         alert("admin role required");
         window.location.href = "Index.html";
     }

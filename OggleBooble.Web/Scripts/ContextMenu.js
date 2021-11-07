@@ -37,7 +37,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
 
         $('.ogContextMenu').draggable();
         if (typeof pause === 'function') pause();
-        if (isInRole("admin"))
+        if (isInRole("admin", "context menu"))
             $('.adminLink').show();
         else
             $('.adminLink').hide();

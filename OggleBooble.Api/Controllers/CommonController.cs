@@ -68,13 +68,17 @@ namespace OggleBooble.Api.Controllers
                     {
                         pageHitSuccessModel.ReturnMessage = "VisitorId not found";
                         visitorId = "00000880-0000-0000-0000-UNKNOWN";
+                        pageHitSuccessModel.VisitorCountry = "xx";
+                    }
+                    else
+                    {
+                        pageHitSuccessModel.VisitorCountry = dbVisitor.Country;
                     }
 
                     var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
                     PageHit lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
                     if (lastHit == null)
                     {
-                        pageHitSuccessModel.VisitorCountry = dbVisitor.Country;
                         pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId).Count();
                         db.PageHits.Add(new PageHit()
                         {

@@ -64,6 +64,13 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
     }
 }
 
+function iii() {
+
+    // https://api.ipify.org/
+
+}
+
+
 let ip0Busy = false;
 function getIpInfo(folderId, visitorId, calledFrom) {
     try {
@@ -466,12 +473,12 @@ function updateVisitor(ipData, calledFrom) {
                     }
                     else {
                         logActivity2(ipData.VisitorId, "IPB", ipData.InitialPage, calledFrom); // ip lookup VisitorId not found.
-                        logError2(ipData.VisitorId, "BUG", ipData.InitialPage, "ip lookup VisitorId not found.", "update visitor");
+                        logError2(ipData.VisitorId, "BUG", ipData.InitialPage, "ip lookup VisitorId not found.", "update visitor/" + calledFrom);
                     }
                 }
                 else {
-                    logActivity2(ipData.VisitorId, "IPJ", ipData.InitialPage, updateVisitorSuccessModel.Success, "update visitor");
-                    logError2(ipData.VisitorId, "AJX", ipData.InitialPage, updateVisitorSuccessModel.Success, "update visitor");
+                    logActivity2(ipData.VisitorId, "IPJ", ipData.InitialPage, updateVisitorSuccessModel.Success);
+                    logError2(ipData.VisitorId, "AJX", ipData.InitialPage, updateVisitorSuccessModel.Success, "update visitor/" + calledFrom);
                 }
             },
             error: function (jqXHR) {

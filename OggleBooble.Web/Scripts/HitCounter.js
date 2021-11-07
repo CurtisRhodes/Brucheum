@@ -1,6 +1,7 @@
 ﻿let freePageHitsAllowed = 500, freeImageHitsAllowed = 2500;
 
-function logImageHit(linkId, folderId, isInitialHit) {
+function logImageHit(
+    linkId, folderId, visitorId, isInitialHit) {
     try {
         if (isNullorUndefined(folderId)) {
             logError("IHF", folderId, "linkId: " + linkId, "log ImageHit");
@@ -10,7 +11,8 @@ function logImageHit(linkId, folderId, isInitialHit) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
             data: {
-                VisitorId: getCookieValue("VisitorId", "log ImageHit"),
+                //VisitorId: getCookieValue("VisitorId", "log ImageHit"),
+                VisitorId: visitorId,
                 FolderId: folderId,
                 LinkId: linkId,
                 IsInitialHit: isInitialHit
@@ -67,7 +69,7 @@ function logIpHit(visitorId, ipAddress, folderId) {
             }
         });
     } catch (e) {
-        logError2(create_UUID(), "CAT", folderId, e, "log IpHit");
+        logError("CAT", folderId, e, "log IpHit");
     }
 }
 

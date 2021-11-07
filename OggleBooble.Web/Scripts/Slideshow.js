@@ -1,7 +1,7 @@
 ﻿let exploderInterval, slideShowSpeed = 5000, viewerH = 50, viewerW = 50, viewerT = 0, viewerL = 0, windowW = $(window).width(), windowH = $(window).height(),
     Xincrimentor = 15, Yincrimentor = 10, exploderSpeed = 18, imageViewerFolderId, imageViewerArray = {}, imageViewerIndex = 0, imageViewerIntervalTimer,
     imageViewerFolderName, albumFolderId, spSlideShowRunning, spSessionCount = 0, slideShowButtonsActive = false, spIncludeSubFolders, slideshowSpped = 570,
-    slideshowImgSrc = new Image(), tempImgSrc = new Image();
+    slideshowImgSrc = new Image(), tempImgSrc = new Image(), ssVisitorId;
 
 function logSSImageHit(linkId, folderId, isInitialHit) {
     try {
@@ -10,7 +10,6 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
             return;
         }
 
-        let stepVis = getCookieValue("VisitorId", "log SSImageHit");
         if (isNullorUndefined(stepVis)) {
             stepVis = "vs kludge";
             logError("BUG", folderId, "VisitorId null in this kludge", "log SSImageHit");
@@ -20,7 +19,7 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
             type: "POST",
             url: settingsArray.ApiServer + "api/Common/LogImageHit",
             data: {
-                VisitorId: stepVis,
+                VisitorId: ssVisitorId,
                 FolderId: folderId,
                 LinkId: linkId,
                 IsInitialHit: isInitialHit
@@ -60,6 +59,8 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
 function launchViewer(folderId, startItem, includeSubFolders) {
     spSlideShowRunning = false;
     imageViewerFolderId = folderId;
+    ssVisitorId = getCookieValue("VisitorId", "launch Viewer");
+
     if (isNullorUndefined(includeSubFolders)) includeSubFolders = false;
     spIncludeSubFolders = includeSubFolders;
     spSessionCount = 0;
@@ -103,7 +104,7 @@ function getSlideshowItems(folderId, startItem) {
                         }
                     };
                     if (typeof logImageHit === 'function')
-                        logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, true);
+                        logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, ssVisitorId, true);
                     else {
                         logSSImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, true);
                     }
@@ -271,7 +272,7 @@ function slide(direction) {
                                 $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                             }
                             else {
-                                if (isInRole("sert")) {
+                                if (isInRole("sert", "slide")) {
                                     $.ajax({
                                         type: "GET",
                                         url: settingsArray.ApiServer + "api/Links/GetLinkCount?imageLinkId=" + imageViewerArray[imageViewerIndex].LinkId,

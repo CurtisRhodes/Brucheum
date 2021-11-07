@@ -292,7 +292,8 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
 }
 
 function logActivity(activityCode, folderId, calledFrom) {    
-    logActivity2(getCookieValue("VisitorId", "logActivity"), activityCode, folderId, calledFrom);
+    let vid = getCookieValue("VisitorId", "logActivity");
+    logActivity2(vid, activityCode, folderId, calledFrom);
 }
 
 function logActivity2(visitorId, activityCode, folderId, calledFrom) {
@@ -312,7 +313,7 @@ function logActivity2(visitorId, activityCode, folderId, calledFrom) {
             }
             else {
                 if (success.indexOf("Duplicate entry") > 0) {
-                    logActivity2(visitorId, "DAE", folderId, "activity code: " + activityCode + ". calledFrom: " + calledFrom);
+                    //logActivity2(visitorId, "DAE", folderId, "activity code: " + activityCode + ". calledFrom: " + calledFrom);
                     //logError2(visitorId, "DUP", folderId, "Duplicate entry: " + activityCode, "log activity/" + calledFrom);
                 }
                 else
@@ -656,25 +657,25 @@ function getCookieValue(itemName, calledFrom) {
             let storageValue = localStorage[itemName];
             if (!isNullorUndefined(storageValue)) {
                 if (itemName == "VisitorId")
-                    logActivity2(returnValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
+                    logActivity2(storageValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
                 else
-                    logActivity2("unknown", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass                
-                setCookieValue(itemName, returnValue, "GET CookieValue/" + calledFrom);
-                returnValue = storageValue
+                    logActivity2("unavailable", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass
+                //setCookieValue(itemName, returnValue, "GET CookieValue/" + calledFrom);
+                returnValue = storageValue;
             }
             else {
                 if (navigator.cookieEnabled) { // user accepts cookies
                     if (calledFrom != "verify session")
-                        logError2(create_UUID(), "CK2", 703245, "itemName: " + itemName + "  localStorage[itemName]: " + localStorage[itemName], "GET CookieValue/" + calledFrom); // cookies enabled. No local storage bypass
+                        logError2("unavailable", "CK2", 703245, "itemName: " + itemName + "  localStorage[itemName]: " + localStorage[itemName], "GET CookieValue/" + calledFrom); // cookies enabled. No local storage bypass
                 }
                 else {
-                    logError2(create_UUID(), "CK3", 703245, "itemName: " + itemName, "GET CookieValue/" + calledFrom); // cookies NOT enabled. No local storage bypass
+                    logError2("unavailable", "CK3", 703245, "itemName: " + itemName, "GET CookieValue/" + calledFrom); // cookies NOT enabled. No local storage bypass
                 }
             }
         }
     }
     catch (e) {
-        logError2(create_UUID(), "CAT", 616329, e, "get CookieValue/" + calledFrom);
+        logError2("unavailable", "CAT", 616329, e, "get CookieValue/" + calledFrom);
     }
     return returnValue;
 }

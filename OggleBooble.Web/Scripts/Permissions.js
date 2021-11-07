@@ -1,4 +1,4 @@
-﻿function isInRole(roleName) {
+﻿function isInRole(roleName, calledFrom) {
     try {
 
         if (isNullorUndefined(window.localStorage)) {
@@ -8,18 +8,19 @@
             return false;
         }
 
-        if (isNullorUndefined(window.localStorage["IsLoggedIn"])) {
-            loadUserProfile(61071, "is InRole");
+        if (isNullorUndefined(window.localStorage["UserRole"])) {
+            return false;
+            //loadUserProfile(61071, "is InRole");
         }
 
         if (!window.localStorage["UserName"] == "unregistered") {
             return false;
         }
 
-        if (!window.localStorage["IsLoggedIn"] == "false") {
-            //logError("BUG", 30578, "bool false THIS WORKED  localStorage[IsLoggedIn]:" + localStorage["IsLoggedIn"], "isInRole/" + calledFrom);
-            return false;
-        }
+        //if (!window.localStorage["IsLoggedIn"] == "false") {
+        //    //logError("BUG", 30578, "bool false THIS WORKED  localStorage[IsLoggedIn]:" + localStorage["IsLoggedIn"], "isInRole/" + calledFrom);
+        //    return false;
+        //}
 
         if (window.localStorage["UserRole"] == "admin")
             return true;
@@ -28,7 +29,7 @@
             return true;
     }
     catch (e) {
-        logError2(create_UUID(), "CAT", 602537, e, "is InRole");
+        logError("CAT", 602537, e, "is InRole/" + calledFrom + ": " + roleName);
         return false;
     }
 }
