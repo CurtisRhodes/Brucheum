@@ -40,6 +40,7 @@ function validateLogin() {
 
 function attemptLogin() {
     if (validateLogin()) {
+        let visitorId = getCookieValue("VisitorId", "attempt Login")
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Login/VerifyLogin?userName=" + $("#txtLoginUserName").val() + "&passWord=" + $("#txtLoginClearPassword").val(),
@@ -48,7 +49,7 @@ function attemptLogin() {
                     $("#vailShell").hide();
                     $("#centeredDialogContainer").hide();
                     setCookieValue("IsLoggedIn", "true", "attempt Login");
-                    setCookieValue("VisitorId", loginSuccess.VisitorId, "attempt Login");
+                    //setCookieValue("VisitorId", loginSuccess.VisitorId, "attempt Login");
 
                     localStorage["IsLoggedIn"] = "true";
                     localStorage["UserName"] = loginSuccess.UserName;
@@ -63,8 +64,11 @@ function attemptLogin() {
                     displayStatusMessage("ok", "thanks for logging in " + localStorage["UserName"]);
 
                     //if (document.domain == "localhost") alert("ok", "thanks for logging in " + userName);
-                    console.log("attempt Login. IsloggedIn: " + localStorage["IsLoggedIn"] + "UserName: " +
-                        localStorage["UserName"] + " UserRole: " + localStorage["UserRole"]);
+                    //    console.log("attempt Login. IsloggedIn: " + localStorage["IsLoggedIn"] + "UserName: " +
+                    //        localStorage["UserName"] + " UserRole: " + localStorage["UserRole"]);
+
+                    sendEmail("CurtishRhodes@hotmail.com", "SomeoneLoggedIn@Ogglebooble.com", "Successful login",
+                        "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visitorId);
                 }
                 else
                 {
@@ -259,56 +263,53 @@ function attemptRegister() {
                         //console.log("registerdUserSuccessModel.RegisterStatus: " + registerdUserSuccessModel.RegisterStatus);
 
                         if (registerdUserSuccessModel.RegisterStatus == "user name already exists") {
-                           $('#errRegisterUserName').html("user name already exists").show();
+                            $('#errRegisterUserName').html("user name already exists").show();
                             return;
                         }
 
                         if (registerdUserSuccessModel.RegisterStatus == "VisitorId not found") {
                             logError2(visitorId, "BUG", 5454, "VisitorId not found", "attempt Register");
-                            alert("visitorId: " + visitorId + "not found");
+                            alert("visitorId not found");
                             if (typeof resume === 'function') resume();
                             $("#vailShell").hide();
                             $("#customMessageContainer").hide();
                             return;
                         }
 
-                        if (registerdUserSuccessModel.RegisterStatus == "visitorId already registered") {
-                            logError2(visitorId, "BUG", 5454, "visitorId already registered", "attempt Register");
-                            // alert("visitorId: " + visitorId + " already registered");
+                        if (registerdUserSuccessModel.RegisterStatus == "VisitorId already registered") {
+                            //$('#errRegisterUserName').html("VisitorId already registered").show();
+                            //logError2(visitorId, "BUG", 5454, "VisitorId not found", "attempt Register");
+                            alert("VisitorId already registered");
+                            if (typeof resume === 'function') resume();
                             $("#vailShell").hide();
                             $("#customMessageContainer").hide();
                             return;
                         }
 
-                        if (registerdUserSuccessModel.RegisterStatus == "admin override") {
-                            setCookieValue("VisitorId", registerdUserSuccessModel.NewVisitorId, "admin override");
+                        if (registerdUserSuccessModel.RegisterStatus == "user successfully registered") {
+                            if (typeof resume === 'function') resume();
+                            $("#vailShell").hide();
+                            $("#customMessageContainer").hide();
+
+                            //setCookieValue("VisitorId")
+                            localStorage["IsLoggedIn"] = "true";
+                            localStorage["UserName"] = userInfo.UserName;
+                            localStorage["UserRole"] = userInfo.UserRole;
+
+                            $('#spnUserName').html(localStorage["UserName"]);
+                            $('#optionNotLoggedIn').hide();
+                            $('#optionLoggedIn').show();
+                            $('#footerCol5').show();
+
+                            logActivity("LG4", 713654, registerdUserSuccessModel.RegisterStatus); // Someone Registerd !!!
+                            sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
+                                "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visitorId +
+                                "<br/>" + registerdUserSuccessModel.RegisterStatus);
                         }
-
-                        if (registerdUserSuccessModel.RegisterStatus == "new VisitorId created") {
-                            setCookieValue("VisitorId", registerdUserSuccessModel.NewVisitorId, "AddRegisterUser");
-                        }
-                        if (typeof resume === 'function') resume();
-                        $("#vailShell").hide();
-                        $("#customMessageContainer").hide();
-
-                        //setCookieValue("VisitorId")
-                        localStorage["IsLoggedIn"] = "true";
-                        localStorage["UserName"] = userInfo.UserName;
-                        localStorage["UserRole"] = userInfo.UserRole;
-
-                        $('#spnUserName').html(localStorage["UserName"]);
-                        $('#optionNotLoggedIn').hide();
-                        $('#optionLoggedIn').show();
-                        $('#footerCol5').show();
-
-                        logActivity("LG4", 713654, registerdUserSuccessModel.RegisterStatus); // Someone Registerd !!!
-                        sendEmail("CurtishRhodes@hotmail.com", "SomeoneRegisterd@Ogglebooble.com", "Someone Registerd !!!",
-                            "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visitorId +
-                            "<br/>" + registerdUserSuccessModel.RegisterStatus);
                     }
                     else {
-                        logActivity("LGX", 713703, "attempt Login");
-                        logError("AJX", 0, registerdUserSuccessModel.Success, "attempt Login");
+                        logActivity("LGX", 713703, "attempt Register");
+                        logError("AJX", 0, registerdUserSuccessModel.Success, "attempt Register");
                     }
                 },
                 error: function (jqXHR) {
@@ -316,8 +317,8 @@ function attemptRegister() {
                     $("#vailShell").hide();
                     $("#centeredDialogContainer").hide();
                     let errMsg = getXHRErrorDetails(jqXHR);
-                    if (!checkFor404(errMsg, folderId, "attempt Login"))
-                        logError("XHR", 0, errMsg, "attempt Login");
+                    if (!checkFor404(errMsg, folderId, "attempt Register"))
+                        logError("XHR", 0, errMsg, "attempt Register");
                 }
             });
         }

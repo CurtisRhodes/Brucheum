@@ -52,6 +52,8 @@ function logAPageHit(folderId, visitorId, calledFrom) {
                 if (pageHitSuccess.Success === "ok") {
                     switch (pageHitSuccess.ReturnMessage) {
                         case "ok":
+                            logActivity2(visitorId, "PH1", folderId, "log A PageHit/" + calledFrom);
+
                             if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
                                 let cf = "PageHits: " + pageHitSuccess.PageHits + " Country: " + pageHitSuccess.VisitorCountry;
                                 logActivity2(visitorId, "PH4", folderId, cf); // pageHits > 3 and country=="ZZ"
@@ -59,20 +61,10 @@ function logAPageHit(folderId, visitorId, calledFrom) {
                             }
                             break;
                         case "duplicate hit":
-                            logActivity2(visitorId, "PH5", folderId, "at:" + now());
-                            break;
-                        case "Visitor not found but exists":
-                            logActivity2(visitorId, "PH2", folderId, "log A PageHit/" + calledFrom);
-                            break;
-                        case "VisitorId not found added":
-                            logActivity2(visitorId, "PH3", folderId, "log A PageHit/" + calledFrom);
-                            break;
-                        case "Visitor not found fail":
                             logActivity2(visitorId, "PH5", folderId, "log A PageHit/" + calledFrom);
                             break;
-                        case "invalid VisitorId not found":
-                            logActivity2(visitorId, "PH1", folderId, "log A PageHit/" + calledFrom);
-                            //logError2(visitorId, "BUG", folderId, "Bad VisitorId", "log A PageHit");
+                        case "VisitorId not found":
+                            logActivity2(visitorId, "PH2", folderId, "log A PageHit/" + calledFrom);
                             break;
                         default:
                             logError2(visitorId, "SWT", "Return message: " + pageHitSuccess.ReturnMessage, "log A PageHit/" + calledFrom);
@@ -81,7 +73,7 @@ function logAPageHit(folderId, visitorId, calledFrom) {
                     }
                 }
                 else {
-                    logActivity2(visitorId, "PH8", folderId, "log A PageHit/" + calledFrom);  // page hit ajax error
+                    logActivity2(visitorId, "PH8", folderId, pageHitSuccess.Success);  // page hit ajax error
                     logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log A PageHit/" + calledFrom);
                 }
             },

@@ -280,9 +280,10 @@ function showHideGalleries() {
 }
 
 function refreshRandomGalleries() {
+    let visitorId = getCookieValue("VisitorId", "refresh RandomGalleries")
     loadRandomGalleries();
     logActivity("RRG", 555, "index page");
-    sendEmail("CurtishRhodes@hotmail.com", "button_click7775@yahoo.com", "Random Galleries Refreshed", "<br/>visitor: " + getCookieValue("VisitorId"));
+    sendEmail("CurtishRhodes@hotmail.com", "button_click7775@Ogglebooble.com", "Random Galleries Refreshed", "<br/>visitor: " + visitorId);
 }
 
 function randomGalleriesImageError(folderId, imgSrc) {

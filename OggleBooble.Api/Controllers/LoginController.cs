@@ -63,84 +63,44 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    registerdUserSuccessModel.RegisterStatus = "user successfully registered";
-                    var dbRegisteredUserUserName = db.RegisteredUsers.Where(u => u.UserName == newRegisteredUserModel.UserName).FirstOrDefault();
-                    if (dbRegisteredUserUserName != null)
+                    var dbVisitor = db.Visitors.Where(v => v.VisitorId == newRegisteredUserModel.VisitorId).FirstOrDefault();
+                    if (dbVisitor == null)
                     {
-                        registerdUserSuccessModel.RegisterStatus = "user name already exists";
-                        registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
-                        registerdUserSuccessModel.Success = "ok";
-                        return registerdUserSuccessModel;
+                        registerdUserSuccessModel.RegisterStatus = "VisitorId not found";
                     }
-
-                    // check for troubled visitorId
-                    if ((newRegisteredUserModel.VisitorId == null) ||
-                        (newRegisteredUserModel.VisitorId.IndexOf("cookie not found") > -1) ||
-                        (newRegisteredUserModel.VisitorId.IndexOf("user does not accept cookies") > -1) ||
-                        (newRegisteredUserModel.VisitorId=="boogers") ||
-                        (newRegisteredUserModel.VisitorId == "unknown"))
-                    { 
-                        newRegisteredUserModel.VisitorId = Guid.NewGuid().ToString();
-                        Visitor newVisitor = new Visitor()
-                        {
-                            VisitorId = newRegisteredUserModel.VisitorId,
-                            IpAddress = "00.00.00",
-                            City = "unknown",
-                            Region = "register",
-                            Country = "ZZ",
-                            GeoCode = "unknown",
-                            InitialPage = 0
-                        };
-                        db.Visitors.Add(newVisitor);
-                        db.SaveChanges();
-                        registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
-                        registerdUserSuccessModel.RegisterStatus = "new VisitorId created";
-                    }
-                    else {
-                        Visitor visitor = db.Visitors.Where(v => v.VisitorId == newRegisteredUserModel.VisitorId).FirstOrDefault();
-                        if (visitor == null) {
-                            registerdUserSuccessModel.RegisterStatus = "VisitorId not found";
-                            registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
-                            registerdUserSuccessModel.Success = "ok";
-                            return registerdUserSuccessModel;
-                        }
-                    }
-
-                    RegisteredUser dbUserVisitorId = db.RegisteredUsers.Where(u => u.VisitorId == newRegisteredUserModel.VisitorId).FirstOrDefault();
-                    if (dbUserVisitorId != null)
+                    else
                     {
-                        if (dbUserVisitorId.UserRole == "admin")
-                        {
-                            registerdUserSuccessModel.RegisterStatus = "admin override";
-                            newRegisteredUserModel.VisitorId = Guid.NewGuid().ToString();
-                            registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
-                        }
+                        var dbRegisteredUserUserName = db.RegisteredUsers.Where(u => u.UserName == newRegisteredUserModel.UserName).FirstOrDefault();
+                        if (dbRegisteredUserUserName != null)
+                            registerdUserSuccessModel.RegisterStatus = "user name already exists";
                         else
                         {
-                            registerdUserSuccessModel.RegisterStatus = "visitorId already registered";
-                            registerdUserSuccessModel.NewVisitorId = newRegisteredUserModel.VisitorId;
-                            registerdUserSuccessModel.Success = "ok";
-                            return registerdUserSuccessModel;
+                            var dbRegisteredVisitorId = db.RegisteredUsers.Where(u => u.VisitorId == newRegisteredUserModel.VisitorId).FirstOrDefault();
+                            if (dbRegisteredVisitorId != null)
+                                registerdUserSuccessModel.RegisterStatus = "VisitorId already registered";
+                            else
+                            {
+                                var newRegisteredUser = new RegisteredUser()
+                                {
+                                    VisitorId = newRegisteredUserModel.VisitorId,
+                                    UserName = newRegisteredUserModel.UserName,
+                                    UserRole = newRegisteredUserModel.UserRole,
+                                    UserCredits = newRegisteredUserModel.UserCredits,
+                                    Status = newRegisteredUserModel.Status,
+                                    IsLoggedIn = true,
+                                    Email = newRegisteredUserModel.Email,
+                                    FirstName = newRegisteredUserModel.FirstName,
+                                    LastName = newRegisteredUserModel.LastName,
+                                    Created = DateTime.Now,
+                                    Pswrd = HashSHA256(newRegisteredUserModel.Pswrd)
+                                };
+                                db.RegisteredUsers.Add(newRegisteredUser);
+                                db.SaveChanges();
+                                registerdUserSuccessModel.RegisterStatus = "user successfully registered";
+                            }
                         }
+                        registerdUserSuccessModel.Success = "ok";
                     }
-                    var newRegisteredUser = new RegisteredUser()
-                    {
-                        VisitorId= newRegisteredUserModel.VisitorId,
-                        UserName = newRegisteredUserModel.UserName,
-                        UserRole = newRegisteredUserModel.UserRole,
-                        UserCredits = newRegisteredUserModel.UserCredits,
-                        Status = newRegisteredUserModel.Status,
-                        IsLoggedIn = true,
-                        Email = newRegisteredUserModel.Email,
-                        FirstName = newRegisteredUserModel.FirstName,
-                        LastName = newRegisteredUserModel.LastName,
-                        Created = DateTime.Now,
-                        Pswrd = HashSHA256(newRegisteredUserModel.Pswrd)
-                    };
-
-                    db.RegisteredUsers.Add(newRegisteredUser);
-                    db.SaveChanges();
-                    registerdUserSuccessModel.Success = "ok";
                 }
             }
             catch (Exception ex) { registerdUserSuccessModel.Success = Helpers.ErrorDetails(ex); }

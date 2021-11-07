@@ -60,53 +60,21 @@ namespace OggleBooble.Api.Controllers
             PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
             try
             {
-                pageHitSuccessModel.ReturnMessage = "ok";
-                string visitorCountry = "QQ";
                 using (var db = new OggleBoobleMySqlContext())
                 {
+                    pageHitSuccessModel.ReturnMessage = "ok";
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
                     {
-                        try
-                        {
-                            Guid guidOutput;
-                            bool isValid = Guid.TryParse(visitorId, out guidOutput);
-                            if (isValid)
-                            {
-                                db.Visitors.Add(new Visitor()
-                                {
-                                    VisitorId = visitorId,
-                                    IpAddress = DateTime.UtcNow.Ticks.ToString().Substring(8),
-                                    GeoCode = "unknown",
-                                    Country = "ZZ",
-                                    City = "added in log page hit",
-                                    Region = "PP",
-                                    InitialVisit = DateTime.Now,
-                                    InitialPage = folderId
-                                });
-                                db.SaveChanges();
-                                pageHitSuccessModel.ReturnMessage = "VisitorId not found added";
-                            }
-                            else
-                            {
-                                pageHitSuccessModel.ReturnMessage = "invalid VisitorId not found";
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            pageHitSuccessModel.ReturnMessage = Helpers.ErrorDetails(ex);
-                            if (pageHitSuccessModel.ReturnMessage.IndexOf("Duplicate") > -1)
-                                pageHitSuccessModel.ReturnMessage = "Visitor not found but exists";
-                        }
+                        pageHitSuccessModel.ReturnMessage = "VisitorId not found";
+                        visitorId = "00000880-0000-0000-0000-UNKNOWN";
                     }
-                    else
-                        visitorCountry = dbVisitor.Country;
 
                     var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
                     PageHit lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
                     if (lastHit == null)
                     {
-                        pageHitSuccessModel.VisitorCountry = visitorCountry;
+                        pageHitSuccessModel.VisitorCountry = dbVisitor.Country;
                         pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId).Count();
                         db.PageHits.Add(new PageHit()
                         {
