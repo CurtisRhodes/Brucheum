@@ -633,6 +633,10 @@ function weDemandCookies() {
 
 function getCookieValue(itemName, calledFrom) {
     let returnValue = "cookie not found";
+    if (document.domain == "localhost" && itemName == "VisitorId") {
+        return "ec6fb880-ddc2-4375-8237-021732907510";
+    }
+
     try {
         let decodedCookie = decodeURIComponent(document.cookie);
         let cookieElements = decodedCookie.split(";");

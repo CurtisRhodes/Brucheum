@@ -432,33 +432,41 @@ function updateVisitor(ipData, calledFrom) {
             type: "PUT",
             url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
             data: ipData,
-            success: function (updateVisitorSuccessModel) {
-                if (updateVisitorSuccessModel.Success == "ok") {
-                    switch (updateVisitorSuccessModel.ReturnValue) {
-                        case "VisitorId not found":
-                            logActivity2(create_UUID(), "IPB", ipData.InitialPage, calledFrom); // ip lookup VisitorId not found. 
-                            break;  // 1
-                        case "New Ip Visitor Updated":
-                            if (calledFrom == "ipinfo")
-                                logActivity2(ipData.VisitorId, "IA2", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
-                            else
-                                logActivity2(ipData.VisitorId, "IP2", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
-                            break;  // 2
-                        case "Duplicate Ip":
-                            if (calledFrom == "ipinfo")
-                                logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IA3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
-                            else
-                                logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
-                            setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId, "update visitor");
-                            break;  // 3
-                        case "bad duplicate Ip":
-                            logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP4", ipData.InitialPage, ipData.VisitorId); // Duplicate IP Bad Info
-                            setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId, "update visitor");
-                            break;  // 4
-                        default:
-                            logActivity2(ipData.VisitorId, "IPS", ipData.InitialPage, "update visitor"); // Switch Case Problem
-                            logError2(ipData.VisitorId, "SWT", ipData.InitialPage, updateVisitorSuccessModel.ReturnValue, "update visitor");
-                            break;
+            success: function (updateVisitorSuccess) {
+                if (updateVisitorSuccess.Success == "ok") {
+                    if (updateVisitorSuccess.VisitorIdExits) {
+                        "Existing Ip Visitor Updated"
+                        switch (updateVisitorSuccessModel.ReturnValue) {
+                            case "New Ip Visitor Updated":
+                                if (calledFrom == "ipinfo")
+                                    logActivity2(ipData.VisitorId, "IA2", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
+                                else
+                                    logActivity2(ipData.VisitorId, "IP2", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
+                                break;  // 2
+                            case "Existing Ip Visitor Updated":
+                                if (calledFrom == "ipinfo")
+                                    logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IA3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
+                                else
+                                    logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP3", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
+
+                                setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId, "update visitor");
+                                break;  // 3
+                            case "Existing Ip Used":
+                                if (calledFrom == "ipinfo")
+                                    logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IA4", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
+                                else
+                                    logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "IP4", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
+                                setCookieValue("VisitorId", updateVisitorSuccessModel.ComprableIpAddressVisitorId, "update visitor");
+                                break;  // 4
+                            default:
+                                logActivity2(ipData.VisitorId, "IPS", ipData.InitialPage, "update visitor"); // Switch Case Problem
+                                logError2(ipData.VisitorId, "SWT", ipData.InitialPage, updateVisitorSuccessModel.ReturnValue, "update visitor");
+                                break;
+                        }
+                    }
+                    else {
+                        logActivity2(ipData.VisitorId, "IPB", ipData.InitialPage, calledFrom); // ip lookup VisitorId not found.
+                        logError2(ipData.VisitorId, "BUG", ipData.InitialPage, "ip lookup VisitorId not found.", "update visitor");
                     }
                 }
                 else {
@@ -470,12 +478,12 @@ function updateVisitor(ipData, calledFrom) {
                 logActivity2(create_UUID(), "IPE", 555, "update visitor/" + calledFrom); // Add Visitor XHR error
                 let errMsg = getXHRErrorDetails(jqXHR);
                 if (!checkFor404(errMsg, 555, "update visitor/" + calledFrom))
-                    logError2(create_UUID(), "XHR", 55, errMsg, "update visitor/" + calledFrom);
+                    logError2(create_UUID(), "XHR", ipData.InitialPage, errMsg, "update visitor/" + calledFrom);
             }
         });
     }
     catch (e) {
-        logActivity2(create_UUID(), "IUC", 1022842, "Update Visitor/" + calledFrom); // catch error
-        logError2(create_UUID(), "CAT", 621241, e, "Update Visitor/" + calledFrom);
+        logActivity2(ipData.VisitorId, "IUC", ipData.InitialPage, "Update Visitor/" + calledFrom); // catch error
+        logError2(ipData.VisitorId, "CAT", ipData.InitialPage, e, "Update Visitor/" + calledFrom);
     }
 }

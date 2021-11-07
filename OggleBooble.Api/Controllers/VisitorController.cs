@@ -46,17 +46,15 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Visitor/UpdateVisitor")]
-        public VerifyVisitorSuccessModel UpdateVisitor(AddVisitorModel visitorData) {
-            var updateVisitorSuccessModel = new VerifyVisitorSuccessModel();
+        public UpdateVisitorSuccessModel UpdateVisitor(AddVisitorModel visitorData) {
+            var updateVisitorSuccessModel = new UpdateVisitorSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor visitor1 = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
                     if (visitor1 == null)
-                    {
-                        updateVisitorSuccessModel.ReturnValue = "VisitorId not found";
-                    }
+                        updateVisitorSuccessModel.VisitorIdExits = false;
                     else
                     {
                         Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
@@ -74,7 +72,6 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
-                            updateVisitorSuccessModel.ReturnValue = "Duplicate Ip";
                             visitor2.IpAddress = visitorData.IpAddress;
                             if ((visitor2.Country == "ZZ") && (visitor1.Country != "ZZ"))
                             {
@@ -82,23 +79,17 @@ namespace OggleBooble.Api.Controllers
                                 visitor2.Country = visitorData.Country;
                                 visitor2.GeoCode = visitorData.GeoCode;
                                 visitor2.Region = visitorData.Region;
-                                updateVisitorSuccessModel.ReturnValue = "bad duplicate Ip";
-
-                                db.ActivityLogs.Add(new ActivityLog()
-                                {
-                                    ActivityCode = "IP1",
-                                    VisitorId = visitor2.VisitorId,
-                                    FolderId = visitor1.InitialPage,
-                                    Occured = DateTime.Now,
-                                    CalledFrom = "Update Controller"
-                                });
+                                updateVisitorSuccessModel.ReturnValue = "Existing Ip Visitor Updated";
                             }
+                            else
+                                updateVisitorSuccessModel.ReturnValue = "Existing Ip Used";
+
                             if (visitor2.InitialPage == 0)
                                 visitor2.InitialPage = visitorData.InitialPage;
 
                             db.Visitors.Remove(visitor1);
                             db.SaveChanges();
-                            updateVisitorSuccessModel.ComprableIpAddressVisitorId = visitor2.VisitorId;
+                            updateVisitorSuccessModel.DupeIpAddressVisitorId = visitor2.VisitorId;
                         }
                     }
                 }
@@ -215,58 +206,32 @@ namespace OggleBooble.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Visitor/VerifyVisitorId")]
-        public bool VerifyVisitorId(string visitorId)
-        {
-            bool visitorIdExists = false;
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                    if (dbVisitor != null)
-                        visitorIdExists = true;
-
-                }
-            return visitorIdExists;
-        }
-
-
-        [HttpGet]
         [Route("api/Visitor/VerifyVisitor")]
         public VerifyVisitorSuccessModel VerifyVisitor(string visitorId)
         {
-            var successModel = new VerifyVisitorSuccessModel();
+            var verifyVisitorSuccess = new VerifyVisitorSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                    if (dbVisitor != null)
-                    {
-                        successModel.ReturnValue = "visitorId ok";
-                        //if (dbVisitor.Country == "ZZ") successModel.ReturnValue = "unknown country";
-                    }
-                    else { 
-                        RetiredVisitor dbRetiredVisitor = db.RetiredVisitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
-                        if (dbRetiredVisitor != null)
-                        {
-                            var dbComprableIpAddressVisitor = db.Visitors.Where(v => v.IpAddress == dbRetiredVisitor.IpAddress).FirstOrDefault();
-                            if (dbComprableIpAddressVisitor != null)
-                            {
-                                successModel.ComprableIpAddressVisitorId = dbComprableIpAddressVisitor.VisitorId;
-                                successModel.ReturnValue = "retired visitor";
-                            }
-                            else {
-                                successModel.ReturnValue = "retired visitor comparable not found";
-                            }
+                    if (dbVisitor == null)
+                        verifyVisitorSuccess.VisitorIdExits = false;
+                    else {
+                        verifyVisitorSuccess.VisitorIdExits = true;
+                        verifyVisitorSuccess.Country = dbVisitor.Country;
+                        var dbRegisterUser = db.RegisteredUsers.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                        if (dbRegisterUser == null)
+                            verifyVisitorSuccess.IsRegisteredUser = false;
+                        else {
+                            verifyVisitorSuccess.IsRegisteredUser = true;
                         }
-                        else
-                            successModel.ReturnValue = "not found";
                     }
                 }
-                successModel.Success = "ok";
+                verifyVisitorSuccess.Success = "ok";
             }
-            catch (Exception ex) { successModel.Success = Helpers.ErrorDetails(ex); }
-            return successModel;
+            catch (Exception ex) { verifyVisitorSuccess.Success = Helpers.ErrorDetails(ex); }
+            return verifyVisitorSuccess;
         }
 
         [HttpGet]
