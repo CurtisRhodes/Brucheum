@@ -1,7 +1,7 @@
 ﻿
 function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
-        logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom);
+        // logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom);
 
         $.ajax({
             type: "GET",
@@ -29,7 +29,7 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                             getIpInfo(folderId, visitorId, calledFrom);
                             break;
                         case "too many page hits":
-                            logActivity2(visitorId, "I0I", folderId, "tryAddNewIP/" + calledFrom);
+                            logActivity2(visitorId, "I0A", folderId, "too many page hits. tryAddNewIP/" + calledFrom);
                             break;
                         case "country not ZZ":
                             logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
@@ -120,7 +120,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
             error: function (jqXHR) {
                 ipCall0Returned = true;
                 let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity2(visitorId, "IAE", folderId, errMsg); // XHR error
+                //logActivity2(visitorId, "IAE", folderId, errMsg); // XHR error
 
                 if (errMsg.indexOf("Rate limit exceeded") > 0) {
                     logActivity2(visitorId, "IA5", folderId, "get IpInfo/" + calledFrom); // lookup limit exceeded
@@ -442,7 +442,6 @@ function updateVisitor(ipData, calledFrom) {
             success: function (updateVisitorSuccess) {
                 if (updateVisitorSuccess.Success == "ok") {
                     if (updateVisitorSuccess.VisitorIdExits) {
-                        "Existing Ip Visitor Updated"
                         switch (updateVisitorSuccessModel.ReturnValue) {
                             case "New Ip Visitor Updated":
                                 if (calledFrom == "ipinfo")
@@ -473,7 +472,7 @@ function updateVisitor(ipData, calledFrom) {
                     }
                     else {
                         logActivity2(ipData.VisitorId, "IPB", ipData.InitialPage, calledFrom); // ip lookup VisitorId not found.
-                        logError2(ipData.VisitorId, "BUG", ipData.InitialPage, "ip lookup VisitorId not found.", "update visitor/" + calledFrom);
+                        //logError2(ipData.VisitorId, "BUG", ipData.InitialPage, "ip lookup VisitorId not found.", "update visitor/" + calledFrom);
                     }
                 }
                 else {

@@ -16,7 +16,7 @@ function verifySession(folderId, calledFrom) {
         }
 
         if (localSessionIsVerified) {
-            logActivity("VS9", folderId, "verify session"); // session verified
+            //logActivity("VS9", folderId, "verify session"); // session verified
             callAlbumPage(folderId, visitorId, calledFrom);
         }
         else {
@@ -90,6 +90,26 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
                     }
                     else {
                         logActivity2(visitorId, "VV4", folderId, "verify visitor/" + calledFrom); // visitorId not found
+
+                        let newVisitorId = create_UUID();
+                        setCookieValue("VisitorId", newVisitorId, "verify visitor");
+                        let geoCode = "unknown";
+                        if (!navigator.cookieEnabled) {
+                            logActivity2(newVisitorId, "VVa", folderId, "verify session"); // user does not accept cookies
+                            //logError2(newVisitorId, "UNC", folderId, "verify session");
+                            geoCode = "user does not accept cookies";
+                        }
+
+                        addVisitor({
+                            VisitorId: newVisitorId,
+                            IpAddress: Math.floor(Math.random() * 10000000000).toString(),
+                            City: "unverified visitorId",
+                            Country: "ZZ",
+                            Region: "VV",
+                            GeoCode: geoCode,
+                            InitialPage: folderId
+                        }, calledFrom);
+
                         //logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify visitor/" + calledFrom);
                     }
                 }
@@ -126,13 +146,13 @@ function addVisitor(visitorData, calledFrom) {
             data: visitorData,
             success: function (success) {
                 if (success == "ok") {
-                    logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add Visitor/" + calledFrom); // new visitor added
+                  //  logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add Visitor/" + calledFrom); // new visitor added
                     setCookieValue("VisitorId", visitorData.VisitorId, "add Visitor/" + calledFrom);
                     logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor");
                     callAlbumPage(visitorData.InitialPage, visitorData.VisitorId, "add Visitor/" + calledFrom);
 
                     // just for today
-                    tryAddNewIP(visitorData.InitialPage, visitorData.VisitorId, "add Visitor/" + calledFrom);
+                    //tryAddNewIP(visitorData.InitialPage, visitorData.VisitorId, "add Visitor/" + calledFrom);
 
                 }
                 else {

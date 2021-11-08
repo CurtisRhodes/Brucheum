@@ -56,7 +56,7 @@ function logAPageHit(folderId, visitorId, calledFrom) {
                 if (pageHitSuccess.Success === "ok") {
                     switch (pageHitSuccess.ReturnMessage) {
                         case "ok":
-                            logActivity2(visitorId, "PH1", folderId, "log A PageHit/" + calledFrom);
+                            //logActivity2(visitorId, "PH1", folderId, "log A PageHit/" + calledFrom);
 
                             if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
                                 let cf = "PageHits: " + pageHitSuccess.PageHits + " Country: " + pageHitSuccess.VisitorCountry;
