@@ -64,10 +64,47 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
     }
 }
 
-function iii() {
-
-    // https://api.ipify.org/
-
+function tryIpify(folderId, visitorId, calledFrom) {
+    try {
+        $.ajax({
+            type: "GET",
+            url: "https://api.ipify.org",
+            success: function (ipifyRtrnTxt) {
+                if (!isNullorUndefined(ipifyRtrnTxt)) {
+                    $.ajax({
+                        type: "POST",
+                        url: settingsArray.ApiServer + "api/Visitor/Ipify?visitorId=" + visitorId + "&IpAddress=" + ipifyRtrnTxt,
+                        success: function (ipifySuccess) {
+                            if (ipifySuccess == "ok") {
+                            }
+                            else {
+                                if (!ipifySuccess.indexOf("Duplicate") < 0) {
+                                    logActivity2(visitorId, "I0J", folderId, ipifySuccess); // screen candidate Ajax error
+                                    // logError2(visitorId, "AJX", folderId, ipifySuccess, "try Ipify");
+                                }
+                            }
+                        },
+                        error: function (jqXHR) {
+                            let errMsg = getXHRErrorDetails(jqXHR);
+                            if (!checkFor404(errMsg, folderId, "try AddNewIP"))
+                                logError2(create_UUID(), "XHR", folderId, errMsg, "try Ipify");
+                        }
+                    });
+                }
+                else {
+                    logActivity2(visitorId, "I0J", folderId, ipifyRtrnTxt); // screen candidate Ajax error
+                    //logError2(visitorId, "AJX", folderId, visitorModel.Success, "try AddNewIP");
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "try AddNewIP"))
+                    logError2(create_UUID(), "XHR", folderId, errMsg, "try AddNewIP");
+            }
+        });
+    } catch (e) {
+        logError2(visitorId, "CAT", "1023823", e, "tryAddNewIP/" + calledFrom);
+    }
 }
 
 

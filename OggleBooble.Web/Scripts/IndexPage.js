@@ -79,6 +79,7 @@ function loadLatestUpdates() {
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numUpdatedGalleries + "&root=" + spaType,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
+                window.localStorage[spaType + "latestUpdatesCache"] = null;
                 window.localStorage[spaType + "latestUpdatesCache"] = JSON.stringify(latestUpdates.LatestTouchedGalleries);
                 loadLatestUpdateArray(latestUpdates.LatestTouchedGalleries, "ajax");
             }
@@ -127,6 +128,7 @@ function loadRandomGalleries() {
         url: settingsArray.ApiServer + "api/IndexPage/GetRandomGalleries?take=" + randGalleryCount + "&root=" + spaType,
         success: function (randomGalleriesModel) {
             if (randomGalleriesModel.Success === "ok") {
+                window.localStorage[spaType + "latestUpdatesCache"] = null;
                 window.localStorage[spaType + "latestUpdatesCache"] = JSON.stringify(randomGalleriesModel.RandomGalleries);
                 loadRandomGalleriesArray(randomGalleriesModel.RandomGalleries, "ajax");
             }
@@ -316,8 +318,10 @@ function resizeIndexPage() {
 //    alert("winH: " + winH + " headerH: " + headerH + "= " + $('.threeColumnLayout').height());
 
     // height
-    $('#topIndexPageSection').height((winH - headerH - 100));
-    $('#topIndexPageSection').height((winH - headerH) * .65);
+    //$('#topIndexPageSection').height((winH - headerH - 100));
+    //$('#topIndexPageSection').height((winH - headerH) * .65);
+    $('#topIndexPageSection').css("height", (winH - headerH - 100));
+    $('#topIndexPageSection').css("height", (winH - headerH) * .65);
     // width
 
     $('section').css("background-color", "#d5d1ba");

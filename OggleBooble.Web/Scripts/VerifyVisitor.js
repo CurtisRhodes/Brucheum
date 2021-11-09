@@ -331,14 +331,21 @@ function logStaticPageHit(folderId, visitorId, calledFrom) {
 }
 
 function callAlbumPage(folderId, visitorId, calledFrom) {
-    if (calledFrom != "Index.html") {
-        if (calledFrom != "album.html") {
-            if (typeof logStaticPageHit === 'function')
-                logStaticPageHit(folderId, visitorId, calledFrom);
-            else
-                logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "verify session");
+    try {
+        if (calledFrom != "Index.html") {
+            if (calledFrom != "album.html") {
+                if (typeof logStaticPageHit === 'function')
+                    logStaticPageHit(folderId, visitorId, calledFrom);
+                else
+                    logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage");
+            }
+
+            tryIpify(folderId, visitorId, calledFrom);
+
+            loadAlbum(folderId, visitorId, calledFrom);
+            // logActivity("VV3", folderId, "verify session"); // active session new page
         }
-        loadAlbum(folderId, visitorId, calledFrom);
-        // logActivity("VV3", folderId, "verify session"); // active session new page
+    } catch (e) {
+        logError2(visitorId, "CAT", folderId, e,"call AlbumPage")
     }
 }

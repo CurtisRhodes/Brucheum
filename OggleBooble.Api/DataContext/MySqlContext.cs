@@ -69,6 +69,18 @@ namespace OggleBooble.Api.MySqlDataContext
         public virtual DbSet<PlayboyPlusDupe> PlayboyPlusDupes { get; set; }
         public virtual DbSet<VwStaticPageReferral> VwStaticPageReferrals { get; set; }
         public virtual DbSet<DailyPerformance> DailyPerformances { get; set; }
+        public virtual DbSet<Ipfy> Ipfys { get; set; }
+
+
+    }
+
+    [Table("OggleBooble.Ipfy")]
+    public partial class Ipfy
+    {
+        [Key]
+        public string VisitorId { get; set; }
+        public string IpAddress { get; set; }
+        public DateTime Occured { get; set; }
     }
 
     [Table("OggleBooble.DailyPerformance")]

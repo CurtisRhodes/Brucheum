@@ -402,7 +402,12 @@ function setLabelLinks(llIdx) {
 }
 
 function resizeCarousel() {
-    $('#thisCarouselImage').height($('#topIndexPageSection').height() - carouselFooterHeight);
+    let tex = $('#topIndexPageSection').height();
+    if (tex + 100 > carouselFooterHeight) {
+        $('#thisCarouselImage').height($('#topIndexPageSection').height() - carouselFooterHeight);
+    }
+    else
+        console.log("topIndexPageSection.height: " + tex);
     $('.carouselFooter').width($('#thisCarouselImage').width());
     $('.carouselFooter').css("visibility", "visible");
 }
