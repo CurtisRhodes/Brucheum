@@ -30,14 +30,14 @@ namespace OggleBooble.Api.Models
 
     public class UpdateVisitorSuccessModel
     {
-        public bool VisitorIdExits { get; set; }
+        public bool VisitorIdExists { get; set; }
         public string ReturnValue { get; set; }
         public string DupeIpAddressVisitorId { get; set; }
         public string Success { get; set; }
     }
 
     public class VerifyVisitorSuccessModel {
-        public bool VisitorIdExits { get; set; }
+        public bool VisitorIdExists { get; set; }
         public bool IsRegisteredUser { get; set; }
         public string Country { get; set; }
         public string Success { get; set; }

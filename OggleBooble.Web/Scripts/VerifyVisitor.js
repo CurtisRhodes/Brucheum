@@ -80,7 +80,7 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
             url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
             success: function (successModel) {
                 if (successModel.Success == "ok") {
-                    if (successModel.VisitorIdExits) {
+                    if (successModel.VisitorIdExists) {
                         //logActivity2(visitorId, "VV1", 1020222, "verify VisitorId"); // visitor verified ok
                         if (successModel.Country == "ZZ") {
 

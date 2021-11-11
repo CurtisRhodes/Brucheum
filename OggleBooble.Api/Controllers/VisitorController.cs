@@ -54,10 +54,10 @@ namespace OggleBooble.Api.Controllers
                 {
                     Visitor visitor1 = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
                     if (visitor1 == null)
-                        updateVisitorSuccessModel.VisitorIdExits = false;
+                        updateVisitorSuccessModel.VisitorIdExists = false;
                     else
                     {
-                        updateVisitorSuccessModel.VisitorIdExits = true;
+                        updateVisitorSuccessModel.VisitorIdExists = true;
                         Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
                         if (visitor2 == null)
                         {
@@ -244,9 +244,9 @@ namespace OggleBooble.Api.Controllers
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
-                        verifyVisitorSuccess.VisitorIdExits = false;
+                        verifyVisitorSuccess.VisitorIdExists = false;
                     else {
-                        verifyVisitorSuccess.VisitorIdExits = true;
+                        verifyVisitorSuccess.VisitorIdExists = true;
                         verifyVisitorSuccess.Country = dbVisitor.Country;
                         var dbRegisterUser = db.RegisteredUsers.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                         if (dbRegisterUser == null)
