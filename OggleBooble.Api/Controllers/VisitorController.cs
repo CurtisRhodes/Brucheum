@@ -57,6 +57,7 @@ namespace OggleBooble.Api.Controllers
                         updateVisitorSuccessModel.VisitorIdExits = false;
                     else
                     {
+                        updateVisitorSuccessModel.VisitorIdExits = true;
                         Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
                         if (visitor2 == null)
                         {
@@ -102,6 +103,33 @@ namespace OggleBooble.Api.Controllers
             return updateVisitorSuccessModel;
         }
 
+        [HttpPut]
+        [Route("api/Visitor/UpdateIfyVisitor")]
+        public string UpdateIfyVisitor(string visitorId, string ipAddress)
+        {
+            string success;
+            try
+            {
+                using (var db = new OggleBoobleMySqlContext())
+                {
+                    Visitor visitor1 = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
+                    if (visitor1 == null)
+                        success = "VisitorId not exits";
+                    else
+                    {
+                        visitor1.IpAddress = ipAddress;
+                        db.SaveChanges();
+                        success = "ok";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
+            }
+            return success;
+        }
+
         [HttpGet]
         [Route("api/Visitor/ScreenIplookupCandidate")]
         public LookupCandidateModel ScreenIplookupCandidate(string visitorId)
@@ -123,13 +151,13 @@ namespace OggleBooble.Api.Controllers
                     else
                     {
                         var dupeCheck1 = db.ActivityLogs
-                            .Where(a => a.ActivityCode == "IP1" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
+                            .Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
                         if (dupeCheck1 != null)
                         {
-                            var dupeCheck2 = db.ActivityLogs
-                                .Where(a => a.ActivityCode == "IP6" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
-                            if (dupeCheck2 == null)
-                                lookupCandidateModel.lookupStatus = "already looked up today";
+                            //var dupeCheck2 = db.ActivityLogs
+                            //    .Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
+                            //if (dupeCheck2 == null)
+                            lookupCandidateModel.lookupStatus = "already looked up today";
                         }
                         else
                         {

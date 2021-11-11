@@ -4,6 +4,11 @@ function verifySession(folderId, calledFrom) {
     console.log("verifySession(" + folderId + "," + calledFrom + ")");
     let visitorId = "uninitialized";
     try {
+
+        if (typeof getCookieValue != 'function') {
+            logError2(visitorId, "bug", folderId, "getCookieValue not a function", "verify session/" + calledFrom);
+            return;
+        }
         visitorId = getCookieValue("VisitorId", "verify session");
         let localSessionIsVerified;
         try {
@@ -14,7 +19,6 @@ function verifySession(folderId, calledFrom) {
             localSessionIsVerified = isSessionVerified;
             logActivity2(visitorId, "VS6", folderId, e); // session storage fail
         }
-
         if (localSessionIsVerified) {
             //logActivity("VS9", folderId, "verify session"); // session verified
             callAlbumPage(folderId, visitorId, calledFrom);
@@ -79,7 +83,11 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
                     if (successModel.VisitorIdExits) {
                         //logActivity2(visitorId, "VV1", 1020222, "verify VisitorId"); // visitor verified ok
                         if (successModel.Country == "ZZ") {
+
+
                             tryAddNewIP(folderId, visitorId, "verify visitor/" + calledFrom);
+
+
                             logActivity2(visitorId, "VV2", folderId, "verify VisitorId"); // incoming visitor Country=ZZ
                         }
                         if (successModel.IsRegisteredUser) {
@@ -152,7 +160,7 @@ function addVisitor(visitorData, calledFrom) {
                     callAlbumPage(visitorData.InitialPage, visitorData.VisitorId, "add Visitor/" + calledFrom);
 
                     // just for today
-                    //tryAddNewIP(visitorData.InitialPage, visitorData.VisitorId, "add Visitor/" + calledFrom);
+                    tryAddNewIP(visitorData.InitialPage, visitorData.VisitorId, "add Visitor/" + calledFrom);
 
                 }
                 else {
@@ -340,12 +348,12 @@ function callAlbumPage(folderId, visitorId, calledFrom) {
                     logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage");
             }
 
-            tryIpify(folderId, visitorId, calledFrom);
+            //tryIpify(folderId, visitorId, calledFrom);
 
             loadAlbum(folderId, visitorId, calledFrom);
             // logActivity("VV3", folderId, "verify session"); // active session new page
         }
     } catch (e) {
-        logError2(visitorId, "CAT", folderId, e,"call AlbumPage")
+        logError2(visitorId, "CAT", folderId, e, "call AlbumPage");
     }
 }

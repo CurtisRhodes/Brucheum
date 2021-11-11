@@ -10,8 +10,8 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
             return;
         }
 
-        if (isNullorUndefined(stepVis)) {
-            stepVis = "vs kludge";
+        if (isNullorUndefined(ssVisitorId)) {
+            ssVisitorId = "vs kludge";
             logError("BUG", folderId, "VisitorId null in this kludge", "log SSImageHit");
         }
 

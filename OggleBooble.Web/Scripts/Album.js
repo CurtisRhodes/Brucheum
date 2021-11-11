@@ -43,6 +43,14 @@ function logAPageHit(folderId, visitorId, calledFrom) {
             logError2("Undefined", "BUG", folderId, "isNullorUndefined(visitorId)", "log A PageHit/" + calledFrom);
             return;
         }
+        if (visitorId == "cookie not found") {
+            visitorId = getCookieValue("VisitorId", "log A PageHit");
+            if (visitorId == "cookie not found") {
+                logError2("Undefined", "BUG", folderId, "visitorId = cookie not found", "log A PageHit/" + calledFrom);
+                return;
+            }
+        }
+
         if ((lastAPageHitFolderId == folderId) && (lastAPageHitVisitorId == visitorId)) {
             // logActivity2(visitorId, "PH6", folderId, "log A PageHit/" + calledFrom); // looping page hit
             return;
@@ -57,7 +65,6 @@ function logAPageHit(folderId, visitorId, calledFrom) {
                     switch (pageHitSuccess.ReturnMessage) {
                         case "ok":
                             //logActivity2(visitorId, "PH1", folderId, "log A PageHit/" + calledFrom);
-
                             if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
                                 let cf = "PageHits: " + pageHitSuccess.PageHits + " Country: " + pageHitSuccess.VisitorCountry;
                                 logActivity2(visitorId, "PH4", folderId, cf); // pageHits > 3 and country=="ZZ"
