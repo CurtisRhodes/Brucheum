@@ -1,47 +1,60 @@
 ﻿
 function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
-        logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom);
-
+        //logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom);
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Visitor/ScreenIplookupCandidate?visitorId=" + visitorId,
-            success: function (lookupCandidateModel) {
-                if (lookupCandidateModel.Success == "ok") {
-                    switch (lookupCandidateModel.lookupStatus) {
-                        case "bad visitor Id":
-                            logActivity2(visitorId, "I0B", folderId, "tryAddNewIP/" + calledFrom);
-                            break;
-                        case "visitorId not found":
-                            logActivity2(visitorId, "I0F", folderId, "tryAddNewIP/" + calledFrom);
-                            break;
-                        case "already looked up today":
-                            //today only 
-                            //getIpIfyIpInfo(visitorId, folderId, "already looked up today");
+            success: function (lookupCandidateSuccess) {
+                if (lookupCandidateSuccess.Success == "ok") {
+                    if (lookupCandidateSuccess.LookupStatus == "ok")
+                        if (lookupCandidateSuccess.DupeHits > 2) {
                             logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
-                            break;
-                        case "months old InitialVisit":
-                            getIpIfyIpInfo(visitorId, folderId, "months old InitialVisit");
-                            //logActivity2(visitorId, "I0L", folderId, "tryAddNewIP/" + calledFrom);
-                            break;
-                        case "pending months old InitialVisit":
-                            getIpIfyIpInfo(visitorId, folderId, "pending months old InitialVisit");
-                            break;
-                        case "too many page hits":
-                            getIpIfyIpInfo(visitorId, folderId, "too many page hits");                            
-                            break;
-                        case "country not ZZ":
-                            logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
-                            break;
-                        case "pending too many pageHits":
-                            getIpIfyIpInfo(visitorId, folderId, "pending too many pageHits");
-                            break;
-                        case "passed":
-                            getIpIfyIpInfo(visitorId, folderId, "candidate screen passed");
-                            break;
-                        default:
-                            logActivity2(visitorId, "I0S", folderId, "tryAddNewIP  missisg case: " + lookupCandidateModel.lookupStatus); // Switch Case Problem
-                            logError2(visitorId, "SWT", folderId, lookupCandidateModel.lookupStatus, "lookupCandidateModel.lookupStatus");
+                        }
+                        else {
+                            if (lookupCandidateSuccess.IpAddress.indexOf(".") > 0) {
+                                getIpInfo3(visitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
+                                logActivity2(visitorId, "I01", folderId, ipifyRtrnTxt); // calling ipInfo with good Ip Address
+                            }
+                            else {
+                                getIpIfyIpInfo(visitorId, folderId, calledFrom);
+                                logActivity2(visitorId, "I02", folderId, ipifyRtrnTxt); // calling getIpIfyIpInfo with bad Ip Address
+                            }
+                        }
+                    else {
+                        switch (lookupCandidateSuccess.LookupStatus) {
+                            case "bad visitor Id":
+                                logActivity2(visitorId, "I0B", folderId, "tryAddNewIP/" + calledFrom);
+                                break;
+                            case "visitorId not found":
+                                logActivity2(visitorId, "I0F", folderId, "tryAddNewIP/" + calledFrom);
+                                break;
+                            case "country not ZZ":
+                                logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
+                                break;
+                            //case "already looked up today":
+                            //    //today only 
+                            //      getIpIfyIpInfo(visitorId, folderId, "already looked up today");
+                            //    //logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
+                            //    break;
+                            //case "months old InitialVisit":
+                            //    getIpIfyIpInfo(visitorId, folderId, "months old InitialVisit");
+                            //    break;
+                            //case "pending months old InitialVisit":
+                            //    getIpIfyIpInfo(visitorId, folderId, "pending months old InitialVisit");
+                            //    break;
+                            //case "too many page hits":
+                            //    getIpIfyIpInfo(visitorId, folderId, "too many page hits");                            
+                            //    break;
+                            //case "pending too many pageHits":
+                            //    break;
+                            //case "passed":
+                            //    getIpIfyIpInfo(visitorId, folderId, "candidate screen passed");
+                            //    break;
+                            default:
+                                logActivity2(visitorId, "I0S", folderId, "tryAddNewIP  missisg case: " + lookupCandidateSuccess.lookupStatus); // Switch Case Problem
+                                logError2(visitorId, "SWT", folderId, lookupCandidateSuccess.LookupStatus, "lookupCandidateSuccess.lookupStatus");
+                        }
                     }
                 }
                 else {
@@ -469,7 +482,7 @@ function getIpIfyIpInfo(visitorId, folderId, calledFrom) {
             url: "https://api.ipify.org",
             success: function (ipifyRtrnTxt) {
                 if (!isNullorUndefined(ipifyRtrnTxt)) {
-                    logActivity2(visitorId, "I01", folderId, ipifyRtrnTxt); // ipify ok
+                    //logActivity2(visitorId, "I01", folderId, ipifyRtrnTxt); // ipify ok
                     getIpInfo3(visitorId, ipifyRtrnTxt, folderId, calledFrom);
                     //ifyUpdate(visitorId, ipifyRtrnTxt, folderId, calledFrom);
                 }
@@ -493,35 +506,22 @@ function getIpIfyIpInfo(visitorId, folderId, calledFrom) {
 } // 00 ipinfo.io?token=ac5da086206dc4
 
 function getIpInfo3(visitorId, ipAddress, folderId, calledFrom) {
-    logActivity2(visitorId, "IA3", folderId, "get IpInfo/" + calledFrom); // empty resopnse
+    //logActivity2(visitorId, "IA3", folderId, "get IpInfo/" + calledFrom); // empty resopnse
     $.ajax({
         type: "GET",
         url: "https://ipinfo.io/" + ipAddress + "?token=ac5da086206dc4",
         success: function (ipResponse) {
-            if (isNullorUndefined(ipResponse.ip)) {
-                logActivity2(visitorId, "I0E", folderId, "get IpInfo/" + calledFrom); // empty resopnse
-                updateVisitor({
-                    VisitorId: visitorId,
-                    IpAddress: ipAddress,
-                    City: "xx",
-                    Country: "Z2",
-                    Region: "Z2",
-                    GeoCode: "Z2",
-                    InitialPage: folderId
-                }, "IpIfyIpInfo");
-            }
-            else {
-                logActivity2(visitorId, "I02", folderId, "City: " + ipResponse.city); // IpInfo worked
-                updateVisitor({
-                    VisitorId: visitorId,
-                    IpAddress: ipAddress,
-                    City: ipResponse.city,
-                    Country: ipResponse.country,
-                    Region: ipResponse.region,
-                    GeoCode: ipResponse.loc,
-                    InitialPage: folderId
-                }, "IpIfyIpInfo");
-            }
+
+            //logActivity2(visitorId, "I02", folderId, "City: " + ipResponse.city); // IpInfo worked
+            updateVisitor({
+                VisitorId: visitorId,
+                IpAddress: ipAddress,
+                City: ipResponse.city,
+                Country: ipResponse.country,
+                Region: ipResponse.region,
+                GeoCode: ipResponse.loc,
+                InitialPage: folderId
+            }, "IpIfyIpInfo");
             ip0Busy = false;
             ipCall0Returned = true;
         },
@@ -550,32 +550,15 @@ function getIpInfo3(visitorId, ipAddress, folderId, calledFrom) {
 
 function updateVisitor(ipData, calledFrom) {
     try {
-        logActivity2(ipData.VisitorId, "I03", ipData.InitialPage, "update Visitor/" + calledFrom); // entering update visitor
+        //logActivity2(ipData.VisitorId, "I03", ipData.InitialPage, "update Visitor/" + calledFrom); // entering update visitor
         $.ajax({
             type: "PUT",
             url: settingsArray.ApiServer + "api/Visitor/UpdateVisitor",
             data: ipData,
             success: function (updateVisitorSuccess) {
                 if (updateVisitorSuccess.Success == "ok") {
-                    logActivity2(ipData.VisitorId, "I0B", ipData.InitialPage, updateVisitorSuccess.ReturnValue); // update Visitor success
                     if (updateVisitorSuccess.VisitorIdExists) {
-                        switch (updateVisitorSuccess.ReturnValue) {
-                            case "New Ip Visitor Updated":
-                                logActivity2(ipData.VisitorId, "I04", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
-                                break;  // 2
-                            case "Existing Ip Visitor Updated":
-                                logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "I05", ipData.InitialPage, ipData.VisitorId); // Existing Ip Visitor Updated 
-                                setCookieValue("VisitorId", updateVisitorSuccess.ComprableIpAddressVisitorId, "update visitor");
-                                break;  // 3
-                            case "Existing Ip Used":
-                                logActivity2(updateVisitorSuccess.ComprableIpAddressVisitorId, "I06", ipData.InitialPage, ipData.VisitorId); // Existing Ip Used not updated
-                                setCookieValue("VisitorId", updateVisitorSuccess.ComprableIpAddressVisitorId, "update visitor");
-                                break;  // 4
-                            default:
-                                logActivity2(ipData.VisitorId, "I0S", ipData.InitialPage, "update visitor"); // Switch Case Problem
-                                logError2(ipData.VisitorId, "SWT", ipData.InitialPage, updateVisitorSuccess.ReturnValue, "update visitor");
-                                break;
-                        }
+                        logActivity2(ipData.VisitorId, "I04", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
                     }
                     else {
                         logActivity2(ipData.VisitorId, "I08", ipData.InitialPage, "update visitor/" + calledFrom); // update VisitorId not exist.
@@ -583,8 +566,15 @@ function updateVisitor(ipData, calledFrom) {
                     }
                 }
                 else {
-                    logActivity2(create_UUID(), "I09", 11091156, updateVisitorSuccess.Success); // 
-                    logError2(create_UUID(), "AJX", 110915, updateVisitorSuccess.Success, "update visitor/" + calledFrom);
+                    if (updateVisitorSuccess.Success.indexOf("Duplicate entry") > 0) {
+
+
+                    }
+
+
+
+                    logActivity2(ipData.VisitorId, "I09", ipData.InitialPage, updateVisitorSuccess.Success); // 
+                    logError2(ipData.VisitorId, "AJX", ipData.InitialPage, updateVisitorSuccess.Success, "update visitor/" + calledFrom);
                 }
             },
             error: function (jqXHR) {

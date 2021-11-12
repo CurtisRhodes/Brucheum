@@ -22,16 +22,11 @@ function getCookieValue(itemName, calledFrom) {
         if (returnValue == "cookie not found") {
             let storageValue = localStorage[itemName];
             if (isNullorUndefined(storageValue)) {
-                if (itemName == "VisitorId")
-                    try {
-                        logActivity2(storageValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
-                    } catch (e) {
-                        logError2(create_UUID(), "CKK", 118750, e, "dd");
-                        //alert("no references?")
-                    }
-                else
-                    logActivity2("unavailable", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass
-                //setCookieValue(itemName, returnValue, "GET CookieValue/" + calledFrom);
+                //if (itemName == "VisitorId")
+                //    // logActivity2(storageValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
+                //else
+                //    logActivity2("unavailable", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass
+                setCookieValue(itemName, returnValue, "GET CookieValue/" + calledFrom);
                 returnValue = storageValue;
             }
             else {

@@ -58,55 +58,30 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Visitor/UpdateVisitor")]
-        public UpdateVisitorSuccessModel UpdateVisitor(AddVisitorModel visitorData) {
+        public UpdateVisitorSuccessModel UpdateVisitor(AddVisitorModel visitorData)
+        {
             var updateVisitorSuccessModel = new UpdateVisitorSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    Visitor visitor1 = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
-                    if (visitor1 == null)
+                    Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
+                    if (dbVisitor == null)
                         updateVisitorSuccessModel.VisitorIdExists = false;
                     else
                     {
                         updateVisitorSuccessModel.VisitorIdExists = true;
-                        Visitor visitor2 = db.Visitors.Where(v => v.IpAddress == visitorData.IpAddress).FirstOrDefault();
-                        if (visitor2 == null)
-                        {
-                            visitor1.City = visitorData.City;
-                            visitor1.IpAddress = visitorData.IpAddress;
-                            visitor1.Country = visitorData.Country;
-                            visitor1.GeoCode = visitorData.GeoCode;
-                            visitor1.Region = visitorData.Region;
-                            if (visitor1.InitialPage == 0)
-                                visitor1.InitialPage = visitorData.InitialPage;
-                            db.SaveChanges();
-                            updateVisitorSuccessModel.ReturnValue = "New Ip Visitor Updated";
-                        }
-                        else
-                        {
-                            visitor2.IpAddress = visitorData.IpAddress;
-                            if ((visitor2.Country == "ZZ") && (visitor1.Country != "ZZ"))
-                            {
-                                visitor2.City = visitorData.City;
-                                visitor2.Country = visitorData.Country;
-                                visitor2.GeoCode = visitorData.GeoCode;
-                                visitor2.Region = visitorData.Region;
-                                updateVisitorSuccessModel.ReturnValue = "Existing Ip Visitor Updated";
-                            }
-                            else
-                                updateVisitorSuccessModel.ReturnValue = "Existing Ip Used";
-
-                            if (visitor2.InitialPage == 0)
-                                visitor2.InitialPage = visitorData.InitialPage;
-
-                            db.Visitors.Remove(visitor1);
-                            db.SaveChanges();
-                            updateVisitorSuccessModel.DupeIpAddressVisitorId = visitor2.VisitorId;
-                        }
+                        dbVisitor.City = visitorData.City;
+                        dbVisitor.IpAddress = visitorData.IpAddress;
+                        dbVisitor.Country = visitorData.Country;
+                        dbVisitor.GeoCode = visitorData.GeoCode;
+                        dbVisitor.Region = visitorData.Region;
+                        if (dbVisitor.InitialPage == 0)
+                            dbVisitor.InitialPage = visitorData.InitialPage;
+                        db.SaveChanges();
                     }
+                    updateVisitorSuccessModel.Success = "ok";
                 }
-                updateVisitorSuccessModel.Success = "ok";
             }
             catch (Exception ex)
             {
@@ -149,62 +124,32 @@ namespace OggleBooble.Api.Controllers
             var lookupCandidateModel = new LookupCandidateModel();
             try
             {
-                lookupCandidateModel.lookupStatus = "passed";
+                lookupCandidateModel.LookupStatus = "ok";
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
-                        lookupCandidateModel.lookupStatus = "visitorId not found";
-                    else if (dbVisitor.Country != "ZZ")
-                        lookupCandidateModel.lookupStatus = "country not ZZ";
-                    else if (dbVisitor.VisitorId.Length != 36)
-                        lookupCandidateModel.lookupStatus = "bad visitor Id";
-                    // else if (dbVisitor.GeoCode == "too many page hits") lookupCandidateModel.lookupStatus = "too many page hits";
+                        lookupCandidateModel.LookupStatus = "visitorId not found";
                     else
-                    {
-                        var dupeCheck1 = db.ActivityLogs
-                            .Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
-                        if (dupeCheck1 != null)
-                        {
-                            //var dupeCheck2 = db.ActivityLogs
-                            //    .Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).FirstOrDefault();
-                            //if (dupeCheck2 == null)
-                            lookupCandidateModel.lookupStatus = "already looked up today";
-                        }
-                        else
-                        {
-                            if (dbVisitor.InitialVisit < DateTime.Today.AddMonths(-1))
-                            {
-                                lookupCandidateModel.lookupStatus = "pending months old InitialVisit";
-                                //dbVisitor.GeoCode = "months old InitialVisit";
-                                //db.SaveChanges();
-                            }
-                            else
-                            {
-                                int pageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
-                                if (pageHits > 10)
-                                {
-                                    lookupCandidateModel.lookupStatus = "pending too many pageHits";
-                                    //dbVisitor.GeoCode = "too many page hits";
-                                    //db.SaveChanges();
-                                }
-                            }
-                        }
+                    { 
+                        if (dbVisitor.Country != "ZZ")
+                            lookupCandidateModel.LookupStatus = "country not ZZ";
+                        else if (dbVisitor.VisitorId.Length != 36)
+                            lookupCandidateModel.LookupStatus = "bad visitor Id";
                     }
+                    if (lookupCandidateModel.LookupStatus == "ok")
+                    {
+                        lookupCandidateModel.DupeHits = db.ActivityLogs.Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).Count();
+                        lookupCandidateModel.IpAddress = dbVisitor.IpAddress; ;
+                    }
+                    lookupCandidateModel.Success = "ok";
                 }
-                lookupCandidateModel.Success = "ok";
             }
             catch (Exception ex)
             {
                 lookupCandidateModel.Success = Helpers.ErrorDetails(ex);
             }
             return lookupCandidateModel;
-
-
-            //if (lookupCandidateModel.lookupStatus == "passed")
-            //{
-            //}
-            //if (lookupCandidateModel.lookupStatus == "passed")
         }
 
         [HttpGet]

@@ -31,8 +31,6 @@ namespace OggleBooble.Api.Models
     public class UpdateVisitorSuccessModel
     {
         public bool VisitorIdExists { get; set; }
-        public string ReturnValue { get; set; }
-        public string DupeIpAddressVisitorId { get; set; }
         public string Success { get; set; }
     }
 
@@ -168,11 +166,11 @@ namespace OggleBooble.Api.Models
 
     public class LookupCandidateModel
     {
-        public string lookupStatus { get; set; }
+        public int DupeHits { get; set; }
+        public string IpAddress { get; set; }
+        public string LookupStatus { get; set; }
         public string Success { get; set; }
     }
-
-
 
     public class VisitorInfoSuccessModel
     {

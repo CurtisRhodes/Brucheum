@@ -131,7 +131,7 @@ function addVisitor(folderId, calledFrom) {
             url: "https://api.ipify.org",
             success: function (ipifyRtrnTxt) {
                 if (!isNullorUndefined(ipifyRtrnTxt)) {
-                    logActivity2(failureVisitorId, "AV0", folderId, "add visitor/" + calledFrom); // entering Add Visitor 
+                    //logActivity2(failureVisitorId, "AV0", folderId, "add visitor/" + calledFrom); // entering Add Visitor 
                     //logActivity2(visitorId, "I01", folderId, ipifyRtrnTxt); // ipify ok
                     addVisitorIfIpUnique(ipifyRtrnTxt, folderId, calledFrom);
                 }
@@ -143,7 +143,7 @@ function addVisitor(folderId, calledFrom) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity2(failureVisitorId, "I0X", folderId, errMsg); //  get IpIfyIpInfo XHR error
+                logActivity2(failureVisitorId, "AVX", folderId, errMsg); //  get IpIfyIpInfo XHR error
                 if (!checkFor404(errMsg, folderId, "get IpIfyIpInfo/" + calledFrom))
                     logError2(failureVisitorId, "XHR", folderId, errMsg, "get IpIfyIpInfo/" + calledFrom);
 
@@ -159,11 +159,11 @@ function addVisitor(folderId, calledFrom) {
 
 function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
     try {
-        logActivity2(failureVisitorId, "AV3", folderId, "ip:" + ipAddress); // entering addVisitorIfIpUnique
+        //logActivity2(failureVisitorId, "AV3", folderId, "ip:" + ipAddress); // entering addVisitorIfIpUnique
 
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "api/Visitor/AddUniqueIpVisitor&ipAddress=" + ipAddress + "&calledFrom=" + calledFrom,
+            url: settingsArray.ApiServer + "api/Visitor/AddUniqueIpVisitor?ipAddress=" + ipAddress + "&calledFrom=" + calledFrom,
             success: function (addVisitorSuccess) {
 
                 logActivity2(failureVisitorId, "AV4", folderId, "addVisitorSuccess.Success:" + addVisitorSuccess.Success); // new add visitor happened

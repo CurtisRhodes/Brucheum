@@ -414,16 +414,17 @@ function authenticateEmail(usersEmail) {
 ///////////////////////////////////////////////////////////////////////////////////////
 
 function showUserProfileDialog() {
+    let visitorId = getCookieValue("VisitorId", "user ProfileHtml");
     $('#centeredDialogTitle').html("user profile");
-    $('#centeredDialogContents').html(userProfileHtml());
+    $('#centeredDialogContents').html(userProfileHtml(visitorId));
     $("#vailShell").fadeIn();
     $("#centeredDialogContainer").draggable().fadeIn();
-    loadUserProfile(741050, "show UserProfileDialog");
+    loadUserProfile(741050, visitorId);
 }
 
-function userProfileHtml() {
+function userProfileHtml(visitorId) {
     return "<div id='userProfileDialog' class='roundedDialog' >\n" +
-        "   <div><label style='white-space:nowrap;'>visitorId: </label><span> " + getCookieValue("VisitorId", "user ProfileHtml") + "</span></div>\n" +
+        "   <div><label style='white-space:nowrap;'>visitorId: </label><span> " + visitorId + "</span></div>\n" +
         "   <div><label style='white-space:nowrap;'>user name</label><input id='txtUserProfileName' class='roundedInput' placeholder='your go by name'></input></div>\n" +
         "   <div><label style='white-space:nowrap;'>First Name</label><input id='txtUserProfileFirstName' class='roundedInput'></input></div>\n" +
         "   <div><label style='white-space:nowrap;'>Last Name</label><input id='txtUserProfileLastName' class='roundedInput'></input></div>\n" +

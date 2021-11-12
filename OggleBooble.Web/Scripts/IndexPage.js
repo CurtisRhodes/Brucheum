@@ -188,8 +188,9 @@ function latestGalleryImageError(folderId, thisItemSrc) {
 
 function testFunction() {
 
-    //tryAddNewIP(4110, "9cdd9a69-1e42-4f1c-a06d-0ca3d3427a94", "test function");
-    addVisitor(748, "test function");
+    //tryAddNewIP(4110, "decd8899-478c-44ee-a68b-38cbb9715785", "test function");
+    getIpIfyIpInfo("decd8899-478c-44ee-a68b-38cbb9715785", 4110, "test function") 
+    //addVisitor(748, "test function");
 
     // time to log in
     //showCustomMessage('09b40acd-083e-44fe-970d-0a57d1a61360', false);
