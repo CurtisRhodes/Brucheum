@@ -1,10 +1,31 @@
 ﻿var isSessionVerified = false;
+let failureVisitorId = "00000880-0000-0000-0000-UNKNOWN";
+
+function callAlbumPage(visitorId, folderId, calledFrom) {
+    try {
+        if (calledFrom != "Index.html") {
+            if (calledFrom != "album.html") {
+                if (typeof logStaticPageHit === 'function')
+                    logStaticPageHit(folderId, visitorId, calledFrom);
+                else
+                    logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage");
+            }
+
+            //tryIpify(folderId, visitorId, calledFrom);
+
+            loadAlbum(folderId, visitorId, calledFrom);
+            // logActivity("VV3", folderId, "verify session"); // active session new page
+        }
+    } catch (e) {
+        logError2(visitorId, "CAT", folderId, e, "call AlbumPage");
+    }
+}
+
 
 function verifySession(folderId, calledFrom) {
     console.log("verifySession(" + folderId + "," + calledFrom + ")");
     let visitorId = "uninitialized";
     try {
-
         if (typeof getCookieValue != 'function') {
             logError2(visitorId, "bug", folderId, "getCookieValue not a function", "verify session/" + calledFrom);
             return;
@@ -21,36 +42,17 @@ function verifySession(folderId, calledFrom) {
         }
         if (localSessionIsVerified) {
             //logActivity("VS9", folderId, "verify session"); // session verified
-            callAlbumPage(folderId, visitorId, calledFrom);
+            callAlbumPage(visitorId, folderId, calledFrom);
         }
         else {
             $('#headerMessage').html("new session started");
             logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
-
             if (visitorId.indexOf("cookie not found") > -1) {
-                //createNewVisitorId
-                let newVisitorId = create_UUID();
-                setCookieValue("VisitorId", newVisitorId, "verify session");
-                let geoCode = "unknown";
-                if (!navigator.cookieEnabled) {
-                    logActivity2(newVisitorId, "VS5", folderId, "verify session"); // user does not accept cookies
-                    logError2(newVisitorId, "UNC", folderId, "verify session");
-                    geoCode = "user does not accept cookies";
-                }
-                logActivity2(newVisitorId, "VS2", folderId, "verify session"); // verify visitorId not found (new user?)
-                addVisitor({
-                    VisitorId: newVisitorId,
-                    IpAddress: Math.floor(Math.random() * 10000000000).toString(),
-                    City: "new visitor?",
-                    Country: "ZZ",
-                    Region: "VS",
-                    GeoCode: geoCode,
-                    InitialPage: folderId
-                }, calledFrom);
+                addVisitor(folderId, "new session started");
             }
             else {
                 verifyVisitor(visitorId, folderId, calledFrom);
-                callAlbumPage(folderId, visitorId, calledFrom);
+                callAlbumPage(visitorId, folderId, calledFrom);
             }
             try {
                 let storagek = window.sessionStorage || {};
@@ -64,7 +66,7 @@ function verifySession(folderId, calledFrom) {
     catch (e) {
         logActivity2(visitorId, "VS8", folderId, "verify session2/" + calledFrom + " ERRMSG: " + e); // verify session CATCH error
         logError2(visitorId, "CAT", folderId, e, "verify session2/" + calledFrom);
-        callAlbumPage(folderId, visitorId, calledFrom);
+        callAlbumPage(visitorId, folderId, calledFrom);
     }
 }
 
@@ -98,26 +100,7 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
                     }
                     else {
                         logActivity2(visitorId, "VV4", folderId, "verify visitor/" + calledFrom); // visitorId not found
-
-                        let newVisitorId = create_UUID();
-                        setCookieValue("VisitorId", newVisitorId, "verify visitor");
-                        let geoCode = "unknown";
-                        if (!navigator.cookieEnabled) {
-                            logActivity2(newVisitorId, "VVa", folderId, "verify session"); // user does not accept cookies
-                            //logError2(newVisitorId, "UNC", folderId, "verify session");
-                            geoCode = "user does not accept cookies";
-                        }
-
-                        addVisitor({
-                            VisitorId: newVisitorId,
-                            IpAddress: Math.floor(Math.random() * 10000000000).toString(),
-                            City: "unverified visitorId",
-                            Country: "ZZ",
-                            Region: "VV",
-                            GeoCode: geoCode,
-                            InitialPage: folderId
-                        }, calledFrom);
-
+                        addVisitor(folderId, "verify Visitor");
                         //logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify visitor/" + calledFrom);
                     }
                 }
@@ -141,50 +124,77 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
     }
 }
 
-function addVisitor(visitorData, calledFrom) {
+function addVisitor(folderId, calledFrom) {
     try {
-        if (isNullorUndefined(visitorData.VisitorId)) {
-            logError2(create_UUID(), "BUG", visitorData.FolderId, "visitorId came in null", "add visitor/" + calledFrom);
-            return;
-        }
-        logActivity2(visitorData.VisitorId, "AV0", visitorData.FolderId, "add visitor/" + calledFrom); // entering Add Visitor 
         $.ajax({
-            type: "POST",
-            url: settingsArray.ApiServer + "api/Visitor/AddVisitor",
-            data: visitorData,
-            success: function (success) {
-                if (success == "ok") {
-                  //  logActivity2(visitorData.VisitorId, "AV1", visitorData.InitialPage, "add Visitor/" + calledFrom); // new visitor added
-                    setCookieValue("VisitorId", visitorData.VisitorId, "add Visitor/" + calledFrom);
-                    logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor");
-                    callAlbumPage(visitorData.InitialPage, visitorData.VisitorId, "add Visitor/" + calledFrom);
-
-                    // just for today
-                    tryAddNewIP(visitorData.InitialPage, visitorData.VisitorId, "add Visitor/" + calledFrom);
-
+            type: "GET",
+            url: "https://api.ipify.org",
+            success: function (ipifyRtrnTxt) {
+                if (!isNullorUndefined(ipifyRtrnTxt)) {
+                    logActivity2(failureVisitorId, "AV0", folderId, "add visitor/" + calledFrom); // entering Add Visitor 
+                    //logActivity2(visitorId, "I01", folderId, ipifyRtrnTxt); // ipify ok
+                    addVisitorIfIpUnique(ipifyRtrnTxt, folderId, calledFrom);
                 }
                 else {
-                    if (success.indexOf("Duplicate entry") > 0) {
-                        logActivity2(visitorData.VisitorId, "AV3", visitorData.InitialPage, "add visitor/" + calledFrom); // duplicate key violation
-                        logVisit(visitorData.VisitorId, visitorData.InitialPage, "add Visitor. Duplicate entry");
-                        callAlbumPage(folderId, newVisitorId, calledFrom);
-                    } else {
-                        logActivity2(visitorData.VisitorId, "AV7", visitorData.InitialPage, success); // ajax error from Add Visitor
-                        logError2(visitorData.VisitorId, "AJ7", visitorData.InitialPage, success, "add visitor/" + calledFrom);
-                    }
+                    logActivity2(failureVisitorId, "AV5", folderId, errMsg); //  ipify fail
+                    logError2(visitorId, "AJX", folderId, "ipify null", "add visitor/" + calledFrom);
+                    callAlbumPage(failureVisitorId, folderId, calledFrom);
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, 555, "add Visitor"))
-                    logError2(create_UUID(), "XHR", 55, errMsg, "add visitor/" + calledFrom);
-                else
-                    logActivity2(create_UUID(), "AV8", 555, errMsg); // Add Visitor XHR error
+                logActivity2(failureVisitorId, "I0X", folderId, errMsg); //  get IpIfyIpInfo XHR error
+                if (!checkFor404(errMsg, folderId, "get IpIfyIpInfo/" + calledFrom))
+                    logError2(failureVisitorId, "XHR", folderId, errMsg, "get IpIfyIpInfo/" + calledFrom);
+
+                callAlbumPage(failureVisitorId, folderId, calledFrom);
             }
         });
     } catch (e) {
-        logActivity2(create_UUID(), "AV6", 555, "add Visitor"); // add vis catch error
-        logError2(create_UUID(), "CAT", 555, e, "add Visitor");
+        logActivity2(failureVisitorId, "AV6", folderId, e); // add vis catch error
+        logError2(failureVisitorId, "CAT", folderId, e, "add Visitor");
+        callAlbumPage(failureVisitorId, folderId, calledFrom);
+    }
+}
+
+function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
+    try {
+        logActivity2(failureVisitorId, "AV3", folderId, "ip:" + ipAddress); // entering addVisitorIfIpUnique
+
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Visitor/AddUniqueIpVisitor&ipAddress=" + ipAddress + "&calledFrom=" + calledFrom,
+            success: function (addVisitorSuccess) {
+
+                logActivity2(failureVisitorId, "AV4", folderId, "addVisitorSuccess.Success:" + addVisitorSuccess.Success); // new add visitor happened
+
+                if (addVisitorSuccess.Success == "ok") {
+                    setCookieValue("VisitorId", addVisitorSuccess.VisitorId, "add Visitor/" + calledFrom);
+                    logVisit(addVisitorSuccess.VisitorId, folderId, "add Visitor");
+                    callAlbumPage(addVisitorSuccess.VisitorId, folderId, calledFrom);
+
+                    if (addVisitorSuccess.ErrorMessage == "ok")
+                        logActivity2(addVisitorSuccess.VisitorId, "AV1", folderId, "add Visitor/" + calledFrom); // new visitor added
+                    else
+                        logActivity2(addVisitorSuccess.VisitorId, "AV2", folderId, "add Visitor/" + calledFrom); // new visitor added
+                }
+                else {
+                    logActivity2(failureVisitorId, "AV7", folderId, success); // ajax error from Add Visitor
+                    logError2(failureVisitorId, "AJ7", folderId, success, "add visitor/" + calledFrom);
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "add Visitor"))
+                    logError2(create_UUID(), "XHR", 55, errMsg, "add visitor/" + calledFrom);
+                else
+                    logActivity2(failureVisitorId, "AV8", folderId, errMsg); // Add Visitor XHR error
+            }
+        });
+    } catch (e) {
+        logActivity2(failureVisitorId, "AV6", folderId, e); // add vis catch error
+        logError2(failureVisitorId, "CAT", folderId, e, "add Visitor");
+        callAlbumPage(failureVisitorId, folderId, calledFrom);
     }
 }
 
@@ -218,17 +228,7 @@ function loadUserProfile(folderId, visitorId) {
                         $('#footerCol5').hide
 
                         if (!visitorInfo.VisitorFound) {
-                            k1VisitorId = create_UUID();
-                            setCookieValue("VisitorId", k1VisitorId, "load UserProfile");
-                            addVisitor({
-                                VisitorId: k1VisitorId,
-                                IpAddress: Math.floor(Math.random() * 10000000000).toString(),
-                                City: "loadUserProfile",
-                                Country: "ZZ",
-                                Region: "LP",
-                                GeoCode: "unknown",
-                                InitialPage: folderId
-                            }, "loadUserProfile");
+                            addVisitor(folderId, "load UserProfile");
                             logActivity2(visitorId, "VS3", folderId, "load UserProfile"); // visitorId cookie exists but not found
                             logError2(visitorId, "BUG", folderId, "visitorId cookie exists but not found", "loadUserProfile");
                         }
@@ -338,22 +338,3 @@ function logStaticPageHit(folderId, visitorId, calledFrom) {
     });
 }
 
-function callAlbumPage(folderId, visitorId, calledFrom) {
-    try {
-        if (calledFrom != "Index.html") {
-            if (calledFrom != "album.html") {
-                if (typeof logStaticPageHit === 'function')
-                    logStaticPageHit(folderId, visitorId, calledFrom);
-                else
-                    logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage");
-            }
-
-            //tryIpify(folderId, visitorId, calledFrom);
-
-            loadAlbum(folderId, visitorId, calledFrom);
-            // logActivity("VV3", folderId, "verify session"); // active session new page
-        }
-    } catch (e) {
-        logError2(visitorId, "CAT", folderId, e, "call AlbumPage");
-    }
-}

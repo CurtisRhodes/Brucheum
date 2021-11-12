@@ -16,12 +16,13 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                             logActivity2(visitorId, "I0F", folderId, "tryAddNewIP/" + calledFrom);
                             break;
                         case "already looked up today":
-                            getIpIfyIpInfo(visitorId, folderId, "already looked up today");
-                            //logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
+                            //today only 
+                            //getIpIfyIpInfo(visitorId, folderId, "already looked up today");
+                            logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
                             break;
                         case "months old InitialVisit":
                             getIpIfyIpInfo(visitorId, folderId, "months old InitialVisit");
-                                //logActivity2(visitorId, "I0L", folderId, "tryAddNewIP/" + calledFrom);
+                            //logActivity2(visitorId, "I0L", folderId, "tryAddNewIP/" + calledFrom);
                             break;
                         case "pending months old InitialVisit":
                             getIpIfyIpInfo(visitorId, folderId, "pending months old InitialVisit");
@@ -492,7 +493,7 @@ function getIpIfyIpInfo(visitorId, folderId, calledFrom) {
 } // 00 ipinfo.io?token=ac5da086206dc4
 
 function getIpInfo3(visitorId, ipAddress, folderId, calledFrom) {
-    //logActivity2(visitorId, "IA3", folderId, "get IpInfo/" + calledFrom); // empty resopnse
+    logActivity2(visitorId, "IA3", folderId, "get IpInfo/" + calledFrom); // empty resopnse
     $.ajax({
         type: "GET",
         url: "https://ipinfo.io/" + ipAddress + "?token=ac5da086206dc4",
@@ -510,7 +511,6 @@ function getIpInfo3(visitorId, ipAddress, folderId, calledFrom) {
                 }, "IpIfyIpInfo");
             }
             else {
-                //logActivity2(visitorId, "I02", folderId, "get getIpInfo3/" + calledFrom); // calling getIpIfyIpInfo
                 logActivity2(visitorId, "I02", folderId, "City: " + ipResponse.city); // IpInfo worked
                 updateVisitor({
                     VisitorId: visitorId,
@@ -561,26 +561,14 @@ function updateVisitor(ipData, calledFrom) {
                     if (updateVisitorSuccess.VisitorIdExists) {
                         switch (updateVisitorSuccess.ReturnValue) {
                             case "New Ip Visitor Updated":
-                                if (calledFrom == "IpIfyIpInfo") {
-                                    logActivity2(ipData.VisitorId, "I02", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
-                                }
-                                else {
-                                    logActivity2(ipData.VisitorId, "I02", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
-                                }
+                                logActivity2(ipData.VisitorId, "I04", ipData.InitialPage, calledFrom); // New Ip Visitor Updated
                                 break;  // 2
                             case "Existing Ip Visitor Updated":
-                                if (calledFrom == "IpIfyIpInfo")
-                                    logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "I05", ipData.InitialPage, ipData.VisitorId); // Existing Ip Visitor Updated 
-                                else
-                                    logActivity2(updateVisitorSuccess.ComprableIpAddressVisitorId, "I05", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
-
+                                logActivity2(updateVisitorSuccessModel.ComprableIpAddressVisitorId, "I05", ipData.InitialPage, ipData.VisitorId); // Existing Ip Visitor Updated 
                                 setCookieValue("VisitorId", updateVisitorSuccess.ComprableIpAddressVisitorId, "update visitor");
                                 break;  // 3
                             case "Existing Ip Used":
-                                if (calledFrom == "IpIfyIpInfo")
-                                    logActivity2(updateVisitorSuccess.ComprableIpAddressVisitorId, "I06", ipData.InitialPage, ipData.VisitorId); // Existing Ip Used not updated
-                                else
-                                    logActivity2(updateVisitorSuccess.ComprableIpAddressVisitorId, "I06", ipData.InitialPage, ipData.VisitorId); // Duplicate Ip 
+                                logActivity2(updateVisitorSuccess.ComprableIpAddressVisitorId, "I06", ipData.InitialPage, ipData.VisitorId); // Existing Ip Used not updated
                                 setCookieValue("VisitorId", updateVisitorSuccess.ComprableIpAddressVisitorId, "update visitor");
                                 break;  // 4
                             default:
@@ -590,7 +578,7 @@ function updateVisitor(ipData, calledFrom) {
                         }
                     }
                     else {
-                        logActivity2(create_UUID(), "I08", 5555, calledFrom); // update VisitorId not exist.
+                        logActivity2(ipData.VisitorId, "I08", ipData.InitialPage, "update visitor/" + calledFrom); // update VisitorId not exist.
                         //logError2(ipData.VisitorId, "BUG", ipData.InitialPage, "ip lookup VisitorId not found.", "update visitor/" + calledFrom);
                     }
                 }

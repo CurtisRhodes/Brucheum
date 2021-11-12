@@ -1,5 +1,4 @@
 ﻿
-
 function getCookieValue(itemName, calledFrom) {
     let returnValue = "cookie not found";
     try {

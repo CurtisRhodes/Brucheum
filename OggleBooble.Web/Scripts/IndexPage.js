@@ -29,7 +29,7 @@ function displaySpaPage(spaPageId) {
             loadLatestUpdates();
             loadRandomGalleries();
             //setTimeout(function () { launchPromoMessages(); }, 3000);
-            $('#testFunctionClick').show();
+         //   $('#testFunctionClick').show();
             resizeIndexPage();
             break;  //index page;
         case 3909:

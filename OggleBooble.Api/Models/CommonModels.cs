@@ -147,6 +147,13 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
+    public class AddVisitorSuccessModel
+    {
+        public string VisitorId { get; set; }
+        public string ErrorMessage { get; set; }
+        public string Success { get; set; }
+    }
+
     public class AddVisitorModel
     {
         public string VisitorId { get; set; }
@@ -164,6 +171,8 @@ namespace OggleBooble.Api.Models
         public string lookupStatus { get; set; }
         public string Success { get; set; }
     }
+
+
 
     public class VisitorInfoSuccessModel
     {

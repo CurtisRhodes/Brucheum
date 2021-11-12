@@ -13,35 +13,47 @@ namespace OggleBooble.Api.Controllers
     public class VisitorController : ApiController
     {
         [HttpPost]
-        [Route("api/Visitor/AddVisitor")]
-        public string AddVisitor(AddVisitorModel visitorData)
+        [Route("api/Visitor/AddUniqueIpVisitor")]
+
+        //url: settingsArray.ApiServer + "api/Visitor/AddVisitor&ipAddress=" + ipAddress + "&initialPage=" + folderId,
+        public AddVisitorSuccessModel AddUniqueIpVisitor(string ipAddress,string calledFrom)
         {
-            string success = "ono";
+            AddVisitorSuccessModel successModel = new AddVisitorSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var newVisitor = new Visitor()
+                    Visitor existingVisitor = db.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
+                    if (existingVisitor == null)
                     {
-                        VisitorId = visitorData.VisitorId,
-                        IpAddress = visitorData.IpAddress,
-                        City = visitorData.City,
-                        Country = visitorData.Country,
-                        GeoCode = visitorData.GeoCode,
-                        Region = visitorData.Region,
-                        InitialPage = visitorData.InitialPage,
-                        InitialVisit = DateTime.Now
-                    };
-                    db.Visitors.Add(newVisitor);
-                    db.SaveChanges();
-                    success = "ok";
+                        successModel.VisitorId = Guid.NewGuid().ToString();
+                        var newVisitor = new Visitor()
+                        {
+                            VisitorId = successModel.VisitorId,
+                            IpAddress = ipAddress,
+                            Country = "ZZ",
+                            City = calledFrom,
+                            GeoCode = "",
+                            Region = "",
+                            InitialPage = 0,
+                            InitialVisit = DateTime.Now
+                        };
+                        db.Visitors.Add(newVisitor);
+                        db.SaveChanges();
+                        successModel.ErrorMessage = "ok";
+                    }
+                    else {
+                        successModel.ErrorMessage = "existing Ip";
+                        successModel.VisitorId = existingVisitor.VisitorId;
+                    }
+                    successModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                successModel.Success= Helpers.ErrorDetails(ex);
             }
-            return success;
+            return successModel;
         }
 
         [HttpPut]
