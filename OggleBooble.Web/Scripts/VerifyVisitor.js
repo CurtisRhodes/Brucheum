@@ -169,14 +169,16 @@ function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
                 logActivity2(failureVisitorId, "AV4", folderId, "addVisitorSuccess.Success:" + addVisitorSuccess.Success); // new add visitor happened
 
                 if (addVisitorSuccess.Success == "ok") {
-                    setCookieValue("VisitorId", addVisitorSuccess.VisitorId, "add Visitor/" + calledFrom);
+                    if (addVisitorSuccess.ErrorMessage == "ok") {
+                        setCookieValue("VisitorId", addVisitorSuccess.VisitorId, "add Visitor/" + calledFrom);
+                        logActivity2(addVisitorSuccess.VisitorId, "AV1", folderId, "add Visitor/" + calledFrom); // new visitor added
+                    }
+                    if (addVisitorSuccess.ErrorMessage == "existing Ip") {
+                        setCookieValue("VisitorId", addVisitorSuccess.VisitorId, "add Visitor/" + calledFrom);
+                        logActivity2(addVisitorSuccess.VisitorId, "AV1", folderId, "add Visitor/" + calledFrom); // new visitor added
+                    }
                     logVisit(addVisitorSuccess.VisitorId, folderId, "add Visitor");
                     callAlbumPage(addVisitorSuccess.VisitorId, folderId, calledFrom);
-
-                    if (addVisitorSuccess.ErrorMessage == "ok")
-                        logActivity2(addVisitorSuccess.VisitorId, "AV1", folderId, "add Visitor/" + calledFrom); // new visitor added
-                    else
-                        logActivity2(addVisitorSuccess.VisitorId, "AV2", folderId, "add Visitor/" + calledFrom); // new visitor added
                 }
                 else {
                     logActivity2(failureVisitorId, "AV7", folderId, success); // ajax error from Add Visitor
