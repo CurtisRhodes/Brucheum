@@ -67,7 +67,10 @@ $(document).ready(function () {
             resizeStaticPage();
             $(window).resize(resizeStaticPage());
             //logPageHit(staticPageFolderId, "static page");
+
             logActivity2(visitorId, "PH2", folderId, "log pageHit");  // page hit success
+
+
             getBreadCrumbs(staticPageFolderId);
         }
     }, 300);

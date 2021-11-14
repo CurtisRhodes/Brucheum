@@ -75,7 +75,7 @@ function logAPageHit(folderId, visitorId, calledFrom) {
                             logActivity2(visitorId, "PH5", folderId, "log A PageHit/" + calledFrom);
                             break;
                         case "VisitorId not found":
-                            logActivity2(visitorId, "PH2", folderId, "log A PageHit/" + calledFrom);
+                            logActivity2(visitorId, "PH9", folderId, "log A PageHit/" + calledFrom); // 
                             break;
                         default:
                             logError2(visitorId, "SWT", "Return message: " + pageHitSuccess.ReturnMessage, "log A PageHit/" + calledFrom);
@@ -98,7 +98,7 @@ function logAPageHit(folderId, visitorId, calledFrom) {
         });
 
     } catch (e) {
-        logActivity2(visitorId, "PH9", "log A PageHit/" + calledFrom);  // page hit catch error
+        logActivity2(visitorId, "PHC", "log A PageHit/" + calledFrom);  // page hit catch error
         logError2(visitorId, "CAT", folderId, e, "log A PageHit/" + calledFrom);
     }
 }

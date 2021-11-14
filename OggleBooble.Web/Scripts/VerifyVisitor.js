@@ -166,7 +166,7 @@ function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
             url: settingsArray.ApiServer + "api/Visitor/AddUniqueIpVisitor?ipAddress=" + ipAddress + "&calledFrom=" + calledFrom,
             success: function (addVisitorSuccess) {
 
-                logActivity2(failureVisitorId, "AV4", folderId, "addVisitorSuccess.Success:" + addVisitorSuccess.Success); // new add visitor happened
+                //logActivity2(failureVisitorId, "AV4", folderId, "addVisitorSuccess.Success:" + addVisitorSuccess.Success); // new add visitor happened
 
                 if (addVisitorSuccess.Success == "ok") {
                     if (addVisitorSuccess.ErrorMessage == "ok") {
