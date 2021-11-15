@@ -261,13 +261,14 @@ let intervalReady = true;
 function intervalBody() {
     if (intervalReady) {
         if ($('#pauseButton').html() == "||") {
-            intervalReady = false;
+            //intervalReady = false;
             //$('#testMessage1').html("|");
             imageIndex = Math.floor(Math.random() * carouselItemArray.length);
             //$('#testMessage1').html("||");
             let nextImg = settingsImgRepo + carouselItemArray[imageIndex].ImageFileName;
             //$('#testMessage1').html("|||");
 
+            $('#tempImageLoad').attr('src', nextImg);
             $('#tempImageLoad').attr('src', nextImg).load(function () {
                 //$('#testMessage1').html("||||");
                 if (isNullorUndefined(nextImg)) {

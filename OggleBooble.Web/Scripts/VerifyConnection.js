@@ -94,9 +94,9 @@ function checkConnection(folderId, calledFrom) {
                                         //console.log("TRAPPED: " + successModel.Success);
                                     }
                                     if (successModel.Success.indexOf("A socket operation was attempted to an unreachable network") > -1) {
-                                        $('#dots').html('');
-                                        clearInterval(verifyConnectionWaiter);
-                                        alert("no network connection");
+                                        //$('#dots').html('');
+                                        //clearInterval(verifyConnectionWaiter);
+                                        alert(successModel.Success);
                                     }
                                     //   console.log("proper error in verify ConnectionFunction: " + successModel.Success);
                                     //   logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
@@ -105,10 +105,16 @@ function checkConnection(folderId, calledFrom) {
                                 checkingConnection = false;
                             },
                             error: function (jqXHR) {
-                                clearInterval(verifyConnectionWaiter);
                                 let errMsg = getXHRErrorDetails(jqXHR);
-                                //if (document.domain === "localhost")
-                                alert("verifyConnection XHR: " + errMsg);
+                                if (!(errMsg.toUpperCase().indexOf("NOT CONNECT") > -1)) {
+                                    clearInterval(verifyConnectionWaiter);
+                                    connectionVerified = false;
+                                    //if (document.domain === "localhost")
+                                    alert("errMsg.toUpperCase().indexOf(NOT CONNECT): " + errMsg.toUpperCase().indexOf("NOT CONNECT"));
+                                    //alert("verifyConnection XHR: " + errMsg);
+                                }
+                                else
+                                    checkingConnection = false;
                             }
                         });
                     }

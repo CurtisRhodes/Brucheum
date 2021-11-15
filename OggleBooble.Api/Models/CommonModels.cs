@@ -166,8 +166,9 @@ namespace OggleBooble.Api.Models
 
     public class LookupCandidateModel
     {
-        public int DupeHits { get; set; }
+        public int DupeHits { get; set; }        
         public string IpAddress { get; set; }
+        public string ExistingIpAddressVisitorId { get; set; }
         public string LookupStatus { get; set; }
         public string Success { get; set; }
     }

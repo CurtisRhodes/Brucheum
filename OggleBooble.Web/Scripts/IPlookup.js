@@ -8,17 +8,23 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
             success: function (lookupCandidateSuccess) {
                 if (lookupCandidateSuccess.Success == "ok") {
                     if (lookupCandidateSuccess.LookupStatus == "ok")
-                        if (lookupCandidateSuccess.DupeHits > 2) {
-                            logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
+                        if (lookupCandidate.LookupStatus == "existing Ip") {
+                            logActivity2(visitorId, "I03", folderId, "tryAddNewIP/" + calledFrom); // existing Ip visitor
+                            setCookieValue("VisitorId", lookupCandidate.ExistingIpAddressVisitorId, "tryAddNewIP/" + calledFrom);
                         }
                         else {
-                            if (lookupCandidateSuccess.IpAddress.indexOf(".") > 0) {
-                                getIpInfo3(visitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
-                                logActivity2(visitorId, "I01", folderId, ipifyRtrnTxt); // calling ipInfo with good Ip Address
+                            if (lookupCandidateSuccess.DupeHits > 2) {
+                                logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
                             }
                             else {
-                                getIpIfyIpInfo(visitorId, folderId, calledFrom);
-                                logActivity2(visitorId, "I02", folderId, ipifyRtrnTxt); // calling getIpIfyIpInfo with bad Ip Address
+                                if (lookupCandidateSuccess.IpAddress.indexOf(".") > 0) {
+                                    getIpInfo3(visitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
+                                    logActivity2(visitorId, "I01", folderId, lookupCandidateSuccess.IpAddress); // calling ipInfo with good Ip Address
+                                }
+                                else {
+                                    getIpIfyIpInfo(visitorId, folderId, calledFrom);
+                                    logActivity2(visitorId, "I02", folderId, lookupCandidateSuccess.IpAddress); // calling getIpIfyIpInfo with bad Ip Address
+                                }
                             }
                         }
                     else {
@@ -570,11 +576,10 @@ function updateVisitor(ipData, calledFrom) {
 
 
                     }
-
-
-
-                    logActivity2(ipData.VisitorId, "I09", ipData.InitialPage, updateVisitorSuccess.Success); // 
-                    logError2(ipData.VisitorId, "AJX", ipData.InitialPage, updateVisitorSuccess.Success, "update visitor/" + calledFrom);
+                    else {
+                        logActivity2(ipData.VisitorId, "I09", ipData.InitialPage, updateVisitorSuccess.Success); // 
+                        logError2(ipData.VisitorId, "AJX", ipData.InitialPage, updateVisitorSuccess.Success, "update visitor/" + calledFrom);
+                    }
                 }
             },
             error: function (jqXHR) {

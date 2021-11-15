@@ -21,16 +21,17 @@ function getCookieValue(itemName, calledFrom) {
         }
         if (returnValue == "cookie not found") {
             let storageValue = localStorage[itemName];
-            if (isNullorUndefined(storageValue)) {
-                //if (itemName == "VisitorId")
-                //    // logActivity2(storageValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
-                //else
-                //    logActivity2("unavailable", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass
+            if (!isNullorUndefined(storageValue)) {
+                if (itemName == "VisitorId")
+                    logActivity2(storageValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
+                else
+                    logActivity2("unavailable", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass
                 setCookieValue(itemName, returnValue, "GET CookieValue/" + calledFrom);
                 returnValue = storageValue;
             }
             else {
                 if (navigator.cookieEnabled) { // user accepts cookies
+                    //returnValue = "not enabled not found";
                     if (calledFrom != "verify session")
                         logError2("unavailable", "CK2", 703245, "itemName: " + itemName + "  localStorage[itemName]: " + localStorage[itemName], "GET CookieValue/" + calledFrom); // cookies enabled. No local storage bypass
                 }

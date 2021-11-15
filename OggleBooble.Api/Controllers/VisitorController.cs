@@ -139,8 +139,20 @@ namespace OggleBooble.Api.Controllers
                     }
                     if (lookupCandidateModel.LookupStatus == "ok")
                     {
-                        lookupCandidateModel.DupeHits = db.ActivityLogs.Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).Count();
-                        lookupCandidateModel.IpAddress = dbVisitor.IpAddress; ;
+                        Visitor dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == dbVisitor.IpAddress).FirstOrDefault();
+                        if (dbExistingIpVisitor != null)
+                        {
+                            lookupCandidateModel.LookupStatus = "existing Ip";
+                            lookupCandidateModel.ExistingIpAddressVisitorId = dbExistingIpVisitor.VisitorId;
+
+                            db.Visitors.Remove(dbVisitor);
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            lookupCandidateModel.DupeHits = db.ActivityLogs.Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).Count();
+                            lookupCandidateModel.IpAddress = dbVisitor.IpAddress; ;
+                        }
                     }
                     lookupCandidateModel.Success = "ok";
                 }

@@ -21,7 +21,6 @@ function callAlbumPage(visitorId, folderId, calledFrom) {
     }
 }
 
-
 function verifySession(folderId, calledFrom) {
     console.log("verifySession(" + folderId + "," + calledFrom + ")");
     let visitorId = "uninitialized";
@@ -40,14 +39,21 @@ function verifySession(folderId, calledFrom) {
             localSessionIsVerified = isSessionVerified;
             logActivity2(visitorId, "VS6", folderId, e); // session storage fail
         }
+
+
         if (localSessionIsVerified) {
             //logActivity("VS9", folderId, "verify session"); // session verified
+            if (visitorId == "cookie not found") {
+                // cookie not found made it past 
+                logActivity("VS4", folderId, "verify session"); // session verified
+                visitorId = failureVisitorId;
+            }
             callAlbumPage(visitorId, folderId, calledFrom);
         }
         else {
             $('#headerMessage').html("new session started");
             logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
-            if (visitorId.indexOf("cookie not found") > -1) {
+            if (visitorId == "cookie not found") {
                 addVisitor(folderId, "new session started");
             }
             else {
