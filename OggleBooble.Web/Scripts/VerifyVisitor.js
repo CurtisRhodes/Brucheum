@@ -92,7 +92,7 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
                         //logActivity2(visitorId, "VV1", 1020222, "verify VisitorId"); // visitor verified ok
                         if (successModel.Country == "ZZ") {
 
-
+                            // today only
                             tryAddNewIP(folderId, visitorId, "verify visitor/" + calledFrom);
 
 
@@ -165,11 +165,9 @@ function addVisitor(folderId, calledFrom) {
 
 function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
     try {
-        //logActivity2(failureVisitorId, "AV3", folderId, "ip:" + ipAddress); // entering addVisitorIfIpUnique
-
         $.ajax({
             type: "POST",
-            url: settingsArray.ApiServer + "api/Visitor/AddUniqueIpVisitor?ipAddress=" + ipAddress + "&calledFrom=" + calledFrom,
+            url: settingsArray.ApiServer + "api/Visitor/AddUniqueIpVisitor?ipAddress=" + ipAddress + "&calledFrom=" + calledFrom + "&initialPage=" + folderId,
             success: function (addVisitorSuccess) {
 
                 //logActivity2(failureVisitorId, "AV4", folderId, "addVisitorSuccess.Success:" + addVisitorSuccess.Success); // new add visitor happened

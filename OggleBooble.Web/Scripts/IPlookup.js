@@ -1,7 +1,7 @@
 ﻿
 function tryAddNewIP(folderId, visitorId, calledFrom) {
     try {
-        //logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom);
+        logActivity2(visitorId, "I00", folderId, "tryAddNewIP/" + calledFrom);
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Visitor/ScreenIplookupCandidate?visitorId=" + visitorId,
@@ -10,8 +10,15 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                     if (lookupCandidateSuccess.LookupStatus == "ok")
 
                         if (lookupCandidate.LookupStatus == "existing Ip") {
-                            logActivity2(visitorId, "I03", folderId, "tryAddNewIP/" + calledFrom); // existing Ip visitor
+                            logActivity2(visitorId, "I03", folderId, "Ip: " + lookupCandidateSuccess.IpAddress); // existing Ip visitor
                             setCookieValue("VisitorId", lookupCandidate.ExistingIpAddressVisitorId, "tryAddNewIP/" + calledFrom);
+
+                            if (lookupCandidateSuccess.ExistingIpAddressCountry == "ZZ") {
+
+                                logActivity2(lookupCandidate.ExistingIpAddressVisitorId, "I05", folderId, "removed: " + visitorId);
+
+                                getIpInfo3(lookupCandidate.ExistingIpAddressVisitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
+                            }
                         }
                         else {
                              if (lookupCandidateSuccess.DupeHits > 2) {

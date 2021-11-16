@@ -14,9 +14,7 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpPost]
         [Route("api/Visitor/AddUniqueIpVisitor")]
-
-        //url: settingsArray.ApiServer + "api/Visitor/AddVisitor&ipAddress=" + ipAddress + "&initialPage=" + folderId,
-        public AddVisitorSuccessModel AddUniqueIpVisitor(string ipAddress,string calledFrom)
+        public AddVisitorSuccessModel AddUniqueIpVisitor(string ipAddress, string calledFrom, int initialPage)
         {
             AddVisitorSuccessModel successModel = new AddVisitorSuccessModel();
             try
@@ -35,14 +33,15 @@ namespace OggleBooble.Api.Controllers
                             City = calledFrom,
                             GeoCode = "",
                             Region = "",
-                            InitialPage = 0,
+                            InitialPage = initialPage,
                             InitialVisit = DateTime.Now
                         };
                         db.Visitors.Add(newVisitor);
                         db.SaveChanges();
                         successModel.ErrorMessage = "ok";
                     }
-                    else {
+                    else
+                    {
                         successModel.ErrorMessage = "existing Ip";
                         successModel.VisitorId = existingVisitor.VisitorId;
                     }
@@ -51,7 +50,7 @@ namespace OggleBooble.Api.Controllers
             }
             catch (Exception ex)
             {
-                successModel.Success= Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
             return successModel;
         }
@@ -143,7 +142,9 @@ namespace OggleBooble.Api.Controllers
                         if (dbExistingIpVisitor != null)
                         {
                             lookupCandidateModel.LookupStatus = "existing Ip";
+                            lookupCandidateModel.IpAddress = dbVisitor.IpAddress;
                             lookupCandidateModel.ExistingIpAddressVisitorId = dbExistingIpVisitor.VisitorId;
+                            lookupCandidateModel.ExistingIpAddressCountry = dbExistingIpVisitor.Country;
 
                             db.Visitors.Remove(dbVisitor);
                             db.SaveChanges();
@@ -151,7 +152,7 @@ namespace OggleBooble.Api.Controllers
                         else
                         {
                             lookupCandidateModel.DupeHits = db.ActivityLogs.Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).Count();
-                            lookupCandidateModel.IpAddress = dbVisitor.IpAddress; ;
+                            lookupCandidateModel.IpAddress = dbVisitor.IpAddress;
                         }
                     }
                     lookupCandidateModel.Success = "ok";
