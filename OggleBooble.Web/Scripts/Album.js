@@ -46,7 +46,7 @@ function logAPageHit(folderId, visitorId, calledFrom) {
         if (visitorId == "cookie not found") {
             visitorId = getCookieValue("VisitorId", "log A PageHit");
             if (visitorId == "cookie not found") {
-                logError2("Undefined", "BUG", folderId, "visitorId = cookie not found", "log A PageHit/" + calledFrom);
+                logError2(visitorId, "BUG", folderId, "visitorId = cookie not found", "log A PageHit/" + calledFrom);
                 return;
             }
         }
@@ -517,8 +517,8 @@ function setBreadcrumbs(folderId) {
                             else {
                                 $('#breadcrumbContainer').append(
                                     "<a class='inactiveBreadCrumb' " +
-                                    "onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")' " +
-                                    "onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
+                                    //"onmouseover = 'slowlyShowFolderInfoDialog(" + breadCrumbSuccess.BreadCrumbs[i].FolderId + ")' " +
+                                    //"onmouseout = 'forgetHomeFolderInfoDialog=true;' " +
                                     "onclick='forgetHomeFolderInfoDialog=\"true\";showFolderInfoDialog(" +
                                     breadCrumbSuccess.BreadCrumbs[i].FolderId + ",\"bc click\")'>" +
                                     breadCrumbSuccess.BreadCrumbs[i].FolderName.replace(".OGGLEBOOBLE.COM", "") + "</a>"

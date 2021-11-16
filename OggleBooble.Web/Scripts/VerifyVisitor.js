@@ -1,19 +1,19 @@
 ﻿var isSessionVerified = false;
 let failureVisitorId = "00000880-0000-0000-0000-UNKNOWN";
 
-function callAlbumPage(visitorId, folderId, calledFrom) {
+function callAlbumPage(visitorId, folderId, pageSouce, calledFrom) {
     try {
-        if (calledFrom != "Index.html") {
-            if (calledFrom != "album.html") {
+        if (pageSouce != "Index.html") {
+            if (pageSouce != "album.html") {
                 if (typeof logStaticPageHit === 'function')
                     logStaticPageHit(folderId, visitorId, calledFrom);
                 else
-                    logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage");
+                    logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage/" + calledFrom);
             }
 
             //tryIpify(folderId, visitorId, calledFrom);
 
-            loadAlbum(folderId, visitorId, calledFrom);
+            loadAlbum(folderId, visitorId, pageSouce);
             // logActivity("VV3", folderId, "verify session"); // active session new page
         }
     } catch (e) {
@@ -48,7 +48,7 @@ function verifySession(folderId, calledFrom) {
                 logActivity("VS4", folderId, "verify session"); // session verified
                 visitorId = failureVisitorId;
             }
-            callAlbumPage(visitorId, folderId, calledFrom);
+            callAlbumPage(visitorId, folderId, calledFrom, "verify session");
         }
         else {
             $('#headerMessage').html("new session started");
@@ -58,7 +58,7 @@ function verifySession(folderId, calledFrom) {
             }
             else {
                 verifyVisitor(visitorId, folderId, calledFrom);
-                callAlbumPage(visitorId, folderId, calledFrom);
+                callAlbumPage(visitorId, folderId, calledFrom, "new session started");
             }
             try {
                 let storagek = window.sessionStorage || {};
@@ -72,7 +72,7 @@ function verifySession(folderId, calledFrom) {
     catch (e) {
         logActivity2(visitorId, "VS8", folderId, "verify session2/" + calledFrom + " ERRMSG: " + e); // verify session CATCH error
         logError2(visitorId, "CAT", folderId, e, "verify session2/" + calledFrom);
-        callAlbumPage(visitorId, folderId, calledFrom);
+        callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
     }
 }
 
@@ -144,7 +144,7 @@ function addVisitor(folderId, calledFrom) {
                 else {
                     logActivity2(failureVisitorId, "AV5", folderId, errMsg); //  ipify fail
                     logError2(visitorId, "AJX", folderId, "ipify null", "add visitor/" + calledFrom);
-                    callAlbumPage(failureVisitorId, folderId, calledFrom);
+                    callAlbumPage(failureVisitorId, folderId, calledFrom, "add visitor success");
                 }
             },
             error: function (jqXHR) {
@@ -153,13 +153,13 @@ function addVisitor(folderId, calledFrom) {
                 if (!checkFor404(errMsg, folderId, "get IpIfyIpInfo/" + calledFrom))
                     logError2(failureVisitorId, "XHR", folderId, errMsg, "get IpIfyIpInfo/" + calledFrom);
 
-                callAlbumPage(failureVisitorId, folderId, calledFrom);
+                callAlbumPage(failureVisitorId, folderId, calledFrom, "add visitor error");
             }
         });
     } catch (e) {
         logActivity2(failureVisitorId, "AV6", folderId, e); // add vis catch error
         logError2(failureVisitorId, "CAT", folderId, e, "add Visitor");
-        callAlbumPage(failureVisitorId, folderId, calledFrom);
+        callAlbumPage(failureVisitorId, folderId, calledFrom, "add visitor catch error");
     }
 }
 
@@ -184,11 +184,12 @@ function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
                         logActivity2(addVisitorSuccess.VisitorId, "AV1", folderId, "add Visitor/" + calledFrom); // new visitor added
                     }
                     logVisit(addVisitorSuccess.VisitorId, folderId, "add Visitor");
-                    callAlbumPage(addVisitorSuccess.VisitorId, folderId, calledFrom);
+                    callAlbumPage(addVisitorSuccess.VisitorId, folderId, calledFrom, "addVisitor If IpUnique");
                 }
                 else {
                     logActivity2(failureVisitorId, "AV7", folderId, success); // ajax error from Add Visitor
                     logError2(failureVisitorId, "AJ7", folderId, success, "add visitor/" + calledFrom);
+                    callAlbumPage(failureVisitorId, folderId, calledFrom, "addVisitor If IpUnique Ajax error");
                 }
             },
             error: function (jqXHR) {
@@ -201,8 +202,8 @@ function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
         });
     } catch (e) {
         logActivity2(failureVisitorId, "AV6", folderId, e); // add vis catch error
-        logError2(failureVisitorId, "CAT", folderId, e, "add Visitor");
-        callAlbumPage(failureVisitorId, folderId, calledFrom);
+        logError2(failureVisitorId, "CAT", folderId, e, "addVisitor If IpUnique ");
+        callAlbumPage(failureVisitorId, folderId, calledFrom, "addVisitor If IpUnique catch error");
     }
 }
 

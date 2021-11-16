@@ -8,12 +8,13 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
             success: function (lookupCandidateSuccess) {
                 if (lookupCandidateSuccess.Success == "ok") {
                     if (lookupCandidateSuccess.LookupStatus == "ok")
+
                         if (lookupCandidate.LookupStatus == "existing Ip") {
                             logActivity2(visitorId, "I03", folderId, "tryAddNewIP/" + calledFrom); // existing Ip visitor
                             setCookieValue("VisitorId", lookupCandidate.ExistingIpAddressVisitorId, "tryAddNewIP/" + calledFrom);
                         }
                         else {
-                            if (lookupCandidateSuccess.DupeHits > 2) {
+                             if (lookupCandidateSuccess.DupeHits > 2) {
                                 logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
                             }
                             else {
@@ -573,8 +574,8 @@ function updateVisitor(ipData, calledFrom) {
                 }
                 else {
                     if (updateVisitorSuccess.Success.indexOf("Duplicate entry") > 0) {
-
-
+                        logActivity2(ipData.VisitorId, "I09", ipData.InitialPage, updateVisitorSuccess.Success); // 
+                        logError2(ipData.VisitorId, "AJX", ipData.InitialPage, updateVisitorSuccess.Success, "update visitor/" + calledFrom);
                     }
                     else {
                         logActivity2(ipData.VisitorId, "I09", ipData.InitialPage, updateVisitorSuccess.Success); // 
