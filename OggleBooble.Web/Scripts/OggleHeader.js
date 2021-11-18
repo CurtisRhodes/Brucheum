@@ -26,7 +26,7 @@
             break;
         case "porn":
             changeFavoriteIcon("porn");
-            console.log("changeFavoriteIcon porn 1")
+            //console.log("changeFavoriteIcon porn 1")
             document.title = "OgglePorn";
             break;
         case "dashboard": {
@@ -71,7 +71,7 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#hdrBtmRowSec3').append(addSpaButton(72, "every playboy centerfold"));
         case "archive": {
             //changeFavoriteIcon("redBallon");
-            console.log("changeFavoriteIcon redBallon 1")
+            //console.log("changeFavoriteIcon redBallon 1")
             $('#oggleHeader').switchClass('playboyHeader', 'boobsHeader');
             $('#divSiteLogo').attr("src", "/Images/redballon.png");
             $('#oggleHeaderTitle').html("OggleBooble");
@@ -175,7 +175,7 @@ function resetOggleHeader(folderId, rootFolder) {
         }
         case "porn": {
             changeFavoriteIcon("porn");
-            console.log("changeFavoriteIcon porn 2")
+            //console.log("changeFavoriteIcon porn 2")
             $('#oggleHeader').switchClass('boobsHeader', 'pornHeader');
             $('#divSiteLogo').attr("src", "/Images/csLips02.png");
             $('#oggleHeaderTitle').html("OgglePorn ");

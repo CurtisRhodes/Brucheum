@@ -38,7 +38,7 @@ function showDirTreeDialog(imgSrc, menuType, title) {
         $('#dashBoardLoadingGif').show();
         $("linkManipulateDirTree").html(tempDirTree);
         $('#dashBoardLoadingGif').hide();
-        console.log("loaded linkManipulateDirTree from temp");
+        //console.log("loaded linkManipulateDirTree from temp");
     }
     //var winH = $(window).height();
     //var dlgH = $('#centeredDialog').height();

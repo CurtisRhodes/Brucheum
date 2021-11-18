@@ -217,7 +217,7 @@ function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
         calledFrom = "unknown";
 
     if (document.domain === 'localhost') {
-        console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
+        //console.log(errorCode + " " + folderId + " " + errorMessage + " " + calledFrom);
         alert("Error " + errorCode + " calledFrom: " + calledFrom + "\nerrorMessage : " + errorMessage);
     }
     else {

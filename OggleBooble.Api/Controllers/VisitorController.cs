@@ -151,6 +151,7 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
+                            lookupCandidateModel.LookupStatus = "ok";
                             lookupCandidateModel.DupeHits = db.ActivityLogs.Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).Count();
                             lookupCandidateModel.IpAddress = dbVisitor.IpAddress;
                         }

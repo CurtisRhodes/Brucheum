@@ -60,7 +60,7 @@ function getCookieValue(itemName, calledFrom) {
 
 function rebuildCookie() {
     try {
-        console.log("createCookie");
+        //console.log("createCookie");
         //alert("deleted decoded cookie: " + decodeURIComponent(document.cookie));
         expirydate = new Date();
         expirydate.setMonth(expirydate.getMonth() + 9);

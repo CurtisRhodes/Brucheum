@@ -24,7 +24,7 @@ function callAlbumPage(visitorId, folderId, pageSouce, calledFrom) {
 
 function verifySession(folderId, calledFrom) {
     $(document).ready(function () {
-        console.log("verifySession(" + folderId + "," + calledFrom + ")");
+        //console.log("verifySession(" + folderId + "," + calledFrom + ")");
         let visitorId = "uninitialized";
         try {
             if (typeof getCookieValue != 'function') {
@@ -173,6 +173,9 @@ function addVisitor(folderId, calledFrom) {
 }
 
 function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
+
+    //let visitorId = create_UUID();
+
     try {
         $.ajax({
             type: "POST",

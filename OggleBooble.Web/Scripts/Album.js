@@ -100,7 +100,7 @@ function logAPageHit(folderId, visitorId, calledFrom) {
 }
 
 function qucikHeader(folderId) {
-    let infoStart = Date.now();
+    //let infoStart = Date.now();
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/GalleryPage/GetQucikHeader?folderId=" + folderId,
@@ -118,8 +118,8 @@ function qucikHeader(folderId) {
                     showFeedbackDialog(folderId, albumInfo.FolderName);
                 });
 
-                let delta = (Date.now() - infoStart) / 1000;
-                console.log("QucikHeader took: " + delta.toFixed(3));
+                //let delta = (Date.now() - infoStart) / 1000;
+                //console.log("QucikHeader took: " + delta.toFixed(3));
             }
             else {
                 logError("AJX", folderId, albumInfo.Success, "qucikHeader");
@@ -134,7 +134,7 @@ function qucikHeader(folderId) {
 
 function getMultipleAlbumImages(folderId, visitorId) {
     //alert("getMultipleAlbumImages: " + folderId);
-    let getImagesStart = Date.now();
+    //let getImagesStart = Date.now();
     $('#albumPageLoadingGif').show();
     $('#galleryBottomfileCount').html("?");
     let imageFrameClass = "folderImageOutterFrame";
@@ -148,7 +148,7 @@ function getMultipleAlbumImages(folderId, visitorId) {
                     $('#imageContainer').show();
                     $('#imageContainer').html('');
                     $.each(subFolders.childFolders, function (idx, childFolder) {
-                        console.log("loading images for " + childFolder.Id);
+                        //console.log("loading images for " + childFolder.Id);
                         $.ajax({
                             type: "GET",
                             url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + childFolder.Id,
@@ -201,8 +201,8 @@ function getMultipleAlbumImages(folderId, visitorId) {
                     resizeAlbumPage();
                     //$('#footerMessage').html(": " + imagesModel.Files.length);
                     $('#folderCommentButton').fadeIn();
-                    let delta = (Date.now() - getImagesStart) / 1000;
-                    console.log("getMultipleAlbumImages took: " + delta.toFixed(3));
+                    //let delta = (Date.now() - getImagesStart) / 1000;
+                    //console.log("getMultipleAlbumImages took: " + delta.toFixed(3));
                     $('.footer').show();
                 }
                 else {
@@ -222,7 +222,7 @@ function getMultipleAlbumImages(folderId, visitorId) {
 }
 
 function getAlbumImages(folderId) {
-    let getImagesStart = Date.now();
+    //let getImagesStart = Date.now();
     const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
     $('#albumPageLoadingGif').show();
     $('#galleryBottomfileCount').html("?");
@@ -304,8 +304,8 @@ function getAlbumImages(folderId) {
                     resizeAlbumPage();
                     //$('#footerMessage').html(": " + imagesModel.Files.length);
                     $('#folderCommentButton').fadeIn();
-                    let delta = (Date.now() - getImagesStart) / 1000;
-                    console.log("Get albumImages took: " + delta.toFixed(3));
+                    //let delta = (Date.now() - getImagesStart) / 1000;
+                    //console.log("Get albumImages took: " + delta.toFixed(3));
                     $('.footer').show();
                 }
                 else {
@@ -325,7 +325,7 @@ function getAlbumImages(folderId) {
 
 function getAlbumPageInfo(folderId, visitorId, isLargeLoad) {
     try {
-        let infoStart = Date.now();
+        //let infoStart = Date.now();
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumPageInfo?folderId=" + folderId + "&visitorId=" + visitorId,
@@ -409,8 +409,8 @@ function getAlbumPageInfo(folderId, visitorId, isLargeLoad) {
                         }
                     }
                     checkRegistrationStatus(folderId, visitorId, albumInfo);
-                    let delta = (Date.now() - infoStart) / 1000;
-                    console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
+                    //let delta = (Date.now() - infoStart) / 1000;
+                    //console.log("GetAlbumPageInfo took: " + delta.toFixed(3));
                 }
                 else {
                     if (albumInfo.Success.indexOf("Sequence contains no elements") > 0) {

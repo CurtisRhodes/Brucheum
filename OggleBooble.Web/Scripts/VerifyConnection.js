@@ -40,14 +40,15 @@ function checkConnection(folderId, calledFrom) {
 
                     clearInterval(verifyConnectionWaiter);
                     $('#dots').html('');
-                    console.log("connection verified after: " + verifyConnectionCount);
+                    //console.log("connection verified after: " + verifyConnectionCount);
                     $('#headerMessage').html("");
                 }
                 else {
                     if (!connectingToServerImgShowing && verifyConnectionCount > 8) {
                         $('#customMessage').html("<div id='launchingServiceGif' class='launchingServiceContainer'><img src='Images/tenor02.gif' height='300' /></div>\n").show();
                         $('#customMessageContainer').css("top", 200).css("left", 500).show();
-                        console.log("showing connectingToServerGif");
+                        //console.log("showing connectingToServerGif");
+                        //logActivity2("any","")
                         connectingToServerImgShowing = true;
                     }
                     if (!canIgetaConnectionImgShowing && verifyConnectionCount > 22) {
@@ -56,7 +57,7 @@ function checkConnection(folderId, calledFrom) {
                             "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
                             "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
                             "</div>").show();
-                        console.log("canIgetaConnection message showing");
+                        //console.log("canIgetaConnection message showing");
                         logError("404", 3910, "SERVICE DOWN", calledFrom);
                         canIgetaConnectionImgShowing = true;
                     }
@@ -75,7 +76,7 @@ function checkConnection(folderId, calledFrom) {
                             async: "false",
                             url: settingsArray.ApiServer + "api/Common/VerifyConnection",
                             success: function (successModel) {
-                                console.log("GET VerifyConnection: " + verifyConnectionCount);
+                                //console.log("GET VerifyConnection: " + verifyConnectionCount);
                                 if (successModel.Success == "ok") {
                                     if (successModel.ConnectionVerified) {
                                         //changeFavoriteIcon("redBallon");

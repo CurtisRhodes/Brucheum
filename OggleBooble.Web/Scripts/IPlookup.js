@@ -23,29 +23,28 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                                 }
                             }
                             break;
-                            case "existing Ip":
-                                logActivity2(lookupCandidateSuccess.ExistingIpAddressVisitorId, "I03", folderId, "removed: " + visitorId); // existing Ip visitor
-                                //logActivity2(visitorId, "I03", folderId, "Ip: " + lookupCandidateSuccess.IpAddress); // existing Ip visitor
-                                localStorage["VisitorId"] = lookupCandidate.ExistingIpAddressVisitorId;
-                                rebuildCookie();
-                                if (lookupCandidateSuccess.ExistingIpAddressCountry == "ZZ") {
-                                    logActivity2(lookupCandidateSuccess.ExistingIpAddressVisitorId, "I05", "tryAddNewIP/" + calledFrom);
-                                    getIpInfo3(lookupCandidateSuccess.ExistingIpAddressVisitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
-                                }
-                                break;
-                            case "bad visitor Id":
-                                logActivity2(visitorId, "I0B", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            case "visitorId not found":
-                                logActivity2(visitorId, "I0F", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            case "country not ZZ":
-                                logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
-                                break;
-                            default:
-                                logActivity2(visitorId, "I0S", folderId, "tryAddNewIP  missisg case: " + lookupCandidateSuccess.lookupStatus); // Switch Case Problem
-                                logError2(visitorId, "SWT", folderId, lookupCandidateSuccess.LookupStatus, "lookupCandidateSuccess.lookupStatus");
-                        }
+                        case "existing Ip":
+                            logActivity2(lookupCandidateSuccess.ExistingIpAddressVisitorId, "I03", folderId, "removed: " + visitorId); // existing Ip visitor
+                            //logActivity2(visitorId, "I03", folderId, "Ip: " + lookupCandidateSuccess.IpAddress); // existing Ip visitor
+                            localStorage["VisitorId"] = lookupCandidate.ExistingIpAddressVisitorId;
+                            rebuildCookie();
+                            if (lookupCandidateSuccess.ExistingIpAddressCountry == "ZZ") {
+                                logActivity2(lookupCandidateSuccess.ExistingIpAddressVisitorId, "I05", "tryAddNewIP/" + calledFrom);
+                                getIpInfo3(lookupCandidateSuccess.ExistingIpAddressVisitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
+                            }
+                            break;
+                        case "bad visitor Id":
+                            logActivity2(visitorId, "I0B", folderId, "tryAddNewIP/" + calledFrom);
+                            break;
+                        case "visitorId not found":
+                            logActivity2(visitorId, "I0F", folderId, "tryAddNewIP/" + calledFrom);
+                            break;
+                        case "country not ZZ":
+                            logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
+                            break;
+                        default:
+                            logActivity2(visitorId, "I0S", folderId, "tryAddNewIP  missisg case: " + lookupCandidateSuccess.lookupStatus); // Switch Case Problem
+                            logError2(visitorId, "SWT", folderId, lookupCandidateSuccess.LookupStatus, "lookupCandidateSuccess.lookupStatus");
                     }
                 }
                 else {
