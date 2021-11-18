@@ -91,10 +91,10 @@ function showBasicFolderInfoDialog() {
     $('#summernoteContainer').summernote('disable');
     $(".note-editable").css('font-size', '16px');
     $(".note-editable").css('min-height', '186px');
-    if (!isLoggedIn()) {
+    if (localStorage["IsLoggedIn"] == "false") {
         ///showMyAlert("you must be logged in to edit folder comments");
-        $("#btnCatDlgEdit").hide();
-        $("#btnCatDlgLinks").hide();
+        //$("#btnCatDlgEdit").hide();
+        //$("#btnCatDlgLinks").hide();
     }
     $('#centeredDialogContainer').mouseleave(function () {
         if (allowDialogClose) dragableDialogClose();
@@ -148,7 +148,7 @@ function showFullModelDetails(folderId) {
 
 function modelInfoDetailHtml() {
 
-    //if (isLoggedIn()) {
+    //if (localStorage["IsLoggedIn"] == "true") {
     //    $('#folderInfoDialogFooter').append(
     //        "        <div id='btnCatDlgLinks' class='folderCategoryDialogButton' onclick='showTrackbackDialog()'>Trackback Links</div>\n");
     //}

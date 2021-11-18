@@ -12,7 +12,7 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
 
         if (isNullorUndefined(ssVisitorId)) {
             ssVisitorId = "vs kludge";
-            logError("BUG", folderId, "VisitorId null in this kludge", "log SSImageHit");
+            logError("VNF", folderId, "VisitorId null in this kludge", "log SSImageHit");
         }
 
         $.ajax({
@@ -38,11 +38,11 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
                         //logError("AJX", folderId, imageHitSuccessModel.Success, "logcImageHit");
                     }
                     else {
-                        // ERROR: Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.
-                        // Entity of type "ImageHit" in state "Added" has the following validation errors: - 
-                        // Property: "VisitorId", Error: "The VisitorId field is required."
+                        if (latestUpdates.Success.indexOf("connection attempt failed") > 0)
+                            logError("TOE", folderId, imageHitSuccessModel.Success, "log SSImageHit");
+                        else
+                            logError("AJX", folderId, imageHitSuccessModel.Success, "log SSImageHit");
                         if (document.domain == 'localhost') alert(imageHitSuccessModel.Success);
-                        logError("AJX", folderId, imageHitSuccessModel.Success, "log SSImageHit");
                     }
                 }
             },

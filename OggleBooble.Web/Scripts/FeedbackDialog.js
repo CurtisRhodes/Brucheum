@@ -71,11 +71,11 @@
                         {
                             logEvent("FBS", folderId, "save Feedback", "Hooraaaayyy !!");
 
-                            if (document.domain !== "localhost")
+                            if (document.domain !== "localhost")            
                                 sendEmail("CurtishRhodes@hotmail.com", "YouGotFeedback@Ogglebooble.com", "You Got Some Feedback",
                                     "feedBackType: " + feedbackType + "<br/><br/>" +
                                     "feedbackMessage: " + $('#smnFeedback').val() + "<br/>" +
-                                    "visitor: " + feedbackSuccess.VisitorInfo + "<br/>" +
+                                    "visitor: " + visitorId + "<br/>" +
                                     "folder: " + folderName);
                             else
                                 alert("sendEmail(CurtishRhodes@hotmail.com, Feedback@Ogglebooble.com, Feedback !!!" +
@@ -86,7 +86,7 @@
                             //console.log("is email working?");
                             $("#centeredDialogContainer").fadeOut();
 
-                            //if (isLoggedIn)
+                            //if (localStorage["IsLoggedIn"] == "true")
                             showMyAlert("feedback received", "Thank you for your " + feedbackType);
                         }
                         else {

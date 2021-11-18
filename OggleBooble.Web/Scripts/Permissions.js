@@ -44,14 +44,6 @@ function resetUserSettings() {
     console.log("default user settings loaded");
 }
 
-function isLoggedIn() {
-    //if (document.domain === 'localhost') return true;
-    //alert("who is calling this?");
-    if (isNullorUndefined(localStorage["IsLoggedIn"]))
-        return false;
-    return localStorage["IsLoggedIn"] == "true";
-}
-
 function updateUserSettings(settingName, settingJson) {
     try {
         $.ajax({

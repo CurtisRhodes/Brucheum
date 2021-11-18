@@ -32,7 +32,13 @@ function logImageHit(
                         // Entity of type "ImageHit" in state "Added" has the following validation errors: - 
                         // Property: "VisitorId", Error: "The VisitorId field is required."
                         if (document.domain == 'localhost') alert(imageHitSuccessModel.Success);
-                        logError("AJX", folderId, imageHitSuccessModel.Success, "log ImageHit");
+
+                        else {
+                            if (latestUpdates.Success.indexOf("connection attempt failed") > 0)
+                                logError("AJX", folderId, imageHitSuccessModel.Success, "log ImageHit"); // timeout error
+                            else
+                                logError("AJX", folderId, imageHitSuccessModel.Success, "log ImageHit");
+                        }
                     }
                 }
             },
@@ -75,9 +81,8 @@ function logIpHit(visitorId, ipAddress, folderId) {
 
 //////////////////////////////////////////////////////////////////
 
-function checkForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {
+function XXcheckForHitLimit(calledFrom, folderId, userPageHits, userImageHits) {
     if (localStorage["IsLoggedIn"] == "true") { }
-    //if (!isLoggedIn())
     {
         if (calledFrom === "pages") {
             if (userPageHits > freePageHitsAllowed && userPageHits % 10 === 0) {

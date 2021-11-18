@@ -199,37 +199,24 @@ function resetOggleHeader(folderId, rootFolder) {
             setHeaderMenu("sluts");
             break;
         default:
-            alert("resetOggleHeader rootFolder " + rootFolder + " not handled");
+            logError("SWT", 1117705, "switch case: " + rootFolder, "reset OggleHeader");
             window.location.href = "Index.html";
     }
-
-    //console.log("header says IsLoggedIn = " + localStorage["IsLoggedIn"]);
-    if (isNullorUndefined(localStorage["IsLoggedIn"])) {
-        localStorage["IsLoggedIn"] = "false";
+    if (getCookieValue("IsLoggedIn", "reset OggleHeader") == "true") {
+        //console.log("I say IsLoggedIn is true: " + localStorage["IsLoggedIn"]);
+        $('#spnUserName').html(getCookieValue("UserName", "reset OggleHeader"));
+        $('#optionNotLoggedIn').hide();
+        $('#optionLoggedIn').show();
+        $('#footerCol5').show();
+    }
+    else {
+        //console.log("I say IsLoggedIn is false: " + localStorage["IsLoggedIn"]);
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         $('#footerCol5').hide();
-
-        //logError("LSH", folderId, "rootFolder: " + rootFolder, "resetOggleHeader");  // localStorage isLoggedIn Undefined in header
-        loadUserProfile(folderId, "resetOggleHeader");
-
-    }
-    else {
-        if (localStorage["IsLoggedIn"] == "true") {
-            //console.log("I say IsLoggedIn is true: " + localStorage["IsLoggedIn"]);
-            $('#spnUserName').html(localStorage["UserName"]);
-            $('#optionNotLoggedIn').hide();
-            $('#optionLoggedIn').show();
-            $('#footerCol5').show();
-        }
-        else {
-            //console.log("I say IsLoggedIn is false: " + localStorage["IsLoggedIn"]);
-            $('#optionLoggedIn').hide();
-            $('#optionNotLoggedIn').show();
-            $('#footerCol5').hide();
-        }
     }
 }
+
 
 function setHeaderMenu(menu) {
     switch (menu) {
@@ -423,7 +410,7 @@ function headerHtml() {
         "                   <div class='hoverTab'><a href='javascript:onLogoutClick()'>Log Out</a></div>\n" +
         "               </div>\n" +
         "               <div id='optionNotLoggedIn' class='displayHidden'>\n" +
-        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog(\"true\")'>Register</a></div>\n" +
+        "                   <div id='btnLayoutRegister' class='hoverTab'><a href='javascript:showRegisterDialog()'>Register</a></div>\n" +
         "                   <div id='btnLayoutLogin' class='hoverTab'><a href='javascript:showLoginDialog()'>Log In</a></div>\n" +
         "               </div>\n" +
         "           </div>\n" +
@@ -442,7 +429,7 @@ function headerHtml() {
         "           <div id='centeredDialogHeader'class='oggleDialogHeader' onmousedown='centeredDialogEnterDragMode()' onmouseup='centeredDialogCancelDragMode()'>" +
         "               <div id='centeredDialogTitle' class='oggleDialogTitle'></div>" +
         "               <div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
-        "               <img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n" +
+        "               <img src='/images/poweroffRed01.png' onclick='centeringDialogClose()'/></div>\n" +
         "           </div>\n" +
         "           <div id='centeredDialogContents' class='oggleDialogContents'></div>\n" +
         "      </div>\n" +
@@ -469,7 +456,7 @@ function centeredDialogCancelDragMode() {
     //$('#headerMessage').html("end drag");
     $('#centeredDialogContents').draggable({ disabled: true });
 }
-function dragableDialogClose() {
+function centeringDialogClose() {
     $("#vailShell").fadeOut();
     $('#centeredDialogContainer').fadeOut();
     if (typeof resume === 'function') resume();

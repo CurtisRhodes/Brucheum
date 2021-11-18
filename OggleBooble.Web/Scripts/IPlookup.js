@@ -7,21 +7,9 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
             url: settingsArray.ApiServer + "api/Visitor/ScreenIplookupCandidate?visitorId=" + visitorId,
             success: function (lookupCandidateSuccess) {
                 if (lookupCandidateSuccess.Success == "ok") {
-                    if (lookupCandidateSuccess.LookupStatus == "ok")
-
-                        if (lookupCandidate.LookupStatus == "existing Ip") {
-                            logActivity2(visitorId, "I03", folderId, "Ip: " + lookupCandidateSuccess.IpAddress); // existing Ip visitor
-                            setCookieValue("VisitorId", lookupCandidate.ExistingIpAddressVisitorId, "tryAddNewIP/" + calledFrom);
-
-                            if (lookupCandidateSuccess.ExistingIpAddressCountry == "ZZ") {
-
-                                logActivity2(lookupCandidate.ExistingIpAddressVisitorId, "I05", folderId, "removed: " + visitorId);
-
-                                getIpInfo3(lookupCandidate.ExistingIpAddressVisitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
-                            }
-                        }
-                        else {
-                             if (lookupCandidateSuccess.DupeHits > 2) {
+                    switch (lookupCandidateSuccess.LookupStatus) {
+                        case "ok":
+                            if (lookupCandidateSuccess.DupeHits > 2) {
                                 logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
                             }
                             else {
@@ -34,9 +22,17 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                                     logActivity2(visitorId, "I02", folderId, lookupCandidateSuccess.IpAddress); // calling getIpIfyIpInfo with bad Ip Address
                                 }
                             }
-                        }
-                    else {
-                        switch (lookupCandidateSuccess.LookupStatus) {
+                            break;
+                            case "existing Ip":
+                                logActivity2(lookupCandidateSuccess.ExistingIpAddressVisitorId, "I03", folderId, "removed: " + visitorId); // existing Ip visitor
+                                //logActivity2(visitorId, "I03", folderId, "Ip: " + lookupCandidateSuccess.IpAddress); // existing Ip visitor
+                                localStorage["VisitorId"] = lookupCandidate.ExistingIpAddressVisitorId;
+                                rebuildCookie();
+                                if (lookupCandidateSuccess.ExistingIpAddressCountry == "ZZ") {
+                                    logActivity2(lookupCandidateSuccess.ExistingIpAddressVisitorId, "I05", "tryAddNewIP/" + calledFrom);
+                                    getIpInfo3(lookupCandidateSuccess.ExistingIpAddressVisitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
+                                }
+                                break;
                             case "bad visitor Id":
                                 logActivity2(visitorId, "I0B", folderId, "tryAddNewIP/" + calledFrom);
                                 break;
@@ -46,25 +42,6 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
                             case "country not ZZ":
                                 logActivity2(visitorId, "I0Z", folderId, "tryAddNewIP/" + calledFrom);
                                 break;
-                            //case "already looked up today":
-                            //    //today only 
-                            //      getIpIfyIpInfo(visitorId, folderId, "already looked up today");
-                            //    //logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
-                            //    break;
-                            //case "months old InitialVisit":
-                            //    getIpIfyIpInfo(visitorId, folderId, "months old InitialVisit");
-                            //    break;
-                            //case "pending months old InitialVisit":
-                            //    getIpIfyIpInfo(visitorId, folderId, "pending months old InitialVisit");
-                            //    break;
-                            //case "too many page hits":
-                            //    getIpIfyIpInfo(visitorId, folderId, "too many page hits");                            
-                            //    break;
-                            //case "pending too many pageHits":
-                            //    break;
-                            //case "passed":
-                            //    getIpIfyIpInfo(visitorId, folderId, "candidate screen passed");
-                            //    break;
                             default:
                                 logActivity2(visitorId, "I0S", folderId, "tryAddNewIP  missisg case: " + lookupCandidateSuccess.lookupStatus); // Switch Case Problem
                                 logError2(visitorId, "SWT", folderId, lookupCandidateSuccess.LookupStatus, "lookupCandidateSuccess.lookupStatus");
@@ -576,7 +553,7 @@ function updateVisitor(ipData, calledFrom) {
                     }
                     else {
                         logActivity2(ipData.VisitorId, "I08", ipData.InitialPage, "update visitor/" + calledFrom); // update VisitorId not exist.
-                        //logError2(ipData.VisitorId, "BUG", ipData.InitialPage, "ip lookup VisitorId not found.", "update visitor/" + calledFrom);
+                        logError2(ipData.VisitorId, "VNF", ipData.InitialPage, "ip lookup VisitorId not found.", "update visitor/" + calledFrom);
                     }
                 }
                 else {

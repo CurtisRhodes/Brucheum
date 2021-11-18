@@ -57,7 +57,7 @@ function perfomCopyLink(linkId) {
         url: settingsArray.ApiServer + "api/Links/AddLink?linkId=" + linkId + "&destinationId=" + pSelectedTreeId,
         success: function (success) {
             $('#albumPageLoadingGif').hide();
-            dragableDialogClose();
+            centeringDialogClose();
             slideShowDialogClose();
             slideShowButtonsActive = true;
             if (success === "ok") {
@@ -107,7 +107,7 @@ function moveFile(request, linkId, folderId) {
         success: function (success) {
             $('#albumPageLoadingGif').hide();
             $('#centeredDialogContainer').fadeOut();
-            dragableDialogClose();
+            centeringDialogClose();
             slideShowDialogClose();
             if (success === "ok") {
                 if (viewerShowing)
@@ -225,7 +225,7 @@ function performMoveImageToRejects(linkId, folderId) {
 
                     // TODO: include reason radio button
                     getAlbumImages(folderId);
-                    dragableDialogClose();
+                    centeringDialogClose();
                     slideShowDialogClose();
                     displayStatusMessage("ok", "link moved to rejects" + linkId);
                     logDataActivity({

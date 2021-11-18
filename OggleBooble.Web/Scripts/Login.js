@@ -48,12 +48,11 @@ function attemptLogin() {
                 if (loginSuccess.Success === "ok") {
                     $("#vailShell").hide();
                     $("#centeredDialogContainer").hide();
-                    setCookieValue("IsLoggedIn", "true", "attempt Login");
-                    //setCookieValue("VisitorId", loginSuccess.VisitorId, "attempt Login");
 
                     localStorage["IsLoggedIn"] = "true";
                     localStorage["UserName"] = loginSuccess.UserName;
                     localStorage["UserRole"] = loginSuccess.UserRole;
+                    rebuildCookie();
 
                     $('#spnUserName').html(localStorage["UserName"]);
                     $('#optionNotLoggedIn').hide();
@@ -96,7 +95,6 @@ function attemptLogin() {
 
 function onLogoutClick(pageId) {
     if (confirm("log out?")) {
-        //setCookieValue("IsLoggedIn", "false");
         updateRegisteredUser({
             VisitorId: getCookieValue("VisitorId", "on LogoutClick"),
             IsLoggedIn: "false"
@@ -104,18 +102,17 @@ function onLogoutClick(pageId) {
         localStorage["IsLoggedIn"] = "false";
         localStorage["UserName"] = "not registered";
         localStorage["UserRole"] = "not registered";
+        rebuildCookie();
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         $('#footerCol5').hide();
 
-        console.log("onLogoutClick IsLoggedIn: " + localStorage["IsLoggedIn"] +
-            " UserName: " + localStorage["UserName"] +
-            " UserRole: " + localStorage["UserRole"]);
+        //logActivity("")
     }
 }
 
 function cancelLogin() {
-    dragableDialogClose();
+    centeringDialogClose();
     if (typeof resume === 'function')
         resume();
 }
@@ -218,21 +215,68 @@ function checkFaceBookLoginState() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function showRegisterDialog(showCloseButton) {
-    if (typeof pause === 'function') pause();
-    $("#vailShell").fadeIn();
-    //$('#centeredDialogTitle').html("Register and Login to OggleBooble");
-    $('#customMessage').html(registerDialogHtml(showCloseButton));
-    $("#vailShell").fadeIn();
-    $("#customMessageContainer").draggable().fadeIn();
-    $('#customMessageContainer').css("top", 126);
-    $('#customMessageContainer').css("left", 663);
-    $('.validationError').hide();
-    if(showCloseButton)
-        logActivity("LG0", 713650, "show register dialog"); // Register dialog opened
-    else
-        logActivity("LG3", 713654, "show register dialog"); // Register dialog opened from request warning
-    //logEvent("RDO", 0, "YESS!!!");
+function showRegisterDialog() {
+
+    let visitorId = getCookieValue("VisitorId", "show RegisterDialog");
+
+    console.log("showRegisterDialog. visitorId: " + visitorId);
+
+    if ((isNullorUndefined(visitorId) == "cookie not found") || (visitorId == "cookie not found")) {
+        alert("visitorId cookie not found")
+        logError2(visitorId, "VNF", "visitorId cookie not found", "show RegisterDialog");
+    }
+    else {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Visitor/VerifyVisitor?visitorId=" + visitorId,
+            success: function (successModel) {
+                if (successModel.Success == "ok") {
+                    if (successModel.VisitorIdExists) {
+                        //logActivity2(visitorId, "VV1", 1020222, "verify VisitorId"); // visitor verified ok
+                        if (successModel.Country == "ZZ") {
+                            tryAddNewIP(folderId, visitorId, "show RegisterDialog");
+                            logActivity2(visitorId, "VV2", folderId, "show RegisterDialog"); // incoming visitor Country=ZZ
+                        }
+                        if (successModel.IsRegisteredUser) {
+                            alert("visitorId already registered");
+                            logActivity2(visitorId, "LG3", 713654, "already registered", "show RegisterDialog"); // Register dialog opened from request warning
+                            return;
+                        }
+
+                        if (typeof pause === 'function') pause();
+                        $("#vailShell").fadeIn();
+
+                        $('#centeredDialogTitle').html("Register and Login to OggleBooble");
+                        $('#centeredDialogContents').html(registerDialogHtml());
+                        $('#customMessage').html(registerDialogHtml(showCloseButton));
+                        $("#vailShell").fadeIn();
+                        $("#centeredDialogContainer").draggable().fadeIn();
+                        //$("#customMessageContainer").draggable().fadeIn();
+                        //$('#customMessageContainer').css("top", 126);
+                        //$('#customMessageContainer').css("left", 663);
+                        $('.validationError').hide();
+                        logActivity("LG0", 713650, "show register dialog"); // Register dialog opened
+                        //logEvent("RDO", 0, "YESS!!!");
+                    }
+                    else {
+                        logError2(visitorId, "VNF", folderId, "visitorId came back not found", "show RegisterDialog/verify visitor");
+                        alert("unable to verify visitorId: " + visitorId);
+                    }
+                }
+                else {
+                    alert("unable to verify visitorId: " + visitorId);
+                    logError2(visitorId, "AJX", 1117335, successModel.Success, "show RegisterDialog/verify visitor");
+                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                logActivity2(visitorId, "VV6", folderId, errMsg); // verify visitor XHR error
+                if (!checkFor404(errMsg, folderId, "show RegisterDialog")) {
+                    logError2(visitorId, "XHR", folderId, errMsg, "show RegisterDialog");
+                }
+            }
+        });
+    }
 }
 
 function attemptRegister() {
@@ -268,7 +312,7 @@ function attemptRegister() {
                         }
 
                         if (registerdUserSuccessModel.RegisterStatus == "VisitorId not found") {
-                            logError2(visitorId, "BUG", 5454, "VisitorId not found", "attempt Register");
+                            logError2(visitorId, "VNF", 5454, "VisitorId not found", "attempt Register");
                             alert("visitorId not found");
                             if (typeof resume === 'function') resume();
                             $("#vailShell").hide();
@@ -278,7 +322,6 @@ function attemptRegister() {
 
                         if (registerdUserSuccessModel.RegisterStatus == "VisitorId already registered") {
                             //$('#errRegisterUserName').html("VisitorId already registered").show();
-                            //logError2(visitorId, "BUG", 5454, "VisitorId not found", "attempt Register");
                             alert("VisitorId already registered");
                             if (typeof resume === 'function') resume();
                             $("#vailShell").hide();
@@ -291,10 +334,10 @@ function attemptRegister() {
                             $("#vailShell").hide();
                             $("#customMessageContainer").hide();
 
-                            //setCookieValue("VisitorId")
                             localStorage["IsLoggedIn"] = "true";
                             localStorage["UserName"] = userInfo.UserName;
                             localStorage["UserRole"] = userInfo.UserRole;
+                            rebuildCookie();
 
                             $('#spnUserName').html(localStorage["UserName"]);
                             $('#optionNotLoggedIn').hide();
@@ -330,6 +373,9 @@ function attemptRegister() {
 
 function validateRegister() {
     if ($('#txtRegisterUserName').val() === "") {
+
+        let dd1 = $('#txtRegisterUserName').val();
+
         $('#errRegisterUserName').show();
         return false;
     }
@@ -363,16 +409,11 @@ function validateRegister() {
     return true;
 }
 
-function registerDialogHtml(showCloseButton) {
-
-    let htmlString = "<div class='dialogContainer1'>\n" +
+function registerDialogHtml() {
+    return "<div class='dialogContainer1'>\n" +
         "<div id='centeredDialogHeader'class='oggleDialogHeader'>" +
-        "   <div id='centeredDialogTitle' class='oggleDialogTitle'>Register and Login to OggleBooble</div>";
-    if (showCloseButton) {
-        htmlString += "<div id='centeredDialogCloseButton' class='oggleDialogCloseButton'>" +
-            "<img src='/images/poweroffRed01.png' onclick='dragableDialogClose()'/></div>\n";
-    }
-    htmlString += "</div>\n<div id='registerValidationSummary' class='validationError'></div>\n" +
+        "   <div id='centeredDialogTitle' class='oggleDialogTitle'>Register and Login to OggleBooble</div>" +
+        "   </div>\n<div id='registerValidationSummary' class='validationError'></div>\n" +
         "   <div id='errRegisterUserName' class='validationError'>Required</div>\n" +
         "   <label style='white-space:nowrap;'>user name</label><span class='requiredField' title='required'>  *</span><br>\n" +
         "   <input id='txtRegisterUserName' type='text' class='roundedInput' placeholder='your go by name'></input><br>\n" +
@@ -392,7 +433,6 @@ function registerDialogHtml(showCloseButton) {
         "   <label>Email</label>\n" +
         "   <input id='txtRegisterEmail' type='email' class='roundedInput' placeholder='you@example.org'></input><br>\n" +
         "   <button class='roundendButton submitButton' onclick='attemptRegister()'>Submit</button></div>\n";
-    return htmlString;
 }
 
 var registerEmail;
@@ -440,7 +480,7 @@ function userProfileHtml(visitorId) {
 function callUpdateUserProfile() {
     let visitorId = getCookieValue("VisitorId", "call UpdateUserProfile");
     if (visitorId == "cookie not found") {
-        logError2(create_UUID(), "BUG", 616356, "cookie not found", "call Update UserProfile");
+        logError2(create_UUID(), "VNF", 616356, "cookie not found", "call Update UserProfile");
         alert("Sorry\nprogram error\please report by sending feedback");
     }
     else {
@@ -468,8 +508,7 @@ function updateRegisteredUser(userProfileData) {
                     localStorage["IsLoggedIn"] = userProfileData.IsLoggedIn;
                     localStorage["UserName"] = userProfileData.UserName;
                     localStorage["UserRole"] = userProfileData.UserRole;
-                    console.log("user profile updated. IsloggedIn: " + localStorage["IsLoggedIn"] + "\nUserName: " +
-                        localStorage["UserName"] + " UserRole: " + localStorage["UserRole"]);
+//logActivity()
                 }
                 else {
                     logError("AJX", 0, success, "update Registered User");

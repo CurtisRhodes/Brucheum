@@ -135,9 +135,9 @@
             setOggleHeader("loading");
 
             resizeAlbumPage();
-            var dots = "";
+            let dots = "";
             loadOggleSettings();
-            var settingsWaiter = setInterval(function () {
+            let settingsWaiter = setInterval(function () {
                 if (settingsArray.ApiServer === undefined) {
                     dots += "~ ";
                     $('#dots').html(dots);
@@ -146,7 +146,7 @@
                     clearInterval(settingsWaiter);
                     $('#mainMenuContainer').html("connecting");
                     checkConnection(params.folder, "album.html");
-                    var waiter2 = setInterval(function () {
+                    let waiter2 = setInterval(function () {
 
                         if (connectionVerified) {
                             dots += ". ";

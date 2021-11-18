@@ -214,7 +214,7 @@ function reloadRankerImages() {
 function imageClick(selectedSide) {
     if ($('.rankerImageSlotBox').css('cursor') !== 'not-allowed') {
 
-        //if (!isLoggedIn()) {
+        //if (localStorage["IsLoggedIn"] == "false") {
         //    displayStatusMessage("warning", "please log in to record hotness");
         //}
 

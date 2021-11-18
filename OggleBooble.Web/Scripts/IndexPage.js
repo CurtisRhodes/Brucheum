@@ -29,7 +29,7 @@ function displaySpaPage(spaPageId) {
             loadLatestUpdates();
             loadRandomGalleries();
             //setTimeout(function () { launchPromoMessages(); }, 3000);
-            $('#testFunctionClick').show();
+            //$('#testFunctionClick').show();
             resizeIndexPage();
             break;  //index page;
         case 3909:
@@ -83,7 +83,12 @@ function loadLatestUpdates() {
                 window.localStorage[spaType + "latestUpdatesCache"] = JSON.stringify(latestUpdates.LatestTouchedGalleries);
                 loadLatestUpdateArray(latestUpdates.LatestTouchedGalleries, "ajax");
             }
-            else logError("AJX", 3908, latestUpdates.Success, "load LatestUpdates");
+            else {
+                if (latestUpdates.Success.indexOf("connection attempt failed") > 0)
+                    logError("TOE", 3908, latestUpdates.Success, "load LatestUpdates");  // timeout error
+                else
+                    logError("AJX", 3908, latestUpdates.Success, "load LatestUpdates");
+            }
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
@@ -188,9 +193,10 @@ function latestGalleryImageError(folderId, thisItemSrc) {
 
 function testFunction() {
 
-    //tryAddNewIP(4110, "decd8899-478c-44ee-a68b-38cbb9715785", "test function");
-    getIpIfyIpInfo("decd8899-478c-44ee-a68b-38cbb9715785", 4110, "test function") 
+    //tryAddNewIP(4110, "c2b638e6-bd1e-499b-8099-67d5602b3c71", "test function");
+    //getIpIfyIpInfo("decd8899-478c-44ee-a68b-38cbb9715785", 4110, "test function") 
     //addVisitor(748, "test function");
+    addVisitorIfIpUnique("190.209.145.178", 1111, "test function");
 
     // time to log in
     //showCustomMessage('09b40acd-083e-44fe-970d-0a57d1a61360', false);

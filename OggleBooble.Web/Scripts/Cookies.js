@@ -2,9 +2,7 @@
 function getCookieValue(itemName, calledFrom) {
     let returnValue = "cookie not found";
     try {
-        if (document.domain == "localhost" && itemName == "VisitorId") {
-            return "ec6fb880-ddc2-4375-8237-021732907510";
-        }
+        //if (document.domain == "localhost" && itemName == "VisitorId") return "ec6fb880-ddc2-4375-8237-021732907510";
         let decodedCookie = decodeURIComponent(document.cookie);
         let cookieElements = decodedCookie.split(";");
         let cookieItem, cookieItemName, cookieItemValue;
@@ -16,81 +14,64 @@ function getCookieValue(itemName, calledFrom) {
                 if (!isNullorUndefined(cookieItemValue)) {
                     returnValue = cookieItemValue;
                     localStorage[itemName] = cookieItemValue;
+                    logActivity2(localStorage["VisitorId"], "CK0", 1031122, "GET CookieValue/" + calledFrom); // cookie actually worked
                 }
             }
         }
         if (returnValue == "cookie not found") {
-            let storageValue = localStorage[itemName];
-            if (!isNullorUndefined(storageValue)) {
-                if (itemName == "VisitorId")
-                    logActivity2(storageValue, "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
-                else
-                    logActivity2("unavailable", "CK1", 1031128, "GET CookieValue/" + calledFrom); // local storage bypass
-                setCookieValue(itemName, returnValue, "GET CookieValue/" + calledFrom);
-                returnValue = storageValue;
+            if (!isNullorUndefined(localStorage[itemName])) {
+                returnValue = localStorage[itemName];
+                rebuildCookie();
+            //    if (itemName == "VisitorId")
+            //        logActivity2(localStorage["VisitorId"], "CK1", 1031122, "GET CookieValue/" + calledFrom); // local storage bypass
+            //    else
+            //        logActivity2("unavailable", "CK1", 1031128, "itemName: " + itemName + ". calledFrom: " + calledFrom); // local storage bypass
             }
             else {
-                if (navigator.cookieEnabled) { // user accepts cookies
-                    //returnValue = "not enabled not found";
-                    if (calledFrom != "verify session")
-                        logError2("unavailable", "CK2", 703245, "itemName: " + itemName + "  localStorage[itemName]: " + localStorage[itemName], "GET CookieValue/" + calledFrom); // cookies enabled. No local storage bypass
+                if (itemName == "VisitorId") {
+                    if (calledFrom != "verify session") {
+                        let newVisId = create_UUID();
+                        localStorage["VisitorId"] = newVisId;
+                        rebuildCookie();
+                        addVisitor(1111, "cookie not found");
+                        returnValue = newVisId;
+                        logError2(newVisId, "CK2", 703245, "navigator.cookieEnabled: " + navigator.cookieEnabled + "calledFrom:" + calledFrom); // visitor added from get cookie
+                    }
                 }
                 else {
-                    logError2("unavailable", "CK3", 703245, "itemName: " + itemName, "GET CookieValue/" + calledFrom); // cookies NOT enabled. No local storage bypass
+                    if (itemName == "IsLoggedIn") {
+                        localStorage["IsLoggedIn"] = "false";
+                        //rebuildCookie();
+                    }
+                    else
+                        logError2("unavailable", "CK3", 703245, "itemName: " + itemName + ". navigator.cookieEnabled: " + navigator.cookieEnabled + "calledFrom:" + calledFrom); // No local storage bypass
                 }
             }
         }
+        //else logActivity2(returnValue, "CK0", 11151150, "navigator.cookieEnabled: " + navigator.cookieEnabled); // cookie test ok
     }
     catch (e) {
-        if (isNullOrUndefined(e)) {
-            logError2("unavailable", "CAT", 616329, e, "get CookieValue/" + calledFrom);
-        }
         logError2("unavailable", "CAT", 616329, e, "get CookieValue/" + calledFrom);
     }
-    return returnValue;
-}
-
-function setCookieValue(elementToSet, newValue, calledFrom) {
-    try {
-        if (!isNullorUndefined(newValue)) {
-            localStorage[elementToSet] = newValue;
-            let cookieString = elementToSet + ":" + newValue;
-            document.cookie = cookieString;
-        }
-        else {
-            logError2(create_UUID(), "BUG", 1104845, "newValue: " + newValue, "set CookieValue/" + calledFrom);
-            //logError2(create_UUID(), "BUG", 1104845, "newValue NullorUndefined", "set CookieValue/" + calledFrom);
-        }
-    } catch (e) {
-        logError2(create_UUID(), "CAT", 1105947, e, "set cookie/" + calledFrom);
+    finally {
+        return returnValue;
     }
 }
 
-function createCookie(visitorId) {
+function rebuildCookie() {
     try {
         console.log("createCookie");
-        //alert("createCookie");
-        //cookies.remove("document.cookie");
-        document.cookie = "expires=Thu, 01 Jan 1970 00: 00: 00 UTC; path =/;";
-
-        alert("deleted decoded cookie: " + decodeURIComponent(document.cookie));
-
+        //alert("deleted decoded cookie: " + decodeURIComponent(document.cookie));
         expirydate = new Date();
-
         expirydate.setMonth(expirydate.getMonth() + 9);
-        let cookiestring = ";VisitorId=" + visitorId + ";UserName=" + localStorage["UserName"] +
-            "VisitorVerified=true;Isloggedin=" + localStorage["IsLoggedIn"] + ";expires=" + expirydate.toUTCString();
+        let cookiestring = "VisitorId=" + localStorage["VisitorId"] +
+            ";UserName=" + localStorage["UserName"] +
+            ";VisitorVerified=true" +
+            ";IsloggedIn=" + localStorage["IsLoggedIn"] +
+            ";expires=" + expirydate.toUTCString() + "path=/";
         document.cookie = cookiestring;
-
-
-        var test1 = getCookieValue("Visitorid", "boogers");
-
-        //alert("cookieTest1: " + test1);
-
-
-        //alert("decoded cookie: " + decodeURIComponent(document.cookie));
-
+        let decodedCookie = decodeURIComponent(document.cookie);
     } catch (e) {
-        console.log("createCookie CATCH " + e);
+        logError2(localStorage["VisitorId"], "CAT", 333, e, "rebuild Cookie");
     }
 }

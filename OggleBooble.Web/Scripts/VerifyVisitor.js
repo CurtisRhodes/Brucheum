@@ -1,5 +1,4 @@
-﻿var isSessionVerified = false;
-let failureVisitorId = "00000880-0000-0000-0000-UNKNOWN";
+﻿let isSessionVerified = false;
 
 function callAlbumPage(visitorId, folderId, pageSouce, calledFrom) {
     try {
@@ -10,10 +9,12 @@ function callAlbumPage(visitorId, folderId, pageSouce, calledFrom) {
                 else
                     logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage/" + calledFrom);
             }
-
-            //tryIpify(folderId, visitorId, calledFrom);
-
-            loadAlbum(folderId, visitorId, pageSouce);
+            if (typeof loadAlbum === 'function')
+                loadAlbum(folderId, visitorId, pageSouce);
+            else {
+                logError2(visitorId, "FNF", folderId, "loadAlbum not a function", "call AlbumPage/" + calledFrom);
+                window.location.href = "Index.html";
+            }
             // logActivity("VV3", folderId, "verify session"); // active session new page
         }
     } catch (e) {
@@ -22,64 +23,72 @@ function callAlbumPage(visitorId, folderId, pageSouce, calledFrom) {
 }
 
 function verifySession(folderId, calledFrom) {
-    console.log("verifySession(" + folderId + "," + calledFrom + ")");
-    let visitorId = "uninitialized";
-    try {
-        if (typeof getCookieValue != 'function') {
-            logError2(visitorId, "bug", folderId, "getCookieValue not a function", "verify session/" + calledFrom);
-            return;
-        }
-        visitorId = getCookieValue("VisitorId", "verify session");
-        let localSessionIsVerified;
+    $(document).ready(function () {
+        console.log("verifySession(" + folderId + "," + calledFrom + ")");
+        let visitorId = "uninitialized";
         try {
-            let storagek = window.sessionStorage || {};
-            localSessionIsVerified = window.sessionStorage["SessionVerified"];
-            // logActivity2(visitorId, "VS4", folderId, "verify session"); // session storage ok
-        } catch (e) {
-            localSessionIsVerified = isSessionVerified;
-            logActivity2(visitorId, "VS6", folderId, e); // session storage fail
-        }
-
-
-        if (localSessionIsVerified) {
-            //logActivity("VS9", folderId, "verify session"); // session verified
-            if (visitorId == "cookie not found") {
-                // cookie not found made it past 
-                logActivity("VS4", folderId, "verify session"); // session verified
-                visitorId = failureVisitorId;
+            if (typeof getCookieValue != 'function') {
+                logError2(visitorId, "BUG", folderId, "getCookieValue not a function", "verify session/" + calledFrom);
+                return;
             }
-            callAlbumPage(visitorId, folderId, calledFrom, "verify session");
-        }
-        else {
-            $('#headerMessage').html("new session started");
-            logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
-            if (visitorId == "cookie not found") {
-                addVisitor(folderId, "new session started");
-            }
-            else {
-                verifyVisitor(visitorId, folderId, calledFrom);
-                callAlbumPage(visitorId, folderId, calledFrom, "new session started");
-            }
+            visitorId = getCookieValue("VisitorId", "verify session");
+            let localSessionIsVerified;
             try {
                 let storagek = window.sessionStorage || {};
-                window.sessionStorage["SessionVerified"] = true;
+                localSessionIsVerified = window.sessionStorage["SessionVerified"];
+                // logActivity2(visitorId, "VS4", folderId, "verify session"); // session storage ok
             } catch (e) {
-                logActivity2(visitorId, "VS6", folderId, "isSessionVerified set to true"); // session storage fail
-                isSessionVerified = true;
+                localSessionIsVerified = isSessionVerified;
+                logActivity2(visitorId, "VS6", folderId, e); // session storage fail
+            }
+
+            if (localSessionIsVerified) {
+                //logActivity("VS9", folderId, "verify session"); // session verified
+                if (visitorId == "cookie not found") {
+                    //visitorId = create_UUID();
+                    //localStorage["VisitorId"] = visitorId;
+                    //rebuildCookie();
+                    //addVisitor(folderId, "session verified, but");
+                    logError2(visitorId, "VNF", folderId, "localSessionIsVerified", "verify session/" + calledFrom);
+                    visitorId = failureVisitorId;
+                }
+                else {
+                    logActivity("VS4", folderId, "verify session"); // session verified
+                }
+                callAlbumPage(visitorId, folderId, calledFrom, "verify session");
+            }
+            else {
+                $('#headerMessage').html("new session started");
+                logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
+                if (visitorId == "cookie not found") {
+                    addVisitor(folderId, "new session started");
+                }
+                else {
+                    verifyVisitor(visitorId, folderId, calledFrom);
+                    callAlbumPage(visitorId, folderId, calledFrom, "new session started");
+                }
+                try {
+                    let storagek = window.sessionStorage || {};
+                    window.sessionStorage["SessionVerified"] = true;
+                } catch (e) {
+                    logActivity2(visitorId, "VS6", folderId, "isSessionVerified set to true"); // session storage fail
+                    isSessionVerified = true;
+                }
             }
         }
-    }
-    catch (e) {
-        logActivity2(visitorId, "VS8", folderId, "verify session2/" + calledFrom + " ERRMSG: " + e); // verify session CATCH error
-        logError2(visitorId, "CAT", folderId, e, "verify session2/" + calledFrom);
-        callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
-    }
+        catch (e) {
+            logActivity2(visitorId, "VS8", folderId, "verify session2/" + calledFrom + " ERRMSG: " + e); // verify session CATCH error
+            logError2(visitorId, "CAT", folderId, e, "verify session2/" + calledFrom);
+            callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
+        }
+    });
 }
 
 function verifyVisitor(visitorId, folderId, calledFrom) {
     try {
-        if (visitorId.indexOf("cookie not found") > -1) {
-            logActivity2(create_UUID(), "VV8", "verify visitor/" + calledFrom); // cookie not found made it too far
+        if (visitorId == "cookie not found") {
+            //logActivity2(visitorId, "VV8", "verify visitor/" + calledFrom); // cookie not found made it too far
+            logError2(visitorId, "VNF", folderId, "should not make it this far", "verify visitor/" + calledFrom);
             return;
         }
         //logActivity2(visitorId, "VV0", folderId, "verify Visitor"); // attempting to verify visitor
@@ -105,9 +114,9 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
                         logVisit(visitorId, folderId, "verify visitor");
                     }
                     else {
-                        logActivity2(visitorId, "VV4", folderId, "verify visitor/" + calledFrom); // visitorId not found
+                        logActivity2(visitorId, "VV4", folderId, "verify visitor/" + calledFrom); // visitor not exists
                         addVisitor(folderId, "verify Visitor");
-                        //logError2(visitorId, "BUG", folderId, "visitorId came back not found", "verify visitor/" + calledFrom);
+                        //logError2(visitorId, "VNF", folderId, "adding visitor", "verify visitor/" + calledFrom);
                     }
                 }
                 else {
@@ -174,28 +183,32 @@ function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
 
                 if (addVisitorSuccess.Success == "ok") {
                     if (addVisitorSuccess.ErrorMessage == "ok") {
-                        setCookieValue("VisitorId", addVisitorSuccess.VisitorId, "add Visitor/" + calledFrom);
+                        localStorage["VisitorId"] = addVisitorSuccess.VisitorId;
+                        rebuildCookie();
                         logActivity2(addVisitorSuccess.VisitorId, "AV1", folderId, "add Visitor/" + calledFrom); // new visitor added
                     }
                     if (addVisitorSuccess.ErrorMessage == "existing Ip") {
-                        setCookieValue("VisitorId", addVisitorSuccess.VisitorId, "add Visitor/" + calledFrom);
+                        localStorage["VisitorId"] = addVisitorSuccess.VisitorId;
+                        rebuildCookie();
                         logActivity2(addVisitorSuccess.VisitorId, "AV1", folderId, "add Visitor/" + calledFrom); // new visitor added
                     }
                     logVisit(addVisitorSuccess.VisitorId, folderId, "add Visitor");
                     callAlbumPage(addVisitorSuccess.VisitorId, folderId, calledFrom, "addVisitor If IpUnique");
                 }
                 else {
-                    logActivity2(failureVisitorId, "AV7", folderId, success); // ajax error from Add Visitor
-                    logError2(failureVisitorId, "AJ7", folderId, success, "add visitor/" + calledFrom);
+                    logActivity2(addVisitorSuccess.VisitorId, "AV7", folderId, success); // ajax error from Add Visitor
+                    logError2(addVisitorSuccess.VisitorId, "AJ7", folderId, success, "add visitor/" + calledFrom);
                     callAlbumPage(failureVisitorId, folderId, calledFrom, "addVisitor If IpUnique Ajax error");
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, folderId, "add Visitor"))
-                    logError2(create_UUID(), "XHR", 55, errMsg, "add visitor/" + calledFrom);
-                else
-                    logActivity2(failureVisitorId, "AV8", folderId, errMsg); // Add Visitor XHR error
+                if (!checkFor404(errMsg, folderId, "addVisitor If IpUnique"))
+                    logError2("unavailable", "XHR", 55, errMsg, "addVisitor If IpUnique/" + calledFrom);
+                else {
+                    // logError2("unavailable", "AV8", folderId, errMsg, "addVisitor If IpUnique"); // Add Visitor XHR error
+                    logActivity2("unavailable", "AV8", folderId, "errMsg: " + errMsg); // Add Visitor XHR error
+                }
             }
         });
     } catch (e) {
@@ -212,38 +225,38 @@ function loadUserProfile(folderId, visitorId) {
             url: settingsArray.ApiServer + "api/Visitor/GetVisitorInfo?visitorId=" + visitorId,
             success: function (visitorInfo) {
                 if (visitorInfo.Success == "ok") {
-                    if (visitorInfo.IsRegisteredUser) {
-                        localStorage["IsLoggedIn"] = "true";
-                        if (visitorInfo.RegisteredUser.IsLoggedIn == 0)
-                            localStorage["IsLoggedIn"] = "false";
-                        localStorage["UserName"] = visitorInfo.RegisteredUser.UserName;
-                        localStorage["UserRole"] = visitorInfo.RegisteredUser.UserRole;
-
-                        if (localStorage["IsLoggedIn"] == "true") {
-                            $('#spnUserName').html(localStorage["UserName"]);
+                    if (!visitorInfo.VisitorFound) {
+                        logActivity2(visitorId, "VS3", folderId, "load UserProfile"); // visitorId cookie exists but not found
+                        logError2(visitorId, "VNF", folderId, "visitorId cookie exists but not found", "loadUserProfile");
+                        addVisitor(folderId, "load UserProfile");
+                    }
+                    else {
+                        if (visitorInfo.IsRegisteredUser) {
+                            if (visitorInfo.RegisteredUser.IsLoggedIn == 0)
+                                localStorage["IsLoggedIn"] = "false";
+                            else
+                                localStorage["IsLoggedIn"] = "true";
+                            localStorage["UserName"] = visitorInfo.RegisteredUser.UserName;
+                            localStorage["UserRole"] = visitorInfo.RegisteredUser.UserRole;
+                            $('#spnUserName').html(visitorInfo.RegisteredUser.UserName);
                             $('#optionNotLoggedIn').hide();
                             $('#optionLoggedIn').show();
                             $('#footerCol5').show();
                         }
-                    }
-                    else {
-                        localStorage["IsLoggedIn"] = "false";
-                        localStorage["UserName"] = "not registered";
-                        localStorage["UserRole"] = "not registered";
-                        $('#optionLoggedIn').hide();
-                        $('#optionNotLoggedIn').show();
-                        $('#footerCol5').hide
-
-                        if (!visitorInfo.VisitorFound) {
-                            addVisitor(folderId, "load UserProfile");
-                            logActivity2(visitorId, "VS3", folderId, "load UserProfile"); // visitorId cookie exists but not found
-                            logError2(visitorId, "BUG", folderId, "visitorId cookie exists but not found", "loadUserProfile");
+                        else {
+                            localStorage["IsLoggedIn"] = "false";
+                            localStorage["UserName"] = "not registered";
+                            localStorage["UserRole"] = "not registered";
+                            $('#optionLoggedIn').hide();
+                            $('#optionNotLoggedIn').show();
+                            $('#footerCol5').hide
                         }
+                        rebuildCookie();
                     }
                 }
                 else {
                     logError("AJX", folderId, visitorInfo.Success, "load UserProfile");
-                    if (document.domain == "localhost") alert("load UserProfile: " + visitorInfo.Success);
+                    //if (document.domain == "localhost") alert("load UserProfile: " + visitorInfo.Success);
                 }
             },
             error: function (jqXHR) {
@@ -262,7 +275,7 @@ function logVisit(visitorId, folderId, calledFrom) {
         //logActivity2(visitorId, "LV0", folderId, calledFrom);
         if (visitorId == "cookie not found") {
             logActivity2(visitorId, "LV4", folderId, calledFrom);
-            logError2(create_UUID(), "VNF", folderId, " ", "log visit"); // visitorId came back cookie not found
+            logError2(visitorId, "VNF", folderId, " ", "log visit"); // visitorId came back cookie not found
             return;
         }
         $.ajax({
@@ -276,8 +289,8 @@ function logVisit(visitorId, folderId, calledFrom) {
                     }
                     if (successModel.ReturnValue == "return visit logged") {
                         logActivity2(visitorId, "LV2", folderId, "log visit/" + calledFrom);  // Return Vist Recorded
-                        if (isLoggedIn())
-                            $('#headerMessage').html("Welcome back " + localStorage["UserName"]);
+                        if (localStorage["IsLoggedIn"] == "true")
+                            $('#headerMessage').html("Welcome back " + getCookieValue("UserName", "log visit"));
                         else
                             $('#headerMessage').html("Welcome back. Please log in");
                     }
@@ -286,7 +299,7 @@ function logVisit(visitorId, folderId, calledFrom) {
 
                     if (successModel.ReturnValue == "VisitorId not found") {
                         logActivity2(visitorId, "LV3", folderId, "log visit/" + calledFrom);  // visitorId not found
-                        logError2(visitorId, "BUG", folderId, "visitorId not found", "log visit/" + calledFrom);
+                        logError2(visitorId, "VNF", folderId, "visitorId not found", "log visit/" + calledFrom);
                     }
                 }
                 else {
