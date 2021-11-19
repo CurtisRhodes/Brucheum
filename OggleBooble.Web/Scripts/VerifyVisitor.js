@@ -193,7 +193,7 @@ function addVisitorIfIpUnique(ipAddress, folderId, calledFrom) {
                     if (addVisitorSuccess.ErrorMessage == "existing Ip") {
                         localStorage["VisitorId"] = addVisitorSuccess.VisitorId;
                         rebuildCookie();
-                        logActivity2(addVisitorSuccess.VisitorId, "AV1", folderId, "add Visitor/" + calledFrom); // new visitor added
+                        logActivity2(addVisitorSuccess.VisitorId, "AV2", folderId, "add Visitor/" + calledFrom); // existing IP used
                     }
                     logVisit(addVisitorSuccess.VisitorId, folderId, "add Visitor");
                     callAlbumPage(addVisitorSuccess.VisitorId, folderId, calledFrom, "addVisitor If IpUnique");

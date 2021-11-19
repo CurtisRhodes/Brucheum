@@ -168,8 +168,6 @@ namespace OggleBooble.Api.Models
     {
         public int DupeHits { get; set; }        
         public string IpAddress { get; set; }
-        public string ExistingIpAddressVisitorId { get; set; }
-        public string ExistingIpAddressCountry { get; set; }
         public string LookupStatus { get; set; }
         public string Success { get; set; }
     }

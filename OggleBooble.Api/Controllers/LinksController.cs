@@ -447,6 +447,10 @@ namespace OggleBooble.Api.Controllers
 
                     var linksToRemove = db.CategoryImageLinks.Where(l => l.ImageLinkId == linkId).ToList();
                     db.CategoryImageLinks.RemoveRange(linksToRemove);
+
+
+
+
                     ImageFile reject = db.ImageFiles.Where(i => i.Id == linkId).First();
                     reject.FolderId = -6;
                     //db.ImageFiles.Remove(reject);

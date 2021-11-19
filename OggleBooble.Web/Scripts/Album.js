@@ -309,7 +309,10 @@ function getAlbumImages(folderId) {
                     $('.footer').show();
                 }
                 else {
-                    logError("AJX", folderId, albumImageInfo.Success, "get albumImages");
+                    if ((albumImageInfo.Success.indexOf("connection attempt failed") > 0) || (latestUpdates.Success.indexOf("Timeout in IO operation") > 0))
+                        logError("TOE", folderId, albumImageInfo.Success, "get albumImages");  // timeout error
+                    else
+                        logError("AJX", folderId, albumImageInfo.Success, "get albumImages");
                 }
             },
             error: function (jqXHR) {

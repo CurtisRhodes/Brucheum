@@ -8,30 +8,25 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
             success: function (lookupCandidateSuccess) {
                 if (lookupCandidateSuccess.Success == "ok") {
                     switch (lookupCandidateSuccess.LookupStatus) {
+                        case "ok2":
+                            logError2(visitorId, "BUG", folderId, "lookupCandidateSuccess.LookupStatus: " + lookupCandidateSuccess.LookupStatus, lookupCandidateSuccess.IpAddress);
                         case "ok":
                             if (lookupCandidateSuccess.DupeHits > 2) {
                                 logActivity2(visitorId, "I07", folderId, "tryAddNewIP/" + calledFrom);
                             }
                             else {
-                                if (lookupCandidateSuccess.IpAddress.indexOf(".") > 0) {
+                                if (returnIpAddress.indexOf(".") > 0) {
                                     getIpInfo3(visitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
                                     logActivity2(visitorId, "I01", folderId, lookupCandidateSuccess.IpAddress); // calling ipInfo with good Ip Address
                                 }
                                 else {
-                                    getIpIfyIpInfo(visitorId, folderId, calledFrom);
+                                    getIpIfyIpInfo(visitorId, folderId, "tryAddNewIP");
                                     logActivity2(visitorId, "I02", folderId, lookupCandidateSuccess.IpAddress); // calling getIpIfyIpInfo with bad Ip Address
                                 }
                             }
                             break;
                         case "existing Ip":
-                            logActivity2(lookupCandidateSuccess.ExistingIpAddressVisitorId, "I03", folderId, "removed: " + visitorId); // existing Ip visitor
-                            //logActivity2(visitorId, "I03", folderId, "Ip: " + lookupCandidateSuccess.IpAddress); // existing Ip visitor
-                            localStorage["VisitorId"] = lookupCandidate.ExistingIpAddressVisitorId;
-                            rebuildCookie();
-                            if (lookupCandidateSuccess.ExistingIpAddressCountry == "ZZ") {
-                                logActivity2(lookupCandidateSuccess.ExistingIpAddressVisitorId, "I05", "tryAddNewIP/" + calledFrom);
-                                getIpInfo3(lookupCandidateSuccess.ExistingIpAddressVisitorId, lookupCandidateSuccess.IpAddress, folderId, calledFrom);
-                            }
+                            logActivity2(visitorId, "I0X", folderId, "removed"); // existing Ip visitor
                             break;
                         case "bad visitor Id":
                             logActivity2(visitorId, "I0B", folderId, "tryAddNewIP/" + calledFrom);
@@ -54,11 +49,13 @@ function tryAddNewIP(folderId, visitorId, calledFrom) {
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
+                logActivity2(visitorId, "I0X", folderId, errMsg);
                 if (!checkFor404(errMsg, folderId, "try AddNewIP"))
                     logError2(create_UUID(), "XHR", folderId, errMsg, "try AddNewIP");
             }
         });
     } catch (e) {
+        logActivity2(visitorId, "I0C", folderId, "tryAddNewIP/" + calledFrom);
         logError2(visitorId, "CAT", "1023823", e, "tryAddNewIP/" + calledFrom);
     }
 }
@@ -116,7 +113,7 @@ function getIpInfo(folderId, visitorId, calledFrom) {
 
         let ipCall0Returned = false;
         ip0Busy = true;
-        logActivity2(visitorId, "IA1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
+        //logActivity2(visitorId, "IA1", folderId, "get IpInfo/" + calledFrom); // calling ip-lookup api
         $.ajax({
             type: "GET",
             url: "https://ipinfo.io?token=ac5da086206dc4", 
@@ -136,7 +133,6 @@ function getIpInfo(folderId, visitorId, calledFrom) {
                     logActivity2(visitorId, "IA3", folderId, "get IpInfo/" + calledFrom); // empty resopnse
                 }
                 else {
-                    // logActivity2(visitorId, "IA2", folderId, "ipResponse.ip: " + ipResponse.ip); // it worked
                     ipCall0Returned = true;
                     updateVisitor({
                         VisitorId: visitorId,
@@ -501,8 +497,7 @@ function getIpInfo3(visitorId, ipAddress, folderId, calledFrom) {
         type: "GET",
         url: "https://ipinfo.io/" + ipAddress + "?token=ac5da086206dc4",
         success: function (ipResponse) {
-
-            //logActivity2(visitorId, "I02", folderId, "City: " + ipResponse.city); // IpInfo worked
+            logActivity2(visitorId, "I03", folderId, "ipResponse.ip: " + ipResponse.ip); // ipInfo call worked
             updateVisitor({
                 VisitorId: visitorId,
                 IpAddress: ipAddress,
@@ -520,17 +515,17 @@ function getIpInfo3(visitorId, ipAddress, folderId, calledFrom) {
             let errMsg = getXHRErrorDetails(jqXHR);
             //logActivity2(visitorId, "IAE", folderId, errMsg); // XHR error
             if (errMsg.indexOf("Rate limit exceeded") > 0) {
-                logActivity2(visitorId, "IA5", folderId, "get IpInfo/" + calledFrom); // lookup limit exceeded
+                logActivity2(visitorId, "I0L", folderId, "get IpInfo/" + calledFrom); // lookup limit exceeded
                 tryApiDbIpFree(folderId, visitorId, calledFrom);
             }
             else {
                 if (errMsg.toUpperCase().indexOf("NOT CONNECT") > -1) {
-                    logActivity2(visitorId, "IA6", folderId, "get IpInfo/" + calledFrom); // connection problem
+                    logActivity2(visitorId, "I05", folderId, "get IpInfo/" + calledFrom); // connection problem
                     tryOtherAccessTokin(folderId, visitorId, calledFrom);
                 }
                 else {
                     logError2(visitorId, "XHR", folderId, errMsg, "get IpInfo/" + calledFrom);
-                    logActivity2(visitorId, "IAX", folderId, errMsg); // XHR error
+                    logActivity2(visitorId, "I0X", folderId, errMsg); // XHR error
                 }
             }
             ip0Busy = false;

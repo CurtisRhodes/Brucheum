@@ -79,8 +79,12 @@ function loadLatestUpdates() {
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numUpdatedGalleries + "&root=" + spaType,
         success: function (latestUpdates) {
             if (latestUpdates.Success === "ok") {
-                window.localStorage[spaType + "latestUpdatesCache"] = null;
-                window.localStorage[spaType + "latestUpdatesCache"] = JSON.stringify(latestUpdates.LatestTouchedGalleries);
+                try {
+                    window.localStorage[spaType + "latestUpdatesCache"] = null;
+                    window.localStorage[spaType + "latestUpdatesCache"] = JSON.stringify(latestUpdates.LatestTouchedGalleries);
+                } catch (e) {
+                    logError("CAT", 3908, e, "load LatestUpdates");
+                }
                 loadLatestUpdateArray(latestUpdates.LatestTouchedGalleries, "ajax");
             }
             else {
@@ -123,8 +127,12 @@ function loadRandomGalleries() {
         console.log("no " + spaType + " cache found");
     }
     else {
-        console.log("loading " + spaType + " random galleries from cache");
-        loadRandomGalleriesArray(JSON.parse(window.localStorage[spaType + "randomGalleriesCache"], "cache"));
+        try {
+            console.log("loading " + spaType + " random galleries from cache");
+            loadRandomGalleriesArray(JSON.parse(window.localStorage[spaType + "randomGalleriesCache"], "cache"));
+        } catch (e) {
+            logError("CAT", 3908, e, "load RandomGalleries");
+        }
     }
     //$('#randomGalleriesSectionLoadingGif').hide();
     let randGalleryCount = 9;

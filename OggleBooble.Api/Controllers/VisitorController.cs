@@ -123,45 +123,38 @@ namespace OggleBooble.Api.Controllers
             var lookupCandidateModel = new LookupCandidateModel();
             try
             {
-                lookupCandidateModel.LookupStatus = "ok";
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
-                        lookupCandidateModel.LookupStatus = "visitorId not found";
-                    else
-                    { 
-                        if (dbVisitor.Country != "ZZ")
-                            lookupCandidateModel.LookupStatus = "country not ZZ";
-                        else if (dbVisitor.VisitorId.Length != 36)
-                            lookupCandidateModel.LookupStatus = "bad visitor Id";
-                    }
-                    if (lookupCandidateModel.LookupStatus == "ok")
                     {
-                        Visitor dbExistingIpVisitor = db.Visitors.Where(v => v.IpAddress == dbVisitor.IpAddress).FirstOrDefault();
-                        if (dbExistingIpVisitor != null)
+                        lookupCandidateModel.LookupStatus = "visitorId not found";
+                    }
+                    else
+                    {
+                        lookupCandidateModel.IpAddress = dbVisitor.IpAddress;
+                        if (dbVisitor.Country != "ZZ")
                         {
-                            lookupCandidateModel.LookupStatus = "existing Ip";
-                            lookupCandidateModel.IpAddress = dbVisitor.IpAddress;
-                            lookupCandidateModel.ExistingIpAddressVisitorId = dbExistingIpVisitor.VisitorId;
-                            lookupCandidateModel.ExistingIpAddressCountry = dbExistingIpVisitor.Country;
-
-                            db.Visitors.Remove(dbVisitor);
-                            db.SaveChanges();
+                            lookupCandidateModel.LookupStatus = "country not ZZ";
                         }
                         else
                         {
                             lookupCandidateModel.LookupStatus = "ok";
                             lookupCandidateModel.DupeHits = db.ActivityLogs.Where(a => a.ActivityCode == "I00" && a.VisitorId == visitorId && a.Occured > DateTime.Today).Count();
-                            lookupCandidateModel.IpAddress = dbVisitor.IpAddress;
                         }
                     }
-                    lookupCandidateModel.Success = "ok";
                 }
+                lookupCandidateModel.Success = "ok";
             }
             catch (Exception ex)
             {
                 lookupCandidateModel.Success = Helpers.ErrorDetails(ex);
+            }
+            finally {
+                if (lookupCandidateModel.LookupStatus == null)
+                {
+                    lookupCandidateModel.LookupStatus = "ok2";
+                }
             }
             return lookupCandidateModel;
         }
