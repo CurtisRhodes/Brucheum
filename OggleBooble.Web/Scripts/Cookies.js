@@ -33,7 +33,7 @@ function getCookieValue(itemName, calledFrom) {
                         let newVisId = create_UUID();
                         localStorage["VisitorId"] = newVisId;
                         rebuildCookie();
-                        addVisitor(1111, "cookie not found");
+                        addVisitor(newVisId, 1111, "cookie not found");
                         returnValue = newVisId;
                         logError2(newVisId, "CK2", 703245, "navigator.cookieEnabled: " + navigator.cookieEnabled + "calledFrom:" + calledFrom); // visitor added from get cookie
                     }

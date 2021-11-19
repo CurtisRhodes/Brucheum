@@ -14,7 +14,7 @@ namespace OggleBooble.Api.Controllers
     {
         [HttpPost]
         [Route("api/Visitor/AddUniqueIpVisitor")]
-        public AddVisitorSuccessModel AddUniqueIpVisitor(string ipAddress, string calledFrom, int initialPage)
+        public AddVisitorSuccessModel AddUniqueIpVisitor(string visitorId, string ipAddress, string calledFrom, int initialPage)
         {
             AddVisitorSuccessModel successModel = new AddVisitorSuccessModel();
             try
@@ -24,10 +24,9 @@ namespace OggleBooble.Api.Controllers
                     Visitor existingVisitor = db.Visitors.Where(v => v.IpAddress == ipAddress).FirstOrDefault();
                     if (existingVisitor == null)
                     {
-                        successModel.VisitorId = Guid.NewGuid().ToString();
                         var newVisitor = new Visitor()
                         {
-                            VisitorId = successModel.VisitorId,
+                            VisitorId = visitorId,
                             IpAddress = ipAddress,
                             Country = "ZZ",
                             City = calledFrom,
@@ -43,7 +42,7 @@ namespace OggleBooble.Api.Controllers
                     else
                     {
                         successModel.ErrorMessage = "existing Ip";
-                        successModel.VisitorId = existingVisitor.VisitorId;
+                        successModel.ExistingVisitorId = existingVisitor.VisitorId;
                     }
                     successModel.Success = "ok";
                 }

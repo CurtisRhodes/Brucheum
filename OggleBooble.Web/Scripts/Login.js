@@ -459,7 +459,7 @@ function showUserProfileDialog() {
     $('#centeredDialogContents').html(userProfileHtml(visitorId));
     $("#vailShell").fadeIn();
     $("#centeredDialogContainer").draggable().fadeIn();
-    loadUserProfile(741050, visitorId);
+    loadUserProfile(741050, visitorId, "user ProfileHtml");
 }
 
 function userProfileHtml(visitorId) {
