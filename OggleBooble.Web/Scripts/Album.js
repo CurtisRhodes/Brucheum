@@ -1,13 +1,15 @@
 ﻿let apFolderName, apFolderRoot, apFolderId = 0, isLargeLoad = false;
 const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
 let tempDirTree = null;
+let apVisitorId;
 
 function loadAlbum(folderId, visitorId, calledFrom) {
     try {
         if (isNullorUndefined(folderId)) {
             logError2(visitorId, "BUG", 1021720, "folderId isNullorUndefined: " + folderId, "load album");
-            return;
+            window.location.href = "Index.html";
         }
+        apVisitorId = visitorId;
         setOggleHeader("album");
         apFolderId = folderId;
         qucikHeader(folderId);
@@ -174,7 +176,7 @@ function getMultipleAlbumImages(folderId, visitorId) {
                                                 " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\)'\n" +
                                                 " alt='" + obj.LinkId + "' titile='" + obj.DirectoryName + "' \n" +
                                                 " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + imgSrc + "\")'\n" +
-                                                " onclick='launchViewer(" + folderId + ",\"" + obj.LinkId + "\",true)' src='" + imgSrc + "'/>\n";
+                                                " onclick='callLaunchViewer(\"" + obj.LinkId + "\",true)' src='" + imgSrc + "'/>\n";
                                             if (obj.FolderId !== obj.SrcId)
                                                 imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
                                                     obj.SrcFolder + "' onclick='rtpe(\"SEE\",\"abc\",\"detail\"," + obj.SrcId + ")' /></div>\n";
@@ -260,7 +262,7 @@ function getAlbumImages(folderId) {
                                 " onerror='galleryImageError(\"" + obj.LinkId + "\",\"" + obj.SrcId + "\)'\n" +
                                 " alt='" + obj.LinkId + "' titile='" + obj.SrcFolder + "' \n" +
                                 " oncontextmenu='albumContextMenu(\"Image\",\"" + obj.LinkId + "\"," + obj.FolderId + ",\"" + imgSrc + "\")'\n" +
-                                " onclick='launchViewer(" + obj.FolderId + ",\"" + obj.LinkId + "\",false)' src='" + imgSrc + "'/>\n";
+                                " onclick='callLaunchViewer(\"" + obj.LinkId + "\",false)' src='" + imgSrc + "'/>\n";
 
                             if (obj.FolderId !== obj.SrcId)
                                 imageHtml += "<div class='knownModelIndicator'><img src='images/foh01.png' title='" +
@@ -439,7 +441,8 @@ function checkRegistrationStatus(folderId, visitorId, albumInfo) {
         if (visitorId == failureVisitorId)
             return;
 
-        if (getCookieValue("IsLoggedIn", "check registration status") == "false") {
+        if (localStorage["IsLoggedIn"] == "false") {
+            //getCookieValue("IsLoggedIn", "check registration status") == "false") {
             if (albumInfo.FolderType == "singleChild") {
                 if ((albumInfo.RootFolder == "centerfold") || (albumInfo.RootFolder == "muses")
                     || (albumInfo.RootFolder == "cybergirl") || (albumInfo.RootFolder == "playboy")) {
@@ -608,11 +611,16 @@ function launchLargeLoad() {
 function launchDeepSlideShow() {
     $('#albumPageLoadingGif').show();
     logEvent("DSC", apFolderId, apFolderName, "launchDeepSlideShow");
-    launchViewer(apFolderId, 1, true);
+    launchViewer(apVisitorId, apFolderId, 1, true);
+
 
     //    let visitorId = getCookieValue("VisitorId");
     //    sendEmail("CurtishRhodes@hotmail.com", "DeepSlideshow@Ogglebooble.com",
     //        "deep slideshow clicked", "Visitor Id: " + visitorId + "<br/>Folder: " + apFolderName);
+}
+
+function callLaunchViewer(startItem, includeAllSubFolders) {
+    launchViewer(apVisitorId, apFolderId, startItem, includeAllSubFolders);
 }
 
 function checkAlbumCost() {

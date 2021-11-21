@@ -554,22 +554,6 @@ namespace OggleBooble.Api.Controllers
             return centerfoldReport;
         }
 
-        [HttpGet]
-        [Route("api/Report/GetZZVisitors")]
-        public OverdueZZVisitors GetZZVisitors()
-        {
-            var overdueZZVisitors = new OverdueZZVisitors();
-            try
-            {
-                using (var db = new OggleBoobleMySqlContext())
-                {
-                    overdueZZVisitors.ZZVisitors = db.VwOverdueZZVisitors.Where(v=>v.InitialVisit < DateTime.Today.AddDays(-5)).ToList();
-                }
-                overdueZZVisitors.Success = "ok";
-            }
-            catch (Exception ex) { overdueZZVisitors.Success = Helpers.ErrorDetails(ex); }
-            return overdueZZVisitors;
-        }
         public string MySnippet()
         {
             string success;

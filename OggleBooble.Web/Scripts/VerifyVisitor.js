@@ -85,7 +85,7 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
                         else {
                             if (successModel.IsRegisteredUser) {
                                 logActivity2(visitorId, "VV3", folderId, "verify visitor/" + calledFrom); // VV3	registered user verified
-                                loadUserProfile(folderId, visitorId, "verify visitor/" + calledFrom);
+                                loadUserProfile(visitorId, folderId, "verify visitor/" + calledFrom);
                             }
                             else
                                 logActivity2(visitorId, "VV1", folderId, "verify visitor/" + calledFrom); // VV3	unregistered user verified

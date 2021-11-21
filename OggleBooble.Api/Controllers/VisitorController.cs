@@ -56,19 +56,19 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Visitor/UpdateVisitor")]
-        public UpdateVisitorSuccessModel UpdateVisitor(AddVisitorModel visitorData)
-        {
-            var updateVisitorSuccessModel = new UpdateVisitorSuccessModel();
+        public SuccessModel UpdateVisitor(AddVisitorModel visitorData)
+        {            
+            var successModel = new SuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorData.VisitorId).FirstOrDefault();
                     if (dbVisitor == null)
-                        updateVisitorSuccessModel.VisitorIdExists = false;
+                        successModel.ReturnValue = "not found";
                     else
                     {
-                        updateVisitorSuccessModel.VisitorIdExists = true;
+                        successModel.ReturnValue = "ok";
                         dbVisitor.City = visitorData.City;
                         dbVisitor.IpAddress = visitorData.IpAddress;
                         dbVisitor.Country = visitorData.Country;
@@ -77,15 +77,16 @@ namespace OggleBooble.Api.Controllers
                         if (dbVisitor.InitialPage == 0)
                             dbVisitor.InitialPage = visitorData.InitialPage;
                         db.SaveChanges();
+
                     }
-                    updateVisitorSuccessModel.Success = "ok";
+                    successModel.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                updateVisitorSuccessModel.Success = Helpers.ErrorDetails(ex);
+                successModel.Success = Helpers.ErrorDetails(ex);
             }
-            return updateVisitorSuccessModel;
+            return successModel;
         }
 
         [HttpPut]
@@ -254,24 +255,23 @@ namespace OggleBooble.Api.Controllers
             return successModel;
         }
         
-        [HttpPost]
-        [Route("api/Visitor/Ipify")]
-        public string Ipify(string visitorId, string IpAddress) {
-            string success;
+        [HttpGet]
+        [Route("api/Visitor/GetZZVisitors")]
+        public GetZZVisitorsSuccessModel GetZZVisitors(int howMany) {
+            var zzVisitorsSuccess = new GetZZVisitorsSuccessModel();
             try
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    db.Ipfys.Add(new Ipfy() { VisitorId = visitorId, IpAddress = IpAddress, Occured = DateTime.Now });
-                    db.SaveChanges();
-                    success = "ok";
+                    zzVisitorsSuccess.ZZVisitors = db.VwZZVisitors.Take(howMany).ToList();
+                    zzVisitorsSuccess.Success = "ok";
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                zzVisitorsSuccess.Success= Helpers.ErrorDetails(ex);
             }
-            return success;
+            return zzVisitorsSuccess;
         }
     }
 

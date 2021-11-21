@@ -16,72 +16,61 @@ function launchCarousel(startRoot) {
     let carouselSkip = 0;
     imageIndex = 0;
     try {
-        //loadCarouselSettingsIntoLocalStorage();
-        //jsCarouselSettings = JSON.parse(window.localStorage["carouselSettings"]);
-        if (isNullorUndefined(window.localStorage)) {
-            window.localStorage["IsLoggedIn"] = "false";
-            logError("BUG", 602537, "entire concept of window.localStorage fail", "launch Carousel");
-            carouselTake = 10;
-        }
-        else {
-            switch (startRoot) {
-                case "centerfold":
-                    if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
-                        //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
-                        console.log("loading centerfold from centerfold cache");
-                        let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
-                        $.each(carouselCacheArray, function (idx, obj) {
-                            carouselItemArray.push(obj);
-                        });
-                        carouselSkip = carouselItemArray.length;
-                        startCarousel("centefold cache");
-                        //console.log("loaded " + carouselItemArray.length + " from centerfold cache");
-                    }
-                    else {
-                        if (document.domain == "localhost") alert("no " + startRoot + " cache found");
-                        carouselTake = 10;
-                        //console.log("no " + startRoot + " cache found");
-                        //logError("CR1", 618407, "no " + startRoot + " cache found");
-                    }
-                    break;
-                case "boobs":
-                    if (!isNullorUndefined(localStorage["carouselCache"])) {
-                        let carouselCacheArray = JSON.parse(localStorage["carouselCache"]);
-                        $.each(carouselCacheArray, function (idx, obj) {
-                            carouselItemArray.push(obj);
-                        });
-                        carouselSkip = carouselItemArray.length;
-                        startCarousel("big naturals cache");
-                    }
-                    else {
-                        carouselTake = 10;
-                        console.log("no " + startRoot + " cache found");
-                    }
-                    break;
-                case "porn":
-                    if (!isNullorUndefined(window.localStorage["pornCache"])) {
-                        console.log("loading porn from centerfold cache");
-                        let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
-                        $.each(carouselCacheArray, function (idx, obj) {
-                            carouselItemArray.push(obj);
-                        });
-                        carouselSkip = carouselItemArray.length;
-                        startCarousel("porn cache");
-                        console.log("loaded " + carouselItemArray.length + " from porn cache");
-                    }
-                    else {
-                        carouselTake = 10;
-                        console.log("no " + startRoot + " cache found");
-                    }
-                    break;
-                default:
-                    logError("SWT", 222, startRoot, "launchCarousel");
-            }
+        switch (startRoot) {
+            case "centerfold":
+                if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
+                    //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
+                    console.log("loading centerfold from centerfold cache");
+                    let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
+                    $.each(carouselCacheArray, function (idx, obj) {
+                        carouselItemArray.push(obj);
+                    });
+                    carouselSkip = carouselItemArray.length;
+                    startCarousel("centefold cache");
+                    //console.log("loaded " + carouselItemArray.length + " from centerfold cache");
+                }
+                else {
+                    if (document.domain == "localhost") alert("no " + startRoot + " cache found");
+                    carouselTake = 10;
+                    //console.log("no " + startRoot + " cache found");
+                    //logError("CR1", 618407, "no " + startRoot + " cache found");
+                }
+                break;
+            case "boobs":
+                if (!isNullorUndefined(localStorage["carouselCache"])) {
+                    let carouselCacheArray = JSON.parse(localStorage["carouselCache"]);
+                    $.each(carouselCacheArray, function (idx, obj) {
+                        carouselItemArray.push(obj);
+                    });
+                    carouselSkip = carouselItemArray.length;
+                    startCarousel("big naturals cache");
+                }
+                else {
+                    carouselTake = 10;
+                    console.log("no " + startRoot + " cache found");
+                }
+                break;
+            case "porn":
+                if (!isNullorUndefined(window.localStorage["pornCache"])) {
+                    console.log("loading porn from centerfold cache");
+                    let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
+                    $.each(carouselCacheArray, function (idx, obj) {
+                        carouselItemArray.push(obj);
+                    });
+                    carouselSkip = carouselItemArray.length;
+                    startCarousel("porn cache");
+                    console.log("loaded " + carouselItemArray.length + " from porn cache");
+                }
+                else {
+                    carouselTake = 10;
+                    console.log("no " + startRoot + " cache found");
+                }
+                break;
+            default:
+                logError("SWT", 222, startRoot, "launchCarousel");
         }
     }
     catch (e) {
-        // TypeError: localStorage is null
-        //if (e.IndexOf("SyntaxError: Unexpected token u in JSON at position 1") > -1) {
         logError("CAT", 1105126, e, "launch Carousel");
     }
     finally {

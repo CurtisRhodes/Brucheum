@@ -61,11 +61,6 @@ function attemptLogin() {
 
                     logEvent("LOG", 2380, "Successfull log in: " + localStorage["UserName"]);
                     displayStatusMessage("ok", "thanks for logging in " + localStorage["UserName"]);
-
-                    //if (document.domain == "localhost") alert("ok", "thanks for logging in " + userName);
-                    //    console.log("attempt Login. IsloggedIn: " + localStorage["IsLoggedIn"] + "UserName: " +
-                    //        localStorage["UserName"] + " UserRole: " + localStorage["UserRole"]);
-
                     sendEmail("CurtishRhodes@hotmail.com", "SomeoneLoggedIn@Ogglebooble.com", "Successful login",
                         "UserName: " + localStorage["UserName"] + "<br/>VisitorId: " + visitorId);
                 }
@@ -459,7 +454,7 @@ function showUserProfileDialog() {
     $('#centeredDialogContents').html(userProfileHtml(visitorId));
     $("#vailShell").fadeIn();
     $("#centeredDialogContainer").draggable().fadeIn();
-    loadUserProfile(741050, visitorId, "user ProfileHtml");
+    loadUserProfile(visitorId, 741050, "user ProfileHtml");
 }
 
 function userProfileHtml(visitorId) {
@@ -508,7 +503,6 @@ function updateRegisteredUser(userProfileData) {
                     localStorage["IsLoggedIn"] = userProfileData.IsLoggedIn;
                     localStorage["UserName"] = userProfileData.UserName;
                     localStorage["UserRole"] = userProfileData.UserRole;
-//logActivity()
                 }
                 else {
                     logError("AJX", 0, success, "update Registered User");

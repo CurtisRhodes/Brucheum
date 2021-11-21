@@ -27,10 +27,14 @@ namespace OggleBooble.Api.Models
         public int Parent { get; set; }
         public string Success { get; set; }
     }
-
-    public class UpdateVisitorSuccessModel
+    
+    public class GetZZVisitorsSuccessModel
     {
-        public bool VisitorIdExists { get; set; }
+        public GetZZVisitorsSuccessModel()
+        {
+            ZZVisitors = new List<VwZZVisitors>();
+        }
+        public List<VwZZVisitors> ZZVisitors { get; set; }
         public string Success { get; set; }
     }
 

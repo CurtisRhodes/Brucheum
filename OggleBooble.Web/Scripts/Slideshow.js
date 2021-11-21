@@ -56,10 +56,10 @@ function logSSImageHit(linkId, folderId, isInitialHit) {
     }
 }
 
-function launchViewer(folderId, startItem, includeSubFolders) {
+function launchViewer(visitorId, folderId, startItem, includeSubFolders) {
     spSlideShowRunning = false;
     imageViewerFolderId = folderId;
-    ssVisitorId = getCookieValue("VisitorId", "launch Viewer");
+    ssVisitorId = visitorId;
 
     if (isNullorUndefined(includeSubFolders)) includeSubFolders = false;
     spIncludeSubFolders = includeSubFolders;

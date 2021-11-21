@@ -29,7 +29,7 @@ function displaySpaPage(spaPageId) {
             loadLatestUpdates();
             loadRandomGalleries();
             //setTimeout(function () { launchPromoMessages(); }, 3000);
-            $('#testFunctionClick').show();
+            //$('#testFunctionClick').show();
             resizeIndexPage();
             break;  //index page;
         case 3909:
@@ -201,11 +201,12 @@ function latestGalleryImageError(folderId, thisItemSrc) {
 
 function testFunction() {
 
+    runAfew();
     //tryAddNewIP(4110, "c2b638e6-bd1e-499b-8099-67d5602b3c71", "test function");
     //getIpIfyIpInfo("decd8899-478c-44ee-a68b-38cbb9715785", 4110, "test function") 
     //addVisitor(748, "test function");
     //addVisitorIfIpUnique("190.209.145.178", 1111, "test function");
-    getIpInfo3("d272da49-5eb9-4aaf-9fc6-4a12d2a0bd70", "75.182.147.211", 1111, "test function")
+    //getIpInfo3("d272da49-5eb9-4aaf-9fc6-4a12d2a0bd70", "75.182.147.211", 1111, "test function")
 
     // time to log in
     //showCustomMessage('09b40acd-083e-44fe-970d-0a57d1a61360', false);

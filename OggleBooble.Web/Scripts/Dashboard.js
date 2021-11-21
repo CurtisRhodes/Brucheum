@@ -171,7 +171,9 @@ function setLeftMenu(role) {
             break;
         case "reports":
             document.title = "reports : OggleBooble";
-            $('#reportsLeftMenu').html("<div class='clickable' onclick='runMetricsMatrixReport()'>Performance Metrics</div>\n" +
+            $('#reportsLeftMenu').html(
+                "<div class='clickable' onclick='runMetricsMatrixReport()'>Update Performance Stats</div>\n" +
+                "<div class='clickable' onclick='runMetricsMatrixReport()'>Performance Metrics</div>\n" +
                 "<div class='clickable' onclick='runPageHitReport()'>Page Hit Report</div>\n" +
                 "<div class='clickable' onclick='eventSummaryReport()'>Event Activity</div>\n" +
                 "<div class='clickable' onclick='errorSummaryReport()'>Error Report</div>\n" +
@@ -197,9 +199,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showMoveManyTool(3);'>Archive Many</div>\n" +
                 "<div class='clickable' onclick='showRipPdfDialog();'>Rip Pdf</div>\n"+
                 "<div class='clickable' onclick='DupeCheck();'>Dupe Check</div>\n" +
-                "<div class='clickable' onclick='RemoveDuplicateIps();'>force a few</div>\n" +
-
-                
+                "<div class='clickable' onclick='runAfewZZvisitors(1);'>force a few</div>\n" +
 
                 "<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>\n" +
                 "<div class='clickable' onclick='showBuildFolderTreePageDialog()'>Build FolderTree Page</div>\n" +                
@@ -428,26 +428,32 @@ function RemoveDuplicateIps() {
     }
 }
 
-function forceAfew() {
-    $.ajax({
-        type: "GET",
-        url: settingsArray.ApiServer + "api/Report/GetZZVisitors",
-        success: function (overdueZZVisitors) {
-            $('#dashBoardLoadingGif').hide();
-            if (overdueZZVisitors.Success === "ok") {
-                for (i = 0; i < 5; i++) {
-                    tryAddNewIP(3110, overdueZZVisitors.ZZVisitors[i], "any");
+function runAfewZZvisitors(howmany) {
+    try {
+        $.ajax({
+            type: "GET",
+            url: settingsArray.ApiServer + "api/Visitor/GetZZVisitors?howmany=" + howmany,
+            success: function (zzVisitorsSuccess) {
+                if (zzVisitorsSuccess.Success == "ok") {
+                    for (i = 0; i < howmany; i++) {
+                        getIpInfo3(zzVisitorsSuccess.ZZVisitors[i].VisitorId, zzVisitorsSuccess.ZZVisitors[i].IpAddress, zzVisitorsSuccess.ZZVisitors[i].IpAddress, "runAfewZZvisitors");
+                    };
                 }
+                else
+                    logError2("VisitorId", "AJX", 0, zzVisitorsSuccess.Success, "run a few");
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                logActivity2(create_UUID(), "I0Y", 5555, errMsg); // update visitor XHR error
+                if (!checkFor404(errMsg, 555, "run a few"))
+                    logError2(create_UUID(), "XHR", 555, errMsg, "run a few");
             }
-            else
-                alert("CreateNewFolder: " + successModel.Success);
-        },
-        error: function (xhr) {
-            $('#dashBoardLoadingGif').hide();
-            alert("createNewFolder xhr error: " + getXHRErrorDetails(xhr));
-        }
-    });
-
+        });
+    }
+    catch (e) {
+        logActivity2(ipData.VisitorId, "I0C", ipData.InitialPage, "run a few"); // catch error
+        logError2(ipData.VisitorId, "CAT", ipData.InitialPage, e, "run a few");
+    }
 }
 
 

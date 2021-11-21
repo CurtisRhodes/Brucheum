@@ -202,15 +202,14 @@ function resetOggleHeader(folderId, rootFolder) {
             logError("SWT", 1117705, "switch case: " + rootFolder, "reset OggleHeader");
             window.location.href = "Index.html";
     }
-    if (getCookieValue("IsLoggedIn", "reset OggleHeader") == "true") {
-        //console.log("I say IsLoggedIn is true: " + localStorage["IsLoggedIn"]);
+    if (localStorage["IsLoggedIn"] == "true") {
+        //getCookieValue("IsLoggedIn", "reset OggleHeader") == "true") {
         $('#spnUserName').html(getCookieValue("UserName", "reset OggleHeader"));
         $('#optionNotLoggedIn').hide();
         $('#optionLoggedIn').show();
         $('#footerCol5').show();
     }
     else {
-        //console.log("I say IsLoggedIn is false: " + localStorage["IsLoggedIn"]);
         $('#optionLoggedIn').hide();
         $('#optionNotLoggedIn').show();
         $('#footerCol5').hide();

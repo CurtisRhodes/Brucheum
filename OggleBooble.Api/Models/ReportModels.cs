@@ -93,12 +93,6 @@ namespace OggleBooble.Api.Models
         public string Success { get; set; }
     }
 
-    public class OverdueZZVisitors
-    {
-        public List<VwOverdueZZVisitors> ZZVisitors { get; set; }
-        public string Success { get; set; }
-    }
-
     public class UserReportSuccessModel
     {
         public UserReportModel UserReport { get; set; }
