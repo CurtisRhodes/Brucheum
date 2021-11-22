@@ -199,7 +199,7 @@ function setLeftMenu(role) {
                 "<div class='clickable' onclick='showMoveManyTool(3);'>Archive Many</div>\n" +
                 "<div class='clickable' onclick='showRipPdfDialog();'>Rip Pdf</div>\n"+
                 "<div class='clickable' onclick='DupeCheck();'>Dupe Check</div>\n" +
-                "<div class='clickable' onclick='runAfewZZvisitors(1);'>force a few</div>\n" +
+                "<div class='clickable' onclick='runAfewZZvisitorsDialog();'>force a few</div>\n" +
 
                 "<div class='clickable' onclick='prepareXhamsterPage()'>Prepare xHamster Page</div>\n" +
                 "<div class='clickable' onclick='showBuildFolderTreePageDialog()'>Build FolderTree Page</div>\n" +                
@@ -428,7 +428,18 @@ function RemoveDuplicateIps() {
     }
 }
 
+// REPAIR FUNCTIONS
+function runAfewZZvisitorsDialog() {
+    $('#dashboardDialogTitle').html("run a few ZZvisitors");
+    $('#dashboardDialogContents').html(
+        "    <div><span>how many</span><input id='txtHowManyZZvisitors' default='6' class='txtLinkPath roundedInput'></input></div>\n" +
+        "    <div class='roundendButton' onclick='runAfewZZvisitors($(\"#txtHowManyZZvisitors\").val())'>Run</div>\n");
+    $("#txtFolderToRepair").val(pSelectedTreeFolderPath);
+    $('#dashboardDialog').fadeIn();
+}
 function runAfewZZvisitors(howmany) {
+    $('#dataifyInfo').show().html("checking and repairing links");
+    $('#dashBoardLoadingGif').fadeIn();
     try {
         $.ajax({
             type: "GET",
@@ -438,6 +449,8 @@ function runAfewZZvisitors(howmany) {
                     for (i = 0; i < howmany; i++) {
                         getIpInfo3(zzVisitorsSuccess.ZZVisitors[i].VisitorId, zzVisitorsSuccess.ZZVisitors[i].IpAddress, zzVisitorsSuccess.ZZVisitors[i].IpAddress, "runAfewZZvisitors");
                     };
+                    $('#dashBoardLoadingGif').fadeOut();
+                    $('#dataifyInfo').show().html(howmany + " visitors ip infoed");
                 }
                 else
                     logError2("VisitorId", "AJX", 0, zzVisitorsSuccess.Success, "run a few");
@@ -455,7 +468,6 @@ function runAfewZZvisitors(howmany) {
         logError2(ipData.VisitorId, "CAT", ipData.InitialPage, e, "run a few");
     }
 }
-
 
 // CREATE STATIC PAGES
 function showCreateStaticPagesDialog() {

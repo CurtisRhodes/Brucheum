@@ -30,7 +30,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    PerformFolderChecks(folderId, repairReport, db, recurr);
+                    FixFolderPaths(folderId, repairReport, db, true);
+                    //PerformFolderChecks(folderId, repairReport, db, recurr);
                 }
             }
             catch (Exception ex)
@@ -38,6 +39,33 @@ namespace OggleBooble.Api.Controllers
                 repairReport.Success = Helpers.ErrorDetails(ex);
             }
             return repairReport;
+        }
+
+        private void FixFolderPaths(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr) {
+
+            var parentFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+
+            var subFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+
+
+
+            string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + parentFolder.FolderPath;
+
+            string[] childFolders = FtpUtilies.GetDirectories(ftpPath);
+
+            foreach (CategoryFolder f in subFolders) {
+                if (f.FolderPath == "xx")
+                {
+                    repairReport.Errors.Add("");
+                }
+            
+            }
+
+
+
+
+
+
         }
 
         private void PerformFolderChecks(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)

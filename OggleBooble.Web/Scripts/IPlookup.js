@@ -111,7 +111,7 @@ function getIpInfo3(visitorId, ipAddress, folderId, calledFrom) {
                         Region: ipResponse.region,
                         GeoCode: ipResponse.loc,
                         InitialPage: folderId
-                    }, "getIpInfo3");
+                    }, calledFrom);
                     ip0Busy = false;
                     ipCall0Returned = true;
                 }
@@ -163,7 +163,7 @@ function updateVisitor(ipData, calledFrom) {
                         else
                             logActivity2(ipData.VisitorId, "I09", ipData.InitialPage, successModel.Success); // 
                     }
-
+                    //if (calledFrom == "runAfewZZvisitors") {}
                 }
                 else {
                     logActivity2(ipData.VisitorId, "I09", ipData.InitialPage, successModel.Success); // 
