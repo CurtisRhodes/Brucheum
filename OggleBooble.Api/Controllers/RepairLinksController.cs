@@ -30,7 +30,8 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    FixFolderPaths(folderId, repairReport, db, true);
+                    //VerifyFolderRow(folderId, repairReport, db, true);
+                    VerifyFolderPaths(folderId, repairReport, db, true);
                     //PerformFolderChecks(folderId, repairReport, db, recurr);
                 }
             }
@@ -41,31 +42,95 @@ namespace OggleBooble.Api.Controllers
             return repairReport;
         }
 
-        private void FixFolderPaths(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr) {
+        private void VerifyFolderPaths(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)
+        {
+            try
+            {
+                string ftpPath;
+                var parentFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
 
-            var parentFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
-
-            var subFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
-
-
-
-            string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + parentFolder.FolderPath;
-
-            string[] childFolders = FtpUtilies.GetDirectories(ftpPath);
-
-            foreach (CategoryFolder f in subFolders) {
-                if (f.FolderPath == "xx")
+                var subFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                foreach (CategoryFolder f in subFolders)
                 {
-                    repairReport.Errors.Add("");
+                    ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + f.FolderPath;
+
+                    if (!FtpUtilies.DirectoryExists(ftpPath))
+                    {
+                        System.Threading.Thread.Sleep(1001);
+                        repairReport.Errors.Add(f.Id + ", " + f.FolderName + ", " + f.FolderPath);
+                        db.ErrorLogs.Add(new ErrorLog()
+                        {
+                            CalledFrom = "VerifyFolderPaths",
+                            ErrorCode = "x77",
+                            FolderId = f.Id,
+                            ErrorMessage = ftpPath,
+                            Occured = DateTime.Now,
+                            VisitorId = "XXX"
+                        });
+                    }
+                    repairReport.PhyscialFilesProcessed++;
+
                 }
-            
+                if (recurr)
+                    foreach (CategoryFolder f in subFolders)
+                        VerifyFolderPaths(f.Id, repairReport, db, recurr);
+
+                repairReport.Success = "ok";
             }
+            catch (Exception ex)
+            {
+                repairReport.Success = Helpers.ErrorDetails(ex);
+                throw;
+            }
+        }
 
+        private void VerifyFolderRows(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)
+        {
+            try
+            {
+                string ftpPath;
+                var parentFolder = db.CategoryFolders.Where(f => f.Id == folderId).FirstOrDefault();
+                ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + parentFolder.FolderPath;
 
+                var subFolders = db.CategoryFolders.Where(f => f.Parent == folderId).ToList();
+                foreach (CategoryFolder subFolder in subFolders)
+                {
+                    ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + subFolder.FolderPath;
+                    string[] v = FtpUtilies.GetDirectories(ftpPath);
+                    foreach (string dirDetail in v)
+                    {
+                        string folderName = dirDetail.Substring(dirDetail.IndexOf("<DIR>") + 5).Trim();
+                        if (db.CategoryFolders.Where(f => f.FolderName == folderName).FirstOrDefault() == null)
+                        {
+                            repairReport.Errors.Add(folderName + "not found");
 
+                            System.Threading.Thread.Sleep(101);
 
-
-
+                            db.ErrorLogs.Add(new ErrorLog()
+                            {
+                                CalledFrom = "VerifyFolderRow",
+                                ErrorCode = "xxx",
+                                FolderId = subFolder.Id,
+                                ErrorMessage = "folder: " + folderName + " not found",
+                                Occured = DateTime.Now,
+                                VisitorId = "VFR"
+                            });
+                            db.SaveChanges();
+                        }
+                        repairReport.LinkRecordsProcessed++;
+                    }
+                    repairReport.CatLinksRemoved++;
+                }
+                if (recurr)
+                    foreach (CategoryFolder f in subFolders)
+                        VerifyFolderRows(f.Id, repairReport, db, recurr);
+                repairReport.Success = "ok";
+            }
+            catch (Exception ex)
+            {
+                repairReport.Success = Helpers.ErrorDetails(ex);
+                throw;
+            }
         }
 
         private void PerformFolderChecks(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)

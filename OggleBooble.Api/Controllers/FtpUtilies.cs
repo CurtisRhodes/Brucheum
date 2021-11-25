@@ -25,7 +25,7 @@ namespace OggleBooble.Api.Controllers
             {
                 FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(new Uri(ftpPath));
                 ftpRequest.Credentials = networkCredentials;
-                ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
+                ftpRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
                 FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse();
                 StreamReader streamReader = new StreamReader(response.GetResponseStream());
 
