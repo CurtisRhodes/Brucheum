@@ -192,6 +192,7 @@ function incrimentExplode() {
         $('#slideShowContainer').css('top', 0);
         $('#slideShowContainer').css('left', 0);
 
+        $('#slideshowImageLabel').hide();
         if (imageViewerArray[imageViewerIndex].FolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
             $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
         }
@@ -268,10 +269,11 @@ function slide(direction) {
                         if (spIncludeSubFolders)
                             $('#imageViewerHeaderTitle').html(imageViewerFolderName + "/" + imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                         else {
-                            if (albumFolderId !== imageViewerArray[imageViewerIndex].ImageFolderId) {
+                            if (albumFolderId != imageViewerArray[imageViewerIndex].ImageFolderId) {
                                 $('#slideshowImageLabel').html(imageViewerArray[imageViewerIndex].ImageFolderName).fadeIn();
                             }
                             else {
+
                                 if (isInRole("sert", "slide")) {
                                     $.ajax({
                                         type: "GET",
@@ -500,8 +502,8 @@ function slideshowHtml() {
         "   <div id='leftClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"prev\")'></div>\n" +
         "   <div id='rightClickArea' class='hiddenClickArea' oncontextmenu='slideshowContextMenu()' onclick='slideClick(\"next\")'></div>\n" +
 
-        "   <img id='ssLeftwa' class='slideshowLeftWingArrow' src='/Images/next_left_arrow.png'/> \n" +
-        "   <img id='ssRightwa' class='slideshowRightWingArrow' src='/Images/next_right_arrow.png'/> \n" +
+//        "   <img id='ssLeftwa' class='slideshowLeftWingArrow' src='/Images/next_left_arrow.png'/> \n" +
+//        "   <img id='ssRightwa' class='slideshowRightWingArrow' src='/Images/next_right_arrow.png'/> \n" +
         "<div class='centeringOuterShell'>\n" +
         "   <div class='centeringInnerShell'>\n" +
         "      <div id='slideShowDialogContainer' class='oggleDialogContainer' style='z-index: 25;'>\n" +    // draggableDialog

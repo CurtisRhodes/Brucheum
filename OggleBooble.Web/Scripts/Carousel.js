@@ -195,10 +195,10 @@ function refreshCache(rootFolder) {
                     console.log("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3));
                     $('#footerMessage2').html("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3) + "  size: " + cacheArray.length);
                     logActivity2(create_UUID(), "RC0", 618518, "rootFolder");
-                        //"cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length, "refresh cache success"); // refresh cache success
+                    //"cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length, "refresh cache success"); // refresh cache success
                 }
                 else {
-                    if (carouselInfo.Success.indexOf("A connection attempt failed") > 0) {
+                    if ((carouselInfo.Success.indexOf("A connection attempt failed") > 0) || (carouselInfo.Success.indexOf("Timeout in IO operation") > 0)) {
                         logActivity2(create_UUID(), "RC6", 618518, "refresh Cache"); // connection attempt failed
                         checkFor404("Not connect", 616425, "carousel refreshCache");
                     }

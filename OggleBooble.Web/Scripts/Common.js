@@ -208,8 +208,11 @@ function create_UUID() {
 }
 
 function logError(errorCode, folderId, errorMessage, calledFrom) {
-    if (errorCode != "404")
-        logError2(getCookieValue("VisitorId", "logError"), errorCode, folderId, errorMessage, calledFrom);
+    if (errorCode != "404") {
+        //let eVisitorId = getCookieValue("VisitorId", "logError");
+        //setTimeout({ logError2(eVisitorId, errorCode, folderId, errorMessage, calledFrom) }, 888);
+        logError2(localStorage["VisitorId"], errorCode, folderId, errorMessage, calledFrom);
+    }
 }
 
 function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
@@ -281,8 +284,9 @@ function logEvent(eventCode, folderId, calledFrom, eventDetails) {
                 if (success.indexOf("Duplicate entry") > 0) {
                     // logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/log Event");
                 }
-                else
+                else {
                     logError("AJE", folderId, eventCode + ": " + success, "log Event/" + calledFrom);
+                }
             }
         },
         error: function (jqXHR) {

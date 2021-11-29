@@ -29,13 +29,14 @@ function getCookieValue(itemName, calledFrom) {
             }
             else {
                 if (itemName == "VisitorId") {
-                    if (calledFrom != "verify session") {
+                    if (!calledFrom.indexOf("verify session") > -1) {
+
                         let newVisId = create_UUID();
                         localStorage["VisitorId"] = newVisId;
-                        rebuildCookie();
-                        addVisitor(newVisId, 1111, "cookie not found");
-                        returnValue = newVisId;
-                        logError2(newVisId, "CK2", 703245, "navigator.cookieEnabled: " + navigator.cookieEnabled + "calledFrom:" + calledFrom); // visitor added from get cookie
+                        //rebuildCookie();
+                        //addVisitor(newVisId, 1111, "cookie not found");
+                        //returnValue = newVisId;
+                        logError2(localStorage["VisitorId"], "CK2", 703245, "calledFrom: " + calledFrom + ". navigator.cookieEnabled: " + navigator.cookieEnabled); // visitor added from get cookie
                     }
                 }
                 else {

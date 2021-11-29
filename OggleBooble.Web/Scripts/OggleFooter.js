@@ -29,14 +29,13 @@ function setOggleFooter(folderId, rootFolder, calledFrom) {
             "       </div>\n" +
             "    </div>\n" +
             "    <div class='footerCol'>\n" +  // column 6
-            "   <div id='histats_counter'></div>\n" +
-            "       <div id='footerCol6' class='footerColCustContainer'>\n" +
-            "       </div >\n" +
+            "       <div id='histats_counter'></div>\n" +
             "    </div>\n" +
-            "    <div class='rightMostfooterColumn'>\n" +  // column 7
-            "       <div id='footerCol7' class='rightMostColCustContainer'>\n" +
-            "           <a href='https://ipinfo.io/' alt='IPinfo - Comprehensive IP address data, IP geolocation API and database'>" +
-            "           this site uses<img src='/images/ipinfo.png' height='40' /></a>\n" +
+            "    <div class='footerCol rightMostfooterColumn'>\n" +  // column 7
+            //"           <a href='htt ps://ipinfo.io/' alt='IPinfo - Comprehensive IP address data, IP geolocation API and database'>" +
+            //"           this site uses<img src='/images/ipinfo.png' height='40' /></a>\n" +
+            "       <div id='footerCol6' class='footerColCustContainer'>\n" +
+            "           <a href='https://www.paypal.com/donate/?hosted_button_id=M5UE6B2RJ9NFY' alt='paypal test'>make a donation</a>\n" +
             "       </div >\n" +
             "    </div>\n" +
             "   </div>\n<div class='footerFooter'>\n" +
@@ -72,9 +71,9 @@ function setOggleFooter(folderId, rootFolder, calledFrom) {
                 $('#footerCol2').html(
                     "<div class='clickable' onclick='showCatListDialog(2)'>Category List</div>\n" +
                     "<div class='clickable' onclick='showCatListDialog(3)'>Babes List</div>\n");                
-                $('#footerCol6').html(
-                    "<a href='https://www.babepedia.com/' target='_blank' alt='Babepedia - The hottest nude babes'>" +
-                    "<img src='/images/babepdiaBanner02.png' height='65'/></a>\n");
+                //$('#footerCol6').html(
+                //    "<a href='h ttps://www.babepedia.com/' target='_blank' alt='Babepedia - The hottest nude babes'>" +
+                //    "<img src='/images/babepdiaBanner02.png' height='65'/></a>\n");
                 break;
             }
             case "boobs": {  //    poses 

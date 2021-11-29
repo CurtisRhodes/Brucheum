@@ -91,38 +91,42 @@
 
     <script>
         $(document).ready(function () {
-            let spaPageId, dots = "";
-            params = getParams();
-            if (isNullorUndefined(params.spa))
-                spaPageId = 3908;
-            else
-                spaPageId = params.spa;
+            try {
+                let spaPageId, dots = "";
+                params = getParams();
+                if (isNullorUndefined(params.spa))
+                    spaPageId = 3908;
+                else
+                    spaPageId = params.spa;
 
-            setOggleHeader("loading");
+                setOggleHeader("loading");
 
-            loadOggleSettings();
-            connectionVerified = false;
-            var settingsWaiter = setInterval(function () {
-                if (settingsArray.ApiServer === undefined) {
-                    dots += "~ ";
-                    $('#dots').html(dots);
-                }
-                else {
-                    clearInterval(settingsWaiter);
-                    //document.title = "connecting : OggleBooble";
-                    $('#mainMenuContainer').html("connecting");
-                    checkConnection(spaPageId, "Index.html");
-                    let connectionVerifiedLoop = setInterval(function () {
-                        if (connectionVerified) {
-                            clearInterval(connectionVerifiedLoop);
-                            displaySpaPage(spaPageId);
-                            verifySession(spaPageId, "Index.html");
-                        }
-                    }, 300);
-                }
-            });
-            window.addEventListener("resize", resizeIndexPage);
-            resizeIndexPage();
+                loadOggleSettings();
+                connectionVerified = false;
+                var settingsWaiter = setInterval(function () {
+                    if (settingsArray.ApiServer === undefined) {
+                        dots += "~ ";
+                        $('#dots').html(dots);
+                    }
+                    else {
+                        clearInterval(settingsWaiter);
+                        //document.title = "connecting : OggleBooble";
+                        $('#mainMenuContainer').html("connecting");
+                        checkConnection(spaPageId, "Index.html");
+                        let connectionVerifiedLoop = setInterval(function () {
+                            if (connectionVerified) {
+                                clearInterval(connectionVerifiedLoop);
+                                displaySpaPage(spaPageId);
+                                verifySession(spaPageId, "Index.html");
+                            }
+                        }, 300);
+                    }
+                });
+                window.addEventListener("resize", resizeIndexPage);
+                resizeIndexPage();
+            } catch (e) {
+                alert("outter most catch: " + e);
+            }
         });
     </script>
 </body>

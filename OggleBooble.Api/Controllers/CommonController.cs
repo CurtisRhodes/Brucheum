@@ -62,34 +62,36 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    pageHitSuccessModel.ReturnMessage = "ok";
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
                     {
                         pageHitSuccessModel.ReturnMessage = "VisitorId not found";
-                        visitorId = "00000880-0000-0000-0000-UNKNOWN";
-                        pageHitSuccessModel.VisitorCountry = "xx";
                     }
                     else
                     {
                         pageHitSuccessModel.VisitorCountry = dbVisitor.Country;
-                    }
-
-                    var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
-                    PageHit lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
-                    if (lastHit == null)
-                    {
-                        pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId).Count();
-                        db.PageHits.Add(new PageHit()
+                        PageHit lastHit = null;
+                        var pageHits = db.PageHits.Where(h => h.VisitorId == visitorId).FirstOrDefault();
+                        if (pageHits != null)
                         {
-                            VisitorId = visitorId,
-                            PageId = folderId,
-                            Occured = DateTime.Now
-                        });
-                        db.SaveChanges();
+                            var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
+                            lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
+                            if (lastHit == null)
+                            {
+                                pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId).Count();
+                                db.PageHits.Add(new PageHit()
+                                {
+                                    VisitorId = visitorId,
+                                    PageId = folderId,
+                                    Occured = DateTime.Now
+                                });
+                                db.SaveChanges();
+                                pageHitSuccessModel.ReturnMessage = "ok";
+                            }
+                            else
+                                pageHitSuccessModel.ReturnMessage = "duplicate hit";
+                        }
                     }
-                    else
-                        pageHitSuccessModel.ReturnMessage = "duplicate hit";
                 }
                 pageHitSuccessModel.Success = "ok";
             }

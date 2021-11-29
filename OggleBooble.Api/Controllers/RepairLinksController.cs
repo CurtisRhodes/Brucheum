@@ -31,8 +31,8 @@ namespace OggleBooble.Api.Controllers
                 using (var db = new OggleBoobleMySqlContext())
                 {
                     //VerifyFolderRow(folderId, repairReport, db, true);
-                    VerifyFolderPaths(folderId, repairReport, db, true);
-                    //PerformFolderChecks(folderId, repairReport, db, recurr);
+                    //VerifyFolderPaths(folderId, repairReport, db, true);
+                    PerformFolderChecks(folderId, repairReport, db, recurr);
                 }
             }
             catch (Exception ex)

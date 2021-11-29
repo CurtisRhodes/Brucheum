@@ -16,7 +16,7 @@ function loadAlbum(folderId, visitorId, calledFrom) {
         settingsImgRepo = settingsArray.ImageRepo;
         getAlbumImages(folderId);
         getAlbumPageInfo(folderId, visitorId, false);
-        logAPageHit(folderId, visitorId, calledFrom);
+        logAPageHit(folderId, visitorId, "load album/" + calledFrom);
     }
     catch (e) {
         logError("CAT", folderId, e, "load album");
@@ -223,6 +223,12 @@ function getMultipleAlbumImages(folderId, visitorId) {
     }
 }
 
+function verifyFileExists(imgSrc) {
+
+
+}
+
+
 function getAlbumImages(folderId) {
     //let getImagesStart = Date.now();
     const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
@@ -244,6 +250,9 @@ function getAlbumImages(folderId) {
                     $.each(albumImageInfo.ImageLinks, function (idx, obj) {
                         //let imgSrc = settingsImgRepo + "/" + encodeURI(obj.FileName.replace(/'/g, '&27'));
                         let imgSrc = settingsImgRepo + "/" + obj.FileName.replace(/'/g, '%27');
+
+                       // verifyFileExists(imgSrc);
+
                         //let imgSrc = settingsImgRepo + "/" + obj.FileName.replace("'","''");
                         if (obj.FileName.endsWith("mpg") || obj.FileName.endsWith("mp4")) {
                             $('#imageContainer').append(
@@ -597,7 +606,7 @@ function subFolderImgError(linkId, imgSrc) {
     setTimeout(function () {
         if ($('#' + linkId).attr('src') == null) {
             $('#' + linkId).attr('src', "Images/redballon.png");
-            logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "subFolderImg");
+            logError("ILF", apFolderId, "linkId: " + linkId + " imgSrc: " + imgSrc, "subFolder Img Error");
         }
     }, 600);
 }
