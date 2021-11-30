@@ -72,24 +72,31 @@ namespace OggleBooble.Api.Controllers
                         pageHitSuccessModel.VisitorCountry = dbVisitor.Country;
                         PageHit lastHit = null;
                         var pageHits = db.PageHits.Where(h => h.VisitorId == visitorId).FirstOrDefault();
-                        if (pageHits != null)
+                        if (pageHits == null)
+                        {
+                            lastHit = null;
+                            pageHitSuccessModel.PageHits = 1;
+                        }
+                        else
                         {
                             var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
                             lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
-                            if (lastHit == null)
+                            pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId).Count();
+                        }
+                        if (lastHit == null)
+                        {
+                            db.PageHits.Add(new PageHit()
                             {
-                                pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId).Count();
-                                db.PageHits.Add(new PageHit()
-                                {
-                                    VisitorId = visitorId,
-                                    PageId = folderId,
-                                    Occured = DateTime.Now
-                                });
-                                db.SaveChanges();
-                                pageHitSuccessModel.ReturnMessage = "ok";
-                            }
-                            else
-                                pageHitSuccessModel.ReturnMessage = "duplicate hit";
+                                VisitorId = visitorId,
+                                PageId = folderId,
+                                Occured = DateTime.Now
+                            });
+                            db.SaveChanges();
+                            pageHitSuccessModel.ReturnMessage = "ok";
+                        }
+                        else
+                        {
+                            pageHitSuccessModel.ReturnMessage = "duplicate hit";
                         }
                     }
                 }

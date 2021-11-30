@@ -63,7 +63,8 @@ function logAPageHit(folderId, visitorId, calledFrom) {
                     switch (pageHitSuccess.ReturnMessage) {
                         case "ok":
                             //logActivity2(visitorId, "PH1", folderId, "log A PageHit/" + calledFrom);
-                            if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
+                            if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ"))
+                            {
                                 let cf = "PageHits: " + pageHitSuccess.PageHits + " Country: " + pageHitSuccess.VisitorCountry;
                                 logActivity2(visitorId, "PH4", folderId, cf); // pageHits > 3 and country=="ZZ"
                                 tryAddNewIP(folderId, visitorId, cf);
@@ -76,7 +77,7 @@ function logAPageHit(folderId, visitorId, calledFrom) {
                             logActivity2(visitorId, "PH9", folderId, "log A PageHit/" + calledFrom); // 
                             break;
                         default:
-                            logError2(visitorId, "SWT", "Return message: " + pageHitSuccess.ReturnMessage, "log A PageHit/" + calledFrom);
+                            logError2(visitorId, "SWT", folderId, "Return message: " + pageHitSuccess.ReturnMessage, "log A PageHit/" + calledFrom);
                             logActivity2(visitorId, "PHS", folderId, "log A PageHit/" + calledFrom);
                             break;
                     }

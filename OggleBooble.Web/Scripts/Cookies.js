@@ -29,8 +29,7 @@ function getCookieValue(itemName, calledFrom) {
             }
             else {
                 if (itemName == "VisitorId") {
-                    if (!calledFrom.indexOf("verify session") > -1) {
-
+                    if (calledFrom != "verify session") {
                         let newVisId = create_UUID();
                         localStorage["VisitorId"] = newVisId;
                         //rebuildCookie();
@@ -42,6 +41,7 @@ function getCookieValue(itemName, calledFrom) {
                 else {
                     if (itemName == "IsLoggedIn") {
                         localStorage["IsLoggedIn"] = "false";
+                        returnValue = "false";
                         //rebuildCookie();
                     }
                     else
