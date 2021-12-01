@@ -85,15 +85,17 @@ function loadLatestUpdates() {
                     window.localStorage[spaType + "latestUpdatesCache"] = null;
                     window.localStorage[spaType + "latestUpdatesCache"] = JSON.stringify(latestUpdates.LatestTouchedGalleries);
                 } catch (e) {
-                    logError("CAT", 3908, e, "load LatestUpdates");
+                    logError("CAT", 3908, e, "load Updated Galleries Boxes");
                 }
                 loadLatestUpdateArray(latestUpdates.LatestTouchedGalleries, "ajax");
             }
             else {
-                if (latestUpdates.Success.indexOf("connection attempt failed") > 0)
-                    logError("TOE", 3908, latestUpdates.Success, "load LatestUpdates");  // timeout error
+                if ((latestUpdates.Success.indexOf("connection attempt failed") > 0) || (latestUpdates.Success.indexOf("Timeout in IO operation") > 0)) {
+                    logError("TOE", 3909, latestUpdates.Success, "load LatestUpdates");  // timeout error
+                    checkConnection(3908, "load Updated Galleries Boxes");
+                }
                 else
-                    logError("AJX", 3908, latestUpdates.Success, "load LatestUpdates");
+                    logError("AJX", 3908, latestUpdates.Success, "load Updated Galleries Boxes");
             }
         },
         error: function (jqXHR) {

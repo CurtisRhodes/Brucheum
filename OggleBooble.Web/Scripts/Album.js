@@ -3,7 +3,7 @@ const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
 let tempDirTree = null;
 let apVisitorId;
 
-function loadAlbum(folderId, visitorId, calledFrom) {
+function loadAlbum(folderId, visitorId, pageSouce, calledFrom) {
     try {
         if (isNullorUndefined(folderId)) {
             logError2(visitorId, "BUG", 1021720, "folderId isNullorUndefined: " + folderId, "load album");
@@ -16,7 +16,7 @@ function loadAlbum(folderId, visitorId, calledFrom) {
         settingsImgRepo = settingsArray.ImageRepo;
         getAlbumImages(folderId);
         getAlbumPageInfo(folderId, visitorId, false);
-        logAPageHit(folderId, visitorId, "load album/" + calledFrom);
+        logAPageHit(folderId, visitorId, pageSouce, "load album/" + calledFrom);
     }
     catch (e) {
         logError("CAT", folderId, e, "load album");
@@ -35,16 +35,16 @@ function loadLargeAlbum(folderId) {
 }
 
 let lastAPageHitFolderId, lastAPageHitVisitorId;
-function logAPageHit(folderId, visitorId, calledFrom) {
+function logAPageHit(folderId, visitorId, pageSouce, calledFrom) {
     try {
         if (isNullorUndefined(folderId)) {
             logError2(visitorId, "BUG", Undefined, "isNullorUndefined(folderId)", "log A PageHit/" + calledFrom);
             return;
         }
-        if ((isNullorUndefined(visitorId))|| (visitorId == "cookie not found") ){
+        if ((isNullorUndefined(visitorId)) || (visitorId == "cookie not found")) {
             visitorId = getCookieValue("VisitorId", "log A PageHit");
             if (visitorId == "cookie not found") {
-                logError2(visitorId, "VNF", folderId, "visitorId = cookie not found", "log A PageHit/" + calledFrom);
+                logError2(visitorId, "VNF", folderId, "pageSouce: " + pageSouce, "log A PageHit/" + calledFrom);
                 visitorId = failureVisitorId;
             }
         }

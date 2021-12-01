@@ -81,7 +81,12 @@ function loadRankerImages() {
             else {
                 $('#rankerLoadingGif').hide();
                 if (document.domain == "localHost") alert("loadBoobsRanker: " + success);
-                logError("AJX", 3907, container.Success, "load RankerImages");
+                if ((container.Success.indexOf("connection attempt failed") > 0) || (container.Success.indexOf("Timeout in IO operation") > 0)) {
+                    logError("TOE", folderId, container.Success, "load RankerImages");  // timeout error
+                    checkConnection(folderId, "load RankerImages");
+                }
+                else
+                    logError("AJX", 3907, container.Success, "load RankerImages");
             }
         },
         error: function (jqXHR) {

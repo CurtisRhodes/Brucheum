@@ -79,12 +79,13 @@ namespace OggleBooble.Api.Controllers
                         }
                         else
                         {
-                            var threeMinutesAgo = DateTime.Now.AddMinutes(-3);
-                            lastHit = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId && h.Occured > threeMinutesAgo).FirstOrDefault();
-                            pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId && h.PageId == folderId).Count();
+                            var threeMinutesAgo = DateTime.Now.AddMinutes(-13);
+                            lastHit = db.PageHits.Where(h => (h.VisitorId == visitorId) && (h.PageId == folderId) && (h.Occured > threeMinutesAgo)).FirstOrDefault();
+                            pageHitSuccessModel.PageHits = db.PageHits.Where(h => h.VisitorId == visitorId).Count();
                         }
                         if (lastHit == null)
                         {
+                            //System.Threading.Thread.Sleep(1001);
                             db.PageHits.Add(new PageHit()
                             {
                                 VisitorId = visitorId,

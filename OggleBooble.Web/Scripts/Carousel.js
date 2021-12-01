@@ -136,8 +136,9 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                 }
                 else {
                     if (document.domain == "localhost") alert("carouselInfo error " + carouselInfo.Success);
-                    if (carouselInfo.Success.indexOf("A connection attempt failed") > 0) {
-                        checkFor404("Not connect", 616425, "carousel loadImages");
+                    if ((carouselInfo.Success.indexOf("connection attempt failed") > 0) || (carouselInfo.Success.indexOf("Timeout in IO operation") > 0)) {
+                        logError("TOE", 11302031, carouselInfo.Success, "carousel loadImages");  // timeout error
+                        checkConnection(11302031, "carousel loadImages");
                     }
                     else
                         logError("AJX", 3908, carouselInfo.Success, "carousel loadImages");
@@ -198,6 +199,16 @@ function refreshCache(rootFolder) {
                     //"cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length, "refresh cache success"); // refresh cache success
                 }
                 else {
+                    if (document.domain == "localhost") alert("carouselInfo error " + carouselInfo.Success);
+                    if ((carouselInfo.Success.indexOf("connection attempt failed") > 0) || (carouselInfo.Success.indexOf("Timeout in IO operation") > 0)) {
+                        logError("TOE", 11302031, carouselInfo.Success, "carousel refreshCache");  // timeout error
+                        checkConnection(11302031, "carousel refreshCache");
+                    }
+                    else
+                        logError("AJX", 3908, carouselInfo.Success, "carousel refreshCache");
+
+
+
                     if ((carouselInfo.Success.indexOf("A connection attempt failed") > 0) || (carouselInfo.Success.indexOf("Timeout in IO operation") > 0)) {
                         logActivity2(create_UUID(), "RC6", 618518, "refresh Cache"); // connection attempt failed
                         checkFor404("Not connect", 616425, "carousel refreshCache");

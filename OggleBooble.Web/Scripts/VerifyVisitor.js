@@ -8,7 +8,7 @@
                     logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage/" + calledFrom);
             }
             if (typeof loadAlbum === 'function')
-                loadAlbum(folderId, visitorId, pageSouce);
+                loadAlbum(folderId, visitorId, pageSouce, calledFrom);
             else {
                 logError2(visitorId, "FNF", folderId, "loadAlbum not a function", "call AlbumPage/" + calledFrom);
                 window.location.href = "Index.html";
@@ -23,37 +23,42 @@
 function verifySession(folderId, calledFrom) {
     $(document).ready(function () {
         //console.log("verifySession(" + folderId + "," + calledFrom + ")");
-        let visitorId = "uninitialized";
         try {
-            visitorId = getCookieValue("VisitorId", "verify session");
-            if (isNullorUndefined(window.sessionStorage["SessionVerified"]))
-            {
-                window.sessionStorage["SessionVerified"] = true;
-                $('#headerMessage').html("new session started");
-                //logActivity2(visitorId, "VS0", folderId, "verify session"); // new session started
-
-                if (visitorId == "cookie not found") {
+            if (window.localStorage) {
+                let visitorId = localStorage["VisitorId"];
+                if (window.sessionStorage) {
+                    if (isNullorUndefined(window.sessionStorage["SessionVerified"])) {
+                        window.sessionStorage["SessionVerified"] = true;
+                        if (isNullorUndefined(visitorId)) {
+                            visitorId = create_UUID();
+                            localStorage["VisitorId"] = visitorId;
+                            addVisitor(visitorId, folderId, "new visitor");
+                            logActivity("VS2", folderId, "verify session"); // VisitorId not found (new visitor?)
+                        }
+                        else {
+                            verifyVisitor(visitorId, folderId, calledFrom);
+                        }
+                    }
+                        callAlbumPage(visitorId, folderId, calledFrom, "normal bypass");
+                }
+                else { // no concept of local storage
                     visitorId = create_UUID();
-                    localStorage["VisitorId"] = visitorId;
-                    rebuildCookie();
-                    addVisitor(visitorId, folderId, "new visitor");
-                    logActivity("VS2", folderId, "verify session"); // VisitorId not found (new visitor?)
+                    addVisitor(visitorId, folderId, "no local storage");
+                    callAlbumPage(visitorId, folderId, calledFrom, "new session started");
+                    logError2(visitorId, "BUG", folderId, "no local storage", "verify session/" + calledFrom);
                 }
-                else {
-                    verifyVisitor(visitorId, folderId, calledFrom);
-                    logActivity("VS1", folderId, "verify session"); // new session started ok
-                }
-                callAlbumPage(visitorId, folderId, calledFrom, "verify session");
             }
-            else {
-                if (visitorId == "cookie not found") {
-                    addVisitor(visitorId, folderId, "session started but");
-                }
+            else { //  no concept of storage
+                visitorId = create_UUID();
+                addVisitor(visitorId, folderId, "no session storage");
                 callAlbumPage(visitorId, folderId, calledFrom, "new session started");
+                logError2(visitorId, "BUG", folderId, "no local storage", "verify session/" + calledFrom);
             }
         }
         catch (e) {
-            logActivity2(visitorId, "VS8", folderId, "verify session2/" + calledFrom + " ERRMSG: " + e); // verify session CATCH error
+            // verify session2/album.html ERRMSG: SecurityError: The operation is insecure.
+            logActivity2(visitorId, "VS8", folderId, "verify session2/" + calledFrom + ". ERRMSG: " + e); // verify session CATCH error
+            //logError2(visitorId, errorCode, folderId, errorMessage, calledFrom)
             logError2(visitorId, "CAT", folderId, e, "verify session2/" + calledFrom);
             callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
         }
