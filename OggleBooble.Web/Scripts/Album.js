@@ -297,7 +297,7 @@ function getAlbumImages(folderId) {
 
                             if (isNullorUndefined(folder.FolderImage)) {
                                 imgSrc = "/Images/binaryCodeRain.gif";
-                                logError("FIM", folder.FolderId, "FolderImage missing", "get AlbumImages");
+                                logError2(create_UUID, "FIM", folder.FolderId, "FolderImage missing", "get AlbumImages");
                             }
                             else
                                 imgSrc = encodeURI(settingsImgRepo + folder.FolderImage);
@@ -321,8 +321,10 @@ function getAlbumImages(folderId) {
                     $('.footer').show();
                 }
                 else {
-                    if ((albumImageInfo.Success.indexOf("connection attempt failed") > 0) || (latestUpdates.Success.indexOf("Timeout in IO operation") > 0))
+                    if ((albumImageInfo.Success.indexOf("connection attempt failed") > 0) || (albumImageInfo.Success.indexOf("Timeout in IO operation") > 0)) {
                         logError("TOE", folderId, albumImageInfo.Success, "get albumImages");  // timeout error
+                        checkConnection(folderId, "get albumImages");
+                    }
                     else
                         logError("AJX", folderId, albumImageInfo.Success, "get albumImages");
                 }
