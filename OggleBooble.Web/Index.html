@@ -32,6 +32,7 @@
     <script src="Scripts/Permissions.js"></script>
     <script src="Scripts/IPlookup.js"></script>
     <script src="Scripts/HitCounter.js"></script>
+    <script src="Scripts/IndexPage.js"></script>
     <script src="Scripts/VerifyVisitor.js"></script>
     <script src="Scripts/EventControl.js"></script>
     <script src="Scripts/VerifyConnection.js"></script>
@@ -53,7 +54,6 @@
     <script src="Scripts/ImageCommentDialog.js"></script>
     <script src="Scripts/ContextMenu.js"></script>
     <script src="Scripts/Carousel.js"></script>
-    <script src="Scripts/IndexPage.js"></script>
 
     <link href="Styles/Common.css" rel="stylesheet" />
     <link href="Styles/AlbumPage.css" rel="stylesheet">
@@ -116,7 +116,10 @@
                         let connectionVerifiedLoop = setInterval(function () {
                             if (connectionVerified) {
                                 clearInterval(connectionVerifiedLoop);
-                                displaySpaPage(spaPageId);
+
+
+
+                                //displaySpaPage(spaPageId);
                                 verifySession(spaPageId, "Index.html");
                             }
                         }, 300);

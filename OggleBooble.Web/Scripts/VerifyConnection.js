@@ -51,31 +51,30 @@ function checkConnection(folderId, calledFrom) {
                         //logActivity2("any","")
                         connectingToServerImgShowing = true;
                     }
-                    if (!canIgetaConnectionImgShowing && verifyConnectionCount > 22) {
+                    if (!canIgetaConnectionImgShowing && verifyConnectionCount > 27) {
                         $('#customMessage').html(
                             "<div class='shaddowBorder'>" +
                             "   <img src='/Images/canIgetaConnection.gif' height='230' >\n" +
                             "   <div class='divRefreshPage' onclick='window.location.reload(true)'>Thanks GoDaddy. Refresh Page</a></div>" +
                             "</div>").show();
                         //console.log("canIgetaConnection message showing");
-                        logError("404", 3910, "SERVICE DOWN", calledFrom);
+                        if (verifyConnectionCount == 25)
+                            logError("404", 3910, "SERVICE DOWN", calledFrom);
                         canIgetaConnectionImgShowing = true;
                     }
-
-                    if (checkingConnection) {
-                        dots += "- ";
+                    dots += ". ";
+                    if (verifyConnectionCount++ > 3) {
                         $('#dots').html(dots);
+                        $('#headerMessage').html(verifyConnectionCount);
                     }
-                    else {
+                    if (!checkingConnection) {
                         checkingConnection = true;
-                        dots += ". ";
-                        $('#dots').html(dots);
-                        $('#headerMessage').html(++verifyConnectionCount);
                         $.ajax({
                             type: "GET",
                             async: "false",
                             url: settingsArray.ApiServer + "api/Common/VerifyConnection",
                             success: function (successModel) {
+                                checkingConnection = false;
                                 //console.log("GET VerifyConnection: " + verifyConnectionCount);
                                 if (successModel.Success == "ok") {
                                     if (successModel.ConnectionVerified) {
@@ -103,9 +102,9 @@ function checkConnection(folderId, calledFrom) {
                                     //   logError("AJX", folderId, "proper error in verify ConnectionFunction", calledFrom);
                                     //if (document.domain === "localhost") alert("proper error in verify ConnectionFunction: " + successModel.Success);
                                 }
-                                checkingConnection = false;
                             },
                             error: function (jqXHR) {
+                                checkingConnection = false;
                                 let errMsg = getXHRErrorDetails(jqXHR);
                                 if (!(errMsg.toUpperCase().indexOf("NOT CONNECT") > -1)) {
                                     clearInterval(verifyConnectionWaiter);
@@ -114,13 +113,11 @@ function checkConnection(folderId, calledFrom) {
                                     alert("errMsg.toUpperCase().indexOf(NOT CONNECT): " + errMsg.toUpperCase().indexOf("NOT CONNECT"));
                                     //alert("verifyConnection XHR: " + errMsg);
                                 }
-                                else
-                                    checkingConnection = false;
                             }
                         });
                     }
                 }
-            }, 550);
+            }, 660);
         }
     }, 300);
 }

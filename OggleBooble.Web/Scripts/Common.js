@@ -261,39 +261,36 @@ function logError2(visitorId, errorCode, folderId, errorMessage, calledFrom) {
 }
 
 function logEvent(eventCode, folderId, calledFrom, eventDetails) {
-    //if (document.domain === 'localhost')
-    //    alert("log Event. eventCode: " + eventCode + "  folderId: " + folderId + " calledFrom: " + calledFrom + "\neventDetails: " + eventDetails);
-    if (isNullorUndefined(calledFrom)) {
-        if (document.domain === 'localhost')
-            alert("log Event. eventCode: " + eventCode + "  folderId: " + folderId + "\neventDetails: " + eventDetails);
-        logError("BUG", folderId, "calledFrom isNullorUndefined. event code: " + eventCode, "logEvent");
-        calledFrom = "undefined";
-    }
-    $.ajax({
-        type: "POST",
-        url: settingsArray.ApiServer + "api/Common/LogEvent",
-        data: {
-            VisitorId: getCookieValue("VisitorId", "logEvent/" + eventCode),
-            EventCode: eventCode,
-            EventDetail: eventDetails,
-            CalledFrom: calledFrom,
-            FolderId: folderId
-        },
-        success: function (success) {
-            if (success !== "ok") {
-                if (success.indexOf("Duplicate entry") > 0) {
-                    // logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/log Event");
+    try {
+        let eCookie = getCookieValue("VisitorId", calledFrom + "log Event/" + eventCode);
+        $.ajax({
+            type: "POST",
+            url: settingsArray.ApiServer + "api/Common/LogEvent",
+            data: {
+                VisitorId: eCookie,
+                EventCode: eventCode,
+                EventDetail: eventDetails,
+                CalledFrom: calledFrom,
+                FolderId: folderId
+            },
+            success: function (success) {
+                if (success !== "ok") {
+                    if (success.indexOf("Duplicate entry") > 0) {
+                        // logError("EVD", folderId, "eventCode: " + eventCode, calledFrom + "/log Event");
+                    }
+                    else {
+                        logError("AJE", folderId, eventCode + ": " + success, "log Event/" + calledFrom);
+                    }
                 }
-                else {
-                    logError("AJE", folderId, eventCode + ": " + success, "log Event/" + calledFrom);
-                }
+            },
+            error: function (jqXHR) {
+                let errMsg = getXHRErrorDetails(jqXHR);
+                if (!checkFor404(errMsg, folderId, "log Event")) logError("XHR", folderId, errMsg, "log Event");
             }
-        },
-        error: function (jqXHR) {
-            let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, folderId, "log Event")) logError("XHR", folderId, errMsg, "log Event");
-        }
-    });
+        });
+    } catch (e) {
+        logError2(eCookie, "CAT", folderId, e, calledFrom + "log Event/" + eventCode);
+    }
 }
 
 function logActivity(activityCode, folderId, calledFrom) {    
@@ -321,8 +318,15 @@ function logActivity2(visitorId, activityCode, folderId, calledFrom) {
                     //logActivity2(visitorId, "DAE", folderId, "activity code: " + activityCode + ". calledFrom: " + calledFrom);
                     //logError2(visitorId, "DUP", folderId, "Duplicate entry: " + activityCode, "log activity/" + calledFrom);
                 }
-                else
-                    logError2(visitorId, "AJX", folderId, activityCode + ": " + success, "log activity/" + calledFrom);
+                else {
+                    if ((success.indexOf("connection attempt failed") > 0) || (success.indexOf("Timeout in IO operation") > 0)) {
+                        logError("TOE", folderId, success, calledFrom + "/log activity");  // timeout error
+                        checkConnection(folderId, "log activity");
+                    }
+                    else {
+                        logError2(visitorId, "AJX", folderId, activityCode + ": " + success, "log activity/" + calledFrom);
+                    }
+                }
             }
         },
         error: function (jqXHR) {

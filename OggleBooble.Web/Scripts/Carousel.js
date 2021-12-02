@@ -69,6 +69,7 @@ function launchCarousel(startRoot) {
             default:
                 logError("SWT", 222, startRoot, "launchCarousel");
         }
+        refreshCache(startRoot);
     }
     catch (e) {
         logError("CAT", 1105126, e, "launch Carousel");
@@ -76,7 +77,6 @@ function launchCarousel(startRoot) {
     finally {
         window.addEventListener("resize", resizeCarousel);
         loadImages(startRoot, carouselSkip, carouselTake, true, false);
-        refreshCache(startRoot);
     }
 }
 
@@ -160,19 +160,13 @@ function refreshCache(rootFolder) {
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/Carousel/RefreshCache?root=" + rootFolder + "&cacheCount=" + cacheSize,
-            success: function (carouselInfo) {
-                if (carouselInfo.Success === "ok") {
+            success: function (carouselCacheInfo) {
+                if (carouselCacheInfo.Success === "ok") {
                     let cacheArray = [];
                     //let isAlreadyInArray = false;
                     for (i = 0; i < cacheSize; i++) {
-                        cacheArray.push(carouselInfo.Links[i]);
+                        cacheArray.push(carouselCacheInfo.Links[i]);
                     };
-
-                    //let jsnObj = "[";  //new JSONArray();
-                    //for (i = 0; i < cacheSize; i++) {
-                    //    jsnObj += (JSON.stringify(cacheArray[i])) + ",";
-                    //}
-                    //jsnObj.substring(0, jsnObj.length - 1) + "]";
                     let cacheName = "carouselCache";
                     switch (rootFolder) {
                         case "porn": cacheName = "pornCache"; break;
@@ -188,7 +182,7 @@ function refreshCache(rootFolder) {
                             window.localStorage.clear();
                             window.localStorage[cacheName] = JSON.stringify(cacheArray);
                         } catch (e) {
-                            logError2(create_UUID(), "BUG", 444, cacheName + " " + e, "Carosel refreshCache");
+                            logError2(create_UUID(), "BUG", 444, cacheName + " " + e, "Carosel refresh Cache");
                         }
                     }
 
@@ -199,31 +193,22 @@ function refreshCache(rootFolder) {
                     //"cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length, "refresh cache success"); // refresh cache success
                 }
                 else {
-                    if (document.domain == "localhost") alert("carouselInfo error " + carouselInfo.Success);
-                    if ((carouselInfo.Success.indexOf("connection attempt failed") > 0) || (carouselInfo.Success.indexOf("Timeout in IO operation") > 0)) {
-                        logError("TOE", 11302031, carouselInfo.Success, "carousel refreshCache");  // timeout error
+                    if (document.domain == "localhost") alert("carouselInfo error " + carouselCacheInfo.Success);
+                    if ((carouselCacheInfo.Success.indexOf("connection attempt failed") > 0) || (carouselCacheInfo.Success.indexOf("Timeout in IO operation") > 0)) {
+                        logError("TOE", 11302031, carouselCacheInfo.Success, "carousel refreshCache");  // timeout error
                         checkConnection(11302031, "carousel refreshCache");
                     }
                     else
-                        logError("AJX", 3908, carouselInfo.Success, "carousel refreshCache");
-
-
-
-                    if ((carouselInfo.Success.indexOf("A connection attempt failed") > 0) || (carouselInfo.Success.indexOf("Timeout in IO operation") > 0)) {
-                        logActivity2(create_UUID(), "RC6", 618518, "refresh Cache"); // connection attempt failed
-                        checkFor404("Not connect", 616425, "carousel refreshCache");
+                        logError("AJX", 3908, carouselCacheInfo.Success, "carousel refreshCache");
+                        logActivity("RC3", 618518, "refresh Cache"); // refresh cache Ajax error
                     }
-                    else {
-                        logError2(create_UUID(), "AJX", 77508, carouselInfo.Success, "refresh Cache");
-                        logActivity2(create_UUID(), "RC3", 618518, "refresh Cache"); // refresh cache Ajax error
-                    }
-                }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity2(create_UUID(), "RC4", 618518, errMsg); // refresh cache XHR error
-                if (!checkFor404(errMsg, 366, "refreshCache"))
+                logActivity("RC4", 618518, errMsg); // refresh cache XHR error
+                if (!checkFor404(errMsg, 366, "refreshCache")) {
                     logError2(create_UUID(), "XHR", 366, errMsg, "refresh Cache");
+                }
             }
         });
     } catch (e) {

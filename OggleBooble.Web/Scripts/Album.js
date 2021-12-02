@@ -38,13 +38,13 @@ let lastAPageHitFolderId, lastAPageHitVisitorId;
 function logAPageHit(folderId, visitorId, pageSouce, calledFrom) {
     try {
         if (isNullorUndefined(folderId)) {
-            logError2(visitorId, "BUG", Undefined, "isNullorUndefined(folderId)", "log A PageHit/" + calledFrom);
+            logError2(visitorId, "BUG", Undefined, "isNullorUndefined(folderId)", calledFrom + "/log A PageHit");
             return;
         }
         if ((isNullorUndefined(visitorId)) || (visitorId == "cookie not found")) {
             visitorId = getCookieValue("VisitorId", "log A PageHit");
             if (visitorId == "cookie not found") {
-                logError2(visitorId, "VNF", folderId, "pageSouce: " + pageSouce, "log A PageHit/" + calledFrom);
+                logError2(visitorId, "VNF", folderId, "pageSouce: " + pageSouce, calledFrom + "/log A PageHit");
                 visitorId = failureVisitorId;
             }
         }
@@ -63,8 +63,7 @@ function logAPageHit(folderId, visitorId, pageSouce, calledFrom) {
                     switch (pageHitSuccess.ReturnMessage) {
                         case "ok":
                             //logActivity2(visitorId, "PH1", folderId, "log A PageHit/" + calledFrom);
-                            if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ"))
-                            {
+                            if ((pageHitSuccess.PageHits > 3) && (pageHitSuccess.VisitorCountry == "ZZ")) {
                                 let cf = "PageHits: " + pageHitSuccess.PageHits + " Country: " + pageHitSuccess.VisitorCountry;
                                 logActivity2(visitorId, "PH4", folderId, cf); // pageHits > 3 and country=="ZZ"
                                 tryAddNewIP(folderId, visitorId, cf);
@@ -83,8 +82,14 @@ function logAPageHit(folderId, visitorId, pageSouce, calledFrom) {
                     }
                 }
                 else {
-                    logActivity2(visitorId, "PH8", folderId, pageHitSuccess.Success);  // page hit ajax error
-                    logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, "log A PageHit/" + calledFrom);
+                    if ((pageHitSuccess.Success.indexOf("connection attempt failed") > 0) || (pageHitSuccess.Success.indexOf("Timeout in IO operation") > 0)) {
+                        logError("TOE", folderId, pageHitSuccess.Success, "log A PageHit");  // timeout error
+                        checkConnection(folderId, "log A PageHit");
+                    }
+                    else {
+                        logError2(visitorId, "AJX", folderId, pageHitSuccess.Success, calledFrom + "/-log A PageHit");
+                        logActivity2(visitorId, "PH8", folderId, pageHitSuccess.Success);  // page hit ajax error
+                    }
                 }
             },
             error: function (jqXHR) {

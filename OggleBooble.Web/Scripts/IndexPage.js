@@ -5,77 +5,17 @@
     numUpdatedGalleries = 24,
     spaType = "archive";
 
-function displaySpaPage(spaPageId) {
-    switch (Number(spaPageId)) {
-        case 3907:
-            rankerStartup(params.bp);
-            break; // ranker
-        case 3911:
-            blogStartup();
-            break; // blog
-        case 3910:
-            dashboardStartup();
-            break; // dashboard
-        case 3908:
-            //document.title = "welcome : OggleBooble";
-            changeFavoriteIcon("redBallon");
-            spaType = "boobs";
-            $('#indexMiddleColumn').html(indexPageHTML());
-            setOggleHeader("index");
-            setOggleFooter(3908, "index", "index");
-            launchCarousel("boobs");
-            resetOggleHeader(3908, "boobs");
-            //setTimeout(function () { loadLatestUpdates(); }, 3000);
-            console.log("calling load LatestUpdates");
-            loadLatestUpdates();
-            console.log("calling load RandomGalleries");
-            loadRandomGalleries();
-            //setTimeout(function () { launchPromoMessages(); }, 3000);
-            //$('#testFunctionClick').show();
-            resizeIndexPage();
-            break;  //index page;
-        case 3909:
-            spaType = "porn";
-            $('#indexMiddleColumn').html(indexPageHTML());
-            setOggleHeader("porn");
-            setOggleFooter(spaPageId, "porn", "porn");
-            launchCarousel("porn");
-            // set porn colors
-            $('.threeColumnLayout').css("background-color", "#d279a6");
-            //if (subdomain == "porn")
-            //    $('.threeColumnLayout').css("background-color", "var(--oggleBackgroundColor)");
-            //else
-            //    $('.threeColumnLayout').css("background-color", "#d279a6");
-            $('#updatedGalleriesSectionLoadingGif').show();
-            loadLatestUpdates();
-            resetOggleHeader(3909, "porn");
-            break; // porn
-        case 72: 
-            spaType = "centerfold";
-            $('#indexMiddleColumn').html(playboyPageHTML());
-            setOggleHeader("playboyIndex");
-            resetOggleHeader(72, "playboyIndex");
-            setOggleFooter(spaPageId, "centerfold", "centerfold");
-            launchCarousel("centerfold");
-            $('#updatedGalleriesSectionLoadingGif').show();
-            loadLatestUpdates();
-            break; // every playboy centerfold
-        default:
-            if (document.domain === 'localhost') alert("spaPageId: " + spaPageId + " not found");
-            logError("SWT", spaPageId, spaPageId, "displaySpaPage");
-            break;
-    }
-}
-
-function loadLatestUpdates() {
-    if (isNullorUndefined(window.localStorage[spaType + "latestUpdatesCache"])) {
-        console.log("no " + spaType + "latestUpdatesCache found.");
+function quickLoadLatestUpdates(spaType) {
+    if (!isNullorUndefined(window.localStorage[spaType + "latestUpdatesCache"])) {
+        console.log(spaType + "LatestUpdates loaded from cache");
+        loadLatestUpdateArray(JSON.parse(window.localStorage[spaType + "latestUpdatesCache"]), "quick Load");
     }
     else {
-        console.log("latestUpdates " + spaType + "latestUpdatesCache loaded from cache.");
-        loadLatestUpdateArray(JSON.parse(window.localStorage[spaType + "latestUpdatesCache"]), "cache");
+        console.log("no " + spaType + " cache found");
     }
-    //$('#updatedGalleriesSectionLoadingGif').show();
+    loadLatestUpdates();
+}
+function loadLatestUpdates() {
     $.ajax({
         type: "GET",
         url: settingsArray.ApiServer + "api/IndexPage/GetLatestUpdatedFolders?take=" + numUpdatedGalleries + "&root=" + spaType,
@@ -104,10 +44,9 @@ function loadLatestUpdates() {
         }
     });
 }
-
 function loadLatestUpdateArray(latestTouchedGalleries, calledFrom) {
-    try {
-
+    try
+    {
         console.log("loadLatestUpdateArray: " + calledFrom);
         $('#updatedGalleriesSection').html("");
         $('#updatedGalleriesSectionLoadingGif').hide();
@@ -128,39 +67,34 @@ function loadLatestUpdateArray(latestTouchedGalleries, calledFrom) {
         resizeIndexPage();
 
     } catch (e) {
+        logError("CAT", 5555, e, "load LatestUpdate Array");
     }
 }
 
-function loadRandomGalleries() {
-    if (isNullorUndefined(window.localStorage[spaType + "randomGalleriesCache"])) {
-        console.log("no " + spaType + " cache found");
-        refreshRandomGalleries();
-
+function quickLoadloadRandomGalleries(spaType) {
+    if (!isNullorUndefined(window.localStorage[spaType + "randomGalleriesCache"])) {
+        console.log("quickLoad LatestUpdates " + spaType + " cache found");
+        loadRandomGalleriesArray(JSON.parse(window.localStorage[spaType + "randomGalleriesCache"]), "quick Load");
     }
     else {
-        try {
-            console.log("loading " + spaType + " random galleries from cache");
-            loadRandomGalleriesArray(JSON.parse(window.localStorage[spaType + "randomGalleriesCache"], "cache"));
-        } catch (e) {
-            console.error("loadRandom Galleries: " + e);
-            logError("CAT", 3908, e, "load RandomGalleries");
-        }
+        console.log("no " + spaType + "Random Galleries cache found");
     }
-    //$('#randomGalleriesSectionLoadingGif').hide();
+    loadRandomGalleries();
+}
+function loadRandomGalleries() {
     let randGalleryCount = 9;
     try {
-
         $.ajax({
             type: "GET",
             url: settingsArray.ApiServer + "api/IndexPage/GetRandomGalleries?take=" + randGalleryCount + "&root=" + spaType,
             success: function (randomGalleriesModel) {
                 if (randomGalleriesModel.Success === "ok") {
-                    window.localStorage[spaType + "latestUpdatesCache"] = null;
-                    window.localStorage[spaType + "latestUpdatesCache"] = JSON.stringify(randomGalleriesModel.RandomGalleries);
+                    window.localStorage[spaType + "randomGalleriesCache"] = null;
+                    window.localStorage[spaType + "randomGalleriesCache"] = JSON.stringify(randomGalleriesModel.RandomGalleries);
                     loadRandomGalleriesArray(randomGalleriesModel.RandomGalleries, "ajax");
                 }
                 else
-                    logError("AJX", 3908, randomGalleriesModel.Success, "show RandomGalleries");
+                    logError("AJX", 3908, randomGalleriesModel.Success, "load Random Galleries");
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
@@ -169,13 +103,13 @@ function loadRandomGalleries() {
             }
         });
     } catch (e) {
-        console.error("loadRandomGalleries1: " + e);
+        logError("CAT", 55555, e, "load Random Galleries");
+        console.error("loadRandomGalleries: " + e);
     }
 }
-
 function loadRandomGalleriesArray(randomGalleriesArray, calledFrom) {
     try {
-        console.log("starting loadRandomGalleriesArray: " + calledFrom);
+        console.log("starting load Random Galleries Array: " + calledFrom);
         $('#rgSectionContainer').show().html("");
         let rndItemSrc = "/Images/binaryCodeRain.gif";
         let winWidth = $(window).width();
@@ -204,10 +138,10 @@ function loadRandomGalleriesArray(randomGalleriesArray, calledFrom) {
                 $('#rg' + randomGallery.FolderId).hide();
 
         });
-        console.log("done loadRandomGalleriesArray");
+        console.log("done load RandomGalleries Array");
 
     } catch (e) {
-        console.error("loadRandomGalleriesArray: " + e);
+        console.error("load RandomGalleries Array: " + e);
     }
     $('#showRandomGalleriesLabel').show();
     resizeIndexPage();
@@ -332,10 +266,10 @@ function showHideGalleries() {
 }
 
 function refreshRandomGalleries() {
-    let visitorId = getCookieValue("VisitorId", "refresh RandomGalleries")
+    //let visitorId = getCookieValue("VisitorId", "refresh RandomGalleries")
     loadRandomGalleries();
     logActivity("RRG", 555, "index page");
-    sendEmail("CurtishRhodes@hotmail.com", "button_click7775@Ogglebooble.com", "Random Galleries Refreshed", "<br/>visitor: " + visitorId);
+    //sendEmail("CurtishRhodes@hotmail.com", "button_click7775@Ogglebooble.com", "Random Galleries Refreshed", "<br/>visitor: " + visitorId);
 }
 
 function randomGalleriesImageError(folderId, imgSrc) {

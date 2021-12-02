@@ -1,6 +1,67 @@
 ﻿function callAlbumPage(visitorId, folderId, pageSouce, calledFrom) {
     try {
-        if (pageSouce != "Index.html") {
+        if (pageSouce == "Index.html") {
+            //displaySpaPage(folderId);
+            switch (Number(folderId)) {
+                case 3907:
+                    rankerStartup(params.bp);
+                    break; // ranker
+                case 3911:
+                    blogStartup();
+                    break; // blog
+                case 3910:
+                    dashboardStartup();
+                    break; // dashboard
+                case 3908:
+                    //document.title = "welcome : OggleBooble";
+                    changeFavoriteIcon("redBallon");
+                    spaType = "boobs";
+                    $('#indexMiddleColumn').html(indexPageHTML());
+                    setOggleHeader("index");
+                    setOggleFooter(3908, "index", "index");
+                    launchCarousel(spaType);
+                    resetOggleHeader(3908, spaType);
+                    console.log("calling load LatestUpdates");
+                    quickLoadLatestUpdates(spaType);
+                    console.log("calling load RandomGalleries");
+                    quickLoadloadRandomGalleries(spaType);
+                    //setTimeout(function () { launchPromoMessages(); }, 3000);
+                    //$('#testFunctionClick').show();
+                    resizeIndexPage();
+                    break;  //index page;
+                case 3909:
+                    spaType = "porn";
+                    $('#indexMiddleColumn').html(indexPageHTML());
+                    setOggleHeader("porn");
+                    setOggleFooter(spaPageId, "porn", "porn");
+                    launchCarousel("porn");
+                    // set porn colors
+                    $('.threeColumnLayout').css("background-color", "#d279a6");
+                    //if (subdomain == "porn")
+                    //    $('.threeColumnLayout').css("background-color", "var(--oggleBackgroundColor)");
+                    //else
+                    //    $('.threeColumnLayout').css("background-color", "#d279a6");
+                    $('#updatedGalleriesSectionLoadingGif').show();
+                    quickLoadLatestUpdates(spaType);
+                    resetOggleHeader(3909, "porn");
+                    break; // porn
+                case 72:
+                    spaType = "centerfold";
+                    $('#indexMiddleColumn').html(playboyPageHTML());
+                    setOggleHeader("playboyIndex");
+                    resetOggleHeader(72, "playboyIndex");
+                    setOggleFooter(spaPageId, "centerfold", "centerfold");
+                    launchCarousel(spaType);
+                    $('#updatedGalleriesSectionLoadingGif').show();
+                    quickLoadLatestUpdates(spaType);
+                    break; // every playboy centerfold
+                default:
+                    if (document.domain === 'localhost') alert("spaPageId: " + spaPageId + " not found");
+                    logError("SWT", spaPageId, spaPageId, "displaySpaPage");
+                    break;
+            }
+        }
+        else {
             if (pageSouce != "album.html") {
                 if (typeof logStaticPageHit === 'function')
                     logStaticPageHit(folderId, visitorId, calledFrom);
@@ -25,7 +86,7 @@ function verifySession(folderId, calledFrom) {
         //console.log("verifySession(" + folderId + "," + calledFrom + ")");
         try {
             if (window.localStorage) {
-                let visitorId = localStorage["VisitorId"];
+                let visitorId = getCookieValue("VisitorId", "verify session"); // localStorage["VisitorId"];
                 if (window.sessionStorage) {
                     if (isNullorUndefined(window.sessionStorage["SessionVerified"])) {
                         window.sessionStorage["SessionVerified"] = true;
@@ -39,7 +100,7 @@ function verifySession(folderId, calledFrom) {
                             verifyVisitor(visitorId, folderId, calledFrom);
                         }
                     }
-                        callAlbumPage(visitorId, folderId, calledFrom, "normal bypass");
+                    callAlbumPage(visitorId, folderId, calledFrom, "normal bypass");
                 }
                 else { // no concept of local storage
                     visitorId = create_UUID();
@@ -57,10 +118,11 @@ function verifySession(folderId, calledFrom) {
         }
         catch (e) {
             // verify session2/album.html ERRMSG: SecurityError: The operation is insecure.
-            logActivity2(visitorId, "VS8", folderId, "verify session2/" + calledFrom + ". ERRMSG: " + e); // verify session CATCH error
+            logActivity2("ubk", "VS8", folderId, "verify session2/" + calledFrom + ". ERRMSG: " + e); // verify session CATCH error
             //logError2(visitorId, errorCode, folderId, errorMessage, calledFrom)
-            logError2(visitorId, "CAT", folderId, e, "verify session2/" + calledFrom);
-            callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
+            logError2("ubk", "CAT", folderId, e, "verify session2/" + calledFrom);
+            //callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
+            //window.location.href = "Index.html";
         }
     });
 }
@@ -135,24 +197,24 @@ function addVisitor(visitorId, folderId, calledFrom) {
                     addVisitorIfIpUnique(visitorId, ipifyRtrnTxt, folderId, calledFrom);
                 }
                 else {
-                    logActivity2(failureVisitorId, "AV5", folderId, errMsg); //  ipify fail
+                    logActivity2(visitorId, "AV5", folderId, errMsg); //  ipify fail
                     logError2(visitorId, "AJX", folderId, "ipify null", "add visitor/" + calledFrom);
                     callAlbumPage(failureVisitorId, folderId, calledFrom, "add visitor success");
                 }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
-                logActivity2(failureVisitorId, "AVX", folderId, errMsg); //  get IpIfyIpInfo XHR error
+                logActivity2(visitorId, "AVX", folderId, errMsg); //  get IpIfyIpInfo XHR error
                 if (!checkFor404(errMsg, folderId, "get IpIfyIpInfo/" + calledFrom))
-                    logError2(failureVisitorId, "XHR", folderId, errMsg, "get IpIfyIpInfo/" + calledFrom);
+                    logError2(visitorId, "XHR", folderId, errMsg, "get IpIfyIpInfo/" + calledFrom);
 
-                callAlbumPage(failureVisitorId, folderId, calledFrom, "add visitor error");
+                callAlbumPage(visitorId, folderId, calledFrom, "add visitor error");
             }
         });
     } catch (e) {
-        logActivity2(failureVisitorId, "AV6", folderId, e); // add vis catch error
-        logError2(failureVisitorId, "CAT", folderId, e, "add Visitor");
-        callAlbumPage(failureVisitorId, folderId, calledFrom, "add visitor catch error");
+        logActivity2(visitorId, "AV6", folderId, e); // add vis catch error
+        logError2(visitorId, "CAT", folderId, e, "add Visitor");
+        callAlbumPage(visitorId, folderId, calledFrom, "add visitor catch error");
     }
 }
 

@@ -4,7 +4,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
     try {
         event.preventDefault();
         window.event.returnValue = false;
-        logEvent("CXM", folderId, menuType, "showContextMenu");
+        logEvent("CXM", folderId, menuType, "show-ContextMenu");
         console.log("context menu opened: " + menuType);
         pMenuType = menuType;
         pLinkId = linkId;
@@ -42,7 +42,7 @@ function showContextMenu(menuType, pos, imgSrc, linkId, folderId, folderName) {
         else
             $('.adminLink').hide();
     } catch (e) {
-        logError("CAT", folderId, e, "showContextMenu");
+        logError("CAT", folderId, e, "show ContextMenu");
         if (document.domain == "localhost") alert("context menu CATCH: " + e);
     }
 }
