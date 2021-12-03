@@ -3,7 +3,8 @@ let imageIndex = 0, numImages = 0, numFolders = 0, backArrowClicks = 0,
     carouselItemArray = [], imageHistory = [], absolueStartTime,
     carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
-    imgSrc, jsCarouselSettings, arryItemsShownCount = 0, carouselRoot, cacheSize = 11;
+    imgSrc, jsCarouselSettings, arryItemsShownCount = 0, carouselRoot, isCacheRefreshed = false,
+    cacheSize = 11;
 
 function launchCarousel(startRoot) {
     settingsImgRepo = settingsArray.ImageRepo;
@@ -69,7 +70,6 @@ function launchCarousel(startRoot) {
             default:
                 logError("SWT", 222, startRoot, "launchCarousel");
         }
-        refreshCache(startRoot);
     }
     catch (e) {
         logError("CAT", 1105126, e, "launch Carousel");
@@ -119,10 +119,15 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
 
                     if (carouselInfo.Links.length === carouselTake) {
                         carouselSkip += carouselTake;
-                        carouselTake = 500;
+                        carouselTake = 200;
                         $('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
                             " total items: " + carouselItemArray.length.toLocaleString());
                         loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
+
+                        if ((!isCacheRefreshed) && (carouselItemArray.length > 200)) {
+                            refreshCache(carouselRoot);
+                            isCacheRefreshed = true;
+                        }
                     }
                     else {
                         let delta = (Date.now() - startTime) / 1000;
@@ -135,10 +140,10 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                     }
                 }
                 else {
-                    if (document.domain == "localhost") alert("carouselInfo error " + carouselInfo.Success);
                     if ((carouselInfo.Success.indexOf("connection attempt failed") > 0) || (carouselInfo.Success.indexOf("Timeout in IO operation") > 0)) {
                         logError("TOE", 11302031, carouselInfo.Success, "carousel loadImages");  // timeout error
                         checkConnection(11302031, "carousel loadImages");
+                        loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
                     }
                     else
                         logError("AJX", 3908, carouselInfo.Success, "carousel loadImages");
@@ -172,7 +177,7 @@ function refreshCache(rootFolder) {
                         case "porn": cacheName = "pornCache"; break;
                         case "centerfold": cacheName = "centerfoldCache"; break;
                         case "boobs": cacheName = "carouselCache"; break;
-                        default: logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refreshCache");
+                        default: logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refresh cache");
                     }
                     try {
                         window.localStorage.removeItem[cacheName];
@@ -195,25 +200,25 @@ function refreshCache(rootFolder) {
                 else {
                     if (document.domain == "localhost") alert("carouselInfo error " + carouselCacheInfo.Success);
                     if ((carouselCacheInfo.Success.indexOf("connection attempt failed") > 0) || (carouselCacheInfo.Success.indexOf("Timeout in IO operation") > 0)) {
-                        logError("TOE", 11302031, carouselCacheInfo.Success, "carousel refreshCache");  // timeout error
-                        checkConnection(11302031, "carousel refreshCache");
+                        logError("TOE", 11302031, carouselCacheInfo.Success, "carousel refresh cache");  // timeout error
+                        checkConnection(11302031, "carousel refresh cache");
                     }
                     else
-                        logError("AJX", 3908, carouselCacheInfo.Success, "carousel refreshCache");
+                        logError("AJX", 3908, carouselCacheInfo.Success, "carousel refresh cache");
                         logActivity("RC3", 618518, "refresh Cache"); // refresh cache Ajax error
                     }
             },
             error: function (jqXHR) {
                 let errMsg = getXHRErrorDetails(jqXHR);
                 logActivity("RC4", 618518, errMsg); // refresh cache XHR error
-                if (!checkFor404(errMsg, 366, "refreshCache")) {
-                    logError2(create_UUID(), "XHR", 366, errMsg, "refresh Cache");
+                if (!checkFor404(errMsg, 366, "refresh cache")) {
+                    logError2(create_UUID(), "XHR", 366, errMsg, "refresh cache");
                 }
             }
         });
     } catch (e) {
-        logActivity2(create_UUID(), "RC5", 618518, "refresh Cache"); // refresh cache CATCH error
-        logError2(create_UUID(),  "CAT", 3908, e, "refreshCache");
+        logActivity2(create_UUID(), "RC5", 618518, "refresh cache"); // refresh cache CATCH error
+        logError2(create_UUID(),  "CAT", 3908, e, "refresh cache");
     }
 }
 

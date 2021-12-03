@@ -5,13 +5,72 @@
     numUpdatedGalleries = 24,
     spaType = "archive";
 
+function displaySpaPage(folderId) {
+    switch (Number(folderId)) {
+        case 3907:
+            rankerStartup(params.bp);
+            break; // ranker
+        case 3911:
+            blogStartup();
+            break; // blog
+        case 3910:
+            dashboardStartup();
+            break; // dashboard
+        case 3908:
+            //document.title = "welcome : OggleBooble";
+            changeFavoriteIcon("redBallon");
+            spaType = "boobs";
+            $('#indexMiddleColumn').html(indexPageHTML());
+            setOggleHeader("index");
+            setOggleFooter(3908, "index", "index");
+            launchCarousel(spaType);
+            resetOggleHeader(3908, spaType);
+            quickLoadLatestUpdates(spaType);
+            // quickLoadloadRandomGalleries(spaType); 
+            //setTimeout(function () { launchPromoMessages(); }, 3000);
+            //$('#testFunctionClick').show();
+            resizeIndexPage();
+            break;  //index page;
+        case 3909:
+            spaType = "porn";
+            $('#indexMiddleColumn').html(indexPageHTML());
+            setOggleHeader("porn");
+            setOggleFooter(folderId, "porn", "porn");
+            launchCarousel("porn");
+            // set porn colors
+            $('.threeColumnLayout').css("background-color", "#d279a6");
+            //if (subdomain == "porn")
+            //    $('.threeColumnLayout').css("background-color", "var(--oggleBackgroundColor)");
+            //else
+            //    $('.threeColumnLayout').css("background-color", "#d279a6");
+            $('#updatedGalleriesSectionLoadingGif').show();
+            quickLoadLatestUpdates(spaType);
+            resetOggleHeader(3909, "porn");
+            break; // porn
+        case 72:
+            spaType = "centerfold";
+            $('#indexMiddleColumn').html(playboyPageHTML());
+            setOggleHeader("playboyIndex");
+            resetOggleHeader(72, "playboyIndex");
+            setOggleFooter(folderId, "centerfold", "centerfold");
+            launchCarousel(spaType);
+            $('#updatedGalleriesSectionLoadingGif').show();
+            quickLoadLatestUpdates(spaType);
+            break; // every playboy centerfold
+        default:
+            if (document.domain === 'localhost') alert("spaPageId: " + folderId + " not found");
+            logError("SWT", folderId, "case: " + folderId, "displaySpaPage");
+            break;
+    }
+}
+
 function quickLoadLatestUpdates(spaType) {
     if (!isNullorUndefined(window.localStorage[spaType + "latestUpdatesCache"])) {
-        console.log(spaType + "LatestUpdates loaded from cache");
+        console.log(spaType + "latest updates loaded from cache");
         loadLatestUpdateArray(JSON.parse(window.localStorage[spaType + "latestUpdatesCache"]), "quick Load");
     }
     else {
-        console.log("no " + spaType + " cache found");
+        console.log("no latest updates for: " + spaType + " cache found");
     }
     loadLatestUpdates();
 }
@@ -28,6 +87,7 @@ function loadLatestUpdates() {
                     logError("CAT", 3908, e, "load Updated Galleries Boxes");
                 }
                 loadLatestUpdateArray(latestUpdates.LatestTouchedGalleries, "ajax");
+                console.log("loaded latest updated galleries for: " + spaType);
             }
             else {
                 if ((latestUpdates.Success.indexOf("connection attempt failed") > 0) || (latestUpdates.Success.indexOf("Timeout in IO operation") > 0)) {
@@ -37,6 +97,11 @@ function loadLatestUpdates() {
                 else
                     logError("AJX", 3908, latestUpdates.Success, "load Updated Galleries Boxes");
             }
+
+            if (spaType == "boobs")
+                quickLoadloadRandomGalleries(spaType);
+
+
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
@@ -47,7 +112,6 @@ function loadLatestUpdates() {
 function loadLatestUpdateArray(latestTouchedGalleries, calledFrom) {
     try
     {
-        console.log("loadLatestUpdateArray: " + calledFrom);
         $('#updatedGalleriesSection').html("");
         $('#updatedGalleriesSectionLoadingGif').hide();
 
@@ -73,11 +137,11 @@ function loadLatestUpdateArray(latestTouchedGalleries, calledFrom) {
 
 function quickLoadloadRandomGalleries(spaType) {
     if (!isNullorUndefined(window.localStorage[spaType + "randomGalleriesCache"])) {
-        console.log("quickLoad LatestUpdates " + spaType + " cache found");
+        console.log("random galleries " + spaType + " cache found");
         loadRandomGalleriesArray(JSON.parse(window.localStorage[spaType + "randomGalleriesCache"]), "quick Load");
     }
     else {
-        console.log("no " + spaType + "Random Galleries cache found");
+        console.log("no " + spaType + "random galleries cache found");
     }
     loadRandomGalleries();
 }
@@ -92,6 +156,7 @@ function loadRandomGalleries() {
                     window.localStorage[spaType + "randomGalleriesCache"] = null;
                     window.localStorage[spaType + "randomGalleriesCache"] = JSON.stringify(randomGalleriesModel.RandomGalleries);
                     loadRandomGalleriesArray(randomGalleriesModel.RandomGalleries, "ajax");
+                    console.log("loaded random galleries");
                 }
                 else
                     logError("AJX", 3908, randomGalleriesModel.Success, "load Random Galleries");
@@ -109,7 +174,7 @@ function loadRandomGalleries() {
 }
 function loadRandomGalleriesArray(randomGalleriesArray, calledFrom) {
     try {
-        console.log("starting load Random Galleries Array: " + calledFrom);
+        //console.log("starting load Random Galleries Array: " + calledFrom);
         $('#rgSectionContainer').show().html("");
         let rndItemSrc = "/Images/binaryCodeRain.gif";
         let winWidth = $(window).width();
@@ -138,7 +203,6 @@ function loadRandomGalleriesArray(randomGalleriesArray, calledFrom) {
                 $('#rg' + randomGallery.FolderId).hide();
 
         });
-        console.log("done load RandomGalleries Array");
 
     } catch (e) {
         console.error("load RandomGalleries Array: " + e);
@@ -156,8 +220,8 @@ function latestGalleryImageError(folderId, thisItemSrc) {
 
             if (document.domain === 'localhost') {
               //  pause();
-              //  alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
-                console.log("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+                //  alert("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
+                console.error("image error\npage: " + folderId + ",\nLink: " + thisItemSrc);
             }
         }
     }, 600);

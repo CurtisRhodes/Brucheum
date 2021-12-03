@@ -1,86 +1,4 @@
-﻿function callAlbumPage(visitorId, folderId, pageSouce, calledFrom) {
-    try {
-        if (pageSouce == "Index.html") {
-            //displaySpaPage(folderId);
-            switch (Number(folderId)) {
-                case 3907:
-                    rankerStartup(params.bp);
-                    break; // ranker
-                case 3911:
-                    blogStartup();
-                    break; // blog
-                case 3910:
-                    dashboardStartup();
-                    break; // dashboard
-                case 3908:
-                    //document.title = "welcome : OggleBooble";
-                    changeFavoriteIcon("redBallon");
-                    spaType = "boobs";
-                    $('#indexMiddleColumn').html(indexPageHTML());
-                    setOggleHeader("index");
-                    setOggleFooter(3908, "index", "index");
-                    launchCarousel(spaType);
-                    resetOggleHeader(3908, spaType);
-                    console.log("calling load LatestUpdates");
-                    quickLoadLatestUpdates(spaType);
-                    console.log("calling load RandomGalleries");
-                    quickLoadloadRandomGalleries(spaType);
-                    //setTimeout(function () { launchPromoMessages(); }, 3000);
-                    //$('#testFunctionClick').show();
-                    resizeIndexPage();
-                    break;  //index page;
-                case 3909:
-                    spaType = "porn";
-                    $('#indexMiddleColumn').html(indexPageHTML());
-                    setOggleHeader("porn");
-                    setOggleFooter(spaPageId, "porn", "porn");
-                    launchCarousel("porn");
-                    // set porn colors
-                    $('.threeColumnLayout').css("background-color", "#d279a6");
-                    //if (subdomain == "porn")
-                    //    $('.threeColumnLayout').css("background-color", "var(--oggleBackgroundColor)");
-                    //else
-                    //    $('.threeColumnLayout').css("background-color", "#d279a6");
-                    $('#updatedGalleriesSectionLoadingGif').show();
-                    quickLoadLatestUpdates(spaType);
-                    resetOggleHeader(3909, "porn");
-                    break; // porn
-                case 72:
-                    spaType = "centerfold";
-                    $('#indexMiddleColumn').html(playboyPageHTML());
-                    setOggleHeader("playboyIndex");
-                    resetOggleHeader(72, "playboyIndex");
-                    setOggleFooter(spaPageId, "centerfold", "centerfold");
-                    launchCarousel(spaType);
-                    $('#updatedGalleriesSectionLoadingGif').show();
-                    quickLoadLatestUpdates(spaType);
-                    break; // every playboy centerfold
-                default:
-                    if (document.domain === 'localhost') alert("spaPageId: " + spaPageId + " not found");
-                    logError("SWT", spaPageId, spaPageId, "displaySpaPage");
-                    break;
-            }
-        }
-        else {
-            if (pageSouce != "album.html") {
-                if (typeof logStaticPageHit === 'function')
-                    logStaticPageHit(folderId, visitorId, calledFrom);
-                else
-                    logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage/" + calledFrom);
-            }
-            if (typeof loadAlbum === 'function')
-                loadAlbum(folderId, visitorId, pageSouce, calledFrom);
-            else {
-                logError2(visitorId, "FNF", folderId, "loadAlbum not a function", "call AlbumPage/" + calledFrom);
-                window.location.href = "Index.html";
-            }
-            // logActivity("VV3", folderId, "verify session"); // active session new page
-        }
-    } catch (e) {
-        logError2(visitorId, "CAT", folderId, e, "call AlbumPage");
-    }
-}
-
+﻿
 function verifySession(folderId, calledFrom) {
     $(document).ready(function () {
         //console.log("verifySession(" + folderId + "," + calledFrom + ")");
@@ -90,38 +8,40 @@ function verifySession(folderId, calledFrom) {
                 if (window.sessionStorage) {
                     if (isNullorUndefined(window.sessionStorage["SessionVerified"])) {
                         window.sessionStorage["SessionVerified"] = true;
-                        if (isNullorUndefined(visitorId)) {
+                        if (visitorId == "cookie not found") {
                             visitorId = create_UUID();
                             localStorage["VisitorId"] = visitorId;
                             addVisitor(visitorId, folderId, "new visitor");
-                            logActivity("VS2", folderId, "verify session"); // VisitorId not found (new visitor?)
+                            logActivity2(visitorId, "VS2", folderId, "verify session"); // VisitorId not found (new visitor?)
                         }
                         else {
                             verifyVisitor(visitorId, folderId, calledFrom);
+                            logActivity2(visitorId, "VS1", folderId, "verify session"); // new session started ok
                         }
+                        callAlbumPage(visitorId, folderId, calledFrom, "new session started");
                     }
-                    callAlbumPage(visitorId, folderId, calledFrom, "normal bypass");
+                    else
+                        callAlbumPage(visitorId, folderId, calledFrom, "normal bypass");
                 }
-                else { // no concept of local storage
+                else { // no concept of session storage
                     visitorId = create_UUID();
-                    addVisitor(visitorId, folderId, "no local storage");
-                    callAlbumPage(visitorId, folderId, calledFrom, "new session started");
-                    logError2(visitorId, "BUG", folderId, "no local storage", "verify session/" + calledFrom);
+                    addVisitor(visitorId, folderId, "no session storage");
+                    callAlbumPage(visitorId, folderId, calledFrom, "no session storage");
+                    logError2(visitorId, "BUG", folderId, "no concept of session storage", "verify session/" + calledFrom);
                 }
             }
             else { //  no concept of storage
                 visitorId = create_UUID();
-                addVisitor(visitorId, folderId, "no session storage");
+                addVisitor(visitorId, folderId, "no concept of storage");
                 callAlbumPage(visitorId, folderId, calledFrom, "new session started");
-                logError2(visitorId, "BUG", folderId, "no local storage", "verify session/" + calledFrom);
+                logError2(visitorId, "BUG", folderId, "no concept of storage", "verify session/" + calledFrom);
             }
         }
         catch (e) {
             // verify session2/album.html ERRMSG: SecurityError: The operation is insecure.
-            logActivity2("ubk", "VS8", folderId, "verify session2/" + calledFrom + ". ERRMSG: " + e); // verify session CATCH error
-            //logError2(visitorId, errorCode, folderId, errorMessage, calledFrom)
-            logError2("ubk", "CAT", folderId, e, "verify session2/" + calledFrom);
-            //callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
+            logActivity2("ubk", "VS8", folderId, "verify session3/" + calledFrom + ". ERRMSG: " + e); // verify session CATCH error
+            logError2("ubk", "CAT", folderId, e, "verify session3/" + calledFrom);
+            callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
             //window.location.href = "Index.html";
         }
     });
@@ -182,6 +102,31 @@ function verifyVisitor(visitorId, folderId, calledFrom) {
     catch (e) {
         logError2(visitorId, "CAT", folderId, e, "verify visitor/" + calledFrom);
         logActivity2(visitorId, "VV7", folderId, e); // verify visitor CATCH error
+    }
+}
+
+function callAlbumPage(visitorId, folderId, pageSouce, calledFrom) {
+    try {
+        if (pageSouce == "Index.html") {
+            displaySpaPage(folderId);
+        }
+        else {
+            if (pageSouce != "album.html") {
+                if (typeof logStaticPageHit === 'function')
+                    logStaticPageHit(folderId, visitorId, calledFrom);
+                else
+                    logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage/" + calledFrom);
+            }
+            if (typeof loadAlbum === 'function')
+                loadAlbum(folderId, visitorId, pageSouce, calledFrom);
+            else {
+                logError2(visitorId, "FNF", folderId, "loadAlbum not a function", "call AlbumPage/" + calledFrom);
+                window.location.href = "Index.html";
+            }
+            // logActivity("VV3", folderId, "verify session"); // active session new page
+        }
+    } catch (e) {
+        logError2(visitorId, "CAT", folderId, e, "call AlbumPage");
     }
 }
 
