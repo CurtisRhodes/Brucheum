@@ -55,9 +55,9 @@ namespace OggleBooble.Api.Controllers
         public GalleryImagesAndFoldersModel GetAlbumImages(int folderId)
         {
             var albumImageInfo = new GalleryImagesAndFoldersModel();
-            try
+            using (var db = new OggleBoobleMySqlContext())
             {
-                using (var db = new OggleBoobleMySqlContext())
+                try
                 {
                     // SUB FOLDERS
                     List<VwDirTree> dbFolderRows = db.VwDirTrees.Where(v => v.Parent == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.FolderName).ToList();
@@ -81,10 +81,13 @@ namespace OggleBooble.Api.Controllers
 
                     // IMAGES
                     albumImageInfo.ImageLinks = db.VwLinks.Where(v => v.FolderId == folderId).OrderBy(v => v.SortOrder).ThenBy(v => v.LinkId).ToList();
+                    albumImageInfo.Success = "ok";
                 }
-                albumImageInfo.Success = "ok";
+                catch (Exception ex)
+                {
+                    albumImageInfo.Success = Helpers.ErrorDetails(ex);
+                }
             }
-            catch (Exception ex) { albumImageInfo.Success = Helpers.ErrorDetails(ex); }
             return albumImageInfo;
         }
 

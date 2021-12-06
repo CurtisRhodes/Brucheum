@@ -17,6 +17,7 @@ namespace OggleBooble.Api.Models
     public class VerifyConnectionSuccessModel
     {
         public bool ConnectionVerified { get; set; }
+        public string Message { get; set; }
         public string Success { get; set; }
     }
     public class FolderInfoModel

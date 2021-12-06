@@ -37,7 +37,7 @@ namespace OggleBooble.Api.Controllers
                 }
                 carouselInfo.Success = "ok";
             }
-            catch (Exception ex)
+                catch (Exception ex)
             {
                 carouselInfo.Success = Helpers.ErrorDetails(ex);
             }
@@ -48,9 +48,9 @@ namespace OggleBooble.Api.Controllers
         public CarouselInfoModel RefreshCache(string root, int cacheCount)
         {
             CarouselInfoModel carouselInfo = new CarouselInfoModel();
-            try
+            using (var db = new OggleBoobleMySqlContext())
             {
-                using (var db = new OggleBoobleMySqlContext())
+                try
                 {
                     List<VwCarouselItem> allCarouselItems;
                     allCarouselItems = db.VwCarouselImages.Where(v => v.RootFolder == root)
@@ -69,12 +69,12 @@ namespace OggleBooble.Api.Controllers
                     }
                     else
                         carouselInfo.Links = allCarouselItems;
+                    carouselInfo.Success = "ok";
                 }
-                carouselInfo.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                carouselInfo.Success = Helpers.ErrorDetails(ex);
+                catch (Exception ex)
+                {
+                    carouselInfo.Success = Helpers.ErrorDetails(ex);
+                }
             }
             return carouselInfo;
         }

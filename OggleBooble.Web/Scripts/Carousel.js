@@ -4,7 +4,7 @@ let imageIndex = 0, numImages = 0, numFolders = 0, backArrowClicks = 0,
     carouselImageViews = 0, carouselImageErrors = 0, vCarouselInterval = null,
     mainImageClickId, knownModelLabelClickId, imageTopLabelClickId, footerLabelClickId,
     imgSrc, jsCarouselSettings, arryItemsShownCount = 0, carouselRoot, isCacheRefreshed = false,
-    cacheSize = 11;
+    takeSize = 88, cacheSize = 22, maxCarouselLength = 888;
 
 function launchCarousel(startRoot) {
     settingsImgRepo = settingsArray.ImageRepo;
@@ -81,85 +81,87 @@ function launchCarousel(startRoot) {
 }
 
 function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait) {
-    let startTime = Date.now();
-    try {
-        $.ajax({
-            type: "GET",
-            //url: settingsArray.ApiCoreServer + "Carousel/GetImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
-            //    "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
-            // crossDomain: true,
-            // dataType: 'jsonp',
-            // headers: { 'Access-Control-Allow-Origin': 'Accept' },
-            url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
-                "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
-            success: function (carouselInfo) {
-                if (carouselInfo.Success === "ok") {
-                    $('#footerMessage2').html("");
-                    let isAlreadyInArray = false;
-                    $.each(carouselInfo.Links, function (idx, obj) {
-                        isAlreadyInArray = false;
-                        for (i = 0; i < carouselInfo.length; i++) {
-                            if (obj.Id === carouselInfo[i].Id) {
-                                if (carouselDebugMode) alert(obj.Id + " already in carouselItemArray: " + carouselItemArray.find(item => { item.Id == obj.Id }));
-                                console.log(obj.Id + " already in carouselItemArray");
-                                isAlreadyInArray = true;
-                                if (document.domain == "localhost") alert(obj.Id + " already in carouselItemArray");
+    $(document).ready(function () {
+        let startTime = Date.now();
+        try {
+            $.ajax({
+                type: "GET",
+                //url: settingsArray.ApiCoreServer + "Carousel/GetImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
+                //    "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
+                // crossDomain: true,
+                // dataType: 'jsonp',
+                // headers: { 'Access-Control-Allow-Origin': 'Accept' },
+                url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
+                    "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
+                success: function (carouselInfo) {
+                    if (carouselInfo.Success === "ok") {
+                        $('#footerMessage2').html("");
+                        let isAlreadyInArray = false;
+                        $.each(carouselInfo.Links, function (idx, obj) {
+                            isAlreadyInArray = false;
+                            for (i = 0; i < carouselInfo.length; i++) {
+                                if (obj.Id === carouselInfo[i].Id) {
+                                    if (carouselDebugMode) alert(obj.Id + " already in carouselItemArray: " + carouselItemArray.find(item => { item.Id == obj.Id }));
+                                    console.log(obj.Id + " already in carouselItemArray");
+                                    isAlreadyInArray = true;
+                                    if (document.domain == "localhost") alert(obj.Id + " already in carouselItemArray");
+                                }
+                            }
+                            if (!isAlreadyInArray) {
+                                carouselItemArray.push(obj);
+                            }
+                        });
+
+                        if (!vCarouselInterval) {
+                            console.log("starting carousel from after ajax. take: " + carouselTake);
+                            //logError("LSC", 625131, "take: " + carouselTake);
+                            //logActivity("LSC", 618518, "carousel loadImages"); // starting carousel from after ajax
+                            startCarousel("ajax");
+                        }
+
+                        if ((carouselInfo.Links.length === carouselTake) && (carouselInfo.Links.length < maxCarouselLength)) {
+                            carouselSkip += carouselTake;
+                            carouselTake = takeSize;
+                            $('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
+                                " total items: " + carouselItemArray.length.toLocaleString());
+                            loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
+
+                            if ((!isCacheRefreshed) && (carouselItemArray.length > 200)) {
+                                refreshCache(carouselRoot);
+                                isCacheRefreshed = true;
                             }
                         }
-                        if (!isAlreadyInArray) {
-                            carouselItemArray.push(obj);
-                        }
-                    });
-
-                    if (!vCarouselInterval) {
-                        console.log("starting carousel from after ajax. take: " + carouselTake);
-                        //logError("LSC", 625131, "take: " + carouselTake);
-                        //logActivity("LSC", 618518, "carousel loadImages"); // starting carousel from after ajax
-                        startCarousel("ajax");
-                    }
-
-                    if (carouselInfo.Links.length === carouselTake) {
-                        carouselSkip += carouselTake;
-                        carouselTake = 200;
-                        $('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
-                            " total items: " + carouselItemArray.length.toLocaleString());
-                        loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
-
-                        if ((!isCacheRefreshed) && (carouselItemArray.length > 200)) {
-                            refreshCache(carouselRoot);
-                            isCacheRefreshed = true;
+                        else {
+                            let delta = (Date.now() - startTime) / 1000;
+                            //console.log(rootFolder + "done.  took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                            //$('#footerMessage2').html(rootFolder + ": skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake + "  took: " + delta.toFixed(3) + "  total items: " + carouselItemArray.length.toLocaleString());
+                            //if (document.domain == "localhost") alert("done: " + carouselItemArray.length);
+                            //if (carouselDebugMode) $('#badgesContainer').html(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
+                            $('#footerMessage2').html("");
+                            $('#footerMessage').html("done loading. total items: " + carouselItemArray.length.toLocaleString() + "  took: " + delta.toFixed(3));
                         }
                     }
                     else {
-                        let delta = (Date.now() - startTime) / 1000;
-                        //console.log(rootFolder + "done.  took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                        //$('#footerMessage2').html(rootFolder + ": skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake + "  took: " + delta.toFixed(3) + "  total items: " + carouselItemArray.length.toLocaleString());
-                        //if (document.domain == "localhost") alert("done: " + carouselItemArray.length);
-                        //if (carouselDebugMode) $('#badgesContainer').html(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                        $('#footerMessage2').html("");
-                        $('#footerMessage').html("done loading. total items: " + carouselItemArray.length.toLocaleString() + "  took: " + delta.toFixed(3));
-                    }
-                }
-                else {
-                    if ((carouselInfo.Success.indexOf("connection attempt failed") > 0) || (carouselInfo.Success.indexOf("Timeout in IO operation") > 0)) {
-                        logError("TOE", 11302031, carouselInfo.Success, "carousel loadImages");  // timeout error
-                        checkConnection(11302031, "carousel loadImages");
-                        loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
-                        $('#footerMessage2').html("connection attempt failed. Retrying");
+                        if ((carouselInfo.Success.indexOf("connection attempt failed") > 0) || (carouselInfo.Success.indexOf("Timeout in IO operation") > 0)) {
+                            logError("TOE", 11302031, carouselInfo.Success, "carousel loadImages");  // timeout error
+                            checkConnection(11302031, "carousel loadImages");
+                            loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
+                            $('#footerMessage2').html("connection attempt failed. Retrying");
 
+                        }
+                        else
+                            logError("AJX", 3908, carouselInfo.Success, "carousel loadImages");
                     }
-                    else
-                        logError("AJX", 3908, carouselInfo.Success, "carousel loadImages");
+                },
+                error: function (jqXHR) {
+                    let errMsg = getXHRErrorDetails(jqXHR);
+                    if (!checkFor404(errMsg, rootFolder, "loadImages")) logError("XHR", rootFolder, errMsg, "loadImages");
                 }
-            },
-            error: function (jqXHR) {
-                let errMsg = getXHRErrorDetails(jqXHR);
-                if (!checkFor404(errMsg, rootFolder, "loadImages")) logError("XHR", rootFolder, errMsg, "loadImages");
-            }
-        });
-    } catch (e) {
-        logError("CAT", 3908, e, "loadImages");
-    }
+            });
+        } catch (e) {
+            logError("CAT", 3908, e, "loadImages");
+        }
+    });
 }
 
 function refreshCache(rootFolder) {

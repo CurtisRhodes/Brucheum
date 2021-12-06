@@ -309,11 +309,11 @@ function slide(direction) {
             spSessionCount++;
             //$('#footerMessage').html("image: " + imageViewerIndex + " of: " + imageViewerArray.length);
 
-            if (typeof logImageHit === 'function')
-                logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
-            else {
-                logSSImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
-            }
+        //    if (typeof logImageHit === 'function')
+        //        logImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+        //    else {
+        //        logSSImageHit(imageViewerArray[imageViewerIndex].LinkId, imageViewerFolderId, false);
+        //    }
         }        
     } catch (e) {
         logError("CAT", 111187, e, "slide2");

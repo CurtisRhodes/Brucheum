@@ -23,9 +23,9 @@ namespace OggleBooble.Api.Controllers
         public ImageHitSuccessModel LogImageHit(LogImageHitDataModel logImageHItData)
         {
             ImageHitSuccessModel imageHitSuccess = new ImageHitSuccessModel();
-            try
+            using (var dbm = new OggleBoobleMySqlContext())
             {
-                using (var dbm = new OggleBoobleMySqlContext())
+                try
                 {
                     dbm.ImageHits.Add(new ImageHit()
                     {
@@ -39,16 +39,17 @@ namespace OggleBooble.Api.Controllers
                     imageHitSuccess.UserPageHits = dbm.PageHits.Where(h => h.VisitorId == logImageHItData.VisitorId).Count();
                     imageHitSuccess.ImageHits = dbm.ImageHits.Where(h => h.ImageLinkId == logImageHItData.LinkId).Count();
 
+
+                    imageHitSuccess.Success = "ok";
                 }
-                imageHitSuccess.Success = "ok";
-            }
-            catch (DbEntityValidationException dbEx)
-            {
-                imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
-            }
-            catch (Exception ex)
-            {
-                imageHitSuccess.Success = Helpers.ErrorDetails(ex);
+                catch (DbEntityValidationException dbEx)
+                {
+                    imageHitSuccess.Success = Helpers.ErrorDetails(dbEx);
+                }
+                catch (Exception ex)
+                {
+                    imageHitSuccess.Success = Helpers.ErrorDetails(ex);
+                }
             }
             return imageHitSuccess;
         }
@@ -57,10 +58,10 @@ namespace OggleBooble.Api.Controllers
         [Route("api/Common/LogPageHit")]
         public PageHitSuccessModel LogPageHit(string visitorId, int folderId)
         {
-            PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
-            try
+            using (var db = new OggleBoobleMySqlContext())
             {
-                using (var db = new OggleBoobleMySqlContext())
+                PageHitSuccessModel pageHitSuccessModel = new PageHitSuccessModel();
+                try
                 {
                     Visitor dbVisitor = db.Visitors.Where(v => v.VisitorId == visitorId).FirstOrDefault();
                     if (dbVisitor == null)
@@ -100,14 +101,14 @@ namespace OggleBooble.Api.Controllers
                             pageHitSuccessModel.ReturnMessage = "duplicate hit";
                         }
                     }
+                    pageHitSuccessModel.Success = "ok";
                 }
-                pageHitSuccessModel.Success = "ok";
+                catch (Exception ex)
+                {
+                    pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
+                }
+                return pageHitSuccessModel;
             }
-            catch (Exception ex)
-            {
-                pageHitSuccessModel.Success = Helpers.ErrorDetails(ex);
-            }
-            return pageHitSuccessModel;
         }
 
         [HttpPost]
@@ -203,28 +204,28 @@ namespace OggleBooble.Api.Controllers
 
         [HttpGet]
         [Route("api/Common/VerifyConnection")]
-        [EnableCors("*", "*", "*")]
         public VerifyConnectionSuccessModel VerifyConnection()
         {
             var timer = new System.Diagnostics.Stopwatch();
             timer.Start();
             VerifyConnectionSuccessModel successModel = new VerifyConnectionSuccessModel() { ConnectionVerified = false };
-            try
+            using (var db = new OggleBoobleMySqlContext())
             {
-                //using (var db = new OggleBoobleMSSqlContext())
-                using (var db = new OggleBoobleMySqlContext())
+                try
                 {
+                    //using (var db = new OggleBoobleMSSqlContext())
                     var dbTest = db.CategoryFolders.Where(f => f.Id == 1).FirstOrDefault();
                     successModel.ConnectionVerified = (dbTest != null);
+
+                    timer.Stop();
+                    successModel.Message = timer.Elapsed.ToString();
+                    System.Diagnostics.Debug.WriteLine("VerifyConnection took: " + timer.Elapsed);
+                    successModel.Success = "ok";
                 }
-                timer.Stop();
-                //successModel.ReturnValue = timer.Elapsed.ToString();
-                System.Diagnostics.Debug.WriteLine("VerifyConnection took: " + timer.Elapsed);
-                successModel.Success = "ok";
-            }
-            catch (Exception ex)
-            {
-                successModel.Success = Helpers.ErrorDetails(ex);
+                catch (Exception ex)
+                {
+                    successModel.Success = Helpers.ErrorDetails(ex);
+                }
             }
             return successModel;
         }
