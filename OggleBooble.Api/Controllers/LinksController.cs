@@ -317,11 +317,11 @@ namespace OggleBooble.Api.Controllers
         public string UpdateSortOrder(List<SortOrderItem> links)
         {
             string success = "";
-            try
+            using (var db = new OggleBoobleMySqlContext())
             {
-                int folderId = links[0].FolderId;
-                using (var db = new OggleBoobleMySqlContext())
+                try
                 {
+                    int folderId = links[0].FolderId;
                     List<CategoryImageLink> catLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
                     foreach (SortOrderItem link in links)
                     {
@@ -334,11 +334,10 @@ namespace OggleBooble.Api.Controllers
                     db.SaveChanges();
                     success = "ok";
                 }
-
-            }
                 catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
+                {
+                    success = Helpers.ErrorDetails(ex);
+                }
             }
             return success;
         }
@@ -348,9 +347,9 @@ namespace OggleBooble.Api.Controllers
         public string AddLink(string linkId, int destinationId)
         {
             string success;
-            try
+            using (var db = new OggleBoobleMySqlContext())
             {
-                using (var db = new OggleBoobleMySqlContext())
+                try
                 {
                     db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
                     {
@@ -359,12 +358,12 @@ namespace OggleBooble.Api.Controllers
                         SortOrder = 1456
                     });
                     db.SaveChanges();
+                    success = "ok";
                 }
-                success = "ok";
-            }
-            catch (Exception ex)
-            {
-                success = Helpers.ErrorDetails(ex);
+                catch (Exception ex)
+                {
+                    success = Helpers.ErrorDetails(ex);
+                }
             }
             return success;
         }
@@ -393,9 +392,9 @@ namespace OggleBooble.Api.Controllers
         public string AttemptRemoveLink(string linkId, int folderId)
         {
             string success;
-            try
+            using (var db = new OggleBoobleMySqlContext())
             {
-                using (var db = new OggleBoobleMySqlContext())
+                try
                 {
                     var imageLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == linkId).ToList();
                     if (imageLinks.Count > 1)
@@ -414,8 +413,8 @@ namespace OggleBooble.Api.Controllers
                     else
                         success = "single link";
                 }
+                catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             }
-            catch (Exception ex) { success = Helpers.ErrorDetails(ex); }
             return success;
         }
 

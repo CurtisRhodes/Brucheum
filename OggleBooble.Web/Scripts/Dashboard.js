@@ -1005,7 +1005,7 @@ function saveSortOrder() {
             data: JSON.stringify(sortOrderArray),
             success: function (success) {
                 $('#dashBoardLoadingGif').hide();
-                if (success === "ok") {
+                if (success == "ok") {
                     let delta = (Date.now() - sStart);
                     if (delta < 1500)
                         $('#dataifyInfo').hide();

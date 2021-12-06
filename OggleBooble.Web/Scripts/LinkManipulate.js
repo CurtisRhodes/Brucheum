@@ -181,7 +181,7 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
     });
 }
 
-function showConfirmDeteteImageDialog(linkId, folderId, imgSrc, errMsg) {
+function showConfirmDeteteImageDialog(menuType, linkId, folderId, imgSrc, errMsg) {
     if (errMsg === "single link") {
         $('#centeredDialogTitle').html("Delete Image");
         $('#centeredDialogContents').html(
@@ -190,7 +190,7 @@ function showConfirmDeteteImageDialog(linkId, folderId, imgSrc, errMsg) {
             "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked'></input>  duplicate</div>\n" +
             "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons'></input>  bad link</div>\n" +
             "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons'></input>  low quality</div>\n" +
-            "    <div class='roundendButton' onclick='performMoveImageToRejects(\"" + linkId + "\"," + folderId + ")'>ok</div>\n" +
+            "    <div class='roundendButton' onclick='performMoveImageToRejects(\"" + menuType + "\"," + linkId + "\"," + folderId + ")'>ok</div>\n" +
             "</form>>");
     }
 
@@ -205,16 +205,20 @@ function showConfirmDeteteImageDialog(linkId, folderId, imgSrc, errMsg) {
     $('#centeredDialogContainer').fadeIn();
 }
 
-function performMoveImageToRejects(linkId, folderId) {
+function performMoveImageToRejects(menuType, linkId, folderId) {
     let rejectReason = $('input[name="rdoRejectImageReasons"]:checked').val();
     //alert("rejectReason: " + rejectReason + " link: " + linkId);
+    if (menuType == "") {
+        $('#albumPageLoadingGif').show();
+    }
 
     $.ajax({
         type: "PUT",
         url: settingsArray.ApiServer + "api/Links/MoveImageToRejects?linkId=" + linkId,
         success: function (success) {
+            $('#albumPageLoadingGif').hide();
             if (success === "single link" || success === "home folder Link") {
-                showConfirmDeteteImageDialog(linkId, folderId, imgSrc, success);
+                showConfirmDeteteImageDialog(menuType, linkId, folderId, imgSrc, success);
             }
             else {
                 if (success === "ok") {

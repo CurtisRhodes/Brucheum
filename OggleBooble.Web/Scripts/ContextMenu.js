@@ -277,7 +277,7 @@ function contextMenuAction(action) {
             break;
         case "reject":
             $("#imageContextMenu").fadeOut();
-            showConfirmDeteteImageDialog(pLinkId, cxFolderId, pImgSrc, "single link");
+            showConfirmDeteteImageDialog(pMenuType, pLinkId, cxFolderId, pImgSrc, "single link");
             break;
         case "setF":
             setFolderImage(pLinkId, cxFolderId, "folder");
