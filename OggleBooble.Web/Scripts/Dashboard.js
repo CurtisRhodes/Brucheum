@@ -994,38 +994,45 @@ function reloadSortTool() {
     $('#dataifyInfo').hide();
 }
 function saveSortOrder() {
+    try {
     $('#dashBoardLoadingGif').show();
     $('#dataifyInfo').show().html("saving changes");
     let sStart = Date.now();
-    $.ajax({
-        type: "PUT",
-        url: settingsArray.ApiServer + "api/Links/UpdateSortOrder",
-        contentType: 'application/json',
-        data: JSON.stringify(sortOrderArray),
-        success: function (success) {
-            $('#dashBoardLoadingGif').hide();
-            if (success === "ok") {
-                let delta = (Date.now() - sStart);
-                if (delta < 1500)
-                    $('#dataifyInfo').hide();
-                else
-                    $('#dataifyInfo').html("saving changes took: " + (delta / 1000).toFixed(3));
-
-                //loadSortImages();
-            }
-            else {
+        $.ajax({
+            type: "PUT",
+            url: settingsArray.ApiServer + "api/Links/UpdateSortOrder",
+            contentType: 'application/json',
+            data: JSON.stringify(sortOrderArray),
+            success: function (success) {
                 $('#dashBoardLoadingGif').hide();
-                alert(success);
-                logError("AJX", mmSourceFolderId, success, "UpdateSortOrder");
+                if (success === "ok") {
+                    let delta = (Date.now() - sStart);
+                    if (delta < 1500)
+                        $('#dataifyInfo').hide();
+                    else
+                        $('#dataifyInfo').html("saving changes took: " + (delta / 1000).toFixed(3));
+
+                    //loadSortImages();
+                }
+                else {
+                    $('#dashBoardLoadingGif').hide();
+                    alert(success);
+                    logError("AJX", mmSourceFolderId, success, "UpdateSortOrder");
+                }
+            },
+            error: function (jqXHR) {
+                $('#dashBoardLoadingGif').hide();
+                $('#dataifyInfo').hide();
+                let errMsg = getXHRErrorDetails(jqXHR);
+                alert("XHR: " + errMsg);
+                if (!checkFor404(errMsg, pSelectedTreeId, "save SortChanges")) logError("XHR", pSelectedTreeId, errMsg, "save SortChanges");
             }
-        },
-        error: function (jqXHR) {
-            $('#dashBoardLoadingGif').hide();
-            let errMsg = getXHRErrorDetails(jqXHR);
-            alert("XHR: " + errMsg);
-            if (!checkFor404(errMsg, pSelectedTreeId, "save SortChanges")) logError("XHR", pSelectedTreeId, errMsg, "save SortChanges");
-        }
-    });
+        });
+    } catch (e) {
+        $('#dashBoardLoadingGif').hide();
+        $('#dataifyInfo').hide();
+        alert("CAT: " + e);
+    }
 }
 
 // EMERGENCY TOOLS

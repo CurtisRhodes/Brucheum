@@ -236,7 +236,6 @@ function verifyFileExists(imgSrc) {
 
 }
 
-
 function getAlbumImages(folderId) {
     //let getImagesStart = Date.now();
     const posterFolder = 'https://img.OGGLEBOOBLE.COM/posters/';
@@ -247,6 +246,7 @@ function getAlbumImages(folderId) {
             type: "GET",
             url: settingsArray.ApiServer + "api/GalleryPage/GetAlbumImages?folderId=" + folderId,
             success: function (albumImageInfo) {
+                $('#footerMessage2').html("");
                 $('#albumPageLoadingGif').hide();
                 if (albumImageInfo.Success === "ok") {
                     //PROCESS IMAGES
@@ -331,6 +331,8 @@ function getAlbumImages(folderId) {
                     if ((albumImageInfo.Success.indexOf("connection attempt failed") > 0) || (albumImageInfo.Success.indexOf("Timeout in IO operation") > 0)) {
                         logError("TOE", folderId, albumImageInfo.Success, "get albumImages");  // timeout error
                         checkConnection(folderId, "get albumImages");
+                        getAlbumImages(folderId);
+                        $('#footerMessage2').html("connection attempt failed. Retrying");
                     }
                     else
                         logError("AJX", folderId, albumImageInfo.Success, "get albumImages");

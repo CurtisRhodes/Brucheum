@@ -94,6 +94,7 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                 "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
             success: function (carouselInfo) {
                 if (carouselInfo.Success === "ok") {
+                    $('#footerMessage2').html("");
                     let isAlreadyInArray = false;
                     $.each(carouselInfo.Links, function (idx, obj) {
                         isAlreadyInArray = false;
@@ -144,6 +145,8 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                         logError("TOE", 11302031, carouselInfo.Success, "carousel loadImages");  // timeout error
                         checkConnection(11302031, "carousel loadImages");
                         loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
+                        $('#footerMessage2').html("connection attempt failed. Retrying");
+
                     }
                     else
                         logError("AJX", 3908, carouselInfo.Success, "carousel loadImages");

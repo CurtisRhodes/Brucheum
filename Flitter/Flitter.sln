@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OggleBooble.Api", "..\Oggle
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OggleBooble.Api.Core", "..\OggleBooble.Api.Core\OggleBooble.Api.Core.csproj", "{58E43A71-A6EE-47A6-ABD1-102BD3847BCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OggleCore.Api", "..\OggleCore.Api\OggleCore.Api.csproj", "{10E471A0-C77F-48D7-BD27-E4A6F7E4EA12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{58E43A71-A6EE-47A6-ABD1-102BD3847BCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58E43A71-A6EE-47A6-ABD1-102BD3847BCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58E43A71-A6EE-47A6-ABD1-102BD3847BCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10E471A0-C77F-48D7-BD27-E4A6F7E4EA12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10E471A0-C77F-48D7-BD27-E4A6F7E4EA12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10E471A0-C77F-48D7-BD27-E4A6F7E4EA12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10E471A0-C77F-48D7-BD27-E4A6F7E4EA12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

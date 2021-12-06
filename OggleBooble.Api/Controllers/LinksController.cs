@@ -314,22 +314,31 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Links/UpdateSortOrder")]
-        public string UpdateSortOrder(List<SortOrderItem> links) {
+        public string UpdateSortOrder(List<SortOrderItem> links)
+        {
             string success = "";
-            int folderId = links[0].FolderId;
-            using (var db = new OggleBoobleMySqlContext())
+            try
             {
-                List<CategoryImageLink> catLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
-                foreach (SortOrderItem link in links)
+                int folderId = links[0].FolderId;
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    CategoryImageLink catLink = catLinks.Where(x => x.ImageLinkId == link.ItemId).FirstOrDefault();
-                    if (catLink != null)
+                    List<CategoryImageLink> catLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
+                    foreach (SortOrderItem link in links)
                     {
-                        catLink.SortOrder = link.SortOrder;
-                        db.SaveChanges();
+                        CategoryImageLink catLink = catLinks.Where(x => x.ImageLinkId == link.ItemId).FirstOrDefault();
+                        if (catLink != null)
+                        {
+                            catLink.SortOrder = link.SortOrder;
+                        }
                     }
+                    db.SaveChanges();
+                    success = "ok";
                 }
-                success = "ok";
+
+            }
+                catch (Exception ex)
+            {
+                success = Helpers.ErrorDetails(ex);
             }
             return success;
         }
