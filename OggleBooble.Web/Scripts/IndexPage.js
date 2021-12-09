@@ -93,6 +93,8 @@ function loadLatestUpdates() {
                 if ((latestUpdates.Success.indexOf("connection attempt failed") > 0) || (latestUpdates.Success.indexOf("Timeout in IO operation") > 0)) {
                     logError("TOE", 3909, latestUpdates.Success, "load LatestUpdates");  // timeout error
                     checkConnection(3908, "load Updated Galleries Boxes");
+                    $('#footerMessage2').html("load latest updates connection failed. Retrying");
+                    loadLatestUpdates();
                 }
                 else
                     logError("AJX", 3908, latestUpdates.Success, "load Updated Galleries Boxes");
