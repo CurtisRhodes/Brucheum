@@ -317,27 +317,43 @@ namespace OggleBooble.Api.Controllers
         public string UpdateSortOrder(List<SortOrderItem> links)
         {
             string success = "";
-            using (var db = new OggleBoobleMySqlContext())
+            try
             {
-                try
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    int folderId = links[0].FolderId;
-                    List<CategoryImageLink> catLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
-                    foreach (SortOrderItem link in links)
+                    try
                     {
-                        CategoryImageLink catLink = catLinks.Where(x => x.ImageLinkId == link.ItemId).FirstOrDefault();
-                        if (catLink != null)
+                        int folderId = links[0].FolderId;
+                        List<CategoryImageLink> catLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
+                        int insertThrottle = 0;
+                        foreach (SortOrderItem link in links)
                         {
-                            catLink.SortOrder = link.SortOrder;
+                            CategoryImageLink catLink = catLinks.Where(x => x.ImageLinkId == link.ItemId).FirstOrDefault();
+                            if (catLink != null)
+                            {
+                                if (catLink.SortOrder != link.SortOrder)
+                                {
+                                    catLink.SortOrder = link.SortOrder;
+                                    if (++insertThrottle % 5 == 0)
+                                    {
+                                        db.SaveChanges();
+                                    }
+                                }
+                            }
                         }
+                        db.SaveChanges();
+                        success = "ok";
                     }
-                    db.SaveChanges();
-                    success = "ok";
+                    catch (Exception ex)
+                    {
+                        success = Helpers.ErrorDetails(ex);
+                        db.Dispose();
+                    }
                 }
-                catch (Exception ex)
-                {
-                    success = Helpers.ErrorDetails(ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                success += Helpers.ErrorDetails(ex);
             }
             return success;
         }
@@ -362,6 +378,7 @@ namespace OggleBooble.Api.Controllers
                 }
                 catch (Exception ex)
                 {
+                    db.Dispose();
                     success = Helpers.ErrorDetails(ex);
                 }
             }
@@ -472,84 +489,94 @@ namespace OggleBooble.Api.Controllers
 
         [HttpPut]
         [Route("api/Links/MoveMany")]
-        public string MoveMany(MoveManyModel moveManyModel) {
-            string success = "ono";
+        public string MoveMany(MoveManyModel moveManyModel)
+        {
+            string success = "";
             try
             {
-                string ftpRepo = imgRepo.Substring(7);
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    var dbDestFolder = db.CategoryFolders.Where(i => i.Id == moveManyModel.DestinationFolderId).First();
-                    string destFtpPath = ftpHost + ftpRepo + "/" + dbDestFolder.FolderPath;
-
-                    if (!FtpUtilies.DirectoryExists(destFtpPath))
-                        FtpUtilies.CreateDirectory(destFtpPath);
-
-                    var dbSourceFolder = db.CategoryFolders.Where(f => f.Id == moveManyModel.SourceFolderId).First();
-                    string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath;
-
-                    ImageFile dbImageFile = null;
-                    string oldFileName;
-                    string newFileName;
-                    string linkId;
-                    int sortOrder;
-                    for (int i = 0; i < moveManyModel.ImageLinkIds.Length; i++)
+                    try
                     {
-                        linkId = moveManyModel.ImageLinkIds[i];
-                        if (moveManyModel.Context == "copy") //only
+                        string ftpRepo = imgRepo.Substring(7);
+                        var dbDestFolder = db.CategoryFolders.Where(i => i.Id == moveManyModel.DestinationFolderId).First();
+                        string destFtpPath = ftpHost + ftpRepo + "/" + dbDestFolder.FolderPath;
+
+                        if (!FtpUtilies.DirectoryExists(destFtpPath))
+                            FtpUtilies.CreateDirectory(destFtpPath);
+
+                        var dbSourceFolder = db.CategoryFolders.Where(f => f.Id == moveManyModel.SourceFolderId).First();
+                        string sourceFtpPath = ftpHost + ftpRepo + "/" + dbSourceFolder.FolderPath;
+
+                        ImageFile dbImageFile = null;
+                        string oldFileName;
+                        string newFileName;
+                        string linkId;
+                        int sortOrder;
+                        for (int i = 0; i < moveManyModel.ImageLinkIds.Length; i++)
                         {
-                            db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
+                            linkId = moveManyModel.ImageLinkIds[i];
+                            if (moveManyModel.Context == "copy") //only
                             {
-                                ImageCategoryId = dbDestFolder.Id,
-                                ImageLinkId = linkId,
-                                SortOrder = 9876
-                            });
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            dbImageFile = db.ImageFiles.Where(f => f.Id == linkId).First();
-                            oldFileName = dbImageFile.FileName;
-                            string ext = dbImageFile.FileName.Substring(dbImageFile.FileName.LastIndexOf("."));
-                            newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
-                            if (dbDestFolder.Parent == dbSourceFolder.Id)
-                                newFileName = oldFileName;
-
-                            success = FtpUtilies.MoveFile(sourceFtpPath + "/" + oldFileName, destFtpPath + "/" + newFileName);
-                            if (success == "ok")
-                            {
-                                dbImageFile.FolderId = moveManyModel.DestinationFolderId;
-                                dbImageFile.FileName = newFileName;
-                                db.SaveChanges();
-
-                                var oldLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
-                                sortOrder = oldLink.SortOrder;
-                                if (moveManyModel.Context == "move")
-                                {
-                                    db.CategoryImageLinks.Remove(oldLink);
-                                    db.SaveChanges();
-                                }
-
-                                db.CategoryImageLinks.Add(new CategoryImageLink()
+                                db.CategoryImageLinks.Add(new MySqlDataContext.CategoryImageLink()
                                 {
                                     ImageCategoryId = dbDestFolder.Id,
                                     ImageLinkId = linkId,
-                                    SortOrder = sortOrder
+                                    SortOrder = 9876
                                 });
                                 db.SaveChanges();
-                                // SIGNAR
                             }
                             else
-                                return success;
+                            {
+                                dbImageFile = db.ImageFiles.Where(f => f.Id == linkId).First();
+                                oldFileName = dbImageFile.FileName;
+                                string ext = dbImageFile.FileName.Substring(dbImageFile.FileName.LastIndexOf("."));
+                                newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
+                                if (dbDestFolder.Parent == dbSourceFolder.Id)
+                                    newFileName = oldFileName;
+
+                                success = FtpUtilies.MoveFile(sourceFtpPath + "/" + oldFileName, destFtpPath + "/" + newFileName);
+                                if (success == "ok")
+                                {
+                                    dbImageFile.FolderId = moveManyModel.DestinationFolderId;
+                                    dbImageFile.FileName = newFileName;
+                                    db.SaveChanges();
+
+                                    var oldLink = db.CategoryImageLinks.Where(l => l.ImageCategoryId == dbSourceFolder.Id && l.ImageLinkId == linkId).First();
+                                    sortOrder = oldLink.SortOrder;
+                                    if (moveManyModel.Context == "move")
+                                    {
+                                        db.CategoryImageLinks.Remove(oldLink);
+                                        db.SaveChanges();
+                                    }
+
+                                    db.CategoryImageLinks.Add(new CategoryImageLink()
+                                    {
+                                        ImageCategoryId = dbDestFolder.Id,
+                                        ImageLinkId = linkId,
+                                        SortOrder = sortOrder
+                                    });
+                                    db.SaveChanges();
+                                    // SIGNAR
+                                }
+                                else
+                                    return success;
+                            }
                         }
+                        db.SaveChanges();
+                        success = "ok";
                     }
-                    db.SaveChanges();
-                    success = "ok";
+                    catch (Exception ex)
+                    {
+                        success = Helpers.ErrorDetails(ex);
+                        if (db != null)
+                            db.Dispose();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                success = Helpers.ErrorDetails(ex);
+                success += Helpers.ErrorDetails(ex);
             }
             return success;
         }

@@ -181,17 +181,17 @@ function attemptRemoveLink(linkId, folderId, imgSrc) {
     });
 }
 
-function showConfirmDeteteImageDialog(menuType, linkId, folderId, imgSrc, errMsg) {
+function showMoveImageToRejectsDialog(menuType, linkId, folderId, imgSrc, errMsg) {
     if (errMsg === "single link") {
-        $('#centeredDialogTitle').html("Delete Image");
+        $('#centeredDialogTitle').html("move image to rejects");
         $('#centeredDialogContents').html(
             "<form id='frmReject>'\n" +
             "    <div class='inline'><img id='linkManipulateImage' class='copyDialogImage' src='" + imgSrc + "'/></div>\n" +
             "    <div><input type='radio' value='DUP' name='rdoRejectImageReasons' checked='checked'></input>  duplicate</div>\n" +
             "    <div><input type='radio' value='BAD' name='rdoRejectImageReasons'></input>  bad link</div>\n" +
             "    <div><input type='radio' value='LOW' name='rdoRejectImageReasons'></input>  low quality</div>\n" +
-            "    <div class='roundendButton' onclick='performMoveImageToRejects(\"" + menuType + "\"," + linkId + "\"," + folderId + ")'>ok</div>\n" +
-            "</form>>");
+            "    <div class='roundendButton' onclick='performMoveImageToRejects(\"" + menuType + "\",\"" + linkId + "\"," + folderId + ")'>ok</div>\n" +
+            "</form>");
     }
 
     if (errMsg === "home folder Link") {
@@ -208,7 +208,7 @@ function showConfirmDeteteImageDialog(menuType, linkId, folderId, imgSrc, errMsg
 function performMoveImageToRejects(menuType, linkId, folderId) {
     let rejectReason = $('input[name="rdoRejectImageReasons"]:checked').val();
     //alert("rejectReason: " + rejectReason + " link: " + linkId);
-    if (menuType == "") {
+    if (menuType == "Image") {
         $('#albumPageLoadingGif').show();
     }
 
@@ -226,7 +226,6 @@ function performMoveImageToRejects(menuType, linkId, folderId) {
                         // TODO: remove image from slideshow array
                         slide("next");
                     }
-
                     // TODO: include reason radio button
                     getAlbumImages(folderId);
                     centeringDialogClose();

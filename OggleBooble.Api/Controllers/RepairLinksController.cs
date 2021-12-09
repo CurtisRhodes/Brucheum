@@ -30,14 +30,23 @@ namespace OggleBooble.Api.Controllers
             {
                 using (var db = new OggleBoobleMySqlContext())
                 {
-                    //VerifyFolderRow(folderId, repairReport, db, true);
-                    //VerifyFolderPaths(folderId, repairReport, db, true);
-                    PerformFolderChecks(folderId, repairReport, db, recurr);
+                    try
+                    {
+                        //VerifyFolderRow(folderId, repairReport, db, true);
+                        //VerifyFolderPaths(folderId, repairReport, db, true);
+                        PerformFolderChecks(folderId, repairReport, db, recurr);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (db != null)
+                            db.Dispose();
+                        repairReport.Success = Helpers.ErrorDetails(ex);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                repairReport.Success = Helpers.ErrorDetails(ex);
+                repairReport.Success = "outter catch " + Helpers.ErrorDetails(ex) + repairReport.Success;
             }
             return repairReport;
         }
