@@ -334,7 +334,7 @@ namespace OggleBooble.Api.Controllers
                                 if (catLink.SortOrder != link.SortOrder)
                                 {
                                     catLink.SortOrder = link.SortOrder;
-                                    if (++insertThrottle % 5 == 0)
+                                    if (++insertThrottle % 25 == 0)
                                     {
                                         db.SaveChanges();
                                     }

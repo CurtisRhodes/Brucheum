@@ -26,8 +26,7 @@ function displaySpaPage(folderId) {
             launchCarousel(spaType);
             resetOggleHeader(3908, spaType);
             quickLoadLatestUpdates(spaType);
-            // quickLoadloadRandomGalleries(spaType); 
-            //setTimeout(function () { launchPromoMessages(); }, 3000);
+            quickLoadloadRandomGalleries(spaType);
             //$('#testFunctionClick').show();
             resizeIndexPage();
             break;  //index page;
@@ -93,21 +92,19 @@ function loadLatestUpdates() {
                 if ((latestUpdates.Success.indexOf("connection attempt failed") > 0) || (latestUpdates.Success.indexOf("Timeout in IO operation") > 0)) {
                     logError("TOE", 3909, latestUpdates.Success, "load LatestUpdates");  // timeout error
                     checkConnection(3908, "load Updated Galleries Boxes");
-                    $('#footerMessage2').html("load latest updates connection failed. Retrying");
-                    loadLatestUpdates();
+                    $('#footerMessage2').html("load latest updates connection failed");
+                    //loadLatestUpdates();
                 }
                 else
                     logError("AJX", 3908, latestUpdates.Success, "load Updated Galleries Boxes");
             }
-
-            if (spaType == "boobs")
-                quickLoadloadRandomGalleries(spaType);
-
-
         },
         error: function (jqXHR) {
             let errMsg = getXHRErrorDetails(jqXHR);
-            if (!checkFor404(errMsg, 619845, "load Updated Galleries Boxes")) logError("XHR", 619846, errMsg, "load Updated Galleries Boxes");
+            if (!checkFor404(errMsg, 619845, "load Updated Galleries Boxes"))
+                logError("XHR", 619846, errMsg, "load Updated Galleries Boxes");
+
+            $('#footerMessage2').html("load latest updates: " + errMsg);
         }
     });
 }

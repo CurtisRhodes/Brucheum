@@ -86,11 +86,6 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
         try {
             $.ajax({
                 type: "GET",
-                //url: settingsArray.ApiCoreServer + "Carousel/GetImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
-                //    "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
-                // crossDomain: true,
-                // dataType: 'jsonp',
-                // headers: { 'Access-Control-Allow-Origin': 'Accept' },
                 url: settingsArray.ApiServer + "api/Carousel/GetCarouselImages?root=" + rootFolder + "&skip=" + carouselSkip + "&take=" + carouselTake +
                     "&includeLandscape=" + includeLandscape + "&includePortrait=" + includePortrait,
                 success: function (carouselInfo) {
@@ -122,20 +117,14 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                         if ((carouselInfo.Links.length === carouselTake) || (carouselInfo.Links.length > maxCarouselLength)) {
                             carouselSkip += carouselTake;
                             carouselTake = takeSize;
-                            $('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
-                                " total items: " + carouselItemArray.length.toLocaleString());
+                            //$('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
+                            //    " total items: " + carouselItemArray.length.toLocaleString());
+                            $('#footerMessage2').html(" total items: " + carouselItemArray.length.toLocaleString());
                             loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, includePortrait);
-
-                            if ((!isCacheRefreshed) && (carouselItemArray.length > 200)) {
-                                refreshCache(carouselRoot);
-                                isCacheRefreshed = true;
-                            }
                         }
                         else {
                             let delta = (Date.now() - startTime) / 1000;
-                            //console.log(rootFolder + "done.  took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
-                            //$('#footerMessage2').html(rootFolder + ": skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake + "  took: " + delta.toFixed(3) + "  total items: " + carouselItemArray.length.toLocaleString());
-                            //if (document.domain == "localhost") alert("done: " + carouselItemArray.length);
+                            console.log(rootFolder + "done.  took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                             //if (carouselDebugMode) $('#badgesContainer').html(rootFolder + "skip: " + carouselSkip + " take: " + carouselTake + " took: " + delta.toFixed(3) + " total items: " + carouselItemArray.length.toLocaleString());
                             $('#footerMessage2').html("");
                             $('#footerMessage').html("done loading. total items: " + carouselItemArray.length.toLocaleString() + "  took: " + delta.toFixed(3));
@@ -150,6 +139,9 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                         }
                         else
                             logError("AJX", 3908, carouselInfo.Success, "carousel loadImages");
+                    }
+                    if ((!isCacheRefreshed) && (carouselItemArray.length > 200)) {
+                        refreshCache(carouselRoot);
                     }
                 },
                 error: function (jqXHR) {
@@ -199,7 +191,7 @@ function refreshCache(rootFolder) {
                     console.log("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3));
                     $('#footerMessage2').html("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3) + "  size: " + cacheArray.length);
                     logActivity2(create_UUID(), "RC0", 618518, "rootFolder");
-                    //"cache: " + rootFolder + " took: " + delta.toFixed(3) + "  size: " + cacheArray.length, "refresh cache success"); // refresh cache success
+                    isCacheRefreshed = true;
                 }
                 else {
                     if (document.domain == "localhost") alert("carouselInfo error " + carouselCacheInfo.Success);

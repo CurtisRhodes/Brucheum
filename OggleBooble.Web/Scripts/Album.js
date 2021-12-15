@@ -329,10 +329,11 @@ function getAlbumImages(folderId) {
                 }
                 else {
                     if ((albumImageInfo.Success.indexOf("connection attempt failed") > 0) || (albumImageInfo.Success.indexOf("Timeout in IO operation") > 0)) {
-                        logError("TOE", folderId, albumImageInfo.Success, "get albumImages");  // timeout error
-                        checkConnection(folderId, "get albumImages");
-                        getAlbumImages(folderId);
-                        $('#footerMessage2').html("connection attempt failed. Retrying");
+                        logError("TOE", folderId, albumImageInfo.Success, "get albumImages. reloading page");  // timeout error
+                        $('#footerMessage2').html("connection attempt failed. reloading page");
+                        //checkConnection(folderId, "get albumImages");
+                        //getAlbumImages(folderId);
+                        window.location.href = "Album.html?folder=" + folderId;
                     }
                     else
                         logError("AJX", folderId, albumImageInfo.Success, "get albumImages");
