@@ -113,7 +113,7 @@ function callAlbumPage(visitorId, folderId, pageSouce, calledFrom) {
         else {
             if (pageSouce != "album.html") {
                 if (typeof logStaticPageHit === 'function')
-                    logStaticPageHit(folderId, visitorId, calledFrom);
+                    logStaticPageHit(folderId, visitorId, pageSouce);
                 else
                     logError2(visitorId, "FNF", folderId, "logStaticPageHit not a function", "call AlbumPage/" + calledFrom);
             }
@@ -316,11 +316,11 @@ function isValidGuid(uuid) {
     return true;
 }
 
-function logStaticPageHit(folderId, visitorId, calledFrom) {
+function logStaticPageHit(folderId, visitorId, pageSouce) {
     //logActivity("SP0", folderId, calledFrom); // calling static page hit
     $.ajax({
         type: "POST",
-        url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId + "&folderId=" + folderId + "&calledFrom=" + calledFrom,
+        url: settingsArray.ApiServer + "api/Common/LogStaticPageHit?visitorId=" + visitorId + "&folderId=" + folderId + "&calledFrom=" + pageSouce,
         success: function (success) {
             if (success == "ok") {
                 //logActivity("SP1", folderId, "logStatic PageHit/" + calledFrom); // static page hit success

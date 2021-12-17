@@ -111,10 +111,11 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
             //setHeaderMenu("playboy");
             $('#mainMenuContainer').html(
-                "<span onclick='headerMenuClick(\"playboyIndex\",1132)'>centerfolds, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>playboy plus, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
+                "<span onclick='headerMenuClick(\"cybergirl\",1132)'>centerfolds, </span>\n" +
+                "<span onclick='headerMenuClick(\"cybergirl\",6095)'>muses, </span>\n" +
+                "<span onclick='headerMenuClick(\"cybergirl\",6368)'>playboy plus, </span>\n" +
+                "<span onclick='headerMenuClick(\"cybergirl\",3128)'>international, </span>\n" +
+                "<span onclick='headerMenuClick(\"cybergirl\",9306)'>more</span>\n"
             );
             break;
         case "muses":
@@ -128,10 +129,11 @@ function resetOggleHeader(folderId, rootFolder) {
             //$('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
             //setHeaderMenu("playboy");
             $('#mainMenuContainer').html(
-                "<span onclick='headerMenuClick(\"playboyIndex\",1132)'>centerfolds, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>playboy plus, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
+                "<span onclick='headerMenuClick(\"muses\",1132)'>centerfolds, </span>\n" +
+                "<span onclick='headerMenuClick(\"muses\",3796)'>cybergirls, </span>\n" +
+                "<span onclick='headerMenuClick(\"muses\",6368)'>playboy plus, </span>\n" +
+                "<span onclick='headerMenuClick(\"muses\",3128)'>international, </span>\n" +
+                "<span onclick='headerMenuClick(\"muses\",9306)'>more</span>\n"
             );
             break;
         case "plus":
@@ -143,10 +145,11 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#badgesContainer').append(addSpaButton(3908, "back to OggleBooble"));
             //setHeaderMenu("playboy");
             $('#mainMenuContainer').html(
-                "<span onclick='headerMenuClick(\"playboyIndex\",1132)'>centerfolds, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
+                "<span onclick='headerMenuClick(\"playboyplus\",1132)'>centerfolds, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyplus\",3796)'>cybergirls, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyplus\",6095)'>muses, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyplus\",3128)'>international, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyplus\",9306)'>more</span>\n"
             );
             break;
         case "magazine":
@@ -245,7 +248,7 @@ function setHeaderMenu(menu) {
                 "<span onclick='headerMenuClick(\"playboyIndex\",3796)'>cybergirls, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>playboy plus, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
-                //"<span onclick='headerMenuClick(\"playboyIndex\",3128)'>international, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",3128)'>international, </span>\n" +
                 //"<span onclick='headerMenuClick(\"playboyIndex\",6076)'>specials, </span>\n" +
                 //"<span onclick='headerMenuClick(\"playboyIndex\",3393)'>lingerie, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
@@ -257,7 +260,7 @@ function setHeaderMenu(menu) {
                 //"<span onclick='headerMenuClick(\"playboyIndex\",4015)'>pictorials, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",6368)'>playboy plus, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",6095)'>muses, </span>\n" +
-                //"<span onclick='headerMenuClick(\"playboyIndex\",3128)'>international, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",3128)'>international, </span>\n" +
                 //"<span onclick='headerMenuClick(\"playboyIndex\",6076)'>specials, </span>\n" +
                 //"<span onclick='headerMenuClick(\"playboyIndex\",3393)'>lingerie, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",9306)'>more</span>\n"
@@ -270,7 +273,7 @@ function setHeaderMenu(menu) {
                 "<span onclick='headerMenuClick(\"playboyIndex\",628)'>1990's, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",641)'>2000's, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",513)'>2010's, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",4128)'>2020's, </span>\n" 
+                "<span onclick='headerMenuClick(\"playboyIndex\",4128)'>2020's </span>\n" 
             );
                 //"<a href='javascript:rtpe(\"PBB\",72,\"magazine covers\",1986)'>magazine covers</a>,\n" +
                 //"<a href='javascript:rtpe(\"PBB\",72,\"Pmoy\",4013)'>Pmoy</a>,\n" +
