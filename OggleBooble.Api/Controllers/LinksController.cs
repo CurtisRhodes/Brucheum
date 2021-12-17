@@ -531,7 +531,15 @@ namespace OggleBooble.Api.Controllers
                                 dbImageFile = db.ImageFiles.Where(f => f.Id == linkId).First();
                                 oldFileName = dbImageFile.FileName;
                                 string ext = dbImageFile.FileName.Substring(dbImageFile.FileName.LastIndexOf("."));
-                                newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
+
+                                if (dbDestFolder.FolderType == "singleChild")
+                                {
+                                    var destinationParent = db.CategoryFolders.Where(f => f.Id == dbDestFolder.Parent).First();
+                                    newFileName = destinationParent.FolderName + "_" + linkId + ext;
+                                }
+                                else
+                                    newFileName = dbDestFolder.FolderName + "_" + linkId + ext;
+
                                 if (dbDestFolder.Parent == dbSourceFolder.Id)
                                     newFileName = oldFileName;
 

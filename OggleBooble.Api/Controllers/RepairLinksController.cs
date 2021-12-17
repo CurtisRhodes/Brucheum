@@ -270,11 +270,12 @@ namespace OggleBooble.Api.Controllers
                             {
                                 try
                                 {
+                                    int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 1;
                                     db.CategoryImageLinks.Add(new CategoryImageLink()
                                     {
                                         ImageCategoryId = folderId,
                                         ImageLinkId = physcialFileLinkId,
-                                        SortOrder = 0
+                                        SortOrder = nextSortOrder
                                     });
                                     db.SaveChanges();
                                     repairReport.CatLinksAdded++;
@@ -423,11 +424,12 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (dbCatLinks.Where(il => il.ImageLinkId == pfLinkId).FirstOrDefault() == null)
                     {
+                        int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 1;
                         db.CategoryImageLinks.Add(new CategoryImageLink()
                         {
                             ImageCategoryId = folderId,
                             ImageLinkId = pfLinkId,
-                            SortOrder = 0
+                            SortOrder = nextSortOrder
                         });
                         db.SaveChanges();
                         repairReport.CatLinksAdded++;

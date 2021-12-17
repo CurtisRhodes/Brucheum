@@ -114,7 +114,7 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                             startCarousel("ajax");
                         }
 
-                        if ((carouselInfo.Links.length === carouselTake) || (carouselInfo.Links.length > maxCarouselLength)) {
+                        if ((carouselInfo.Links.length === carouselTake) && (carouselItemArray.length < maxCarouselLength)) {
                             carouselSkip += carouselTake;
                             carouselTake = takeSize;
                             //$('#footerMessage2').html("skip: " + carouselSkip.toLocaleString() + "  take: " + carouselTake +
