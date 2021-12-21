@@ -2,9 +2,10 @@
 function verifySession(folderId, calledFrom) {
     $(document).ready(function () {
         //console.log("verifySession(" + folderId + "," + calledFrom + ")");
+        let visitorId = "uninitiated";
         try {
             if (window.localStorage) {
-                let visitorId = getCookieValue("VisitorId", "verify session"); // localStorage["VisitorId"];
+                visitorId = getCookieValue("VisitorId", "verify session"); // localStorage["VisitorId"];
                 if (window.sessionStorage) {
                     if (isNullorUndefined(window.sessionStorage["SessionVerified"])) {
                         window.sessionStorage["SessionVerified"] = true;
@@ -39,8 +40,8 @@ function verifySession(folderId, calledFrom) {
         }
         catch (e) {
             // verify session2/album.html ERRMSG: SecurityError: The operation is insecure.
-            logActivity2("ubk", "VS8", folderId, "verify session3/" + calledFrom + ". ERRMSG: " + e); // verify session CATCH error
-            logError2("ubk", "CAT", folderId, e, "verify session3/" + calledFrom);
+            logActivity2(visitorId, "VS8", folderId, "verify session3/" + calledFrom + ". ERRMSG: " + e); // verify session CATCH error
+            logError2(visitorId, "CAT", folderId, e, "verify session3/" + calledFrom);
             callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
             //window.location.href = "Index.html";
         }

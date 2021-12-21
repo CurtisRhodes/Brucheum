@@ -145,6 +145,7 @@ function qucikHeader(folderId) {
 function getMultipleAlbumImages(folderId, visitorId) {
     //alert("getMultipleAlbumImages: " + folderId);
     //let getImagesStart = Date.now();
+    $('#imageContainer').html('qq');
     $('#albumPageLoadingGif').show();
     $('#galleryBottomfileCount').html("?");
     let imageFrameClass = "folderImageOutterFrame";
