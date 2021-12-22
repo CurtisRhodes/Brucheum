@@ -16,7 +16,7 @@
         case "album":
         case "loading": {
             $("#divLoginArea").hide();
-            $('#headerMessage').html("connecting");
+            $('#headerMessage').html("OggleBooble");
             //document.title = "loading : OggleBooble";
             break;
         }
@@ -268,7 +268,7 @@ function setHeaderMenu(menu) {
             $('#breadcrumbContainer').html(
                 "<span onclick='headerMenuClick(\"playboyIndex\",621)'>1950's, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",638)'>1960's, </span>\n" +
-                "<span onclick='headerMenuClick(\"playboyIndex\",339)'>1970's, </span>\n" +
+                "<span onclick='headerMenuClick(\"playboyIndex\",639)'>1970's, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",640)'>1980's, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",628)'>1990's, </span>\n" +
                 "<span onclick='headerMenuClick(\"playboyIndex\",641)'>2000's, </span>\n" +

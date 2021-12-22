@@ -29,7 +29,7 @@ function checkConnection(folderId, calledFrom) {
             clearInterval(getXMLsettingsWaiter);
             let verifyConnectionCount = 0;
             let connectingToServerImgShowing = false, canIgetaConnectionImgShowing = false;
-            $('#headerMessage').html("OggleBooble");
+            $('#headerMessage').html("connecting");
             //document.title = "connecting : OggleBooble";
             //changeFavoriteIcon("loading");
             connectionVerified = false;
