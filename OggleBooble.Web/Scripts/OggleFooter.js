@@ -63,6 +63,7 @@ function setOggleFooter(folderId, rootFolder, calledFrom) {
                 break;
             case "blog":
             case "root":
+            case "bond":
             case "special":
             case "index": {
                 $('#footerCol1').html(

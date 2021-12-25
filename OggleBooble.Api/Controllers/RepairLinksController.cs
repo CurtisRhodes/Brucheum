@@ -270,7 +270,8 @@ namespace OggleBooble.Api.Controllers
                             {
                                 try
                                 {
-                                    int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 1;
+                                    //int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 1;
+                                    int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() + 1;
                                     db.CategoryImageLinks.Add(new CategoryImageLink()
                                     {
                                         ImageCategoryId = folderId,
@@ -424,7 +425,8 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (dbCatLinks.Where(il => il.ImageLinkId == pfLinkId).FirstOrDefault() == null)
                     {
-                        int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 1;
+                        int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() + 1;
+                        //int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 1;
                         db.CategoryImageLinks.Add(new CategoryImageLink()
                         {
                             ImageCategoryId = folderId,

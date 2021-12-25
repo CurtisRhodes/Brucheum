@@ -1,11 +1,9 @@
 ﻿function setOggleHeader(headerContext) {
     // focus fix someone commented
-
-
     $('#oggleHeader').html(headerHtml());
-
     switch (headerContext) {
         case "root":
+        case "bond":
         case "index": {
             changeFavoriteIcon("redBallon");
             $('#oggleHeader').addClass('boobsHeader');
@@ -16,7 +14,7 @@
         case "album":
         case "loading": {
             $("#divLoginArea").hide();
-            $('#headerMessage').html("connecting");
+            $('#headerMessage').html("OggleBooble");
             //document.title = "loading : OggleBooble";
             break;
         }
@@ -52,7 +50,6 @@
     //window.addEventListener("resize", mediaSavyHdrResize);
 }
 
-
 let hdrFolderId, hdrRootFolder;
 function resetOggleHeader(folderId, rootFolder) {
     hdrFolderId = folderId;
@@ -66,8 +63,9 @@ function resetOggleHeader(folderId, rootFolder) {
         case "root":
         case "index":
             $('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
-            $('#hdrBtmRowSec3').append(addPgLinkButton(5233, "softcore"));
+            //$('#hdrBtmRowSec3').append(addPgLinkButton(5233, "softcore"));
             $('#hdrBtmRowSec3').append(addPgLinkButton(846, "Gent Archive"));
+            $('#hdrBtmRowSec3').append(addPgLinkButton(10326, "Bond Girls"));
             $('#hdrBtmRowSec3').append(addSpaButton(72, "every playboy centerfold"));
         case "archive": {
             //changeFavoriteIcon("redBallon");
@@ -85,6 +83,7 @@ function resetOggleHeader(folderId, rootFolder) {
             $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
             $('#oggleHeaderTitle').html("<span style='color:#fff;'>every playboy centerfold</span>");
             $('#topRowRightContainer').append(addRankerButton("001000000", "centerfold ranker"));
+            $('#hdrBtmRowSec3').append(addPgLinkButton(10326, "Bond Girls"));
             $('#hdrBtmRowSec3').append(addSpaButton(3908, "back to OggleBooble"));
             //$('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
             //$('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
@@ -116,6 +115,24 @@ function resetOggleHeader(folderId, rootFolder) {
                 "<span onclick='headerMenuClick(\"cybergirl\",6368)'>playboy plus, </span>\n" +
                 "<span onclick='headerMenuClick(\"cybergirl\",3128)'>international, </span>\n" +
                 "<span onclick='headerMenuClick(\"cybergirl\",9306)'>more</span>\n"
+            );
+            break;
+        case "bond":
+            $('#oggleHeader').switchClass('boobsHeader', 'playboyHeader');
+            $('#oggleHeaderTitle').html("Bond Girls");
+            $('#divSiteLogo').attr("src", "/Images/playboyBallon.png");
+            $('#topRowRightContainer').append(addRankerButton("000010000", "Muses ranker"));
+            // bottom row
+            $('#badgesContainer').append(addSpaButton(3908, "back to OggleBooble"));
+            //$('#hdrBtmRowSec3').append(addPgLinkButton(3, "big naturals archive"));
+            //$('#hdrBtmRowSec3').append(addSpaButton(3909, "Oggle Porn"));
+            //setHeaderMenu("playboy");
+            $('#mainMenuContainer').html(
+                "<span onclick='headerMenuClick(\"muses\",1132)'>centerfolds, </span>\n" +
+                "<span onclick='headerMenuClick(\"muses\",3796)'>cybergirls, </span>\n" +
+                "<span onclick='headerMenuClick(\"muses\",6368)'>playboy plus, </span>\n" +
+                "<span onclick='headerMenuClick(\"muses\",3128)'>international, </span>\n" +
+                "<span onclick='headerMenuClick(\"muses\",9306)'>more</span>\n"
             );
             break;
         case "muses":
@@ -218,7 +235,6 @@ function resetOggleHeader(folderId, rootFolder) {
         $('#footerCol5').hide();
     }
 }
-
 
 function setHeaderMenu(menu) {
     switch (menu) {
