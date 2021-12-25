@@ -16,59 +16,30 @@ function launchCarousel(startRoot) {
     carouselTake = 45;
     let carouselSkip = 0;
     imageIndex = 0;
+    let carouselCache;
     try {
-        switch (startRoot) {
-            case "centerfold":
-                if (!isNullorUndefined(window.localStorage["centerfoldCache"])) {
-                    //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
-                    console.log("loading centerfold from centerfold cache");
-                    let carouselCacheArray = JSON.parse(window.localStorage["centerfoldCache"]);
-                    $.each(carouselCacheArray, function (idx, obj) {
-                        carouselItemArray.push(obj);
-                    });
-                    carouselSkip = carouselItemArray.length;
-                    startCarousel("centefold cache");
-                    //console.log("loaded " + carouselItemArray.length + " from centerfold cache");
-                }
-                else {
-                    if (document.domain == "localhost") alert("no " + startRoot + " cache found");
-                    carouselTake = 10;
-                    //console.log("no " + startRoot + " cache found");
-                    //logError("CR1", 618407, "no " + startRoot + " cache found");
-                }
-                break;
-            case "boobs":
-                if (!isNullorUndefined(localStorage["carouselCache"])) {
-                    let carouselCacheArray = JSON.parse(localStorage["carouselCache"]);
-                    $.each(carouselCacheArray, function (idx, obj) {
-                        carouselItemArray.push(obj);
-                    });
-                    carouselSkip = carouselItemArray.length;
-                    startCarousel("big naturals cache");
-                }
-                else {
-                    carouselTake = 10;
-                    console.log("no " + startRoot + " cache found");
-                }
-                break;
-            case "porn":
-                if (!isNullorUndefined(window.localStorage["pornCache"])) {
-                    console.log("loading porn from centerfold cache");
-                    let carouselCacheArray = JSON.parse(window.localStorage["pornCache"]);
-                    $.each(carouselCacheArray, function (idx, obj) {
-                        carouselItemArray.push(obj);
-                    });
-                    carouselSkip = carouselItemArray.length;
-                    startCarousel("porn cache");
-                    console.log("loaded " + carouselItemArray.length + " from porn cache");
-                }
-                else {
-                    carouselTake = 10;
-                    console.log("no " + startRoot + " cache found");
-                }
-                break;
-            default:
-                logError("SWT", 222, startRoot, "launchCarousel");
+        if (!isNullorUndefined(window.localStorage)) {
+            carouselCache = window.localStorage[startRoot];
+        }
+        else {
+            carouselCache = window.sessionStorage[startRoot];
+        }
+        if (!isNullorUndefined(carouselCache)) {
+            //if (document.domain == "localhost") alert("loading centerfold from centerfold cache");
+            console.log("loading " + startRoot + " from cache");
+            let cacheArray = JSON.parse(window.localStorage[startRoot]);
+            $.each(cacheArray, function (idx, obj) {
+                carouselItemArray.push(obj);
+            });
+            carouselSkip = carouselItemArray.length;
+            startCarousel(startRoot + " cache");
+            console.log("loaded " + carouselItemArray.length + " from " + startRoot + " cache");
+        }
+        else {
+            if (document.domain == "localhost") alert("no " + startRoot + " cache found");
+            carouselTake = 10;
+            console.log("no " + startRoot + " cache found");
+            //logError("CR1", 618407, "no " + startRoot + " cache found");
         }
     }
     catch (e) {
@@ -77,6 +48,7 @@ function launchCarousel(startRoot) {
     finally {
         window.addEventListener("resize", resizeCarousel);
         loadImages(startRoot, carouselSkip, carouselTake, true, false);
+        refreshCache(startRoot);
     }
 }
 
@@ -140,9 +112,9 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
                         else
                             logError("AJX", 3908, carouselInfo.Success, "carousel loadImages");
                     }
-                    if ((!isCacheRefreshed) && (carouselItemArray.length > 200)) {
-                        refreshCache(carouselRoot);
-                    }
+                //    if ((!isCacheRefreshed) && (carouselItemArray.length > 200)) {
+                //        refreshCache(carouselRoot);
+                //    }
                 },
                 error: function (jqXHR) {
                     let errMsg = getXHRErrorDetails(jqXHR);
@@ -157,6 +129,12 @@ function loadImages(rootFolder, carouselSkip, carouselTake, includeLandscape, in
 
 function refreshCache(rootFolder) {
     try {
+        if ((isNullorUndefined(window.localStorage)) && (isNullorUndefined(window.localStorage))) {
+            logError("SST", 1222, "this user should be flaged", "refresh carousle cache"); // NO SESSION STATE AVAILABLE
+            $('#footerMessage2').html("no session state cache available");
+            return;
+        }
+
         let startTime = Date.now();
         $.ajax({
             type: "GET",
@@ -168,25 +146,12 @@ function refreshCache(rootFolder) {
                     for (i = 0; i < cacheSize; i++) {
                         cacheArray.push(carouselCacheInfo.Links[i]);
                     };
-                    let cacheName = "carouselCache";
-                    switch (rootFolder) {
-                        case "porn": cacheName = "pornCache"; break;
-                        case "centerfold": cacheName = "centerfoldCache"; break;
-                        case "boobs": cacheName = "carouselCache"; break;
-                        default: logError("SWT", 444, "rootFolder: " + rootFolder, "Carosel refresh cache");
+                    if (window.localStorage) {
+                        window.localStorage[rootFolder] = JSON.stringify(cacheArray);
                     }
-                    try {
-                        window.localStorage.removeItem[cacheName];
-                        window.localStorage[cacheName] = JSON.stringify(cacheArray);
-                    } catch (e) {
-                        try {
-                            window.localStorage.clear();
-                            window.localStorage[cacheName] = JSON.stringify(cacheArray);
-                        } catch (e) {
-                            logError2(create_UUID(), "BUG", 444, cacheName + " " + e, "Carosel refresh Cache");
-                        }
+                    else {
+                        window.sessionStorage[rootFolder] = JSON.stringify(cacheArray);
                     }
-
                     let delta = (Date.now() - startTime) / 1000;
                     console.log("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3));
                     $('#footerMessage2').html("refreshed " + rootFolder + " cache.  Took: " + delta.toFixed(3) + "  size: " + cacheArray.length);

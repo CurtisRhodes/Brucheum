@@ -2,10 +2,11 @@
 function verifySession(folderId, calledFrom) {
     $(document).ready(function () {
         //console.log("verifySession(" + folderId + "," + calledFrom + ")");
+        let visitorId = "uninitiated";
         try {
-            if (window.localStorage) {
-                let visitorId = getCookieValue("VisitorId", "verify session"); // localStorage["VisitorId"];
-                if (window.sessionStorage) {
+            if (!isNullorUndefined(window.localStorage)) {
+                visitorId = getCookieValue("VisitorId", "verify session"); // localStorage["VisitorId"];
+                if (!isNullorUndefined(window.sessionStorage)) {
                     if (isNullorUndefined(window.sessionStorage["SessionVerified"])) {
                         window.sessionStorage["SessionVerified"] = true;
                         if (visitorId == "cookie not found") {
@@ -27,20 +28,20 @@ function verifySession(folderId, calledFrom) {
                     visitorId = create_UUID();
                     addVisitor(visitorId, folderId, "no session storage");
                     callAlbumPage(visitorId, folderId, calledFrom, "no session storage");
-                    logError2(visitorId, "BUG", folderId, "no concept of session storage", "verify session/" + calledFrom);
+                    logError2(visitorId, "SST", folderId, "no concept of storage", "verify session/" + calledFrom);
                 }
             }
             else { //  no concept of storage
                 visitorId = create_UUID();
                 addVisitor(visitorId, folderId, "no concept of storage");
                 callAlbumPage(visitorId, folderId, calledFrom, "new session started");
-                logError2(visitorId, "BUG", folderId, "no concept of storage", "verify session/" + calledFrom);
+                logError2(visitorId, "SST", folderId, "chrome window storage security", "verify session/" + calledFrom);
             }
         }
         catch (e) {
             // verify session2/album.html ERRMSG: SecurityError: The operation is insecure.
-            logActivity2("ubk", "VS8", folderId, "verify session3/" + calledFrom + ". ERRMSG: " + e); // verify session CATCH error
-            logError2("ubk", "CAT", folderId, e, "verify session3/" + calledFrom);
+            logActivity2(visitorId, "VS8", folderId, "verify session3/" + calledFrom + ". ERRMSG: " + e); // verify session CATCH error
+            logError2(visitorId, "CAT", folderId, e, "verify session3/" + calledFrom);
             callAlbumPage(visitorId, folderId, calledFrom, "verify session catch");
             //window.location.href = "Index.html";
         }

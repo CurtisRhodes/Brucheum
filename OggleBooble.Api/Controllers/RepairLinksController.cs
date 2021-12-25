@@ -26,28 +26,19 @@ namespace OggleBooble.Api.Controllers
         public RepairReportModel RepairLinks(int folderId, bool recurr)
         {
             RepairReportModel repairReport = new RepairReportModel();
-            try
+            using (var db = new OggleBoobleMySqlContext())
             {
-                using (var db = new OggleBoobleMySqlContext())
+                try
                 {
-                    try
-                    {
-                        //VerifyFolderRow(folderId, repairReport, db, true);
-                        //VerifyFolderPaths(folderId, repairReport, db, true);
-                        PerformFolderChecks(folderId, repairReport, db, recurr);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (db != null)
-                            db.Dispose();
-                        repairReport.Success = Helpers.ErrorDetails(ex);
-                    }
+                    //VerifyFolderRow(folderId, repairReport, db, true);
+                    //VerifyFolderPaths(folderId, repairReport, db, true);
+                    PerformFolderChecks(folderId, repairReport, recurr);
                 }
-            }
-            catch (Exception ex)
-            {
-                repairReport.Success = "outter catch " + Helpers.ErrorDetails(ex) + repairReport.Success;
-            }
+                catch (Exception ex)
+                {
+                    repairReport.Success = Helpers.ErrorDetails(ex);
+                }
+            }        
             return repairReport;
         }
 
@@ -142,24 +133,36 @@ namespace OggleBooble.Api.Controllers
             }
         }
 
-        private void PerformFolderChecks(int folderId, RepairReportModel repairReport, OggleBoobleMySqlContext db, bool recurr)
+        private void PerformFolderChecks(int folderId, RepairReportModel repairReport, bool recurr)
         {
+            List<CategoryFolder> childFolders = null;
             try
             {
-                CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
-                string ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
-                //string folderName = dbCategoryFolder.FolderName;
-                ImageFile dbFolderImageFile, dbMisplacedImageFile;
-                List<CategoryImageLink> dbRejCatlinks;
-                string ftpFileName, physcialFileName, physcialFileLinkId, rejectFolder, ftpSuccess;
-                string imageFolderName = ftpPath.Substring(ftpPath.LastIndexOf("/") + 1);
-                if (dbCategoryFolder.FolderType == "singleChild")
+                string ftpPath;
+                string imageFolderName;
+                string imageFolderPath;
+                List<CategoryImageLink> catLinks;
+                List<ImageFile> folderImages;
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    CategoryFolder dbParentFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
-                    imageFolderName = dbParentFolder.FolderName;
+                    CategoryFolder dbCategoryFolder = db.CategoryFolders.Where(f => f.Id == folderId).First();
+                    ftpPath = ftpHost + "/" + imgRepo.Substring(8) + "/" + dbCategoryFolder.FolderPath;
+                    imageFolderName = ftpPath.Substring(ftpPath.LastIndexOf("/") + 1);
+                    childFolders = db.CategoryFolders.Where(c => c.Parent == folderId).ToList();
+                    folderImages = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
+                    catLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
+                    imageFolderPath = dbCategoryFolder.FolderPath;
+                    if (dbCategoryFolder.FolderType == "singleChild")
+                    {
+                        CategoryFolder dbParentFolder = db.CategoryFolders.Where(f => f.Id == dbCategoryFolder.Parent).First();
+                        imageFolderName = dbParentFolder.FolderName;
+                    }
                 }
+                //string folderName = dbCategoryFolder.FolderName;
+                List<CategoryImageLink> dbRejCatlinks;                
+                string ftpFileName, physcialFileName, physcialFileLinkId, rejectFolder, ftpSuccess;
                 string renameSuccess = RenamePhyscialFiles(ftpPath, imageFolderName, repairReport);
-                if(renameSuccess!="ok")
+                if (renameSuccess != "ok")
                 {
                     repairReport.Success = renameSuccess + "ftpPath: " + ftpPath + "  imageFolderName: " + imageFolderName;
                     return;
@@ -173,15 +176,19 @@ namespace OggleBooble.Api.Controllers
                 }
 
                 #region 0 rename ImageFiles to expected name 
-                var dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
-                string expectedFileName;
-                foreach (ImageFile imageFile in dbFolderImageFiles)
+                List<ImageFile> dbFolderImageFiles;
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    if (imageFile.FileName.LastIndexOf(".") < 5)
+                    dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
+
+                    string expectedFileName;
+                    foreach (ImageFile imageFile in dbFolderImageFiles)
                     {
-                        imageFile.FileName = "xxxxx.jpg";
-                        //repairReport.Errors.Add("bad filename: " + imageFile.FileName + "folder: " + imageFile.FolderId);
-                    }
+                        if (imageFile.FileName.LastIndexOf(".") < 5)
+                        {
+                            imageFile.FileName = "xxxxx.jpg";
+                            //repairReport.Errors.Add("bad filename: " + imageFile.FileName + "folder: " + imageFile.FolderId);
+                        }
                         expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
                         if (imageFile.FileName != expectedFileName)
                         {
@@ -189,10 +196,12 @@ namespace OggleBooble.Api.Controllers
                             db.SaveChanges();
                             repairReport.ImageFilesRenamed++;
                         }
+                    }
                 }
                 #endregion
 
                 #region 1. make sure every physicalFile has an ImageFile row
+                ImageFile dbFolderImageFile;
                 for (int i = 0; i < physcialFiles.Length; i++)
                 {
                     physcialFileName = physcialFiles[i];
@@ -200,7 +209,11 @@ namespace OggleBooble.Api.Controllers
                     dbFolderImageFile = dbFolderImageFiles.Where(f => f.Id == physcialFileLinkId).FirstOrDefault();
                     if (dbFolderImageFile == null)
                     {
-                        dbMisplacedImageFile = db.ImageFiles.Where(m => m.Id == physcialFileLinkId).FirstOrDefault();
+                        ImageFile dbMisplacedImageFile;
+                        using (var db = new OggleBoobleMySqlContext())
+                        {
+                            dbMisplacedImageFile = db.ImageFiles.Where(m => m.Id == physcialFileLinkId).FirstOrDefault();
+                        }
                         if (dbMisplacedImageFile != null)
                         {
                             if (dbMisplacedImageFile.FolderId == -6)
@@ -210,24 +223,29 @@ namespace OggleBooble.Api.Controllers
                                 ftpFileName = ftpPath + "/" + physcialFileName;
                                 rejectFolder = ftpHost + "/archive.OggleBooble.com/rejects/" + dbMisplacedImageFile.FileName;
                                 if (FtpUtilies.MoveFile(ftpFileName, rejectFolder) == "ok")
-                                    repairReport.ImageFilesMoved++;
-                                dbRejCatlinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == dbMisplacedImageFile.Id).ToList();
-                                if (dbRejCatlinks.Count > 0)
                                 {
-                                    foreach (CategoryImageLink dbRejCatlink in dbRejCatlinks)
+                                    using (var db = new OggleBoobleMySqlContext())
                                     {
-                                        if (dbRejCatlink.ImageCategoryId != -6)
+                                        dbRejCatlinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == dbMisplacedImageFile.Id).ToList();
+                                        if (dbRejCatlinks.Count > 0)
                                         {
-                                            db.CategoryImageLinks.Remove(dbRejCatlink);
-                                            repairReport.CatLinksRemoved++;
+                                            foreach (CategoryImageLink dbRejCatlink in dbRejCatlinks)
+                                            {
+                                                if (dbRejCatlink.ImageCategoryId != -6)
+                                                {
+                                                    db.CategoryImageLinks.Remove(dbRejCatlink);
+                                                    repairReport.CatLinksRemoved++;
+                                                }
+                                            }
+                                            db.SaveChanges();
                                         }
                                     }
-                                    db.SaveChanges();
+                                    repairReport.ImageFilesMoved++;
                                 }
                             }
                             else
                             {
-                                var catLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == physcialFileLinkId).ToList();
+                                //var catLinks = db.CategoryImageLinks.Where(l => l.ImageLinkId == physcialFileLinkId).ToList();
                                 bool itsok = false;
                                 foreach (CategoryImageLink catLink in catLinks)
                                 {
@@ -239,141 +257,159 @@ namespace OggleBooble.Api.Controllers
                                 }
                                 if (!itsok)
                                 {
-                                    dbMisplacedImageFile.FolderId = folderId;
-                                    db.SaveChanges();
-                                    repairReport.ImageFilesMoved++;
+                                    using (var db = new OggleBoobleMySqlContext())
+                                    {
+                                        dbMisplacedImageFile.FolderId = folderId;
+                                        db.SaveChanges();
+                                        repairReport.ImageFilesMoved++;
+                                    }
                                 }
                             }
-                        }
+                        }  //  dbMisplacedImageFile != null
                         else
                         {
-                           string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
+                            string newFileName = imgRepo + "/" + imageFolderPath + "/" + physcialFileName;
                             ImageFileInfo imageFileInfo = GetImageFileInfo(newFileName);
-                            ImageFile imageFile = new ImageFile()
+                            CategoryImageLink ktest;
+                            using (var db = new OggleBoobleMySqlContext())
                             {
-                                Id = physcialFileLinkId,
-                                Acquired = DateTime.Now,
-                                ExternalLink = "??",
-                                FileName = physcialFileName,
-                                FolderId = folderId,
-                                Height = imageFileInfo.Height,
-                                Size = imageFileInfo.Size,
-                                Width = imageFileInfo.Width
-                            };
-                            db.ImageFiles.Add(imageFile);
-                            dbFolderImageFiles.Add(imageFile);
-                            db.SaveChanges();
-                            repairReport.ImageFilesAdded++;
-
-                            CategoryImageLink ktest = db.CategoryImageLinks.Where(l => (l.ImageCategoryId == folderId) && (l.ImageLinkId == physcialFileLinkId)).FirstOrDefault();
+                                ImageFile imageFile = new ImageFile()
+                                {
+                                    Id = physcialFileLinkId,
+                                    Acquired = DateTime.Now,
+                                    ExternalLink = "??",
+                                    FileName = physcialFileName,
+                                    FolderId = folderId,
+                                    Height = imageFileInfo.Height,
+                                    Size = imageFileInfo.Size,
+                                    Width = imageFileInfo.Width
+                                };
+                                db.ImageFiles.Add(imageFile);
+                                dbFolderImageFiles.Add(imageFile);
+                                db.SaveChanges();
+                                repairReport.ImageFilesAdded++;
+                                ktest = db.CategoryImageLinks.Where(l => (l.ImageCategoryId == folderId) && (l.ImageLinkId == physcialFileLinkId)).FirstOrDefault();
+                            }
                             if (ktest == null)
                             {
                                 try
                                 {
-                                    //int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 1;
-                                    int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() + 1;
-                                    db.CategoryImageLinks.Add(new CategoryImageLink()
+                                    using (var db = new OggleBoobleMySqlContext())
                                     {
-                                        ImageCategoryId = folderId,
-                                        ImageLinkId = physcialFileLinkId,
-                                        SortOrder = nextSortOrder
-                                    });
-                                    db.SaveChanges();
-                                    repairReport.CatLinksAdded++;
-
+                                        int nextSortOrder = 0;
+                                        if (db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0)
+                                        {
+                                            nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 2;
+                                        }
+                                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                                        {
+                                            ImageCategoryId = folderId,
+                                            ImageLinkId = physcialFileLinkId,
+                                            SortOrder = nextSortOrder
+                                        });
+                                        db.SaveChanges();
+                                        repairReport.CatLinksAdded++;
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
                                     repairReport.Errors.Add("ktest lied: " + Helpers.ErrorDetails(ex));
                                 }
                             }
-                        }
-                    }
-                    else
-                    {
-                        if (dbFolderImageFile.Size == 0)
-                        {
-                            string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + physcialFileName;
-                            ImageFileInfo imageFileInfo = GetImageFileInfo(newFileName);
-                            if (imageFileInfo.Size == 0)
-                            {
-
-                                if (FtpUtilies.DeleteFile(ftpPath + "/" + dbFolderImageFile.FileName) == "ok")
-                                {
-                                    db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == dbFolderImageFile.Id).ToList());
-                                    db.ImageFiles.Remove(dbFolderImageFile);
-                                    db.SaveChanges();
-
-                                    repairReport.ZeroLenImageFilesRemoved++;
-                                }
-                            }
                             else
                             {
-                                dbFolderImageFile.Size = imageFileInfo.Size;
-                                dbFolderImageFile.Height = imageFileInfo.Height;
-                                dbFolderImageFile.Width = imageFileInfo.Width;
-                                db.SaveChanges();
-                                repairReport.ZeroLenFileResized++;
+                                if (dbFolderImageFile.Size == 0)
+                                {
+                                    //string newFileName = imgRepo + "/" + imageFolderPath + "/" + physcialFileName;
+                                    //ImageFileInfo imageFileInfo2 = GetImageFileInfo(newFileName);
+                                    if (imageFileInfo.Size == 0)
+                                    {
+
+                                        if (FtpUtilies.DeleteFile(ftpPath + "/" + dbFolderImageFile.FileName) == "ok")
+                                        {
+                                            using (var db = new OggleBoobleMySqlContext())
+                                            {
+                                                db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == dbFolderImageFile.Id).ToList());
+                                                db.ImageFiles.Remove(dbFolderImageFile);
+                                                db.SaveChanges();
+                                                repairReport.ZeroLenImageFilesRemoved++;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        using (var db = new OggleBoobleMySqlContext())
+                                        {
+                                            dbFolderImageFile.Size = imageFileInfo.Size;
+                                            dbFolderImageFile.Height = imageFileInfo.Height;
+                                            dbFolderImageFile.Width = imageFileInfo.Width;
+                                            db.SaveChanges();
+                                            repairReport.ZeroLenFileResized++;
+                                        }
+                                    }
+                                }
                             }
                         }
-                    }
+                    } // dbFolderImageFile == null
                     repairReport.PhyscialFilesProcessed++;
                 }
                 #endregion
 
                 #region 2. Make sure every ImageFile row has a physcial file
-                // rebuild list 
-                dbFolderImageFiles = db.ImageFiles.Where(if1 => if1.FolderId == folderId).ToList();
+                // rebuild list                 
                 var physcialFileLinkIds = new List<string>();
-                for (int i = 0; i < physcialFiles.Length; i++) { physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].LastIndexOf("_") + 1, 36)); }
+
+                for (int i = 0; i < physcialFiles.Length; i++)
+                {
+                    physcialFileLinkIds.Add(physcialFiles[i].Substring(physcialFiles[i].LastIndexOf("_") + 1, 36));
+                }
+
                 if (physcialFileLinkIds.Count() != dbFolderImageFiles.Count())
                 {
                     if (physcialFileLinkIds.Count() > dbFolderImageFiles.Count())
                     {
-                        foreach (string pflinkId in physcialFileLinkIds)
+                        using (var db = new OggleBoobleMySqlContext())
                         {
-                            dbFolderImageFile = db.ImageFiles.Where(i => i.Id == pflinkId).FirstOrDefault();
-                            if (dbFolderImageFile == null)
+                            foreach (string pflinkId in physcialFileLinkIds)
                             {
-                                db.ImageFiles.Add(new ImageFile()
+                                dbFolderImageFile = db.ImageFiles.Where(i => i.Id == pflinkId).FirstOrDefault();
+                                if (dbFolderImageFile == null)
                                 {
-                                    Id = pflinkId,
-                                    FolderId = folderId,
-                                    FileName = ""
-                                });
-
-                            }
-                            else if (dbFolderImageFile.FolderId != folderId)
-                            {
-                                List<CategoryImageLink> links = db.CategoryImageLinks.Where(l => l.ImageLinkId == dbFolderImageFile.Id).ToList();
-                                if (links.Count() > 0)
-                                {
-                                    dbFolderImageFile.FolderId = folderId;
-                                    db.SaveChanges();
-                                    repairReport.NoLinkImageFiles++;                                }
-                                else
-                                {
-                                    string imageFileToRemove = ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg";
-                                    rejectFolder = ftpHost + "/archive.OggleBooble.com/rejects/" + imageFolderName + "_" + pflinkId + ".jpg";
-                                    ftpSuccess = FtpUtilies.MoveFile(imageFileToRemove, rejectFolder);
-                                    //.DeleteFile(ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg");
-                                    //ftpSuccess = FtpUtilies.DeleteFile(ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg");
-                                    if (ftpSuccess == "ok")
+                                    db.ImageFiles.Add(new ImageFile()
                                     {
-                                        repairReport.ImageFilesRemoved++;
-                                        repairReport.Errors.Add("I moved a file to rejects : " + imageFolderName + "_" + pflinkId);
+                                        Id = pflinkId,
+                                        FolderId = folderId,
+                                        FileName = ""
+                                    });
+                                    db.SaveChanges();
+                                }
+                                else if (dbFolderImageFile.FolderId != folderId)
+                                {
+                                    List<CategoryImageLink> links = db.CategoryImageLinks.Where(l => l.ImageLinkId == dbFolderImageFile.Id).ToList();
+                                    if (links.Count() > 0)
+                                    {
+                                        dbFolderImageFile.FolderId = folderId;
+                                        db.SaveChanges();
+                                        repairReport.NoLinkImageFiles++;
                                     }
                                     else
-                                        repairReport.Errors.Add("I wanted to delete : " + imageFolderName + "_" + pflinkId);
+                                    {
+                                        string imageFileToRemove = ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg";
+                                        rejectFolder = ftpHost + "/archive.OggleBooble.com/rejects/" + imageFolderName + "_" + pflinkId + ".jpg";
+                                        ftpSuccess = FtpUtilies.MoveFile(imageFileToRemove, rejectFolder);
+                                        //.DeleteFile(ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg");
+                                        //ftpSuccess = FtpUtilies.DeleteFile(ftpPath + "/" + imageFolderName + "_" + pflinkId + ".jpg");
+                                        if (ftpSuccess == "ok")
+                                        {
+                                            repairReport.ImageFilesRemoved++;
+                                            repairReport.Errors.Add("I moved a file to rejects : " + imageFolderName + "_" + pflinkId);
+                                        }
+                                        else
+                                            repairReport.Errors.Add("I wanted to delete : " + imageFolderName + "_" + pflinkId);
+                                    }
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        repairReport.Errors.Add("Folder: " + folderId + " FolderName: " + imageFolderName +
-                            "  physcialFiles: " + physcialFileLinkIds.Count() +
-                            " ImageFiles: " + dbFolderImageFiles.Count());
                     }
                 }
 
@@ -381,7 +417,7 @@ namespace OggleBooble.Api.Controllers
                 {
                     if (!physcialFileLinkIds.Contains(imageFile.Id))
                     {
-                        if (imageFile.ExternalLink != "?")
+                        if (imageFile.ExternalLink.IndexOf("http") > -1)
                         {
                             // Download missing File
                             if (imageFile.FileName.LastIndexOf(".") < 2)
@@ -390,70 +426,108 @@ namespace OggleBooble.Api.Controllers
                             }
                             else
                             {
-                                expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
-                                string newFileName = imgRepo + "/" + dbCategoryFolder.FolderPath + "/" + expectedFileName;
+                                string expectedFileName = imageFolderName + "_" + imageFile.Id + imageFile.FileName.Substring(imageFile.FileName.LastIndexOf("."));
+                                string newFileName = imgRepo + "/" + imageFolderPath + "/" + expectedFileName;
                                 string downLoadSuccess = DownLoadImage(ftpPath, imageFile.ExternalLink, expectedFileName);
                                 if (downLoadSuccess == "ok")
+                                {
                                     repairReport.ImagesDownLoaded++;
+
+                                    using (var db = new OggleBoobleMySqlContext())
+                                    {
+                                        if (db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).FirstOrDefault() == null)
+                                        {
+                                            db.CategoryImageLinks.Add(new CategoryImageLink() { ImageCategoryId = folderId, ImageLinkId = imageFile.Id, SortOrder = 9999 });
+                                            db.SaveChanges();
+                                        }
+                                    }
+                                }
                                 else
                                 {
                                     //repairReport.Errors.Add("download faild: " + imageFile.ExternalLink);
-                                    db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList());
-                                    db.ImageFiles.Remove(imageFile);
-                                    db.SaveChanges();
-                                    repairReport.ImageFilesRemoved++;
+                                    using (var db = new OggleBoobleMySqlContext())
+                                    {
+                                        if (db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).Count() > 0)
+                                        {
+                                            db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList());
+                                            db.SaveChanges();
+                                        }
+                                        var ulIm = db.ImageFiles.Where(i => i.Id == imageFile.Id).FirstOrDefault();
+                                        if (ulIm != null)
+                                        {
+                                            db.ImageFiles.Remove(ulIm);
+                                            db.SaveChanges();
+                                            repairReport.ImageFilesRemoved++;
+                                        }
+                                    }
                                 }
                             }
                         }
                         else
                         {
                             repairReport.Errors.Add("ImageFile with no physcial file " + imageFile.Id);
-                            db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList());
-                            db.ImageFiles.Remove(imageFile);
-                            db.SaveChanges();
-                            repairReport.ImageFilesRemoved++;
+                            using (var db = new OggleBoobleMySqlContext())
+                            {
+                                if (db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).Count() > 0)
+                                {
+                                    db.CategoryImageLinks.RemoveRange(db.CategoryImageLinks.Where(l => l.ImageLinkId == imageFile.Id).ToList());
+                                }
+                                var ulIm = db.ImageFiles.Where(i => i.Id == imageFile.Id).FirstOrDefault();
+                                if (ulIm != null)
+                                {
+                                    db.ImageFiles.Remove(ulIm);
+                                    db.SaveChanges();
+                                    repairReport.ImageFilesRemoved++;
+                                }
+                            }
                         }
                     }
                     repairReport.ImageFilesProcessed++;
                 }
-
                 #endregion
 
                 #region 3. check if there is a catlink for every physcial file 
-                var dbCatLinks = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).ToList();
-                foreach (string pfLinkId in physcialFileLinkIds)
+
+                using (var db = new OggleBoobleMySqlContext())
                 {
-                    if (dbCatLinks.Where(il => il.ImageLinkId == pfLinkId).FirstOrDefault() == null)
+                    foreach (string pfLinkId in physcialFileLinkIds)
                     {
-                        int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() + 1;
-                        //int nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 1;
-                        db.CategoryImageLinks.Add(new CategoryImageLink()
+                        if (db.CategoryImageLinks.Where(l=>l.ImageCategoryId==folderId && l.ImageLinkId == pfLinkId).FirstOrDefault() == null)
                         {
-                            ImageCategoryId = folderId,
-                            ImageLinkId = pfLinkId,
-                            SortOrder = nextSortOrder
-                        });
-                        db.SaveChanges();
-                        repairReport.CatLinksAdded++;
+                            int nextSortOrder = 0;
+                            if (db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Count() > 0)
+                            {
+                                nextSortOrder = db.CategoryImageLinks.Where(l => l.ImageCategoryId == folderId).Max(l => l.SortOrder) + 2;
+                            }
+                            db.CategoryImageLinks.Add(new CategoryImageLink()
+                            {
+                                ImageCategoryId = folderId,
+                                ImageLinkId = pfLinkId,
+                                SortOrder = nextSortOrder
+                            });
+                            db.SaveChanges();
+                            repairReport.CatLinksAdded++;
+
+                        }
+                        repairReport.LinkRecordsProcessed++;
                     }
-                    repairReport.LinkRecordsProcessed++;
                 }
                 #endregion
 
-                if (recurr)
-                {
-                    var childFolders = db.CategoryFolders.Where(c => c.Parent == folderId).ToList();
-                    foreach (CategoryFolder childFolder in childFolders)
-                    {
-                        PerformFolderChecks(childFolder.Id, repairReport, db, recurr);
-                    }
-                }
                 repairReport.Success = "ok";
-            }
+
+            }            
             catch (Exception ex)
             {
-                repairReport.Success = Helpers.ErrorDetails(ex);
-                return;
+                repairReport.Errors.Add(Helpers.ErrorDetails(ex));
+            }
+            if (recurr)
+            {
+                //var childFolders = db.CategoryFolders.Where(c => c.Parent == folderId).ToList();
+                foreach (CategoryFolder childFolder in childFolders)
+                {
+                    PerformFolderChecks(childFolder.Id, repairReport, recurr);
+                }
             }
         }
 
@@ -496,8 +570,6 @@ namespace OggleBooble.Api.Controllers
                             Guid.TryParse(possibleGuid, out Guid outGuid);
                             if (outGuid == Guid.Empty)
                                 possibleGuid = Guid.NewGuid().ToString();
-                            else
-                                repairReport.Success = "happy";
                         }
                     }
                     try
